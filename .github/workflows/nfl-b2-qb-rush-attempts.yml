@@ -1,0 +1,647 @@
+name: NFL B2 QB Rush-Attempt Benchmark
+
+# Research-only structural ablation.
+#
+# PRE-REGISTERED before observing B2 metrics:
+# - market: QB rush attempts only
+# - rolling history: 5 prior player appearances
+# - minimum player/team history: 3
+# - B2 formula: scale only rolling designed QB rush attempts by B1's
+#   team-window scale; leave rolling scrambles and kneels unscaled
+# - 2024 = development season
+# - 2025 = secondary, non-blind validation; parent B1 has already been examined
+# - exact same B0/B1 QB comparison rows; no favorable row dropping
+# - no fitted weights, no tuned thresholds, no sportsbook prices
+#
+# Promotion is NOT possible from this workflow. Even a positive result only
+# earns clustered uncertainty and prospective evaluation.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-b2-qb-rush-attempts.yml
+      - nfl/research/qb_rushing_components.py
+      - nfl/research/qb_rush_attempt_model.py
+      - nfl/research/b1_attribution.py
+      - nfl/research/b1_alignment.py
+      - nfl/research/b1_history.py
+      - nfl/research/b1_evaluate.py
+      - nfl/research/nflverse_history.py
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Run B2 QB rush-attempt benchmark
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import gzip
+          import hashlib
+          import io
+          import json
+          import math
+          import os
+          import statistics
+          from collections import defaultdict, deque
+          from datetime import datetime, timezone
+
+          import requests
+
+          from nfl.research import b1_alignment as align
+          from nfl.research import b1_attribution as attrib
+          from nfl.research import nflverse_history as nh
+          from nfl.research import qb_rush_attempt_model as b2
+          from nfl.research.qb_rushing_components import (
+              aggregate_components,
+              classify_qb_rush,
+          )
+          from nfl.research.b1_evaluate import paired_error_rows
+          from nfl.research.b1_history import (
+              TEAM_REQUIRED_COLUMNS,
+              build_b1_rows,
+          )
+
+          SEASONS = (2023, 2024, 2025)
+          ROLLING_WINDOW = 5
+          MIN_HISTORY = 3
+          MIN_TEAM_HISTORY = 3
+          EPS = 1e-10
+
+          PLAYER_SHA256 = {
+              2023: "f19cb71a5de0dce7fd09376026237c9ee9d5a93fe13815a2ea3ec2d37204cb17",
+              2024: "3ddc45a84f759aa348ce465ae001752c530575455717657cdfe1f8abfcdb4759",
+              2025: "e5e0615b3d96a3eaebfaee91e55afb4a4e7fe0caf057454177bcd7d6ad4bcfc2",
+          }
+          TEAM_SHA256 = {
+              2023: "dc5a387daabe8663deaddac492ad7020d47fb1a66048690b355b406cd8e4c454",
+              2024: "b207a1430c2715d03bbf1844c4eae98695f364851ff6025f422febc2c13f5255",
+              2025: "91058a59d894855377b2f39f40c4e7bdbeef96d12144289dc68215209a1c93cb",
+          }
+          PBP_SHA256 = {
+              2023: "4649804ee0f0a40b41e51ec75a1ce921949d7fab5459213488656b92f78560e8",
+              2024: "23370d5d10f8104d80d46a1fc5e61f4f6f5a3263fe96fe2dd629913cfcb08c06",
+              2025: "2f135887790a013fd004e609e37096bb4816d5cc80b9f19122e1bad478961978",
+          }
+          EXPECTED_QB_COMPARISON_N = {
+              2024: 615,
+              2025: 617,
+          }
+
+          def as_float(value, name):
+              try:
+                  out = float(value)
+              except (TypeError, ValueError) as exc:
+                  raise ValueError(f"invalid {name}: {value!r}") from exc
+              if not math.isfinite(out):
+                  raise ValueError(f"non-finite {name}: {value!r}")
+              return out
+
+          def as_bool(value):
+              if value in (None, "", 0, 0.0, "0", "0.0", False):
+                  return False
+              if value in (1, 1.0, "1", "1.0", True):
+                  return True
+              try:
+                  return float(value) == 1.0
+              except (TypeError, ValueError):
+                  return False
+
+          def pkey(row):
+              return (
+                  int(row["season"]),
+                  int(row["week"]),
+                  str(row["season_type"]),
+                  str(row["player_id"]),
+              )
+
+          def tkey(row):
+              return (
+                  int(row["season"]),
+                  int(row["week"]),
+                  str(row["season_type"]),
+                  str(row["team"]),
+              )
+
+          def metrics(preds, actuals):
+              if not preds:
+                  return {
+                      "n": 0, "mae": None, "rmse": None,
+                      "bias": None, "mean_prediction": None,
+                      "mean_actual": None,
+                  }
+              errors = [p - a for p, a in zip(preds, actuals)]
+              return {
+                  "n": len(errors),
+                  "mae": statistics.fmean(abs(e) for e in errors),
+                  "rmse": math.sqrt(
+                      statistics.fmean(e * e for e in errors)
+                  ),
+                  "bias": statistics.fmean(errors),
+                  "mean_prediction": statistics.fmean(preds),
+                  "mean_actual": statistics.fmean(actuals),
+              }
+
+          def summarize_rows(rows):
+              if not rows:
+                  return {
+                      "n": 0,
+                      "b0_mae": None,
+                      "b1_mae": None,
+                      "b2_mae": None,
+                      "b2_minus_b0_mae": None,
+                      "b2_minus_b1_mae": None,
+                      "b2_better_than_b0_n": 0,
+                      "b2_worse_than_b0_n": 0,
+                      "b2_tied_b0_n": 0,
+                  }
+              b0_abs = [abs(r["b0_prediction"] - r["actual"]) for r in rows]
+              b1_abs = [abs(r["b1_prediction"] - r["actual"]) for r in rows]
+              b2_abs = [abs(r["b2_prediction"] - r["actual"]) for r in rows]
+              deltas = [b2e - b0e for b2e, b0e in zip(b2_abs, b0_abs)]
+              return {
+                  "n": len(rows),
+                  "b0_mae": statistics.fmean(b0_abs),
+                  "b1_mae": statistics.fmean(b1_abs),
+                  "b2_mae": statistics.fmean(b2_abs),
+                  "b2_minus_b0_mae":
+                      statistics.fmean(b2_abs) - statistics.fmean(b0_abs),
+                  "b2_minus_b1_mae":
+                      statistics.fmean(b2_abs) - statistics.fmean(b1_abs),
+                  "b2_better_than_b0_n": sum(d < -EPS for d in deltas),
+                  "b2_worse_than_b0_n": sum(d > EPS for d in deltas),
+                  "b2_tied_b0_n": sum(abs(d) <= EPS for d in deltas),
+                  "mean_team_window_scale": statistics.fmean(
+                      r["team_window_scale"] for r in rows
+                  ),
+                  "mean_rolling_designed": statistics.fmean(
+                      r["rolling_designed"] for r in rows
+                  ),
+                  "mean_rolling_scramble": statistics.fmean(
+                      r["rolling_scramble"] for r in rows
+                  ),
+                  "mean_rolling_kneel": statistics.fmean(
+                      r["rolling_kneel"] for r in rows
+                  ),
+              }
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent": "Full-Count NFL B2 QB rush-attempt benchmark (read-only)"
+          })
+
+          player_source = []
+          team_source = []
+          qb_ids_by_season = defaultdict(set)
+          sources = {"player": {}, "team": {}, "pbp": {}}
+
+          for season in SEASONS:
+              purl = nh.player_stats_url(season)
+              pr = session.get(purl, timeout=60)
+              pr.raise_for_status()
+              pdigest = hashlib.sha256(pr.content).hexdigest()
+              if pdigest != PLAYER_SHA256[season]:
+                  raise SystemExit(
+                      f"{season}: player source SHA drift {pdigest}"
+                  )
+              prows = list(csv.DictReader(io.StringIO(pr.text)))
+              player_source.extend(prows)
+              for row in prows:
+                  if str(row.get("position") or "").strip().upper() == "QB":
+                      pid = str(row.get("player_id") or "").strip()
+                      if pid:
+                          qb_ids_by_season[season].add(pid)
+              sources["player"][str(season)] = {
+                  "url": purl,
+                  "rows": len(prows),
+                  "sha256": pdigest,
+              }
+
+              turl = (
+                  "https://github.com/nflverse/nflverse-data/releases/download/"
+                  f"stats_team/stats_team_week_{season}.csv"
+              )
+              tr = session.get(turl, timeout=60)
+              tr.raise_for_status()
+              tdigest = hashlib.sha256(tr.content).hexdigest()
+              if tdigest != TEAM_SHA256[season]:
+                  raise SystemExit(
+                      f"{season}: team source SHA drift {tdigest}"
+                  )
+              trows = list(csv.DictReader(io.StringIO(tr.text)))
+              if not trows:
+                  raise SystemExit(f"{season}: empty team source")
+              missing = sorted(TEAM_REQUIRED_COLUMNS - set(trows[0]))
+              if missing:
+                  raise SystemExit(
+                      f"{season}: missing team columns {missing}"
+                  )
+              team_source.extend(trows)
+              sources["team"][str(season)] = {
+                  "url": turl,
+                  "rows": len(trows),
+                  "sha256": tdigest,
+              }
+
+          component_actuals = defaultdict(list)
+          for season in SEASONS:
+              url = (
+                  "https://github.com/nflverse/nflverse-data/releases/download/"
+                  f"pbp/play_by_play_{season}.csv.gz"
+              )
+              response = session.get(url, timeout=120)
+              response.raise_for_status()
+              digest = hashlib.sha256(response.content).hexdigest()
+              if digest != PBP_SHA256[season]:
+                  raise SystemExit(f"{season}: PBP source SHA drift {digest}")
+
+              with gzip.GzipFile(fileobj=io.BytesIO(response.content)) as gz:
+                  text = io.TextIOWrapper(gz, encoding="utf-8", newline="")
+                  reader = csv.DictReader(text)
+                  rows_seen = 0
+                  for row in reader:
+                      rows_seen += 1
+                      pid = str(row.get("rusher_player_id") or "").strip()
+                      if not pid or pid not in qb_ids_by_season[season]:
+                          continue
+                      if not (
+                          as_bool(row.get("rush_attempt"))
+                          or as_bool(row.get("qb_kneel"))
+                          or as_bool(row.get("qb_scramble"))
+                      ):
+                          continue
+                      obs = classify_qb_rush(row, is_qb=True)
+                      if obs is None:
+                          continue
+                      key = (
+                          season,
+                          int(float(row["week"])),
+                          str(row.get("season_type") or ""),
+                          pid,
+                      )
+                      component_actuals[key].append(obs)
+
+              sources["pbp"][str(season)] = {
+                  "url": url,
+                  "rows": rows_seen,
+                  "bytes": len(response.content),
+                  "sha256": digest,
+              }
+
+          component_actuals = {
+              key: aggregate_components(rows)
+              for key, rows in component_actuals.items()
+          }
+
+          # Build the same prior-only player chronology as B0, then attach
+          # component means before appending the current game's components.
+          prior_rows = nh.build_prior_only_rows(
+              player_source,
+              rolling_window=ROLLING_WINDOW,
+          )
+          component_history = defaultdict(
+              lambda: deque(maxlen=ROLLING_WINDOW)
+          )
+          component_features = {}
+          carry_reconciliation_n = 0
+
+          for row in prior_rows:
+              if str(row.get("position") or "").strip().upper() != "QB":
+                  continue
+              key = pkey(row)
+              actual = component_actuals.get(
+                  key,
+                  aggregate_components([]),
+              )
+              official_carries = as_float(
+                  row["target"]["carries"],
+                  "official carries",
+              )
+              if abs(float(actual["carries"]) - official_carries) > EPS:
+                  raise SystemExit(
+                      f"QB carry reconciliation failed at {key}: "
+                      f"{actual['carries']} != {official_carries}"
+                  )
+              carry_reconciliation_n += 1
+
+              hist = component_history[row["player_id"]]
+              if hist:
+                  rolling = {
+                      "designed": statistics.fmean(
+                          float(x["designed_rush_attempts"]) for x in hist
+                      ),
+                      "scramble": statistics.fmean(
+                          float(x["scramble_attempts"]) for x in hist
+                      ),
+                      "kneel": statistics.fmean(
+                          float(x["kneel_attempts"]) for x in hist
+                      ),
+                  }
+              else:
+                  rolling = {
+                      "designed": None,
+                      "scramble": None,
+                      "kneel": None,
+                  }
+              component_features[key] = {
+                  **rolling,
+                  "history_n": len(hist),
+              }
+
+              hist.append(actual)
+
+          # Build B1 independently; all B2 rows must be a strict subset of its
+          # already-defined comparable population, then QB-filtered only.
+          built = build_b1_rows(
+              player_source,
+              team_source,
+              rolling_window=ROLLING_WINDOW,
+          )
+          built_index = {pkey(row): row for row in built}
+          if len(built_index) != len(built):
+              raise SystemExit("duplicate B1 player-game key")
+
+          # Build prior game identity windows for alignment-category reporting.
+          normalized_team = []
+          seen_team = set()
+          for raw in team_source:
+              row = {
+                  "season": int(float(raw["season"])),
+                  "week": int(float(raw["week"])),
+                  "season_type": str(raw["season_type"]),
+                  "team": str(raw["team"]).strip(),
+              }
+              key = tkey(row)
+              if key in seen_team:
+                  raise SystemExit(f"duplicate team game key {key}")
+              seen_team.add(key)
+              normalized_team.append(row)
+          normalized_team.sort(
+              key=lambda r: (
+                  r["season"], r["week"], r["team"], r["season_type"]
+              )
+          )
+
+          team_histories = defaultdict(
+              lambda: deque(maxlen=ROLLING_WINDOW)
+          )
+          team_prior = {}
+          for row in normalized_team:
+              key = tkey(row)
+              team_prior[key] = list(team_histories[row["team"]])
+              team_histories[row["team"]].append(key)
+
+          player_histories = defaultdict(
+              lambda: deque(maxlen=ROLLING_WINDOW)
+          )
+          alignment_by_player_game = {}
+          for row in prior_rows:
+              game = tkey(row)
+              prior_player = list(player_histories[row["player_id"]])
+              prior_team = team_prior.get(game)
+              if prior_team is None:
+                  raise SystemExit(f"missing team prior history for {game}")
+              alignment_by_player_game[pkey(row)] = (
+                  align.classify_history_alignment(
+                      prior_player,
+                      prior_team,
+                      current_team=row["team"],
+                  )
+              )
+              player_histories[row["player_id"]].append(game)
+
+          reports = {}
+          for season, label in (
+              (2024, "2024_development"),
+              (2025, "2025_secondary_nonblind_validation"),
+          ):
+              paired = paired_error_rows(
+                  built,
+                  "rush_attempts",
+                  test_season=season,
+                  test_season_type="REG",
+                  min_history=MIN_HISTORY,
+                  min_team_history=MIN_TEAM_HISTORY,
+              )
+
+              rows = []
+              qb_comparable_n = 0
+              for pair in paired:
+                  key = (
+                      int(pair["season"]),
+                      int(pair["week"]),
+                      "REG",
+                      str(pair["player_id"]),
+                  )
+                  source = built_index.get(key)
+                  if source is None:
+                      raise SystemExit(f"missing B1 row for {key}")
+                  if str(source.get("position") or "").strip().upper() != "QB":
+                      continue
+                  qb_comparable_n += 1
+
+                  comp = component_features.get(key)
+                  if comp is None:
+                      raise SystemExit(f"missing QB component features {key}")
+                  if int(comp["history_n"]) < MIN_HISTORY:
+                      raise SystemExit(
+                          f"component history shorter than B0 history at {key}"
+                      )
+                  if any(
+                      comp[name] is None
+                      for name in ("designed", "scramble", "kneel")
+                  ):
+                      raise SystemExit(
+                          f"missing component mean on comparable row {key}"
+                      )
+
+                  component_sum = (
+                      float(comp["designed"])
+                      + float(comp["scramble"])
+                      + float(comp["kneel"])
+                  )
+                  if abs(component_sum - float(pair["b0_prediction"])) > EPS:
+                      raise SystemExit(
+                          f"B0 component reconstruction failed at {key}: "
+                          f"{component_sum} != {pair['b0_prediction']}"
+                      )
+
+                  parts = attrib.opportunity_components(
+                      source,
+                      "rush_attempts",
+                  )
+                  scale = float(parts["team_window_scale"])
+                  prediction = b2.predict_attempts(
+                      rolling_designed_rush_attempts=float(comp["designed"]),
+                      rolling_scramble_attempts=float(comp["scramble"]),
+                      rolling_kneel_attempts=float(comp["kneel"]),
+                      team_window_scale=scale,
+                  )
+
+                  rows.append({
+                      "season": season,
+                      "week": key[1],
+                      "player_id": key[3],
+                      "team": source["team"],
+                      "alignment":
+                          alignment_by_player_game.get(key, "UNKNOWN"),
+                      "team_window_scale": scale,
+                      "rolling_designed": float(comp["designed"]),
+                      "rolling_scramble": float(comp["scramble"]),
+                      "rolling_kneel": float(comp["kneel"]),
+                      "b0_prediction": float(pair["b0_prediction"]),
+                      "b1_prediction": float(pair["b1_prediction"]),
+                      "b2_prediction": prediction,
+                      "actual": float(pair["actual"]),
+                  })
+
+              expected = EXPECTED_QB_COMPARISON_N[season]
+              if qb_comparable_n != expected or len(rows) != expected:
+                  raise SystemExit(
+                      f"{label}: QB comparison population drift "
+                      f"{len(rows)} != frozen {expected}"
+                  )
+
+              b0m = metrics(
+                  [r["b0_prediction"] for r in rows],
+                  [r["actual"] for r in rows],
+              )
+              b1m = metrics(
+                  [r["b1_prediction"] for r in rows],
+                  [r["actual"] for r in rows],
+              )
+              b2m = metrics(
+                  [r["b2_prediction"] for r in rows],
+                  [r["actual"] for r in rows],
+              )
+
+              categories = {}
+              for category in (
+                  "ALIGNED",
+                  "MISSED_GAMES",
+                  "TEAM_CHANGE",
+                  "WINDOW_LENGTH_MISMATCH",
+                  "NO_HISTORY",
+              ):
+                  categories[category] = summarize_rows(
+                      [r for r in rows if r["alignment"] == category]
+                  )
+
+              scale_buckets = {
+                  "down_10pct_plus": summarize_rows([
+                      r for r in rows if r["team_window_scale"] < 0.90
+                  ]),
+                  "down_2_to_10pct": summarize_rows([
+                      r for r in rows
+                      if 0.90 <= r["team_window_scale"] < 0.98
+                  ]),
+                  "within_2pct": summarize_rows([
+                      r for r in rows
+                      if 0.98 <= r["team_window_scale"] <= 1.02
+                  ]),
+                  "up_2_to_10pct": summarize_rows([
+                      r for r in rows
+                      if 1.02 < r["team_window_scale"] <= 1.10
+                  ]),
+                  "up_10pct_plus": summarize_rows([
+                      r for r in rows if r["team_window_scale"] > 1.10
+                  ]),
+              }
+
+              reports[label] = {
+                  "population_n": len(rows),
+                  "b0": b0m,
+                  "b1": b1m,
+                  "b2": b2m,
+                  "delta_mae_b2_minus_b0": b2m["mae"] - b0m["mae"],
+                  "delta_mae_b2_minus_b1": b2m["mae"] - b1m["mae"],
+                  "overall": summarize_rows(rows),
+                  "by_alignment": categories,
+                  "by_team_window_scale": scale_buckets,
+              }
+
+          development = reports["2024_development"]
+          decision = {
+              "criterion_1_b2_beats_b1_mae":
+                  development["delta_mae_b2_minus_b1"] < 0,
+              "criterion_2_b2_not_worse_than_b0_mae":
+                  development["delta_mae_b2_minus_b0"] <= 0,
+          }
+          decision["development_gate_pass"] = all(decision.values())
+
+          output = {
+              "analysis": "NFL_B2_QB_RUSH_ATTEMPT_COMPONENT_ABLATION",
+              "status": "research_only_no_promotion",
+              "created_at": datetime.now(timezone.utc).isoformat(),
+              "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+              "pre_registered": {
+                  "market": "QB rush_attempts",
+                  "rolling_window_prior_player_appearances": ROLLING_WINDOW,
+                  "minimum_player_history": MIN_HISTORY,
+                  "minimum_team_history": MIN_TEAM_HISTORY,
+                  "formula": (
+                      "rolling_scrambles + rolling_kneels + "
+                      "rolling_designed_rushes * B1_team_window_scale"
+                  ),
+                  "fit_parameters": 0,
+                  "development_season": 2024,
+                  "secondary_validation_season": 2025,
+                  "secondary_validation_caveat": (
+                      "parent B1 and its 2025 alignment behavior were already "
+                      "examined; B2 metrics were not used to choose the formula, "
+                      "but this is not a pristine blind holdout"
+                  ),
+                  "development_gate": (
+                      "B2 MAE must beat B1 and be <= B0 on the exact QB "
+                      "comparison population"
+                  ),
+              },
+              "source_integrity": {
+                  "prior_reconciliation_run_id": 34635388244,
+                  "qb_weekly_carry_reconciliation_rows":
+                      carry_reconciliation_n,
+                  "component_sum_must_equal_B0_prediction": True,
+                  "pbp_rushing_yards_not_used": (
+                      "intentionally excluded because prior reconciliation "
+                      "found four PBP-vs-weekly yard discrepancies"
+                  ),
+              },
+              "sources": sources,
+              "reports": reports,
+              "development_decision": decision,
+              "next_if_pass": (
+                  "Run player/team clustered uncertainty; then prospective "
+                  "shadow evaluation. Do not promote from MAE alone."
+              ),
+              "next_if_fail": (
+                  "Reject this structural ablation and inspect designed-rush "
+                  "role/coaching/game-state features before adding weights."
+              ),
+          }
+
+          path = "/tmp/nfl-b2-qb-rush-attempts.json"
+          with open(path, "w", encoding="utf-8") as f:
+              json.dump(output, f, indent=2, sort_keys=True)
+
+          print(json.dumps(output, indent=2, sort_keys=True))
+          print(f"\nWrote {path}")
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-b2-qb-rush-attempt-benchmark
+          path: /tmp/nfl-b2-qb-rush-attempts.json
+          retention-days: 30
