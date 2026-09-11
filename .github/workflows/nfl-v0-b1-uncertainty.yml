@@ -1,0 +1,206 @@
+name: NFL V0 B1 Clustered Uncertainty
+
+# Research-only uncertainty audit for the already-observed B1 benchmark.
+# This does not tune, promote, select, publish, or change any model.
+#
+# Primary estimand: mean paired absolute-error delta (B1 - B0).
+# Negative = B1 lower absolute error.
+#
+# Dependence is examined three separate ways:
+# - week/slate clusters
+# - game clusters
+# - repeated-player clusters
+#
+# Bootstrap fractions are descriptive, NOT formal p-values.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-v0-b1-uncertainty.yml
+      - nfl/research/b1_uncertainty.py
+
+permissions:
+  contents: read
+
+jobs:
+  uncertainty:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Run paired clustered uncertainty audit
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import hashlib
+          import io
+          import json
+          import os
+          from datetime import datetime, timezone
+
+          import requests
+
+          from nfl.research.b1_history import build_b1_rows, TEAM_REQUIRED_COLUMNS
+          from nfl.research.b1_evaluate import MARKETS, paired_error_rows
+          from nfl.research.b1_uncertainty import cluster_bootstrap_mean_ci
+          from nfl.research.nflverse_history import REQUIRED_COLUMNS, player_stats_url
+
+          RAW_SEASONS = (2023, 2024, 2025)
+          ROLLING_WINDOW = 5
+          MIN_HISTORY = 3
+          MIN_TEAM_HISTORY = 3
+          REPS = 10_000
+          SEED = 20260911
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent": "Full-Count NFL B1 uncertainty audit (read-only)"
+          })
+
+          players = []
+          teams = []
+          sources = {"player": {}, "team": {}}
+
+          for season in RAW_SEASONS:
+              purl = player_stats_url(season)
+              pr = session.get(purl, timeout=60)
+              pr.raise_for_status()
+              prows = list(csv.DictReader(io.StringIO(pr.text)))
+              pmissing = sorted(REQUIRED_COLUMNS - set(prows[0].keys()))
+              if pmissing:
+                  raise SystemExit(f"{season}: missing player columns {pmissing}")
+              players.extend(prows)
+              sources["player"][str(season)] = {
+                  "url": purl,
+                  "rows": len(prows),
+                  "sha256": hashlib.sha256(pr.content).hexdigest(),
+              }
+
+              turl = (
+                  "https://github.com/nflverse/nflverse-data/releases/download/"
+                  f"stats_team/stats_team_week_{season}.csv"
+              )
+              tr = session.get(turl, timeout=60)
+              tr.raise_for_status()
+              trows = list(csv.DictReader(io.StringIO(tr.text)))
+              tmissing = sorted(TEAM_REQUIRED_COLUMNS - set(trows[0].keys()))
+              if tmissing:
+                  raise SystemExit(f"{season}: missing team columns {tmissing}")
+              teams.extend(trows)
+              sources["team"][str(season)] = {
+                  "url": turl,
+                  "rows": len(trows),
+                  "sha256": hashlib.sha256(tr.content).hexdigest(),
+              }
+
+          built = build_b1_rows(
+              players,
+              teams,
+              rolling_window=ROLLING_WINDOW,
+          )
+
+          reports = {}
+          for season, label in ((2024, "2024_validation"), (2025, "2025_test")):
+              reports[label] = {}
+              for market in MARKETS:
+                  paired = paired_error_rows(
+                      built,
+                      market,
+                      test_season=season,
+                      test_season_type="REG",
+                      min_history=MIN_HISTORY,
+                      min_team_history=MIN_TEAM_HISTORY,
+                  )
+                  if not paired:
+                      raise SystemExit(f"{label}/{market}: no paired rows")
+
+                  enriched = []
+                  for row in paired:
+                      team = str(row.get("team") or "")
+                      opponent = str(row.get("opponent_team") or "")
+                      game_teams = sorted((team, opponent))
+                      enriched.append({
+                          **row,
+                          "week_cluster": f"{row['season']}-W{row['week']}",
+                          "game_cluster": (
+                              f"{row['season']}-W{row['week']}-"
+                              f"{game_teams[0]}-{game_teams[1]}"
+                          ),
+                          "player_cluster": row["player_id"],
+                      })
+
+                  cluster_results = {}
+                  for label_name, field in (
+                      ("week", "week_cluster"),
+                      ("game", "game_cluster"),
+                      ("player", "player_cluster"),
+                  ):
+                      cluster_results[label_name] = cluster_bootstrap_mean_ci(
+                          enriched,
+                          cluster_field=field,
+                          value_field="delta_abs_error",
+                          reps=REPS,
+                          seed=SEED,
+                      )
+
+                  observed = (
+                      sum(row["delta_abs_error"] for row in enriched) /
+                      len(enriched)
+                  )
+                  for result in cluster_results.values():
+                      if abs(result["observed_mean"] - observed) > 1e-12:
+                          raise SystemExit(
+                              f"{label}/{market}: bootstrap population drift"
+                          )
+
+                  reports[label][market] = {
+                      "comparison_n": len(enriched),
+                      "observed_mean_delta_absolute_error": observed,
+                      "negative_means_b1_better": True,
+                      "clusters": cluster_results,
+                  }
+
+          output = {
+              "analysis": "NFL_V0_B1_CLUSTERED_PAIRED_ABSOLUTE_ERROR_UNCERTAINTY",
+              "status": "research_only",
+              "created_at": datetime.now(timezone.utc).isoformat(),
+              "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+              "scientific_context": {
+                  "b0_run_id": 34621247208,
+                  "b1_run_id": 34622487867,
+                  "b1_replay_run_id": 34622853771,
+                  "rolling_window_prior_games": ROLLING_WINDOW,
+                  "minimum_player_history": MIN_HISTORY,
+                  "minimum_team_history": MIN_TEAM_HISTORY,
+                  "bootstrap_reps": REPS,
+                  "seed": SEED,
+                  "estimand": "mean paired absolute-error delta, B1 minus B0",
+                  "warning": (
+                      "clustered bootstrap intervals are descriptive; "
+                      "bootstrap fractions are not formal p-values"
+                  ),
+              },
+              "sources": sources,
+              "reports": reports,
+          }
+
+          path = "/tmp/nfl-v0-b1-uncertainty.json"
+          with open(path, "w", encoding="utf-8") as f:
+              json.dump(output, f, indent=2, sort_keys=True)
+          print(json.dumps(output, indent=2, sort_keys=True))
+          print(f"\nWrote {path}")
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-v0-b1-clustered-uncertainty
+          path: /tmp/nfl-v0-b1-uncertainty.json
+          retention-days: 30
