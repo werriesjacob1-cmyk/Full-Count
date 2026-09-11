@@ -112,5 +112,36 @@ class FailClosed(unittest.TestCase):
             })
 
 
+    def test_negative_rush_efficiency_is_valid_football_data(self):
+        self.assertAlmostEqual(
+            b1.predict_rushing_yards({
+                "projected_team_carries": 10.0,
+                "prior_player_carry_share": 0.20,
+                "prior_player_rush_yards_per_carry": -1.5,
+            }),
+            -3.0,
+        )
+
+    def test_negative_receiving_efficiency_is_not_silently_clamped(self):
+        self.assertAlmostEqual(
+            b1.predict_receiving_yards({
+                "projected_team_targets": 10.0,
+                "prior_player_target_share": 0.20,
+                "prior_player_yards_per_target": -2.0,
+            }),
+            -4.0,
+        )
+
+    def test_negative_passing_efficiency_is_not_silently_clamped(self):
+        self.assertAlmostEqual(
+            b1.predict_passing_yards({
+                "projected_team_pass_attempts": 10.0,
+                "prior_player_pass_attempt_share": 1.0,
+                "prior_player_pass_yards_per_attempt": -1.0,
+            }),
+            -10.0,
+        )
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
