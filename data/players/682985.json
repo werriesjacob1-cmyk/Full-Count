@@ -1149,6 +1149,111 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 52.4,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ Detroit Tigers",
+          "game_pk": 824227,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 41.4286,
+            "pitch_exploit": 6.2857,
+            "l7_avg_ev": 42.4306,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 34.5,
+            "season_barrel_pct": 80.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 3.9,
+            "park_hand_index": -2.47,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 2.0,
+            "woba_ahead": 25.4545,
+            "woba_behind": 37.2727,
+            "pull_park_synergy": -0.9077,
+            "hard_hit_105_rate": 0.815,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.224,
+            "vs_rp_ops": 0.348,
+            "ump_k_pct": -0.216,
+            "ump_bb_pct": 0.24
+          },
+          "hit_probability": 0.707,
+          "raw_hit_probability": 0.7378,
+          "lift": 0.0393,
+          "reliability": "A",
+          "sample_n": 125,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 12.7,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Detroit Tigers",
+          "game_pk": 824227,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0792
+          },
+          "hit_probability": 0.0792,
+          "raw_hit_probability": null,
+          "lift": 0.0313,
+          "reliability": "A",
+          "sample_n": 125,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.8,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Detroit Tigers",
+          "game_pk": 824227,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0359
+          },
+          "hit_probability": 0.0359,
+          "raw_hit_probability": null,
+          "lift": 0.015,
+          "reliability": "A",
+          "sample_n": 125,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

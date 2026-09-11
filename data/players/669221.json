@@ -694,6 +694,60 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 22.9,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ Atlanta Braves",
+          "game_pk": 824873,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 64.5714,
+            "l7_avg_ev": 36.5625,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 74.6,
+            "season_barrel_pct": 22.6667,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 0.0,
+            "bvp_ops": -1.32,
+            "platoon_barrel_pct": -3.2,
+            "platoon_xwoba": -4.68,
+            "park_hand_index": -1.0,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 2.0,
+            "woba_ahead": 11.8182,
+            "woba_behind": 56.3636,
+            "pull_park_synergy": -0.5355,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 2.056,
+            "vs_rp_ops": 0.672,
+            "ump_k_pct": -0.228,
+            "ump_bb_pct": 0.192
+          },
+          "hit_probability": 0.5437,
+          "raw_hit_probability": 0.5437,
+          "lift": -0.0218,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

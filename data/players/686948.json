@@ -2345,6 +2345,110 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 72.4,
+          "notable_signals": 2,
+          "matchup": "Philadelphia Phillies @ Atlanta Braves",
+          "game_pk": 824873,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 64.5714,
+            "pitch_exploit": 1.1429,
+            "l7_avg_ev": 24.6591,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 74.6,
+            "season_barrel_pct": 64.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 3.84,
+            "park_hand_index": 0.98,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "woba_behind": 47.2727,
+            "pull_park_synergy": 0.2401,
+            "hard_hit_105_rate": 1.1775,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.696,
+            "vs_rp_ops": 0.324,
+            "ump_k_pct": -0.228,
+            "ump_bb_pct": 0.192
+          },
+          "hit_probability": 0.6529,
+          "raw_hit_probability": 0.6409,
+          "lift": 0.0874,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 16.3,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Atlanta Braves",
+          "game_pk": 824873,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0937
+          },
+          "hit_probability": 0.0937,
+          "raw_hit_probability": null,
+          "lift": 0.0458,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.3,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Atlanta Braves",
+          "game_pk": 824873,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0296
+          },
+          "hit_probability": 0.0296,
+          "raw_hit_probability": null,
+          "lift": 0.0087,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

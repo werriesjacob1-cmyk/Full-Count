@@ -139,6 +139,34 @@
             "value": 3.5,
             "needs": 4
           }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ Detroit Tigers",
+          "game_pk": 824227,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            690279,
+            664285
+          ],
+          "signals": {
+            "combined_k_edge": 0.1229
+          },
+          "hit_probability": 0.7097,
+          "raw_hit_probability": null,
+          "lift": 0.1229,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
+          }
         }
       ]
     }

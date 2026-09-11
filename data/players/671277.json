@@ -1,6 +1,6 @@
 {
   "player_id": 671277,
-  "name": "Luis Garc\u00eda",
+  "name": "Luis Garc\u00eda Jr.",
   "snapshots": [
     {
       "date": "2026-08-04",
@@ -1864,6 +1864,110 @@
           "lift": 0.013,
           "reliability": "A",
           "sample_n": 135,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-11",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 50.5,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ New York Yankees",
+          "game_pk": 823498,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 16.0,
+            "l7_avg_ev": 52.5,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 36.1,
+            "season_barrel_pct": 62.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 15.1515,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 3.42,
+            "park_hand_index": 2.98,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 0.0,
+            "woba_ahead": 83.6364,
+            "woba_behind": 47.2727,
+            "pull_park_synergy": 1.9504,
+            "hard_hit_105_rate": 1.3125,
+            "team_total_move": 6.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.504,
+            "vs_rp_ops": 2.604,
+            "ump_k_pct": -0.288,
+            "ump_bb_pct": 0.252
+          },
+          "hit_probability": 0.6665,
+          "raw_hit_probability": 0.6515,
+          "lift": 0.101,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 17.7,
+          "notable_signals": 1,
+          "matchup": "New York Mets @ New York Yankees",
+          "game_pk": 823498,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0991
+          },
+          "hit_probability": 0.0991,
+          "raw_hit_probability": null,
+          "lift": 0.0512,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.3,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ New York Yankees",
+          "game_pk": 823498,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0337
+          },
+          "hit_probability": 0.0337,
+          "raw_hit_probability": null,
+          "lift": 0.0128,
+          "reliability": "A",
+          "sample_n": 136,
           "projection": {
             "stat": "moonshot_420",
             "value": 1,
