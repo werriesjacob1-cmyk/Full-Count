@@ -50,7 +50,7 @@ jobs:
           }
           REQUIRED = {
               "season", "week", "season_type", "game_id", "play_id",
-              "posteam", "qb_dropback", "xpass", "pass_oe",
+              "posteam", "pass", "rush", "qb_dropback", "xpass", "pass_oe",
               "two_point_attempt",
           }
           IDENTITY_TOLERANCE = 1e-7
@@ -96,6 +96,8 @@ jobs:
               xpass_only = 0
               pass_oe_only = 0
               partial_examples = []
+              structural_partial_rows = 0
+              unexplained_partial_rows = 0
               identity_errors = []
               xpasses = []
               pass_oes = []
@@ -132,15 +134,34 @@ jobs:
                           both_missing += 1
                           continue
                       if xmissing or pmissing:
+                          pass_flag = flag(row.get("pass"), "pass")
+                          rush_flag = flag(row.get("rush"), "rush")
                           if xmissing:
                               pass_oe_only += 1
                               missing_side = "xpass_missing"
                           else:
                               xpass_only += 1
                               missing_side = "pass_oe_missing"
+
+                          # nflfastR add_xpass deliberately retains xpass on
+                          # model-valid no-play rows but sets pass_oe to NA
+                          # whenever cleaned rush==0 and pass==0.
+                          structural = (
+                              (not xmissing)
+                              and pmissing
+                              and pass_flag == 0.0
+                              and rush_flag == 0.0
+                          )
+                          if structural:
+                              structural_partial_rows += 1
+                          else:
+                              unexplained_partial_rows += 1
+
                           if len(partial_examples) < 25:
                               partial_examples.append({
                                   "missing_side": missing_side,
+                                  "structural_by_upstream_contract":
+                                      structural,
                                   "game_id": row.get("game_id"),
                                   "play_id": row.get("play_id"),
                                   "season_type": row.get("season_type"),
@@ -149,6 +170,8 @@ jobs:
                                   "play_type": row.get("play_type"),
                                   "down": row.get("down"),
                                   "qtr": row.get("qtr"),
+                                  "pass": row.get("pass"),
+                                  "rush": row.get("rush"),
                                   "qb_dropback": row.get("qb_dropback"),
                                   "two_point_attempt":
                                       row.get("two_point_attempt"),
@@ -165,6 +188,8 @@ jobs:
 
                       xpass = f(xraw, "xpass")
                       pass_oe = f(praw, "pass_oe")
+                      pass_flag = flag(row.get("pass"), "pass")
+                      rush_flag = flag(row.get("rush"), "rush")
                       dropback = flag(row.get("qb_dropback"), "qb_dropback")
 
                       if not (0.0 <= xpass <= 1.0):
@@ -176,7 +201,7 @@ jobs:
                               f"{season}: pass_oe outside [-100,100]: {pass_oe}"
                           )
 
-                      expected = 100.0 * (dropback - xpass)
+                      expected = 100.0 * (pass_flag - xpass)
                       identity_errors.append(abs(pass_oe - expected))
                       xpasses.append(xpass)
                       pass_oes.append(pass_oe)
@@ -202,6 +227,8 @@ jobs:
                       "xpass_present_pass_oe_missing_rows": xpass_only,
                       "xpass_missing_pass_oe_present_rows": pass_oe_only,
                       "partial_missing_rows": xpass_only + pass_oe_only,
+                      "structural_partial_rows": structural_partial_rows,
+                      "unexplained_partial_rows": unexplained_partial_rows,
                       "partial_fraction_among_any_signal": (
                           (xpass_only + pass_oe_only)
                           / (eligible + xpass_only + pass_oe_only)
@@ -223,7 +250,7 @@ jobs:
                   },
                   "identity": {
                       "formula_tested":
-                          "pass_oe == 100 * (qb_dropback - xpass)",
+                          "pass_oe == 100 * (pass - xpass)",
                       "tolerance": IDENTITY_TOLERANCE,
                       "max_abs_error": max_identity_error,
                       "mean_abs_error":
@@ -297,6 +324,13 @@ jobs:
                       all(
                           "partial_missing_rows"
                           in reports[str(s)]["missingness"]
+                          for s in SEASONS
+                      ),
+                  "all_partial_missingness_structurally_explained":
+                      all(
+                          reports[str(s)]["missingness"][
+                              "unexplained_partial_rows"
+                          ] == 0
                           for s in SEASONS
                       ),
               },
