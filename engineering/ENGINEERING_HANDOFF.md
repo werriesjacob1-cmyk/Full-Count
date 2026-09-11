@@ -1848,3 +1848,61 @@ depending on whatever the live payload happens to contain.
 the same version root `requirements.txt` already pins. Nothing was added to any
 requirements file; `requirements.txt` remains byte-identical (sha256
 `10c18dbe…`).
+
+### Deliverable 2 — per-sport ledger tripwire, and Enforcement 4
+
+**`ledger_integrity.py` now compares estates PER SPORT.** NFL estates
+(`nfl/results/grades_*.json`, `nfl/data/public_top_picks/registry.json`) are
+separate files from MLB's, are read independently, and losses are reported
+grouped by sport.
+
+**The masking mutation, observed.** 270 healthy MLB identities growing to 280,
+beside one NFL identity vanishing:
+
+```
+FAIL  published identities disappeared between f7fe68f3 and f0ad3bbd
+  [NFL] NFL graded ledger (nfl/results/grades_*.json): 1 lost
+      fcnfl1:nflverse:2026_01_TB_CIN:player-2:receiving_yards:64.5:over
+  [NFL] NFL publication registry (nfl/data/public_top_picks/registry.json): 1 lost
+      fcnfl1:nflverse:2026_01_TB_CIN:player-2:receiving_yards:64.5:over
+EXIT: 1
+```
+
+`[MLB]` does not appear. A healthy MLB estate does not soften or mask it, which
+is the whole point — pooling the two identity sets would have made one missing
+row look like noise against 280 intact ones.
+
+**MLB behaviour is byte-identical**, verified against real refs (`97c3dab` →
+branch HEAD) before and after the change, across all four code paths: clean
+forward compare, reverse compare, unreadable-ref fail-closed, and the
+argument-error path. All four outputs `cmp`-identical; MLB identity counts
+unchanged at 270 graded / 276 registry; `ESTATES` preserved under its original
+name and value for any existing importer. **The existing MLB test for this file,
+`test_ledger_integrity.py`, passes 13/13 with the change in place.**
+
+**Historical MLB incident detection confirmed unchanged**: the 2026-09-03 shape
+(12 graded identities lost, 6 registry — different amounts, which is why the
+estates are never pooled) still reports both, and substitution at an identical
+row count is still caught.
+
+**The absence rule.** An estate declared optional and absent at BOTH refs is
+"not established yet — nothing to lose", not a failure; that is what keeps the
+live MLB check green today. Present at `before` and absent at `after` is the
+loudest failure there is. MLB estates stay REQUIRED, so a missing MLB estate is
+still `Unreadable` and still fails closed.
+
+**Cross-sport contamination is also caught**: an `fcnfl1:` id inside an MLB
+estate, or an `fc2:` id inside an NFL one, fails. The estates are separate files
+precisely so one sport's tooling cannot rewrite the other's.
+
+**Enforcement 4, no pooled metric** — `nfl/sport_partition.py` refuses mixed
+MLB/NFL rows in any performance metric. Observed: disabling the guard fails
+`test_MUTATION_mixed_mlb_and_nfl_rows_raise` with "PooledSportsError not raised".
+Sport is read from the identity namespace, not a `sport` field, because a field
+can contradict the identity and a namespace cannot. Administrative operations may
+span sports but must pass `administrative=True` WITH a reason — omitting the
+reason raises, so pooling is never silent. **Deliberately not wired into
+`accuracy_lab.py`, `eval_lib.py`, `model_health_report.py` or `backtest/`**: that
+would edit frozen MLB production for no present benefit, since no NFL row exists
+to pool with. Wiring it is a decision for Jacob and should happen BEFORE the
+first NFL row, not after.
