@@ -63,19 +63,19 @@ def predict_receptions(features: Mapping[str, Any]) -> float:
 def predict_receiving_yards(features: Mapping[str, Any]) -> float:
     team_targets = _nonnegative(features, "projected_team_targets")
     target_share = _share(features, "prior_player_target_share")
-    ypt = _nonnegative(features, "prior_player_yards_per_target")
+    ypt = _feature(features, "prior_player_yards_per_target")
     return team_targets * target_share * ypt
 
 
 def predict_passing_yards(features: Mapping[str, Any]) -> float:
     team_attempts = _nonnegative(features, "projected_team_pass_attempts")
     attempt_share = _share(features, "prior_player_pass_attempt_share")
-    ypa = _nonnegative(features, "prior_player_pass_yards_per_attempt")
+    ypa = _feature(features, "prior_player_pass_yards_per_attempt")
     return team_attempts * attempt_share * ypa
 
 
 def predict_rushing_yards(features: Mapping[str, Any]) -> float:
     team_carries = _nonnegative(features, "projected_team_carries")
     carry_share = _share(features, "prior_player_carry_share")
-    ypc = _nonnegative(features, "prior_player_rush_yards_per_carry")
+    ypc = _feature(features, "prior_player_rush_yards_per_carry")
     return team_carries * carry_share * ypc
