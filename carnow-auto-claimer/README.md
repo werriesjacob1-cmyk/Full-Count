@@ -101,6 +101,20 @@ exactly the leads you'd have tapped yourself. One toggle arms it.
 
 ## Testing
 
+### Unit tests
+
+```bash
+cd carnow-auto-claimer && node test/keys.test.mjs
+```
+
+Covers row-key stability and both gate predicates. The regexes are lifted out of
+`content.js` at runtime rather than copied, so the suite cannot drift from the
+implementation. Two of these cases are regressions for defects that would have caused
+**wrong claims** — leads belonging to other salespeople getting tapped:
+
+- a coworker claiming a row changed its text, and so its key, making it look new
+- a customer replying bumped Last Update, with the same effect
+
 ### Offline
 
 Open `test/mock-carnow.html`. It renders 10 baseline rows, then gives you five buttons:
