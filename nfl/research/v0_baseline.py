@@ -35,9 +35,59 @@ FIRST_WAVE_MARKETS = {
 }
 
 
+# Historical sportsbook eligibility is not reconstructable from weekly box-score
+# data alone. V0 therefore uses a deliberately conservative, PRE-GAME-AVAILABLE
+# proxy: plausible position for the market + positive PRIOR rolling opportunity.
+# This prevents irrelevant structural zeroes from manufacturing low error.
+ELIGIBLE_POSITIONS = {
+    "attempts": frozenset({"QB"}),
+    "passing_yards": frozenset({"QB"}),
+    "carries": frozenset({"QB", "RB", "FB", "WR", "TE"}),
+    "rushing_yards": frozenset({"QB", "RB", "FB", "WR", "TE"}),
+    "receptions": frozenset({"RB", "FB", "WR", "TE"}),
+    "receiving_yards": frozenset({"RB", "FB", "WR", "TE"}),
+}
+
+ROLE_FEATURE = {
+    "attempts": "rolling_attempts",
+    "passing_yards": "rolling_attempts",
+    "carries": "rolling_carries",
+    "rushing_yards": "rolling_carries",
+    "receptions": "rolling_targets",
+    "receiving_yards": "rolling_targets",
+}
+
+
+def _market_eligible(row: Mapping[str, Any], stat: str) -> bool:
+    """Conservative pregame proxy for whether this player belongs in the market.
+
+    Crucially, this function never inspects the CURRENT target. A new role that
+    appears for the first time will therefore be missed by B0 rather than
+    discovered with hindsight. Later prospective FanDuel capture can replace
+    this proxy with the actual posted eligible population.
+    """
+    position = str(row.get("position") or "").strip().upper()
+    if position not in ELIGIBLE_POSITIONS[stat]:
+        return False
+    features = row.get("features") or {}
+    role_value = features.get(ROLE_FEATURE[stat])
+    if role_value is None:
+        return False
+    try:
+        role_value = float(role_value)
+    except (TypeError, ValueError):
+        return False
+    return math.isfinite(role_value) and role_value > 0.0
+
+
 def _empty_metrics(stat: str) -> dict:
     return {
         "stat": stat,
+        "eligibility": {
+            "positions": sorted(ELIGIBLE_POSITIONS[stat]),
+            "prior_role_feature": ROLE_FEATURE[stat],
+            "prior_role_rule": "> 0",
+        },
         "n": 0,
         "mae": None,
         "rmse": None,
@@ -88,6 +138,8 @@ def evaluate_stat(
             continue
         if history_n < min_history:
             continue
+        if not _market_eligible(row, stat):
+            continue
 
         features = row.get("features") or {}
         target = row.get("target") or {}
@@ -117,6 +169,11 @@ def evaluate_stat(
 
     return {
         "stat": stat,
+        "eligibility": {
+            "positions": sorted(ELIGIBLE_POSITIONS[stat]),
+            "prior_role_feature": ROLE_FEATURE[stat],
+            "prior_role_rule": "> 0",
+        },
         "n": n,
         "mae": sum(abs_errors) / n,
         "rmse": math.sqrt(sum(squared_errors) / n),
