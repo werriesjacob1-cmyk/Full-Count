@@ -38,6 +38,7 @@
     <button class="ctl gray" id="switchFilter">Switch filter — replace all rows (must re-baseline, claim nothing)</button>
     <button class="ctl gray" id="refresh">Force full table re-render (must claim nothing)</button>
     <button class="ctl warn" id="addUnderOverlay">Add new lead UNDER a modal (must refuse to click through)</button>
+    <button class="ctl warn" id="coworkerClaims">Coworker claims a baselined lead (must NOT be re-claimed)</button>
   </div>
 
   <table>
@@ -135,7 +136,11 @@
 
   // Baseline: 10 pre-existing, already-claimed leads spread over past days.
   for (let i = 0; i < 10; i++) {
-    model.push(makeLead({ date: new Date(Date.now() - (i + 1) * 7.2e6) }));
+    model.push(makeLead({
+      date: new Date(Date.now() - (i + 1) * 7.2e6),
+      // Row 5 starts unclaimed, so "coworker claims it" can be exercised.
+      rep: i === 4 ? '' : undefined
+    }));
   }
   render();
   log('10 baseline rows rendered — extension should arm in ~2s and ignore all of them');
@@ -171,6 +176,16 @@
   document.getElementById('refresh').onclick = () => {
     render();
     log('full re-render, same data — keys unchanged, so no claim');
+  };
+
+  document.getElementById('coworkerClaims').onclick = () => {
+    const target = model.find((l) => !l.rep && !l.isNew);
+    if (!target) { log('no unclaimed baseline row left — reload the page'); return; }
+    target.rep = 'Thiago H';
+    target.date = new Date();
+    render();
+    log(`coworker claimed baselined lead "${target.name}" — its key must not change, ` +
+        'and the assignee gate must refuse it. Any click here is a WRONG claim.');
   };
 
   document.getElementById('addUnderOverlay').onclick = () => {

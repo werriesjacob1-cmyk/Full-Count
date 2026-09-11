@@ -18,17 +18,18 @@ So this extension never asks *"is this row claimable?"* It asks *"did this row a
 **after** I started watching?"* Everything present at startup is baselined and ignored
 permanently.
 
-## The five gates
+## The six gates
 
-A detected row must pass all five before anything is clicked:
+A detected row must pass all six before anything is clicked:
 
 | # | Gate | Blocks |
 |---|---|---|
 | 1 | **Armed** | Acting before the baseline has settled (2s quiet, 15s hard cap) |
 | 2 | **Burst** | More than 3 new rows at once — a filter switch, sort, page turn or reload |
 | 3 | **Page** | Anything not on page 1 of the pagination |
-| 4 | **Freshness** | Rows whose Last Update is older than `maxLeadAgeMin` (default 5) |
-| 5 | **Rate limit** | Faster than 1 per 10s, or more than 10 per session |
+| 4 | **Assignee** | Rows that already show a rep name — someone else owns it |
+| 5 | **Freshness** | Rows whose Last Update is older than `maxLeadAgeMin` (default 5) |
+| 6 | **Rate limit** | Faster than 1 per 10s, or more than 10 per session |
 
 Gate 2 is the important one. Every scenario that makes the whole list look new — changing
 to the Missed tab, re-sorting, turning a page, a hard refresh — produces many new keys at
@@ -50,6 +51,18 @@ standalone 1–3 digit badge counts are all removed before keying.
 
 Lead identifiers survive it: `Benton_747335` keeps its digits (no word boundary after the
 underscore), as do 4-digit years and 7-digit stock numbers.
+
+**The assignee is excluded too**, and this one is subtle. An unclaimed row reads
+`(Nashville Toyota North)`; the moment a coworker claims it, it reads
+`Thiago H (Nashville Toyota North)`. If that text were in the key, the row would get a
+fresh key at exactly the moment it stopped being available — look brand new to the
+baseline — and get claimed out from under the coworker who just took it. Where a cell
+holds a link, the key uses the link text alone.
+
+Gate 4 then reads the assignee directly as an independent check, so a row belonging to
+someone else is refused even if every other gate has been fooled. It handles the
+truncated form (`Jacob Werries (Na...`) that the All Leads column produces; without that
+it would read `unknown` and pass everything through on the busiest screen.
 
 ## Files
 

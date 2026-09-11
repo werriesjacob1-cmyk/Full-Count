@@ -168,8 +168,16 @@
     const href = link && link.getAttribute('href');
     if (href && href !== '#') return 'href=' + href;
 
+    // Where a cell holds a link, key on the LINK TEXT alone. The name cell
+    // also carries the assigned rep, and that changes the moment a coworker
+    // claims the lead — which would hand the row a fresh key, make it look
+    // brand new to the baseline, and get it claimed out from under them.
     const cells = Array.from(row.children || [])
-      .map((c) => stripVolatile(norm(c.textContent)))
+      .map((c) => {
+        const link = c.querySelector && c.querySelector('a');
+        const linkText = link ? norm(link.textContent) : '';
+        return stripVolatile(linkText || norm(c.textContent));
+      })
       .filter(Boolean);
 
     if (!cells.length) return null;
@@ -268,6 +276,33 @@
       return false;
     }
     return true;
+  }
+
+  /**
+   * Reads the assignee line: a claimed row reads "Rep Name (Dealership)",
+   * an unclaimed one just "(Dealership)". This is deliberately independent
+   * of the baseline — it encodes the business rule directly, so a row that
+   * already belongs to someone is refused even if every other gate has been
+   * fooled. Returns 'unknown' when the pattern isn't found, which allows the
+   * claim; the baseline is still the primary defence.
+   */
+  function assigneeState(row) {
+    let nodes;
+    try { nodes = row.querySelectorAll('*'); } catch { return 'unknown'; }
+    for (const el of nodes) {
+      if (el.children.length) continue;                 // leaf nodes only
+      const text = norm(el.textContent);
+      if (!text || text.length > 80) continue;
+      // "Thiago H (Nashville Toyota North)" — full text.
+      let m = text.match(/^(.*?)\(([^()]{3,})\)$/);
+      // "Jacob Werries (Na..." — the All Leads column truncates, leaving the
+      // paren unclosed. Without this the gate reads 'unknown' on every row of
+      // the screen it matters most on.
+      if (!m) m = text.match(/^(.*?)\([^()]*$/);
+      if (!m) continue;
+      return m[1].trim() ? 'assigned' : 'unassigned';
+    }
+    return 'unknown';
   }
 
   function freshEnough(row) {
@@ -444,8 +479,13 @@
 
     for (const entry of fresh) {
       if (acted.has(entry.key)) continue;
-      if (!freshEnough(entry.row)) { acted.add(entry.key); continue; }  // GATE 4
-      if (!rateLimitOk()) return;                                       // GATE 5
+      if (assigneeState(entry.row) === 'assigned') {                    // GATE 4
+        log('row already shows an assigned rep — skipping');
+        acted.add(entry.key);
+        continue;
+      }
+      if (!freshEnough(entry.row)) { acted.add(entry.key); continue; }  // GATE 5
+      if (!rateLimitOk()) return;                                       // GATE 6
       act(entry, source);
     }
   }
@@ -677,6 +717,7 @@
     }),
     rows: () => collectRows().map((e) => ({
       key: e.key,
+      assignee: assigneeState(e.row),
       ageMin: (() => { const a = rowAgeMs(e.row); return a === null ? null : Math.round(a / 60000); })(),
       baselined: baseline.has(e.key),
       text: norm(e.row.textContent).slice(0, 90)
