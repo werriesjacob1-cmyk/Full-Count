@@ -1,0 +1,161 @@
+name: NFL V0 B0 Historical Benchmark
+
+# Research-only benchmark. No picks, publication, production scorer, or model promotion.
+# Pre-registered primary B0 before observing these metrics:
+#   rolling window = 5 prior player games
+#   minimum history = 3 prior games
+#   2024 = development/validation report
+#   2025 = first historical test report
+#
+# Do not tune these constants on 2025 and continue calling 2025 "test".
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-v0-b0-benchmark.yml
+      - nfl/research/nflverse_history.py
+      - nfl/research/v0_baseline.py
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install requests only
+        run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Run frozen B0 benchmark
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import hashlib
+          import io
+          import json
+          import os
+          from datetime import datetime, timezone
+
+          import requests
+
+          from nfl.research.nflverse_history import (
+              REQUIRED_COLUMNS,
+              build_prior_only_rows,
+              player_stats_url,
+          )
+          from nfl.research.v0_baseline import evaluate_first_wave
+
+          RAW_SEASONS = (2023, 2024, 2025)
+          ROLLING_WINDOW = 5
+          MIN_HISTORY = 3
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent": "Full-Count NFL V0 research benchmark (read-only)"
+          })
+
+          all_rows = []
+          source_manifest = {}
+
+          for season in RAW_SEASONS:
+              url = player_stats_url(season)
+              response = session.get(url, timeout=60)
+              response.raise_for_status()
+              raw = response.content
+              text = raw.decode("utf-8-sig")
+              reader = csv.DictReader(io.StringIO(text))
+              header = set(reader.fieldnames or [])
+              missing = sorted(REQUIRED_COLUMNS - header)
+              if missing:
+                  raise SystemExit(
+                      f"{season}: source schema drift, missing {missing}"
+                  )
+              rows = list(reader)
+              if not rows:
+                  raise SystemExit(f"{season}: source file is empty")
+              all_rows.extend(rows)
+              source_manifest[str(season)] = {
+                  "url": url,
+                  "bytes": len(raw),
+                  "sha256": hashlib.sha256(raw).hexdigest(),
+                  "rows": len(rows),
+                  "required_columns_missing": missing,
+              }
+
+          built = build_prior_only_rows(
+              all_rows,
+              rolling_window=ROLLING_WINDOW,
+          )
+
+          reports = {
+              "2024_validation": evaluate_first_wave(
+                  built,
+                  test_season=2024,
+                  test_season_type="REG",
+                  min_history=MIN_HISTORY,
+              ),
+              "2025_test": evaluate_first_wave(
+                  built,
+                  test_season=2025,
+                  test_season_type="REG",
+                  min_history=MIN_HISTORY,
+              ),
+          }
+
+          for split_name, split in reports.items():
+              for market, metrics in split["markets"].items():
+                  if metrics["n"] <= 0:
+                      raise SystemExit(
+                          f"{split_name}/{market}: no eligible evaluation rows"
+                      )
+
+          report = {
+              "benchmark": "NFL_V0_B0_PRIOR_ONLY_ROLLING_MEAN",
+              "status": "research_only",
+              "created_at": datetime.now(timezone.utc).isoformat(),
+              "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+              "pre_registered": {
+                  "raw_seasons": list(RAW_SEASONS),
+                  "rolling_window_prior_games": ROLLING_WINDOW,
+                  "minimum_prior_games": MIN_HISTORY,
+                  "validation_season": 2024,
+                  "first_test_season": 2025,
+                  "season_type": "REG",
+                  "market_eligibility": (
+                      "position + positive prior opportunity only; "
+                      "never current-game outcome"
+                  ),
+                  "tuning_rule": (
+                      "2025 must not be used to tune B0/B1 while retaining "
+                      "the label first historical test"
+                  ),
+              },
+              "sources": source_manifest,
+              "built_rows": len(built),
+              "reports": reports,
+          }
+
+          out = "/tmp/nfl-v0-b0-benchmark.json"
+          with open(out, "w", encoding="utf-8") as f:
+              json.dump(report, f, indent=2, sort_keys=True)
+
+          print(json.dumps(report, indent=2, sort_keys=True))
+          print(f"\nWrote {out}")
+          PY
+
+      - name: Upload immutable benchmark evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: nfl-v0-b0-benchmark
+          path: /tmp/nfl-v0-b0-benchmark.json
+          retention-days: 30
