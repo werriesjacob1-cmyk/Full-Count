@@ -22,21 +22,21 @@ class RollingBaselineMetrics(unittest.TestCase):
         self.rows = [
             {
                 "season": 2025, "week": 1, "season_type": "REG",
-                "history_n": 0,
+                "position": "WR", "history_n": 0,
                 "features": {"rolling_receptions": None,
                              "rolling_receiving_yards": None},
                 "target": {"receptions": 4.0, "receiving_yards": 50.0},
             },
             {
                 "season": 2025, "week": 2, "season_type": "REG",
-                "history_n": 1,
+                "position": "WR", "history_n": 1,
                 "features": {"rolling_receptions": 4.0,
                              "rolling_receiving_yards": 50.0},
                 "target": {"receptions": 6.0, "receiving_yards": 80.0},
             },
             {
                 "season": 2025, "week": 3, "season_type": "REG",
-                "history_n": 2,
+                "position": "WR", "history_n": 2,
                 "features": {"rolling_receptions": 5.0,
                              "rolling_receiving_yards": 65.0},
                 "target": {"receptions": 3.0, "receiving_yards": 35.0},
@@ -75,11 +75,11 @@ class RollingBaselineMetrics(unittest.TestCase):
 
     def test_test_season_and_type_are_hard_filters(self):
         rows = self.rows + [{
-            "season": 2024, "week": 18, "season_type": "REG", "history_n": 10,
+            "season": 2024, "week": 18, "season_type": "REG", "position": "WR", "history_n": 10,
             "features": {"rolling_receptions": 99.0},
             "target": {"receptions": 0.0},
         }, {
-            "season": 2025, "week": 19, "season_type": "POST", "history_n": 10,
+            "season": 2025, "week": 19, "season_type": "POST", "position": "WR", "history_n": 10,
             "features": {"rolling_receptions": 99.0},
             "target": {"receptions": 0.0},
         }]
@@ -88,6 +88,22 @@ class RollingBaselineMetrics(unittest.TestCase):
             test_season_type="REG", min_history=1
         )
         self.assertEqual(m["n"], 2)
+
+    def test_irrelevant_positions_cannot_make_zero_props_look_easy(self):
+        rows = list(self.rows) + [{
+            "season": 2025, "week": 4, "season_type": "REG",
+            "position": "CB", "history_n": 12,
+            "features": {"rolling_receptions": 0.0,
+                         "rolling_receiving_yards": 0.0},
+            "target": {"receptions": 0.0, "receiving_yards": 0.0},
+        }]
+        m = b0.evaluate_stat(
+            rows, "receptions", test_season=2025, min_history=1
+        )
+        self.assertEqual(
+            m["n"], 2,
+            "a CB with structural 0 receptions is not an eligible receiving-prop row"
+        )
 
     def test_empty_evaluable_population_is_explicit(self):
         m = b0.evaluate_stat(
@@ -100,23 +116,51 @@ class RollingBaselineMetrics(unittest.TestCase):
 
 
 class SuiteContract(unittest.TestCase):
-    def test_first_wave_keeps_markets_separate(self):
-        rows = [{
-            "season": 2025, "week": 1, "season_type": "REG", "history_n": 5,
-            "features": {
-                "rolling_attempts": 30.0,
-                "rolling_carries": 12.0,
-                "rolling_receptions": 4.0,
-                "rolling_passing_yards": 250.0,
-                "rolling_rushing_yards": 55.0,
-                "rolling_receiving_yards": 60.0,
+    def test_first_wave_keeps_markets_separate_and_position_eligible(self):
+        rows = [
+            {
+                "season": 2025, "week": 1, "season_type": "REG",
+                "position": "QB", "history_n": 5,
+                "features": {
+                    "rolling_attempts": 30.0, "rolling_carries": 4.0,
+                    "rolling_receptions": 0.0, "rolling_passing_yards": 250.0,
+                    "rolling_rushing_yards": 20.0, "rolling_receiving_yards": 0.0,
+                },
+                "target": {
+                    "attempts": 32.0, "carries": 5.0, "receptions": 0.0,
+                    "passing_yards": 260.0, "rushing_yards": 25.0,
+                    "receiving_yards": 0.0,
+                },
             },
-            "target": {
-                "attempts": 32.0, "carries": 10.0, "receptions": 5.0,
-                "passing_yards": 260.0, "rushing_yards": 45.0,
-                "receiving_yards": 72.0,
+            {
+                "season": 2025, "week": 1, "season_type": "REG",
+                "position": "RB", "history_n": 5,
+                "features": {
+                    "rolling_attempts": 0.0, "rolling_carries": 12.0,
+                    "rolling_receptions": 3.0, "rolling_passing_yards": 0.0,
+                    "rolling_rushing_yards": 55.0, "rolling_receiving_yards": 25.0,
+                },
+                "target": {
+                    "attempts": 0.0, "carries": 10.0, "receptions": 4.0,
+                    "passing_yards": 0.0, "rushing_yards": 45.0,
+                    "receiving_yards": 35.0,
+                },
             },
-        }]
+            {
+                "season": 2025, "week": 1, "season_type": "REG",
+                "position": "WR", "history_n": 5,
+                "features": {
+                    "rolling_attempts": 0.0, "rolling_carries": 0.0,
+                    "rolling_receptions": 4.0, "rolling_passing_yards": 0.0,
+                    "rolling_rushing_yards": 0.0, "rolling_receiving_yards": 60.0,
+                },
+                "target": {
+                    "attempts": 0.0, "carries": 0.0, "receptions": 5.0,
+                    "passing_yards": 0.0, "rushing_yards": 0.0,
+                    "receiving_yards": 72.0,
+                },
+            },
+        ]
         report = b0.evaluate_first_wave(rows, test_season=2025, min_history=1)
         self.assertEqual(
             set(report["markets"]),
@@ -126,7 +170,9 @@ class SuiteContract(unittest.TestCase):
             },
         )
         self.assertEqual(report["markets"]["pass_attempts"]["n"], 1)
-        self.assertEqual(report["markets"]["receiving_yards"]["mae"], 12.0)
+        self.assertEqual(report["markets"]["rush_attempts"]["n"], 2)
+        self.assertEqual(report["markets"]["receiving_yards"]["n"], 2)
+        self.assertEqual(report["markets"]["receiving_yards"]["mae"], 11.0)
 
     def test_unknown_stat_is_refused_not_silently_zeroed(self):
         with self.assertRaisesRegex(ValueError, "unsupported V0 stat"):
