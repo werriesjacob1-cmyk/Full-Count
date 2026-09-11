@@ -39,7 +39,8 @@ from nfl.archive.provenance import (
     CONCLUSIVE_OUTCOMES, Fetched, SOURCE_FAILED, coverage_summary, utcnow,
 )
 from nfl.archive.sources import (
-    espn_nfl, fanduel_nfl, media_discovery, official_nfl, weather_nws,
+    coaching_staff, espn_nfl, fanduel_nfl, media_discovery, official_nfl,
+    weather_nws,
 )
 
 # (priority, source_id, callable). Priority mirrors the archival order; it is
@@ -49,6 +50,7 @@ SOURCES = (
     (1, "fanduel_nfl", "sportsbook / player-prop state"),
     (2, "official_nfl", "official practice/injury state, transactions, schedule"),
     (3, "espn_nfl", "injury/roster aggregation, venue, consensus market numbers"),
+    (6, "coaching_staff_wikipedia", "HC/OC/DC identity, point-in-time reconstructable"),
     (7, "weather_nws", "weather forecast vintages"),
     (9, "media_discovery", "coach/player media discovery + recorded non-coverage"),
 )
@@ -85,6 +87,7 @@ def run_capture(
     records += _run("official_nfl", official_nfl.capture, session=session)
     records += _run("espn_nfl", espn_nfl.capture,
                     session=session, summary_event_limit=summary_limit)
+    records += _run("coaching_staff_wikipedia", coaching_staff.capture, session=session)
     records += _run("weather_nws", weather_nws.capture, session=session)
     records += _run("media_discovery", media_discovery.capture, session=session)
 
@@ -104,6 +107,9 @@ def run_capture(
             "publication": "none",
         },
         "known_gaps": [
+            "The ACTUAL PLAY CALLER is not established by any source captured "
+            "here. Coordinator identity is, via Wikipedia; who calls plays is a "
+            "separate and harder fact. See nfl/docs/PLAY_CALLER.md.",
             "No authoritative machine-readable source for the official pregame "
             "inactive list was established. That list is the highest-value NFL "
             "information timestamp and remains an open gap.",
