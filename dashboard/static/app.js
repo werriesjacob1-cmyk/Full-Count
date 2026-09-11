@@ -730,6 +730,13 @@ function marketBlock(p) {
     <div class="pc-edge ${edgeClass}">${edgeText} edge</div>
   </div>`;
 }
+function topPickHistoryLine(p) {
+  const stat = ((p.projection || {}).stat || p.stat);
+  const row = (((DATA || {}).track_record || {}).current || {}).by_prop?.[stat];
+  if (!row || !row.n) return "";
+  return `<div class="pc-sub">Top Pick history: ${pct(row.hit_rate, 1)} · ${row.hits}-${row.misses} (n=${row.n})</div>`;
+}
+
 function pickCard(p) {
   // Evidence quality is deliberately NOT repeated here -- it's one tap away
   // in the detail sheet's "Underlying data," and showing it on every single
@@ -753,6 +760,7 @@ function pickCard(p) {
   // renders -- statusChip(p) above already shows "TOP PICK" once, which
   // is the one real, defensible claim this card makes.
   const why = (p.why || [])[0] ? `<div class="pc-why">${esc(capSentence(humanizeReason(p.why[0])))}</div>` : "";
+  const topPickHistory = p.recommendation_status === "top_pick" ? topPickHistoryLine(p) : "";
   // Real bug, found 2026-08-26 (Part 2 item 5, richer compact cards): this
   // was computed and then never once used anywhere in the template below --
   // a viewer browsing a grid of a dozen-plus cards had no way to see which
@@ -781,6 +789,7 @@ function pickCard(p) {
       ${starred ? `<span class="pc-saved" aria-label="Saved to My Board">★</span>` : ""}
     </div>
     <div class="pc-prop">${esc(p.prop)}</div>
+    ${topPickHistory}
     <div class="pc-prob-row">
       <span class="pc-prob">${pctBig(p.hit_probability)}</span>
       <span class="pc-prob-label">Full Count<br>Probability</span>
@@ -1682,6 +1691,17 @@ function renderPerformance() {
       ${cur.last_14d_hit_rate != null ? `<div class="perf-metric"><div class="pm-n">${pct(cur.last_14d_hit_rate, 1)}</div><div class="pm-l">Last 14 days (n=${cur.last_14d_n})</div></div>` : ""}
     </div>`;
     if (curCaveat) html += `<p class="perf-sample-caveat">${esc(curCaveat)}</p>`;
+    const byProp = Object.entries(cur.by_prop || {}).sort((a, b) => b[1].n - a[1].n);
+    if (byProp.length) {
+      html += `<div class="section-head" style="margin-top:18px;"><h3>Top Picks by prop</h3>
+        <span class="section-sub">Only immutable public Top Picks; ungraded and void picks are excluded.</span></div>
+        <div class="perf-metric-grid">${byProp.map(([stat, row]) => `
+          <div class="perf-metric">
+            <div class="pm-n">${pct(row.hit_rate, 1)}</div>
+            <div class="pm-l">${esc(CATEGORY_LABEL_FOR_FAMILY(familyFilterValue(stat)))} · ${row.hits}-${row.misses} · n=${row.n}</div>
+          </div>`).join("")}
+        </div>`;
+    }
   } else {
     html += `<div class="empty-state">
       <div class="es-icon">📊</div>
