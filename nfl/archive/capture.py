@@ -110,8 +110,9 @@ def run_capture(
             "The ACTUAL PLAY CALLER is not established by any source captured "
             "here. Coordinator identity is, via Wikipedia; who calls plays is a "
             "separate and harder fact. See nfl/docs/PLAY_CALLER.md.",
-            "The authoritative NFL.com inactives surface is captured as raw "
-            "HTML. Per-game inactive parsing, semantic normalization, and "
+            "The authoritative NFL.com inactives index and any linked "
+            "same-origin game-specific inactive-report articles are captured "
+            "as raw HTML. Player/team parsing, semantic normalization, and "
             "binding to canonical game/player identity remain open gaps.",
             "Weather forecast vintages are blocked on a verified venue "
             "coordinate table, which NFL-01 did not invent.",
