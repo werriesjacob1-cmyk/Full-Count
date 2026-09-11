@@ -74,7 +74,16 @@ jobs:
                   raise ValueError(f"non-finite {name}: {value!r}")
               return out
 
+          missing_binary_counts = defaultdict(int)
+
           def flag(value, name):
+              # nflverse binary columns are NA on administrative/non-stat
+              # rows. For this aggregation audit only, NA is counted and
+              # treated as zero; exact reconciliation to official team totals
+              # is the independent guardrail against a bad convention.
+              if value in (None, ""):
+                  missing_binary_counts[name] += 1
+                  return 0
               out = f(value, name)
               if out not in (0.0, 1.0):
                   raise ValueError(f"{name} outside 0/1: {out}")
@@ -240,6 +249,12 @@ jobs:
 
               reports[str(season)] = {
                   "team_weeks": len(comparisons),
+                  "missing_binary_values_treated_as_zero": {
+                      name: count
+                      for name, count in sorted(
+                          missing_binary_counts.items()
+                      )
+                  },
                   "pbp_pass_attempt_reconciliation": {
                       "exact_n": len(pbp_exact),
                       "exact_rate":
