@@ -185,6 +185,28 @@ def _tab_titles(body: Optional[bytes]) -> list[str]:
     return out
 
 
+_NON_RESEARCH_TAB_TOKENS = frozenset({
+    "quick-bets",
+    "parlays",
+    "same-game-parlay",
+})
+
+
+def _research_relevant_tab(slug: str) -> bool:
+    """Reject UI/period navigation without guessing away unknown market tabs.
+
+    Live probe 2026-09-11 showed FanDuel layout discovery exposing quarter/half
+    tabs plus quick-bets/parlays. Fetching them doubles archive work without
+    adding pregame player-prop evidence. The filter is intentionally NARROW:
+    unknown future tabs remain discoverable rather than being silently dropped.
+    """
+    if slug in _NON_RESEARCH_TAB_TOKENS:
+        return False
+    if re.fullmatch(r"\d+(?:st|nd|rd|th)-(?:quarter|half)", slug):
+        return False
+    return True
+
+
 def _tab_slugs_for_event(
     baseline_body: Optional[bytes], fallback_tabs: Iterable[str] = PROP_TABS,
 ) -> tuple[str, ...]:
@@ -206,7 +228,8 @@ def _tab_slugs_for_event(
             seen.add(token)
     for title in _tab_titles(baseline_body):
         slug = _slugify_tab_title(title)
-        if slug and not slug.isdigit() and slug not in seen:
+        if (slug and not slug.isdigit() and _research_relevant_tab(slug)
+                and slug not in seen):
             ordered.append(slug)
             seen.add(slug)
     return tuple(ordered)
