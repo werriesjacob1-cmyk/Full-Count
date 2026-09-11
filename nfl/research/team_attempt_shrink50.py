@@ -1,1 +1,100 @@
-#!/usr/bin/env python3\n"""Frozen prior-only SHRINK50 baseline for NFL team pass attempts.\n\nResearch status\n---------------\nThis is the simplest team-volume challenger that survived:\n- 2023-2025 diagnostic screening against the 5-game rolling baseline, and\n- a preregistered untouched 2019 holdout.\n\nIt is NOT a production pick model. It does not fetch data, infer starters,\nread sportsbook lines, or publish anything.\n\nFrozen formula\n--------------\nB0 = mean official team pass attempts over the team's prior up-to-5 REG games,\n     requiring at least 3.\nL  = mean official team pass attempts across league REG team-games strictly\n     prior to the prediction week.\n\nprediction = 0.50 * B0 + 0.50 * L\n\nThe caller is responsible for supplying PRIOR-ONLY histories. This module\ndeliberately has no clock, schedule, or network access.\n"""\nfrom __future__ import annotations\n\nimport math\nimport statistics\nfrom collections.abc import Sequence\nfrom typing import Any\n\n\nTEAM_WINDOW = 5\nMIN_HISTORY = 3\nSHRINK_WEIGHT = 0.50\n\n\ndef _finite_nonnegative(value: Any, label: str) -> float:\n    try:\n        out = float(value)\n    except (TypeError, ValueError) as exc:\n        raise ValueError(f"non-numeric {label}: {value!r}") from exc\n    if not math.isfinite(out):\n        raise ValueError(f"non-finite {label}: {value!r}")\n    if out < 0:\n        raise ValueError(f"negative {label}: {out}")\n    return out\n\n\ndef _validated(values: Sequence[Any], label: str) -> list[float]:\n    return [\n        _finite_nonnegative(value, f"{label} value")\n        for value in values\n    ]\n\n\ndef predict_from_prior(\n    team_history: Sequence[Any],\n    league_prior_attempts: Sequence[Any],\n) -> dict[str, float | int]:\n    """Return the exact frozen SHRINK50 prediction from prior-only inputs.\n\n    team_history may contain more than five games; only the most recent\n    five are used. At least three are required.\n\n    league_prior_attempts is the caller-supplied strictly-prior league-wide\n    REG team-game population. It must be non-empty.\n    """\n    team_values = _validated(team_history, "team history")\n    if len(team_values) < MIN_HISTORY:\n        raise ValueError(\n            f"team history requires at least {MIN_HISTORY} prior games"\n        )\n    team_values = team_values[-TEAM_WINDOW:]\n\n    league_values = _validated(\n        league_prior_attempts,\n        "league prior",\n    )\n    if not league_values:\n        raise ValueError("league prior requires at least one observation")\n\n    team_mean = statistics.fmean(team_values)\n    league_prior_mean = statistics.fmean(league_values)\n    prediction = (\n        (1.0 - SHRINK_WEIGHT) * team_mean\n        + SHRINK_WEIGHT * league_prior_mean\n    )\n\n    if not math.isfinite(prediction) or prediction < 0:\n        raise ValueError("invalid SHRINK50 prediction")\n\n    return {\n        "prediction": prediction,\n        "team_mean": team_mean,\n        "league_prior_mean": league_prior_mean,\n        "team_history_used": len(team_values),\n        "league_history_used": len(league_values),\n        "shrink_weight": SHRINK_WEIGHT,\n    }\n
+#!/usr/bin/env python3
+"""Frozen prior-only SHRINK50 baseline for NFL team pass attempts.
+
+Research status
+---------------
+This is the simplest team-volume challenger that survived:
+- 2023-2025 diagnostic screening against the 5-game rolling baseline, and
+- a preregistered untouched 2019 holdout.
+
+It is NOT a production pick model. It does not fetch data, infer starters,
+read sportsbook lines, or publish anything.
+
+Frozen formula
+--------------
+B0 = mean official team pass attempts over the team's prior up-to-5 REG games,
+     requiring at least 3.
+L  = mean official team pass attempts across league REG team-games strictly
+     prior to the prediction week.
+
+prediction = 0.50 * B0 + 0.50 * L
+
+The caller is responsible for supplying PRIOR-ONLY histories. This module
+deliberately has no clock, schedule, or network access.
+"""
+from __future__ import annotations
+
+import math
+import statistics
+from collections.abc import Sequence
+from typing import Any
+
+
+TEAM_WINDOW = 5
+MIN_HISTORY = 3
+SHRINK_WEIGHT = 0.50
+
+
+def _finite_nonnegative(value: Any, label: str) -> float:
+    try:
+        out = float(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"non-numeric {label}: {value!r}") from exc
+    if not math.isfinite(out):
+        raise ValueError(f"non-finite {label}: {value!r}")
+    if out < 0:
+        raise ValueError(f"negative {label}: {out}")
+    return out
+
+
+def _validated(values: Sequence[Any], label: str) -> list[float]:
+    return [
+        _finite_nonnegative(value, f"{label} value")
+        for value in values
+    ]
+
+
+def predict_from_prior(
+    team_history: Sequence[Any],
+    league_prior_attempts: Sequence[Any],
+) -> dict[str, float | int]:
+    """Return the exact frozen SHRINK50 prediction from prior-only inputs.
+
+    team_history may contain more than five games; only the most recent
+    five are used. At least three are required.
+
+    league_prior_attempts is the caller-supplied strictly-prior league-wide
+    REG team-game population. It must be non-empty.
+    """
+    team_values = _validated(team_history, "team history")
+    if len(team_values) < MIN_HISTORY:
+        raise ValueError(
+            f"team history requires at least {MIN_HISTORY} prior games"
+        )
+    team_values = team_values[-TEAM_WINDOW:]
+
+    league_values = _validated(
+        league_prior_attempts,
+        "league prior",
+    )
+    if not league_values:
+        raise ValueError("league prior requires at least one observation")
+
+    team_mean = statistics.fmean(team_values)
+    league_prior_mean = statistics.fmean(league_values)
+    prediction = (
+        (1.0 - SHRINK_WEIGHT) * team_mean
+        + SHRINK_WEIGHT * league_prior_mean
+    )
+
+    if not math.isfinite(prediction) or prediction < 0:
+        raise ValueError("invalid SHRINK50 prediction")
+
+    return {
+        "prediction": prediction,
+        "team_mean": team_mean,
+        "league_prior_mean": league_prior_mean,
+        "team_history_used": len(team_values),
+        "league_history_used": len(league_values),
+        "shrink_weight": SHRINK_WEIGHT,
+    }
