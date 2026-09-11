@@ -1,0 +1,482 @@
+name: NFL B2-ROLE Pass Attempts Fresh 2022 Audit
+
+# PRIMARY UNSEEN HISTORICAL AUDIT.
+#
+# B2-ROLE was frozen after signal discovery on 2023-2025. This workflow tests
+# 2022 for the first time using 2021 only as prior history.
+#
+# B2-ROLE:
+#   ALIGNED -> frozen B0
+#   discontinuity -> current-team prior-5 pass attempts *
+#                    QB most-recent prior-appearance attempt share
+#
+# No fitted coefficients. No tuning from 2022. No promotion from this workflow.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-b2-role-pass-attempts-2022.yml
+      - nfl/research/b2_pass_role.py
+      - nfl/research/b1_alignment.py
+      - nfl/research/b1_history.py
+      - nfl/research/b1_evaluate.py
+      - nfl/research/nflverse_history.py
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Run untouched 2022 B2-ROLE audit
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import hashlib
+          import io
+          import json
+          import math
+          import os
+          import random
+          import statistics
+          from collections import defaultdict, deque
+          from datetime import datetime, timezone
+
+          import requests
+
+          from nfl.research import b1_alignment as al
+          from nfl.research import b2_pass_role as b2
+          from nfl.research.b1_evaluate import paired_error_rows
+          from nfl.research.b1_history import (
+              TEAM_REQUIRED_COLUMNS,
+              build_b1_rows,
+          )
+          from nfl.research import nflverse_history as nh
+
+          HISTORY_SEASON = 2021
+          TEST_SEASON = 2022
+          SEASONS = (HISTORY_SEASON, TEST_SEASON)
+          WINDOW = 5
+          MIN_HISTORY = 3
+          MIN_TEAM_HISTORY = 3
+          BOOTSTRAPS = 5000
+          SEED = 20260911
+          EPS = 1e-12
+
+          PLAYER_SHA256 = {
+              2021: "41915fb49238902ad1f129ebf0405b11a1e710454ae0fe8f7b3e4f9145875f48",
+              2022: "ad426c3fe5bf1cc30c3f137fdfe96d054e19d400879ee4413129da49fa7b54be",
+          }
+          TEAM_SHA256 = {
+              2021: "a094523217f7f351a79f5e667dbe67267e0861a3b76a7a3b62a1cfe49f289673",
+              2022: "9803875bd0b74aa49230288d45359c75e45910f1cf1953ea0f07b9d3db35e4d1",
+          }
+
+          def pkey(row):
+              return (
+                  int(row["season"]),
+                  int(row["week"]),
+                  str(row["season_type"]),
+                  str(row["player_id"]),
+              )
+
+          def gkey(row):
+              return (
+                  int(row["season"]),
+                  int(row["week"]),
+                  str(row["season_type"]),
+                  str(row["team"]),
+              )
+
+          def percentile(values, q):
+              values = sorted(values)
+              if not values:
+                  return None
+              pos = (len(values) - 1) * q
+              lo = int(math.floor(pos))
+              hi = int(math.ceil(pos))
+              if lo == hi:
+                  return values[lo]
+              w = pos - lo
+              return values[lo] * (1 - w) + values[hi] * w
+
+          def metrics(rows, field):
+              if not rows:
+                  return {
+                      "n": 0, "mae": None, "rmse": None, "bias": None,
+                      "mean_prediction": None, "mean_actual": None,
+                  }
+              errors = [r[field] - r["actual"] for r in rows]
+              return {
+                  "n": len(rows),
+                  "mae": statistics.fmean(abs(e) for e in errors),
+                  "rmse": math.sqrt(
+                      statistics.fmean(e * e for e in errors)
+                  ),
+                  "bias": statistics.fmean(errors),
+                  "mean_prediction": statistics.fmean(
+                      r[field] for r in rows
+                  ),
+                  "mean_actual": statistics.fmean(
+                      r["actual"] for r in rows
+                  ),
+              }
+
+          def delta_mae(rows, challenger, reference="b0_prediction"):
+              return statistics.fmean(
+                  abs(r[challenger] - r["actual"])
+                  - abs(r[reference] - r["actual"])
+                  for r in rows
+              )
+
+          def clustered_bootstrap(rows, field, challenger, seed_offset):
+              groups = defaultdict(list)
+              for row in rows:
+                  key = str(row[field])
+                  if not key:
+                      raise SystemExit(f"empty cluster key {field}")
+                  groups[key].append(row)
+              keys = sorted(groups)
+              if len(keys) < 2:
+                  raise SystemExit(f"not enough clusters for {field}")
+              rng = random.Random(SEED + seed_offset)
+              deltas = []
+              for _ in range(BOOTSTRAPS):
+                  sample = []
+                  for _ in keys:
+                      sample.extend(groups[rng.choice(keys)])
+                  deltas.append(
+                      delta_mae(sample, challenger)
+                  )
+              return {
+                  "cluster_field": field,
+                  "clusters": len(keys),
+                  "replicates": len(deltas),
+                  "delta_mae_median": percentile(deltas, 0.5),
+                  "delta_mae_ci95": [
+                      percentile(deltas, 0.025),
+                      percentile(deltas, 0.975),
+                  ],
+                  "probability_delta_below_zero":
+                      sum(d < 0 for d in deltas) / len(deltas),
+              }
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent": "Full-Count untouched 2022 B2-ROLE audit"
+          })
+
+          players = []
+          teams = []
+          sources = {"player": {}, "team": {}}
+
+          for season in SEASONS:
+              purl = nh.player_stats_url(season)
+              pr = session.get(purl, timeout=60)
+              pr.raise_for_status()
+              psha = hashlib.sha256(pr.content).hexdigest()
+              if psha != PLAYER_SHA256[season]:
+                  raise SystemExit(
+                      f"{season}: player SHA drift {psha}"
+                  )
+              prows = list(csv.DictReader(io.StringIO(pr.text)))
+              players.extend(prows)
+              sources["player"][str(season)] = {
+                  "url": purl, "rows": len(prows), "sha256": psha,
+              }
+
+              turl = (
+                  "https://github.com/nflverse/nflverse-data/releases/download/"
+                  f"stats_team/stats_team_week_{season}.csv"
+              )
+              tr = session.get(turl, timeout=60)
+              tr.raise_for_status()
+              tsha = hashlib.sha256(tr.content).hexdigest()
+              if tsha != TEAM_SHA256[season]:
+                  raise SystemExit(
+                      f"{season}: team SHA drift {tsha}"
+                  )
+              trows = list(csv.DictReader(io.StringIO(tr.text)))
+              missing = sorted(TEAM_REQUIRED_COLUMNS - set(trows[0]))
+              if missing:
+                  raise SystemExit(
+                      f"{season}: team schema drift {missing}"
+                  )
+              teams.extend(trows)
+              sources["team"][str(season)] = {
+                  "url": turl, "rows": len(trows), "sha256": tsha,
+              }
+
+          # Team attempts map and prior team game identities.
+          team_attempts = {}
+          ordered_teams = []
+          for raw in teams:
+              row = {
+                  "season": int(float(raw["season"])),
+                  "week": int(float(raw["week"])),
+                  "season_type": str(raw["season_type"]),
+                  "team": str(raw["team"]).strip(),
+                  "attempts": float(raw["attempts"]),
+              }
+              key = gkey(row)
+              if key in team_attempts:
+                  raise SystemExit(f"duplicate team game {key}")
+              if not math.isfinite(row["attempts"]) or row["attempts"] < 0:
+                  raise SystemExit(f"invalid team attempts {key}")
+              team_attempts[key] = row["attempts"]
+              ordered_teams.append(row)
+          ordered_teams.sort(
+              key=lambda r: (
+                  r["season"], r["week"], r["team"], r["season_type"]
+              )
+          )
+
+          team_hist = defaultdict(lambda: deque(maxlen=WINDOW))
+          team_prior_keys = {}
+          for row in ordered_teams:
+              key = gkey(row)
+              team_prior_keys[key] = list(team_hist[row["team"]])
+              team_hist[row["team"]].append(key)
+
+          # Build last-appearance role share and alignment with strictly prior
+          # data. Current share is appended only after features are emitted.
+          prior_rows = nh.build_prior_only_rows(
+              players,
+              rolling_window=WINDOW,
+          )
+          player_hist = defaultdict(lambda: deque(maxlen=WINDOW))
+          role = {}
+          alignments = {}
+
+          for row in prior_rows:
+              pk = pkey(row)
+              game = gkey(row)
+              if game not in team_attempts or game not in team_prior_keys:
+                  raise SystemExit(f"missing team game substrate {game}")
+
+              hist = player_hist[row["player_id"]]
+              role[pk] = {
+                  "last_share": (
+                      float(hist[-1]["share"]) if hist else None
+                  ),
+                  "history_n": len(hist),
+              }
+              alignments[pk] = al.classify_history_alignment(
+                  [item["game_key"] for item in hist],
+                  team_prior_keys[game],
+                  current_team=row["team"],
+              )
+
+              team_atts = float(team_attempts[game])
+              player_atts = float(row["target"]["attempts"])
+              if team_atts <= 0:
+                  if player_atts != 0:
+                      raise SystemExit(
+                          f"player attempts with zero team attempts {pk}"
+                      )
+                  current_share = 0.0
+              else:
+                  current_share = player_atts / team_atts
+              if current_share < -EPS or current_share > 1 + EPS:
+                  raise SystemExit(
+                      f"QB share outside [0,1] {pk}: {current_share}"
+                  )
+              player_hist[row["player_id"]].append({
+                  "game_key": game,
+                  "share": min(1.0, max(0.0, current_share)),
+              })
+
+          built = build_b1_rows(
+              players,
+              teams,
+              rolling_window=WINDOW,
+          )
+          index = {pkey(row): row for row in built}
+          if len(index) != len(built):
+              raise SystemExit("duplicate built player-game key")
+
+          paired = paired_error_rows(
+              built,
+              "pass_attempts",
+              test_season=TEST_SEASON,
+              test_season_type="REG",
+              min_history=MIN_HISTORY,
+              min_team_history=MIN_TEAM_HISTORY,
+          )
+          if not paired:
+              raise SystemExit("no 2022 pass-attempt comparison rows")
+
+          rows = []
+          for pair in paired:
+              pk = (
+                  int(pair["season"]),
+                  int(pair["week"]),
+                  "REG",
+                  str(pair["player_id"]),
+              )
+              source = index.get(pk)
+              rr = role.get(pk)
+              category = alignments.get(pk)
+              if source is None or rr is None or category is None:
+                  raise SystemExit(f"missing B2 row {pk}")
+              if str(source.get("position") or "").strip().upper() != "QB":
+                  raise SystemExit(f"non-QB in pass market {pk}")
+              if rr["history_n"] < MIN_HISTORY:
+                  raise SystemExit(f"role history mismatch {pk}")
+              if rr["last_share"] is None:
+                  raise SystemExit(f"missing last role share {pk}")
+
+              base = float(pair["b0_prediction"])
+              b1_pred = float(pair["b1_prediction"])
+              team_projection = float(
+                  source["features"]["projected_team_pass_attempts"]
+              )
+              prediction = b2.predict_attempts(
+                  b0_prediction=base,
+                  projected_team_pass_attempts=team_projection,
+                  last_attempt_share=float(rr["last_share"]),
+                  alignment_category=category,
+              )
+              rows.append({
+                  "player_id": pk[3],
+                  "team": str(source["team"]),
+                  "alignment": category,
+                  "b0_prediction": base,
+                  "b1_prediction": b1_pred,
+                  "b2_prediction": prediction,
+                  "actual": float(pair["actual"]),
+              })
+
+          b0m = metrics(rows, "b0_prediction")
+          b1m = metrics(rows, "b1_prediction")
+          b2m = metrics(rows, "b2_prediction")
+          d20 = b2m["mae"] - b0m["mae"]
+          d21 = b2m["mae"] - b1m["mae"]
+
+          player_boot = clustered_bootstrap(
+              rows, "player_id", "b2_prediction", 1
+          )
+          team_boot = clustered_bootstrap(
+              rows, "team", "b2_prediction", 2
+          )
+
+          player_ci = player_boot["delta_mae_ci95"]
+          team_ci = team_boot["delta_mae_ci95"]
+          decision = {
+              "b2_beats_b0_mae": d20 < 0,
+              "b2_beats_b1_mae": d21 < 0,
+              "player_cluster_ci_entirely_favorable":
+                  player_ci[1] is not None and player_ci[1] < 0,
+              "team_cluster_ci_entirely_favorable":
+                  team_ci[1] is not None and team_ci[1] < 0,
+          }
+          decision["directional_gate_pass"] = (
+              decision["b2_beats_b0_mae"]
+              and decision["b2_beats_b1_mae"]
+          )
+          decision["strong_gate_pass"] = (
+              decision["directional_gate_pass"]
+              and decision["player_cluster_ci_entirely_favorable"]
+              and decision["team_cluster_ci_entirely_favorable"]
+          )
+
+          by_alignment = {}
+          for cat in (
+              "ALIGNED",
+              "MISSED_GAMES",
+              "TEAM_CHANGE",
+              "WINDOW_LENGTH_MISMATCH",
+              "NO_HISTORY",
+          ):
+              subset = [r for r in rows if r["alignment"] == cat]
+              by_alignment[cat] = {
+                  "n": len(subset),
+                  "b0_mae": (
+                      metrics(subset, "b0_prediction")["mae"]
+                      if subset else None
+                  ),
+                  "b1_mae": (
+                      metrics(subset, "b1_prediction")["mae"]
+                      if subset else None
+                  ),
+                  "b2_mae": (
+                      metrics(subset, "b2_prediction")["mae"]
+                      if subset else None
+                  ),
+              }
+
+          output = {
+              "analysis": "NFL_B2_ROLE_PASS_ATTEMPTS_UNTOUCHED_2022",
+              "status": "research_only_no_promotion",
+              "created_at": datetime.now(timezone.utc).isoformat(),
+              "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+              "pre_registered": {
+                  "history_season": HISTORY_SEASON,
+                  "test_season": TEST_SEASON,
+                  "test_season_type": "REG",
+                  "rolling_window": WINDOW,
+                  "minimum_player_history": MIN_HISTORY,
+                  "minimum_team_history": MIN_TEAM_HISTORY,
+                  "formula": (
+                      "ALIGNED -> B0; otherwise current-team prior-5 "
+                      "pass attempts * most-recent prior-appearance QB share"
+                  ),
+                  "fit_parameters": 0,
+                  "2022_metrics_unseen_when_formula_frozen": True,
+                  "directional_gate": "B2 MAE < B0 MAE and B2 MAE < B1 MAE",
+                  "strong_gate": (
+                      "directional gate plus player/team clustered 95% "
+                      "delta-MAE upper bounds < 0"
+                  ),
+              },
+              "sources": sources,
+              "population": {
+                  "comparison_rows": len(rows),
+                  "players": len({r["player_id"] for r in rows}),
+                  "teams": len({r["team"] for r in rows}),
+              },
+              "b0": b0m,
+              "b1": b1m,
+              "b2": b2m,
+              "delta_mae_b2_minus_b0": d20,
+              "delta_mae_b2_minus_b1": d21,
+              "player_cluster_bootstrap_b2_vs_b0": player_boot,
+              "team_cluster_bootstrap_b2_vs_b0": team_boot,
+              "by_alignment": by_alignment,
+              "decision": decision,
+              "next_if_strong": (
+                  "Run prospective 2026 shadow and equal-volume prop "
+                  "selection evaluation; no production promotion yet."
+              ),
+              "next_if_directional_only": (
+                  "Keep B2-ROLE as research challenger, run prospective "
+                  "shadow, and do not add more historical tuning."
+              ),
+              "next_if_fail": (
+                  "Reject historical box-score role repair. Prioritize "
+                  "prospective starter/inactive identity and PROE/pace."
+              ),
+          }
+
+          path = "/tmp/nfl-b2-role-pass-attempts-2022.json"
+          with open(path, "w", encoding="utf-8") as f:
+              json.dump(output, f, indent=2, sort_keys=True)
+          print(json.dumps(output, indent=2, sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-b2-role-pass-attempts-untouched-2022
+          path: /tmp/nfl-b2-role-pass-attempts-2022.json
+          retention-days: 30
