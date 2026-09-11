@@ -12,14 +12,24 @@ category.
 ## SOLVED: coordinator identity, free, licensed, and point-in-time
 
 Wikipedia maintains `Template:<Team> staff` for all 32 clubs, listing the full
-staff by role. Measured 2026-09-11, one pass, no authentication:
+staff by role.
+
+The FIRST per-page measurement on 2026-09-11 resolved only 30/32 because the
+32-request burst was rate-limited. That result is retained as evidence of why
+per-page live capture is the wrong acquisition pattern.
+
+The corrected BATCHED live measurement on 2026-09-11 uses one MediaWiki query:
 
 | | resolved |
 |---|---|
-| templates fetched | 30 / 32 (2 transient rate-limits, not missing pages) |
-| head coach | 30 / 30 |
-| offensive coordinator | 30 / 30 |
-| defensive coordinator | 29 / 30 |
+| templates fetched | 32 / 32 |
+| head coach | 32 / 32 |
+| offensive coordinator | 32 / 32 |
+| defensive coordinator | 31 / 32 |
+
+The one missing defensive-coordinator role is Tampa Bay and is not a transport
+gap: the staff structure has no separate DC. That absence must remain a real
+coaching-state observation rather than being imputed.
 
 **It is also point-in-time reconstructable**, which is the hardest of the
 inventory's fifteen fields and the one most intelligence sources fail. The
@@ -122,8 +132,10 @@ correct.
 
 ## Maintenance reality
 
-32 teams. Roughly 96 rows a season for HC/OC/DC, plus in-season changes.
-The capture is automated and costs one paced pass over 32 pages. The residual
+32 teams. Roughly 96 role assignments a season for HC/OC/DC, plus in-season
+changes. Current-state capture is automated as ONE batched MediaWiki request;
+point-in-time historical reconstruction remains per-page because MediaWiki does
+not support the needed revision parameters across multiple titles. The residual
 human judgement is confined to play-caller attribution and to adjudicating
 source contradictions like Buffalo and Arizona above — neither of which is a
 treadmill, and both of which are recorded rather than resolved.
