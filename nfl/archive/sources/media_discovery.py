@@ -79,13 +79,6 @@ NOT_ATTEMPTED = (
     ("audio_video_transcription",
      "Would require retrieving media this mission has not established the right "
      "to retrieve. Not attempted."),
-    ("official_inactives_list",
-     "The official ~90-minute-pregame inactive list is the highest-value NFL "
-     "information timestamp and IS an archival target, but no verified public "
-     "machine-readable endpoint for it was established in NFL-01. Captured "
-     "indirectly and non-authoritatively via the ESPN injury feed and the "
-     "official injury report page; a dedicated authoritative source is an "
-     "open gap."),
     ("pff_and_other_paywalled_charting",
      "Paywalled. Not fetched, and must never be presented as a free source."),
     ("next_gen_stats_api",
