@@ -1906,3 +1906,34 @@ reason raises, so pooling is never silent. **Deliberately not wired into
 would edit frozen MLB production for no present benefit, since no NFL row exists
 to pool with. Wiring it is a decision for Jacob and should happen BEFORE the
 first NFL row, not after.
+
+### CI, final state on `eae9d55` — the before/after evidence for the MLB file change
+
+**NFL Test Suite: SUCCESS** (`actions/runs/34555660592`).
+
+**MLB Test Suite: FAILURE** (`actions/runs/34555660565`), and the failure set is
+**unchanged from the branch base**: exactly one file, `test_board_first_paint.py`
+at 12/14, with the same two checks — the overlay-price probe and the
+staleness-isolation check. Nothing was added by this branch.
+
+**This is the run that validates the `ledger_integrity.py` per-sport extension.**
+`test_ledger_integrity.py` — the existing MLB test for that file — passes in CI
+with the extension in place, including its fail-closed path:
+
+```
+  ok   identical estate is clean
+  ok   added identity is clean
+  ok   single graded loss is caught, one estate only
+  ok   single graded loss names the exact identity
+  ok   single graded loss is attributed to the graded ledger
+  ok   registry-only loss is caught
+  ok   registry-only loss is attributed to the registry
+  ok   registry-only loss names the identity
+  ok   both estates regressing reports both
+  ok   missing registry raises rather than passing
+```
+
+Note for whoever reads the Actions tab: the MLB runs on `cc45b7e` and `edafd1b`
+show as **cancelled**, not failed. `test.yml` sets
+`cancel-in-progress: true`, and three pushes landed in quick succession. Only the
+`eae9d55` run is a completed verdict, and it is the one quoted above.
