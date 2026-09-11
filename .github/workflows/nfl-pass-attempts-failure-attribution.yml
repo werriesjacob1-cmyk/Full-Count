@@ -54,8 +54,12 @@ jobs:
           )
           from nfl.research import nflverse_history as nh
 
-          RAW_SEASONS = (2022, 2023, 2024, 2025)
           TEST_SEASONS = (2023, 2024, 2025)
+          SOURCE_WINDOWS = {
+              2023: (2022, 2023),
+              2024: (2023, 2024),
+              2025: (2023, 2024, 2025),
+          }
           ROLLING_WINDOW = 5
           MIN_HISTORY = 3
           MIN_TEAM_HISTORY = 3
@@ -235,66 +239,80 @@ jobs:
           session.headers.update({
               "User-Agent": "Full-Count pass-attempt failure attribution"
           })
-          raw_players = []
-          raw_teams = []
-          sources = {"player": {}, "team": {}}
-
-          for season in RAW_SEASONS:
-              purl = nh.player_stats_url(season)
-              pr = session.get(purl, timeout=60)
-              pr.raise_for_status()
-              psha = hashlib.sha256(pr.content).hexdigest()
-              if psha != EXPECTED_SHA256["player"][season]:
-                  raise SystemExit(
-                      f"{season}: player SHA drift {psha}"
-                  )
-              prows = list(csv.DictReader(io.StringIO(pr.text)))
-              raw_players.extend(prows)
-              sources["player"][str(season)] = {
-                  "url": purl, "rows": len(prows), "sha256": psha,
-              }
-
-              turl = (
-                  "https://github.com/nflverse/nflverse-data/releases/download/"
-                  f"stats_team/stats_team_week_{season}.csv"
-              )
-              tr = session.get(turl, timeout=60)
-              tr.raise_for_status()
-              tsha = hashlib.sha256(tr.content).hexdigest()
-              if tsha != EXPECTED_SHA256["team"][season]:
-                  raise SystemExit(
-                      f"{season}: team SHA drift {tsha}"
-                  )
-              trows = list(csv.DictReader(io.StringIO(tr.text)))
-              raw_teams.extend(trows)
-              sources["team"][str(season)] = {
-                  "url": turl, "rows": len(trows), "sha256": tsha,
-              }
-
-          built = build_b1_rows(
-              raw_players,
-              raw_teams,
-              rolling_window=ROLLING_WINDOW,
-          )
-          index = {player_key(row): row for row in built}
-          if len(index) != len(built):
-              raise SystemExit("duplicate built player-game key")
-          alignments = alignment_map(raw_players, raw_teams)
-
           reports = {}
-          for season in TEST_SEASONS:
+          sources = {}
+
+          for test_season in TEST_SEASONS:
+              raw_players = []
+              raw_teams = []
+              season_sources = {"player": {}, "team": {}}
+
+              # IMPORTANT: build each audit season from the exact historical
+              # source window that originally defined its frozen population.
+              # A wider earlier-season history can make additional QBs pass
+              # min-history/role eligibility and silently rewrite evidence.
+              for source_season in SOURCE_WINDOWS[test_season]:
+                  purl = nh.player_stats_url(source_season)
+                  pr = session.get(purl, timeout=60)
+                  pr.raise_for_status()
+                  psha = hashlib.sha256(pr.content).hexdigest()
+                  if psha != EXPECTED_SHA256["player"][source_season]:
+                      raise SystemExit(
+                          f"{test_season}/{source_season}: "
+                          f"player SHA drift {psha}"
+                      )
+                  prows = list(csv.DictReader(io.StringIO(pr.text)))
+                  raw_players.extend(prows)
+                  season_sources["player"][str(source_season)] = {
+                      "url": purl,
+                      "rows": len(prows),
+                      "sha256": psha,
+                  }
+
+                  turl = (
+                      "https://github.com/nflverse/nflverse-data/releases/download/"
+                      f"stats_team/stats_team_week_{source_season}.csv"
+                  )
+                  tr = session.get(turl, timeout=60)
+                  tr.raise_for_status()
+                  tsha = hashlib.sha256(tr.content).hexdigest()
+                  if tsha != EXPECTED_SHA256["team"][source_season]:
+                      raise SystemExit(
+                          f"{test_season}/{source_season}: "
+                          f"team SHA drift {tsha}"
+                      )
+                  trows = list(csv.DictReader(io.StringIO(tr.text)))
+                  raw_teams.extend(trows)
+                  season_sources["team"][str(source_season)] = {
+                      "url": turl,
+                      "rows": len(trows),
+                      "sha256": tsha,
+                  }
+
+              built = build_b1_rows(
+                  raw_players,
+                  raw_teams,
+                  rolling_window=ROLLING_WINDOW,
+              )
+              index = {player_key(row): row for row in built}
+              if len(index) != len(built):
+                  raise SystemExit(
+                      f"{test_season}: duplicate built player-game key"
+                  )
+              alignments = alignment_map(raw_players, raw_teams)
+
               paired = paired_error_rows(
                   built,
                   "pass_attempts",
-                  test_season=season,
+                  test_season=test_season,
                   test_season_type="REG",
                   min_history=MIN_HISTORY,
                   min_team_history=MIN_TEAM_HISTORY,
               )
-              if len(paired) != EXPECTED_N[season]:
+              if len(paired) != EXPECTED_N[test_season]:
                   raise SystemExit(
-                      f"{season}: population drift "
-                      f"{len(paired)} != {EXPECTED_N[season]}"
+                      f"{test_season}: population drift "
+                      f"{len(paired)} != {EXPECTED_N[test_season]}"
                   )
 
               records = []
@@ -309,11 +327,11 @@ jobs:
                   category = alignments.get(pk)
                   if row is None or category is None:
                       raise SystemExit(
-                          f"{season}: missing attribution row {pk}"
+                          f"{test_season}: missing attribution row {pk}"
                       )
                   if str(row.get("position") or "").strip().upper() != "QB":
                       raise SystemExit(
-                          f"{season}: non-QB in pass market {pk}"
+                          f"{test_season}: non-QB in pass market {pk}"
                       )
                   parts = at.opportunity_components(
                       row, "pass_attempts"
@@ -340,7 +358,7 @@ jobs:
               }
               if sum(x["n"] for x in by_alignment.values()) != len(records):
                   raise SystemExit(
-                      f"{season}: alignment partition incomplete"
+                      f"{test_season}: alignment partition incomplete"
                   )
 
               by_share = {}
@@ -351,7 +369,7 @@ jobs:
                   ])
               if sum(x["n"] for x in by_share.values()) != len(records):
                   raise SystemExit(
-                      f"{season}: share partition incomplete"
+                      f"{test_season}: share partition incomplete"
                   )
 
               by_scale = {}
@@ -362,15 +380,17 @@ jobs:
                   ])
               if sum(x["n"] for x in by_scale.values()) != len(records):
                   raise SystemExit(
-                      f"{season}: scale partition incomplete"
+                      f"{test_season}: scale partition incomplete"
                   )
 
-              reports[str(season)] = {
+              reports[str(test_season)] = {
+                  "source_window": list(SOURCE_WINDOWS[test_season]),
                   "overall": summarize(records),
                   "by_alignment": by_alignment,
                   "by_prior_attempt_share": by_share,
                   "by_team_window_scale": by_scale,
               }
+              sources[str(test_season)] = season_sources
 
           output = {
               "analysis": "NFL_PASS_ATTEMPTS_REJECTED_B1_FAILURE_ATTRIBUTION",
