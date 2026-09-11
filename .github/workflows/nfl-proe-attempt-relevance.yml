@@ -1,0 +1,529 @@
+name: NFL PROE Incremental Attempt Relevance
+
+# Research-only development audit.
+#
+# PROE passed persistence, but persistence alone does not imply usefulness for
+# official pass-attempt volume. This workflow asks whether prior-five PROE has
+# stable incremental association with next-game official attempts AFTER the
+# frozen rolling-attempt baseline has already been subtracted.
+#
+# 2022 is history for early 2023 only. No untouched challenger holdout is read.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-proe-attempt-relevance.yml
+
+permissions:
+  contents: read
+
+jobs:
+  relevance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Test PROE incremental relevance to official attempts
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import gzip
+          import hashlib
+          import io
+          import json
+          import math
+          import os
+          import random
+          import statistics
+          from collections import defaultdict, deque
+          from datetime import datetime, timezone
+
+          import requests
+
+          SEASONS = (2022, 2023, 2024, 2025)
+          TEST_SEASONS = (2023, 2024, 2025)
+          WINDOW = 5
+          MIN_HISTORY = 3
+          BOOTSTRAPS = 5000
+          SEED = 20260911
+          EPS = 1e-9
+
+          PBP_SHA256 = {
+              2022: "0c69a71eb39498956c7b1d5c1ca52ce7fe679934a95d1af249facb5ea9829ea4",
+              2023: "4649804ee0f0a40b41e51ec75a1ce921949d7fab5459213488656b92f78560e8",
+              2024: "23370d5d10f8104d80d46a1fc5e61f4f6f5a3263fe96fe2dd629913cfcb08c06",
+              2025: "2f135887790a013fd004e609e37096bb4816d5cc80b9f19122e1bad478961978",
+          }
+          TEAM_SHA256 = {
+              2022: "9803875bd0b74aa49230288d45359c75e45910f1cf1953ea0f07b9d3db35e4d1",
+              2023: "dc5a387daabe8663deaddac492ad7020d47fb1a66048690b355b406cd8e4c454",
+              2024: "b207a1430c2715d03bbf1844c4eae98695f364851ff6025f422febc2c13f5255",
+              2025: "91058a59d894855377b2f39f40c4e7bdbeef96d12144289dc68215209a1c93cb",
+          }
+          REQUIRED_PBP = {
+              "season", "week", "season_type", "posteam",
+              "pass", "rush", "xpass", "pass_oe", "sack",
+              "pass_attempt", "two_point_attempt",
+          }
+          REQUIRED_TEAM = {
+              "season", "week", "season_type", "team", "attempts",
+          }
+
+          def num(value, label):
+              try:
+                  out = float(value)
+              except (TypeError, ValueError) as exc:
+                  raise ValueError(f"invalid {label}: {value!r}") from exc
+              if not math.isfinite(out):
+                  raise ValueError(f"non-finite {label}: {value!r}")
+              return out
+
+          def flag0(value, label):
+              if value in (None, ""):
+                  return 0
+              out = num(value, label)
+              if out not in (0.0, 1.0):
+                  raise ValueError(f"{label} outside 0/1: {out}")
+              return int(out)
+
+          def pearson(xs, ys):
+              if len(xs) < 3:
+                  return None
+              mx = statistics.fmean(xs)
+              my = statistics.fmean(ys)
+              dx = [x - mx for x in xs]
+              dy = [y - my for y in ys]
+              den = math.sqrt(
+                  sum(x*x for x in dx) * sum(y*y for y in dy)
+              )
+              if den <= 0:
+                  return None
+              return sum(x*y for x, y in zip(dx, dy)) / den
+
+          def rankdata(values):
+              order = sorted(range(len(values)), key=lambda i: values[i])
+              ranks = [0.0] * len(values)
+              i = 0
+              while i < len(order):
+                  j = i + 1
+                  while (
+                      j < len(order)
+                      and values[order[j]] == values[order[i]]
+                  ):
+                      j += 1
+                  rank = (i + 1 + j) / 2.0
+                  for k in range(i, j):
+                      ranks[order[k]] = rank
+                  i = j
+              return ranks
+
+          def spearman(xs, ys):
+              return pearson(rankdata(xs), rankdata(ys))
+
+          def pct(values, q):
+              values = sorted(values)
+              if not values:
+                  return None
+              pos = (len(values) - 1) * q
+              lo = int(math.floor(pos))
+              hi = int(math.ceil(pos))
+              if lo == hi:
+                  return values[lo]
+              w = pos - lo
+              return values[lo] * (1-w) + values[hi] * w
+
+          def cluster_bootstrap(rows, xfield, yfield, seed_offset):
+              groups = defaultdict(list)
+              for row in rows:
+                  groups[row["team"]].append(row)
+              keys = sorted(groups)
+              rng = random.Random(SEED + seed_offset)
+              vals = []
+              for _ in range(BOOTSTRAPS):
+                  sample = []
+                  for _ in keys:
+                      sample.extend(groups[rng.choice(keys)])
+                  r = pearson(
+                      [x[xfield] for x in sample],
+                      [x[yfield] for x in sample],
+                  )
+                  if r is not None and math.isfinite(r):
+                      vals.append(r)
+              return {
+                  "clusters": len(keys),
+                  "replicates": len(vals),
+                  "median": pct(vals, 0.5),
+                  "ci95": [pct(vals, 0.025), pct(vals, 0.975)],
+                  "probability_below_zero":
+                      sum(v < 0 for v in vals) / len(vals),
+              }
+
+          def quartiles(rows):
+              ordered = sorted(rows, key=lambda r: r["prior_proe"])
+              out = []
+              n = len(ordered)
+              for q in range(4):
+                  lo = (q*n)//4
+                  hi = ((q+1)*n)//4
+                  sub = ordered[lo:hi]
+                  out.append({
+                      "quartile": q+1,
+                      "n": len(sub),
+                      "mean_prior_proe":
+                          statistics.fmean(r["prior_proe"] for r in sub),
+                      "mean_attempt_residual":
+                          statistics.fmean(
+                              r["attempt_residual"] for r in sub
+                          ),
+                  })
+              return out
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent":
+                  "Full-Count NFL PROE incremental relevance audit"
+          })
+
+          game = defaultdict(lambda: {
+              "decision_plays": 0,
+              "pass_oe_sum": 0.0,
+              "sacks": 0,
+              "parsed_pass_attempts": 0,
+          })
+          sources = {"pbp": {}, "team": {}}
+
+          for season in SEASONS:
+              purl = (
+                  "https://github.com/nflverse/nflverse-data/releases/download/"
+                  f"pbp/play_by_play_{season}.csv.gz"
+              )
+              pr = session.get(purl, timeout=120)
+              pr.raise_for_status()
+              psha = hashlib.sha256(pr.content).hexdigest()
+              if psha != PBP_SHA256[season]:
+                  raise SystemExit(f"{season}: PBP SHA drift {psha}")
+
+              rows_seen = 0
+              with gzip.GzipFile(fileobj=io.BytesIO(pr.content)) as gz:
+                  reader = csv.DictReader(
+                      io.TextIOWrapper(gz, encoding="utf-8", newline="")
+                  )
+                  missing = sorted(
+                      REQUIRED_PBP - set(reader.fieldnames or [])
+                  )
+                  if missing:
+                      raise SystemExit(
+                          f"{season}: PBP schema drift {missing}"
+                      )
+                  for row in reader:
+                      rows_seen += 1
+                      if str(row.get("season_type") or "") != "REG":
+                          continue
+                      team = str(row.get("posteam") or "").strip()
+                      if not team:
+                          continue
+                      try:
+                          week = int(float(row["week"]))
+                      except (TypeError, ValueError):
+                          continue
+                      key = (season, week, team)
+
+                      if flag0(
+                          row.get("two_point_attempt"),
+                          "two_point_attempt",
+                      ):
+                          continue
+
+                      rec = game[key]
+                      rec["sacks"] += flag0(row.get("sack"), "sack")
+                      rec["parsed_pass_attempts"] += flag0(
+                          row.get("pass_attempt"), "pass_attempt"
+                      )
+
+                      xraw = row.get("xpass")
+                      praw = row.get("pass_oe")
+                      if xraw in (None, "") or praw in (None, ""):
+                          continue
+                      p = flag0(row.get("pass"), "pass")
+                      rush = flag0(row.get("rush"), "rush")
+                      if p + rush < 1:
+                          raise SystemExit(
+                              f"{season}: pass_oe present on non-decision play"
+                          )
+                      xpass = num(xraw, "xpass")
+                      pass_oe = num(praw, "pass_oe")
+                      if abs(pass_oe - 100.0*(p-xpass)) > 1e-7:
+                          raise SystemExit(
+                              f"{season}: pass_oe identity drift"
+                          )
+                      rec["decision_plays"] += 1
+                      rec["pass_oe_sum"] += pass_oe
+
+              sources["pbp"][str(season)] = {
+                  "url": purl,
+                  "rows": rows_seen,
+                  "bytes": len(pr.content),
+                  "sha256": psha,
+              }
+
+              turl = (
+                  "https://github.com/nflverse/nflverse-data/releases/download/"
+                  f"stats_team/stats_team_week_{season}.csv"
+              )
+              tr = session.get(turl, timeout=60)
+              tr.raise_for_status()
+              tsha = hashlib.sha256(tr.content).hexdigest()
+              if tsha != TEAM_SHA256[season]:
+                  raise SystemExit(f"{season}: team SHA drift {tsha}")
+              trows = list(csv.DictReader(io.StringIO(tr.text)))
+              missing = sorted(REQUIRED_TEAM - set(trows[0]))
+              if missing:
+                  raise SystemExit(
+                      f"{season}: team schema drift {missing}"
+                  )
+
+              for raw in trows:
+                  if str(raw.get("season_type") or "") != "REG":
+                      continue
+                  key = (
+                      int(float(raw["season"])),
+                      int(float(raw["week"])),
+                      str(raw["team"]).strip(),
+                  )
+                  if key not in game:
+                      raise SystemExit(
+                          f"{season}: official team-game missing PBP {key}"
+                      )
+                  rec = game[key]
+                  official = num(raw["attempts"], "official attempts")
+                  parsed_official = (
+                      rec["parsed_pass_attempts"] - rec["sacks"]
+                  )
+                  if abs(parsed_official - official) > EPS:
+                      raise SystemExit(
+                          f"{season}: official attempt reconciliation "
+                          f"failed {key}: {parsed_official} != {official}"
+                      )
+                  rec["official_attempts"] = official
+
+              sources["team"][str(season)] = {
+                  "url": turl,
+                  "rows": len(trows),
+                  "bytes": len(tr.content),
+                  "sha256": tsha,
+              }
+
+          ordered = []
+          for (season, week, team), rec in game.items():
+              if "official_attempts" not in rec:
+                  continue
+              if rec["decision_plays"] <= 0:
+                  raise SystemExit(
+                      f"no PROE plays {(season, week, team)}"
+                  )
+              ordered.append({
+                  "season": season,
+                  "week": week,
+                  "team": team,
+                  "proe":
+                      rec["pass_oe_sum"] / rec["decision_plays"],
+                  "decision_plays": float(rec["decision_plays"]),
+                  "official_attempts": float(rec["official_attempts"]),
+              })
+          ordered.sort(key=lambda r:(r["season"], r["week"], r["team"]))
+
+          history = defaultdict(lambda: deque(maxlen=WINDOW))
+          rows = []
+          for row in ordered:
+              h = history[row["team"]]
+              if (
+                  row["season"] in TEST_SEASONS
+                  and len(h) >= MIN_HISTORY
+              ):
+                  total_prior_plays = sum(
+                      x["decision_plays"] for x in h
+                  )
+                  prior_proe = (
+                      sum(
+                          x["proe"] * x["decision_plays"]
+                          for x in h
+                      ) / total_prior_plays
+                  )
+                  rolling_attempts = statistics.fmean(
+                      x["official_attempts"] for x in h
+                  )
+                  rows.append({
+                      **row,
+                      "prior_proe": prior_proe,
+                      "rolling_attempts": rolling_attempts,
+                      "attempt_residual":
+                          row["official_attempts"] - rolling_attempts,
+                  })
+              h.append(row)
+
+          reports = {}
+          for season in TEST_SEASONS:
+              sr = [r for r in rows if r["season"] == season]
+              if not sr:
+                  raise SystemExit(f"{season}: no relevance rows")
+
+              # Team-demeaning prevents a between-team fixed effect from being
+              # mistaken for useful within-team next-game information.
+              team_means = {}
+              for team in sorted({r["team"] for r in sr}):
+                  sub = [r for r in sr if r["team"] == team]
+                  team_means[team] = {
+                      "x": statistics.fmean(
+                          r["prior_proe"] for r in sub
+                      ),
+                      "y": statistics.fmean(
+                          r["attempt_residual"] for r in sub
+                      ),
+                  }
+              demeaned = [
+                  {
+                      **r,
+                      "prior_proe_within":
+                          r["prior_proe"] - team_means[r["team"]]["x"],
+                      "attempt_residual_within":
+                          r["attempt_residual"]
+                          - team_means[r["team"]]["y"],
+                  }
+                  for r in sr
+              ]
+
+              pooled = pearson(
+                  [r["prior_proe"] for r in sr],
+                  [r["attempt_residual"] for r in sr],
+              )
+              pooled_s = spearman(
+                  [r["prior_proe"] for r in sr],
+                  [r["attempt_residual"] for r in sr],
+              )
+              within = pearson(
+                  [r["prior_proe_within"] for r in demeaned],
+                  [r["attempt_residual_within"] for r in demeaned],
+              )
+
+              reports[str(season)] = {
+                  "team_games": len(sr),
+                  "teams": len({r["team"] for r in sr}),
+                  "pooled": {
+                      "pearson": pooled,
+                      "spearman": pooled_s,
+                      "team_cluster_bootstrap":
+                          cluster_bootstrap(
+                              sr,
+                              "prior_proe",
+                              "attempt_residual",
+                              season,
+                          ),
+                      "quartiles": quartiles(sr),
+                  },
+                  "within_team": {
+                      "pearson": within,
+                  },
+              }
+
+          pooled_signs = [
+              math.copysign(
+                  1.0, reports[str(s)]["pooled"]["pearson"]
+              )
+              for s in TEST_SEASONS
+          ]
+          same_pooled_sign = len(set(pooled_signs)) == 1
+          direction = (
+              "negative" if same_pooled_sign and pooled_signs[0] < 0
+              else "positive" if same_pooled_sign
+              else "mixed"
+          )
+          ci_excludes_zero = 0
+          within_same_direction = 0
+          for s in TEST_SEASONS:
+              ci = reports[str(s)]["pooled"][
+                  "team_cluster_bootstrap"
+              ]["ci95"]
+              if ci[1] < 0 or ci[0] > 0:
+                  ci_excludes_zero += 1
+              w = reports[str(s)]["within_team"]["pearson"]
+              if (
+                  direction == "negative" and w < 0
+              ) or (
+                  direction == "positive" and w > 0
+              ):
+                  within_same_direction += 1
+
+          relevance_pass = (
+              same_pooled_sign
+              and ci_excludes_zero >= 2
+              and within_same_direction >= 2
+          )
+
+          output = {
+              "analysis":
+                  "NFL_PROE_INCREMENTAL_PASS_ATTEMPT_RELEVANCE",
+              "status": "research_only_no_challenger",
+              "created_at": datetime.now(timezone.utc).isoformat(),
+              "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+              "scientific_context": {
+                  "proe_persistence_run_id": 34639603256,
+                  "proe_persistence_passed": True,
+                  "pace_persistence_passed": False,
+                  "important_distinction": (
+                      "Trait persistence is necessary but not sufficient. "
+                      "This audit tests direct next-game target relevance "
+                      "after subtracting the rolling official-attempt baseline."
+                  ),
+                  "holdout_policy": (
+                      "No untouched model holdout is inspected here."
+                  ),
+                  "decision_rule": (
+                      "PROE earns further challenger design only if pooled "
+                      "association has the same sign in all 3 seasons, "
+                      "team-clustered 95% CI excludes zero in >=2/3, and "
+                      "within-team association has that same sign in >=2/3."
+                  ),
+              },
+              "sources": sources,
+              "reports": reports,
+              "decision": {
+                  "same_pooled_sign_all_seasons": same_pooled_sign,
+                  "direction": direction,
+                  "cluster_ci_excludes_zero_seasons":
+                      ci_excludes_zero,
+                  "within_team_same_direction_seasons":
+                      within_same_direction,
+                  "incremental_relevance_pass": relevance_pass,
+              },
+              "next_if_pass": (
+                  "Diagnose mechanism before freezing a formula; do not "
+                  "assume sign is causal. Candidate mechanisms include "
+                  "regression in game script, opponent pass environment, "
+                  "and market-implied game state."
+              ),
+              "next_if_fail": (
+                  "Reject PROE as a pass-attempt-volume feature despite "
+                  "its persistence; prioritize prospective QB identity/"
+                  "availability and opponent/market game-state data."
+              ),
+          }
+
+          path = "/tmp/nfl-proe-attempt-relevance.json"
+          with open(path, "w", encoding="utf-8") as f:
+              json.dump(output, f, indent=2, sort_keys=True)
+          print(json.dumps(output, indent=2, sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-proe-attempt-relevance
+          path: /tmp/nfl-proe-attempt-relevance.json
+          retention-days: 30
