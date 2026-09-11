@@ -210,7 +210,54 @@ check(abs(result["hit_rate"] - 0.5) < 1e-9,
       "hit_rate is 1 win / 2 settled = 0.5 (the 2 skipped bets don't dilute it)",
       f"got {result['hit_rate']}")
 
-head("4. settle(): no prices / no reads short-circuit cleanly")
+head("4. plus-money evidence: price-band x market truth, not pooled longshot folklore")
+
+plus_fixture = [
+    {"stat": "strikeouts", "american": 120, "won": True},
+    {"stat": "strikeouts", "american": 130, "won": False},
+    {"stat": "strikeouts", "american": 175, "won": True},
+    {"stat": "pitcher_outs", "american": 175, "won": False},
+    {"stat": "pitcher_outs", "american": 250, "won": True},
+    {"stat": "home_runs", "american": 400, "won": False},
+    # Negative price must never leak into a plus-money band.
+    {"stat": "hits", "american": -150, "won": True},
+]
+pm = gv.plus_money_breakdown(plus_fixture)
+
+check(pm["overall"]["n"] == 6,
+      "plus-money overall excludes the -150 favourite and keeps all +100-or-better bets",
+      f"got {pm['overall']}")
+check(pm["overall"]["hits"] == 3,
+      "plus-money overall records the literal 3 wins / 6 eligible bets",
+      f"got {pm['overall']}")
+check(pm["bands"]["+100_to_+149"]["n"] == 2,
+      "+100..+149 is a distinct price band", f"got {pm['bands']}")
+check(pm["bands"]["+150_to_+199"]["n"] == 2,
+      "+150..+199 is a distinct price band", f"got {pm['bands']}")
+check(pm["bands"]["+200_to_+299"]["n"] == 1,
+      "+200..+299 is a distinct price band", f"got {pm['bands']}")
+check(pm["bands"]["+300_plus"]["n"] == 1,
+      "+300+ is a distinct price band", f"got {pm['bands']}")
+check(pm["by_stat"]["strikeouts"]["n"] == 3
+      and pm["by_stat"]["pitcher_outs"]["n"] == 2,
+      "market-level evidence is preserved instead of hiding behind one pooled longshot rate",
+      f"got {pm['by_stat']}")
+
+# +120 winner returns 2.20; +130 loser returns 0.00 on two units staked.
+band = pm["bands"]["+100_to_+149"]
+check(abs(band["roi"] - 0.10) < 1e-12,
+      "+100..+149 ROI uses the actual captured prices (+10% here), not hit rate alone",
+      f"got {band}")
+expected_avg_implied = (1 / pp.decimal_odds(120) + 1 / pp.decimal_odds(130)) / 2
+check(abs(band["avg_implied_probability"] - expected_avg_implied) < 1e-12,
+      "each band carries the sportsbook break-even probability implied by its real prices",
+      f"got {band}")
+check(abs(band["hit_rate_minus_avg_implied"] -
+          (0.5 - expected_avg_implied)) < 1e-12,
+      "observed accuracy is compared with the price-implied break-even rate",
+      f"got {band}")
+
+head("5. settle(): no prices / no reads short-circuit cleanly")
 
 with mock.patch.object(gv, "closing_prices", return_value={}):
     check(gv.settle(DATE) is None, "no captured prices for the date returns None outright")
