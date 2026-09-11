@@ -15,6 +15,10 @@ on:
       - superchad/nfl-foundation-continuation-20260911
     paths:
       - .github/workflows/nfl-v0-b1-benchmark.yml
+      - nfl/research/nflverse_history.py
+      - nfl/research/b1_history.py
+      - nfl/research/b1_team_opportunity.py
+      - nfl/research/b1_evaluate.py
 
 permissions:
   contents: read
