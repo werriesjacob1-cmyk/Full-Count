@@ -1937,3 +1937,120 @@ Note for whoever reads the Actions tab: the MLB runs on `cc45b7e` and `edafd1b`
 show as **cancelled**, not failed. `test.yml` sets
 `cancel-in-progress: true`, and three pushes landed in quick succession. Only the
 `eae9d55` run is a completed verdict, and it is the one quoted above.
+
+### Signal research COMPLETE — and one finding changes the NFL plan
+
+`nfl/research/NFL_SIGNAL_INVENTORY.md` (1,814 lines) and
+`nfl/research/nfl_signals.json` are now real deliverables, replacing the empty
+scaffold committed earlier.
+
+**Validated independently, not taken on the agent's word:** 56 signals, every one
+carrying all 15 required fields, ranks contiguous 1–56, no duplicate names, 26
+`unavailable` entries, 17 markets, and **zero signals at HIGH prior confidence**.
+Ranking basis stored verbatim as `expected marginal information beyond market
+price; RESEARCH PRIORITY ORDER, NOT EVIDENCE`.
+
+#### THE FINDING THAT MATTERS MOST — NEEDS JACOB
+
+**`pbp_participation` does not publish in-season.** Verified by direct fetch:
+
+```
+pbp_participation_2026.csv  -> 404
+pbp_participation_2025.csv  -> 200 (49,094,943 bytes)
+ftn_charting_2026.csv       -> 404
+ftn_charting_2025.csv       -> 200 (8,128,926 bytes)
+```
+
+nflverse's own wording: *"provided after all post-season games are completed. It
+does not update during the season!"*
+
+Everything mechanistic lives in that file — man/zone, coverage shell, route,
+personnel grouping, box count, pressure, time-to-throw. **So for the 2026 season
+Full Count structurally CANNOT compute the mechanistic defensive matchup the
+mission requires, while books with licensed charting can.** That is a product and
+strategy decision, not an engineering one, and it is explicitly the kind of thing
+to bring to Jacob rather than decide: either NFL's defensive-matchup family waits
+for the off-season dump, or a licensed charting source gets bought, or that family
+ships degraded and says so.
+
+It also carries an **inverse leakage trap**: joining current-season participation
+into a same-season backtest reads a file that did not exist at the cutoff.
+
+#### Other verified findings worth acting on
+
+- **Only HEAD COACH exists in free structured data.** `nfldata/games.csv` has
+  `away_coach`/`home_coach`, 272/272 populated for 2026, and **no OC, DC, or
+  play-caller column anywhere** (verified: zero columns matching
+  coordinator/caller). The entire coaching family is therefore attributable only
+  to a head coach, and coordinator/play-caller changes are not historically
+  measurable. Recorded as a stated mis-specification, not papered over.
+- **Two lookahead traps confirmed by counting 2026 rows:** `temp`, `wind` and
+  `referee` are post-game — **0 of 272 populated**. `spread_line`/`total_line` is
+  one mutable field refreshed every ~5 minutes — 103 of 272 — that becomes the
+  close. Reading either in a backtest reads the future.
+- **Documentation is not an availability oracle.** nflverse says the injuries
+  source died after 2024; `injuries_2026.csv` returns 200 with real Week-1 rows
+  (verified, 14,903 bytes). Probe, don't trust docs.
+- **Reachability is not permission.** ESPN returns 200 but Disney's ToU bars
+  automated extraction for compiling datasets or developing AI tools. nfl.com
+  §1.3 prohibits systematic retrieval to build a collection; YouTube ToS bars
+  automated access. So the press-conference layer's content is public and its
+  **bulk retrieval is prohibited** — the compliant shape is search/fetch as
+  discovery, quoted span as evidence, raw artifact `UNAVAILABLE_BY_POLICY`, which
+  is what Phase A already does.
+- **FTN charting is the only explicitly licensed source found** (CC-BY-SA 4.0 via
+  nflverse). Share-alike is a real obligation, not a footnote.
+- **Weather's blocker narrows to geocoding.** NWS terms are the cleanest found
+  (*"free to use for any purpose"*); ESPN supplies venue city/state/zip but not
+  coordinates. So the Phase A gap is a venue→lat/lon step, not a missing source.
+- **Seven of the 17 required markets were NOT OBSERVED on FanDuel** across 139
+  distinct marketTypes in the 262 archived payloads: completions, attempts,
+  interceptions thrown, rush attempts, longest reception, longest rush, and
+  **tackles+assists**. Kicking points and FGs made exist only as TEAM-level
+  runners. Twelve further tab slugs were probed live and all silently returned the
+  default payload.
+- **A better tab-discovery method than slug guessing:** the event payload
+  publishes its own `layout.tabs`. But tabs are **PER-EVENT**, and `d-st` and
+  `game-specials` returned real payloads for all 29 archived events while
+  appearing in neither list — so capture should UNION layout-reading with
+  slug-guessing and record which method found each tab. A concrete improvement to
+  `fanduel_nfl.py`, not yet implemented.
+
+#### Proposed additions to `nfl/archive/provenance.py`
+
+Phase A already implements seven outcome states (one more than the brief's six —
+it added `UNAVAILABLE_BY_POLICY`). The research proposes four it lacks, and the
+first is the important one:
+
+1. **`PARTIAL`** — the verified FanDuel silent-default case is neither
+   CHECKED_AND_FOUND nor SOURCE_FAILED, and currently has **no state**. This is
+   the most dangerous failure mode in the whole audit.
+2. `OUT_OF_SEASON_BY_DESIGN` — so nobody "fixes" participation by fetching it.
+3. `SOURCE_CONTRADICTS_ITS_OWN_DOCUMENTATION` — the injuries case.
+4. A per-source expected-cadence field so `STALE` is computed, not asserted.
+
+#### Inference structure recommended
+
+Week-block bootstrap primary, game-level clustering inside the block, explicit
+player and team effects, head-coach-level regime grouping (a stated
+mis-specification), strictly time-ordered splits, test split scored once.
+**Row-level bootstrap and Wilson are insufficient** — one game moves 12–20
+correlated rows. 272 games/season, and a 5%-event market needs ~300 rows per
+parameter to satisfy `MIN_EVENTS_PER_PARAM = 15.0`. **For 2026 the honest posture
+is RECORD, not PROMOTE.**
+
+Base rates were computed in this pass from 18,540 REG player-weeks and 46,452 REG
+plays rather than quoted from memory, and the pooling trap is made concrete: 2+ TD
+at 5.0% beside receptions over 2.5 at 71.8% and 1+ FG at 85.7% reproduces MLB's
+fake 0.748 if pooled.
+
+#### The agent's own three least-confident points, kept
+
+1. That the market is inefficient **anywhere** in the inventory — all 56 rankings
+   are reasoned guesses, and given MLB's 0.492 the likeliest outcome is that most
+   add nothing measurable.
+2. Whether coaching tendencies persist across rosters and staffs — the strongest
+   causal story and the least-verified part; the coaching family may be measuring
+   rosters wearing coaching labels.
+3. Whether the press-conference layer can be built compliantly at the required
+   scale. 30 further items are listed as could-not-determine.
