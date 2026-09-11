@@ -1,0 +1,449 @@
+name: NFL Pass Attempts Role Recency Signal
+
+# Research-only signal audit.
+#
+# Question: on the exact frozen pass-attempt populations, does the QB's most
+# recent prior-game share of team pass attempts predict CURRENT share better
+# than B1's five-appearance ratio-of-sums share?
+#
+# This tests role-state recency only. It does not create a pass-attempt model.
+# 2022 remains untouched as a future challenger audit season.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-pass-attempt-role-recency-signal.yml
+      - nfl/research/b1_alignment.py
+      - nfl/research/b1_history.py
+      - nfl/research/b1_evaluate.py
+      - nfl/research/nflverse_history.py
+
+permissions:
+  contents: read
+
+jobs:
+  signal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Audit last-role share versus rolling share
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import hashlib
+          import io
+          import json
+          import math
+          import os
+          import statistics
+          from collections import defaultdict, deque
+          from datetime import datetime, timezone
+
+          import requests
+
+          from nfl.research import b1_alignment as al
+          from nfl.research.b1_evaluate import paired_error_rows
+          from nfl.research.b1_history import (
+              TEAM_REQUIRED_COLUMNS,
+              build_b1_rows,
+          )
+          from nfl.research import nflverse_history as nh
+
+          TEST_SEASONS = (2023, 2024, 2025)
+          SOURCE_WINDOWS = {
+              2023: (2022, 2023),
+              2024: (2023, 2024),
+              2025: (2023, 2024, 2025),
+          }
+          EXPECTED_N = {2023: 599, 2024: 611, 2025: 617}
+          WINDOW = 5
+          MIN_HISTORY = 3
+          MIN_TEAM_HISTORY = 3
+          EPS = 1e-12
+          EXPECTED_SHA256 = {
+              "player": {
+                  2022: "ad426c3fe5bf1cc30c3f137fdfe96d054e19d400879ee4413129da49fa7b54be",
+                  2023: "f19cb71a5de0dce7fd09376026237c9ee9d5a93fe13815a2ea3ec2d37204cb17",
+                  2024: "3ddc45a84f759aa348ce465ae001752c530575455717657cdfe1f8abfcdb4759",
+                  2025: "e5e0615b3d96a3eaebfaee91e55afb4a4e7fe0caf057454177bcd7d6ad4bcfc2",
+              },
+              "team": {
+                  2022: "9803875bd0b74aa49230288d45359c75e45910f1cf1953ea0f07b9d3db35e4d1",
+                  2023: "dc5a387daabe8663deaddac492ad7020d47fb1a66048690b355b406cd8e4c454",
+                  2024: "b207a1430c2715d03bbf1844c4eae98695f364851ff6025f422febc2c13f5255",
+                  2025: "91058a59d894855377b2f39f40c4e7bdbeef96d12144289dc68215209a1c93cb",
+              },
+          }
+
+          CATEGORIES = (
+              "ALIGNED",
+              "MISSED_GAMES",
+              "TEAM_CHANGE",
+              "WINDOW_LENGTH_MISMATCH",
+              "NO_HISTORY",
+          )
+
+          def pkey(row):
+              return (
+                  int(row["season"]),
+                  int(row["week"]),
+                  str(row["season_type"]),
+                  str(row["player_id"]),
+              )
+
+          def gkey(row):
+              return (
+                  int(row["season"]),
+                  int(row["week"]),
+                  str(row["season_type"]),
+                  str(row["team"]),
+              )
+
+          def summarize(rows):
+              if not rows:
+                  return {
+                      "n": 0,
+                      "rolling_share_mae": None,
+                      "last_share_mae": None,
+                      "delta_mae_last_minus_rolling": None,
+                      "last_better_n": 0,
+                      "rolling_better_n": 0,
+                      "tied_n": 0,
+                  }
+              rolling_errors = [
+                  abs(r["rolling_share"] - r["actual_share"])
+                  for r in rows
+              ]
+              last_errors = [
+                  abs(r["last_share"] - r["actual_share"])
+                  for r in rows
+              ]
+              deltas = [
+                  last - rolling
+                  for last, rolling in zip(last_errors, rolling_errors)
+              ]
+              return {
+                  "n": len(rows),
+                  "rolling_share_mae": statistics.fmean(rolling_errors),
+                  "last_share_mae": statistics.fmean(last_errors),
+                  "delta_mae_last_minus_rolling":
+                      statistics.fmean(deltas),
+                  "last_better_n": sum(d < -EPS for d in deltas),
+                  "rolling_better_n": sum(d > EPS for d in deltas),
+                  "tied_n": sum(abs(d) <= EPS for d in deltas),
+                  "mean_actual_share": statistics.fmean(
+                      r["actual_share"] for r in rows
+                  ),
+                  "mean_rolling_share": statistics.fmean(
+                      r["rolling_share"] for r in rows
+                  ),
+                  "mean_last_share": statistics.fmean(
+                      r["last_share"] for r in rows
+                  ),
+              }
+
+          def load_window(session, test_season):
+              players = []
+              teams = []
+              sources = {"player": {}, "team": {}}
+              for season in SOURCE_WINDOWS[test_season]:
+                  purl = nh.player_stats_url(season)
+                  pr = session.get(purl, timeout=60)
+                  pr.raise_for_status()
+                  psha = hashlib.sha256(pr.content).hexdigest()
+                  if psha != EXPECTED_SHA256["player"][season]:
+                      raise SystemExit(
+                          f"{test_season}/{season}: player SHA drift {psha}"
+                      )
+                  prows = list(csv.DictReader(io.StringIO(pr.text)))
+                  players.extend(prows)
+                  sources["player"][str(season)] = {
+                      "url": purl, "rows": len(prows), "sha256": psha,
+                  }
+
+                  turl = (
+                      "https://github.com/nflverse/nflverse-data/releases/download/"
+                      f"stats_team/stats_team_week_{season}.csv"
+                  )
+                  tr = session.get(turl, timeout=60)
+                  tr.raise_for_status()
+                  tsha = hashlib.sha256(tr.content).hexdigest()
+                  if tsha != EXPECTED_SHA256["team"][season]:
+                      raise SystemExit(
+                          f"{test_season}/{season}: team SHA drift {tsha}"
+                      )
+                  trows = list(csv.DictReader(io.StringIO(tr.text)))
+                  missing = sorted(TEAM_REQUIRED_COLUMNS - set(trows[0]))
+                  if missing:
+                      raise SystemExit(
+                          f"{test_season}/{season}: team schema drift {missing}"
+                      )
+                  teams.extend(trows)
+                  sources["team"][str(season)] = {
+                      "url": turl, "rows": len(trows), "sha256": tsha,
+                  }
+              return players, teams, sources
+
+          def normalize_team_attempts(team_rows):
+              attempts = {}
+              ordered = []
+              for raw in team_rows:
+                  row = {
+                      "season": int(float(raw["season"])),
+                      "week": int(float(raw["week"])),
+                      "season_type": str(raw["season_type"]),
+                      "team": str(raw["team"]).strip(),
+                      "attempts": float(raw["attempts"]),
+                  }
+                  key = gkey(row)
+                  if key in attempts:
+                      raise SystemExit(f"duplicate team game {key}")
+                  if not math.isfinite(row["attempts"]) or row["attempts"] < 0:
+                      raise SystemExit(f"invalid team attempts {key}")
+                  attempts[key] = row["attempts"]
+                  ordered.append(row)
+              ordered.sort(
+                  key=lambda r: (
+                      r["season"], r["week"], r["team"], r["season_type"]
+                  )
+              )
+              return attempts, ordered
+
+          def build_role_and_alignment(player_rows, team_rows):
+              team_attempts, ordered_teams = normalize_team_attempts(team_rows)
+              players = nh.build_prior_only_rows(
+                  player_rows,
+                  rolling_window=WINDOW,
+              )
+
+              team_hist = defaultdict(lambda: deque(maxlen=WINDOW))
+              team_prior_keys = {}
+              for row in ordered_teams:
+                  key = gkey(row)
+                  team_prior_keys[key] = list(team_hist[row["team"]])
+                  team_hist[row["team"]].append(key)
+
+              player_hist = defaultdict(lambda: deque(maxlen=WINDOW))
+              role = {}
+              alignment = {}
+
+              for row in players:
+                  pk = pkey(row)
+                  game = gkey(row)
+                  if game not in team_attempts:
+                      raise SystemExit(f"missing team attempts for {game}")
+                  if game not in team_prior_keys:
+                      raise SystemExit(f"missing team history for {game}")
+
+                  hist = player_hist[row["player_id"]]
+                  last_share = (
+                      float(hist[-1]["share"]) if hist else None
+                  )
+                  prior_keys = [
+                      item["game_key"] for item in hist
+                  ]
+                  alignment[pk] = al.classify_history_alignment(
+                      prior_keys,
+                      team_prior_keys[game],
+                      current_team=row["team"],
+                  )
+
+                  team_atts = float(team_attempts[game])
+                  player_atts = float(row["target"]["attempts"])
+                  if team_atts <= 0:
+                      if player_atts != 0:
+                          raise SystemExit(
+                              f"player attempts with zero team attempts {pk}"
+                          )
+                      current_share = 0.0
+                  else:
+                      current_share = player_atts / team_atts
+                  if current_share < -EPS or current_share > 1.0 + EPS:
+                      raise SystemExit(
+                          f"current QB share outside [0,1] {pk}: "
+                          f"{current_share}"
+                      )
+                  current_share = min(1.0, max(0.0, current_share))
+
+                  role[pk] = {
+                      "last_share": last_share,
+                      "actual_share": current_share,
+                      "history_n": len(hist),
+                  }
+                  hist.append({
+                      "game_key": game,
+                      "share": current_share,
+                  })
+
+              return role, alignment
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent": "Full-Count QB role recency signal audit"
+          })
+
+          reports = {}
+          sources = {}
+
+          for season in TEST_SEASONS:
+              player_rows, team_rows, src = load_window(
+                  session, season
+              )
+              built = build_b1_rows(
+                  player_rows,
+                  team_rows,
+                  rolling_window=WINDOW,
+              )
+              index = {pkey(row): row for row in built}
+              role, alignments = build_role_and_alignment(
+                  player_rows, team_rows
+              )
+
+              paired = paired_error_rows(
+                  built,
+                  "pass_attempts",
+                  test_season=season,
+                  test_season_type="REG",
+                  min_history=MIN_HISTORY,
+                  min_team_history=MIN_TEAM_HISTORY,
+              )
+              if len(paired) != EXPECTED_N[season]:
+                  raise SystemExit(
+                      f"{season}: population drift "
+                      f"{len(paired)} != {EXPECTED_N[season]}"
+                  )
+
+              rows = []
+              for pair in paired:
+                  pk = (
+                      int(pair["season"]),
+                      int(pair["week"]),
+                      "REG",
+                      str(pair["player_id"]),
+                  )
+                  built_row = index.get(pk)
+                  role_row = role.get(pk)
+                  category = alignments.get(pk)
+                  if (
+                      built_row is None
+                      or role_row is None
+                      or category is None
+                  ):
+                      raise SystemExit(
+                          f"{season}: missing role row {pk}"
+                      )
+                  if role_row["last_share"] is None:
+                      raise SystemExit(
+                          f"{season}: comparable row missing last share {pk}"
+                      )
+                  rolling_share = float(
+                      built_row["features"][
+                          "prior_player_pass_attempt_share"
+                      ]
+                  )
+                  if not (0 <= rolling_share <= 1):
+                      raise SystemExit(
+                          f"{season}: rolling share outside [0,1] {pk}"
+                      )
+                  rows.append({
+                      "player_id": pk[3],
+                      "category": category,
+                      "rolling_share": rolling_share,
+                      "last_share": float(role_row["last_share"]),
+                      "actual_share": float(role_row["actual_share"]),
+                  })
+
+              by_alignment = {
+                  cat: summarize([
+                      r for r in rows if r["category"] == cat
+                  ])
+                  for cat in CATEGORIES
+              }
+              discontinuity = [
+                  r for r in rows if r["category"] != "ALIGNED"
+              ]
+
+              reports[str(season)] = {
+                  "population_n": len(rows),
+                  "overall": summarize(rows),
+                  "discontinuity_rows": summarize(discontinuity),
+                  "by_alignment": by_alignment,
+              }
+              sources[str(season)] = src
+
+          # Pre-registered signal gate: recency must improve share MAE on
+          # discontinuity rows in every observed diagnostic season. This is
+          # intentionally strict because 2022 is being preserved for the first
+          # actual challenger audit.
+          deltas = {
+              season: reports[str(season)]["discontinuity_rows"][
+                  "delta_mae_last_minus_rolling"
+              ]
+              for season in TEST_SEASONS
+          }
+          decision = {
+              "last_share_better_2023": deltas[2023] < 0,
+              "last_share_better_2024": deltas[2024] < 0,
+              "last_share_better_2025": deltas[2025] < 0,
+          }
+          decision["signal_gate_pass"] = all(decision.values())
+
+          output = {
+              "analysis": "NFL_PASS_ATTEMPT_QB_ROLE_RECENCY_SIGNAL",
+              "status": "research_only_no_challenger",
+              "created_at": datetime.now(timezone.utc).isoformat(),
+              "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+              "pre_registered": {
+                  "signal": (
+                      "most recent prior appearance QB share of team "
+                      "pass attempts"
+                  ),
+                  "reference": (
+                      "B1 prior-five appearance ratio-of-sums attempt share"
+                  ),
+                  "target": "current QB share of team pass attempts",
+                  "evaluation_population":
+                      "exact frozen B0/B1 pass-attempt comparison rows",
+                  "primary_subset":
+                      "history-window discontinuity rows (non-ALIGNED)",
+                  "gate": (
+                      "last-share MAE must beat rolling-share MAE on "
+                      "discontinuity rows in 2023, 2024, and 2025"
+                  ),
+                  "2022_status":
+                      "preserved untouched for first actual challenger audit",
+              },
+              "sources": sources,
+              "reports": reports,
+              "decision": decision,
+              "next_if_pass": (
+                  "Freeze B2-ROLE using last-share role state and audit it "
+                  "first on untouched 2022 using 2021 prior history."
+              ),
+              "next_if_fail": (
+                  "Do not rescue box-score role state with recency. Move to "
+                  "prospective starter/inactive identity plus team PROE/pace "
+                  "signal capture."
+              ),
+          }
+
+          path = "/tmp/nfl-pass-attempt-role-recency-signal.json"
+          with open(path, "w", encoding="utf-8") as f:
+              json.dump(output, f, indent=2, sort_keys=True)
+          print(json.dumps(output, indent=2, sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-pass-attempt-role-recency-signal
+          path: /tmp/nfl-pass-attempt-role-recency-signal.json
+          retention-days: 30
