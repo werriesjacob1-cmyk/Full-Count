@@ -302,6 +302,66 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-11",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 41.7,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ New York Yankees",
+          "game_pk": 823498,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 54.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 92.9412,
+            "tto_penalty": -8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5948,
+          "raw_hit_probability": 0.6043,
+          "lift": 0.0817,
+          "reliability": "B",
+          "sample_n": 13,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 42.9,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ New York Yankees",
+          "game_pk": 823498,
+          "team": "New York Yankees",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6624,
+            "avg_outs_per_start": 14.77
+          },
+          "hit_probability": 0.6624,
+          "raw_hit_probability": null,
+          "lift": -0.1018,
+          "reliability": "B",
+          "sample_n": 13,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        }
+      ]
     }
   ]
 }

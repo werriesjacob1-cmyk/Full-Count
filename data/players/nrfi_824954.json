@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824954",
+  "name": "Seattle Mariners @ Athletics \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-11",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 68.3,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Athletics",
+          "game_pk": 824954,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.3244,
+            "away_team_scores_p": 0.3535,
+            "fi_n_starts": 28.0
+          },
+          "hit_probability": 0.5632,
+          "raw_hit_probability": null,
+          "lift": 0.0616,
+          "reliability": "A",
+          "sample_n": 28,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 56.3
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -105,6 +105,39 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-11",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 42.8,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Detroit Tigers",
+          "game_pk": 824227,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 60.0,
+            "same_hand_ratio": 88.8889,
+            "l14_k_pct": 84.1176,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6064,
+          "raw_hit_probability": 0.6618,
+          "lift": 0.0933,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        }
+      ]
     }
   ]
 }
