@@ -1,0 +1,392 @@
+name: NFL V0 B1 Component Attribution
+
+# Research-only attribution of the already-observed B1 benchmark.
+#
+# This workflow does NOT tune, promote, select, publish, or change a model.
+# It answers one narrower scientific question:
+#   What part of current B1 can actually differ from frozen B0?
+#
+# IMPORTANT:
+# - 2024 is the development/diagnostic season for interpretation.
+# - 2025 has already been observed repeatedly and is descriptive only here.
+# - The exact nflverse source bytes are pinned by SHA256. If they change,
+#   this audit fails closed rather than silently becoming a different study.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-v0-b1-attribution.yml
+      - nfl/research/b1_attribution.py
+      - nfl/research/b1_history.py
+      - nfl/research/b1_evaluate.py
+      - nfl/research/b1_team_opportunity.py
+      - nfl/research/nflverse_history.py
+
+permissions:
+  contents: read
+
+jobs:
+  attribution:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Run B1 component attribution audit
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import hashlib
+          import io
+          import json
+          import math
+          import os
+          import statistics
+          from collections import defaultdict
+          from datetime import datetime, timezone
+
+          import requests
+
+          from nfl.research import b1_attribution as at
+          from nfl.research.b1_evaluate import MARKETS, paired_error_rows
+          from nfl.research.b1_history import build_b1_rows, TEAM_REQUIRED_COLUMNS
+          from nfl.research.nflverse_history import REQUIRED_COLUMNS, player_stats_url
+
+          RAW_SEASONS = (2023, 2024, 2025)
+          ROLLING_WINDOW = 5
+          MIN_HISTORY = 3
+          MIN_TEAM_HISTORY = 3
+          IDENTITY_TOLERANCE = 1e-9
+          CHANGE_TOLERANCE = 1e-12
+
+          # Source identity from the successful clustered-uncertainty artifact
+          # run 34623354023 at c372486bd1f703e700e1a0f8f75261448b041f5d.
+          EXPECTED_SHA256 = {
+              "player": {
+                  2023: "f19cb71a5de0dce7fd09376026237c9ee9d5a93fe13815a2ea3ec2d37204cb17",
+                  2024: "3ddc45a84f759aa348ce465ae001752c530575455717657cdfe1f8abfcdb4759",
+                  2025: "e5e0615b3d96a3eaebfaee91e55afb4a4e7fe0caf057454177bcd7d6ad4bcfc2",
+              },
+              "team": {
+                  2023: "dc5a387daabe8663deaddac492ad7020d47fb1a66048690b355b406cd8e4c454",
+                  2024: "b207a1430c2715d03bbf1844c4eae98695f364851ff6025f422febc2c13f5255",
+                  2025: "91058a59d894855377b2f39f40c4e7bdbeef96d12144289dc68215209a1c93cb",
+              },
+          }
+
+          EXPECTED_COMPARISON_N = {
+              2024: {
+                  "pass_attempts": 611,
+                  "passing_yards": 611,
+                  "receptions": 4689,
+                  "receiving_yards": 4689,
+                  "rush_attempts": 2953,
+                  "rushing_yards": 2953,
+              },
+              2025: {
+                  "pass_attempts": 617,
+                  "passing_yards": 617,
+                  "receptions": 4849,
+                  "receiving_yards": 4849,
+                  "rush_attempts": 3045,
+                  "rushing_yards": 3045,
+              },
+          }
+
+          def key(row):
+              return (
+                  int(row["season"]),
+                  int(row["week"]),
+                  str(row["season_type"]),
+                  str(row["player_id"]),
+              )
+
+          def summarize(records):
+              if not records:
+                  return {
+                      "n": 0,
+                      "mean_delta_abs_error": None,
+                      "improved_n": 0,
+                      "worsened_n": 0,
+                      "tied_n": 0,
+                      "mean_team_window_scale": None,
+                      "median_team_window_scale": None,
+                  }
+              deltas = [r["delta_abs_error"] for r in records]
+              scales = [r["team_window_scale"] for r in records]
+              return {
+                  "n": len(records),
+                  "mean_delta_abs_error": statistics.fmean(deltas),
+                  "improved_n": sum(d < -CHANGE_TOLERANCE for d in deltas),
+                  "worsened_n": sum(d > CHANGE_TOLERANCE for d in deltas),
+                  "tied_n": sum(abs(d) <= CHANGE_TOLERANCE for d in deltas),
+                  "mean_team_window_scale": statistics.fmean(scales),
+                  "median_team_window_scale": statistics.median(scales),
+              }
+
+          def scale_bucket(scale):
+              if scale < 0.90:
+                  return "down_10pct_plus"
+              if scale < 0.98:
+                  return "down_2_to_10pct"
+              if scale <= 1.02:
+                  return "within_2pct"
+              if scale <= 1.10:
+                  return "up_2_to_10pct"
+              return "up_10pct_plus"
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent": "Full-Count NFL B1 component attribution (read-only)"
+          })
+
+          players = []
+          teams = []
+          sources = {"player": {}, "team": {}}
+
+          for season in RAW_SEASONS:
+              purl = player_stats_url(season)
+              pr = session.get(purl, timeout=60)
+              pr.raise_for_status()
+              psha = hashlib.sha256(pr.content).hexdigest()
+              if psha != EXPECTED_SHA256["player"][season]:
+                  raise SystemExit(
+                      f"{season}: player source SHA drift: {psha} != "
+                      f"{EXPECTED_SHA256['player'][season]}"
+                  )
+              prows = list(csv.DictReader(io.StringIO(pr.text)))
+              pmissing = sorted(REQUIRED_COLUMNS - set(prows[0].keys()))
+              if pmissing:
+                  raise SystemExit(f"{season}: missing player columns {pmissing}")
+              players.extend(prows)
+              sources["player"][str(season)] = {
+                  "url": purl,
+                  "rows": len(prows),
+                  "sha256": psha,
+              }
+
+              turl = (
+                  "https://github.com/nflverse/nflverse-data/releases/download/"
+                  f"stats_team/stats_team_week_{season}.csv"
+              )
+              tr = session.get(turl, timeout=60)
+              tr.raise_for_status()
+              tsha = hashlib.sha256(tr.content).hexdigest()
+              if tsha != EXPECTED_SHA256["team"][season]:
+                  raise SystemExit(
+                      f"{season}: team source SHA drift: {tsha} != "
+                      f"{EXPECTED_SHA256['team'][season]}"
+                  )
+              trows = list(csv.DictReader(io.StringIO(tr.text)))
+              tmissing = sorted(TEAM_REQUIRED_COLUMNS - set(trows[0].keys()))
+              if tmissing:
+                  raise SystemExit(f"{season}: missing team columns {tmissing}")
+              teams.extend(trows)
+              sources["team"][str(season)] = {
+                  "url": turl,
+                  "rows": len(trows),
+                  "sha256": tsha,
+              }
+
+          built = build_b1_rows(
+              players,
+              teams,
+              rolling_window=ROLLING_WINDOW,
+          )
+          indexed = {key(row): row for row in built}
+          if len(indexed) != len(built):
+              raise SystemExit("duplicate built player-game key in attribution input")
+
+          reports = {}
+          season_labels = (
+              (2024, "2024_development"),
+              (2025, "2025_previously_observed_descriptive"),
+          )
+
+          for season, label in season_labels:
+              reports[label] = {}
+              for market in MARKETS:
+                  paired = paired_error_rows(
+                      built,
+                      market,
+                      test_season=season,
+                      test_season_type="REG",
+                      min_history=MIN_HISTORY,
+                      min_team_history=MIN_TEAM_HISTORY,
+                  )
+                  expected_n = EXPECTED_COMPARISON_N[season][market]
+                  if len(paired) != expected_n:
+                      raise SystemExit(
+                          f"{label}/{market}: comparison population drifted: "
+                          f"{len(paired)} != frozen {expected_n}"
+                      )
+
+                  records = []
+                  max_identity_abs_error = 0.0
+
+                  for p in paired:
+                      source_key = (
+                          int(p["season"]),
+                          int(p["week"]),
+                          "REG",
+                          str(p["player_id"]),
+                      )
+                      row = indexed.get(source_key)
+                      if row is None:
+                          raise SystemExit(
+                              f"{label}/{market}: built row not found for {source_key}"
+                          )
+
+                      identity_error = abs(
+                          at.efficiency_identity_error(row, market)
+                      )
+                      max_identity_abs_error = max(
+                          max_identity_abs_error,
+                          identity_error,
+                      )
+                      if identity_error > IDENTITY_TOLERANCE:
+                          raise SystemExit(
+                              f"{label}/{market}: efficiency identity violated: "
+                              f"{identity_error}"
+                          )
+
+                      c = at.opportunity_components(row, market)
+                      changed = (
+                          abs(p["b1_prediction"] - p["b0_prediction"])
+                          > CHANGE_TOLERANCE
+                      )
+                      records.append({
+                          "position": str(row.get("position") or "").upper(),
+                          "changed": changed,
+                          "delta_abs_error": float(p["delta_abs_error"]),
+                          "team_window_scale": float(c["team_window_scale"]),
+                          "scale_bucket": scale_bucket(
+                              float(c["team_window_scale"])
+                          ),
+                      })
+
+                  changed_records = [r for r in records if r["changed"]]
+                  unchanged_records = [r for r in records if not r["changed"]]
+
+                  by_position = {}
+                  for position in sorted({r["position"] for r in records}):
+                      pos_records = [
+                          r for r in records if r["position"] == position
+                      ]
+                      pos_changed = [r for r in pos_records if r["changed"]]
+                      by_position[position] = {
+                          "all": summarize(pos_records),
+                          "changed_only": summarize(pos_changed),
+                          "changed_fraction": (
+                              len(pos_changed) / len(pos_records)
+                              if pos_records else None
+                          ),
+                      }
+
+                  by_scale_bucket = {}
+                  for bucket in (
+                      "down_10pct_plus",
+                      "down_2_to_10pct",
+                      "within_2pct",
+                      "up_2_to_10pct",
+                      "up_10pct_plus",
+                  ):
+                      by_scale_bucket[bucket] = summarize(
+                          [r for r in records if r["scale_bucket"] == bucket]
+                      )
+
+                  all_summary = summarize(records)
+                  observed = (
+                      sum(float(p["delta_abs_error"]) for p in paired)
+                      / len(paired)
+                  )
+                  if not math.isclose(
+                      all_summary["mean_delta_abs_error"],
+                      observed,
+                      rel_tol=1e-12,
+                      abs_tol=1e-12,
+                  ):
+                      raise SystemExit(
+                          f"{label}/{market}: attribution population drift"
+                      )
+
+                  reports[label][market] = {
+                      "comparison_n": len(records),
+                      "observed_mean_delta_absolute_error": observed,
+                      "max_efficiency_identity_abs_error":
+                          max_identity_abs_error,
+                      "all_rows": all_summary,
+                      "changed_prediction": summarize(changed_records),
+                      "unchanged_prediction": summarize(unchanged_records),
+                      "changed_n": len(changed_records),
+                      "changed_fraction": len(changed_records) / len(records),
+                      "by_position": by_position,
+                      "by_team_window_scale": by_scale_bucket,
+                  }
+
+          output = {
+              "analysis": "NFL_V0_B1_COMPONENT_ATTRIBUTION",
+              "status": "research_only",
+              "created_at": datetime.now(timezone.utc).isoformat(),
+              "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+              "scientific_context": {
+                  "b0_run_id": 34621247208,
+                  "b1_run_id": 34622487867,
+                  "clustered_uncertainty_run_id": 34623354023,
+                  "rolling_window_prior_games": ROLLING_WINDOW,
+                  "minimum_player_history": MIN_HISTORY,
+                  "minimum_team_history": MIN_TEAM_HISTORY,
+                  "development_season": 2024,
+                  "2025_status": (
+                      "previously observed; descriptive only; not pristine "
+                      "for new tuning claims"
+                  ),
+                  "identity_tolerance": IDENTITY_TOLERANCE,
+                  "change_tolerance": CHANGE_TOLERANCE,
+              },
+              "attribution_identity": {
+                  "efficiency": (
+                      "With the current same prior-player window, B1's "
+                      "ratio-of-sums efficiency does not independently change "
+                      "the forecast relative to B0. B1 outcome equals B0 outcome "
+                      "times the B1/B0 player-opportunity ratio."
+                  ),
+                  "opportunity": (
+                      "Current B1 player opportunity equals B0 rolling player "
+                      "opportunity times current-team rolling volume divided by "
+                      "the team-volume average aligned to the player's own prior "
+                      "game window."
+                  ),
+                  "interpretation": (
+                      "Current B1 is therefore a team-window rescaling of prior "
+                      "player opportunity. The report measures where that "
+                      "rescaling actually changes predictions and whether those "
+                      "changes helped."
+                  ),
+              },
+              "sources": sources,
+              "reports": reports,
+          }
+
+          path = "/tmp/nfl-v0-b1-attribution.json"
+          with open(path, "w", encoding="utf-8") as f:
+              json.dump(output, f, indent=2, sort_keys=True)
+
+          print(json.dumps(output, indent=2, sort_keys=True))
+          print(f"\nWrote {path}")
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-v0-b1-component-attribution
+          path: /tmp/nfl-v0-b1-attribution.json
+          retention-days: 30
