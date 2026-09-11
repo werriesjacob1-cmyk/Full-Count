@@ -1,0 +1,91 @@
+name: NFL Branch-Only Source Schema Probe
+
+# One-shot / branch-only proof that the exact nflverse files V0 research
+# intends to consume exist and still carry the required columns.
+#
+# Read-only: no commit, no push, no publication, no production activation.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-source-schema-probe.yml
+      - nfl/research/nflverse_history.py
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install requests only
+        run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Verify 2025 + 2026 nflverse weekly player schema
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import io
+          import json
+          import requests
+
+          from nfl.research.nflverse_history import REQUIRED_COLUMNS, player_stats_url
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent": "Full-Count research schema probe (read-only)"
+          })
+
+          report = {}
+          for season in (2025, 2026):
+              url = player_stats_url(season)
+              r = session.get(url, timeout=45)
+              r.raise_for_status()
+              text = r.text
+              reader = csv.DictReader(io.StringIO(text))
+              header = set(reader.fieldnames or [])
+              missing = sorted(REQUIRED_COLUMNS - header)
+              if missing:
+                  raise SystemExit(
+                      f"{season}: nflverse schema drift; missing required columns: {missing}"
+                  )
+              rows = list(reader)
+              weeks = sorted({
+                  int(float(row["week"])) for row in rows
+                  if row.get("week") not in (None, "")
+              })
+              season_types = sorted({
+                  row.get("season_type") for row in rows if row.get("season_type")
+              })
+              player_ids = {
+                  row.get("player_id") for row in rows if row.get("player_id")
+              }
+              report[season] = {
+                  "url": url,
+                  "bytes": len(r.content),
+                  "rows": len(rows),
+                  "weeks": weeks,
+                  "season_types": season_types,
+                  "unique_player_ids": len(player_ids),
+                  "required_columns_present": len(REQUIRED_COLUMNS),
+                  "missing_required_columns": missing,
+              }
+
+          if not report[2025]["rows"]:
+              raise SystemExit("2025 weekly player file unexpectedly empty")
+          if not report[2026]["rows"]:
+              raise SystemExit("2026 weekly player file unexpectedly empty")
+          if max(report[2026]["weeks"] or [0]) < 1:
+              raise SystemExit("2026 file contains no completed regular-season week")
+
+          print(json.dumps(report, indent=2, sort_keys=True))
+          print("PASS: V0 nflverse weekly-player source exists and required schema is intact")
+          PY
