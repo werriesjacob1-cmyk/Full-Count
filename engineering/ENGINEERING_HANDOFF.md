@@ -1796,3 +1796,55 @@ protect, so the extension has nothing to guard; see next action).
 4. Find an authoritative inactives source.
 5. Deliverable 2 (per-sport `ledger_integrity.py`) when NFL first has estate
    files — not before, since there is nothing to protect yet.
+
+### CI STATUS — correction, and MLB CI IS NOT GREEN
+
+The NFL-01 entry above lists "MLB CI green" as a completion condition. **It is
+not met, and it was not met at the branch base either.** Stating it plainly
+rather than letting a green NFL job stand in for it.
+
+**NFL Test Suite: green.** Run 3 at `1a3e3ce` — success
+(`actions/runs/34554466722`). Its first run at `bc38a82` also passed; the run at
+`6cfedcd` failed on the `live_state` import false positive described above and
+was fixed in `1a3e3ce`.
+
+**MLB Test Suite: red, with exactly one failing file, inherited.**
+`test_board_first_paint.py` scores **12/14**, failing:
+
+- `first paint shows the OVERLAY price, not the base payload price`
+- `board age is what tripped staleness, with prices left fresh`
+
+**Proved inherited, not caused by NFL-01**, three independent ways:
+
+1. The test reads `dashboard/static/app.js`, `docs/data.json` and
+   `docs/live.json`. `git diff --stat 97c3dab HEAD -- docs/ frontend/ dashboard/
+   data/ test_board_first_paint.py` is **empty** — every input is byte-identical
+   to the branch base. This branch adds only `nfl/**`, two `nfl-*.yml`
+   workflows, and this handoff entry.
+2. Reproduced locally at branch HEAD: 12/14, same two failures.
+3. **Reproduced identically in a clean `git worktree` checked out at `97c3dab`
+   itself, where `nfl/` does not exist at all**: 12/14, same two failures.
+
+**Why it is red at the base.** `main`'s last CI-tested commit is `b09a3416`
+(2026-09-10 16:22Z), which reported this file 14/14. The branch base `97c3dab`
+is ~40 pipeline commits later, and **`test.yml` never ran on any of them** —
+Actions does not start workflow runs from `GITHUB_TOKEN` pushes, which
+`ledger-integrity.yml`'s own comments already document (3,077 commits, one run).
+So `97c3dab` had never been CI-tested before this branch pushed it. Both failing
+checks are data- and clock-dependent against the committed `docs/` payloads the
+dashboard pipeline rewrites several times an hour, which is the failure class
+`5026385b` and `b09a3416` both describe at length: the overlay probe depends on
+the committed `live.json` containing a naturally moved price, and the staleness
+isolation check depends on the board clock.
+
+**NOT FIXED HERE, deliberately.** It is an MLB frontend test-fixture problem on
+`main`, outside NFL-01's authorised scope, and fixing it would widen this branch
+into MLB production surface for no NFL benefit. Flagged for Jacob: this file will
+keep flipping red as the pipeline's committed data drifts until its fixtures stop
+depending on whatever the live payload happens to contain.
+
+**Ad-hoc investigation dependency, reported per Enforcement 5:** `playwright`
+`1.62.0` was installed into this container by hand to reproduce the failure —
+the same version root `requirements.txt` already pins. Nothing was added to any
+requirements file; `requirements.txt` remains byte-identical (sha256
+`10c18dbe…`).
