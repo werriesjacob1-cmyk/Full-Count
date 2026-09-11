@@ -172,7 +172,105 @@ quietly inherit the name of the unavailable variable.
 
 ---
 
-## F. FIRST SCORING MODEL DATA GATE
+## F. PAID / LICENSED SOURCE ESCALATION CANDIDATES
+
+Free/public data remains the default because cost is not evidence of predictive
+value. Paid data should be purchased only when it closes a measured information
+gap that materially improves held-out or prospective performance.
+
+### Sports Info Solutions (SIS) — HIGH-PRIORITY EVALUATION CANDIDATE
+
+Public 2026 product material says SIS currently works with 15 NFL teams and
+offers, for NFL/FBS:
+
+- participation data
+- offensive / defensive / special-teams raw data
+- frame-timer data
+- coaches data
+- universal player IDs
+- advanced player/play charting
+- Total Points / EPA / WPA / SIS-WAR
+- pressures and completion percentage above expectation
+- team pace
+- expected pass rate
+- targets above expectation
+- player and snap projections
+- Film Room / film filters
+- injury database from 2016 onward with expert video review, diagnoses,
+  prognoses, return dates, recurrence and possible unreported injury events
+
+Why it matters to FULL COUNT:
+this is the first source found that publicly claims to close MULTIPLE current
+P0 holes at once: in-season participation, detailed injury intelligence,
+coaching data, charting and film workflow.
+
+What is NOT known yet:
+- price
+- redistribution/API rights for a public betting product
+- exact in-season latency by feed
+- historical point-in-time revision semantics
+- whether the participation feed includes the exact route/alignment/coverage
+  concepts FULL COUNT needs
+- whether its player/snap projections add information beyond market price
+
+Decision standard:
+request commercial terms/spec only after the free-data baseline identifies the
+incremental value we would need the paid source to provide.
+
+Source observed 2026-09-11:
+https://www.sportsinfosolutions.com/football/
+
+### Genius Sports — OFFICIAL / ENTERPRISE ESCALATION CANDIDATE
+
+Genius Sports states it is the NFL's exclusive distributor of official
+real-time play-by-play, proprietary Next Gen Stats and the league's official
+sports-betting data feed, with the partnership extended through the 2029 NFL
+season.
+
+Public product material describes:
+- official low-latency NFL data APIs
+- historical + real-time feeds
+- NGS player/ball tracking: speed, acceleration and location
+- betting/media/fantasy licensing use cases
+
+Why it matters:
+if FULL COUNT eventually needs official low-latency tracking or data not
+legitimately reconstructable from public releases, Genius is the authoritative
+enterprise path rather than trying to reverse-engineer protected feeds.
+
+What is NOT known:
+- price
+- small-startup access tier
+- exact pregame vs live tracking products available to us
+- historical point-in-time archive options
+- redistribution/product-use restrictions
+- incremental predictive value relative to public nflverse releases
+
+Sources observed 2026-09-11:
+https://www.geniussports.com/engage/official-sports-data-api/
+https://www.geniussports.com/newsroom/the-national-football-league-expands-and-extends-strategic-partnership-with-genius-sports-in-multi-year-deal/
+
+### Paid-data rule
+
+Do NOT buy a feed because it looks sophisticated.
+
+For any paid source, require:
+1. exact fields
+2. exact latency
+3. historical depth
+4. PIT reconstruction semantics
+5. licensing/product rights
+6. cost
+7. overlap with free sources
+8. a research plan capable of measuring incremental information beyond market
+9. expected effect on usable operational pick volume
+
+A paid source that duplicates public information and does not improve prediction
+or availability is not an upgrade.
+
+---
+
+## G. FIRST SCORING MODEL DATA GATE
 
 The first research scorer may start before every gap is closed, but it must use
 ONLY feature families with honest historical/PIT availability.
