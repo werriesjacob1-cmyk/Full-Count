@@ -110,9 +110,9 @@ def run_capture(
             "The ACTUAL PLAY CALLER is not established by any source captured "
             "here. Coordinator identity is, via Wikipedia; who calls plays is a "
             "separate and harder fact. See nfl/docs/PLAY_CALLER.md.",
-            "No authoritative machine-readable source for the official pregame "
-            "inactive list was established. That list is the highest-value NFL "
-            "information timestamp and remains an open gap.",
+            "The authoritative NFL.com inactives surface is captured as raw "
+            "HTML. Per-game inactive parsing, semantic normalization, and "
+            "binding to canonical game/player identity remain open gaps.",
             "Weather forecast vintages are blocked on a verified venue "
             "coordinate table, which NFL-01 did not invent.",
             "Press-conference transcripts and captions are not retrieved; terms "
