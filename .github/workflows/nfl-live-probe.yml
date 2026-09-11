@@ -1,0 +1,90 @@
+name: NFL Branch-Only Live Capture Probe
+
+# One-shot scientific probe for the SUPERCHAD continuation branch.
+# It DOES NOT commit, push, publish, or touch MLB. Its only job is to prove
+# the current capture semantics against live sources before any merge decision.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-live-probe.yml
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install NFL capture dependencies only
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r nfl/requirements-nfl.txt
+          python3 -m pip install 'requests~=2.34.2'
+
+      - name: Run bounded live capture
+        run: |
+          rm -rf /tmp/nfl-live-probe
+          PYTHONPATH=. python3 -m nfl.archive.capture             --vintage ad-hoc             --event-limit 2             --summary-limit 2             --root /tmp/nfl-live-probe
+
+      - name: Audit FanDuel semantic outcomes
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import glob, json, os, sys
+
+          paths = glob.glob('/tmp/nfl-live-probe/*/*/manifest.json')
+          if len(paths) != 1:
+              raise SystemExit(f'expected exactly one manifest, got {paths}')
+          with open(paths[0], encoding='utf-8') as f:
+              m = json.load(f)
+
+          fd = [a for a in m.get('artifacts', []) if a.get('source_id') == 'fanduel_nfl']
+          if not fd:
+              raise SystemExit('no FanDuel artifacts captured')
+
+          tabs = [a for a in fd if (a.get('context') or {}).get('tab')]
+          if not tabs:
+              raise SystemExit('no FanDuel tab artifacts captured')
+
+          echoed = [a for a in tabs if (a.get('context') or {}).get('tab_echoed_no_tab_baseline') is True]
+          bad = [a for a in echoed if a.get('outcome') != 'PARTIAL']
+          if bad:
+              raise SystemExit(
+                  'silent-default FanDuel payloads still masquerade as conclusive: ' +
+                  json.dumps([(x.get('artifact'), x.get('outcome')) for x in bad])
+              )
+
+          false_partials = [
+              a for a in tabs
+              if (a.get('context') or {}).get('tab_echoed_no_tab_baseline') is False
+              and a.get('outcome') == 'PARTIAL'
+          ]
+          if false_partials:
+              raise SystemExit(
+                  'distinct tab payloads were incorrectly classified PARTIAL: ' +
+                  json.dumps([x.get('artifact') for x in false_partials])
+              )
+
+          tokens = sorted({(a.get('context') or {}).get('tab') for a in tabs})
+          print('manifest:', paths[0])
+          print('FanDuel artifacts:', len(fd))
+          print('tab artifacts:', len(tabs))
+          print('tab tokens observed:', tokens)
+          print('silent-default PARTIAL observations:', len(echoed))
+          print('PASS: every observed silent-default payload is non-conclusive PARTIAL')
+          PY
+
+      - name: Upload probe evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: nfl-live-capture-probe
+          path: /tmp/nfl-live-probe
+          retention-days: 7
