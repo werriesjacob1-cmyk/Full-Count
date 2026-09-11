@@ -12,11 +12,15 @@ const DEFAULTS = Object.freeze({
   debug: false,
   maxLeadAgeMin: 5,
   minClaimIntervalSec: 10,
-  maxClaimsPerSession: 10
+  maxClaimsPerSession: 10,
+  returnToList: true,
+  returnDelaySec: 5,
+  myName: ''
 });
 
-const TOGGLES = ['autoClaim', 'dryRun', 'soundAlert', 'debug'];
-const NUMBERS = ['maxLeadAgeMin', 'minClaimIntervalSec', 'maxClaimsPerSession'];
+const TOGGLES = ['autoClaim', 'dryRun', 'soundAlert', 'debug', 'returnToList'];
+const NUMBERS = ['maxLeadAgeMin', 'minClaimIntervalSec', 'maxClaimsPerSession', 'returnDelaySec'];
+const TEXTS = ['myName'];
 const $ = (id) => document.getElementById(id);
 
 /* -------------------------------------------------------------------- */
@@ -27,6 +31,7 @@ async function loadSettings() {
   const stored = await chrome.storage.sync.get(DEFAULTS);
   for (const key of TOGGLES) $(key).checked = Boolean(stored[key]);
   for (const key of NUMBERS) $(key).value = stored[key];
+  for (const key of TEXTS) $(key).value = stored[key] || '';
   reflectArmState();
 }
 
@@ -55,6 +60,13 @@ function wireToggles() {
     $(key).addEventListener('change', async (event) => {
       await chrome.storage.sync.set({ [key]: event.target.checked });
       reflectArmState();
+      flashSaved();
+    });
+  }
+
+  for (const key of TEXTS) {
+    $(key).addEventListener('change', async (event) => {
+      await chrome.storage.sync.set({ [key]: event.target.value.trim() });
       flashSaved();
     });
   }
@@ -135,8 +147,13 @@ function render(history, ports) {
     label.title = entry.signature || '';
 
     const source = document.createElement('td');
-    source.textContent = entry.dryRun ? 'dry run' : (entry.source || 'claimed');
+    source.textContent = entry.dryRun ? 'dry run'
+      : entry.verified === true ? 'confirmed'
+      : entry.verified === false ? 'UNVERIFIED'
+      : (entry.source || 'claimed');
     if (entry.dryRun) source.style.color = '#94a3b8';
+    if (entry.verified === true) source.style.color = '#16a34a';
+    if (entry.verified === false) source.style.color = '#dc2626';
 
     const speed = document.createElement('td');
     speed.className = 'mono';

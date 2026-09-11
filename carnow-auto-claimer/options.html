@@ -134,6 +134,12 @@
     .banner.dry  { background: #16a34a22; border-color: #16a34a; color: #16a34a; }
     .banner.idle { background: transparent; border-color: var(--line); color: var(--muted); }
 
+    input[type="text"] {
+      font: inherit; padding: 7px 10px;
+      border: 1px solid var(--line); border-radius: 8px;
+      background: var(--bg); color: var(--ink);
+    }
+
     input[type="number"] {
       font: inherit; width: 84px; padding: 7px 10px; text-align: right;
       border: 1px solid var(--line); border-radius: 8px;
@@ -200,6 +206,37 @@
           <input type="checkbox" id="debug" aria-label="Logging and Debug Mode">
           <span class="track"></span>
         </label>
+      </div>
+    </div>
+
+    <p class="section-title">After a claim</p>
+    <div class="card">
+      <div class="row">
+        <div>
+          <div class="label">Return to the list after claiming</div>
+          <div class="hint">Tapping a lead opens its detail page, which stops the extension watching
+            the list. This navigates back so the next lead is still caught.</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="returnToList" aria-label="Return to the list after claiming">
+          <span class="track"></span>
+        </label>
+      </div>
+      <div class="row">
+        <div>
+          <div class="label">Seconds to wait before returning</div>
+          <div class="hint">Long enough to read the lead, short enough not to miss the next one.</div>
+        </div>
+        <input type="number" id="returnDelaySec" min="0" max="120" step="1" aria-label="Seconds before returning to the list">
+      </div>
+      <div class="row">
+        <div>
+          <div class="label">My name in CarNow</div>
+          <div class="hint">Exactly as it appears beside the green “Claimed” pill, e.g. Jacob Werries.
+            Used to confirm the lead landed on you. Leave blank to skip that check.</div>
+        </div>
+        <input type="text" id="myName" placeholder="Jacob Werries" aria-label="My name in CarNow"
+               style="width:170px;text-align:left">
       </div>
     </div>
 

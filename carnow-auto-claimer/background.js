@@ -17,7 +17,10 @@ const DEFAULTS = Object.freeze({
   debug: false,
   maxLeadAgeMin: 5,
   minClaimIntervalSec: 10,
-  maxClaimsPerSession: 10
+  maxClaimsPerSession: 10,
+  returnToList: true,
+  returnDelaySec: 5,
+  myName: ''
 });
 
 const KEEPALIVE_ALARM = 'carnow-keepalive';
@@ -201,6 +204,45 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({ ok: true, total: history.length });
     })();
     return true; // async sendResponse
+  }
+
+  if (message.type === 'CLAIM_VERIFIED') {
+    const { signature, verified, claimedText, mine } = message.payload || {};
+    (async () => {
+      // Stamp the verdict onto the history row this claim created.
+      writeChain = writeChain.then(async () => {
+        const { claimHistory = [] } = await chrome.storage.local.get({ claimHistory: [] });
+        const entry = claimHistory.find((e) => e.signature === signature);
+        if (entry) {
+          entry.verified = verified;
+          await chrome.storage.local.set({ claimHistory });
+        }
+        return claimHistory;
+      }).catch(() => []);
+      await writeChain;
+
+      // Silence is fine when it worked; a failure needs to be seen.
+      if (!verified) {
+        const why = !claimedText
+          ? 'the detail page never showed "Claimed"'
+          : mine === false
+            ? 'it was claimed, but not under your name'
+            : 'unknown';
+        try {
+          await chrome.notifications.create(`carnow-unverified-${Date.now()}`, {
+            type: 'basic',
+            iconUrl: chrome.runtime.getURL('icons/icon128.png'),
+            title: 'Claim may not have registered',
+            message: `Tapped the lead but ${why}. Check it manually.`,
+            priority: 2,
+            requireInteraction: true
+          });
+        } catch { /* notifications unavailable */ }
+      }
+      await debugLog('claim verification', message.payload);
+      sendResponse({ ok: true });
+    })();
+    return true;
   }
 
   if (message.type === 'HEARTBEAT') {

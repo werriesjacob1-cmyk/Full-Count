@@ -36,7 +36,10 @@
     debug: false,
     maxLeadAgeMin: 5,
     minClaimIntervalSec: 10,
-    maxClaimsPerSession: 10
+    maxClaimsPerSession: 10,
+    returnToList: true,
+    returnDelaySec: 5,
+    myName: ''
   });
 
   const POLL_INTERVAL_MS   = 500;
@@ -99,6 +102,16 @@
 
   let claimsThisSession = 0;
   let lastClaimAt = 0;
+
+  /* Claiming navigates to the lead detail page, which ends this page's life.
+   * The hand-off rides in sessionStorage: it is per-tab, same-origin, and
+   * survives both a full reload and an SPA route change. */
+  const PENDING_KEY  = '__carnowACPending';
+  const BASELINE_KEY = '__carnowACBaseline';
+  const HANDOFF_TTL_MS = 2 * 60 * 1000;
+
+  let lastUrl = location.href;
+  let returnTimer = null;
 
   const observers = new Set();
   const observedRoots = new WeakSet();
@@ -317,6 +330,113 @@
   }
 
   /* ---------------------------------------------------------------- */
+  /* Navigation hand-off                                               */
+  /* ---------------------------------------------------------------- */
+
+  function saveHandoff(record, returnTo) {
+    try {
+      sessionStorage.setItem(PENDING_KEY, JSON.stringify({ ...record, returnTo }));
+      // Carry the baseline across too. A fresh baseline on return would
+      // swallow any lead that arrived during the detour; restoring the old
+      // one leaves it looking correctly new.
+      sessionStorage.setItem(BASELINE_KEY, JSON.stringify({
+        ts: Date.now(), url: returnTo, keys: Array.from(baseline).slice(-500)
+      }));
+    } catch { /* storage disabled */ }
+  }
+
+  function takeHandoff() {
+    try {
+      const raw = sessionStorage.getItem(PENDING_KEY);
+      if (!raw) return null;
+      sessionStorage.removeItem(PENDING_KEY);
+      const pending = JSON.parse(raw);
+      if (!pending || Date.now() - pending.ts > HANDOFF_TTL_MS) return null;
+      return pending;
+    } catch { return null; }
+  }
+
+  /** Restores the pre-claim baseline when we land back on the same list. */
+  function restoreBaseline() {
+    try {
+      const raw = sessionStorage.getItem(BASELINE_KEY);
+      if (!raw) return false;
+      const saved = JSON.parse(raw);
+      if (!saved || Date.now() - saved.ts > HANDOFF_TTL_MS) return false;
+      if (saved.url !== location.href) return false;
+      sessionStorage.removeItem(BASELINE_KEY);
+      for (const key of saved.keys) baseline.add(key);
+      return true;
+    } catch { return false; }
+  }
+
+  /**
+   * The detail page states it plainly: a green "Claimed" pill followed by the
+   * owning rep. Set "My name in CarNow" and this confirms the lead landed on
+   * YOU rather than merely being claimed by somebody.
+   */
+  function verifyClaim() {
+    const text = norm(document.body ? document.body.textContent : '').slice(0, 4000);
+    const claimed = /\bclaimed\b/i.test(text);
+    const name = norm(settings.myName);
+    const mine = name ? text.toLowerCase().includes(name.toLowerCase()) : null;
+    return { claimed, mine };
+  }
+
+  function onNavigated(from, to) {
+    log('navigated', from, '->', to);
+    const pending = takeHandoff();
+    if (!pending) return;
+
+    const result = verifyClaim();
+    const ok = result.claimed && result.mine !== false;
+
+    if (ok) {
+      log('claim confirmed on the detail page', result);
+    } else {
+      warn('claim NOT confirmed — page shows claimed=' + result.claimed + ', mine=' + result.mine);
+    }
+    try {
+      chrome.runtime.sendMessage({
+        type: 'CLAIM_VERIFIED',
+        payload: { ...pending, verified: ok, claimedText: result.claimed, mine: result.mine }
+      }, () => void chrome.runtime.lastError);
+    } catch { /* no context */ }
+
+    if (!settings.returnToList || !pending.returnTo || pending.returnTo === to) return;
+
+    if (returnTimer) clearTimeout(returnTimer);
+    returnTimer = setTimeout(() => {
+      log('returning to the list to keep watching');
+      try {
+        // history.back keeps the SPA warm; assign is the fallback if the
+        // route does not actually change.
+        const before = location.href;
+        history.back();
+        setTimeout(() => {
+          if (location.href === before) location.assign(pending.returnTo);
+        }, 1200);
+      } catch {
+        location.assign(pending.returnTo);
+      }
+    }, Math.max(0, settings.returnDelaySec) * 1000);
+  }
+
+  function checkNavigation() {
+    const now = location.href;
+    if (now === lastUrl) return;
+    const from = lastUrl;
+    lastUrl = now;
+    // An SPA route change leaves the script running, so re-arm from scratch.
+    armed = false;
+    baseline.clear();
+    acted.clear();
+    baselineStarted = 0;
+    lastBaselineSize = -1;
+    onNavigated(from, now);
+  }
+
+  /* ---------------------------------------------------------------- */
   /* Claiming                                                          */
   /* ---------------------------------------------------------------- */
 
@@ -445,6 +565,7 @@
         ' in ' + record.elapsedMs + 'ms —', label);
     beep();
     report(record);
+    if (!dry) saveHandoff(record, location.href);
   }
 
   /* ---------------------------------------------------------------- */
@@ -578,7 +699,7 @@
 
   function startIntervalPolling() {
     if (pollTimer) return;
-    pollTimer = setInterval(() => evaluate('poll'), POLL_INTERVAL_MS);
+    pollTimer = setInterval(() => { checkNavigation(); evaluate('poll'); }, POLL_INTERVAL_MS);
     log('fallback polling: setInterval');
   }
 
@@ -590,7 +711,7 @@
       const url = URL.createObjectURL(new Blob([src], { type: 'text/javascript' }));
       pollWorker = new Worker(url);
       URL.revokeObjectURL(url);
-      pollWorker.onmessage = () => { lastWorkerTick = Date.now(); evaluate('worker-poll'); };
+      pollWorker.onmessage = () => { lastWorkerTick = Date.now(); checkNavigation(); evaluate('worker-poll'); };
       pollWorker.onerror = () => { teardownWorker(); startIntervalPolling(); };
       pollWorker.postMessage({ t: 'start', ms: POLL_INTERVAL_MS });
       lastWorkerTick = Date.now();
@@ -636,6 +757,7 @@
     for (const o of observers) { try { o.disconnect(); } catch { /* noop */ } }
     observers.clear();
     teardownWorker();
+    if (returnTimer) { clearTimeout(returnTimer); returnTimer = null; }
     for (const t of [pollTimer, shadowTimer, purgeTimer, baselineTimer]) if (t) clearInterval(t);
     pollTimer = shadowTimer = purgeTimer = baselineTimer = null;
     seen.clear();
@@ -689,8 +811,34 @@
       observe(root);
       discoverShadowRoots(root);
 
+      lastUrl = location.href;
+
+      // A full page load after a claim lands here rather than in
+      // checkNavigation, so consume the hand-off before arming.
+      const pending = takeHandoff();
+      if (pending) {
+        const result = verifyClaim();
+        const ok = result.claimed && result.mine !== false;
+        (ok ? log : warn)('claim ' + (ok ? 'confirmed' : 'NOT confirmed') + ' after reload', result);
+        try {
+          chrome.runtime.sendMessage({
+            type: 'CLAIM_VERIFIED',
+            payload: { ...pending, verified: ok, claimedText: result.claimed, mine: result.mine }
+          }, () => void chrome.runtime.lastError);
+        } catch { /* no context */ }
+        if (settings.returnToList && pending.returnTo && pending.returnTo !== location.href) {
+          returnTimer = setTimeout(() => location.assign(pending.returnTo),
+                                   Math.max(0, settings.returnDelaySec) * 1000);
+        }
+      }
+
+      if (restoreBaseline()) {
+        armed = true;
+        log('restored baseline of ' + baseline.size + ' rows from before the claim');
+      }
+
       // Poll until the list settles, then arm.
-      baselineTimer = setInterval(() => evaluate('baseline'), 250);
+      baselineTimer = setInterval(() => { checkNavigation(); evaluate('baseline'); }, 250);
       evaluate('initial');
 
       startWorkerPolling();

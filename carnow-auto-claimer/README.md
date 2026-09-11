@@ -149,6 +149,26 @@ Two safety properties fall out of that:
   than delivered through the overlay. The row is un-marked so a later tick can retry once
   it's clear.
 
+## What happens after a claim
+
+Tapping a row navigates to the lead's detail page — which is also where the claim is
+confirmed, as a green **Claimed** pill followed by the owning rep. Two consequences:
+
+**The extension stops watching the list.** Without handling, it claims one lead per shift
+and then sits on a detail page. So a claim writes a hand-off into `sessionStorage`
+(per-tab, same-origin, survives both a full reload and an SPA route change) and the
+detail page navigates back after `returnDelaySec`.
+
+**The pre-claim baseline rides along with it.** Taking a fresh baseline on return would
+swallow any lead that arrived during the detour; restoring the old one leaves that lead
+correctly looking new.
+
+The hand-off also carries verification. On arrival the detail page is checked for the
+`Claimed` marker and — if you've set **My name in CarNow** — for your name beside it. A
+confirmed claim is logged quietly and shows green in the history table. An unconfirmed one
+raises a sticky notification saying which half failed, because a claim you believe landed
+but didn't is worse than one that visibly failed.
+
 ## Known unknown
 
 **Can a mistaken claim be released?** If not, keep Dry Run on longer than feels
