@@ -319,6 +319,21 @@ with tempfile.TemporaryDirectory() as td:
             "public_top_pick_totals": {"hits": 7, "misses": 3, "voids": 0},
             "by_recommendation_status_totals": {"top_pick": {"hits": 7, "misses": 3}},
         }, f)
+    # Public Top Pick by-prop history comes only from immutable
+    # grades_*.json -> public_top_picks, never from broader recommendation rows.
+    with open(os.path.join(td, "grades_2026-09-01.json"), "w") as f:
+        json.dump({
+            "public_top_picks": [
+                {"actual_stat": "hits", "grade": "hit"},
+                {"actual_stat": "hits", "grade": "miss"},
+                {"stat": "strikeouts", "grade": "hit"},
+                {"stat": "strikeouts", "grade": "void"},
+            ],
+            "picks": [
+                {"actual_stat": "hits", "grade": "hit",
+                 "recommendation_status": "lean"},
+            ],
+        }, f)
     tr = bd.load_track_record(hist_path)
     check(tr["legacy"]["hit_rate"] == 0.553, "legacy reads main_hit_rate, not any blended "
           "overall figure", f"got {tr['legacy']}")
@@ -329,6 +344,15 @@ with tempfile.TemporaryDirectory() as td:
           f"got {tr['current']}")
     check(tr["current"]["n"] == 10, "current n is hits+misses from "
           "public_top_pick_totals", f"got {tr['current']}")
+    check(tr["current"]["by_prop"]["hits"] == {
+              "hits": 1, "misses": 1, "n": 2, "hit_rate": 0.5,
+              "sample_label": "insufficient"},
+          "per-prop Top Pick history uses only immutable public_top_picks and excludes "
+          "broader picks/Leans", f"got {tr['current']['by_prop']}")
+    check(tr["current"]["by_prop"]["strikeouts"]["hits"] == 1
+          and tr["current"]["by_prop"]["strikeouts"]["misses"] == 0,
+          "void/ungraded rows do not enter the per-prop hit-rate denominator",
+          f"got {tr['current']['by_prop']}")
     # Real bug, found 2026-08-25: the Performance page showed a bare
     # hit-rate percentage with no indication of how thin the underlying
     # sample is -- sample_label (via eval_lib's shared sample-size-honesty
