@@ -32,6 +32,8 @@ was checked and legitimately had nothing to report:
                             nothing for this entity right now
     SOURCE_FAILED           transport, status, or structure failure -- we do
                             NOT know what the source would have said
+    PARTIAL                 bytes were preserved, but expected semantic coverage
+                            is incomplete or ambiguous; never evidence of absence
     NOT_CHECKED             never attempted this run (budget, ordering, or an
                             upstream dependency failed first)
     UNAVAILABLE_BY_POLICY   deliberately not fetched: terms unclear, requires
@@ -60,14 +62,15 @@ CAPTURE_CONTRACT_VERSION = 1
 CHECKED_AND_FOUND = "CHECKED_AND_FOUND"
 CHECKED_AND_NONE_FOUND = "CHECKED_AND_NONE_FOUND"
 SOURCE_FAILED = "SOURCE_FAILED"
+PARTIAL = "PARTIAL"
 NOT_CHECKED = "NOT_CHECKED"
 UNAVAILABLE_BY_POLICY = "UNAVAILABLE_BY_POLICY"
 STALE = "STALE"
 UNRESOLVED_CONTRADICTION = "UNRESOLVED_CONTRADICTION"
 
 OUTCOMES = frozenset((
-    CHECKED_AND_FOUND, CHECKED_AND_NONE_FOUND, SOURCE_FAILED, NOT_CHECKED,
-    UNAVAILABLE_BY_POLICY, STALE, UNRESOLVED_CONTRADICTION,
+    CHECKED_AND_FOUND, CHECKED_AND_NONE_FOUND, SOURCE_FAILED, PARTIAL,
+    NOT_CHECKED, UNAVAILABLE_BY_POLICY, STALE, UNRESOLVED_CONTRADICTION,
 ))
 
 # Outcomes that assert the source was successfully understood. Only these may
@@ -115,12 +118,12 @@ class Fetched:
                 f"unknown capture outcome {self.outcome!r}; "
                 f"expected one of {sorted(OUTCOMES)}"
             )
-        if self.outcome == CHECKED_AND_FOUND and not self.body:
+        if self.outcome in (CHECKED_AND_FOUND, PARTIAL) and not self.body:
             raise ValueError(
-                f"{self.source_id}/{self.artifact}: CHECKED_AND_FOUND asserts a "
-                "payload was understood, but no body was captured. Use "
-                "SOURCE_FAILED when the fetch did not produce one -- a missing "
-                "payload must never read as a successful observation."
+                f"{self.source_id}/{self.artifact}: {self.outcome} asserts bytes "
+                "were preserved, but no body was captured. Use SOURCE_FAILED "
+                "when the fetch did not produce one -- a missing payload must "
+                "never read as a successful or partial observation."
             )
         if self.outcome == SOURCE_FAILED and not self.failure_reason:
             raise ValueError(
@@ -155,6 +158,9 @@ def coverage_summary(records: list["Fetched"]) -> dict:
         },
         "sources_with_failures": sorted(
             s for s, b in per_source.items() if b.get(SOURCE_FAILED)
+        ),
+        "sources_with_partial_observation": sorted(
+            s for s, b in per_source.items() if b.get(PARTIAL)
         ),
         # A source that produced NO conclusive observation at all is the
         # dangerous case: downstream, its silence is indistinguishable from
