@@ -58,7 +58,7 @@ jobs:
           REQUIRED_PBP = {
               "season", "week", "season_type", "game_id", "posteam",
               "pass_attempt", "qb_dropback", "sack", "qb_scramble",
-              "two_point_attempt", "play_type",
+              "qb_spike", "two_point_attempt", "play_type",
           }
           REQUIRED_TEAM = {
               "season", "week", "season_type", "team", "attempts",
@@ -114,6 +114,7 @@ jobs:
                   "dropback": 0,
                   "sack": 0,
                   "scramble": 0,
+                  "spike": 0,
                   "two_point": 0,
               })
               rows_seen = 0
@@ -164,6 +165,9 @@ jobs:
                       rec["scramble"] += flag(
                           row.get("qb_scramble"), "qb_scramble"
                       )
+                      rec["spike"] += flag(
+                          row.get("qb_spike"), "qb_spike"
+                      )
 
               turl = (
                   "https://github.com/nflverse/nflverse-data/releases/download/"
@@ -207,8 +211,14 @@ jobs:
                       missing_pbp.append(key)
                       continue
 
-                  process_attempts = (
+                  parsed_pass_minus_sack = (
+                      rec["pass_attempt"] - rec["sack"]
+                  )
+                  simple_process_attempts = (
                       rec["dropback"] - rec["sack"] - rec["scramble"]
+                  )
+                  spike_adjusted_process_attempts = (
+                      simple_process_attempts + rec["spike"]
                   )
                   comparisons.append({
                       "week": key[1],
@@ -218,11 +228,21 @@ jobs:
                       "dropbacks": rec["dropback"],
                       "sacks": rec["sack"],
                       "scrambles": rec["scramble"],
-                      "process_attempts": process_attempts,
-                      "pbp_delta":
+                      "spikes": rec["spike"],
+                      "simple_process_attempts":
+                          simple_process_attempts,
+                      "spike_adjusted_process_attempts":
+                          spike_adjusted_process_attempts,
+                      "parsed_pass_minus_sack":
+                          parsed_pass_minus_sack,
+                      "raw_pass_attempt_delta":
                           rec["pass_attempt"] - official,
-                      "process_delta":
-                          process_attempts - official,
+                      "parsed_pass_minus_sack_delta":
+                          parsed_pass_minus_sack - official,
+                      "simple_process_delta":
+                          simple_process_attempts - official,
+                      "spike_adjusted_process_delta":
+                          spike_adjusted_process_attempts - official,
                   })
 
               if missing_pbp:
@@ -235,18 +255,30 @@ jobs:
                       f"{season}: no regular-season team-week comparisons"
                   )
 
-              pbp_exact = [
-                  r for r in comparisons
-                  if abs(r["pbp_delta"]) <= EPS
-              ]
-              process_exact = [
-                  r for r in comparisons
-                  if abs(r["process_delta"]) <= EPS
-              ]
-              mismatches = [
-                  r for r in comparisons
-                  if abs(r["process_delta"]) > EPS
-              ]
+              def reconciliation(delta_field):
+                  exact = [
+                      r for r in comparisons
+                      if abs(r[delta_field]) <= EPS
+                  ]
+                  mismatches = [
+                      r for r in comparisons
+                      if abs(r[delta_field]) > EPS
+                  ]
+                  return {
+                      "exact_n": len(exact),
+                      "exact_rate":
+                          len(exact) / len(comparisons),
+                      "max_abs_delta": max(
+                          abs(r[delta_field]) for r in comparisons
+                      ),
+                      "mean_abs_delta": statistics.fmean(
+                          abs(r[delta_field]) for r in comparisons
+                      ),
+                      "mismatch_n": len(mismatches),
+                      "mismatches": mismatches[:100],
+                      "mismatches_truncated":
+                          len(mismatches) > 100,
+                  }
 
               reports[str(season)] = {
                   "team_weeks": len(comparisons),
@@ -256,33 +288,28 @@ jobs:
                           missing_binary_counts.items()
                       )
                   },
-                  "pbp_pass_attempt_reconciliation": {
-                      "exact_n": len(pbp_exact),
-                      "exact_rate":
-                          len(pbp_exact) / len(comparisons),
-                      "max_abs_delta": max(
-                          abs(r["pbp_delta"]) for r in comparisons
-                      ),
-                      "mean_abs_delta": statistics.fmean(
-                          abs(r["pbp_delta"]) for r in comparisons
+                  "raw_pbp_pass_attempt": {
+                      "formula": "pass_attempt",
+                      **reconciliation("raw_pass_attempt_delta"),
+                  },
+                  "parsed_pass_minus_sack": {
+                      "formula": "pass_attempt - sack",
+                      **reconciliation(
+                          "parsed_pass_minus_sack_delta"
                       ),
                   },
-                  "dropback_process_reconciliation": {
+                  "simple_dropback_process": {
                       "formula":
                           "qb_dropback - sack - qb_scramble",
-                      "exact_n": len(process_exact),
-                      "exact_rate":
-                          len(process_exact) / len(comparisons),
-                      "max_abs_delta": max(
-                          abs(r["process_delta"]) for r in comparisons
+                      **reconciliation("simple_process_delta"),
+                  },
+                  "spike_adjusted_dropback_process": {
+                      "formula": (
+                          "qb_dropback - sack - qb_scramble + qb_spike"
                       ),
-                      "mean_abs_delta": statistics.fmean(
-                          abs(r["process_delta"]) for r in comparisons
+                      **reconciliation(
+                          "spike_adjusted_process_delta"
                       ),
-                      "mismatch_n": len(mismatches),
-                      "mismatches": mismatches[:100],
-                      "mismatches_truncated":
-                          len(mismatches) > 100,
                   },
               }
               sources["pbp"][str(season)] = {
@@ -312,25 +339,27 @@ jobs:
               "sources": sources,
               "reports": reports,
               "decision": {
-                  "pbp_pass_attempts_reconcile_all_seasons":
+                  "parsed_pass_minus_sack_exact_all_seasons":
                       all(
                           reports[str(s)][
-                              "pbp_pass_attempt_reconciliation"
+                              "parsed_pass_minus_sack"
                           ]["exact_rate"] == 1.0
                           for s in SEASONS
                       ),
-                  "simple_dropback_process_exact_all_seasons":
+                  "spike_adjusted_dropback_process_exact_all_seasons":
                       all(
                           reports[str(s)][
-                              "dropback_process_reconciliation"
+                              "spike_adjusted_dropback_process"
                           ]["exact_rate"] == 1.0
                           for s in SEASONS
                       ),
               },
               "next_if_process_exact": (
-                  "Model team dropbacks from plays and PROE, then convert "
-                  "dropbacks to attempts with explicitly prior-only "
-                  "sack/scramble rates."
+                  "If the spike-adjusted process is exact or near-exact with "
+                  "documented residuals, model team dropbacks from plays and "
+                  "PROE, then convert to official attempts with prior-only "
+                  "sack/scramble/spike process rates; official weekly stats "
+                  "remain the outcome authority."
               ),
               "next_if_process_not_exact": (
                   "Inspect mismatch semantics before any decomposition model. "
