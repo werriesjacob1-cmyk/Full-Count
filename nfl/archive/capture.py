@@ -112,8 +112,8 @@ def run_capture(
             "separate and harder fact. See nfl/docs/PLAY_CALLER.md.",
             "The authoritative NFL.com inactives index and any linked "
             "same-origin game-specific inactive-report articles are captured "
-            "as raw HTML. Player/team parsing, semantic normalization, and "
-            "binding to canonical game/player identity remain open gaps.",
+            "as raw HTML. Per-game player/team parsing, semantic normalization, "
+            "and binding to canonical game/player identity remain open gaps.",
             "Weather forecast vintages are blocked on a verified venue "
             "coordinate table, which NFL-01 did not invent.",
             "Press-conference transcripts and captions are not retrieved; terms "
