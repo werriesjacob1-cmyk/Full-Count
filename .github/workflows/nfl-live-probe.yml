@@ -9,6 +9,8 @@ on:
       - superchad/nfl-foundation-continuation-20260911
     paths:
       - .github/workflows/nfl-live-probe.yml
+      - nfl/archive/provenance.py
+      - nfl/archive/sources/fanduel_nfl.py
 
 permissions:
   contents: read
