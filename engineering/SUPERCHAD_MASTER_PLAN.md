@@ -25,8 +25,9 @@ rate, and it must not increase volume by lowering evidence standards.
 
 FULL COUNT is now managed as three parallel lanes:
 
-### Lane A — NFL evidence foundation
-Preserve the 2026 season correctly before building a prediction system.
+### Lane A — NFL data + scoring-model R&D
+Preserve the 2026 season correctly while beginning the first measurable scoring-model
+research in parallel. Production scoring/picks remain gated on evidence integrity.
 
 ### Lane B — MLB predictive improvement
 Keep improving the existing live product, especially selector skill, market-relative
@@ -363,15 +364,67 @@ but should stop at those authority gates.
 
 # CURRENT ORDER OF EXECUTION
 
-1. Finish MLB plus-money evaluator red→green.
-2. Complete NFL FanDuel/capture post-fix live verification.
-3. Make NFL-01 foundation merge-ready.
-4. Prepare NFL activation/ruleset decision package for Jacob.
-5. Make MLB per-prop Top Pick UI merge-ready.
-6. Isolate/fix root first-paint/live-overlay baseline defect.
-7. Build NFL source-completeness/play-caller plan.
-8. Deep competitor/source research and Film Intelligence feasibility.
-9. Design NFL canonical bitemporal world-state contract.
-10. Begin historical measurement only after the foundation above is stable.
+1. NFL DATA P0: complete live source coverage, capture validation, inactives/practice/coaching/play-caller/weather/market/film-charting gaps.
+2. NFL MODEL P0: define the first measurable scoring architecture and build historical/shadow research prototypes only where point-in-time data is honest.
+3. COMPETITOR INTELLIGENCE P0: continuously study PFF, Outlier, Props.Cash, BettingPros, Establish The Run, RotoWire, OddsJam, SumerSports and relevant emerging products; map their data, model surfaces, UX, social content, and apparent gaps.
+4. SOCIAL DISCOVERY P0: monitor public/indexed X, Instagram, TikTok, Facebook, YouTube and web content for NFL prop/model products and workflows using legitimate public access, approved APIs, or permitted listening tools; never bypass authentication, robots, or access controls.
+5. Complete NFL FanDuel/capture post-fix live verification and make NFL-01 foundation merge-ready.
+6. Prepare NFL activation/ruleset decision package for Jacob.
+7. Finish MLB plus-money evaluator red→green and continue MLB accuracy work.
+8. Make MLB per-prop Top Pick UI merge-ready.
+9. Isolate/fix root first-paint/live-overlay baseline defect.
+10. Design NFL canonical bitemporal world-state contract and begin historical measurement as each source family becomes scientifically usable.
 
 This order may change only when new evidence shows a higher-value or time-critical dependency.
+
+
+# COMPETITOR / SOCIAL INTELLIGENCE WORKSTREAM
+
+Purpose: learn faster than competitors without copying opaque claims or proprietary material.
+
+For every serious NFL prop/projection platform, record:
+- product name and URL
+- markets covered
+- books/odds coverage
+- projection outputs
+- cover probability / EV / edge presentation
+- usage/opportunity metrics
+- coaching/scheme treatment
+- injury/depth/inactive handling
+- matchup/coverage/film/tracking treatment
+- touchdown/scoring treatment
+- line movement/public betting
+- correlation/parlay handling
+- update cadence
+- historical hit-rate presentation
+- model transparency
+- customer UX
+- alerting/mobile workflow
+- public performance claims and whether independently auditable
+- apparent data sources
+- apparent weaknesses / missing layers
+- FULL COUNT opportunity to be better
+
+Social discovery should collect only public, permitted material and preserve source URL,
+platform, posted timestamp, author/account, content type, and observed_at. It is research
+evidence, not model truth. Viral claims must never be promoted without independent evidence.
+
+Priority competitor set:
+PFF, Outlier, Props.Cash, BettingPros, Establish The Run, RotoWire, OddsJam,
+SumerSports, plus new products discovered from public social/web research.
+
+Initial observed differentiators worth studying:
+- PFF: real-time projections, cover probability, matchup/scheme context, injuries,
+  lineups, odds comparison, and first-TD tooling.
+- Outlier: multi-book prop discovery, implied probability, hit-rate slicing, EV+,
+  line movement, public-bet percentages, saved filters and alerts.
+- BettingPros: projection + consensus line + implied leg odds, EV, filters,
+  correlation-aware SGP tooling.
+- Establish The Run: full-stat projections plus strong human football context,
+  usage, coaching tendencies, matchup analysis, rapid news-driven projection updates.
+- RotoWire: continuous injury/depth-chart/news integration into projections.
+- OddsJam: broad real-time market/alternate/prop coverage, line movement and alerts.
+
+FULL COUNT should aim to exceed them through the combination of:
+point-in-time provenance + coaching/play-caller state + daily intelligence +
+film/charting state + market-relative modeling + transparent immutable realized results.
