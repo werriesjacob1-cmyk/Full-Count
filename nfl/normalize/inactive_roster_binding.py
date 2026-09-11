@@ -1,1 +1,330 @@
-#!/usr/bin/env python3\n"""Strict offline binding from official NFL inactive rows to roster IDs.\n\nThis module is deliberately narrow:\n- input 1: parsed source-local inactive rows,\n- input 2: a caller-pinned nflverse roster snapshot,\n- output: durable roster IDs only when one exact safe candidate exists.\n\nIt never fetches data, never guesses a game ID, never infers a starter, and\nnever turns an unresolved source row into evidence of availability.\n"""\nfrom __future__ import annotations\n\nimport re\nimport unicodedata\nfrom collections.abc import Mapping, Sequence\nfrom typing import Any\n\n\nBINDING_CONTRACT_VERSION = 1\n\n\n_TEAM_NICKNAMES = {\n    "CARDINALS": "ARI",\n    "FALCONS": "ATL",\n    "RAVENS": "BAL",\n    "BILLS": "BUF",\n    "PANTHERS": "CAR",\n    "BEARS": "CHI",\n    "BENGALS": "CIN",\n    "BROWNS": "CLE",\n    "COWBOYS": "DAL",\n    "BRONCOS": "DEN",\n    "LIONS": "DET",\n    "PACKERS": "GB",\n    "TEXANS": "HOU",\n    "COLTS": "IND",\n    "JAGUARS": "JAX",\n    "CHIEFS": "KC",\n    "RAIDERS": "LV",\n    "CHARGERS": "LAC",\n    "RAMS": "LAR",\n    "DOLPHINS": "MIA",\n    "VIKINGS": "MIN",\n    "PATRIOTS": "NE",\n    "SAINTS": "NO",\n    "GIANTS": "NYG",\n    "JETS": "NYJ",\n    "EAGLES": "PHI",\n    "STEELERS": "PIT",\n    "49ERS": "SF",\n    "SEAHAWKS": "SEA",\n    "BUCCANEERS": "TB",\n    "TITANS": "TEN",\n    "COMMANDERS": "WAS",\n}\n\n_TEAM_FULL_NAMES = {\n    "ARIZONA CARDINALS": "ARI",\n    "ATLANTA FALCONS": "ATL",\n    "BALTIMORE RAVENS": "BAL",\n    "BUFFALO BILLS": "BUF",\n    "CAROLINA PANTHERS": "CAR",\n    "CHICAGO BEARS": "CHI",\n    "CINCINNATI BENGALS": "CIN",\n    "CLEVELAND BROWNS": "CLE",\n    "DALLAS COWBOYS": "DAL",\n    "DENVER BRONCOS": "DEN",\n    "DETROIT LIONS": "DET",\n    "GREEN BAY PACKERS": "GB",\n    "HOUSTON TEXANS": "HOU",\n    "INDIANAPOLIS COLTS": "IND",\n    "JACKSONVILLE JAGUARS": "JAX",\n    "KANSAS CITY CHIEFS": "KC",\n    "LAS VEGAS RAIDERS": "LV",\n    "LOS ANGELES CHARGERS": "LAC",\n    "LOS ANGELES RAMS": "LAR",\n    "MIAMI DOLPHINS": "MIA",\n    "MINNESOTA VIKINGS": "MIN",\n    "NEW ENGLAND PATRIOTS": "NE",\n    "NEW ORLEANS SAINTS": "NO",\n    "NEW YORK GIANTS": "NYG",\n    "NEW YORK JETS": "NYJ",\n    "PHILADELPHIA EAGLES": "PHI",\n    "PITTSBURGH STEELERS": "PIT",\n    "SAN FRANCISCO 49ERS": "SF",\n    "SEATTLE SEAHAWKS": "SEA",\n    "TAMPA BAY BUCCANEERS": "TB",\n    "TENNESSEE TITANS": "TEN",\n    "WASHINGTON COMMANDERS": "WAS",\n}\n\n_TEAM_ALIASES = {}\n_TEAM_ALIASES.update(_TEAM_NICKNAMES)\n_TEAM_ALIASES.update(_TEAM_FULL_NAMES)\nfor _abbr in set(_TEAM_NICKNAMES.values()):\n    _TEAM_ALIASES[_abbr] = _abbr\n\n\n_POSITION_GROUP = {\n    "QB": "QB",\n    "RB": "RB", "FB": "RB",\n    "WR": "WR",\n    "TE": "TE",\n    "C": "OL", "G": "OL", "OG": "OL", "T": "OL", "OT": "OL",\n    "LT": "OL", "RT": "OL", "LG": "OL", "RG": "OL", "OL": "OL",\n    "DE": "DL", "DT": "DL", "NT": "DL", "DL": "DL",\n    "LB": "LB", "ILB": "LB", "OLB": "LB", "MLB": "LB",\n    "CB": "DB", "S": "DB", "FS": "DB", "SS": "DB", "DB": "DB",\n    "K": "K", "P": "P", "LS": "LS",\n}\n\n\ndef _team_key(value: Any) -> str:\n    text = unicodedata.normalize("NFKD", str(value or ""))\n    tokens = re.findall(r"[A-Za-z0-9]+", text.upper())\n    return " ".join(tokens)\n\n\ndef team_abbr(source_team_label: Any) -> str | None:\n    """Map an official report team label to nflverse abbreviation."""\n    return _TEAM_ALIASES.get(_team_key(source_team_label))\n\n\ndef _name_key(value: Any) -> str:\n    text = unicodedata.normalize("NFKD", str(value or "")).casefold()\n    return "".join(ch for ch in text if ch.isalnum())\n\n\ndef _position_key(value: Any) -> str:\n    return re.sub(r"[^A-Z0-9]", "", str(value or "").upper())\n\n\ndef _position_group(value: Any) -> str:\n    key = _position_key(value)\n    return _POSITION_GROUP.get(key, key)\n\n\ndef _position_compatible(\n    listed_position: Any,\n    roster_position: Any,\n    depth_position: Any,\n) -> bool:\n    listed = _position_group(listed_position)\n    if not listed:\n        return False\n    candidates = {\n        _position_group(roster_position),\n        _position_group(depth_position),\n    }\n    candidates.discard("")\n    return listed in candidates\n\n\ndef _base_result(\n    source_team_label: Any,\n    player: Mapping[str, Any],\n    *,\n    team: str | None,\n    status: str,\n    candidate_count: int = 0,\n) -> dict[str, Any]:\n    return {\n        "binding_contract_version": BINDING_CONTRACT_VERSION,\n        "binding_status": status,\n        "binding_method": None,\n        "source_team_label": str(source_team_label or "").strip(),\n        "team": team,\n        "player_name": str(player.get("player_name") or "").strip(),\n        "listed_position": str(player.get("listed_position") or "").strip(),\n        "source_player_href": player.get("source_player_href"),\n        "source_player_slug": player.get("source_player_slug"),\n        "candidate_count": int(candidate_count),\n        "gsis_id": None,\n        "esb_id": None,\n        "roster_position": None,\n        "roster_depth_chart_position": None,\n    }\n\n\ndef bind_player(\n    source_team_label: Any,\n    player: Mapping[str, Any],\n    roster_rows: Sequence[Mapping[str, Any]],\n    *,\n    season: int,\n) -> dict[str, Any]:\n    """Bind one parsed inactive player using exact safe roster semantics.\n\n    Matching order is intentionally strict:\n    1. known source team label -> nflverse team abbreviation,\n    2. exact normalized full_name inside that team and season,\n    3. compatible listed/roster position group,\n    4. exactly one surviving row,\n    5. non-empty GSIS durable ID.\n\n    There is no name-only or fuzzy fallback.\n    """\n    if not isinstance(player, Mapping):\n        raise ValueError("player must be a mapping")\n\n    team = team_abbr(source_team_label)\n    if team is None:\n        return _base_result(\n            source_team_label, player, team=None, status="UNRESOLVED_TEAM"\n        )\n\n    name_key = _name_key(player.get("player_name"))\n    if not name_key:\n        return _base_result(\n            source_team_label, player, team=team, status="UNRESOLVED_PLAYER"\n        )\n\n    exact_name_team = []\n    for row in roster_rows:\n        try:\n            row_season = int(row.get("season"))\n        except (TypeError, ValueError):\n            continue\n        if row_season != int(season):\n            continue\n        if str(row.get("team") or "").strip().upper() != team:\n            continue\n        if _name_key(row.get("full_name")) != name_key:\n            continue\n        exact_name_team.append(row)\n\n    if not exact_name_team:\n        return _base_result(\n            source_team_label, player, team=team, status="UNRESOLVED_PLAYER"\n        )\n\n    position_matches = [\n        row for row in exact_name_team\n        if _position_compatible(\n            player.get("listed_position"),\n            row.get("position"),\n            row.get("depth_chart_position"),\n        )\n    ]\n    if not position_matches:\n        return _base_result(\n            source_team_label,\n            player,\n            team=team,\n            status="POSITION_MISMATCH",\n            candidate_count=len(exact_name_team),\n        )\n    if len(position_matches) != 1:\n        return _base_result(\n            source_team_label,\n            player,\n            team=team,\n            status="AMBIGUOUS_PLAYER",\n            candidate_count=len(position_matches),\n        )\n\n    row = position_matches[0]\n    gsis_id = str(row.get("gsis_id") or "").strip()\n    if not gsis_id:\n        return _base_result(\n            source_team_label,\n            player,\n            team=team,\n            status="MISSING_DURABLE_ID",\n            candidate_count=1,\n        )\n\n    result = _base_result(\n        source_team_label,\n        player,\n        team=team,\n        status="BOUND",\n        candidate_count=1,\n    )\n    result.update({\n        "binding_method": "exact_name+team+position_group",\n        "gsis_id": gsis_id,\n        "esb_id": str(row.get("esb_id") or "").strip() or None,\n        "roster_position": str(row.get("position") or "").strip() or None,\n        "roster_depth_chart_position":\n            str(row.get("depth_chart_position") or "").strip() or None,\n    })\n    return result\n\n\ndef bind_report(\n    parsed_report: Mapping[str, Any],\n    roster_rows: Sequence[Mapping[str, Any]],\n    *,\n    season: int,\n) -> dict[str, Any]:\n    """Bind every source row while preserving unresolved rows explicitly."""\n    bound_teams = []\n    status_counts: dict[str, int] = {}\n    total = 0\n    bound = 0\n\n    for team_block in parsed_report.get("teams") or []:\n        label = team_block.get("source_team_label")\n        players = []\n        for player in team_block.get("players") or []:\n            result = bind_player(\n                label, player, roster_rows, season=season\n            )\n            players.append(result)\n            total += 1\n            status = result["binding_status"]\n            status_counts[status] = status_counts.get(status, 0) + 1\n            if status == "BOUND":\n                bound += 1\n        bound_teams.append({\n            "source_team_label": label,\n            "team": team_abbr(label),\n            "players": players,\n        })\n\n    return {\n        "binding_contract_version": BINDING_CONTRACT_VERSION,\n        "report_title": parsed_report.get("report_title"),\n        "season": int(season),\n        "player_count": total,\n        "bound_player_count": bound,\n        "unresolved_player_count": total - bound,\n        "all_players_bound": total > 0 and bound == total,\n        "status_counts": status_counts,\n        "teams": bound_teams,\n        "canonical_game_id": None,\n        "game_identity_bound": False,\n    }\n
+#!/usr/bin/env python3
+"""Strict offline binding from official NFL inactive rows to roster IDs.
+
+This module is deliberately narrow:
+- input 1: parsed source-local inactive rows,
+- input 2: a caller-pinned nflverse roster snapshot,
+- output: durable roster IDs only when one exact safe candidate exists.
+
+It never fetches data, never guesses a game ID, never infers a starter, and
+never turns an unresolved source row into evidence of availability.
+"""
+from __future__ import annotations
+
+import re
+import unicodedata
+from collections.abc import Mapping, Sequence
+from typing import Any
+
+
+BINDING_CONTRACT_VERSION = 1
+
+
+_TEAM_NICKNAMES = {
+    "CARDINALS": "ARI",
+    "FALCONS": "ATL",
+    "RAVENS": "BAL",
+    "BILLS": "BUF",
+    "PANTHERS": "CAR",
+    "BEARS": "CHI",
+    "BENGALS": "CIN",
+    "BROWNS": "CLE",
+    "COWBOYS": "DAL",
+    "BRONCOS": "DEN",
+    "LIONS": "DET",
+    "PACKERS": "GB",
+    "TEXANS": "HOU",
+    "COLTS": "IND",
+    "JAGUARS": "JAX",
+    "CHIEFS": "KC",
+    "RAIDERS": "LV",
+    "CHARGERS": "LAC",
+    "RAMS": "LAR",
+    "DOLPHINS": "MIA",
+    "VIKINGS": "MIN",
+    "PATRIOTS": "NE",
+    "SAINTS": "NO",
+    "GIANTS": "NYG",
+    "JETS": "NYJ",
+    "EAGLES": "PHI",
+    "STEELERS": "PIT",
+    "49ERS": "SF",
+    "SEAHAWKS": "SEA",
+    "BUCCANEERS": "TB",
+    "TITANS": "TEN",
+    "COMMANDERS": "WAS",
+}
+
+_TEAM_FULL_NAMES = {
+    "ARIZONA CARDINALS": "ARI",
+    "ATLANTA FALCONS": "ATL",
+    "BALTIMORE RAVENS": "BAL",
+    "BUFFALO BILLS": "BUF",
+    "CAROLINA PANTHERS": "CAR",
+    "CHICAGO BEARS": "CHI",
+    "CINCINNATI BENGALS": "CIN",
+    "CLEVELAND BROWNS": "CLE",
+    "DALLAS COWBOYS": "DAL",
+    "DENVER BRONCOS": "DEN",
+    "DETROIT LIONS": "DET",
+    "GREEN BAY PACKERS": "GB",
+    "HOUSTON TEXANS": "HOU",
+    "INDIANAPOLIS COLTS": "IND",
+    "JACKSONVILLE JAGUARS": "JAX",
+    "KANSAS CITY CHIEFS": "KC",
+    "LAS VEGAS RAIDERS": "LV",
+    "LOS ANGELES CHARGERS": "LAC",
+    "LOS ANGELES RAMS": "LAR",
+    "MIAMI DOLPHINS": "MIA",
+    "MINNESOTA VIKINGS": "MIN",
+    "NEW ENGLAND PATRIOTS": "NE",
+    "NEW ORLEANS SAINTS": "NO",
+    "NEW YORK GIANTS": "NYG",
+    "NEW YORK JETS": "NYJ",
+    "PHILADELPHIA EAGLES": "PHI",
+    "PITTSBURGH STEELERS": "PIT",
+    "SAN FRANCISCO 49ERS": "SF",
+    "SEATTLE SEAHAWKS": "SEA",
+    "TAMPA BAY BUCCANEERS": "TB",
+    "TENNESSEE TITANS": "TEN",
+    "WASHINGTON COMMANDERS": "WAS",
+}
+
+_TEAM_ALIASES = {}
+_TEAM_ALIASES.update(_TEAM_NICKNAMES)
+_TEAM_ALIASES.update(_TEAM_FULL_NAMES)
+for _abbr in set(_TEAM_NICKNAMES.values()):
+    _TEAM_ALIASES[_abbr] = _abbr
+
+
+_POSITION_GROUP = {
+    "QB": "QB",
+    "RB": "RB", "FB": "RB",
+    "WR": "WR",
+    "TE": "TE",
+    "C": "OL", "G": "OL", "OG": "OL", "T": "OL", "OT": "OL",
+    "LT": "OL", "RT": "OL", "LG": "OL", "RG": "OL", "OL": "OL",
+    "DE": "DL", "DT": "DL", "NT": "DL", "DL": "DL",
+    "LB": "LB", "ILB": "LB", "OLB": "LB", "MLB": "LB",
+    "CB": "DB", "S": "DB", "FS": "DB", "SS": "DB", "DB": "DB",
+    "K": "K", "P": "P", "LS": "LS",
+}
+
+
+def _team_key(value: Any) -> str:
+    text = unicodedata.normalize("NFKD", str(value or ""))
+    tokens = re.findall(r"[A-Za-z0-9]+", text.upper())
+    return " ".join(tokens)
+
+
+def team_abbr(source_team_label: Any) -> str | None:
+    """Map an official report team label to nflverse abbreviation."""
+    return _TEAM_ALIASES.get(_team_key(source_team_label))
+
+
+def _name_key(value: Any) -> str:
+    text = unicodedata.normalize("NFKD", str(value or "")).casefold()
+    return "".join(ch for ch in text if ch.isalnum())
+
+
+def _position_key(value: Any) -> str:
+    return re.sub(r"[^A-Z0-9]", "", str(value or "").upper())
+
+
+def _position_group(value: Any) -> str:
+    key = _position_key(value)
+    return _POSITION_GROUP.get(key, key)
+
+
+def _position_compatible(
+    listed_position: Any,
+    roster_position: Any,
+    depth_position: Any,
+) -> bool:
+    listed = _position_group(listed_position)
+    if not listed:
+        return False
+    candidates = {
+        _position_group(roster_position),
+        _position_group(depth_position),
+    }
+    candidates.discard("")
+    return listed in candidates
+
+
+def _base_result(
+    source_team_label: Any,
+    player: Mapping[str, Any],
+    *,
+    team: str | None,
+    status: str,
+    candidate_count: int = 0,
+) -> dict[str, Any]:
+    return {
+        "binding_contract_version": BINDING_CONTRACT_VERSION,
+        "binding_status": status,
+        "binding_method": None,
+        "source_team_label": str(source_team_label or "").strip(),
+        "team": team,
+        "player_name": str(player.get("player_name") or "").strip(),
+        "listed_position": str(player.get("listed_position") or "").strip(),
+        "source_player_href": player.get("source_player_href"),
+        "source_player_slug": player.get("source_player_slug"),
+        "candidate_count": int(candidate_count),
+        "gsis_id": None,
+        "esb_id": None,
+        "roster_position": None,
+        "roster_depth_chart_position": None,
+    }
+
+
+def bind_player(
+    source_team_label: Any,
+    player: Mapping[str, Any],
+    roster_rows: Sequence[Mapping[str, Any]],
+    *,
+    season: int,
+) -> dict[str, Any]:
+    """Bind one parsed inactive player using exact safe roster semantics.
+
+    Matching order is intentionally strict:
+    1. known source team label -> nflverse team abbreviation,
+    2. exact normalized full_name inside that team and season,
+    3. compatible listed/roster position group,
+    4. exactly one surviving row,
+    5. non-empty GSIS durable ID.
+
+    There is no name-only or fuzzy fallback.
+    """
+    if not isinstance(player, Mapping):
+        raise ValueError("player must be a mapping")
+
+    team = team_abbr(source_team_label)
+    if team is None:
+        return _base_result(
+            source_team_label, player, team=None, status="UNRESOLVED_TEAM"
+        )
+
+    name_key = _name_key(player.get("player_name"))
+    if not name_key:
+        return _base_result(
+            source_team_label, player, team=team, status="UNRESOLVED_PLAYER"
+        )
+
+    exact_name_team = []
+    for row in roster_rows:
+        try:
+            row_season = int(row.get("season"))
+        except (TypeError, ValueError):
+            continue
+        if row_season != int(season):
+            continue
+        if str(row.get("team") or "").strip().upper() != team:
+            continue
+        if _name_key(row.get("full_name")) != name_key:
+            continue
+        exact_name_team.append(row)
+
+    if not exact_name_team:
+        return _base_result(
+            source_team_label, player, team=team, status="UNRESOLVED_PLAYER"
+        )
+
+    position_matches = [
+        row for row in exact_name_team
+        if _position_compatible(
+            player.get("listed_position"),
+            row.get("position"),
+            row.get("depth_chart_position"),
+        )
+    ]
+    if not position_matches:
+        return _base_result(
+            source_team_label,
+            player,
+            team=team,
+            status="POSITION_MISMATCH",
+            candidate_count=len(exact_name_team),
+        )
+    if len(position_matches) != 1:
+        return _base_result(
+            source_team_label,
+            player,
+            team=team,
+            status="AMBIGUOUS_PLAYER",
+            candidate_count=len(position_matches),
+        )
+
+    row = position_matches[0]
+    gsis_id = str(row.get("gsis_id") or "").strip()
+    if not gsis_id:
+        return _base_result(
+            source_team_label,
+            player,
+            team=team,
+            status="MISSING_DURABLE_ID",
+            candidate_count=1,
+        )
+
+    result = _base_result(
+        source_team_label,
+        player,
+        team=team,
+        status="BOUND",
+        candidate_count=1,
+    )
+    result.update({
+        "binding_method": "exact_name+team+position_group",
+        "gsis_id": gsis_id,
+        "esb_id": str(row.get("esb_id") or "").strip() or None,
+        "roster_position": str(row.get("position") or "").strip() or None,
+        "roster_depth_chart_position":
+            str(row.get("depth_chart_position") or "").strip() or None,
+    })
+    return result
+
+
+def bind_report(
+    parsed_report: Mapping[str, Any],
+    roster_rows: Sequence[Mapping[str, Any]],
+    *,
+    season: int,
+) -> dict[str, Any]:
+    """Bind every source row while preserving unresolved rows explicitly."""
+    bound_teams = []
+    status_counts: dict[str, int] = {}
+    total = 0
+    bound = 0
+
+    for team_block in parsed_report.get("teams") or []:
+        label = team_block.get("source_team_label")
+        players = []
+        for player in team_block.get("players") or []:
+            result = bind_player(
+                label, player, roster_rows, season=season
+            )
+            players.append(result)
+            total += 1
+            status = result["binding_status"]
+            status_counts[status] = status_counts.get(status, 0) + 1
+            if status == "BOUND":
+                bound += 1
+        bound_teams.append({
+            "source_team_label": label,
+            "team": team_abbr(label),
+            "players": players,
+        })
+
+    return {
+        "binding_contract_version": BINDING_CONTRACT_VERSION,
+        "report_title": parsed_report.get("report_title"),
+        "season": int(season),
+        "player_count": total,
+        "bound_player_count": bound,
+        "unresolved_player_count": total - bound,
+        "all_players_bound": total > 0 and bound == total,
+        "status_counts": status_counts,
+        "teams": bound_teams,
+        "canonical_game_id": None,
+        "game_identity_bound": False,
+    }
