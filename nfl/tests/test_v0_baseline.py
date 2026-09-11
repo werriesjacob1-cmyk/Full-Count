@@ -23,21 +23,24 @@ class RollingBaselineMetrics(unittest.TestCase):
             {
                 "season": 2025, "week": 1, "season_type": "REG",
                 "position": "WR", "history_n": 0,
-                "features": {"rolling_receptions": None,
+                "features": {"rolling_targets": None,
+                             "rolling_receptions": None,
                              "rolling_receiving_yards": None},
                 "target": {"receptions": 4.0, "receiving_yards": 50.0},
             },
             {
                 "season": 2025, "week": 2, "season_type": "REG",
                 "position": "WR", "history_n": 1,
-                "features": {"rolling_receptions": 4.0,
+                "features": {"rolling_targets": 6.0,
+                             "rolling_receptions": 4.0,
                              "rolling_receiving_yards": 50.0},
                 "target": {"receptions": 6.0, "receiving_yards": 80.0},
             },
             {
                 "season": 2025, "week": 3, "season_type": "REG",
                 "position": "WR", "history_n": 2,
-                "features": {"rolling_receptions": 5.0,
+                "features": {"rolling_targets": 7.0,
+                             "rolling_receptions": 5.0,
                              "rolling_receiving_yards": 65.0},
                 "target": {"receptions": 3.0, "receiving_yards": 35.0},
             },
@@ -76,11 +79,11 @@ class RollingBaselineMetrics(unittest.TestCase):
     def test_test_season_and_type_are_hard_filters(self):
         rows = self.rows + [{
             "season": 2024, "week": 18, "season_type": "REG", "position": "WR", "history_n": 10,
-            "features": {"rolling_receptions": 99.0},
+            "features": {"rolling_targets": 99.0, "rolling_receptions": 99.0},
             "target": {"receptions": 0.0},
         }, {
             "season": 2025, "week": 19, "season_type": "POST", "position": "WR", "history_n": 10,
-            "features": {"rolling_receptions": 99.0},
+            "features": {"rolling_targets": 99.0, "rolling_receptions": 99.0},
             "target": {"receptions": 0.0},
         }]
         m = b0.evaluate_stat(
@@ -93,7 +96,8 @@ class RollingBaselineMetrics(unittest.TestCase):
         rows = list(self.rows) + [{
             "season": 2025, "week": 4, "season_type": "REG",
             "position": "CB", "history_n": 12,
-            "features": {"rolling_receptions": 0.0,
+            "features": {"rolling_targets": 0.0,
+                         "rolling_receptions": 0.0,
                          "rolling_receiving_yards": 0.0},
             "target": {"receptions": 0.0, "receiving_yards": 0.0},
         }]
@@ -104,6 +108,36 @@ class RollingBaselineMetrics(unittest.TestCase):
             m["n"], 2,
             "a CB with structural 0 receptions is not an eligible receiving-prop row"
         )
+
+    def test_prior_role_gate_excludes_structural_zeroes_without_current_leakage(self):
+        rows = [
+            {
+                "season": 2025, "week": 5, "season_type": "REG",
+                "position": "WR", "history_n": 4,
+                "features": {
+                    "rolling_carries": 0.0,
+                    "rolling_rushing_yards": 0.0,
+                },
+                "target": {"carries": 0.0, "rushing_yards": 0.0},
+            },
+            {
+                "season": 2025, "week": 5, "season_type": "REG",
+                "position": "RB", "history_n": 4,
+                "features": {
+                    "rolling_carries": 10.0,
+                    "rolling_rushing_yards": 45.0,
+                },
+                "target": {"carries": 12.0, "rushing_yards": 50.0},
+            },
+        ]
+        m = b0.evaluate_stat(
+            rows, "carries", test_season=2025, min_history=1
+        )
+        self.assertEqual(
+            m["n"], 1,
+            "position alone is insufficient: prior opportunity must show a real role"
+        )
+        self.assertEqual(m["mae"], 2.0)
 
     def test_empty_evaluable_population_is_explicit(self):
         m = b0.evaluate_stat(
@@ -123,7 +157,8 @@ class SuiteContract(unittest.TestCase):
                 "position": "QB", "history_n": 5,
                 "features": {
                     "rolling_attempts": 30.0, "rolling_carries": 4.0,
-                    "rolling_receptions": 0.0, "rolling_passing_yards": 250.0,
+                    "rolling_targets": 0.0, "rolling_receptions": 0.0,
+                    "rolling_passing_yards": 250.0,
                     "rolling_rushing_yards": 20.0, "rolling_receiving_yards": 0.0,
                 },
                 "target": {
@@ -137,7 +172,8 @@ class SuiteContract(unittest.TestCase):
                 "position": "RB", "history_n": 5,
                 "features": {
                     "rolling_attempts": 0.0, "rolling_carries": 12.0,
-                    "rolling_receptions": 3.0, "rolling_passing_yards": 0.0,
+                    "rolling_targets": 4.0, "rolling_receptions": 3.0,
+                    "rolling_passing_yards": 0.0,
                     "rolling_rushing_yards": 55.0, "rolling_receiving_yards": 25.0,
                 },
                 "target": {
@@ -151,7 +187,8 @@ class SuiteContract(unittest.TestCase):
                 "position": "WR", "history_n": 5,
                 "features": {
                     "rolling_attempts": 0.0, "rolling_carries": 0.0,
-                    "rolling_receptions": 4.0, "rolling_passing_yards": 0.0,
+                    "rolling_targets": 7.0, "rolling_receptions": 4.0,
+                    "rolling_passing_yards": 0.0,
                     "rolling_rushing_yards": 0.0, "rolling_receiving_yards": 60.0,
                 },
                 "target": {
