@@ -3,11 +3,11 @@
 Every player below is projected into last night's/his last game's batting slot for his team, because no real lineup — not MLB's own API, not MLB.com, not Rotowire — has been posted for tonight yet. These are NOT picks: the batting order can and does change (a day off, a platoon swap, a late scratch), and none of this is graded or fed back into the accuracy record. Read it as "who to watch once real lineups post," not as a board to bet.
 
 - **Kevin McGonigle** (Detroit Tigers) — Over 0.5 Hits+Runs+RBIs — 73.2% [Colorado Rockies @ Detroit Tigers]
+- **Jake McCarthy** (Colorado Rockies) — Over 0.5 Hits+Runs+RBIs — 72.3% [Colorado Rockies @ Detroit Tigers]
 - **Luis Arraez** (Philadelphia Phillies) — Over 0.5 Hits+Runs+RBIs — 72.2% [Philadelphia Phillies @ Atlanta Braves]
 - **Otto Lopez** (Miami Marlins) — Over 0.5 Hits+Runs+RBIs — 72.2% [Los Angeles Dodgers @ Miami Marlins]
 - **Jackson Chourio** (Milwaukee Brewers) — Over 0.5 Hits+Runs+RBIs — 72.1% [Cincinnati Reds @ Milwaukee Brewers]
 - **Bobby Witt Jr.** (Kansas City Royals) — Over 0.5 Hits+Runs+RBIs — 72.0% [Kansas City Royals @ Boston Red Sox]
-- **Jake McCarthy** (Colorado Rockies) — Over 0.5 Hits+Runs+RBIs — 72.0% [Colorado Rockies @ Detroit Tigers]
 - **Chandler Simpson** (Tampa Bay Rays) — Over 0.5 Hits+Runs+RBIs — 71.9% [Houston Astros @ Tampa Bay Rays]
 - **Fernando Tatis Jr.** (San Diego Padres) — Over 0.5 Hits+Runs+RBIs — 71.7% [San Diego Padres @ San Francisco Giants]
 - **Jeremy Pena** (Houston Astros) — Over 0.5 Hits+Runs+RBIs — 71.4% [Houston Astros @ Tampa Bay Rays]
@@ -20,8 +20,8 @@ Every player below is projected into last night's/his last game's batting slot f
 - **James Wood** (Washington Nationals) — Over 0.5 Hits+Runs+RBIs — 70.9% [Los Angeles Angels @ Washington Nationals]
 - **Kaelen Culpepper** (Minnesota Twins) — Over 0.5 Hits+Runs+RBIs — 70.8% [Cleveland Guardians @ Minnesota Twins]
 - **Chase Meidroth** (Chicago White Sox) — Over 0.5 Hits+Runs+RBIs — 70.5% [Chicago White Sox @ St. Louis Cardinals]
-- **Matt Olson** (Atlanta Braves) — Over 0.5 Hits+Runs+RBIs — 70.5% [Philadelphia Phillies @ Atlanta Braves]
 - **Bryan Reynolds** (Pittsburgh Pirates) — Over 0.5 Hits+Runs+RBIs — 70.5% [Pittsburgh Pirates @ Chicago Cubs]
+- **Matt Olson** (Atlanta Braves) — Over 0.5 Hits+Runs+RBIs — 70.5% [Philadelphia Phillies @ Atlanta Braves]
 - **Randy Arozarena** (Seattle Mariners) — Over 0.5 Hits+Runs+RBIs — 70.5% [Seattle Mariners @ Athletics]
 - **Cody Bellinger** (New York Yankees) — Over 0.5 Hits+Runs+RBIs — 70.3% [New York Mets @ New York Yankees]
 - **Alex Bregman** (Chicago Cubs) — Over 0.5 Hits+Runs+RBIs — 70.3% [Pittsburgh Pirates @ Chicago Cubs]
