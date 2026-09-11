@@ -1,0 +1,295 @@
+name: NFL Team Attempt Window Audit
+
+# Research-only development audit.
+#
+# Hypothesis: the current 5-game team pass-attempt mean is too reactive and
+# mean-reverts. Test exactly one simpler alternative: a 10-game rolling mean.
+#
+# Same rows, same official weekly attempt target, no fitted coefficients.
+# 2022 supplies prior history. No untouched challenger holdout is inspected.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-team-attempt-window-audit.yml
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Compare 5-game and 10-game official attempt baselines
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import hashlib
+          import io
+          import json
+          import math
+          import os
+          import random
+          import statistics
+          from collections import defaultdict, deque
+          from datetime import datetime, timezone
+
+          import requests
+
+          SEASONS = (2022, 2023, 2024, 2025)
+          TEST_SEASONS = (2023, 2024, 2025)
+          SHORT_WINDOW = 5
+          LONG_WINDOW = 10
+          BOOTSTRAPS = 5000
+          SEED = 20260911
+
+          SHA256 = {
+              2022: "9803875bd0b74aa49230288d45359c75e45910f1cf1953ea0f07b9d3db35e4d1",
+              2023: "dc5a387daabe8663deaddac492ad7020d47fb1a66048690b355b406cd8e4c454",
+              2024: "b207a1430c2715d03bbf1844c4eae98695f364851ff6025f422febc2c13f5255",
+              2025: "91058a59d894855377b2f39f40c4e7bdbeef96d12144289dc68215209a1c93cb",
+          }
+          REQUIRED = {
+              "season", "week", "season_type", "team", "attempts",
+          }
+
+          def num(value, label):
+              try:
+                  out = float(value)
+              except (TypeError, ValueError) as exc:
+                  raise ValueError(f"invalid {label}: {value!r}") from exc
+              if not math.isfinite(out):
+                  raise ValueError(f"non-finite {label}: {value!r}")
+              return out
+
+          def pct(values, q):
+              values = sorted(values)
+              pos = (len(values)-1)*q
+              lo = int(math.floor(pos))
+              hi = int(math.ceil(pos))
+              if lo == hi:
+                  return values[lo]
+              w = pos-lo
+              return values[lo]*(1-w)+values[hi]*w
+
+          def metrics(rows, field):
+              errs = [r[field]-r["actual"] for r in rows]
+              return {
+                  "n": len(rows),
+                  "mae": statistics.fmean(abs(e) for e in errs),
+                  "rmse": math.sqrt(
+                      statistics.fmean(e*e for e in errs)
+                  ),
+                  "bias": statistics.fmean(errs),
+                  "mean_prediction": statistics.fmean(
+                      r[field] for r in rows
+                  ),
+                  "mean_actual": statistics.fmean(
+                      r["actual"] for r in rows
+                  ),
+              }
+
+          def delta_mae(rows):
+              return statistics.fmean(
+                  abs(r["rolling10"]-r["actual"])
+                  - abs(r["rolling5"]-r["actual"])
+                  for r in rows
+              )
+
+          def cluster_bootstrap(rows, seed_offset):
+              groups = defaultdict(list)
+              for row in rows:
+                  groups[row["team"]].append(row)
+              teams = sorted(groups)
+              rng = random.Random(SEED+seed_offset)
+              vals = []
+              for _ in range(BOOTSTRAPS):
+                  sample = []
+                  for _ in teams:
+                      sample.extend(groups[rng.choice(teams)])
+                  vals.append(delta_mae(sample))
+              return {
+                  "clusters": len(teams),
+                  "replicates": len(vals),
+                  "median_delta_mae_10_minus_5":
+                      pct(vals, 0.5),
+                  "ci95": [pct(vals, 0.025), pct(vals, 0.975)],
+                  "probability_delta_below_zero":
+                      sum(v < 0 for v in vals)/len(vals),
+              }
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent": "Full-Count NFL team attempt window audit"
+          })
+
+          raw = []
+          sources = {}
+          for season in SEASONS:
+              url = (
+                  "https://github.com/nflverse/nflverse-data/releases/download/"
+                  f"stats_team/stats_team_week_{season}.csv"
+              )
+              response = session.get(url, timeout=60)
+              response.raise_for_status()
+              digest = hashlib.sha256(response.content).hexdigest()
+              if digest != SHA256[season]:
+                  raise SystemExit(
+                      f"{season}: team source SHA drift {digest}"
+                  )
+              rows = list(csv.DictReader(io.StringIO(response.text)))
+              if not rows:
+                  raise SystemExit(f"{season}: empty team stats")
+              missing = sorted(REQUIRED-set(rows[0]))
+              if missing:
+                  raise SystemExit(
+                      f"{season}: team schema drift {missing}"
+                  )
+              raw.extend(rows)
+              sources[str(season)] = {
+                  "url": url,
+                  "rows": len(rows),
+                  "bytes": len(response.content),
+                  "sha256": digest,
+              }
+
+          normalized = []
+          seen = set()
+          for row in raw:
+              if str(row.get("season_type") or "") != "REG":
+                  continue
+              item = {
+                  "season": int(float(row["season"])),
+                  "week": int(float(row["week"])),
+                  "team": str(row["team"]).strip(),
+                  "attempts": num(row["attempts"], "attempts"),
+              }
+              key = (item["season"], item["week"], item["team"])
+              if key in seen:
+                  raise SystemExit(f"duplicate team-week {key}")
+              seen.add(key)
+              normalized.append(item)
+          normalized.sort(
+              key=lambda r:(r["season"], r["week"], r["team"])
+          )
+
+          history = defaultdict(lambda: deque(maxlen=LONG_WINDOW))
+          analysis_rows = []
+          for row in normalized:
+              h = history[row["team"]]
+              if (
+                  row["season"] in TEST_SEASONS
+                  and len(h) >= LONG_WINDOW
+              ):
+                  values = [x["attempts"] for x in h]
+                  analysis_rows.append({
+                      "season": row["season"],
+                      "week": row["week"],
+                      "team": row["team"],
+                      "actual": row["attempts"],
+                      "rolling5":
+                          statistics.fmean(values[-SHORT_WINDOW:]),
+                      "rolling10":
+                          statistics.fmean(values[-LONG_WINDOW:]),
+                  })
+              h.append(row)
+
+          reports = {}
+          for season in TEST_SEASONS:
+              rows = [
+                  r for r in analysis_rows
+                  if r["season"] == season
+              ]
+              if len(rows) != 544:
+                  raise SystemExit(
+                      f"{season}: expected 544 team-games, got {len(rows)}"
+                  )
+              m5 = metrics(rows, "rolling5")
+              m10 = metrics(rows, "rolling10")
+              delta = m10["mae"]-m5["mae"]
+              reports[str(season)] = {
+                  "population": {
+                      "team_games": len(rows),
+                      "teams": len({r["team"] for r in rows}),
+                  },
+                  "rolling5": m5,
+                  "rolling10": m10,
+                  "delta_mae_10_minus_5": delta,
+                  "team_cluster_bootstrap":
+                      cluster_bootstrap(rows, season),
+              }
+
+          beats_all = all(
+              reports[str(s)]["delta_mae_10_minus_5"] < 0
+              for s in TEST_SEASONS
+          )
+          ci_favorable = sum(
+              reports[str(s)]["team_cluster_bootstrap"][
+                  "ci95"
+              ][1] < 0
+              for s in TEST_SEASONS
+          )
+
+          output = {
+              "analysis": "NFL_TEAM_PASS_ATTEMPT_WINDOW_AUDIT",
+              "status": "research_only_no_challenger",
+              "created_at": datetime.now(timezone.utc).isoformat(),
+              "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+              "pre_registered": {
+                  "short_window": SHORT_WINDOW,
+                  "long_window": LONG_WINDOW,
+                  "target": "official weekly team pass attempts",
+                  "same_population_required": True,
+                  "fit_parameters": 0,
+                  "development_seasons": list(TEST_SEASONS),
+                  "history_season": 2022,
+                  "holdout_policy":
+                      "No untouched challenger holdout inspected here.",
+                  "gate": (
+                      "10-game MAE < 5-game MAE in all 3 seasons and "
+                      "team-clustered 95% delta-MAE upper bound <0 "
+                      "in at least 2/3 seasons"
+                  ),
+              },
+              "sources": sources,
+              "reports": reports,
+              "decision": {
+                  "rolling10_beats_rolling5_all_seasons": beats_all,
+                  "cluster_ci_entirely_favorable_seasons":
+                      ci_favorable,
+                  "rolling10_signal_pass":
+                      beats_all and ci_favorable >= 2,
+              },
+              "next_if_pass": (
+                  "Freeze rolling10 as the team-volume shrinkage baseline, "
+                  "then retest PROE incremental relevance against rolling10 "
+                  "before any holdout challenger."
+              ),
+              "next_if_fail": (
+                  "Do not tune rolling-window length. Move to a principled "
+                  "hierarchical/shrinkage baseline or prospective market/"
+                  "availability state."
+              ),
+          }
+
+          path = "/tmp/nfl-team-attempt-window-audit.json"
+          with open(path, "w", encoding="utf-8") as f:
+              json.dump(output, f, indent=2, sort_keys=True)
+          print(json.dumps(output, indent=2, sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-team-attempt-window-audit
+          path: /tmp/nfl-team-attempt-window-audit.json
+          retention-days: 30
