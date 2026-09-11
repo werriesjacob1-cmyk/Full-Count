@@ -1,0 +1,18 @@
+# NFL-specific Python dependencies, installed ONLY by NFL CI.
+#
+# WHY THIS FILE EXISTS WHILE EMPTY. Root requirements.txt is what MLB
+# production installs, and pip resolves a requirements file JOINTLY -- a new
+# package added there can force a different version of an existing MLB pin
+# without anyone editing that pin. That is the failure class root's own header
+# documents (a silent mlb-statsapi minor bump broke the pipeline from v5 to
+# v15). So NFL gets its own file from the start, before there is any pressure
+# to "just add one line" to root's.
+#
+# NFL-01 ADDS NOTHING. The archival layer runs on the standard library plus
+# `requests`, which root already pins at ~=2.34.2 and MLB already installs.
+# That constraint shaped the code rather than being discovered afterwards: it
+# is why nfl/archive/ preserves raw bytes and gzips them instead of pulling in
+# a parsing or scraping stack.
+#
+# When a real NFL dependency arrives, pin it here with ~= and say in a comment
+# what it is for. Do NOT add it to the root file.
