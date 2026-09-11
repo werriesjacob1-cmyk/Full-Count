@@ -285,15 +285,40 @@
   /* Claiming                                                          */
   /* ---------------------------------------------------------------- */
 
-  /** The tappable element inside the row — the link if there is one. */
+  /**
+   * Tapping the row is what claims the lead, so rather than guessing which
+   * descendant carries the handler, hit the topmost element at a point
+   * inside the row — exactly what a finger does. The event then bubbles up
+   * through cell, row and container, reaching the handler wherever it lives.
+   *
+   * The aim point is deliberately left-of-centre, in the name column: the
+   * Actions column on the right holds a red X (close/dismiss) that must
+   * never be clicked.
+   *
+   * Returns null when something is covering the row — a modal, a dropdown,
+   * a tooltip. Clicking through an overlay is never correct.
+   */
   function clickTargetFor(row) {
-    const link = row.querySelector('a[href]:not([href="#"])');
-    if (link && isVisible(link)) return link;
-    const button = row.querySelector('[role="button"], button');
-    if (button && isVisible(button)) return button;
-    const firstCell = row.querySelector('td, [role="cell"], [role="gridcell"]');
-    if (firstCell && isVisible(firstCell)) return firstCell;
-    return row;
+    try { row.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch { /* detached */ }
+
+    const rect = row.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return row;
+
+    const x = rect.left + Math.min(rect.width * 0.25, 200);
+    const y = rect.top + rect.height / 2;
+
+    const doc = row.ownerDocument || document;
+    const hit = (row.getRootNode && row.getRootNode().elementFromPoint)
+      ? row.getRootNode().elementFromPoint(x, y)
+      : doc.elementFromPoint(x, y);
+
+    if (!hit) return row;
+    if (!row.contains(hit) && hit !== row) {
+      warn('row is obscured by', hit.tagName + (hit.className ? '.' + String(hit.className).slice(0, 40) : ''),
+           '— refusing to click through it');
+      return null;
+    }
+    return hit;
   }
 
   function fireClick(el) {
@@ -355,10 +380,16 @@
 
     if (!dry) {
       const target = clickTargetFor(row);
+      if (!target) {
+        // Obscured. Un-mark it so the next tick can retry once it is clear.
+        acted.delete(key);
+        return;
+      }
       try {
         fireClick(target);
       } catch (err) {
         warn('click failed', err);
+        acted.delete(key);
         return;
       }
       claimsThisSession++;

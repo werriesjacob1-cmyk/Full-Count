@@ -37,6 +37,7 @@
     <button class="ctl warn" id="bumpExisting">Bump an existing lead's timestamp (must NOT re-claim)</button>
     <button class="ctl gray" id="switchFilter">Switch filter — replace all rows (must re-baseline, claim nothing)</button>
     <button class="ctl gray" id="refresh">Force full table re-render (must claim nothing)</button>
+    <button class="ctl warn" id="addUnderOverlay">Add new lead UNDER a modal (must refuse to click through)</button>
   </div>
 
   <table>
@@ -170,6 +171,23 @@
   document.getElementById('refresh').onclick = () => {
     render();
     log('full re-render, same data — keys unchanged, so no claim');
+  };
+
+  document.getElementById('addUnderOverlay').onclick = () => {
+    const veil = document.createElement('div');
+    veil.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:9999;' +
+      'display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:600';
+    veil.textContent = 'Modal covering the table — clicks must be refused (clears in 6s)';
+    document.body.append(veil);
+    const lead = makeLead({ rep: '', date: new Date(), isNew: true });
+    spawn.set(lead.id, performance.now());
+    model.unshift(lead);
+    render();
+    log('new lead added UNDER a modal — expect "refusing to click through it" in the console');
+    setTimeout(() => {
+      veil.remove();
+      log('modal cleared — the pending lead should now be claimed on the next tick');
+    }, 6000);
   };
 })();
 </script>

@@ -119,15 +119,27 @@ before you trust anything. Look for the green `[CarNow AC] ARMED` line in the co
 
 Service worker console: `chrome://extensions` → the **service worker** link.
 
-## Known unknowns
+## How the tap is delivered
 
-Two things still need confirming against the live site:
+Tapping the row is confirmed to be what claims the lead, so `clickTargetFor()` doesn't
+guess which descendant carries the handler. It scrolls the row into view, then hits the
+topmost element at a point inside it via `elementFromPoint` — exactly what a finger does.
+The event bubbles up through cell, row and container, reaching the handler wherever it
+actually lives.
 
-1. **Does tapping the row actually claim it**, or does it open the conversation with
-   claiming as a separate step? `clickTargetFor()` picks the row's link, falling back to
-   a button, then the first cell, then the row itself — if CarNow needs a different
-   target, that's the function to change.
-2. **Can a mistaken claim be released?** If not, keep Dry Run on longer.
+Two safety properties fall out of that:
+
+- **The aim point is left-of-centre**, in the name column. The Actions column on the
+  right holds a red X (close/dismiss) that must never be clicked.
+- **If anything is covering the row** — a modal, a dropdown, a tooltip —
+  `elementFromPoint` returns an element outside the row, and the click is refused rather
+  than delivered through the overlay. The row is un-marked so a later tick can retry once
+  it's clear.
+
+## Known unknown
+
+**Can a mistaken claim be released?** If not, keep Dry Run on longer than feels
+necessary — a wrong claim you can't hand back is the one failure with no undo.
 
 ## Notes
 
