@@ -1,0 +1,517 @@
+name: NFL PROE Pace Signal Audit
+
+# Research-only signal discovery.
+#
+# 2022 is history only. Evaluate whether prior-five team passing intent (PROE)
+# and offensive decision-play volume persist into 2023-2025 team-games.
+# No challenger is created and no holdout season is consumed here.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-proe-pace-signal.yml
+
+permissions:
+  contents: read
+
+jobs:
+  signal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Measure prior-only PROE and pace persistence
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import gzip
+          import hashlib
+          import io
+          import json
+          import math
+          import os
+          import random
+          import statistics
+          from collections import defaultdict, deque
+          from datetime import datetime, timezone
+
+          import requests
+
+          SEASONS = (2022, 2023, 2024, 2025)
+          TEST_SEASONS = (2023, 2024, 2025)
+          WINDOW = 5
+          MIN_HISTORY = 3
+          BOOTSTRAPS = 3000
+          SEED = 20260911
+          EPS = 1e-9
+
+          PBP_SHA256 = {
+              2022: "0c69a71eb39498956c7b1d5c1ca52ce7fe679934a95d1af249facb5ea9829ea4",
+              2023: "4649804ee0f0a40b41e51ec75a1ce921949d7fab5459213488656b92f78560e8",
+              2024: "23370d5d10f8104d80d46a1fc5e61f4f6f5a3263fe96fe2dd629913cfcb08c06",
+              2025: "2f135887790a013fd004e609e37096bb4816d5cc80b9f19122e1bad478961978",
+          }
+          TEAM_SHA256 = {
+              2022: "9803875bd0b74aa49230288d45359c75e45910f1cf1953ea0f07b9d3db35e4d1",
+              2023: "dc5a387daabe8663deaddac492ad7020d47fb1a66048690b355b406cd8e4c454",
+              2024: "b207a1430c2715d03bbf1844c4eae98695f364851ff6025f422febc2c13f5255",
+              2025: "91058a59d894855377b2f39f40c4e7bdbeef96d12144289dc68215209a1c93cb",
+          }
+          REQUIRED_PBP = {
+              "season", "week", "season_type", "game_id", "posteam",
+              "pass", "rush", "xpass", "pass_oe", "sack",
+              "pass_attempt", "two_point_attempt",
+          }
+          REQUIRED_TEAM = {
+              "season", "week", "season_type", "team", "attempts",
+          }
+
+          def num(value, label):
+              try:
+                  out = float(value)
+              except (TypeError, ValueError) as exc:
+                  raise ValueError(f"invalid {label}: {value!r}") from exc
+              if not math.isfinite(out):
+                  raise ValueError(f"non-finite {label}: {value!r}")
+              return out
+
+          def flag0(value, label):
+              if value in (None, ""):
+                  return 0
+              out = num(value, label)
+              if out not in (0.0, 1.0):
+                  raise ValueError(f"{label} outside 0/1: {out}")
+              return int(out)
+
+          def pearson(xs, ys):
+              if len(xs) < 3:
+                  return None
+              mx = statistics.fmean(xs)
+              my = statistics.fmean(ys)
+              dx = [x - mx for x in xs]
+              dy = [y - my for y in ys]
+              den = math.sqrt(
+                  sum(x*x for x in dx) * sum(y*y for y in dy)
+              )
+              if den <= 0:
+                  return None
+              return sum(x*y for x, y in zip(dx, dy)) / den
+
+          def pct(values, q):
+              values = sorted(values)
+              if not values:
+                  return None
+              pos = (len(values) - 1) * q
+              lo = int(math.floor(pos))
+              hi = int(math.ceil(pos))
+              if lo == hi:
+                  return values[lo]
+              w = pos - lo
+              return values[lo] * (1-w) + values[hi] * w
+
+          def cluster_bootstrap(rows, xfield, yfield, seed_offset):
+              groups = defaultdict(list)
+              for row in rows:
+                  groups[row["team"]].append(row)
+              keys = sorted(groups)
+              rng = random.Random(SEED + seed_offset)
+              vals = []
+              for _ in range(BOOTSTRAPS):
+                  sample = []
+                  for _ in keys:
+                      sample.extend(groups[rng.choice(keys)])
+                  r = pearson(
+                      [x[xfield] for x in sample],
+                      [x[yfield] for x in sample],
+                  )
+                  if r is not None and math.isfinite(r):
+                      vals.append(r)
+              return {
+                  "clusters": len(keys),
+                  "replicates": len(vals),
+                  "median": pct(vals, 0.5),
+                  "ci95": [pct(vals, 0.025), pct(vals, 0.975)],
+              }
+
+          def quartiles(rows, xfield, yfield):
+              ordered = sorted(rows, key=lambda r: r[xfield])
+              out = []
+              n = len(ordered)
+              for q in range(4):
+                  lo = (q*n)//4
+                  hi = ((q+1)*n)//4
+                  sub = ordered[lo:hi]
+                  if not sub:
+                      continue
+                  out.append({
+                      "quartile": q+1,
+                      "n": len(sub),
+                      "mean_x": statistics.fmean(
+                          r[xfield] for r in sub
+                      ),
+                      "mean_y": statistics.fmean(
+                          r[yfield] for r in sub
+                      ),
+                  })
+              return out
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent": "Full-Count NFL PROE pace signal audit"
+          })
+
+          game = defaultdict(lambda: {
+              "decision_plays": 0,
+              "pass_plays": 0,
+              "xpass_sum": 0.0,
+              "pass_oe_sum": 0.0,
+              "sacks": 0,
+              "parsed_pass_attempts": 0,
+          })
+          sources = {"pbp": {}, "team": {}}
+
+          for season in SEASONS:
+              purl = (
+                  "https://github.com/nflverse/nflverse-data/releases/download/"
+                  f"pbp/play_by_play_{season}.csv.gz"
+              )
+              pr = session.get(purl, timeout=120)
+              pr.raise_for_status()
+              psha = hashlib.sha256(pr.content).hexdigest()
+              if psha != PBP_SHA256[season]:
+                  raise SystemExit(f"{season}: PBP SHA drift {psha}")
+
+              rows_seen = 0
+              with gzip.GzipFile(fileobj=io.BytesIO(pr.content)) as gz:
+                  reader = csv.DictReader(
+                      io.TextIOWrapper(gz, encoding="utf-8", newline="")
+                  )
+                  missing = sorted(
+                      REQUIRED_PBP - set(reader.fieldnames or [])
+                  )
+                  if missing:
+                      raise SystemExit(
+                          f"{season}: PBP schema drift {missing}"
+                      )
+                  for row in reader:
+                      rows_seen += 1
+                      if str(row.get("season_type") or "") != "REG":
+                          continue
+                      team = str(row.get("posteam") or "").strip()
+                      if not team:
+                          continue
+                      try:
+                          week = int(float(row["week"]))
+                      except (TypeError, ValueError):
+                          continue
+                      key = (season, week, team)
+
+                      two = flag0(
+                          row.get("two_point_attempt"),
+                          "two_point_attempt",
+                      )
+                      if two:
+                          continue
+
+                      # Exact official-attempt substrate from the preceding
+                      # source reconciliation.
+                      game[key]["sacks"] += flag0(
+                          row.get("sack"), "sack"
+                      )
+                      game[key]["parsed_pass_attempts"] += flag0(
+                          row.get("pass_attempt"), "pass_attempt"
+                      )
+
+                      xraw = row.get("xpass")
+                      praw = row.get("pass_oe")
+                      if xraw in (None, "") or praw in (None, ""):
+                          continue
+
+                      p = flag0(row.get("pass"), "pass")
+                      rush = flag0(row.get("rush"), "rush")
+                      if p + rush < 1:
+                          raise SystemExit(
+                              f"{season}: pass_oe present on non-decision "
+                              f"play game={row.get('game_id')} "
+                              f"play={row.get('play_id')}"
+                          )
+                      xpass = num(xraw, "xpass")
+                      pass_oe = num(praw, "pass_oe")
+                      if abs(pass_oe - 100.0*(p-xpass)) > 1e-7:
+                          raise SystemExit(
+                              f"{season}: pass_oe identity drift"
+                          )
+
+                      rec = game[key]
+                      rec["decision_plays"] += 1
+                      rec["pass_plays"] += p
+                      rec["xpass_sum"] += xpass
+                      rec["pass_oe_sum"] += pass_oe
+
+              sources["pbp"][str(season)] = {
+                  "url": purl,
+                  "rows": rows_seen,
+                  "bytes": len(pr.content),
+                  "sha256": psha,
+              }
+
+              turl = (
+                  "https://github.com/nflverse/nflverse-data/releases/download/"
+                  f"stats_team/stats_team_week_{season}.csv"
+              )
+              tr = session.get(turl, timeout=60)
+              tr.raise_for_status()
+              tsha = hashlib.sha256(tr.content).hexdigest()
+              if tsha != TEAM_SHA256[season]:
+                  raise SystemExit(f"{season}: team SHA drift {tsha}")
+              trows = list(csv.DictReader(io.StringIO(tr.text)))
+              missing = sorted(REQUIRED_TEAM - set(trows[0]))
+              if missing:
+                  raise SystemExit(
+                      f"{season}: team schema drift {missing}"
+                  )
+
+              for raw in trows:
+                  if str(raw.get("season_type") or "") != "REG":
+                      continue
+                  key = (
+                      int(float(raw["season"])),
+                      int(float(raw["week"])),
+                      str(raw["team"]).strip(),
+                  )
+                  if key not in game:
+                      raise SystemExit(
+                          f"{season}: official team-game missing PBP {key}"
+                      )
+                  rec = game[key]
+                  official = num(raw["attempts"], "official attempts")
+                  parsed_official = (
+                      rec["parsed_pass_attempts"] - rec["sacks"]
+                  )
+                  if abs(parsed_official - official) > EPS:
+                      raise SystemExit(
+                          f"{season}: official attempt reconciliation "
+                          f"failed {key}: {parsed_official} != {official}"
+                      )
+                  rec["official_attempts"] = official
+
+              sources["team"][str(season)] = {
+                  "url": turl,
+                  "rows": len(trows),
+                  "bytes": len(tr.content),
+                  "sha256": tsha,
+              }
+
+          # Normalize complete regular-season team-games and build strictly
+          # prior-five team features.
+          ordered = []
+          for (season, week, team), rec in game.items():
+              if "official_attempts" not in rec:
+                  continue
+              if rec["decision_plays"] <= 0:
+                  raise SystemExit(
+                      f"no PROE decision plays {(season, week, team)}"
+                  )
+              current_proe = (
+                  rec["pass_oe_sum"] / rec["decision_plays"]
+              )
+              current_xpass = rec["xpass_sum"] / rec["decision_plays"]
+              current_pass_rate = rec["pass_plays"] / rec["decision_plays"]
+              if abs(
+                  current_pass_rate
+                  - (current_xpass + current_proe/100.0)
+              ) > 1e-10:
+                  raise SystemExit(
+                      f"team-game PROE identity failed "
+                      f"{(season, week, team)}"
+                  )
+              ordered.append({
+                  "season": season,
+                  "week": week,
+                  "team": team,
+                  "decision_plays": float(rec["decision_plays"]),
+                  "proe": current_proe,
+                  "xpass": current_xpass,
+                  "pass_rate": current_pass_rate,
+                  "official_attempts": float(rec["official_attempts"]),
+              })
+          ordered.sort(key=lambda r:(r["season"], r["week"], r["team"]))
+
+          history = defaultdict(lambda: deque(maxlen=WINDOW))
+          analysis_rows = []
+          for row in ordered:
+              h = history[row["team"]]
+              if (
+                  row["season"] in TEST_SEASONS
+                  and len(h) >= MIN_HISTORY
+              ):
+                  total_prior_plays = sum(
+                      x["decision_plays"] for x in h
+                  )
+                  prior_proe = (
+                      sum(
+                          x["proe"] * x["decision_plays"]
+                          for x in h
+                      ) / total_prior_plays
+                  )
+                  prior_plays = statistics.fmean(
+                      x["decision_plays"] for x in h
+                  )
+                  prior_attempts = statistics.fmean(
+                      x["official_attempts"] for x in h
+                  )
+                  analysis_rows.append({
+                      **row,
+                      "history_n": len(h),
+                      "prior_proe": prior_proe,
+                      "prior_decision_plays": prior_plays,
+                      "prior_attempts": prior_attempts,
+                      "attempt_residual_vs_rolling":
+                          row["official_attempts"] - prior_attempts,
+                      "play_residual_vs_rolling":
+                          row["decision_plays"] - prior_plays,
+                  })
+              h.append(row)
+
+          reports = {}
+          for season in TEST_SEASONS:
+              rows = [
+                  r for r in analysis_rows
+                  if r["season"] == season
+              ]
+              if not rows:
+                  raise SystemExit(f"{season}: no signal rows")
+
+              proe_corr = pearson(
+                  [r["prior_proe"] for r in rows],
+                  [r["proe"] for r in rows],
+              )
+              pace_corr = pearson(
+                  [r["prior_decision_plays"] for r in rows],
+                  [r["decision_plays"] for r in rows],
+              )
+              proe_attempt_resid_corr = pearson(
+                  [r["prior_proe"] for r in rows],
+                  [r["attempt_residual_vs_rolling"] for r in rows],
+              )
+              pace_attempt_resid_corr = pearson(
+                  [r["prior_decision_plays"] for r in rows],
+                  [r["attempt_residual_vs_rolling"] for r in rows],
+              )
+
+              reports[str(season)] = {
+                  "team_games": len(rows),
+                  "teams": len({r["team"] for r in rows}),
+                  "proe_persistence": {
+                      "pearson": proe_corr,
+                      "team_cluster_bootstrap":
+                          cluster_bootstrap(
+                              rows, "prior_proe", "proe", 10+season
+                          ),
+                      "quartiles":
+                          quartiles(rows, "prior_proe", "proe"),
+                  },
+                  "pace_persistence": {
+                      "pearson": pace_corr,
+                      "team_cluster_bootstrap":
+                          cluster_bootstrap(
+                              rows,
+                              "prior_decision_plays",
+                              "decision_plays",
+                              20+season,
+                          ),
+                      "quartiles": quartiles(
+                          rows,
+                          "prior_decision_plays",
+                          "decision_plays",
+                      ),
+                  },
+                  "incremental_vs_rolling_attempt_baseline": {
+                      "prior_proe_vs_attempt_residual_pearson":
+                          proe_attempt_resid_corr,
+                      "prior_pace_vs_attempt_residual_pearson":
+                          pace_attempt_resid_corr,
+                  },
+              }
+
+          proe_positive = all(
+              reports[str(s)]["proe_persistence"]["pearson"] > 0
+              for s in TEST_SEASONS
+          )
+          pace_positive = all(
+              reports[str(s)]["pace_persistence"]["pearson"] > 0
+              for s in TEST_SEASONS
+          )
+          proe_ci_positive = sum(
+              reports[str(s)]["proe_persistence"][
+                  "team_cluster_bootstrap"
+              ]["ci95"][0] > 0
+              for s in TEST_SEASONS
+          )
+          pace_ci_positive = sum(
+              reports[str(s)]["pace_persistence"][
+                  "team_cluster_bootstrap"
+              ]["ci95"][0] > 0
+              for s in TEST_SEASONS
+          )
+
+          output = {
+              "analysis": "NFL_TEAM_PROE_PACE_SIGNAL_AUDIT",
+              "status": "research_only_no_challenger",
+              "created_at": datetime.now(timezone.utc).isoformat(),
+              "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+              "pre_registered": {
+                  "history_season": 2022,
+                  "diagnostic_seasons": list(TEST_SEASONS),
+                  "rolling_window_team_games": WINDOW,
+                  "minimum_history": MIN_HISTORY,
+                  "proe_definition":
+                      "play-weighted mean pass_oe over prior team games",
+                  "pace_definition":
+                      "mean xpass/pass_oe-eligible offensive decision plays",
+                  "holdout_policy":
+                      "Do not inspect 2021 model performance here.",
+                  "signal_gate": (
+                      "positive persistence point estimate in all 3 seasons "
+                      "and clustered 95% CI lower bound >0 in at least 2/3 "
+                      "seasons for a component to earn a challenger"
+                  ),
+              },
+              "sources": sources,
+              "reports": reports,
+              "decision": {
+                  "proe_positive_all_seasons": proe_positive,
+                  "proe_cluster_ci_positive_seasons": proe_ci_positive,
+                  "proe_signal_pass":
+                      proe_positive and proe_ci_positive >= 2,
+                  "pace_positive_all_seasons": pace_positive,
+                  "pace_cluster_ci_positive_seasons": pace_ci_positive,
+                  "pace_signal_pass":
+                      pace_positive and pace_ci_positive >= 2,
+              },
+              "next_if_signal_pass": (
+                  "Freeze a zero-fit team pass-volume challenger using only "
+                  "signal components that pass this gate, then test first on "
+                  "an untouched historical season before player-level use."
+              ),
+          }
+
+          path = "/tmp/nfl-proe-pace-signal.json"
+          with open(path, "w", encoding="utf-8") as f:
+              json.dump(output, f, indent=2, sort_keys=True)
+          print(json.dumps(output, indent=2, sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-proe-pace-signal
+          path: /tmp/nfl-proe-pace-signal.json
+          retention-days: 30
