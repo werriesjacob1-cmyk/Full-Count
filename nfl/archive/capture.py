@@ -36,7 +36,7 @@ import requests
 
 from nfl.archive import store
 from nfl.archive.provenance import (
-    CONCLUSIVE_OUTCOMES, Fetched, SOURCE_FAILED, coverage_summary, utcnow,
+    CONCLUSIVE_OUTCOMES, Fetched, PARTIAL, SOURCE_FAILED, coverage_summary, utcnow,
 )
 from nfl.archive.sources import (
     coaching_staff, espn_nfl, fanduel_nfl, media_discovery, official_nfl,
@@ -167,6 +167,11 @@ def main(argv: list[str]) -> int:
         print("\nWARNING  these sources produced NO conclusive observation this "
               "run; their silence must not be read as 'nothing to report':")
         for source in coverage["sources_with_no_conclusive_observation"]:
+            print(f"  {source}")
+    if coverage.get("sources_with_partial_observation"):
+        print("\nWARNING  these sources contain PARTIAL observations: bytes were "
+              "preserved, but some expected semantic coverage is ambiguous:")
+        for source in coverage["sources_with_partial_observation"]:
             print(f"  {source}")
     return 0
 
