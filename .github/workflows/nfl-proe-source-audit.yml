@@ -1,0 +1,267 @@
+name: NFL PROE Source Audit
+
+# Research-only validation of nflverse/nflfastR expected-pass fields before any
+# PROE feature is admitted to an NFL model.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-proe-source-audit.yml
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Validate xpass and pass_oe substrate
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import gzip
+          import hashlib
+          import io
+          import json
+          import math
+          import os
+          import statistics
+          from collections import defaultdict
+          from datetime import datetime, timezone
+
+          import requests
+
+          SEASONS = (2023, 2024, 2025, 2026)
+          SHA256 = {
+              2023: "4649804ee0f0a40b41e51ec75a1ce921949d7fab5459213488656b92f78560e8",
+              2024: "23370d5d10f8104d80d46a1fc5e61f4f6f5a3263fe96fe2dd629913cfcb08c06",
+              2025: "2f135887790a013fd004e609e37096bb4816d5cc80b9f19122e1bad478961978",
+              2026: "d9e442ae17ba88e70c6df6ed15e4f0ce54c9ff63a607de54f62cb7ed4f016e39",
+          }
+          REQUIRED = {
+              "season", "week", "season_type", "game_id", "play_id",
+              "posteam", "qb_dropback", "xpass", "pass_oe",
+              "two_point_attempt",
+          }
+          IDENTITY_TOLERANCE = 1e-7
+
+          def f(value, name):
+              try:
+                  value = float(value)
+              except (TypeError, ValueError) as exc:
+                  raise ValueError(f"invalid {name}: {value!r}") from exc
+              if not math.isfinite(value):
+                  raise ValueError(f"non-finite {name}: {value!r}")
+              return value
+
+          def flag(value, name):
+              value = f(value, name)
+              if value not in (0.0, 1.0):
+                  raise ValueError(f"{name} outside 0/1: {value}")
+              return value
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent": "Full-Count NFL PROE source audit"
+          })
+
+          reports = {}
+          sources = {}
+
+          for season in SEASONS:
+              url = (
+                  "https://github.com/nflverse/nflverse-data/releases/download/"
+                  f"pbp/play_by_play_{season}.csv.gz"
+              )
+              response = session.get(url, timeout=120)
+              response.raise_for_status()
+              digest = hashlib.sha256(response.content).hexdigest()
+              if digest != SHA256[season]:
+                  raise SystemExit(
+                      f"{season}: PBP SHA drift {digest}"
+                  )
+
+              eligible = 0
+              identity_errors = []
+              xpasses = []
+              pass_oes = []
+              reg_team_game_counts = defaultdict(int)
+              all_team_game_counts = defaultdict(int)
+              max_week = 0
+              rows_seen = 0
+              empty_posteam_with_signal = 0
+
+              with gzip.GzipFile(fileobj=io.BytesIO(response.content)) as gz:
+                  reader = csv.DictReader(
+                      io.TextIOWrapper(gz, encoding="utf-8", newline="")
+                  )
+                  fields = set(reader.fieldnames or [])
+                  missing = sorted(REQUIRED - fields)
+                  if missing:
+                      raise SystemExit(
+                          f"{season}: missing PROE columns {missing}"
+                      )
+
+                  for row in reader:
+                      rows_seen += 1
+                      try:
+                          week = int(float(row["week"]))
+                      except (TypeError, ValueError):
+                          continue
+                      max_week = max(max_week, week)
+
+                      xraw = row.get("xpass")
+                      praw = row.get("pass_oe")
+                      if xraw in (None, "") and praw in (None, ""):
+                          continue
+                      if xraw in (None, "") or praw in (None, ""):
+                          raise SystemExit(
+                              f"{season}: xpass/pass_oe partial missingness "
+                              f"at game={row.get('game_id')} play={row.get('play_id')}"
+                          )
+
+                      posteam = str(row.get("posteam") or "").strip()
+                      if not posteam:
+                          empty_posteam_with_signal += 1
+                          continue
+
+                      xpass = f(xraw, "xpass")
+                      pass_oe = f(praw, "pass_oe")
+                      dropback = flag(row.get("qb_dropback"), "qb_dropback")
+
+                      if not (0.0 <= xpass <= 1.0):
+                          raise SystemExit(
+                              f"{season}: xpass outside [0,1]: {xpass}"
+                          )
+                      if not (-100.0 <= pass_oe <= 100.0):
+                          raise SystemExit(
+                              f"{season}: pass_oe outside [-100,100]: {pass_oe}"
+                          )
+
+                      expected = 100.0 * (dropback - xpass)
+                      identity_errors.append(abs(pass_oe - expected))
+                      xpasses.append(xpass)
+                      pass_oes.append(pass_oe)
+                      eligible += 1
+
+                      key = (str(row["game_id"]), posteam)
+                      all_team_game_counts[key] += 1
+                      if str(row.get("season_type") or "") == "REG":
+                          reg_team_game_counts[key] += 1
+
+              if eligible == 0:
+                  raise SystemExit(f"{season}: no xpass/pass_oe rows")
+
+              max_identity_error = max(identity_errors)
+              identity_holds = max_identity_error <= IDENTITY_TOLERANCE
+
+              reports[str(season)] = {
+                  "rows_seen": rows_seen,
+                  "max_week_present": max_week,
+                  "eligible_xpass_pass_oe_rows": eligible,
+                  "empty_posteam_with_signal_rows":
+                      empty_posteam_with_signal,
+                  "xpass": {
+                      "min": min(xpasses),
+                      "max": max(xpasses),
+                      "mean": statistics.fmean(xpasses),
+                  },
+                  "pass_oe": {
+                      "min": min(pass_oes),
+                      "max": max(pass_oes),
+                      "mean": statistics.fmean(pass_oes),
+                  },
+                  "identity": {
+                      "formula_tested":
+                          "pass_oe == 100 * (qb_dropback - xpass)",
+                      "tolerance": IDENTITY_TOLERANCE,
+                      "max_abs_error": max_identity_error,
+                      "mean_abs_error":
+                          statistics.fmean(identity_errors),
+                      "holds_within_tolerance": identity_holds,
+                  },
+                  "team_game_coverage": {
+                      "all_team_games_with_signal":
+                          len(all_team_game_counts),
+                      "regular_season_team_games_with_signal":
+                          len(reg_team_game_counts),
+                      "regular_season_team_games_ge_20_signal_plays":
+                          sum(
+                              count >= 20
+                              for count in reg_team_game_counts.values()
+                          ),
+                      "min_reg_signal_plays_per_team_game": (
+                          min(reg_team_game_counts.values())
+                          if reg_team_game_counts else None
+                      ),
+                      "median_reg_signal_plays_per_team_game": (
+                          statistics.median(reg_team_game_counts.values())
+                          if reg_team_game_counts else None
+                      ),
+                  },
+              }
+              sources[str(season)] = {
+                  "url": url,
+                  "bytes": len(response.content),
+                  "sha256": digest,
+              }
+
+          output = {
+              "analysis": "NFL_PROE_XPASS_SOURCE_AUDIT",
+              "status": "research_only",
+              "created_at": datetime.now(timezone.utc).isoformat(),
+              "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+              "source_contract": {
+                  "seasons": list(SEASONS),
+                  "sha256": SHA256,
+                  "required_columns": sorted(REQUIRED),
+                  "semantic_reference": (
+                      "nflfastR documents xpass as expected dropback "
+                      "probability and pass_oe as dropback percent over expected"
+                  ),
+              },
+              "sources": sources,
+              "reports": reports,
+              "decision": {
+                  "historical_schema_complete":
+                      all(
+                          reports[str(s)]["eligible_xpass_pass_oe_rows"] > 0
+                          for s in (2023, 2024, 2025)
+                      ),
+                  "prospective_2026_signal_present":
+                      reports["2026"]["eligible_xpass_pass_oe_rows"] > 0,
+                  "identity_holds_all_seasons":
+                      all(
+                          reports[str(s)]["identity"][
+                              "holds_within_tolerance"
+                          ]
+                          for s in SEASONS
+                      ),
+              },
+              "next_if_clean": (
+                  "Build prior-only team PROE/pace features, then test their "
+                  "incremental signal against frozen B0 pass-attempt residuals."
+              ),
+          }
+
+          path = "/tmp/nfl-proe-source-audit.json"
+          with open(path, "w", encoding="utf-8") as f:
+              json.dump(output, f, indent=2, sort_keys=True)
+          print(json.dumps(output, indent=2, sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-proe-source-audit
+          path: /tmp/nfl-proe-source-audit.json
+          retention-days: 30
