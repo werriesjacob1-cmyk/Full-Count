@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CarNow Lead Auto-Claimer — Settings</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --accent: #f97316;
+      --on: #16a34a;
+      --off: #cbd5e1;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --card: #1e293b;
+        --ink: #f1f5f9;
+        --muted: #94a3b8;
+        --line: #334155;
+        --off: #475569;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 32px 16px;
+      background: var(--bg);
+      color: var(--ink);
+      font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .wrap { max-width: 620px; margin: 0 auto; }
+
+    header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    header img { width: 40px; height: 40px; border-radius: 10px; }
+    header h1 { margin: 0; font-size: 19px; font-weight: 650; letter-spacing: -0.01em; }
+    header p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 4px 20px;
+      margin-bottom: 20px;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .row:last-child { border-bottom: none; }
+
+    .row .label { font-weight: 600; }
+    .row .hint { color: var(--muted); font-size: 12.5px; margin-top: 3px; }
+
+    /* Toggle switch */
+    .switch { position: relative; flex: 0 0 auto; width: 46px; height: 26px; }
+    .switch input {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      margin: 0; opacity: 0; cursor: pointer; z-index: 2;
+    }
+    .track {
+      position: absolute; inset: 0;
+      background: var(--off);
+      border-radius: 999px;
+      transition: background 140ms ease;
+      pointer-events: none;
+    }
+    .track::after {
+      content: "";
+      position: absolute; top: 3px; left: 3px;
+      width: 20px; height: 20px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .3);
+      transition: transform 140ms ease;
+    }
+    .switch input:checked + .track { background: var(--on); }
+    .switch input:checked + .track::after { transform: translateX(20px); }
+    .switch input:focus-visible + .track { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .section-title {
+      font-size: 12px; font-weight: 700; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--muted);
+      margin: 0 0 10px 4px;
+    }
+
+    .status {
+      display: flex; flex-wrap: wrap; gap: 10px 28px;
+      padding: 16px 0;
+    }
+    .stat .k { color: var(--muted); font-size: 12px; }
+    .stat .v { font-size: 18px; font-weight: 650; font-variant-numeric: tabular-nums; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); }
+    th { color: var(--muted); font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; }
+    td.mono { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--muted); }
+    td.label { max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .empty { color: var(--muted); padding: 18px 6px; }
+
+    .actions { display: flex; gap: 10px; align-items: center; padding: 14px 0 18px; }
+    button.btn {
+      font: inherit; font-weight: 600;
+      padding: 8px 14px; border-radius: 8px;
+      border: 1px solid var(--line); background: transparent; color: var(--ink);
+      cursor: pointer;
+    }
+    button.btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    #saved {
+      margin-left: auto; color: var(--on); font-weight: 600; font-size: 13px;
+      opacity: 0; transition: opacity 160ms ease;
+    }
+    #saved.show { opacity: 1; }
+
+    footer { color: var(--muted); font-size: 12px; text-align: center; padding-top: 8px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <img src="icons/icon128.png" alt="">
+      <div>
+        <h1>CarNow Lead Auto-Claimer</h1>
+        <p>Runs on <code>https://*.carnow.com/*</code></p>
+      </div>
+    </header>
+
+    <p class="section-title">Controls</p>
+    <div class="card">
+      <div class="row">
+        <div>
+          <div class="label">Auto-Claim Active</div>
+          <div class="hint">Master switch. When off, the extension observes nothing and clicks nothing.</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="autoClaim" aria-label="Auto-Claim Active">
+          <span class="track"></span>
+        </label>
+      </div>
+
+      <div class="row">
+        <div>
+          <div class="label">Sound Alert on Claim</div>
+          <div class="hint">Short tone in the CarNow tab each time a lead is claimed.</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="soundAlert" aria-label="Sound Alert on Claim">
+          <span class="track"></span>
+        </label>
+      </div>
+
+      <div class="row">
+        <div>
+          <div class="label">Logging / Debug Mode</div>
+          <div class="hint">Verbose output in the page console and the service worker console.</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="debug" aria-label="Logging and Debug Mode">
+          <span class="track"></span>
+        </label>
+      </div>
+    </div>
+
+    <p class="section-title">Status</p>
+    <div class="card">
+      <div class="status">
+        <div class="stat"><div class="k">Claims today</div><div class="v" id="statToday">—</div></div>
+        <div class="stat"><div class="k">Claims logged</div><div class="v" id="statTotal">—</div></div>
+        <div class="stat"><div class="k">Connected tabs</div><div class="v" id="statPorts">—</div></div>
+        <div class="stat"><div class="k">Last claim</div><div class="v" id="statLast">—</div></div>
+      </div>
+    </div>
+
+    <p class="section-title">Recent claims</p>
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th>Time</th><th>Button</th><th>Trigger</th><th>Speed</th></tr>
+        </thead>
+        <tbody id="historyBody"></tbody>
+      </table>
+      <div class="actions">
+        <button class="btn" id="refresh" type="button">Refresh</button>
+        <button class="btn" id="clear" type="button">Clear history</button>
+        <span id="saved">Saved</span>
+      </div>
+    </div>
+
+    <footer>Settings sync across signed-in Chrome profiles. Claim history is stored locally.</footer>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

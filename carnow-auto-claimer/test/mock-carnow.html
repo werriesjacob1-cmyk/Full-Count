@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Mock CarNow Dashboard — Auto-Claimer test harness</title>
+  <style>
+    body { font: 14px system-ui, sans-serif; background: #0f172a; color: #e2e8f0; padding: 24px; margin: 0; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    p.sub { color: #94a3b8; margin: 0 0 20px; }
+    .panel { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+    .panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: #94a3b8; margin: 0 0 12px; }
+    .lead { display: flex; align-items: center; justify-content: space-between; gap: 16px;
+            background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; margin-bottom: 8px; }
+    .btn { background: #f97316; color: #0f172a; border: none; border-radius: 6px; padding: 8px 14px;
+           font: inherit; font-weight: 700; cursor: pointer; }
+    .btn.disabled, .btn[disabled] { background: #475569; color: #94a3b8; cursor: not-allowed; }
+    .btn.claimed { background: #16a34a; }
+    .modal { position: fixed; right: 20px; bottom: 20px; width: 300px; background: #1e293b;
+             border: 1px solid #f97316; border-radius: 10px; padding: 16px; z-index: 9999; }
+    #log { background: #020617; border: 1px solid #334155; border-radius: 8px; padding: 12px;
+           font: 12px/1.6 ui-monospace, monospace; max-height: 260px; overflow: auto; white-space: pre-wrap; }
+    button.ctl { background: #334155; color: #e2e8f0; border: 1px solid #475569; border-radius: 6px;
+                 padding: 7px 12px; font: inherit; cursor: pointer; margin-right: 8px; }
+    iframe { width: 100%; height: 110px; border: 1px solid #334155; border-radius: 8px; background: #0f172a; }
+  </style>
+</head>
+<body>
+  <h1>Mock CarNow Dashboard</h1>
+  <p class="sub">Test harness for the CarNow Lead Auto-Claimer. Every claim path is represented below.</p>
+
+  <div class="panel">
+    <h2>Controls</h2>
+    <button class="ctl" id="spawnCard">Spawn dashboard lead</button>
+    <button class="ctl" id="spawnModal">Spawn modal pop-up (position:fixed)</button>
+    <button class="ctl" id="spawnShadow">Spawn lead inside shadow DOM</button>
+    <button class="ctl" id="spawnBurst">Burst: 5 leads at once</button>
+    <button class="ctl" id="spawnDecoys">Spawn decoys (must NOT be clicked)</button>
+  </div>
+
+  <div class="panel">
+    <h2>Lead queue</h2>
+    <div id="queue"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Shadow DOM host</h2>
+    <div id="shadowHost"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Nested iframe (about:blank via srcdoc)</h2>
+    <iframe id="frame" srcdoc='<body style="font:14px system-ui;background:#0f172a;color:#e2e8f0;padding:12px;margin:0">
+      <div data-lead-id="iframe-lead-1">Lead in iframe &mdash; <button class="btn" style="background:#f97316;border:0;border-radius:6px;padding:6px 12px;font-weight:700">Claim Lead</button></div>
+      <script>
+        document.addEventListener("click", function (e) {
+          if (e.target.tagName === "BUTTON") {
+            e.target.textContent = "Claimed";
+            e.target.classList.add("claimed");
+            e.target.disabled = true;
+            parent.postMessage({ mock: "claim", where: "iframe" }, "*");
+          }
+        });
+      </script>
+    </body>'></iframe>
+  </div>
+
+  <div class="panel">
+    <h2>Click log <span style="color:#94a3b8;font-weight:400;text-transform:none;letter-spacing:0">(latency measured from DOM insertion)</span></h2>
+    <div id="log">waiting…</div>
+  </div>
+
+<script>
+(() => {
+  'use strict';
+
+  let n = 0;
+  const spawnTimes = new Map();
+  const logEl = document.getElementById('log');
+  const queue = document.getElementById('queue');
+  let lines = [];
+
+  function log(msg) {
+    lines.unshift(new Date().toLocaleTimeString() + '  ' + msg);
+    logEl.textContent = lines.slice(0, 40).join('\n');
+  }
+
+  function onClaim(button, id) {
+    const spawned = spawnTimes.get(id);
+    const latency = spawned ? (performance.now() - spawned).toFixed(1) : '?';
+    button.textContent = 'Claimed';
+    button.classList.add('claimed');
+    button.disabled = true;
+    log('CLAIMED ' + id + '  latency=' + latency + 'ms' + (latency !== '?' && +latency < 50 ? '  [PASS <50ms]' : '  [check]'));
+  }
+
+  function makeLead(container, opts) {
+    opts = opts || {};
+    const id = 'lead-' + (++n);
+    const row = document.createElement('div');
+    row.className = 'lead';
+    row.setAttribute('data-lead-id', id);
+
+    const text = document.createElement('span');
+    text.textContent = id + ' — ' + (opts.note || 'New inbound lead');
+
+    const button = document.createElement(opts.tag || 'button');
+    button.className = 'btn' + (opts.extraClass ? ' ' + opts.extraClass : '');
+    button.textContent = opts.text || 'Claim Lead';
+    if (opts.tag === 'div') button.setAttribute('role', 'button');
+    if (opts.disabled) button.setAttribute('disabled', '');
+    button.addEventListener('click', () => onClaim(button, id));
+
+    row.append(text, button);
+    spawnTimes.set(id, performance.now());
+    container.append(row);   // insertion happens here — the observer fires next microtask
+    return row;
+  }
+
+  document.getElementById('spawnCard').onclick = () => makeLead(queue, {});
+
+  document.getElementById('spawnModal').onclick = () => {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    document.body.append(modal);
+    makeLead(modal, { note: 'Modal pop-up', text: 'Accept' });
+    setTimeout(() => modal.remove(), 8000);
+  };
+
+  document.getElementById('spawnShadow').onclick = () => {
+    const host = document.createElement('div');
+    document.getElementById('shadowHost').append(host);
+    const root = host.attachShadow({ mode: 'open' });
+    const style = document.createElement('style');
+    style.textContent = '.lead{display:flex;justify-content:space-between;gap:12px;padding:10px;border:1px solid #334155;border-radius:8px;margin-bottom:6px;color:#e2e8f0}.btn{background:#f97316;border:0;border-radius:6px;padding:6px 12px;font-weight:700;cursor:pointer}';
+    root.append(style);
+    makeLead(root, { note: 'Inside open shadow root' });
+  };
+
+  document.getElementById('spawnBurst').onclick = () => {
+    for (let i = 0; i < 5; i++) makeLead(queue, { note: 'Burst lead' });
+  };
+
+  document.getElementById('spawnDecoys').onclick = () => {
+    makeLead(queue, { note: 'DECOY: disabled', disabled: true, text: 'Claim Lead' });
+    makeLead(queue, { note: 'DECOY: .disabled class', extraClass: 'disabled', text: 'Claim' });
+    makeLead(queue, { note: 'DECOY: already claimed', extraClass: 'claimed', text: 'Claimed' });
+    makeLead(queue, { note: 'DECOY: cookie banner', text: 'Accept all cookies' });
+    makeLead(queue, { note: 'DECOY: unclaim action', text: 'Unclaim' });
+    makeLead(queue, { note: 'DECOY: history link', text: 'Claim history' });
+    log('decoys spawned — none of these should appear as CLAIMED above');
+  };
+
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.mock === 'claim') log('CLAIMED in ' + e.data.where + ' (all_frames injection works)');
+  });
+
+  log('harness ready — open DevTools console and enable Debug Mode in the extension options');
+})();
+</script>
+</body>
+</html>
