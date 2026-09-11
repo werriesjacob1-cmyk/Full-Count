@@ -1,0 +1,388 @@
+name: NFL B1 Pass Attempts Fresh 2023 Audit
+
+# Fresh historical audit for the strongest B1 market.
+#
+# PRE-REGISTERED before observing 2023 B1 pass-attempt results:
+# - 2022 is history only
+# - 2023 REG is the audit season
+# - rolling window = 5 prior player appearances / team games
+# - min player history = 3
+# - min team history = 3
+# - exact B0/B1 same-population rows only
+# - no fitted parameters, no feature changes, no row dropping
+# - player- and team-clustered bootstrap uncertainty on delta MAE
+#
+# This workflow cannot promote a model or publish picks.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-b1-pass-attempts-2023.yml
+      - nfl/research/b1_history.py
+      - nfl/research/b1_evaluate.py
+      - nfl/research/b1_team_opportunity.py
+      - nfl/research/v0_baseline.py
+      - nfl/research/nflverse_history.py
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Run fresh 2023 B1 pass-attempt audit
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import hashlib
+          import io
+          import json
+          import math
+          import os
+          import random
+          import statistics
+          from collections import defaultdict
+          from datetime import datetime, timezone
+
+          import requests
+
+          from nfl.research import nflverse_history as nh
+          from nfl.research.b1_evaluate import paired_error_rows
+          from nfl.research.b1_history import (
+              TEAM_REQUIRED_COLUMNS,
+              build_b1_rows,
+          )
+
+          HISTORY_SEASON = 2022
+          TEST_SEASON = 2023
+          SEASONS = (HISTORY_SEASON, TEST_SEASON)
+          ROLLING_WINDOW = 5
+          MIN_HISTORY = 3
+          MIN_TEAM_HISTORY = 3
+          BOOTSTRAPS = 5000
+          SEED = 20260911
+
+          PLAYER_SHA256 = {
+              2022: "ad426c3fe5bf1cc30c3f137fdfe96d054e19d400879ee4413129da49fa7b54be",
+              2023: "f19cb71a5de0dce7fd09376026237c9ee9d5a93fe13815a2ea3ec2d37204cb17",
+          }
+          TEAM_SHA256 = {
+              2022: "9803875bd0b74aa49230288d45359c75e45910f1cf1953ea0f07b9d3db35e4d1",
+              2023: "dc5a387daabe8663deaddac492ad7020d47fb1a66048690b355b406cd8e4c454",
+          }
+
+          def finite(value, label):
+              try:
+                  value = float(value)
+              except (TypeError, ValueError) as exc:
+                  raise ValueError(f"invalid {label}: {value!r}") from exc
+              if not math.isfinite(value):
+                  raise ValueError(f"non-finite {label}: {value!r}")
+              return value
+
+          def pct(values, q):
+              values = sorted(values)
+              if not values:
+                  return None
+              pos = (len(values) - 1) * q
+              lo = int(math.floor(pos))
+              hi = int(math.ceil(pos))
+              if lo == hi:
+                  return values[lo]
+              weight = pos - lo
+              return values[lo] * (1.0 - weight) + values[hi] * weight
+
+          def metrics(rows, pred_field):
+              if not rows:
+                  return {
+                      "n": 0, "mae": None, "rmse": None, "bias": None,
+                      "mean_prediction": None, "mean_actual": None,
+                  }
+              errors = [
+                  finite(r[pred_field], pred_field) - finite(r["actual"], "actual")
+                  for r in rows
+              ]
+              return {
+                  "n": len(rows),
+                  "mae": statistics.fmean(abs(e) for e in errors),
+                  "rmse": math.sqrt(statistics.fmean(e * e for e in errors)),
+                  "bias": statistics.fmean(errors),
+                  "mean_prediction": statistics.fmean(
+                      finite(r[pred_field], pred_field) for r in rows
+                  ),
+                  "mean_actual": statistics.fmean(
+                      finite(r["actual"], "actual") for r in rows
+                  ),
+              }
+
+          def delta_mae(rows):
+              return statistics.fmean(
+                  abs(finite(r["b1_prediction"], "b1") - finite(r["actual"], "actual"))
+                  - abs(finite(r["b0_prediction"], "b0") - finite(r["actual"], "actual"))
+                  for r in rows
+              )
+
+          def clustered_bootstrap(rows, field, seed_offset):
+              groups = defaultdict(list)
+              for row in rows:
+                  key = str(row[field])
+                  if not key:
+                      raise ValueError(f"empty cluster field {field}")
+                  groups[key].append(row)
+              keys = sorted(groups)
+              if len(keys) < 2:
+                  raise ValueError(f"insufficient clusters for {field}")
+
+              rng = random.Random(SEED + seed_offset)
+              deltas = []
+              for _ in range(BOOTSTRAPS):
+                  sampled = []
+                  for _ in keys:
+                      sampled.extend(groups[rng.choice(keys)])
+                  deltas.append(delta_mae(sampled))
+
+              return {
+                  "cluster_field": field,
+                  "clusters": len(keys),
+                  "replicates": len(deltas),
+                  "delta_mae_median": pct(deltas, 0.5),
+                  "delta_mae_ci95": [pct(deltas, 0.025), pct(deltas, 0.975)],
+                  "probability_delta_below_zero":
+                      sum(x < 0 for x in deltas) / len(deltas),
+              }
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent": "Full-Count fresh 2023 B1 pass-attempt audit"
+          })
+
+          player_rows = []
+          team_rows = []
+          sources = {"player": {}, "team": {}}
+
+          for season in SEASONS:
+              purl = nh.player_stats_url(season)
+              response = session.get(purl, timeout=60)
+              response.raise_for_status()
+              pdigest = hashlib.sha256(response.content).hexdigest()
+              if pdigest != PLAYER_SHA256[season]:
+                  raise SystemExit(
+                      f"{season}: player source SHA drift {pdigest}"
+                  )
+              prows = list(csv.DictReader(io.StringIO(response.text)))
+              if not prows:
+                  raise SystemExit(f"{season}: empty player stats")
+              player_rows.extend(prows)
+              sources["player"][str(season)] = {
+                  "url": purl,
+                  "rows": len(prows),
+                  "sha256": pdigest,
+              }
+
+              turl = (
+                  "https://github.com/nflverse/nflverse-data/releases/download/"
+                  f"stats_team/stats_team_week_{season}.csv"
+              )
+              response = session.get(turl, timeout=60)
+              response.raise_for_status()
+              tdigest = hashlib.sha256(response.content).hexdigest()
+              if tdigest != TEAM_SHA256[season]:
+                  raise SystemExit(
+                      f"{season}: team source SHA drift {tdigest}"
+                  )
+              trows = list(csv.DictReader(io.StringIO(response.text)))
+              if not trows:
+                  raise SystemExit(f"{season}: empty team stats")
+              missing = sorted(TEAM_REQUIRED_COLUMNS - set(trows[0]))
+              if missing:
+                  raise SystemExit(
+                      f"{season}: team schema drift {missing}"
+                  )
+              team_rows.extend(trows)
+              sources["team"][str(season)] = {
+                  "url": turl,
+                  "rows": len(trows),
+                  "sha256": tdigest,
+              }
+
+          built = build_b1_rows(
+              player_rows,
+              team_rows,
+              rolling_window=ROLLING_WINDOW,
+          )
+
+          paired = paired_error_rows(
+              built,
+              "pass_attempts",
+              test_season=TEST_SEASON,
+              test_season_type="REG",
+              min_history=MIN_HISTORY,
+              min_team_history=MIN_TEAM_HISTORY,
+          )
+          if not paired:
+              raise SystemExit("no B0/B1 2023 pass-attempt comparison rows")
+
+          # The market contract should already force QB-only rows, but verify
+          # directly against the built source rather than trusting assumption.
+          built_index = {
+              (
+                  int(row["season"]),
+                  int(row["week"]),
+                  str(row["player_id"]),
+              ): row
+              for row in built
+          }
+          audit_rows = []
+          for row in paired:
+              key = (
+                  int(row["season"]),
+                  int(row["week"]),
+                  str(row["player_id"]),
+              )
+              source = built_index.get(key)
+              if source is None:
+                  raise SystemExit(f"missing built row for {key}")
+              position = str(source.get("position") or "").strip().upper()
+              if position != "QB":
+                  raise SystemExit(
+                      f"non-QB leaked into pass-attempt market: {key} {position}"
+                  )
+              audit_rows.append({
+                  **row,
+                  "player_id": str(row["player_id"]),
+                  "team": str(row["team"]),
+                  "player_name": str(source.get("player_display_name") or ""),
+                  "history_n": int(source["history_n"]),
+                  "team_history_n": int(source["team_history_n"]),
+                  "projected_team_pass_attempts": finite(
+                      source["features"]["projected_team_pass_attempts"],
+                      "projected_team_pass_attempts",
+                  ),
+                  "prior_player_pass_attempt_share": finite(
+                      source["features"]["prior_player_pass_attempt_share"],
+                      "prior_player_pass_attempt_share",
+                  ),
+              })
+
+          b0 = metrics(audit_rows, "b0_prediction")
+          b1 = metrics(audit_rows, "b1_prediction")
+          delta = b1["mae"] - b0["mae"]
+
+          player_boot = clustered_bootstrap(
+              audit_rows, "player_id", seed_offset=1
+          )
+          team_boot = clustered_bootstrap(
+              audit_rows, "team", seed_offset=2
+          )
+
+          player_ci = player_boot["delta_mae_ci95"]
+          team_ci = team_boot["delta_mae_ci95"]
+
+          decision = {
+              "directional_support": delta < 0,
+              "player_cluster_ci_entirely_favorable":
+                  player_ci[1] is not None and player_ci[1] < 0,
+              "team_cluster_ci_entirely_favorable":
+                  team_ci[1] is not None and team_ci[1] < 0,
+          }
+          decision["strong_support"] = (
+              decision["directional_support"]
+              and decision["player_cluster_ci_entirely_favorable"]
+              and decision["team_cluster_ci_entirely_favorable"]
+          )
+
+          # Diagnose only where B1 differs from B0. This is descriptive and
+          # does not alter the preregistered decision.
+          changed = [
+              r for r in audit_rows
+              if abs(r["b1_prediction"] - r["b0_prediction"]) > 1e-12
+          ]
+          unchanged = [
+              r for r in audit_rows
+              if abs(r["b1_prediction"] - r["b0_prediction"]) <= 1e-12
+          ]
+
+          output = {
+              "analysis": "NFL_B1_PASS_ATTEMPTS_FRESH_2023_AUDIT",
+              "status": "research_only_no_promotion",
+              "created_at": datetime.now(timezone.utc).isoformat(),
+              "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+              "pre_registered": {
+                  "history_season": HISTORY_SEASON,
+                  "test_season": TEST_SEASON,
+                  "test_season_type": "REG",
+                  "rolling_window": ROLLING_WINDOW,
+                  "minimum_player_history": MIN_HISTORY,
+                  "minimum_team_history": MIN_TEAM_HISTORY,
+                  "market": "pass_attempts",
+                  "formula": (
+                      "projected current-team prior-5 pass attempts * "
+                      "prior QB pass-attempt share"
+                  ),
+                  "same_population_required": True,
+                  "fit_parameters": 0,
+                  "bootstrap_replicates": BOOTSTRAPS,
+                  "decision_rule": (
+                      "directional support if delta MAE < 0; strong support "
+                      "only if player- and team-clustered 95% CI upper bounds "
+                      "are also < 0"
+                  ),
+              },
+              "sources": sources,
+              "population": {
+                  "comparison_rows": len(audit_rows),
+                  "players": len({r["player_id"] for r in audit_rows}),
+                  "teams": len({r["team"] for r in audit_rows}),
+                  "changed_rows": len(changed),
+                  "unchanged_rows": len(unchanged),
+              },
+              "b0": b0,
+              "b1": b1,
+              "delta_mae_b1_minus_b0": delta,
+              "player_cluster_bootstrap": player_boot,
+              "team_cluster_bootstrap": team_boot,
+              "decision": decision,
+              "descriptive_changed_rows": {
+                  "n": len(changed),
+                  "delta_mae_b1_minus_b0":
+                      delta_mae(changed) if changed else None,
+              },
+              "next_if_strong_support": (
+                  "Run mechanism attribution across 2023/2024/2025, then "
+                  "preregister B2-PASS as plays * pass rate * QB dropback share."
+              ),
+              "next_if_directional_only": (
+                  "Treat B1 as promising but unstable; run mechanism "
+                  "attribution before any B2-PASS implementation."
+              ),
+              "next_if_no_support": (
+                  "Reject generic B1 pass-volume rescaling as unstable and "
+                  "move directly to causal plays/pass-rate/dropback-share "
+                  "feature discovery without tuning B1."
+              ),
+          }
+
+          path = "/tmp/nfl-b1-pass-attempts-2023.json"
+          with open(path, "w", encoding="utf-8") as f:
+              json.dump(output, f, indent=2, sort_keys=True)
+
+          print(json.dumps(output, indent=2, sort_keys=True))
+          print(f"\nWrote {path}")
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-b1-pass-attempts-fresh-2023
+          path: /tmp/nfl-b1-pass-attempts-2023.json
+          retention-days: 30
