@@ -92,6 +92,10 @@ jobs:
                   )
 
               eligible = 0
+              both_missing = 0
+              xpass_only = 0
+              pass_oe_only = 0
+              partial_examples = []
               identity_errors = []
               xpasses = []
               pass_oes = []
@@ -122,13 +126,37 @@ jobs:
 
                       xraw = row.get("xpass")
                       praw = row.get("pass_oe")
-                      if xraw in (None, "") and praw in (None, ""):
+                      xmissing = xraw in (None, "")
+                      pmissing = praw in (None, "")
+                      if xmissing and pmissing:
+                          both_missing += 1
                           continue
-                      if xraw in (None, "") or praw in (None, ""):
-                          raise SystemExit(
-                              f"{season}: xpass/pass_oe partial missingness "
-                              f"at game={row.get('game_id')} play={row.get('play_id')}"
-                          )
+                      if xmissing or pmissing:
+                          if xmissing:
+                              pass_oe_only += 1
+                              missing_side = "xpass_missing"
+                          else:
+                              xpass_only += 1
+                              missing_side = "pass_oe_missing"
+                          if len(partial_examples) < 25:
+                              partial_examples.append({
+                                  "missing_side": missing_side,
+                                  "game_id": row.get("game_id"),
+                                  "play_id": row.get("play_id"),
+                                  "season_type": row.get("season_type"),
+                                  "week": row.get("week"),
+                                  "posteam": row.get("posteam"),
+                                  "play_type": row.get("play_type"),
+                                  "down": row.get("down"),
+                                  "qtr": row.get("qtr"),
+                                  "qb_dropback": row.get("qb_dropback"),
+                                  "two_point_attempt":
+                                      row.get("two_point_attempt"),
+                                  "xpass": xraw,
+                                  "pass_oe": praw,
+                                  "desc": str(row.get("desc") or "")[:240],
+                              })
+                          continue
 
                       posteam = str(row.get("posteam") or "").strip()
                       if not posteam:
@@ -169,6 +197,18 @@ jobs:
                   "rows_seen": rows_seen,
                   "max_week_present": max_week,
                   "eligible_xpass_pass_oe_rows": eligible,
+                  "missingness": {
+                      "both_missing_rows": both_missing,
+                      "xpass_present_pass_oe_missing_rows": xpass_only,
+                      "xpass_missing_pass_oe_present_rows": pass_oe_only,
+                      "partial_missing_rows": xpass_only + pass_oe_only,
+                      "partial_fraction_among_any_signal": (
+                          (xpass_only + pass_oe_only)
+                          / (eligible + xpass_only + pass_oe_only)
+                          if (eligible + xpass_only + pass_oe_only) else None
+                      ),
+                      "partial_examples": partial_examples,
+                  },
                   "empty_posteam_with_signal_rows":
                       empty_posteam_with_signal,
                   "xpass": {
@@ -226,8 +266,14 @@ jobs:
                   "sha256": SHA256,
                   "required_columns": sorted(REQUIRED),
                   "semantic_reference": (
-                      "nflfastR documents xpass as expected dropback "
-                      "probability and pass_oe as dropback percent over expected"
+                      "nflfastR add_xpass documents xpass as expected "
+                      "dropback probability scaled 0-1 and pass_oe as "
+                      "dropback percent over expected scaled 0-100"
+                  ),
+                  "missingness_policy": (
+                      "Do not infer either field when only one is present. "
+                      "Characterize partial missingness first; only rows with "
+                      "both fields present enter identity/coverage checks."
                   ),
               },
               "sources": sources,
@@ -245,6 +291,12 @@ jobs:
                           reports[str(s)]["identity"][
                               "holds_within_tolerance"
                           ]
+                          for s in SEASONS
+                      ),
+                  "partial_missingness_measured_all_seasons":
+                      all(
+                          "partial_missing_rows"
+                          in reports[str(s)]["missingness"]
                           for s in SEASONS
                       ),
               },
