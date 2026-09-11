@@ -125,7 +125,7 @@ def _metrics(predictions: list[float], actuals: list[float]) -> dict:
     }
 
 
-def compare_market(
+def paired_error_rows(
     rows: Iterable[Mapping[str, Any]],
     market: str,
     *,
@@ -133,15 +133,13 @@ def compare_market(
     test_season_type: str = "REG",
     min_history: int = 3,
     min_team_history: int = 3,
-) -> dict:
+) -> list[dict]:
+    """Return the exact row-level population on which B0 and B1 are compared."""
     if market not in MARKETS:
         raise ValueError(f"unsupported B1 market: {market}")
 
     stat, predictor = MARKETS[market]
-    reference_n = 0
-    b0_predictions = []
-    b1_predictions = []
-    actuals = []
+    paired = []
 
     for row in rows:
         ref = _reference_eligible(
@@ -153,7 +151,6 @@ def compare_market(
         )
         if ref is None:
             continue
-        reference_n += 1
 
         try:
             team_history_n = int(row.get("team_history_n", 0))
@@ -166,16 +163,68 @@ def compare_market(
         if any(_finite(features.get(name)) is None for name in B1_REQUIRED[market]):
             continue
 
-        # Validation errors other than missing data are scientific/data problems
-        # and must propagate rather than being converted into lower coverage.
         challenger = predictor(features)
         if not math.isfinite(challenger):
             raise ValueError(f"non-finite B1 prediction for {market}")
 
-        b0_prediction, actual = ref
-        b0_predictions.append(b0_prediction)
-        b1_predictions.append(challenger)
-        actuals.append(actual)
+        base, actual = ref
+        paired.append({
+            "season": int(row.get("season")),
+            "week": int(row.get("week")),
+            "player_id": row.get("player_id"),
+            "team": row.get("team"),
+            "opponent_team": row.get("opponent_team"),
+            "b0_prediction": base,
+            "b1_prediction": challenger,
+            "actual": actual,
+            "b0_abs_error": abs(base - actual),
+            "b1_abs_error": abs(challenger - actual),
+            "delta_abs_error": abs(challenger - actual) - abs(base - actual),
+            "b0_squared_error": (base - actual) ** 2,
+            "b1_squared_error": (challenger - actual) ** 2,
+        })
+
+    return paired
+
+
+def compare_market(
+    rows: Iterable[Mapping[str, Any]],
+    market: str,
+    *,
+    test_season: int,
+    test_season_type: str = "REG",
+    min_history: int = 3,
+    min_team_history: int = 3,
+) -> dict:
+    if market not in MARKETS:
+        raise ValueError(f"unsupported B1 market: {market}")
+
+    materialized = list(rows)
+    stat, _ = MARKETS[market]
+
+    reference_n = sum(
+        1 for row in materialized
+        if _reference_eligible(
+            row,
+            stat,
+            test_season=test_season,
+            test_season_type=test_season_type,
+            min_history=min_history,
+        ) is not None
+    )
+
+    paired = paired_error_rows(
+        materialized,
+        market,
+        test_season=test_season,
+        test_season_type=test_season_type,
+        min_history=min_history,
+        min_team_history=min_team_history,
+    )
+
+    b0_predictions = [row["b0_prediction"] for row in paired]
+    b1_predictions = [row["b1_prediction"] for row in paired]
+    actuals = [row["actual"] for row in paired]
 
     base = _metrics(b0_predictions, actuals)
     challenger = _metrics(b1_predictions, actuals)
