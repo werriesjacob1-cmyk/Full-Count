@@ -1,0 +1,421 @@
+name: NFL Team Attempt Empirical-Bayes Audit
+
+# Research-only development audit.
+#
+# Build a principled prior-only shrinkage baseline for team pass attempts:
+# each team's last-10 official-attempt mean is shrunk toward the contemporaneous
+# league mean using a normal-normal empirical-Bayes weight estimated only from
+# histories available before that NFL week begins.
+#
+# No fitted coefficient is selected against target-season outcomes.
+# No untouched challenger holdout is inspected.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-team-attempt-eb-audit.yml
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Evaluate prior-only empirical-Bayes attempt shrinkage
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import hashlib
+          import io
+          import json
+          import math
+          import os
+          import random
+          import statistics
+          from collections import defaultdict, deque
+          from datetime import datetime, timezone
+
+          import requests
+
+          SEASONS = (2022, 2023, 2024, 2025)
+          TEST_SEASONS = (2023, 2024, 2025)
+          TEAM_WINDOW = 10
+          SHORT_WINDOW = 5
+          MIN_HYPER_TEAMS = 24
+          BOOTSTRAPS = 5000
+          SEED = 20260911
+          EPS = 1e-12
+
+          SHA256 = {
+              2022: "9803875bd0b74aa49230288d45359c75e45910f1cf1953ea0f07b9d3db35e4d1",
+              2023: "dc5a387daabe8663deaddac492ad7020d47fb1a66048690b355b406cd8e4c454",
+              2024: "b207a1430c2715d03bbf1844c4eae98695f364851ff6025f422febc2c13f5255",
+              2025: "91058a59d894855377b2f39f40c4e7bdbeef96d12144289dc68215209a1c93cb",
+          }
+          REQUIRED = {
+              "season", "week", "season_type", "team", "attempts",
+          }
+
+          def num(value, label):
+              try:
+                  out = float(value)
+              except (TypeError, ValueError) as exc:
+                  raise ValueError(f"invalid {label}: {value!r}") from exc
+              if not math.isfinite(out):
+                  raise ValueError(f"non-finite {label}: {value!r}")
+              return out
+
+          def sample_variance(values):
+              if len(values) < 2:
+                  return 0.0
+              mean = statistics.fmean(values)
+              return sum((x-mean)**2 for x in values)/(len(values)-1)
+
+          def pct(values, q):
+              values = sorted(values)
+              pos = (len(values)-1)*q
+              lo = int(math.floor(pos))
+              hi = int(math.ceil(pos))
+              if lo == hi:
+                  return values[lo]
+              w = pos-lo
+              return values[lo]*(1-w)+values[hi]*w
+
+          def metrics(rows, field):
+              errs = [r[field]-r["actual"] for r in rows]
+              return {
+                  "n": len(rows),
+                  "mae": statistics.fmean(abs(e) for e in errs),
+                  "rmse": math.sqrt(
+                      statistics.fmean(e*e for e in errs)
+                  ),
+                  "bias": statistics.fmean(errs),
+                  "mean_prediction": statistics.fmean(
+                      r[field] for r in rows
+                  ),
+                  "mean_actual": statistics.fmean(
+                      r["actual"] for r in rows
+                  ),
+              }
+
+          def delta_mae(rows, challenger, reference):
+              return statistics.fmean(
+                  abs(r[challenger]-r["actual"])
+                  - abs(r[reference]-r["actual"])
+                  for r in rows
+              )
+
+          def cluster_bootstrap(rows, challenger, reference, seed_offset):
+              groups = defaultdict(list)
+              for row in rows:
+                  groups[row["team"]].append(row)
+              teams = sorted(groups)
+              rng = random.Random(SEED+seed_offset)
+              vals = []
+              for _ in range(BOOTSTRAPS):
+                  sample = []
+                  for _ in teams:
+                      sample.extend(groups[rng.choice(teams)])
+                  vals.append(
+                      delta_mae(sample, challenger, reference)
+                  )
+              return {
+                  "clusters": len(teams),
+                  "replicates": len(vals),
+                  "median_delta_mae": pct(vals, 0.5),
+                  "ci95": [pct(vals, 0.025), pct(vals, 0.975)],
+                  "probability_delta_below_zero":
+                      sum(v < 0 for v in vals)/len(vals),
+              }
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent":
+                  "Full-Count NFL team attempt empirical-Bayes audit"
+          })
+
+          rows = []
+          sources = {}
+          for season in SEASONS:
+              url = (
+                  "https://github.com/nflverse/nflverse-data/releases/download/"
+                  f"stats_team/stats_team_week_{season}.csv"
+              )
+              response = session.get(url, timeout=60)
+              response.raise_for_status()
+              digest = hashlib.sha256(response.content).hexdigest()
+              if digest != SHA256[season]:
+                  raise SystemExit(
+                      f"{season}: team source SHA drift {digest}"
+                  )
+              raw = list(csv.DictReader(io.StringIO(response.text)))
+              if not raw:
+                  raise SystemExit(f"{season}: empty team source")
+              missing = sorted(REQUIRED-set(raw[0]))
+              if missing:
+                  raise SystemExit(
+                      f"{season}: team schema drift {missing}"
+                  )
+              for row in raw:
+                  if str(row.get("season_type") or "") != "REG":
+                      continue
+                  rows.append({
+                      "season": int(float(row["season"])),
+                      "week": int(float(row["week"])),
+                      "team": str(row["team"]).strip(),
+                      "attempts": num(row["attempts"], "attempts"),
+                  })
+              sources[str(season)] = {
+                  "url": url,
+                  "rows": len(raw),
+                  "bytes": len(response.content),
+                  "sha256": digest,
+              }
+
+          seen = set()
+          for row in rows:
+              key=(row["season"], row["week"], row["team"])
+              if key in seen:
+                  raise SystemExit(f"duplicate team-week {key}")
+              seen.add(key)
+
+          week_groups = defaultdict(list)
+          for row in rows:
+              week_groups[(row["season"], row["week"])].append(row)
+
+          history = defaultdict(lambda: deque(maxlen=TEAM_WINDOW))
+          predictions = []
+          hyper_snapshots = []
+
+          for season, week in sorted(week_groups):
+              current = week_groups[(season, week)]
+
+              # Hyperprior is frozen BEFORE any outcome from this NFL week is
+              # added. Teams on bye contribute their prior history but no
+              # current-week outcome.
+              team_stats = {}
+              for team, hist in history.items():
+                  values = list(hist)
+                  if len(values) < TEAM_WINDOW:
+                      continue
+                  mean = statistics.fmean(values)
+                  s2 = sample_variance(values)
+                  team_stats[team] = {
+                      "n": len(values),
+                      "mean": mean,
+                      "sample_variance": s2,
+                      "mean_sampling_variance": s2/len(values),
+                  }
+
+              if season in TEST_SEASONS:
+                  if len(team_stats) < MIN_HYPER_TEAMS:
+                      raise SystemExit(
+                          f"{season} week {week}: only "
+                          f"{len(team_stats)} hyperprior teams"
+                      )
+
+                  means = [v["mean"] for v in team_stats.values()]
+                  sampling_vars = [
+                      v["mean_sampling_variance"]
+                      for v in team_stats.values()
+                  ]
+                  grand_mean = statistics.fmean(means)
+                  observed_between = sample_variance(means)
+                  mean_sampling_var = statistics.fmean(sampling_vars)
+                  tau2 = max(
+                      0.0, observed_between-mean_sampling_var
+                  )
+
+                  weights = []
+                  for row in current:
+                      team = row["team"]
+                      hist = list(history[team])
+                      if len(hist) < TEAM_WINDOW:
+                          raise SystemExit(
+                              f"{season} week {week} {team}: "
+                              f"history {len(hist)} < {TEAM_WINDOW}"
+                          )
+                      short = statistics.fmean(
+                          hist[-SHORT_WINDOW:]
+                      )
+                      long = statistics.fmean(hist)
+                      s2 = sample_variance(hist)
+                      v = s2/len(hist)
+                      if tau2 <= EPS:
+                          weight = 0.0
+                      else:
+                          weight = tau2/(tau2+v)
+                      if not (0.0 <= weight <= 1.0):
+                          raise SystemExit(
+                              f"invalid EB weight {weight}"
+                          )
+                      eb = grand_mean + weight*(long-grand_mean)
+                      weights.append(weight)
+                      predictions.append({
+                          "season": season,
+                          "week": week,
+                          "team": team,
+                          "actual": row["attempts"],
+                          "rolling5": short,
+                          "rolling10": long,
+                          "eb": eb,
+                          "eb_weight": weight,
+                          "league_prior_mean": grand_mean,
+                          "tau2": tau2,
+                          "team_sampling_variance": v,
+                      })
+
+                  hyper_snapshots.append({
+                      "season": season,
+                      "week": week,
+                      "teams": len(team_stats),
+                      "grand_mean": grand_mean,
+                      "observed_between_variance":
+                          observed_between,
+                      "mean_sampling_variance":
+                          mean_sampling_var,
+                      "tau2": tau2,
+                      "mean_weight":
+                          statistics.fmean(weights),
+                      "min_weight": min(weights),
+                      "max_weight": max(weights),
+                  })
+
+              # Only after all predictions/hyperparameters for this week are
+              # emitted may current outcomes enter history.
+              for row in current:
+                  history[row["team"]].append(row["attempts"])
+
+          reports = {}
+          for season in TEST_SEASONS:
+              sr=[r for r in predictions if r["season"]==season]
+              if len(sr) != 544:
+                  raise SystemExit(
+                      f"{season}: expected 544 predictions, got {len(sr)}"
+                  )
+              m5=metrics(sr,"rolling5")
+              m10=metrics(sr,"rolling10")
+              meb=metrics(sr,"eb")
+              d5=meb["mae"]-m5["mae"]
+              d10=meb["mae"]-m10["mae"]
+              reports[str(season)]={
+                  "population":{
+                      "team_games":len(sr),
+                      "teams":len({r["team"] for r in sr}),
+                  },
+                  "rolling5":m5,
+                  "rolling10":m10,
+                  "empirical_bayes":meb,
+                  "delta_mae_eb_minus_5":d5,
+                  "delta_mae_eb_minus_10":d10,
+                  "eb_vs_5_team_cluster_bootstrap":
+                      cluster_bootstrap(
+                          sr,"eb","rolling5",season+10
+                      ),
+                  "eb_vs_10_team_cluster_bootstrap":
+                      cluster_bootstrap(
+                          sr,"eb","rolling10",season+20
+                      ),
+                  "weight_summary":{
+                      "mean":statistics.fmean(
+                          r["eb_weight"] for r in sr
+                      ),
+                      "median":statistics.median(
+                          r["eb_weight"] for r in sr
+                      ),
+                      "min":min(r["eb_weight"] for r in sr),
+                      "max":max(r["eb_weight"] for r in sr),
+                  },
+              }
+
+          beats5_all=all(
+              reports[str(s)]["delta_mae_eb_minus_5"]<0
+              for s in TEST_SEASONS
+          )
+          ci5=sum(
+              reports[str(s)]["eb_vs_5_team_cluster_bootstrap"][
+                  "ci95"
+              ][1]<0
+              for s in TEST_SEASONS
+          )
+          beats10_all=all(
+              reports[str(s)]["delta_mae_eb_minus_10"]<0
+              for s in TEST_SEASONS
+          )
+
+          output={
+              "analysis":"NFL_TEAM_PASS_ATTEMPT_EMPIRICAL_BAYES_AUDIT",
+              "status":"research_only_no_challenger",
+              "created_at":datetime.now(timezone.utc).isoformat(),
+              "code_sha":os.environ["FULL_COUNT_CODE_SHA"],
+              "pre_registered":{
+                  "team_history_window":TEAM_WINDOW,
+                  "short_reference_window":SHORT_WINDOW,
+                  "target":"official weekly team pass attempts",
+                  "hyperprior_timing":(
+                      "estimated before any outcome from current NFL week"
+                  ),
+                  "grand_mean":(
+                      "equal-team mean of prior-10 team attempt means"
+                  ),
+                  "between_team_variance":(
+                      "max(variance(team means) - mean sampling variance, 0)"
+                  ),
+                  "team_weight":(
+                      "tau^2 / (tau^2 + sample_variance(team last10)/10)"
+                  ),
+                  "fit_parameters_selected_against_targets":0,
+                  "development_seasons":list(TEST_SEASONS),
+                  "history_season":2022,
+                  "holdout_policy":(
+                      "No untouched challenger holdout inspected."
+                  ),
+                  "gate":(
+                      "EB MAE < rolling5 in all 3 seasons and clustered "
+                      "95% delta-MAE upper bound <0 in at least 2/3. "
+                      "EB-vs-rolling10 is secondary architecture evidence."
+                  ),
+              },
+              "sources":sources,
+              "reports":reports,
+              "hyperprior_snapshots":hyper_snapshots,
+              "decision":{
+                  "eb_beats_rolling5_all_seasons":beats5_all,
+                  "eb_vs_5_ci_entirely_favorable_seasons":ci5,
+                  "eb_primary_gate_pass":beats5_all and ci5>=2,
+                  "eb_beats_rolling10_all_seasons":beats10_all,
+              },
+              "next_if_pass":(
+                  "Freeze EB team-volume baseline, then rerun PROE "
+                  "incremental relevance against EB before any untouched "
+                  "player-level challenger."
+              ),
+              "next_if_fail":(
+                  "Do not tune shrinkage strength. Prioritize prospective "
+                  "QB identity/availability and externally grounded game-state "
+                  "features instead of more baseline surgery."
+              ),
+          }
+
+          path="/tmp/nfl-team-attempt-eb-audit.json"
+          with open(path,"w",encoding="utf-8") as f:
+              json.dump(output,f,indent=2,sort_keys=True)
+          print(json.dumps(output,indent=2,sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-team-attempt-eb-audit
+          path: /tmp/nfl-team-attempt-eb-audit.json
+          retention-days: 30
