@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-11T18:48:49.307382+00:00",
+  "updated_at": "2026-09-11T19:03:55.304634+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -26735,6 +26735,103 @@
         },
         "qualification_timestamp": "2026-09-11T18:45:07.469276+00:00",
         "board_timestamp": "2026-09-11T18:45:07.438300+00:00",
+        "slate_date": "2026-09-11"
+      }
+    },
+    "fc2:824227:player-678662:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824227:player-678662:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824227",
+        [
+          "player",
+          "678662"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-11",
+      "first_published_at": "2026-09-11T19:03:55.304634+00:00",
+      "publication_provenance": {
+        "artifact_id": "a7a64f6e296a8d31b90bfcf824834362cc089a26d44b2480bd5a8375d971a6a7",
+        "source_commit": "9f6e7c92926451435cb58a51af4d06fb4b6cade7",
+        "workflow_run_id": "34636595483",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-11T19:03:43.450282+00:00",
+        "data_hash": "31fe9c322817925734f2c7c0e8c229de3245da38de8396c0ad500ace397216f3",
+        "live_hash": "89d5ab6439fbd1b3e107c0afef01167119dca534d949a97260f670ad7302e877"
+      },
+      "snapshot": {
+        "id": "fc2:824227:player-678662:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824227,
+        "player_id": 678662,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Ezequiel Tovar",
+        "team": "Colorado Rockies",
+        "matchup": "Colorado Rockies @ Detroit Tigers",
+        "game_start": "2026-09-11T22:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6354,
+        "market_odds": -150,
+        "market_implied": 0.6,
+        "market_edge": 0.0354,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.0 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Bat speed trending up L14 (+3.3mph 2nd-half vs 1st-half)",
+          "Platoon: R bat vs LHP (favorable)",
+          "Hitter batting behind him: 0.353 wOBA (league ~.320)"
+        ],
+        "watchouts": [
+          "L7 avg EV 84.6mph (league ~88.5) \u2014 cold recent contact",
+          "L7 barrel% 0.0 \u2014 cold recent contact",
+          "Projected 3.52 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.243 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Team implied for 3.49 runs (league avg 4.245; line 3.5, game total 8) \u2014 a weak offensive environment",
+          "L7 AVG 0.5 isn't backed by barrel rate (0.0%) \u2014 likely BABIP-driven, due to cool off",
+          "Season barrel% 6.3 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 0/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6221,
+          0.667
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 130,
+        "lineup_assumed": null,
+        "base_rate": 0.6666,
+        "lift": -0.0312,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "a86ae842f",
+          "prediction_timestamp": "2026-09-11T18:59:56.138861+00:00",
+          "odds_fetched_at": "2026-09-11T18:59:46.117747+00:00",
+          "board_generated_at": "2026-09-11T18:59:56.120378+00:00"
+        },
+        "qualification_timestamp": "2026-09-11T18:59:56.138861+00:00",
+        "board_timestamp": "2026-09-11T18:59:56.120378+00:00",
         "slate_date": "2026-09-11"
       }
     }
