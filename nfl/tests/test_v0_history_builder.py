@@ -105,6 +105,33 @@ class PriorOnlyFeatures(unittest.TestCase):
             nh.build_prior_only_rows(broken)
 
 
+class EmptyIdentitySourceRows(unittest.TestCase):
+    def _row(self, **overrides):
+        row = {
+            "player_id": "",
+            "player_display_name": "",
+            "position": "",
+            "season": "2025", "week": "22", "season_type": "POST",
+            "team": "", "opponent_team": "",
+            "targets": "0", "receptions": "0", "receiving_yards": "0",
+            "receiving_tds": "0", "carries": "0", "rushing_yards": "0",
+            "rushing_tds": "0", "attempts": "0", "completions": "0",
+            "passing_yards": "0", "passing_tds": "0",
+        }
+        row.update(overrides)
+        return row
+
+    def test_blank_structural_zero_row_is_skipped(self):
+        built = nh.build_prior_only_rows([self._row()])
+        self.assertEqual(built, [])
+
+    def test_blank_id_with_real_offense_fails_hard(self):
+        with self.assertRaisesRegex(ValueError, "empty player_id row carries offense"):
+            nh.build_prior_only_rows([
+                self._row(targets="1", receptions="1", receiving_yards="7")
+            ])
+
+
 class SeasonBoundary(unittest.TestCase):
     def test_prior_season_history_is_allowed_but_future_season_is_not(self):
         rows = [
