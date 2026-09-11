@@ -1,0 +1,74 @@
+name: NFL Branch-Only Empty-ID Source Audit
+
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-empty-id-audit.yml
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+      - name: Audit empty player_id rows in nflverse weekly files
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv, io, json, requests
+          from collections import Counter
+          from nfl.research.nflverse_history import player_stats_url
+
+          offensive = [
+              "attempts","completions","passing_yards","passing_tds",
+              "carries","rushing_yards","rushing_tds",
+              "targets","receptions","receiving_yards","receiving_tds",
+          ]
+          session=requests.Session()
+          session.headers.update({"User-Agent":"Full-Count NFL source audit (read-only)"})
+          report={}
+          for season in (2023,2024,2025):
+              r=session.get(player_stats_url(season),timeout=60)
+              r.raise_for_status()
+              rows=list(csv.DictReader(io.StringIO(r.text)))
+              empty=[x for x in rows if not (x.get("player_id") or "").strip()]
+              active=[]
+              for x in empty:
+                  vals={}
+                  any_nonzero=False
+                  for k in offensive:
+                      raw=x.get(k)
+                      try: v=float(raw) if raw not in (None,"") else 0.0
+                      except ValueError: v=0.0
+                      vals[k]=v
+                      any_nonzero=any_nonzero or v!=0.0
+                  if any_nonzero:
+                      active.append({
+                          "week":x.get("week"),
+                          "name":x.get("player_display_name"),
+                          "position":x.get("position"),
+                          "team":x.get("team"),
+                          "opponent_team":x.get("opponent_team"),
+                          "offense":{k:v for k,v in vals.items() if v!=0.0},
+                      })
+              report[season]={
+                  "rows":len(rows),
+                  "empty_player_id_rows":len(empty),
+                  "positions":dict(Counter((x.get("position") or "<blank>") for x in empty)),
+                  "names_top":Counter((x.get("player_display_name") or "<blank>") for x in empty).most_common(20),
+                  "empty_id_rows_with_nonzero_offense":len(active),
+                  "active_examples":active[:50],
+              }
+          print(json.dumps(report,indent=2,sort_keys=True))
+          if any(v["empty_id_rows_with_nonzero_offense"] for v in report.values()):
+              raise SystemExit("FAIL-HONEST: empty-ID rows carry offensive production; cannot silently drop")
+          print("PASS: empty-ID rows carry no tracked offensive production")
+          PY
