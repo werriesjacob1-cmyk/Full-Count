@@ -1,0 +1,528 @@
+name: NFL Live Passing-Yards Shadow Board Audit
+
+# Branch-only launch audit.
+# Live FanDuel -> strict primary passing-yards normalization -> exact 2026
+# roster identity -> frozen B0 projection -> pooled historical residual score ->
+# official-inactives fail-closed gate -> deterministic sealed shadow snapshot.
+#
+# NO commit, push, public PLAY, publication, or production promotion.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-live-passing-yards-shadow-board.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  board:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install NFL dependencies only
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r nfl/requirements-nfl.txt
+          python3 -m pip install 'requests~=2.34.2'
+
+      - name: Build live Sunday shadow board without publishing
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+          TARGET_LOCAL_DATE: '2026-09-13'
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import hashlib
+          import io
+          import json
+          import math
+          import os
+          import statistics
+          from collections import Counter, defaultdict
+          from datetime import datetime, timezone
+          from zoneinfo import ZoneInfo
+
+          import requests
+
+          from nfl.archive.provenance import CHECKED_AND_FOUND, utcnow
+          from nfl.archive.sources import fanduel_nfl, official_nfl
+          from nfl.normalize.fanduel_passing import normalize_payload
+          from nfl.normalize.inactive_roster_binding import bind_report
+          from nfl.normalize.market_roster_binding import bind_passing_candidate
+          from nfl.normalize.official_inactives import parse_report
+          from nfl.normalize.pregame_availability import evaluate_candidate
+          from nfl.prospective.shadow_snapshot import seal_snapshot
+          from nfl.research import nflverse_history as nh
+          from nfl.research.passing_yards_shadow import (
+              current_b0_projection,
+              score_shadow_candidate,
+          )
+
+          TARGET_DATE = os.environ["TARGET_LOCAL_DATE"]
+          CT = ZoneInfo("America/Chicago")
+          MIN_HISTORY = 3
+
+          ROSTER_URL = (
+              "https://github.com/nflverse/nflverse-data/releases/download/"
+              "rosters/roster_2026.csv"
+          )
+          ROSTER_SHA = (
+              "ffdc6f358df0597365b1889332577692c484a283a758d9956b92b2730d0fcd1c"
+          )
+          PLAYER_SHA = {
+              2023: "f19cb71a5de0dce7fd09376026237c9ee9d5a93fe13815a2ea3ec2d37204cb17",
+              2024: "3ddc45a84f759aa348ce465ae001752c530575455717657cdfe1f8abfcdb4759",
+              2025: "e5e0615b3d96a3eaebfaee91e55afb4a4e7fe0caf057454177bcd7d6ad4bcfc2",
+          }
+          EXPECTED_B0 = {
+              2024: {"n": 611, "mae": 70.83543371522084},
+              2025: {"n": 617, "mae": 72.41990815775256},
+          }
+
+          def parse_iso(value):
+              text = str(value or "").strip()
+              if not text:
+                  return None
+              try:
+                  return datetime.fromisoformat(text.replace("Z", "+00:00"))
+              except ValueError:
+                  return None
+
+          def local_slate(value):
+              dt = parse_iso(value)
+              if dt is None:
+                  return None
+              if dt.tzinfo is None:
+                  dt = dt.replace(tzinfo=timezone.utc)
+              return dt.astimezone(CT).date().isoformat()
+
+          def finite(value):
+              try:
+                  out = float(value)
+              except (TypeError, ValueError):
+                  return None
+              return out if math.isfinite(out) else None
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent": "Full-Count NFL live passing-yards shadow board audit"
+          })
+
+          # ---------- current roster, pinned after explicit repin audit ----------
+          rr = session.get(ROSTER_URL, timeout=60)
+          rr.raise_for_status()
+          roster_sha = hashlib.sha256(rr.content).hexdigest()
+          if roster_sha != ROSTER_SHA:
+              raise SystemExit(
+                  f"2026 roster drift {roster_sha} != pinned {ROSTER_SHA}"
+              )
+          roster = list(csv.DictReader(io.StringIO(rr.text)))
+          if not roster:
+              raise SystemExit("empty 2026 roster")
+
+          # ---------- historical B0 calibration substrate ----------
+          player_rows_by_season = {}
+          all_history_rows = []
+          source_meta = {}
+          for season in (2023, 2024, 2025):
+              url = nh.player_stats_url(season)
+              response = session.get(url, timeout=60)
+              response.raise_for_status()
+              digest = hashlib.sha256(response.content).hexdigest()
+              if digest != PLAYER_SHA[season]:
+                  raise SystemExit(
+                      f"{season}: player source drift {digest}"
+                  )
+              rows = list(csv.DictReader(io.StringIO(response.text)))
+              if not rows:
+                  raise SystemExit(f"{season}: empty player source")
+              player_rows_by_season[season] = rows
+              all_history_rows.extend(rows)
+              source_meta[str(season)] = {
+                  "url": url,
+                  "sha256": digest,
+                  "rows": len(rows),
+              }
+
+          built = nh.build_prior_only_rows(
+              all_history_rows,
+              rolling_window=5,
+          )
+
+          residuals = []
+          benchmark_check = {}
+          for season in (2024, 2025):
+              scored = []
+              for row in built:
+                  if int(row["season"]) != season:
+                      continue
+                  if str(row["season_type"]) != "REG":
+                      continue
+                  if str(row.get("position") or "").strip().upper() != "QB":
+                      continue
+                  if int(row.get("history_n") or 0) < MIN_HISTORY:
+                      continue
+                  features = row.get("features") or {}
+                  attempts = finite(features.get("rolling_attempts"))
+                  prediction = finite(features.get("rolling_passing_yards"))
+                  actual = finite((row.get("target") or {}).get("passing_yards"))
+                  if attempts is None or attempts <= 0:
+                      continue
+                  if prediction is None or actual is None:
+                      continue
+                  scored.append((prediction, actual))
+                  residuals.append(actual - prediction)
+
+              mae = statistics.fmean(abs(p - a) for p, a in scored)
+              expected = EXPECTED_B0[season]
+              if len(scored) != expected["n"]:
+                  raise SystemExit(
+                      f"{season}: B0 population drift {len(scored)} != {expected['n']}"
+                  )
+              if not math.isclose(
+                  mae,
+                  expected["mae"],
+                  rel_tol=0.0,
+                  abs_tol=1e-9,
+              ):
+                  raise SystemExit(
+                      f"{season}: B0 MAE drift {mae} != {expected['mae']}"
+                  )
+              benchmark_check[str(season)] = {
+                  "n": len(scored),
+                  "mae": mae,
+              }
+
+          if len(residuals) != 1228:
+              raise SystemExit(
+                  f"pooled B0 residual population drift: {len(residuals)}"
+              )
+
+          # Current player history for Sunday projection. 2025 POST appearances
+          # remain legitimate prior information for 2026 Week 1.
+          prior_by_player = defaultdict(list)
+          for row in player_rows_by_season[2025]:
+              player_id = str(row.get("player_id") or "").strip()
+              if not player_id:
+                  continue
+              attempts = finite(row.get("attempts"))
+              yards = finite(row.get("passing_yards"))
+              week = finite(row.get("week"))
+              if attempts is None or yards is None or week is None:
+                  continue
+              prior_by_player[player_id].append({
+                  "season": 2025,
+                  "week": int(week),
+                  "season_type": str(row.get("season_type") or ""),
+                  "attempts": attempts,
+                  "passing_yards": yards,
+              })
+          for rows in prior_by_player.values():
+              rows.sort(
+                  key=lambda x: (
+                      x["season"],
+                      x["week"],
+                      x["season_type"],
+                  )
+              )
+
+          # ---------- live FanDuel primary passing-yards state ----------
+          root = fanduel_nfl._fetch_first_healthy_host(
+              "root_nfl_page",
+              f"content-managed-page?page=CUSTOM&customPageId=nfl&_ak={fanduel_nfl.AK}",
+              {"feed": "nfl root", "audit": "shadow_board"},
+              session,
+          )
+          if root.outcome != CHECKED_AND_FOUND:
+              raise SystemExit(
+                  f"FanDuel root not conclusive: {root.outcome} {root.failure_reason}"
+              )
+
+          discovered = fanduel_nfl.discover_events(root.body)
+          sunday_events = [
+              event for event in discovered
+              if local_slate(event.get("open_date")) == TARGET_DATE
+          ]
+          if not sunday_events:
+              raise SystemExit(
+                  f"no FanDuel game events found for CT date {TARGET_DATE}"
+              )
+
+          normalized = []
+          market_failures = []
+          for event in sunday_events:
+              event_id = event["event_id"]
+              ctx = {
+                  "event_id": event_id,
+                  "event_name": event["name"],
+                  "open_date": event.get("open_date"),
+                  "audit": "shadow_board",
+              }
+              baseline = fanduel_nfl._fetch_first_healthy_host(
+                  f"event_{event_id}_no_tab",
+                  f"event-page?eventId={event_id}&_ak={fanduel_nfl.AK}",
+                  {**ctx, "tab": None},
+                  session,
+              )
+              baseline_ids = fanduel_nfl._market_ids(baseline.body)
+              passing = fanduel_nfl._fetch_first_healthy_host(
+                  f"event_{event_id}_tab_passing-props",
+                  (
+                      f"event-page?eventId={event_id}&tab=passing-props"
+                      f"&_ak={fanduel_nfl.AK}"
+                  ),
+                  {**ctx, "tab": "passing-props"},
+                  session,
+              )
+              passing = fanduel_nfl._classify_tab_payload(
+                  passing,
+                  baseline_ids,
+              )
+              if passing.outcome != CHECKED_AND_FOUND:
+                  market_failures.append({
+                      "event_id": str(event_id),
+                      "event_name": event["name"],
+                      "outcome": passing.outcome,
+                      "failure_reason": passing.failure_reason,
+                      "context": passing.context,
+                  })
+                  continue
+              payload = json.loads(passing.body)
+              result = normalize_payload(
+                  payload,
+                  captured_at=passing.observed_at,
+              )
+              normalized.extend(result["candidates"])
+              if result["rejections"]:
+                  market_failures.extend([
+                      {
+                          "event_id": str(event_id),
+                          "event_name": event["name"],
+                          "outcome": "NORMALIZER_REJECTION",
+                          **rej,
+                      }
+                      for rej in result["rejections"]
+                  ])
+
+          # De-duplicate exact market observations in case upstream discovery
+          # repeated one event.
+          uniq = {}
+          for row in normalized:
+              key = (
+                  row["event_id"],
+                  row["market_id"],
+                  row["player_name"],
+                  row["line"],
+              )
+              if key in uniq:
+                  raise SystemExit(f"duplicate normalized market: {key}")
+              uniq[key] = row
+          normalized = list(uniq.values())
+
+          # ---------- durable identity ----------
+          bound = [
+              bind_passing_candidate(c, roster, season=2026)
+              for c in normalized
+          ]
+          binding_counts = Counter(
+              row["binding_status"] for row in bound
+          )
+
+          # Explicit ambiguity guard: multiple primary passing-yards QBs for
+          # the same team are market-role ambiguity, never silent starter proof.
+          team_candidate_counts = Counter(
+              row["team"]
+              for row in bound
+              if row["binding_status"] == "BOUND" and row.get("team")
+          )
+
+          # ---------- live official inactive reports ----------
+          official_records = official_nfl.capture(session=session)
+          bound_reports = []
+          report_failures = []
+          for record in official_records:
+              if not record.artifact.startswith("inactive_report_"):
+                  continue
+              if record.outcome != CHECKED_AND_FOUND or not record.body:
+                  report_failures.append({
+                      "artifact": record.artifact,
+                      "outcome": record.outcome,
+                      "failure_reason": record.failure_reason,
+                  })
+                  continue
+              try:
+                  parsed = parse_report(record.body)
+                  rebound = bind_report(
+                      parsed,
+                      roster,
+                      season=2026,
+                  )
+                  bound_reports.append(rebound)
+              except Exception as exc:
+                  report_failures.append({
+                      "artifact": record.artifact,
+                      "outcome": "PARSE_OR_BIND_FAILED",
+                      "failure_reason": f"{type(exc).__name__}: {exc}",
+                  })
+
+          # ---------- projection, score, availability, quarantine ----------
+          snapshot_records = []
+          excluded_unbound = []
+          quarantine_counts = Counter()
+          history_counts = Counter()
+
+          for row in bound:
+              if row["binding_status"] != "BOUND":
+                  excluded_unbound.append(row)
+                  continue
+
+              availability = evaluate_candidate(
+                  row,
+                  bound_reports,
+              )
+              quarantine_reasons = []
+              if not availability["availability_gate_pass"]:
+                  quarantine_reasons.append(
+                      availability["availability_status"]
+                  )
+              if team_candidate_counts[row["team"]] != 1:
+                  quarantine_reasons.append(
+                      "MULTIPLE_PRIMARY_QBS_SAME_TEAM"
+                  )
+
+              projection = None
+              score = None
+              history = prior_by_player.get(row["gsis_id"], [])
+              try:
+                  projection_info = current_b0_projection(history)
+                  projection = float(projection_info["projection"])
+                  history_counts["ELIGIBLE"] += 1
+                  score = score_shadow_candidate(
+                      projection=projection,
+                      line=row["line"],
+                      over_odds=row["over_odds"],
+                      under_odds=row["under_odds"],
+                      residuals=residuals,
+                  )
+              except ValueError:
+                  history_counts["INSUFFICIENT_HISTORY"] += 1
+                  quarantine_reasons.append("INSUFFICIENT_HISTORY")
+
+              decision = (
+                  "SHADOW_ONLY"
+                  if not quarantine_reasons and score is not None
+                  else "QUARANTINED"
+              )
+              for reason in quarantine_reasons:
+                  quarantine_counts[reason] += 1
+
+              record = {
+                  **row,
+                  **availability,
+                  "decision_status": decision,
+                  "quarantine_reasons": sorted(set(quarantine_reasons)),
+                  "model_name": "NFL_B0_ROLLING_PASSING_YARDS_V0",
+                  "model_projection": projection,
+                  "model_history_n": (
+                      min(len(history), 5) if projection is not None else len(history)
+                  ),
+                  "model_scoring_status": (
+                      "SCORED" if score is not None else "NOT_SCORED"
+                  ),
+              }
+              if score is not None:
+                  record.update(score)
+                  # score helper is hard-coded SHADOW_ONLY; final decision may
+                  # still be QUARANTINED by identity/availability gates.
+                  record["decision_status"] = decision
+
+              snapshot_records.append(record)
+
+          sealed_at = utcnow()
+          source_vintage = (
+              max(
+                  (
+                      str(r.get("captured_at") or "")
+                      for r in snapshot_records
+                  ),
+                  default=sealed_at,
+              )
+              or sealed_at
+          )
+          snapshot = seal_snapshot(
+              snapshot_records,
+              slate_date=TARGET_DATE,
+              code_sha=os.environ["FULL_COUNT_CODE_SHA"],
+              source_vintage=source_vintage,
+              sealed_at=sealed_at,
+          )
+
+          board = {
+              "analysis": "NFL_LIVE_PASSING_YARDS_SHADOW_BOARD_AUDIT",
+              "status": "BRANCH_ONLY_RESEARCH_NO_PUBLICATION",
+              "created_at": sealed_at,
+              "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+              "target_local_date": TARGET_DATE,
+              "fan_duel": {
+                  "root_observed_at": root.observed_at,
+                  "events_discovered_total": len(discovered),
+                  "target_sunday_events": len(sunday_events),
+                  "normalized_primary_candidates": len(normalized),
+                  "market_failures": market_failures,
+              },
+              "identity": {
+                  "roster_sha256": roster_sha,
+                  "binding_status_counts": dict(binding_counts),
+                  "team_candidate_counts": dict(team_candidate_counts),
+                  "excluded_unbound_count": len(excluded_unbound),
+                  "excluded_unbound": excluded_unbound,
+              },
+              "model": {
+                  "name": "NFL_B0_ROLLING_PASSING_YARDS_V0",
+                  "historical_benchmark_check": benchmark_check,
+                  "pooled_residual_n": len(residuals),
+                  "current_history_status_counts": dict(history_counts),
+                  "public_selector_validated": False,
+                  "decision_surface": "SHADOW_ONLY_OR_QUARANTINED",
+              },
+              "availability": {
+                  "official_records": len(official_records),
+                  "bound_inactive_reports": len(bound_reports),
+                  "report_failures": report_failures,
+                  "quarantine_reason_counts": dict(quarantine_counts),
+              },
+              "snapshot": snapshot,
+          }
+
+          path = "/tmp/nfl-live-passing-yards-shadow-board.json"
+          with open(path, "w", encoding="utf-8") as f:
+              json.dump(board, f, indent=2, sort_keys=True)
+
+          print(json.dumps({
+              "target_local_date": TARGET_DATE,
+              "target_events": len(sunday_events),
+              "primary_candidates": len(normalized),
+              "binding_status_counts": dict(binding_counts),
+              "history_status_counts": dict(history_counts),
+              "bound_inactive_reports": len(bound_reports),
+              "quarantine_reason_counts": dict(quarantine_counts),
+              "decision_counts": dict(Counter(
+                  r["decision_status"] for r in snapshot["records"]
+              )),
+              "snapshot_sha256": snapshot["snapshot_sha256"],
+              "record_count": snapshot["record_count"],
+          }, indent=2, sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-live-passing-yards-shadow-board
+          path: /tmp/nfl-live-passing-yards-shadow-board.json
+          retention-days: 30
