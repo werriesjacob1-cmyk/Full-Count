@@ -7,6 +7,16 @@ name: NFL Live Passing-Yards Shadow Board Audit
 #
 # NO commit, push, public PLAY, publication, or production promotion.
 on:
+  # UTC. Each wave starts after the ~90-minute inactive-report deadline and
+  # gets a final pre-lock observation. Scheduled runs become active only if
+  # this workflow is explicitly merged onto the default branch.
+  schedule:
+    - cron: '40 15 * * 0'
+    - cron: '50 16 * * 0'
+    - cron: '5 19 * * 0'
+    - cron: '15 20 * * 0'
+    - cron: '0 23 * * 0'
+    - cron: '10 0 * * 1'
   push:
     branches:
       - superchad/nfl-foundation-continuation-20260911
@@ -35,7 +45,8 @@ jobs:
       - name: Build live Sunday shadow board without publishing
         env:
           FULL_COUNT_CODE_SHA: ${{ github.sha }}
-          TARGET_LOCAL_DATE: '2026-09-13'
+          # Optional manual override. Scheduled runs derive the Chicago date.
+          TARGET_LOCAL_DATE: ''
         run: |
           PYTHONPATH=. python3 - <<'PY'
           import csv
@@ -47,6 +58,7 @@ jobs:
           import statistics
           from collections import Counter, defaultdict
           from datetime import datetime, timezone
+          from pathlib import Path
           from zoneinfo import ZoneInfo
 
           import requests
@@ -65,8 +77,15 @@ jobs:
               score_shadow_candidate,
           )
 
-          TARGET_DATE = os.environ["TARGET_LOCAL_DATE"]
           CT = ZoneInfo("America/Chicago")
+          TARGET_DATE = (
+              str(os.environ.get("TARGET_LOCAL_DATE") or "").strip()
+              or datetime.now(CT).date().isoformat()
+          )
+          EVIDENCE_ROOT = Path("/tmp/nfl-shadow-evidence")
+          (EVIDENCE_ROOT / "raw" / "fanduel").mkdir(parents=True, exist_ok=True)
+          (EVIDENCE_ROOT / "raw" / "official_nfl").mkdir(parents=True, exist_ok=True)
+          (EVIDENCE_ROOT / "model_sources").mkdir(parents=True, exist_ok=True)
           MIN_HISTORY = 3
 
           ROSTER_URL = (
@@ -126,6 +145,9 @@ jobs:
           roster = list(csv.DictReader(io.StringIO(rr.text)))
           if not roster:
               raise SystemExit("empty 2026 roster")
+          (EVIDENCE_ROOT / "model_sources" / "roster_2026.csv").write_bytes(
+              rr.content
+          )
 
           # ---------- historical B0 calibration substrate ----------
           player_rows_by_season = {}
@@ -143,6 +165,9 @@ jobs:
               rows = list(csv.DictReader(io.StringIO(response.text)))
               if not rows:
                   raise SystemExit(f"{season}: empty player source")
+              (EVIDENCE_ROOT / "model_sources" / f"stats_player_week_{season}.csv").write_bytes(
+                  response.content
+              )
               player_rows_by_season[season] = rows
               all_history_rows.extend(rows)
               source_meta[str(season)] = {
@@ -245,6 +270,9 @@ jobs:
                   f"FanDuel root not conclusive: {root.outcome} {root.failure_reason}"
               )
 
+          (EVIDENCE_ROOT / "raw" / "fanduel" / "root_nfl_page.json").write_bytes(
+              root.body
+          )
           discovered = fanduel_nfl.discover_events(root.body)
           sunday_events = [
               event for event in discovered
@@ -294,11 +322,20 @@ jobs:
                       "context": passing.context,
                   })
                   continue
+              payload_path = (
+                  EVIDENCE_ROOT / "raw" / "fanduel"
+                  / f"event_{event_id}_passing-props.json"
+              )
+              payload_path.write_bytes(passing.body)
+              payload_sha = hashlib.sha256(passing.body).hexdigest()
               payload = json.loads(passing.body)
               result = normalize_payload(
                   payload,
                   captured_at=passing.observed_at,
               )
+              for candidate in result["candidates"]:
+                  candidate["source_payload_sha256"] = payload_sha
+                  candidate["source_url"] = passing.url
               normalized.extend(result["candidates"])
               if result["rejections"]:
                   market_failures.extend([
@@ -358,6 +395,13 @@ jobs:
                   })
                   continue
               try:
+                  safe_name = "".join(
+                      ch if ch.isalnum() or ch in "._-" else "_"
+                      for ch in record.artifact
+                  )
+                  (EVIDENCE_ROOT / "raw" / "official_nfl" / f"{safe_name}.html").write_bytes(
+                      record.body
+                  )
                   parsed = parse_report(record.body)
                   rebound = bind_report(
                       parsed,
@@ -501,8 +545,8 @@ jobs:
               "snapshot": snapshot,
           }
 
-          path = "/tmp/nfl-live-passing-yards-shadow-board.json"
-          with open(path, "w", encoding="utf-8") as f:
+          path = EVIDENCE_ROOT / "nfl-live-passing-yards-shadow-board.json"
+          with path.open("w", encoding="utf-8") as f:
               json.dump(board, f, indent=2, sort_keys=True)
 
           print(json.dumps({
@@ -524,5 +568,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: nfl-live-passing-yards-shadow-board
-          path: /tmp/nfl-live-passing-yards-shadow-board.json
-          retention-days: 30
+          path: /tmp/nfl-shadow-evidence
+          retention-days: 90
