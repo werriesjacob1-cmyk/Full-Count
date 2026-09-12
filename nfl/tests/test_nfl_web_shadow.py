@@ -37,6 +37,14 @@ class NFLWebShadowTests(unittest.TestCase):
     def test_quarantined_row_must_explain_quarantine(self):
         board = copy.deepcopy(self.board)
         board["snapshot"]["records"][0]["quarantine_reasons"] = []
+        snap = board["snapshot"]
+        board["snapshot"] = seal_snapshot(
+            snap["records"],
+            slate_date=snap["slate_date"],
+            code_sha=snap["code_sha"],
+            source_vintage=snap["source_vintage"],
+            sealed_at=snap["sealed_at"],
+        )
         with self.assertRaisesRegex(ValueError, "must explain"):
             build_public_payload(board, source_board_sha256="a" * 64)
 
@@ -44,6 +52,14 @@ class NFLWebShadowTests(unittest.TestCase):
         board = copy.deepcopy(self.board)
         row = board["snapshot"]["records"][0]
         row["decision_status"] = "SHADOW_ONLY"
+        snap = board["snapshot"]
+        board["snapshot"] = seal_snapshot(
+            snap["records"],
+            slate_date=snap["slate_date"],
+            code_sha=snap["code_sha"],
+            source_vintage=snap["source_vintage"],
+            sealed_at=snap["sealed_at"],
+        )
         with self.assertRaisesRegex(ValueError, "cannot carry"):
             build_public_payload(board, source_board_sha256="a" * 64)
 
