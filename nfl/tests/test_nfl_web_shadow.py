@@ -58,6 +58,26 @@ class NFLWebShadowTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "snapshot SHA-256"):
             build_public_payload(board, source_board_sha256="a" * 64)
 
+    def test_post_kickoff_capture_is_rejected(self):
+        board = copy.deepcopy(self.board)
+        row = board["snapshot"]["records"][0]
+        row["captured_at"] = row["event_open_date"]
+        board["snapshot"] = seal_snapshot(
+            board["snapshot"]["records"],
+            slate_date=board["snapshot"]["slate_date"],
+            code_sha=board["snapshot"]["code_sha"],
+            source_vintage=board["snapshot"]["source_vintage"],
+            sealed_at=board["snapshot"]["sealed_at"],
+        )
+        with self.assertRaisesRegex(ValueError, "not captured pregame"):
+            build_public_payload(board, source_board_sha256="a" * 64)
+
+    def test_board_and_snapshot_slate_must_match(self):
+        board = copy.deepcopy(self.board)
+        board["target_local_date"] = "2026-09-14"
+        with self.assertRaisesRegex(ValueError, "target_local_date"):
+            build_public_payload(board, source_board_sha256="a" * 64)
+
     def test_public_selector_transition_fails_closed(self):
         board = copy.deepcopy(self.board)
         board["model"]["public_selector_validated"] = True
