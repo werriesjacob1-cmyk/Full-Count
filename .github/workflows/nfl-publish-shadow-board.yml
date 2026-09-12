@@ -105,6 +105,15 @@ jobs:
             git fetch origin main
             git checkout --detach origin/main
             mkdir -p docs/nfl
+            verdict="$(python3 nfl/web/publish_guard.py --current docs/nfl/data.json --candidate "$RUNNER_TEMP/nfl-public-data.candidate.json")"
+            if [ "$verdict" = "SAME" ]; then
+              echo "NFL website already carries this exact sealed snapshot."
+              exit 0
+            fi
+            if [ "$verdict" != "NEWER" ]; then
+              echo "::error::Unexpected NFL publication verdict: $verdict"
+              exit 1
+            fi
             cp "$RUNNER_TEMP/nfl-public-data.candidate.json" docs/nfl/data.json
             git add -- docs/nfl/data.json
             staged="$(git diff --cached --name-only)"
