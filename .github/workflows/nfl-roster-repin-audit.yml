@@ -1,0 +1,190 @@
+name: NFL 2026 Roster Repin Audit
+
+# Source-only audit for an updated nflverse 2026 roster release.
+# This workflow intentionally does NOT know or enforce the previous SHA.
+# It establishes whether current bytes satisfy the already-defined identity
+# contract before any downstream workflow is allowed to repin them.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-roster-repin-audit.yml
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Audit current 2026 roster bytes without downstream use
+        env:
+          FULL_COUNT_CODE_SHA: \${{ github.sha }}
+        run: |
+          python3 - <<'PY'
+          import csv, hashlib, io, json, os, re, unicodedata
+          from collections import Counter, defaultdict
+          from datetime import datetime, timezone
+          import requests
+
+          URL=(
+              "https://github.com/nflverse/nflverse-data/releases/download/"
+              "rosters/roster_2026.csv"
+          )
+          REQUIRED={
+              "season","team","position","depth_chart_position","status",
+              "full_name","gsis_id","esb_id"
+          }
+          KNOWN={
+              "TreVeyon Henderson":"00-0040734",
+              "Behren Morton":"00-0041123",
+              "Nick Emmanwori":"00-0040733",
+              "Jalen Milroe":"00-0040673",
+          }
+
+          def key(value):
+              text=unicodedata.normalize("NFKD",str(value or "")).casefold()
+              return "".join(ch for ch in text if ch.isalnum())
+
+          r=requests.get(URL,timeout=60,headers={
+              "User-Agent":"Full-Count NFL roster repin source audit"
+          })
+          r.raise_for_status()
+          digest=hashlib.sha256(r.content).hexdigest()
+          rows=list(csv.DictReader(io.StringIO(r.text)))
+          if not rows:
+              raise SystemExit("empty roster")
+          fields=set(rows[0])
+          missing=sorted(REQUIRED-fields)
+          if missing:
+              raise SystemExit(f"schema drift missing {missing}")
+
+          seasons=Counter(str(row.get("season") or "") for row in rows)
+          teams=sorted({
+              str(row.get("team") or "").strip().upper()
+              for row in rows
+              if str(row.get("team") or "").strip()
+          })
+          if len(teams)!=32:
+              raise SystemExit(f"expected 32 teams, got {len(teams)}")
+
+          gsis=[str(row.get("gsis_id") or "").strip() for row in rows]
+          gsis_nonempty=[v for v in gsis if v]
+          gsis_counts=Counter(gsis_nonempty)
+          gsis_dupes=sorted(v for v,n in gsis_counts.items() if n>1)
+          if gsis_dupes:
+              raise SystemExit(f"duplicate GSIS IDs: {gsis_dupes[:10]}")
+
+          qbs=[]
+          for row in rows:
+              pos=str(row.get("position") or "").strip().upper()
+              depth=str(row.get("depth_chart_position") or "").strip().upper()
+              if "QB" not in {pos,depth}:
+                  continue
+              qbs.append(row)
+
+          qb_missing_name=[
+              row for row in qbs if not str(row.get("full_name") or "").strip()
+          ]
+          qb_missing_gsis=[
+              row for row in qbs if not str(row.get("gsis_id") or "").strip()
+          ]
+          if qb_missing_name or qb_missing_gsis:
+              raise SystemExit(
+                  f"QB identity incompleteness names={len(qb_missing_name)} "
+                  f"gsis={len(qb_missing_gsis)}"
+              )
+
+          qb_name_counts=Counter(key(row["full_name"]) for row in qbs)
+          qb_name_dupes=sorted(k for k,n in qb_name_counts.items() if n>1)
+          # Duplicate QB names are allowed globally only if team + name remains
+          # unique; the market binder also restricts candidates to event teams.
+          qb_team_name_counts=Counter(
+              (str(row.get("team") or "").strip().upper(),key(row["full_name"]))
+              for row in qbs
+          )
+          qb_team_name_dupes=[
+              pair for pair,n in qb_team_name_counts.items() if n>1
+          ]
+          if qb_team_name_dupes:
+              raise SystemExit(
+                  f"duplicate QB team+name identities {qb_team_name_dupes[:10]}"
+              )
+
+          known_matches={}
+          for name,expected in KNOWN.items():
+              matches=[
+                  row for row in rows
+                  if key(row.get("full_name"))==key(name)
+              ]
+              known_matches[name]=[
+                  {
+                      "team":m.get("team"),
+                      "position":m.get("position"),
+                      "gsis_id":m.get("gsis_id"),
+                      "status":m.get("status"),
+                  }
+                  for m in matches
+              ]
+              if len(matches)!=1:
+                  raise SystemExit(f"{name}: expected one match, got {len(matches)}")
+              if str(matches[0].get("gsis_id") or "")!=expected:
+                  raise SystemExit(
+                      f"{name}: GSIS changed {matches[0].get('gsis_id')} != {expected}"
+                  )
+
+          output={
+              "analysis":"NFL_2026_ROSTER_REPIN_AUDIT",
+              "status":"source_only_no_downstream_use",
+              "created_at":datetime.now(timezone.utc).isoformat(),
+              "code_sha":os.environ["FULL_COUNT_CODE_SHA"],
+              "source":{
+                  "url":URL,
+                  "sha256":digest,
+                  "bytes":len(r.content),
+                  "rows":len(rows),
+              },
+              "schema":{
+                  "columns":sorted(fields),
+                  "missing_required":missing,
+              },
+              "coverage":{
+                  "season_counts":dict(seasons),
+                  "teams":teams,
+                  "team_count":len(teams),
+                  "qb_rows":len(qbs),
+              },
+              "identity":{
+                  "gsis_nonempty_n":len(gsis_nonempty),
+                  "gsis_empty_n":len(rows)-len(gsis_nonempty),
+                  "gsis_duplicate_n":len(gsis_dupes),
+                  "qb_missing_name_n":len(qb_missing_name),
+                  "qb_missing_gsis_n":len(qb_missing_gsis),
+                  "qb_global_duplicate_name_keys":qb_name_dupes,
+                  "qb_team_name_duplicate_n":len(qb_team_name_dupes),
+                  "known_identity_matches":known_matches,
+              },
+              "decision":{
+                  "repin_clean":True,
+                  "safe_for_strict_market_binding":True,
+              },
+          }
+          path="/tmp/nfl-roster-repin-audit.json"
+          with open(path,"w",encoding="utf-8") as f:
+              json.dump(output,f,indent=2,sort_keys=True)
+          print(json.dumps(output,indent=2,sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-roster-repin-audit
+          path: /tmp/nfl-roster-repin-audit.json
+          retention-days: 30
