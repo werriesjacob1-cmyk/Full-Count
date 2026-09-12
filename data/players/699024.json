@@ -362,6 +362,50 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 60.7,
+          "notable_signals": 1,
+          "matchup": "Chicago White Sox @ St. Louis Cardinals",
+          "game_pk": 823009,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 6.0,
+            "l7_avg_ev": 91.1905,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 68.7,
+            "season_barrel_pct": 20.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 75.7576,
+            "opp_catcher_framing": 1.68,
+            "days_rest": 0.0,
+            "woba_ahead": 79.0909,
+            "woba_behind": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": -0.108,
+            "ump_bb_pct": 0.024
+          },
+          "hit_probability": 0.6811,
+          "raw_hit_probability": 0.6632,
+          "lift": 0.1164,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -3562,6 +3562,138 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 55.0,
+          "notable_signals": 3,
+          "matchup": "Kansas City Royals @ Boston Red Sox",
+          "game_pk": 824712,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 1.1429,
+            "pitch_exploit": 0.0,
+            "l7_avg_ev": 51.0156,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 1.575,
+            "park_hr_index": 29.4,
+            "season_barrel_pct": 64.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 2.22,
+            "park_hand_index": -1.47,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 0.0,
+            "woba_ahead": 30.0,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -0.4065,
+            "hard_hit_105_rate": 1.06,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.808,
+            "vs_rp_ops": 0.288,
+            "ump_k_pct": -0.36,
+            "ump_bb_pct": 0.024
+          },
+          "hit_probability": 0.6176,
+          "raw_hit_probability": 0.6141,
+          "lift": 0.0529,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 41.1,
+          "notable_signals": 1,
+          "matchup": "Kansas City Royals @ Boston Red Sox",
+          "game_pk": 824712,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -4.62,
+            "sprint_speed": 21.875,
+            "catcher_poptime": 0.0,
+            "on_base": 82.7255
+          },
+          "hit_probability": 0.0556,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 15.2,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Boston Red Sox",
+          "game_pk": 824712,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.089
+          },
+          "hit_probability": 0.089,
+          "raw_hit_probability": null,
+          "lift": 0.0412,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 11.0,
+          "notable_signals": 1,
+          "matchup": "Kansas City Royals @ Boston Red Sox",
+          "game_pk": 824712,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.056
+          },
+          "hit_probability": 0.056,
+          "raw_hit_probability": null,
+          "lift": 0.0352,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

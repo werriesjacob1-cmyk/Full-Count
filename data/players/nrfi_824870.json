@@ -6,29 +6,29 @@
       "date": "2026-09-12",
       "evaluations": [
         {
-          "prop": "No runs in the 1st (both teams)",
+          "prop": "A run scores in the 1st (either team)",
           "type": "game",
-          "score": 66.2,
+          "score": 54.3,
           "notable_signals": 0,
           "matchup": "Philadelphia Phillies @ Atlanta Braves",
           "game_pk": 824870,
           "team": null,
           "side": "both",
-          "lean": "NRFI",
+          "lean": "YRFI",
           "combo_player_ids": null,
           "signals": {
-            "home_team_scores_p": 0.2085,
+            "home_team_scores_p": 0.2858,
             "away_team_scores_p": 0.3154,
-            "fi_n_starts": 25.0
+            "fi_n_starts": 5.0
           },
-          "hit_probability": 0.5419,
+          "hit_probability": 0.5111,
           "raw_hit_probability": null,
-          "lift": 0.0435,
-          "reliability": "A",
-          "sample_n": 25,
+          "lift": 0.0095,
+          "reliability": "C",
+          "sample_n": 5,
           "projection": {
             "stat": "nrfi_combined",
-            "value": 54.2
+            "value": 51.1
           }
         }
       ]

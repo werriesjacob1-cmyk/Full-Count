@@ -2805,6 +2805,137 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 72.5,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Milwaukee Brewers",
+          "game_pk": 823737,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 72.2857,
+            "l7_avg_ev": 19.4643,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 34.2,
+            "season_barrel_pct": 30.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 50.0,
+            "bvp_ops": 2.658,
+            "platoon_barrel_pct": 1.76,
+            "platoon_xwoba": 3.12,
+            "park_hand_index": -0.87,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 67.2727,
+            "woba_behind": 88.1818,
+            "pull_park_synergy": -0.0792,
+            "hard_hit_105_rate": 0.39,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.624,
+            "vs_rp_ops": 1.476,
+            "ump_k_pct": 0.24,
+            "ump_bb_pct": -0.132
+          },
+          "hit_probability": 0.7089,
+          "raw_hit_probability": 0.7414,
+          "lift": 0.0302,
+          "reliability": "A",
+          "sample_n": 137,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 58.1,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Milwaukee Brewers",
+          "game_pk": 823737,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 3.78,
+            "sprint_speed": 40.625,
+            "catcher_poptime": 25.7143,
+            "on_base": 84.6449
+          },
+          "hit_probability": 0.1236,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 137,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 8.5,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Milwaukee Brewers",
+          "game_pk": 823737,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0622
+          },
+          "hit_probability": 0.0622,
+          "raw_hit_probability": null,
+          "lift": 0.0144,
+          "reliability": "A",
+          "sample_n": 137,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 3.8,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Milwaukee Brewers",
+          "game_pk": 823737,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0276
+          },
+          "hit_probability": 0.0276,
+          "raw_hit_probability": null,
+          "lift": 0.0068,
+          "reliability": "A",
+          "sample_n": 137,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

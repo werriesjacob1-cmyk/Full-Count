@@ -249,7 +249,7 @@
         {
           "prop": "Over 7.5 Strikeouts",
           "type": "pitcher",
-          "score": 43.5,
+          "score": 39.8,
           "notable_signals": 0,
           "matchup": "Los Angeles Dodgers @ Miami Marlins",
           "game_pk": 823819,
@@ -259,13 +259,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 48.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 33.3333,
             "l14_k_pct": 76.4706,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 37.9702,
+            "ump_k_pct": 0.276,
+            "ump_bb_pct": 0.108
           },
-          "hit_probability": 0.2727,
-          "raw_hit_probability": 0.2727,
-          "lift": 0.1511,
+          "hit_probability": 0.2724,
+          "raw_hit_probability": 0.2724,
+          "lift": 0.1513,
           "reliability": "B",
           "sample_n": 10,
           "projection": {
@@ -275,9 +278,9 @@
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 88.3,
+          "score": 78.4,
           "notable_signals": 1,
           "matchup": "Los Angeles Dodgers @ Miami Marlins",
           "game_pk": 823819,
@@ -286,18 +289,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6791,
+            "outs_rate": 0.5858,
             "avg_outs_per_start": 17.3
           },
-          "hit_probability": 0.6791,
+          "hit_probability": 0.5858,
           "raw_hit_probability": null,
-          "lift": 0.2014,
+          "lift": 0.1903,
           "reliability": "B",
           "sample_n": 10,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 17.5,
+            "needs": 18
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Miami Marlins",
+          "game_pk": 823819,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            607192,
+            663969
+          ],
+          "signals": {
+            "combined_k_edge": 0.0255
+          },
+          "hit_probability": 0.6157,
+          "raw_hit_probability": null,
+          "lift": 0.0255,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]
