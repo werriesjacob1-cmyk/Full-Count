@@ -1123,6 +1123,135 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 47.6,
+          "notable_signals": 1,
+          "matchup": "Chicago White Sox @ St. Louis Cardinals",
+          "game_pk": 823009,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 6.0,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 68.7,
+            "season_barrel_pct": 43.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 75.7576,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 2.52,
+            "park_hand_index": -2.35,
+            "opp_catcher_framing": 1.68,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -0.2385,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -3.368,
+            "vs_rp_ops": -2.244,
+            "ump_k_pct": -0.108,
+            "ump_bb_pct": 0.024
+          },
+          "hit_probability": 0.6099,
+          "raw_hit_probability": 0.6084,
+          "lift": 0.0452,
+          "reliability": "C",
+          "sample_n": 38,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 45.3,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ St. Louis Cardinals",
+          "game_pk": 823009,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.12,
+            "sprint_speed": 28.125,
+            "catcher_poptime": 17.1429,
+            "on_base": 65.4511
+          },
+          "hit_probability": 0.0797,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 38,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ St. Louis Cardinals",
+          "game_pk": 823009,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0159
+          },
+          "hit_probability": 0.0159,
+          "raw_hit_probability": null,
+          "lift": -0.0319,
+          "reliability": "C",
+          "sample_n": 38,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ St. Louis Cardinals",
+          "game_pk": 823009,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0069
+          },
+          "hit_probability": 0.0069,
+          "raw_hit_probability": null,
+          "lift": -0.0139,
+          "reliability": "C",
+          "sample_n": 38,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

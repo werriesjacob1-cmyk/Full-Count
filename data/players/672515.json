@@ -2263,6 +2263,108 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 53.7,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Arizona Diamondbacks",
+          "game_pk": 825035,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 60.2857,
+            "l7_avg_ev": 26.5217,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 32.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 1.6,
+            "platoon_xwoba": 2.52,
+            "park_hand_index": -0.81,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "woba_ahead": 36.3636,
+            "woba_behind": 31.8182,
+            "pull_park_synergy": -0.2013,
+            "hard_hit_105_rate": 0.7925,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.08,
+            "vs_rp_ops": 1.368,
+            "ump_k_pct": 0.984,
+            "ump_bb_pct": 0.012
+          },
+          "hit_probability": 0.6582,
+          "raw_hit_probability": 0.645,
+          "lift": 0.0935,
+          "reliability": "A",
+          "sample_n": 117,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 12.5,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Arizona Diamondbacks",
+          "game_pk": 825035,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0783
+          },
+          "hit_probability": 0.0783,
+          "raw_hit_probability": null,
+          "lift": 0.0305,
+          "reliability": "A",
+          "sample_n": 117,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.8,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Arizona Diamondbacks",
+          "game_pk": 825035,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0315
+          },
+          "hit_probability": 0.0315,
+          "raw_hit_probability": null,
+          "lift": 0.0107,
+          "reliability": "A",
+          "sample_n": 117,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

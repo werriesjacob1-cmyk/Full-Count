@@ -463,7 +463,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 38.0,
+          "score": 38.3,
           "notable_signals": 0,
           "matchup": "Chicago White Sox @ St. Louis Cardinals",
           "game_pk": 823009,
@@ -475,7 +475,10 @@
             "opp_team_k_pct": 70.0,
             "same_hand_ratio": 12.5,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 53.1308,
+            "ump_k_pct": 0.108,
+            "ump_bb_pct": -0.024
           },
           "hit_probability": 0.6244,
           "raw_hit_probability": 0.7523,
@@ -491,7 +494,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 68.1,
+          "score": 65.8,
           "notable_signals": 0,
           "matchup": "Chicago White Sox @ St. Louis Cardinals",
           "game_pk": 823009,
@@ -500,12 +503,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7386,
+            "outs_rate": 0.7429,
             "avg_outs_per_start": 14.67
           },
-          "hit_probability": 0.7386,
+          "hit_probability": 0.7429,
           "raw_hit_probability": null,
-          "lift": 0.0097,
+          "lift": -0.0098,
           "reliability": "A",
           "sample_n": 27,
           "projection": {

@@ -366,7 +366,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 41.4,
+          "score": 40.4,
           "notable_signals": 0,
           "matchup": "Seattle Mariners @ Athletics",
           "game_pk": 824955,
@@ -376,9 +376,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 55.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 92.9412,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 49.7118,
+            "ump_k_pct": 1.356,
+            "ump_bb_pct": 0.192
           },
           "hit_probability": 0.5171,
           "raw_hit_probability": 0.5171,
@@ -394,7 +397,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 78.6,
+          "score": 79.4,
           "notable_signals": 1,
           "matchup": "Seattle Mariners @ Athletics",
           "game_pk": 824955,
@@ -403,18 +406,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5871,
+            "outs_rate": 0.5861,
             "avg_outs_per_start": 17.37
           },
-          "hit_probability": 0.5871,
+          "hit_probability": 0.5861,
           "raw_hit_probability": null,
-          "lift": 0.1916,
+          "lift": 0.196,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Seattle Mariners @ Athletics",
+          "game_pk": 824955,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            693433,
+            695611
+          ],
+          "signals": {
+            "combined_k_edge": 0.1186
+          },
+          "hit_probability": 0.68,
+          "raw_hit_probability": null,
+          "lift": 0.1186,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]
