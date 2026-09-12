@@ -87,7 +87,7 @@ jobs:
             echo "::error::Downloaded artifact did not contain nfl-live-passing-yards-shadow-board.json"
             exit 1
           fi
-          python3 nfl/web/build_shadow_site.py --input "$source_board" --output "$RUNNER_TEMP/nfl-public-data.json" --source-run-id "$SOURCE_RUN_ID" --publisher-code-sha "$(git rev-parse HEAD)"
+          PYTHONPATH=. python3 nfl/web/build_shadow_site.py --input "$source_board" --output "$RUNNER_TEMP/nfl-public-data.json" --source-run-id "$SOURCE_RUN_ID" --publisher-code-sha "$(git rev-parse HEAD)"
           cmp nfl/web/static/index.html docs/nfl/index.html
           cmp nfl/web/static/app.css docs/nfl/app.css
           cmp nfl/web/static/app.js docs/nfl/app.js
