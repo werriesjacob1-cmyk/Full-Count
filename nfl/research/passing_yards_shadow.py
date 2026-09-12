@@ -32,6 +32,51 @@ def _finite(value: Any, label: str) -> float:
     return out
 
 
+def role_continuity(
+    current_team: str,
+    prior_appearances: Sequence[dict],
+) -> dict[str, Any]:
+    """Fail closed when the QB's current team differs from his latest prior team.
+
+    This is an eligibility/quarantine diagnostic, not a replacement model.
+    Earlier research showed team-change corrections were unstable, so the
+    conservative launch behavior is to preserve the observation but refuse to
+    clear it as SHADOW_ONLY when team identity changed.
+    """
+    current = str(current_team or "").strip().upper()
+    if not current:
+        raise ValueError("current_team is required")
+
+    rows = list(prior_appearances)
+    if not rows:
+        return {
+            "role_continuity_status": "UNKNOWN_NO_HISTORY",
+            "role_continuity_gate_pass": False,
+            "prior_team": None,
+        }
+
+    prior_team = str(rows[-1].get("team") or "").strip().upper()
+    if not prior_team:
+        return {
+            "role_continuity_status": "UNKNOWN_PRIOR_TEAM",
+            "role_continuity_gate_pass": False,
+            "prior_team": None,
+        }
+
+    if prior_team != current:
+        return {
+            "role_continuity_status": "TEAM_CHANGE_ROLE_UNCERTAINTY",
+            "role_continuity_gate_pass": False,
+            "prior_team": prior_team,
+        }
+
+    return {
+        "role_continuity_status": "ROLE_CONTINUITY_CONFIRMED",
+        "role_continuity_gate_pass": True,
+        "prior_team": prior_team,
+    }
+
+
 def american_implied_probability(odds: int | float) -> float:
     """Return raw implied probability from non-zero American odds."""
     o = _finite(odds, "American odds")
@@ -119,7 +164,6 @@ def empirical_side_probabilities(
     under_n = sum(v < threshold for v in values)
     push_n = len(values) - over_n - under_n
 
-    # Half of any exact ties contribute to each side before add-one smoothing.
     over_effective = over_n + 0.5 * push_n
     n = len(values)
     over = (over_effective + 1.0) / (n + 2.0)
