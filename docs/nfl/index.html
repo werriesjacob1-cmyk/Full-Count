@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Full Count NFL — Research Shadow</title>
+  <meta name="description" content="Full Count NFL prospective research shadow board with real passing-yard markets, model projections, evidence gates, and freshness.">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../" aria-label="Full Count MLB home">Full Count</a>
+    <nav class="sport-nav" aria-label="Sports">
+      <a href="../">MLB</a>
+      <a class="active" href="./" aria-current="page">NFL</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <p class="eyebrow">NFL · PROSPECTIVE RESEARCH</p>
+        <h1>Sunday Shadow Board</h1>
+        <p class="lede">Real FanDuel passing-yard markets, exact player identity, model projections, and fail-closed evidence gates.</p>
+      </div>
+      <div id="freshness" class="freshness" role="status">Loading current shadow snapshot…</div>
+    </section>
+
+    <section class="warning" role="note">
+      <strong>Research shadow only.</strong> These are not published picks. The NFL selector has not been validated; quarantined rows are explicitly ineligible.
+    </section>
+
+    <section id="summary" class="summary-grid" aria-label="Board summary"></section>
+    <section id="health" class="health" aria-label="Source health"></section>
+    <section id="board" class="board" aria-live="polite"></section>
+  </main>
+
+  <footer>
+    <p>FULL COUNT NFL is being measured prospectively. No result can change a pregame eligibility state after kickoff.</p>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>
