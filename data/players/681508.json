@@ -1613,6 +1613,106 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 66.0,
+          "notable_signals": 3,
+          "matchup": "Kansas City Royals @ Boston Red Sox",
+          "game_pk": 824712,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 1.1429,
+            "pitch_exploit": 10.8571,
+            "l7_avg_ev": 21.6667,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 2.925,
+            "park_hr_index": 26.4,
+            "season_barrel_pct": 47.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 3.44,
+            "platoon_xwoba": 5.0,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 0.0,
+            "woba_ahead": 28.1818,
+            "woba_behind": 30.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.408,
+            "vs_rp_ops": 1.428,
+            "ump_k_pct": -0.36,
+            "ump_bb_pct": 0.024
+          },
+          "hit_probability": 0.6256,
+          "raw_hit_probability": 0.6201,
+          "lift": 0.0609,
+          "reliability": "B",
+          "sample_n": 55,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 6.0,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Boston Red Sox",
+          "game_pk": 824712,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0521
+          },
+          "hit_probability": 0.0521,
+          "raw_hit_probability": null,
+          "lift": 0.0043,
+          "reliability": "B",
+          "sample_n": 55,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Boston Red Sox",
+          "game_pk": 824712,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0055
+          },
+          "hit_probability": 0.0055,
+          "raw_hit_probability": null,
+          "lift": -0.0153,
+          "reliability": "B",
+          "sample_n": 55,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -2067,6 +2067,108 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 27.5,
+          "notable_signals": 1,
+          "matchup": "New York Mets @ New York Yankees",
+          "game_pk": 823496,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 29.4286,
+            "l7_avg_ev": 24.7727,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.3,
+            "season_barrel_pct": 23.3333,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 15.1515,
+            "platoon_barrel_pct": -1.84,
+            "platoon_xwoba": -5.0,
+            "park_hand_index": 3.1,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 14.5455,
+            "woba_behind": 39.0909,
+            "pull_park_synergy": 1.9964,
+            "hard_hit_105_rate": -0.055,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.64,
+            "vs_rp_ops": -0.348,
+            "ump_k_pct": 0.552,
+            "ump_bb_pct": -0.144
+          },
+          "hit_probability": 0.5456,
+          "raw_hit_probability": 0.5456,
+          "lift": -0.1242,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 3.9,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ New York Yankees",
+          "game_pk": 823496,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0444
+          },
+          "hit_probability": 0.0444,
+          "raw_hit_probability": null,
+          "lift": -0.0034,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ New York Yankees",
+          "game_pk": 823496,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0106
+          },
+          "hit_probability": 0.0106,
+          "raw_hit_probability": null,
+          "lift": -0.0102,
+          "reliability": "A",
+          "sample_n": 111,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

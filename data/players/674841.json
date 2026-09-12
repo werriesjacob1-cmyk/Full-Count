@@ -401,10 +401,10 @@
       "date": "2026-09-12",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 46.2,
-          "notable_signals": 0,
+          "score": 22.9,
+          "notable_signals": 1,
           "matchup": "Los Angeles Angels @ Washington Nationals",
           "game_pk": 822685,
           "team": "Washington Nationals",
@@ -413,25 +413,28 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 83.0,
-            "same_hand_ratio": 61.1111,
+            "same_hand_ratio": 0.0,
             "l14_k_pct": 65.8824,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 74.3488,
+            "ump_k_pct": 0.444,
+            "ump_bb_pct": 0.12
           },
-          "hit_probability": 0.6198,
-          "raw_hit_probability": 0.7287,
-          "lift": -0.0761,
+          "hit_probability": 0.3682,
+          "raw_hit_probability": 0.3682,
+          "lift": 0.0036,
           "reliability": "B",
           "sample_n": 14,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 10.2,
+          "score": 12.0,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Washington Nationals",
           "game_pk": 822685,
@@ -440,12 +443,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.526,
+            "outs_rate": 0.5224,
             "avg_outs_per_start": 14.64
           },
-          "hit_probability": 0.526,
+          "hit_probability": 0.5224,
           "raw_hit_probability": null,
-          "lift": -0.2274,
+          "lift": -0.2189,
           "reliability": "B",
           "sample_n": 14,
           "projection": {

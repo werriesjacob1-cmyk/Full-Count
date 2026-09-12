@@ -374,7 +374,7 @@
       "date": "2026-09-12",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
           "score": 43.6,
           "notable_signals": 0,
@@ -390,21 +390,21 @@
             "l14_k_pct": 44.7059,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6271,
-          "raw_hit_probability": 0.7658,
-          "lift": -0.0688,
+          "hit_probability": 0.5932,
+          "raw_hit_probability": 0.5968,
+          "lift": 0.0762,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 54.8,
+          "score": 57.1,
           "notable_signals": 1,
           "matchup": "Houston Astros @ Tampa Bay Rays",
           "game_pk": 822927,
@@ -413,12 +413,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5441,
+            "outs_rate": 0.5417,
             "avg_outs_per_start": 16.76
           },
-          "hit_probability": 0.5441,
+          "hit_probability": 0.5417,
           "raw_hit_probability": null,
-          "lift": 0.0664,
+          "lift": 0.0765,
           "reliability": "A",
           "sample_n": 25,
           "projection": {

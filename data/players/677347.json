@@ -93,6 +93,53 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 31.3,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Angels @ Washington Nationals",
+          "game_pk": 822685,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 31.4286,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 29.4,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 33.3333,
+            "park_hand_index": 1.65,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": -0.444,
+            "ump_bb_pct": -0.12
+          },
+          "hit_probability": 0.5494,
+          "raw_hit_probability": 0.5647,
+          "lift": -0.0153,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

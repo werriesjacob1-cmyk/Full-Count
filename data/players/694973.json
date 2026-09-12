@@ -361,9 +361,9 @@
       "date": "2026-09-12",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 53.9,
+          "score": 40.9,
           "notable_signals": 1,
           "matchup": "Pittsburgh Pirates @ Chicago Cubs",
           "game_pk": 824630,
@@ -376,23 +376,26 @@
             "same_hand_ratio": 92.8571,
             "l14_k_pct": 0.0,
             "tto_penalty": 8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 60.9967,
+            "ump_k_pct": 0.072,
+            "ump_bb_pct": -0.444
           },
-          "hit_probability": 0.5943,
-          "raw_hit_probability": 0.6019,
-          "lift": 0.0766,
+          "hit_probability": 0.4302,
+          "raw_hit_probability": 0.4302,
+          "lift": 0.0656,
           "reliability": "A",
           "sample_n": 29,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 40.0,
+          "score": 42.4,
           "notable_signals": 0,
           "matchup": "Pittsburgh Pirates @ Chicago Cubs",
           "game_pk": 824630,
@@ -401,18 +404,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5214,
+            "outs_rate": 0.5191,
             "avg_outs_per_start": 16.03
           },
-          "hit_probability": 0.5214,
+          "hit_probability": 0.5191,
           "raw_hit_probability": null,
-          "lift": -0.0203,
+          "lift": -0.0092,
           "reliability": "A",
           "sample_n": 29,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 29.3,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Chicago Cubs",
+          "game_pk": 824630,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            694973,
+            605280
+          ],
+          "signals": {
+            "combined_k_edge": -0.1124
+          },
+          "hit_probability": 0.4602,
+          "raw_hit_probability": null,
+          "lift": -0.1124,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

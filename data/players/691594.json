@@ -3200,6 +3200,137 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 36.6,
+          "notable_signals": 3,
+          "matchup": "Los Angeles Dodgers @ Miami Marlins",
+          "game_pk": 823819,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 17.7143,
+            "pitch_exploit": 1.7143,
+            "l7_avg_ev": 76.6667,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 11.925,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -4.08,
+            "platoon_xwoba": -1.56,
+            "park_hand_index": -3.79,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "woba_ahead": 17.2727,
+            "woba_behind": 10.9091,
+            "pull_park_synergy": -1.3265,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.288,
+            "vs_rp_ops": 0.9,
+            "ump_k_pct": -0.276,
+            "ump_bb_pct": -0.108
+          },
+          "hit_probability": 0.6515,
+          "raw_hit_probability": 0.6398,
+          "lift": 0.0868,
+          "reliability": "A",
+          "sample_n": 122,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 57.6,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Dodgers @ Miami Marlins",
+          "game_pk": 823819,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 2.58,
+            "sprint_speed": 40.625,
+            "catcher_poptime": 31.4286,
+            "on_base": 75.048
+          },
+          "hit_probability": 0.0717,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 122,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Miami Marlins",
+          "game_pk": 823819,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0139
+          },
+          "hit_probability": 0.0139,
+          "raw_hit_probability": null,
+          "lift": -0.0339,
+          "reliability": "A",
+          "sample_n": 122,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Miami Marlins",
+          "game_pk": 823819,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.003
+          },
+          "hit_probability": 0.003,
+          "raw_hit_probability": null,
+          "lift": -0.0178,
+          "reliability": "A",
+          "sample_n": 122,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -6,29 +6,29 @@
       "date": "2026-09-12",
       "evaluations": [
         {
-          "prop": "A run scores in the 1st (either team)",
+          "prop": "No runs in the 1st (both teams)",
           "type": "game",
-          "score": 63.7,
+          "score": 40.9,
           "notable_signals": 0,
           "matchup": "Chicago White Sox @ St. Louis Cardinals",
           "game_pk": 823009,
           "team": null,
           "side": "both",
-          "lean": "YRFI",
+          "lean": "NRFI",
           "combo_player_ids": null,
           "signals": {
-            "home_team_scores_p": 0.3414,
+            "home_team_scores_p": 0.273,
             "away_team_scores_p": 0.266,
-            "fi_n_starts": 25.0
+            "fi_n_starts": 4.0
           },
-          "hit_probability": 0.5166,
+          "hit_probability": 0.5336,
           "raw_hit_probability": null,
-          "lift": 0.015,
-          "reliability": "A",
-          "sample_n": 25,
+          "lift": 0.0352,
+          "reliability": "D",
+          "sample_n": 4,
           "projection": {
             "stat": "nrfi_combined",
-            "value": 51.7
+            "value": 53.4
           }
         }
       ]

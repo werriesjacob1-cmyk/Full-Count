@@ -429,7 +429,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 55.6,
+          "score": 46.1,
           "notable_signals": 0,
           "matchup": "New York Mets @ New York Yankees",
           "game_pk": 823496,
@@ -438,14 +438,17 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "opp_team_k_pct": 55.0,
-            "same_hand_ratio": 100.0,
+            "opp_team_k_pct": 54.0,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 4.1176,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 42.5656,
+            "ump_k_pct": -0.552,
+            "ump_bb_pct": 0.144
           },
-          "hit_probability": 0.4528,
-          "raw_hit_probability": 0.4528,
-          "lift": 0.0836,
+          "hit_probability": 0.4505,
+          "raw_hit_probability": 0.4505,
+          "lift": 0.0859,
           "reliability": "A",
           "sample_n": 19,
           "projection": {
@@ -457,7 +460,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 72.3,
+          "score": 74.1,
           "notable_signals": 1,
           "matchup": "New York Mets @ New York Yankees",
           "game_pk": 823496,
@@ -466,12 +469,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5807,
+            "outs_rate": 0.5786,
             "avg_outs_per_start": 17.53
           },
-          "hit_probability": 0.5807,
+          "hit_probability": 0.5786,
           "raw_hit_probability": null,
-          "lift": 0.1613,
+          "lift": 0.1677,
           "reliability": "A",
           "sample_n": 19,
           "projection": {

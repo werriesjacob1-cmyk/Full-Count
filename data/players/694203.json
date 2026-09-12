@@ -2620,6 +2620,138 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 42.3,
+          "notable_signals": 2,
+          "matchup": "Los Angeles Angels @ Washington Nationals",
+          "game_pk": 822685,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 31.4286,
+            "l7_avg_ev": 49.0625,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 29.4,
+            "season_barrel_pct": 20.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": -1.14,
+            "park_hand_index": 1.65,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 0.0,
+            "pull_park_synergy": 0.7681,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.512,
+            "vs_rp_ops": -1.692,
+            "ump_k_pct": -0.444,
+            "ump_bb_pct": -0.12
+          },
+          "hit_probability": 0.6664,
+          "raw_hit_probability": 0.6653,
+          "lift": -0.0034,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 31.1,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Washington Nationals",
+          "game_pk": 822685,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 1.5,
+            "sprint_speed": 9.375,
+            "catcher_poptime": 42.8571,
+            "on_base": 10.7486
+          },
+          "hit_probability": 0.036,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Washington Nationals",
+          "game_pk": 822685,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.023
+          },
+          "hit_probability": 0.023,
+          "raw_hit_probability": null,
+          "lift": -0.0248,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.1,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Washington Nationals",
+          "game_pk": 822685,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0167
+          },
+          "hit_probability": 0.0167,
+          "raw_hit_probability": null,
+          "lift": -0.0041,
+          "reliability": "B",
+          "sample_n": 65,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -1213,6 +1213,107 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 65.1,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Angels @ Washington Nationals",
+          "game_pk": 822685,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 6.8571,
+            "l7_avg_ev": 4.7917,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 29.4,
+            "season_barrel_pct": 40.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 41.6667,
+            "platoon_barrel_pct": 1.76,
+            "platoon_xwoba": -0.66,
+            "park_hand_index": 2.51,
+            "opp_catcher_framing": -1.2,
+            "days_rest": 0.0,
+            "woba_ahead": 92.7273,
+            "woba_behind": 7.2727,
+            "pull_park_synergy": 1.265,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -2.016,
+            "vs_rp_ops": -3.036,
+            "ump_k_pct": -0.444,
+            "ump_bb_pct": -0.12
+          },
+          "hit_probability": 0.6461,
+          "raw_hit_probability": 0.6306,
+          "lift": -0.0237,
+          "reliability": "C",
+          "sample_n": 35,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 10.6,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Washington Nationals",
+          "game_pk": 822685,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0706
+          },
+          "hit_probability": 0.0706,
+          "raw_hit_probability": null,
+          "lift": 0.0228,
+          "reliability": "C",
+          "sample_n": 35,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Washington Nationals",
+          "game_pk": 822685,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0074
+          },
+          "hit_probability": 0.0074,
+          "raw_hit_probability": null,
+          "lift": -0.0134,
+          "reliability": "C",
+          "sample_n": 35,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

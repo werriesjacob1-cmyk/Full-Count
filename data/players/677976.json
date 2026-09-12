@@ -423,7 +423,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 51.0,
+          "score": 40.5,
           "notable_signals": 0,
           "matchup": "Kansas City Royals @ Boston Red Sox",
           "game_pk": 824712,
@@ -433,13 +433,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 45.0,
-            "same_hand_ratio": 75.0,
+            "same_hand_ratio": 50.0,
             "l14_k_pct": 22.3529,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 51.7206,
+            "ump_k_pct": 0.36,
+            "ump_bb_pct": -0.024
           },
-          "hit_probability": 0.6065,
-          "raw_hit_probability": 0.6625,
-          "lift": -0.0894,
+          "hit_probability": 0.6063,
+          "raw_hit_probability": 0.6615,
+          "lift": -0.0876,
           "reliability": "B",
           "sample_n": 10,
           "projection": {
@@ -451,7 +454,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 38.4,
+          "score": 40.2,
           "notable_signals": 0,
           "matchup": "Kansas City Royals @ Boston Red Sox",
           "game_pk": 824712,
@@ -460,18 +463,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5157,
+            "outs_rate": 0.5106,
             "avg_outs_per_start": 16.2
           },
-          "hit_probability": 0.5157,
+          "hit_probability": 0.5106,
           "raw_hit_probability": null,
-          "lift": -0.026,
+          "lift": -0.0177,
           "reliability": "B",
           "sample_n": 10,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Boston Red Sox",
+          "game_pk": 824712,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            677976,
+            624133
+          ],
+          "signals": {
+            "combined_k_edge": -0.0046
+          },
+          "hit_probability": 0.625,
+          "raw_hit_probability": null,
+          "lift": -0.0046,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
           }
         }
       ]
