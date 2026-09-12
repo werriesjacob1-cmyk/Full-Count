@@ -6,6 +6,47 @@ from nfl.research import passing_yards_shadow as shadow
 
 
 class PassingYardsShadowTests(unittest.TestCase):
+    def test_same_team_role_continuity_passes(self):
+        out = shadow.role_continuity(
+            "PHI",
+            [
+                {"team": "PHI", "passing_yards": 200, "attempts": 30},
+                {"team": "PHI", "passing_yards": 220, "attempts": 32},
+            ],
+        )
+        self.assertTrue(out["role_continuity_gate_pass"])
+        self.assertEqual(
+            out["role_continuity_status"],
+            "ROLE_CONTINUITY_CONFIRMED",
+        )
+        self.assertEqual(out["prior_team"], "PHI")
+
+    def test_team_change_role_continuity_fails_closed(self):
+        out = shadow.role_continuity(
+            "ATL",
+            [
+                {"team": "DAL", "passing_yards": 200, "attempts": 30},
+                {"team": "DAL", "passing_yards": 220, "attempts": 32},
+            ],
+        )
+        self.assertFalse(out["role_continuity_gate_pass"])
+        self.assertEqual(
+            out["role_continuity_status"],
+            "TEAM_CHANGE_ROLE_UNCERTAINTY",
+        )
+        self.assertEqual(out["prior_team"], "DAL")
+
+    def test_missing_prior_team_fails_closed(self):
+        out = shadow.role_continuity(
+            "ATL",
+            [{"passing_yards": 200, "attempts": 30}],
+        )
+        self.assertFalse(out["role_continuity_gate_pass"])
+        self.assertEqual(
+            out["role_continuity_status"],
+            "UNKNOWN_PRIOR_TEAM",
+        )
+
     def test_american_implied_probability(self):
         self.assertAlmostEqual(
             shadow.american_implied_probability(+150),
@@ -52,8 +93,6 @@ class PassingYardsShadowTests(unittest.TestCase):
             ])
 
     def test_empirical_probability_uses_laplace_smoothing(self):
-        # threshold = line - projection = +5.
-        # residuals above +5: one of three. Add-one smoothing => 2/5.
         out = shadow.empirical_side_probabilities(
             projection=100,
             line=105,
