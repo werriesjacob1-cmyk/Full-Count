@@ -5,7 +5,7 @@ name: Dashboard Pages Deploy
 # including a partial live run that successfully committed one channel.
 on:
   workflow_run:
-    workflows: [Dashboard Refresh, Dashboard Live Update]
+    workflows: [Dashboard Refresh, Dashboard Live Update, NFL Shadow Board Publish]
     types: [completed]
   workflow_dispatch:
 
