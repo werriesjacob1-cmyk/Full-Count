@@ -5,6 +5,7 @@ from pathlib import Path
 
 from nfl.prospective.shadow_snapshot import seal_snapshot
 from nfl.web.build_shadow_site import build_public_payload
+from nfl.web.publish_guard import publication_verdict
 
 FIXTURE = Path(__file__).resolve().parents[2] / "nfl" / "tests" / "fixtures" / "nfl_shadow_board_minimal.json"
 
@@ -87,6 +88,32 @@ class NFLWebShadowTests(unittest.TestCase):
     def test_opponent_is_derived_from_event_and_bound_team(self):
         payload = build_public_payload(copy.deepcopy(self.board), source_board_sha256="a" * 64)
         self.assertEqual(payload["records"][0]["opponent"], "CAR")
+
+    def test_publication_guard_is_monotonic(self):
+        candidate = build_public_payload(
+            copy.deepcopy(self.board),
+            source_board_sha256="a" * 64,
+            source_run_id="123",
+            publisher_code_sha="b" * 40,
+        )
+        placeholder = {
+            "publication_status": "RESEARCH_ONLY_NOT_PUBLIC_PICKS",
+            "created_at": None,
+            "model": {"public_selector_validated": False},
+        }
+        self.assertEqual(publication_verdict(placeholder, candidate), "NEWER")
+        self.assertEqual(publication_verdict(copy.deepcopy(candidate), candidate), "SAME")
+
+        newer = copy.deepcopy(candidate)
+        newer["created_at"] = "2026-09-12T19:52:58Z"
+        self.assertEqual(publication_verdict(candidate, newer), "NEWER")
+        with self.assertRaisesRegex(ValueError, "older snapshot"):
+            publication_verdict(newer, candidate)
+
+        conflict = copy.deepcopy(candidate)
+        conflict["snapshot_sha256"] = "c" * 64
+        with self.assertRaisesRegex(ValueError, "different snapshot seal"):
+            publication_verdict(candidate, conflict)
 
     def test_committed_nfl_static_files_match_source(self):
         repo = Path(__file__).resolve().parents[2]
