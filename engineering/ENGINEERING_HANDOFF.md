@@ -1627,3 +1627,18 @@ No merge, production deploy, official picks, model changes, or MLB ledger mutati
 - Activation requires explicit Jacob authorization and either a direct Worker deployment from reviewed main (outside Workers Builds), or restored build capacity. Narrowing watch paths to infra/live-heartbeat/** prevents unrelated generated-data rebuilds but does not restore already exhausted minutes. No payment/upgrade, deployment, or settings change authorized/performed.
 
 - Live capture now explicitly validates captured_at <= sealed_at < kickoff for every row before sealing; crossing kickoff fails the run rather than freezing late eligibility. Added a regression covering equality, late sealing, reversed chronology and naive timestamps. Cloudflare cron history confirms successes at 19:30:48Z/19:35:45Z/19:40:51Z, matching GitHub dispatch creation one to two seconds later.
+
+## 2026-09-12 — Total sports intelligence foundation (Codex)
+
+The work is isolated on `codex/total-sports-foundations-20260912`, based on `db095b30d5f66192a40a558c286db03dfb42da1b`. Remote `main` had advanced to `787cc0389063e62c8bbb59a722d300ac049582a8` at final local validation because scheduled MLB workflows continue to commit generated state. Rebase and re-run exact-head validation before any integration decision.
+
+- Added `market_coverage/registry.py`, a source-agnostic coverage control plane with deterministic IDs, explicit lifecycle/capability classifications, first/last observation provenance, and fail-closed handling for malformed or unknown market families.
+- Added `market_coverage/cli.py`, which consumes archived FanDuel payload bytes, records their SHA-256 digests, and atomically writes a compact registry and coverage-gap report. Raw sportsbook payloads and machine-local paths are not committed.
+- Seeded the registry from a bounded live census of one Buffalo at Houston event across eight verified FanDuel tabs. The capture observed 107 source market families. Only the already-operating primary passing-yards family is classified `PROSPECTIVE_SHADOW`; 106 remain unnormalized, 15 observed alternate families lack normalized ladder representation, and all 107 lack an active NFL grader.
+- Added explicit passing-yards classifications and eight contract tests covering unknown-family retention, malformed identity, aggregation, digest validation, explicit lifecycle preservation, invalid classifications, and incomplete-capture loss suppression. The tests and Python compilation pass locally.
+- Added `engineering/TOTAL_SPORTS_INTELLIGENCE_ROADMAP_2026-09-12.md` with the required A–T repository truth, data and market inventory, blind spots, phased roadmap, completed work, delegation candidates, and remaining owner actions.
+- No NFL capture, model, selector, grader, public surface, workflow, MLB behavior, or immutable history was changed. No production activation or promotion is part of this branch.
+
+Next: run repository CI on the exact pushed head; add multi-event census and MLB pre-filter adapters only after this schema is reviewed; then design compact frozen-candidate and experiment ledgers with measured storage costs before wiring any live capture.
+
+Alligator
