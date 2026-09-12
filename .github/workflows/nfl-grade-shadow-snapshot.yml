@@ -1,0 +1,172 @@
+name: NFL Grade Shadow Snapshot
+
+# Manual, artifact-only grading bridge.
+# Downloads an exact pregame shadow artifact by workflow run ID, fetches and
+# preserves the current 2026 weekly outcome source, and grades only exact
+# GSIS+team+opponent matches.
+#
+# No public ledger writes. No pick promotion. No repository mutation.
+on:
+  # Branch-only self-test. Inert after merge because it matches only the
+  # grading development branch.
+  push:
+    branches:
+      - superchad/nfl-shadow-grading-20260912
+    paths:
+      - .github/workflows/nfl-grade-shadow-snapshot.yml
+  workflow_dispatch:
+    inputs:
+      snapshot_run_id:
+        description: "Workflow run ID that produced nfl-live-passing-yards-shadow-board"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  grade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Download exact pregame shadow artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: nfl-live-passing-yards-shadow-board
+          path: /tmp/pregame-shadow
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: ${{ inputs.snapshot_run_id || '34701948406' }}
+
+      - name: Grade exact snapshot against current 2026 outcomes
+        env:
+          SNAPSHOT_RUN_ID: ${{ inputs.snapshot_run_id || '34701948406' }}
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import hashlib
+          import io
+          import json
+          import os
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          import requests
+
+          from nfl.prospective.shadow_grader import grade_snapshot
+          from nfl.research import nflverse_history as nh
+
+          snapshot_run_id = str(os.environ["SNAPSHOT_RUN_ID"]).strip()
+          board_path = Path(
+              "/tmp/pregame-shadow/"
+              "nfl-live-passing-yards-shadow-board.json"
+          )
+          if not board_path.exists():
+              raise SystemExit(
+                  f"missing board JSON in downloaded artifact: {board_path}"
+              )
+
+          board = json.loads(board_path.read_text(encoding="utf-8"))
+          snapshot = board.get("snapshot")
+          if not isinstance(snapshot, dict):
+              raise SystemExit("downloaded board has no sealed snapshot")
+
+          source_url = nh.player_stats_url(2026)
+          observed_at = datetime.now(timezone.utc).replace(
+              microsecond=0
+          ).isoformat().replace("+00:00", "Z")
+          response = requests.get(
+              source_url,
+              timeout=60,
+              headers={
+                  "User-Agent":
+                      "Full-Count NFL prospective shadow grader"
+              },
+          )
+          response.raise_for_status()
+          source_sha = hashlib.sha256(response.content).hexdigest()
+
+          outcome_rows = list(
+              csv.DictReader(io.StringIO(response.text))
+          )
+          if not outcome_rows:
+              raise SystemExit("2026 outcome source is empty")
+          missing = sorted(
+              nh.REQUIRED_COLUMNS - set(outcome_rows[0])
+          )
+          if missing:
+              raise SystemExit(
+                  f"2026 outcome source schema drift: {missing}"
+              )
+
+          graded = grade_snapshot(
+              snapshot,
+              outcome_rows,
+              season=2026,
+              season_type="REG",
+          )
+
+          summary = graded["summary"]
+          if summary["outcomes_ambiguous"]:
+              grading_status = "AMBIGUOUS_OUTCOMES_FAIL_CLOSED"
+          elif summary["outcomes_unresolved"]:
+              grading_status = "PARTIAL_WAITING_FOR_OUTCOMES"
+          else:
+              grading_status = "COMPLETE"
+
+          out_dir = Path("/tmp/nfl-shadow-grade")
+          out_dir.mkdir(parents=True, exist_ok=True)
+          (out_dir / "stats_player_week_2026.csv").write_bytes(
+              response.content
+          )
+          (out_dir / "pregame-board.json").write_bytes(
+              board_path.read_bytes()
+          )
+
+          result = {
+              "analysis": "NFL_PROSPECTIVE_SHADOW_GRADE",
+              "status": grading_status,
+              "graded_at": observed_at,
+              "grader_code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+              "snapshot_workflow_run_id": snapshot_run_id,
+              "source_snapshot_sha256":
+                  snapshot.get("snapshot_sha256"),
+              "outcome_source": {
+                  "url": source_url,
+                  "observed_at": observed_at,
+                  "sha256": source_sha,
+                  "bytes": len(response.content),
+                  "rows": len(outcome_rows),
+              },
+              "graded": graded,
+          }
+          with (out_dir / "graded-shadow.json").open(
+              "w", encoding="utf-8"
+          ) as f:
+              json.dump(result, f, indent=2, sort_keys=True)
+
+          print(json.dumps({
+              "status": grading_status,
+              "snapshot_workflow_run_id": snapshot_run_id,
+              "source_snapshot_sha256":
+                  snapshot.get("snapshot_sha256"),
+              "outcome_source_sha256": source_sha,
+              **summary,
+          }, indent=2, sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-graded-shadow-${{ inputs.snapshot_run_id || '34701948406' }}
+          path: /tmp/nfl-shadow-grade
+          retention-days: 90

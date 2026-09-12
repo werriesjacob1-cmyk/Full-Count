@@ -1,0 +1,160 @@
+name: NFL 2026 Outcome Source Audit
+
+# Source-only audit of the mutable 2026 weekly player outcome file.
+# No model scoring, no pick selection, no historical eligibility inference.
+on:
+  push:
+    branches:
+      - superchad/nfl-shadow-grading-20260912
+    paths:
+      - .github/workflows/nfl-2026-outcome-source-audit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Audit current 2026 weekly player outcomes
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import hashlib
+          import io
+          import json
+          from collections import Counter
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          import requests
+
+          from nfl.research import nflverse_history as nh
+
+          season = 2026
+          url = nh.player_stats_url(season)
+          observed_at = datetime.now(timezone.utc).replace(
+              microsecond=0
+          ).isoformat().replace("+00:00", "Z")
+
+          response = requests.get(
+              url,
+              timeout=60,
+              headers={
+                  "User-Agent":
+                      "Full-Count NFL 2026 outcome source audit"
+              },
+          )
+          response.raise_for_status()
+          rows = list(csv.DictReader(io.StringIO(response.text)))
+          if not rows:
+              raise SystemExit("2026 player outcome source is empty")
+
+          missing = sorted(nh.REQUIRED_COLUMNS - set(rows[0]))
+          if missing:
+              raise SystemExit(f"2026 player schema drift: {missing}")
+
+          regular = [
+              row for row in rows
+              if str(row.get("season_type") or "") == "REG"
+          ]
+          weeks = sorted({
+              int(float(row["week"]))
+              for row in regular
+              if row.get("week") not in (None, "")
+          })
+          teams = sorted({
+              str(row.get("team") or "").strip()
+              for row in regular
+              if str(row.get("team") or "").strip()
+          })
+
+          qb_rows = [
+              row for row in regular
+              if str(row.get("position") or "").strip().upper() == "QB"
+          ]
+          qb_with_attempts = [
+              row for row in qb_rows
+              if float(row.get("attempts") or 0) > 0
+          ]
+
+          by_week = Counter(
+              int(float(row["week"]))
+              for row in regular
+              if row.get("week") not in (None, "")
+          )
+          qb_by_week = Counter(
+              int(float(row["week"]))
+              for row in qb_with_attempts
+              if row.get("week") not in (None, "")
+          )
+
+          out_dir = Path("/tmp/nfl-2026-outcome-source")
+          out_dir.mkdir(parents=True, exist_ok=True)
+          (out_dir / "stats_player_week_2026.csv").write_bytes(
+              response.content
+          )
+
+          report = {
+              "analysis": "NFL_2026_OUTCOME_SOURCE_AUDIT",
+              "status": "SOURCE_ONLY_NO_GRADING",
+              "observed_at": observed_at,
+              "source": {
+                  "url": url,
+                  "sha256": hashlib.sha256(
+                      response.content
+                  ).hexdigest(),
+                  "bytes": len(response.content),
+                  "rows_total": len(rows),
+              },
+              "schema": {
+                  "columns": sorted(rows[0].keys()),
+                  "missing_required": missing,
+              },
+              "regular_season": {
+                  "rows": len(regular),
+                  "weeks_present": weeks,
+                  "max_week": max(weeks) if weeks else None,
+                  "team_count": len(teams),
+                  "teams": teams,
+                  "rows_by_week": {
+                      str(k): v
+                      for k, v in sorted(by_week.items())
+                  },
+                  "qb_rows": len(qb_rows),
+                  "qb_with_attempts": len(qb_with_attempts),
+                  "qb_with_attempts_by_week": {
+                      str(k): v
+                      for k, v in sorted(qb_by_week.items())
+                  },
+              },
+              "grading_contract": {
+                  "outcome_identity":
+                      "player_id + team + opponent_team + season + season_type",
+                  "authoritative_stat": "passing_yards",
+                  "mutable_source_must_be_rehashed_each_grading_run":
+                      True,
+              },
+          }
+
+          with (out_dir / "audit.json").open(
+              "w", encoding="utf-8"
+          ) as f:
+              json.dump(report, f, indent=2, sort_keys=True)
+
+          print(json.dumps(report, indent=2, sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-2026-outcome-source-audit
+          path: /tmp/nfl-2026-outcome-source
+          retention-days: 90
