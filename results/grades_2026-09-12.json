@@ -1,6 +1,204 @@
 {
   "date": "2026-09-12",
-  "generated": "2026-09-12T01:29:52.099879",
+  "hits": 0,
+  "misses": 0,
+  "ungraded": 23,
+  "fair_hits": 0,
+  "fair_misses": 0,
+  "by_category": {
+    "main": {
+      "hits": 0,
+      "misses": 0,
+      "ungraded": 4
+    },
+    "best_of_category": {
+      "hits": 0,
+      "misses": 0,
+      "ungraded": 19
+    }
+  },
+  "by_recommendation_status": {
+    "lean": {
+      "hits": 0,
+      "misses": 0,
+      "ungraded": 10
+    },
+    "neutral": {
+      "hits": 0,
+      "misses": 0,
+      "ungraded": 13
+    },
+    "top_pick": {
+      "hits": 0,
+      "misses": 0,
+      "voids": 0,
+      "ungraded": 1
+    }
+  },
+  "public_top_pick_counts": {
+    "hits": 0,
+    "misses": 0,
+    "voids": 0,
+    "ungraded": 1
+  },
+  "public_top_picks": [
+    {
+      "id": "fc2:823819:player-663969:strikeouts:4:over",
+      "identity_version": 2,
+      "game_pk": 823819,
+      "player_id": 663969,
+      "combo_player_ids": null,
+      "type": "pitcher",
+      "name": "Tyler Phillips",
+      "team": "Miami Marlins",
+      "matchup": "Los Angeles Dodgers @ Miami Marlins",
+      "game_start": "2026-09-12T20:10:00Z",
+      "stat": "strikeouts",
+      "market_side": "over",
+      "lean": null,
+      "projection": {
+        "stat": "strikeouts",
+        "value": 3.5,
+        "needs": 4
+      },
+      "prop": "Over 3.5 Strikeouts",
+      "hit_probability": 0.6084,
+      "market_odds": -136,
+      "market_implied": 0.5428,
+      "market_edge": 0.0656,
+      "market_hold": null,
+      "price_clears": true,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (7.5 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "why": [
+        "Opposing team K% 20.6",
+        "Expected workload 21.1 batters faced (his own 18.5/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "Platoon advantage: 4 of 7 projected hitters bat right-handed against this RHP"
+      ],
+      "watchouts": [
+        "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average",
+        "L14 K% 18.9 (37 PA) \u2014 cold recent form",
+        "Recency-weighted K rate 20.3% (exp. decay, halflife 30d, 17 real starts / 329 BF) \u2014 drives a below-average strikeout-probability read"
+      ],
+      "prob_ci": [
+        0.5875,
+        0.7076
+      ],
+      "reliability": "A",
+      "reliability_note": null,
+      "sample_n": 17,
+      "lineup_assumed": null,
+      "base_rate": 0.6959,
+      "lift": -0.0875,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "versions": {
+        "model_version": "2026.08.15",
+        "selection_policy_version": "1.0.0",
+        "calibration_version": "1.0.0",
+        "feature_version": "1.0.0",
+        "git_sha": "f9cff33d3",
+        "prediction_timestamp": "2026-09-12T00:51:09.890583+00:00",
+        "odds_fetched_at": "2026-09-12T00:51:01.631636+00:00",
+        "board_generated_at": "2026-09-12T00:51:09.874544+00:00"
+      },
+      "qualification_timestamp": "2026-09-12T00:51:09.890583+00:00",
+      "board_timestamp": "2026-09-12T00:51:09.874544+00:00",
+      "slate_date": "2026-09-12",
+      "published_top_pick_at": "2026-09-12T00:53:38.293066+00:00",
+      "publication_artifact_id": "fb1ff23aa9b002a15e3d021c9069200918b27ed964e7e2af70f87b94a1fef54f",
+      "publication_source_commit": "a90f5a74938a1f9d572c665a48d02f057567cf24",
+      "publication_run_id": "34662998559",
+      "publication_deployment_id": null,
+      "grade": "ungraded",
+      "settlement_state": "ungraded",
+      "reason": "game_not_authoritatively_final",
+      "eligibility": {
+        "eligibility": "ungraded",
+        "reason_code": "game_not_authoritatively_final",
+        "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
+        "game_state": "pregame"
+      },
+      "settlement_authority": "none",
+      "settlement_observed_at": "2026-09-12T01:21:40.427019+00:00",
+      "settlement_source": "durable_morning_status_observation"
+    }
+  ],
+  "shadow_by_category": {
+    "strikeouts@5": {
+      "hits": 0,
+      "misses": 0,
+      "ungraded": 1
+    },
+    "strikeouts@6": {
+      "hits": 0,
+      "misses": 0,
+      "ungraded": 1
+    },
+    "strikeouts@7": {
+      "hits": 0,
+      "misses": 0,
+      "ungraded": 1
+    },
+    "pitcher_outs@12": {
+      "hits": 0,
+      "misses": 0,
+      "ungraded": 1
+    },
+    "pitcher_outs@13": {
+      "hits": 0,
+      "misses": 0,
+      "ungraded": 1
+    },
+    "pitcher_outs@14": {
+      "hits": 0,
+      "misses": 0,
+      "ungraded": 1
+    },
+    "strikeouts@4": {
+      "hits": 0,
+      "misses": 0,
+      "ungraded": 1
+    },
+    "combined_strikeouts@8": {
+      "hits": 0,
+      "misses": 0,
+      "ungraded": 1
+    },
+    "combined_strikeouts@10": {
+      "hits": 0,
+      "misses": 0,
+      "ungraded": 1
+    },
+    "combined_strikeouts@11": {
+      "hits": 0,
+      "misses": 0,
+      "ungraded": 1
+    },
+    "pitcher_outs@15": {
+      "hits": 0,
+      "misses": 0,
+      "ungraded": 1
+    },
+    "combined_strikeouts@12": {
+      "hits": 0,
+      "misses": 0,
+      "ungraded": 1
+    },
+    "combined_strikeouts@9": {
+      "hits": 0,
+      "misses": 0,
+      "ungraded": 1
+    },
+    "nrfi_combined@None": {
+      "hits": 0,
+      "misses": 0,
+      "ungraded": 1
+    }
+  },
   "picks": [
     {
       "rank": 1,
@@ -18,7 +216,7 @@
         "value": 59.4
       },
       "lean": "NRFI",
-      "score": 67.0,
+      "score": 67.3,
       "confidence": "Medium",
       "notable_signals": 0,
       "category": null,
@@ -62,7 +260,7 @@
         "This is the real both-teams NRFI/YRFI market -- combines both starters' halves of the 1st, not a one-sided team read."
       ],
       "watchouts": [],
-      "signal_weight_adjustment": 7.59,
+      "signal_weight_adjustment": 7.88,
       "recommendation_status": "lean",
       "status_reasons": [
         "a real, positive read that doesn't clear every Top Pick requirement"
@@ -72,10 +270,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 2,
@@ -93,7 +293,7 @@
         "value": 53.9
       },
       "lean": "NRFI",
-      "score": 59.9,
+      "score": 60.1,
       "confidence": "Medium",
       "notable_signals": 0,
       "category": null,
@@ -137,7 +337,7 @@
         "This is the real both-teams NRFI/YRFI market -- combines both starters' halves of the 1st, not a one-sided team read."
       ],
       "watchouts": [],
-      "signal_weight_adjustment": 5.97,
+      "signal_weight_adjustment": 6.2,
       "recommendation_status": "lean",
       "status_reasons": [
         "a real, positive read that doesn't clear every Top Pick requirement"
@@ -147,10 +347,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 3,
@@ -168,7 +370,7 @@
         "value": 53.5
       },
       "lean": "YRFI",
-      "score": 62.7,
+      "score": 63.1,
       "confidence": "Medium",
       "notable_signals": 0,
       "category": null,
@@ -212,7 +414,7 @@
         "This is the real both-teams NRFI/YRFI market -- combines both starters' halves of the 1st, not a one-sided team read."
       ],
       "watchouts": [],
-      "signal_weight_adjustment": 9.25,
+      "signal_weight_adjustment": 9.6,
       "recommendation_status": "lean",
       "status_reasons": [
         "a real, positive read that doesn't clear every Top Pick requirement"
@@ -222,10 +424,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 4,
@@ -243,7 +447,7 @@
         "value": 53.7
       },
       "lean": "YRFI",
-      "score": 60.8,
+      "score": 61.0,
       "confidence": "Medium",
       "notable_signals": 0,
       "category": null,
@@ -287,7 +491,7 @@
         "This is the real both-teams NRFI/YRFI market -- combines both starters' halves of the 1st, not a one-sided team read."
       ],
       "watchouts": [],
-      "signal_weight_adjustment": 7.08,
+      "signal_weight_adjustment": 7.34,
       "recommendation_status": "lean",
       "status_reasons": [
         "a real, positive read that doesn't clear every Top Pick requirement"
@@ -297,10 +501,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 5,
@@ -325,7 +531,7 @@
       "category": "best_of_category",
       "hit_probability": 0.6273,
       "signals": {
-        "opp_team_k_pct": 49.0,
+        "opp_team_k_pct": 48.0,
         "same_hand_ratio": 100.0,
         "l14_k_pct": 47.6471,
         "env_neutral": 50.0
@@ -404,7 +610,7 @@
         }
       ],
       "why": [
-        "Opposing team K% 21.9",
+        "Opposing team K% 21.8",
         "Expected workload 24.4 batters faced (his own 26.0/start over 2 real starts, shrunk toward the 23.1 league mean)",
         "Platoon advantage: 6 of 9 projected hitters bat right-handed against this RHP",
         "L14 K% 23.1 (52 PA)",
@@ -423,10 +629,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 6,
@@ -549,10 +757,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 7,
@@ -675,13 +885,145 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 8,
+      "type": "pitcher",
+      "name": "Tyler Mahle",
+      "player_id": 641816,
+      "team": "Atlanta Braves",
+      "matchup": "Philadelphia Phillies @ Atlanta Braves",
+      "game_pk": 824870,
+      "side": null,
+      "combo_player_ids": null,
+      "prop": "Over 3.5 Strikeouts",
+      "projection": {
+        "stat": "strikeouts",
+        "value": 3.5,
+        "needs": 4
+      },
+      "lean": null,
+      "score": 45.4,
+      "confidence": "Low",
+      "notable_signals": 1,
+      "category": "best_of_category",
+      "hit_probability": 0.6259,
+      "signals": {
+        "opp_team_k_pct": 52.0,
+        "same_hand_ratio": 100.0,
+        "l14_k_pct": 58.8235,
+        "tto_penalty": 8.0,
+        "env_neutral": 50.0
+      },
+      "base_rate": 0.6959,
+      "lift": -0.07,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "raw_hit_probability": 0.7597,
+      "calibrated_by": "strikeouts",
+      "prob_ci": [
+        0.605,
+        0.725
+      ],
+      "prob_ci_source": "historical_reliability_band",
+      "sample_n": 24,
+      "reliability": "A",
+      "lineup_assumed": null,
+      "max_acceptable_price": -167,
+      "estimated_odds": -195,
+      "market_odds": null,
+      "market_implied": null,
+      "market_hold": null,
+      "posted_implied": null,
+      "market_fair": null,
+      "market_fair_method": null,
+      "edge_vs_fair": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "modelled_shrunk",
+      "probability_detail": {
+        "empirical": 0.746,
+        "modelled": 0.8234
+      },
+      "alternatives": [
+        {
+          "stat": "strikeouts",
+          "line": 4.5,
+          "needs": 5,
+          "prob": 0.5913,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.5177,
+          "lift": 0.0736,
+          "empirical": 0.5502,
+          "modelled": 0.6574,
+          "raw_prob": 0.5875,
+          "calibrated_by": "strikeouts",
+          "ci": null,
+          "ci_source": null
+        },
+        {
+          "stat": "strikeouts",
+          "line": 5.5,
+          "needs": 6,
+          "prob": 0.4166,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.3692,
+          "lift": 0.0474,
+          "empirical": 0.3808,
+          "modelled": 0.464,
+          "raw_prob": 0.4166,
+          "calibrated_by": null
+        },
+        {
+          "stat": "strikeouts",
+          "line": 6.5,
+          "needs": 7,
+          "prob": 0.2568,
+          "basis": "modelled_shrunk",
+          "base_rate": 0.2277,
+          "lift": 0.0291,
+          "empirical": 0.2172,
+          "modelled": 0.2859,
+          "raw_prob": 0.2568,
+          "calibrated_by": null
+        }
+      ],
+      "why": [
+        "Opposing team K% 22.2",
+        "Expected workload 23.5 batters faced (his own 24.0/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "Platoon advantage: 6 of 9 projected hitters bat right-handed against this RHP",
+        "L14 K% 25.0 (48 PA)",
+        "Recency-weighted K rate 23.0% (exp. decay, halflife 30d, 24 real starts / 545 BF) \u2014 drives the strikeout probability model",
+        "Maintains K rate through the order (TTO1 18.2% -> TTO3 29.6%)"
+      ],
+      "watchouts": [
+        "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "neutral",
+      "status_reasons": [
+        "no market price posted, and no strong enough read to lean on regardless"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
+    },
+    {
+      "rank": 9,
       "type": "pitcher",
       "name": "Kyle Leahy",
       "player_id": 681517,
@@ -802,136 +1144,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
-    },
-    {
-      "rank": 9,
-      "type": "pitcher",
-      "name": "Kumar Rocker",
-      "player_id": 677958,
-      "team": "Texas Rangers",
-      "matchup": "Texas Rangers @ Arizona Diamondbacks",
-      "game_pk": 825035,
-      "side": null,
-      "combo_player_ids": null,
-      "prop": "Over 3.5 Strikeouts",
-      "projection": {
-        "stat": "strikeouts",
-        "value": 3.5,
-        "needs": 4
-      },
-      "lean": null,
-      "score": 44.7,
-      "confidence": "Low",
-      "notable_signals": 0,
-      "category": "best_of_category",
-      "hit_probability": 0.6216,
-      "signals": {
-        "opp_team_k_pct": 24.0,
-        "same_hand_ratio": 100.0,
-        "l14_k_pct": 58.8235,
-        "env_neutral": 50.0
-      },
-      "base_rate": 0.6959,
-      "lift": -0.0743,
-      "lift_reference_rate": null,
-      "stable_lift": null,
-      "raw_hit_probability": 0.7377,
-      "calibrated_by": "strikeouts",
-      "prob_ci": [
-        0.6007,
-        0.7208
-      ],
-      "prob_ci_source": "historical_reliability_band",
-      "sample_n": 24,
-      "reliability": "A",
-      "lineup_assumed": null,
-      "max_acceptable_price": -164,
-      "estimated_odds": -191,
-      "market_odds": null,
-      "market_implied": null,
-      "market_hold": null,
-      "posted_implied": null,
-      "market_fair": null,
-      "market_fair_method": null,
-      "edge_vs_fair": null,
-      "market_edge": null,
-      "price_clears": null,
-      "probability_basis": "modelled_shrunk",
-      "probability_detail": {
-        "empirical": 0.646,
-        "modelled": 0.7794
-      },
-      "alternatives": [
-        {
-          "stat": "strikeouts",
-          "line": 4.5,
-          "needs": 5,
-          "prob": 0.5848,
-          "basis": "modelled_shrunk",
-          "base_rate": 0.5177,
-          "lift": 0.0671,
-          "empirical": 0.5502,
-          "modelled": 0.5936,
-          "raw_prob": 0.5556,
-          "calibrated_by": "strikeouts",
-          "ci": null,
-          "ci_source": null
-        },
-        {
-          "stat": "strikeouts",
-          "line": 5.5,
-          "needs": 6,
-          "prob": 0.3815,
-          "basis": "modelled_shrunk",
-          "base_rate": 0.3692,
-          "lift": 0.0123,
-          "empirical": 0.2808,
-          "modelled": 0.3938,
-          "raw_prob": 0.3815,
-          "calibrated_by": null
-        },
-        {
-          "stat": "strikeouts",
-          "line": 6.5,
-          "needs": 7,
-          "prob": 0.2263,
-          "basis": "modelled_shrunk",
-          "base_rate": 0.2277,
-          "lift": -0.0014,
-          "empirical": 0.1505,
-          "modelled": 0.225,
-          "raw_prob": 0.2263,
-          "calibrated_by": null
-        }
-      ],
-      "why": [
-        "Expected workload 21.4 batters faced (his own 17.0/start over 1 real start, shrunk toward the 23.1 league mean)",
-        "Platoon advantage: 5 of 7 projected hitters bat right-handed against this RHP",
-        "L14 K% 25.0 (40 PA)",
-        "Recency-weighted K rate 23.6% (exp. decay, halflife 30d, 24 real starts / 523 BF) \u2014 drives the strikeout probability model"
-      ],
-      "watchouts": [
-        "Workload estimate rests on only 1 start in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average",
-        "Opposing team K% 19.4 \u2014 contact-oriented lineup, tougher matchup"
-      ],
-      "signal_weight_adjustment": null,
-      "recommendation_status": "neutral",
-      "status_reasons": [
-        "no market price posted, and no strong enough read to lean on regardless"
-      ],
-      "stale": false,
-      "model_version": "2026.08.15",
-      "selection_policy_version": "1.0.0",
-      "calibration_version": "1.0.0",
-      "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 10,
@@ -950,7 +1168,7 @@
         "needs": 15
       },
       "lean": null,
-      "score": 46.7,
+      "score": 46.8,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "best_of_category",
@@ -1030,10 +1248,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 11,
@@ -1052,7 +1272,7 @@
         "needs": 15
       },
       "lean": null,
-      "score": 64.6,
+      "score": 64.7,
       "confidence": "Medium",
       "notable_signals": 0,
       "category": "best_of_category",
@@ -1134,10 +1354,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 12,
@@ -1156,7 +1378,7 @@
         "needs": 17
       },
       "lean": null,
-      "score": 90.2,
+      "score": 90.3,
       "confidence": "High",
       "notable_signals": 1,
       "category": "best_of_category",
@@ -1234,10 +1456,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 13,
@@ -1256,7 +1480,7 @@
         "needs": 14
       },
       "lean": null,
-      "score": 44.4,
+      "score": 44.5,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "best_of_category",
@@ -1335,10 +1559,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 14,
@@ -1357,7 +1583,7 @@
         "needs": 15
       },
       "lean": null,
-      "score": 49.8,
+      "score": 49.9,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "best_of_category",
@@ -1436,10 +1662,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 15,
@@ -1544,10 +1772,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 16,
@@ -1652,10 +1882,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 17,
@@ -1761,13 +1993,126 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 18,
+      "type": "pitcher_combo",
+      "name": "Anthony Kay & Matthew Liberatore",
+      "player_id": 622491,
+      "team": null,
+      "matchup": "Chicago White Sox @ St. Louis Cardinals",
+      "game_pk": 823009,
+      "side": null,
+      "combo_player_ids": [
+        622491,
+        681517
+      ],
+      "prop": "Over 8.5 Combined Strikeouts",
+      "projection": {
+        "stat": "combined_strikeouts",
+        "value": 8.5,
+        "needs": 9
+      },
+      "lean": null,
+      "score": 42.6,
+      "confidence": "Low",
+      "notable_signals": 0,
+      "category": "best_of_category",
+      "hit_probability": 0.5541,
+      "signals": {
+        "combined_k_edge": -0.0861
+      },
+      "base_rate": 0.6402877697841727,
+      "lift": -0.0861,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "prob_ci_source": null,
+      "sample_n": 0,
+      "reliability": "D",
+      "lineup_assumed": null,
+      "max_acceptable_price": -124,
+      "estimated_odds": -143,
+      "market_odds": -178,
+      "market_implied": 0.6403,
+      "market_hold": null,
+      "posted_implied": 0.6403,
+      "market_fair": 0.5929,
+      "market_fair_method": "assumed_hold",
+      "edge_vs_fair": -0.0388,
+      "market_edge": -0.0862,
+      "price_clears": false,
+      "probability_basis": "modelled_independent_binomials",
+      "probability_detail": {
+        "empirical": null,
+        "modelled": 0.554138387291157
+      },
+      "alternatives": [
+        {
+          "stat": "combined_strikeouts",
+          "line": 9.5,
+          "needs": 10,
+          "prob": 0.40421785390302156,
+          "base_rate": 0.504950495049505,
+          "lift": -0.1007,
+          "odds": -102
+        },
+        {
+          "stat": "combined_strikeouts",
+          "line": 10.5,
+          "needs": 11,
+          "prob": 0.2703286796728482,
+          "base_rate": 0.36764705882352944,
+          "lift": -0.0973,
+          "odds": 172
+        },
+        {
+          "stat": "combined_strikeouts",
+          "line": 11.5,
+          "needs": 12,
+          "prob": 0.1652005480658735,
+          "base_rate": 0.24390243902439024,
+          "lift": -0.0787,
+          "odds": 310
+        }
+      ],
+      "why": [
+        "Model: 55.4% chance of 9+ combined Ks (Anthony Kay + Matthew Liberatore), priced at -178 (64.0% implied)",
+        "Luis Castillo: proj. 3.7 Ks, 22.5 exp. BF, K rate 16.3%, opp K% 36.0, L14 K% 0.0",
+        "Kyle Leahy: proj. 5.2 Ks, 19.2 exp. BF, K rate 27.3%, opp K% 71.0, L14 K% 100.0"
+      ],
+      "watchouts": [
+        "This is a newer market on the board -- not enough graded combined-strikeout picks yet for a reliability grade. Treat it as unproven until more results come in.",
+        "Thin evidence behind Luis Castillo and Kyle Leahy's own strikeout projection -- capping how much this pick can be trusted",
+        "No positive read here: 8.6 pts BELOW the 64% league base rate for this market"
+      ],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "neutral",
+      "status_reasons": [
+        "no real MLB track record behind this line at all -- the read leans entirely on league-average/fallback assumptions rather than this player's own data, so it cannot stand as even a Lean yet"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
+    },
+    {
+      "rank": 19,
       "type": "game",
       "name": "Los Angeles Angels @ Washington Nationals \u2014 1st Inning (Both Teams)",
       "player_id": "nrfi_822685",
@@ -1782,7 +2127,7 @@
         "value": 59.4
       },
       "lean": "NRFI",
-      "score": 67.0,
+      "score": 67.3,
       "confidence": "Medium",
       "notable_signals": 0,
       "category": "best_of_category",
@@ -1836,13 +2181,92 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
-      "rank": 19,
+      "rank": 20,
+      "type": "game",
+      "name": "Philadelphia Phillies @ Atlanta Braves \u2014 1st Inning (Both Teams)",
+      "player_id": "nrfi_824870",
+      "team": null,
+      "matchup": "Philadelphia Phillies @ Atlanta Braves",
+      "game_pk": 824870,
+      "side": "both",
+      "combo_player_ids": null,
+      "prop": "No runs in the 1st (both teams)",
+      "projection": {
+        "stat": "nrfi_combined",
+        "value": 54.2
+      },
+      "lean": "NRFI",
+      "score": 66.2,
+      "confidence": "Medium",
+      "notable_signals": 0,
+      "category": "best_of_category",
+      "hit_probability": 0.5419,
+      "signals": {
+        "home_team_scores_p": 0.2085,
+        "away_team_scores_p": 0.3154,
+        "fi_n_starts": 25.0
+      },
+      "base_rate": 0.4984,
+      "lift": 0.0435,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "prob_ci_source": null,
+      "sample_n": 25,
+      "reliability": "A",
+      "lineup_assumed": null,
+      "max_acceptable_price": -118,
+      "estimated_odds": -136,
+      "market_odds": -140,
+      "market_implied": 0.5506,
+      "market_hold": null,
+      "posted_implied": 0.5833,
+      "market_fair": 0.5506,
+      "market_fair_method": "exact_two_sided",
+      "edge_vs_fair": -0.0087,
+      "market_edge": -0.0087,
+      "price_clears": false,
+      "probability_basis": "combined_shrunk",
+      "probability_detail": {
+        "empirical": null,
+        "modelled": null
+      },
+      "alternatives": null,
+      "why": [
+        "Atlanta Braves scores off Jes\u00fas Luzardo (away SP) in the bottom 1st: 20.9% (shrunk, 31 starts)",
+        "Philadelphia Phillies scores off Tyler Mahle (home SP) in the top 1st: 31.5% (shrunk, 25 starts)",
+        "This is the real both-teams NRFI/YRFI market -- combines both starters' halves of the 1st, not a one-sided team read."
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "lean",
+      "status_reasons": [
+        "a real, positive read that doesn't clear every Top Pick requirement"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
+    },
+    {
+      "rank": 21,
       "type": "game",
       "name": "Kansas City Royals @ Boston Red Sox \u2014 1st Inning (Both Teams)",
       "player_id": "nrfi_824712",
@@ -1857,7 +2281,7 @@
         "value": 53.9
       },
       "lean": "NRFI",
-      "score": 59.9,
+      "score": 60.1,
       "confidence": "Medium",
       "notable_signals": 0,
       "category": "best_of_category",
@@ -1911,13 +2335,15 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
-      "rank": 20,
+      "rank": 22,
       "type": "game",
       "name": "New York Mets @ New York Yankees \u2014 1st Inning (Both Teams)",
       "player_id": "nrfi_823496",
@@ -1932,7 +2358,7 @@
         "value": 53.7
       },
       "lean": "YRFI",
-      "score": 60.8,
+      "score": 61.0,
       "confidence": "Medium",
       "notable_signals": 0,
       "category": "best_of_category",
@@ -1986,13 +2412,15 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
-      "rank": 21,
+      "rank": 23,
       "type": "game",
       "name": "Texas Rangers @ Arizona Diamondbacks \u2014 1st Inning (Both Teams)",
       "player_id": "nrfi_825035",
@@ -2007,7 +2435,7 @@
         "value": 53.5
       },
       "lean": "YRFI",
-      "score": 62.7,
+      "score": 63.1,
       "confidence": "Medium",
       "notable_signals": 0,
       "category": "best_of_category",
@@ -2061,96 +2489,23 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
-    },
-    {
-      "rank": 22,
-      "type": "game",
-      "name": "Pittsburgh Pirates @ Chicago Cubs \u2014 1st Inning (Both Teams)",
-      "player_id": "nrfi_824630",
-      "team": null,
-      "matchup": "Pittsburgh Pirates @ Chicago Cubs",
-      "game_pk": 824630,
-      "side": "both",
-      "combo_player_ids": null,
-      "prop": "No runs in the 1st (both teams)",
-      "projection": {
-        "stat": "nrfi_combined",
-        "value": 52.9
-      },
-      "lean": "NRFI",
-      "score": 61.0,
-      "confidence": "Medium",
-      "notable_signals": 0,
-      "category": "best_of_category",
-      "hit_probability": 0.5295,
-      "signals": {
-        "home_team_scores_p": 0.2717,
-        "away_team_scores_p": 0.273,
-        "fi_n_starts": 15.0
-      },
-      "base_rate": 0.4984,
-      "lift": 0.0311,
-      "lift_reference_rate": null,
-      "stable_lift": null,
-      "raw_hit_probability": null,
-      "calibrated_by": null,
-      "prob_ci": null,
-      "prob_ci_source": null,
-      "sample_n": 15,
-      "reliability": "B",
-      "lineup_assumed": null,
-      "max_acceptable_price": -113,
-      "estimated_odds": -130,
-      "market_odds": -115,
-      "market_implied": 0.5042,
-      "market_hold": null,
-      "posted_implied": 0.5349,
-      "market_fair": 0.5042,
-      "market_fair_method": "exact_two_sided",
-      "edge_vs_fair": 0.0253,
-      "market_edge": 0.0253,
-      "price_clears": false,
-      "probability_basis": "combined_shrunk",
-      "probability_detail": {
-        "empirical": null,
-        "modelled": null
-      },
-      "alternatives": null,
-      "why": [
-        "Chicago Cubs scores off Paul Skenes (away SP) in the bottom 1st: 27.2% (shrunk, 30 starts)",
-        "Pittsburgh Pirates scores off Clay Holmes (home SP) in the top 1st: 27.3% (shrunk, 15 starts)",
-        "This is the real both-teams NRFI/YRFI market -- combines both starters' halves of the 1st, not a one-sided team read."
-      ],
-      "watchouts": [],
-      "signal_weight_adjustment": null,
-      "recommendation_status": "lean",
-      "status_reasons": [
-        "a real, positive read that doesn't clear every Top Pick requirement"
-      ],
-      "stale": false,
-      "model_version": "2026.08.15",
-      "selection_policy_version": "1.0.0",
-      "calibration_version": "1.0.0",
-      "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     }
   ],
   "shadow_tracking": [
     {
       "rank": 1,
       "type": "pitcher",
-      "name": "Tyler Glasnow",
-      "player_id": 607192,
-      "team": "Los Angeles Dodgers",
-      "matchup": "Los Angeles Dodgers @ Miami Marlins",
-      "game_pk": 823819,
+      "name": "Jes\u00fas Luzardo",
+      "player_id": 666200,
+      "team": "Philadelphia Phillies",
+      "matchup": "Philadelphia Phillies @ Atlanta Braves",
+      "game_pk": 824870,
       "side": null,
       "combo_player_ids": null,
       "prop": "[shadow] Over 4.5 Strikeouts",
@@ -2160,30 +2515,30 @@
         "needs": 5
       },
       "lean": null,
-      "score": 43.5,
+      "score": 39.1,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "shadow",
-      "hit_probability": 0.6142,
+      "hit_probability": 0.6209,
       "signals": {
-        "opp_team_k_pct": 48.0,
-        "same_hand_ratio": 100.0,
-        "l14_k_pct": 76.4706,
+        "opp_team_k_pct": 47.0,
+        "same_hand_ratio": 75.0,
+        "l14_k_pct": 97.6471,
         "env_neutral": 50.0
       },
       "base_rate": 0.5177,
-      "lift": 0.0965,
+      "lift": 0.1032,
       "lift_reference_rate": null,
       "stable_lift": null,
-      "raw_hit_probability": 0.7006,
+      "raw_hit_probability": 0.7345,
       "calibrated_by": "strikeouts",
       "prob_ci": null,
       "prob_ci_source": null,
       "sample_n": null,
       "reliability": null,
       "lineup_assumed": null,
-      "max_acceptable_price": -159,
-      "estimated_odds": -185,
+      "max_acceptable_price": -164,
+      "estimated_odds": -191,
       "market_odds": null,
       "market_implied": null,
       "market_hold": null,
@@ -2210,10 +2565,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 2,
@@ -2282,19 +2639,21 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 3,
       "type": "pitcher",
-      "name": "Ian Seymour",
-      "player_id": 693855,
-      "team": "Tampa Bay Rays",
-      "matchup": "Houston Astros @ Tampa Bay Rays",
-      "game_pk": 822927,
+      "name": "Jes\u00fas Luzardo",
+      "player_id": 666200,
+      "team": "Philadelphia Phillies",
+      "matchup": "Philadelphia Phillies @ Atlanta Braves",
+      "game_pk": 824870,
       "side": null,
       "combo_player_ids": null,
       "prop": "[shadow] Over 6.5 Strikeouts",
@@ -2304,31 +2663,30 @@
         "needs": 7
       },
       "lean": null,
-      "score": 39.2,
+      "score": 39.1,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "shadow",
-      "hit_probability": 0.3994,
+      "hit_probability": 0.4997,
       "signals": {
         "opp_team_k_pct": 47.0,
-        "same_hand_ratio": 5.5556,
-        "l14_k_pct": 88.2353,
-        "tto_penalty": -8.0,
+        "same_hand_ratio": 75.0,
+        "l14_k_pct": 97.6471,
         "env_neutral": 50.0
       },
       "base_rate": 0.2277,
-      "lift": 0.1717,
+      "lift": 0.272,
       "lift_reference_rate": null,
       "stable_lift": null,
-      "raw_hit_probability": 0.3994,
+      "raw_hit_probability": 0.4997,
       "calibrated_by": null,
       "prob_ci": null,
       "prob_ci_source": null,
       "sample_n": null,
       "reliability": null,
       "lineup_assumed": null,
-      "max_acceptable_price": 150,
-      "estimated_odds": 130,
+      "max_acceptable_price": 100,
+      "estimated_odds": -115,
       "market_odds": null,
       "market_implied": null,
       "market_hold": null,
@@ -2355,19 +2713,21 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 4,
       "type": "pitcher",
-      "name": "Gerrit Cole",
-      "player_id": 543037,
-      "team": "New York Yankees",
-      "matchup": "New York Mets @ New York Yankees",
-      "game_pk": 823496,
+      "name": "Tyler Mahle",
+      "player_id": 641816,
+      "team": "Atlanta Braves",
+      "matchup": "Philadelphia Phillies @ Atlanta Braves",
+      "game_pk": 824870,
       "side": "home",
       "combo_player_ids": null,
       "prop": "[shadow] Over 11.5 Pitcher Outs Recorded",
@@ -2377,17 +2737,17 @@
         "needs": 12
       },
       "lean": null,
-      "score": 72.3,
-      "confidence": "High",
+      "score": 45.0,
+      "confidence": "Low",
       "notable_signals": 0,
       "category": "shadow",
-      "hit_probability": 0.9828,
+      "hit_probability": 0.9856,
       "signals": {
-        "outs_rate": 0.5807,
-        "avg_outs_per_start": 17.53
+        "outs_rate": 0.5417,
+        "avg_outs_per_start": 16.38
       },
       "base_rate": 0.9282,
-      "lift": 0.0546,
+      "lift": 0.0574,
       "lift_reference_rate": null,
       "stable_lift": null,
       "raw_hit_probability": null,
@@ -2425,10 +2785,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 5,
@@ -2447,7 +2809,7 @@
         "needs": 13
       },
       "lean": null,
-      "score": 69.0,
+      "score": 69.1,
       "confidence": "Medium",
       "notable_signals": 0,
       "category": "shadow",
@@ -2495,10 +2857,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 6,
@@ -2517,7 +2881,7 @@
         "needs": 14
       },
       "lean": null,
-      "score": 69.0,
+      "score": 69.1,
       "confidence": "Medium",
       "notable_signals": 0,
       "category": "shadow",
@@ -2565,19 +2929,21 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 7,
       "type": "pitcher",
-      "name": "Tyler Glasnow",
-      "player_id": 607192,
-      "team": "Los Angeles Dodgers",
-      "matchup": "Los Angeles Dodgers @ Miami Marlins",
-      "game_pk": 823819,
+      "name": "Jes\u00fas Luzardo",
+      "player_id": 666200,
+      "team": "Philadelphia Phillies",
+      "matchup": "Philadelphia Phillies @ Atlanta Braves",
+      "game_pk": 824870,
       "side": null,
       "combo_player_ids": null,
       "prop": "[shadow] Over 3.5 Strikeouts",
@@ -2587,22 +2953,22 @@
         "needs": 4
       },
       "lean": null,
-      "score": 43.5,
+      "score": 39.1,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "shadow",
-      "hit_probability": 0.8255,
+      "hit_probability": 0.84,
       "signals": {
-        "opp_team_k_pct": 48.0,
-        "same_hand_ratio": 100.0,
-        "l14_k_pct": 76.4706,
+        "opp_team_k_pct": 47.0,
+        "same_hand_ratio": 75.0,
+        "l14_k_pct": 97.6471,
         "env_neutral": 50.0
       },
       "base_rate": 0.6959,
-      "lift": 0.1296,
+      "lift": 0.1441,
       "lift_reference_rate": null,
       "stable_lift": null,
-      "raw_hit_probability": 0.8255,
+      "raw_hit_probability": 0.84,
       "calibrated_by": null,
       "prob_ci": null,
       "prob_ci_source": null,
@@ -2610,7 +2976,7 @@
       "reliability": null,
       "lineup_assumed": null,
       "max_acceptable_price": -350,
-      "estimated_odds": -617,
+      "estimated_odds": -700,
       "market_odds": null,
       "market_implied": null,
       "market_hold": null,
@@ -2637,10 +3003,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 8,
@@ -2709,10 +3077,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 9,
@@ -2781,10 +3151,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 10,
@@ -2853,10 +3225,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 11,
@@ -2875,7 +3249,7 @@
         "needs": 15
       },
       "lean": null,
-      "score": 40.9,
+      "score": 41.0,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "shadow",
@@ -2923,85 +3297,15 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 12,
-      "type": "pitcher_combo",
-      "name": "George Kirby & Jeffrey Springs",
-      "player_id": 693433,
-      "team": null,
-      "matchup": "Seattle Mariners @ Athletics",
-      "game_pk": 824955,
-      "side": null,
-      "combo_player_ids": [
-        693433,
-        695611
-      ],
-      "prop": "[shadow] Over 8.5 Combined Starter Strikeouts",
-      "projection": {
-        "stat": "combined_strikeouts",
-        "value": 8.5,
-        "needs": 9
-      },
-      "lean": null,
-      "score": 54.7,
-      "confidence": "Low",
-      "notable_signals": 0,
-      "category": "shadow",
-      "hit_probability": 0.8798516773587108,
-      "signals": {
-        "combined_k_edge": 0.3723
-      },
-      "base_rate": 0.5833333333333334,
-      "lift": 0.2965,
-      "lift_reference_rate": null,
-      "stable_lift": null,
-      "raw_hit_probability": null,
-      "calibrated_by": null,
-      "prob_ci": null,
-      "prob_ci_source": null,
-      "sample_n": null,
-      "reliability": null,
-      "lineup_assumed": null,
-      "max_acceptable_price": -350,
-      "estimated_odds": -1074,
-      "market_odds": null,
-      "market_implied": null,
-      "market_hold": null,
-      "posted_implied": null,
-      "market_fair": null,
-      "market_fair_method": null,
-      "edge_vs_fair": null,
-      "market_edge": null,
-      "price_clears": null,
-      "probability_basis": "empirical_shrunk",
-      "probability_detail": null,
-      "alternatives": null,
-      "why": [
-        "Tracked for hit-rate measurement only -- an alternate threshold that lost selection against the real candidate, never a live bet."
-      ],
-      "watchouts": [],
-      "signal_weight_adjustment": null,
-      "recommendation_status": "neutral",
-      "status_reasons": [
-        "no market price posted, and no strong enough read to lean on regardless"
-      ],
-      "stale": false,
-      "model_version": "2026.08.15",
-      "selection_policy_version": "1.0.0",
-      "calibration_version": "1.0.0",
-      "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
-    },
-    {
-      "rank": 13,
       "type": "pitcher_combo",
       "name": "George Kirby & Jeffrey Springs",
       "player_id": 693433,
@@ -3067,10 +3371,86 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
+    },
+    {
+      "rank": 13,
+      "type": "pitcher_combo",
+      "name": "George Kirby & Jeffrey Springs",
+      "player_id": 693433,
+      "team": null,
+      "matchup": "Seattle Mariners @ Athletics",
+      "game_pk": 824955,
+      "side": null,
+      "combo_player_ids": [
+        693433,
+        695611
+      ],
+      "prop": "[shadow] Over 8.5 Combined Starter Strikeouts",
+      "projection": {
+        "stat": "combined_strikeouts",
+        "value": 8.5,
+        "needs": 9
+      },
+      "lean": null,
+      "score": 54.7,
+      "confidence": "Low",
+      "notable_signals": 0,
+      "category": "shadow",
+      "hit_probability": 0.8798516773587108,
+      "signals": {
+        "combined_k_edge": 0.3723
+      },
+      "base_rate": 0.5833333333333334,
+      "lift": 0.2965,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "raw_hit_probability": null,
+      "calibrated_by": null,
+      "prob_ci": null,
+      "prob_ci_source": null,
+      "sample_n": null,
+      "reliability": null,
+      "lineup_assumed": null,
+      "max_acceptable_price": -350,
+      "estimated_odds": -1074,
+      "market_odds": null,
+      "market_implied": null,
+      "market_hold": null,
+      "posted_implied": null,
+      "market_fair": null,
+      "market_fair_method": null,
+      "edge_vs_fair": null,
+      "market_edge": null,
+      "price_clears": null,
+      "probability_basis": "empirical_shrunk",
+      "probability_detail": null,
+      "alternatives": null,
+      "why": [
+        "Tracked for hit-rate measurement only -- an alternate threshold that lost selection against the real candidate, never a live bet."
+      ],
+      "watchouts": [],
+      "signal_weight_adjustment": null,
+      "recommendation_status": "neutral",
+      "status_reasons": [
+        "no market price posted, and no strong enough read to lean on regardless"
+      ],
+      "stale": false,
+      "model_version": "2026.08.15",
+      "selection_policy_version": "1.0.0",
+      "calibration_version": "1.0.0",
+      "feature_version": "1.0.0",
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     },
     {
       "rank": 14,
@@ -3088,7 +3468,7 @@
         "value": 59.4
       },
       "lean": "NRFI",
-      "score": 67.0,
+      "score": 67.3,
       "confidence": "Medium",
       "notable_signals": 0,
       "category": "shadow",
@@ -3142,20 +3522,12 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "dfd9771",
-      "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-      "odds_timestamp": "2026-09-12T01:29:52.096596+00:00",
-      "lineup_checked_at": "2026-09-12T01:29:52.096596+00:00"
+      "git_sha": "26720ec",
+      "prediction_timestamp": "2026-09-12T00:36:21.936753+00:00",
+      "odds_timestamp": "2026-09-12T00:36:21.934328+00:00",
+      "lineup_checked_at": "2026-09-12T00:36:21.934328+00:00",
+      "grade": "ungraded",
+      "reason": "game not final yet (status: Scheduled)"
     }
-  ],
-  "recommendation_metadata": {
-    "model_version": "2026.08.15",
-    "selection_policy_version": "1.0.0",
-    "calibration_version": "1.0.0",
-    "feature_version": "1.0.0",
-    "git_sha": "dfd9771",
-    "prediction_timestamp": "2026-09-12T01:29:52.099205+00:00",
-    "odds_fetched_at": "2026-09-12T01:29:52.096596+00:00",
-    "board_generated_at": "2026-09-12T01:29:52.096596+00:00"
-  }
+  ]
 }
