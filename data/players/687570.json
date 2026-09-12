@@ -364,6 +364,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-12",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 44.1,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Minnesota Twins",
+          "game_pk": 823657,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 42.0,
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 70.5882,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5986,
+          "raw_hit_probability": 0.6233,
+          "lift": 0.0809,
+          "reliability": "A",
+          "sample_n": 19,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 32.4,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Minnesota Twins",
+          "game_pk": 823657,
+          "team": "Minnesota Twins",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.49,
+            "avg_outs_per_start": 15.63
+          },
+          "hit_probability": 0.49,
+          "raw_hit_probability": null,
+          "lift": -0.0517,
+          "reliability": "A",
+          "sample_n": 19,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }

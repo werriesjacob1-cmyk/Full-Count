@@ -356,6 +356,66 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-12",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 53.9,
+          "notable_signals": 1,
+          "matchup": "Pittsburgh Pirates @ Chicago Cubs",
+          "game_pk": 824630,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 43.0,
+            "same_hand_ratio": 92.8571,
+            "l14_k_pct": 0.0,
+            "tto_penalty": 8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5943,
+          "raw_hit_probability": 0.6019,
+          "lift": 0.0766,
+          "reliability": "A",
+          "sample_n": 29,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 40.1,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Chicago Cubs",
+          "game_pk": 824630,
+          "team": "Pittsburgh Pirates",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5214,
+            "avg_outs_per_start": 16.03
+          },
+          "hit_probability": 0.5214,
+          "raw_hit_probability": null,
+          "lift": -0.0203,
+          "reliability": "A",
+          "sample_n": 29,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }
