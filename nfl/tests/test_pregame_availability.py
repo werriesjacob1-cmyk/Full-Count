@@ -12,6 +12,7 @@ CANDIDATE = {
     "team": "PHI",
     "event_away_team": "PHI",
     "event_home_team": "KC",
+    "event_open_date": "2026-09-13T17:00:00Z",
 }
 
 
@@ -39,6 +40,8 @@ def report(*, include_candidate=False, unresolved_candidate=False):
             "team": "PHI",
         })
     return {
+        "report_published_at": "2026-09-13T15:30:00Z",
+        "report_observed_at": "2026-09-13T15:40:00Z",
         "teams": [
             {"team": "PHI", "players": phi_players},
             {
@@ -55,6 +58,14 @@ def report(*, include_candidate=False, unresolved_candidate=False):
 
 
 class PregameAvailabilityTests(unittest.TestCase):
+    def test_old_missing_future_or_postkickoff_report_cannot_clear_current_game(self):
+        for field, value in (("report_published_at", "2025-09-13T15:30:00Z"), ("report_published_at", None), ("report_published_at", "2026-09-13T15:50:00Z"), ("report_observed_at", "2026-09-13T17:00:00Z"), ("report_observed_at", "2026-09-13T15:40:00")):
+            stale = {**report(), field: value}
+            with self.subTest(field=field, value=value):
+                out = availability.evaluate_candidate(CANDIDATE, [stale])
+                self.assertFalse(out['availability_gate_pass'])
+                self.assertEqual(out['availability_status'], 'UNKNOWN_GAME_COVERAGE')
+
     def test_absence_is_usable_only_with_both_event_teams_covered(self):
         out = availability.evaluate_candidate(CANDIDATE, [report()])
         self.assertEqual(out["availability_status"], "NOT_LISTED_INACTIVE")

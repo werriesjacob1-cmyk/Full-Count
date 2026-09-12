@@ -14,6 +14,21 @@ from __future__ import annotations
 import unicodedata
 from collections.abc import Mapping, Sequence
 from typing import Any
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+
+def _current_report(report, candidate):
+    try:
+        times = [datetime.fromisoformat(str(value).replace('Z', '+00:00')) for value in (
+            report.get('report_published_at'), report.get('report_observed_at'), candidate.get('event_open_date'))]
+        if any(t.tzinfo is None for t in times):
+            return False
+        published, observed, kickoff = times
+        ct = ZoneInfo('America/Chicago')
+        return published <= observed < kickoff and published.astimezone(ct).date() == kickoff.astimezone(ct).date()
+    except (ValueError, TypeError):
+        return False
 
 
 def _name_key(value: Any) -> str:
@@ -76,6 +91,8 @@ def evaluate_candidate(
 
     for report in bound_reports:
         if not isinstance(report, Mapping):
+            continue
+        if not _current_report(report, candidate):
             continue
         teams = _report_team_map(report)
         if away not in teams or home not in teams:

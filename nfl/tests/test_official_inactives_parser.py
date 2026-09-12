@@ -29,6 +29,13 @@ REPORT = b"""
 
 
 class OfficialInactiveReportParser(unittest.TestCase):
+    def test_publication_clock_is_not_inferred_from_modification(self):
+        script = b'<script type="application/ld+json">{"@type":"NewsArticle","datePublished":"2026-09-13T15:30:00Z","dateModified":"2026-09-14T01:00:00Z"}</script>'
+        self.assertEqual(official_inactives.parse_report(REPORT + script)['report_published_at'], '2026-09-13T15:30:00Z')
+        self.assertIsNone(official_inactives.parse_report(REPORT)['report_published_at'])
+        conflicting = script.replace(b'15:30', b'16:00')
+        self.assertIsNone(official_inactives.parse_report(REPORT + script + conflicting)['report_published_at'])
+
     def test_extracts_team_sections_and_player_source_identity(self):
         parsed = official_inactives.parse_report(REPORT)
 
