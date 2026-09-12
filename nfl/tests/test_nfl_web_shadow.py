@@ -3,6 +3,7 @@ import json
 import unittest
 from pathlib import Path
 
+from nfl.prospective.shadow_snapshot import seal_snapshot
 from nfl.web.build_shadow_site import build_public_payload
 
 FIXTURE = Path(__file__).resolve().parents[2] / "nfl" / "tests" / "fixtures" / "nfl_shadow_board_minimal.json"
@@ -12,6 +13,14 @@ class NFLWebShadowTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.board = json.loads(FIXTURE.read_text(encoding="utf-8"))
+        snapshot = cls.board["snapshot"]
+        cls.board["snapshot"] = seal_snapshot(
+            snapshot["records"],
+            slate_date=snapshot["slate_date"],
+            code_sha=snapshot["code_sha"],
+            source_vintage=snapshot["source_vintage"],
+            sealed_at=snapshot["sealed_at"],
+        )
 
     def test_builds_only_public_safe_whitelist(self):
         payload = build_public_payload(copy.deepcopy(self.board), source_board_sha256="a" * 64)
@@ -41,6 +50,12 @@ class NFLWebShadowTests(unittest.TestCase):
         board = copy.deepcopy(self.board)
         board["snapshot"]["records"][0]["actual"] = 300
         with self.assertRaisesRegex(ValueError, "outcome fields"):
+            build_public_payload(board, source_board_sha256="a" * 64)
+
+    def test_tampered_snapshot_seal_fails_closed(self):
+        board = copy.deepcopy(self.board)
+        board["snapshot"]["records"][0]["line"] = 999.5
+        with self.assertRaisesRegex(ValueError, "snapshot SHA-256"):
             build_public_payload(board, source_board_sha256="a" * 64)
 
     def test_public_selector_transition_fails_closed(self):
