@@ -156,7 +156,9 @@ def build_public_payload(board: dict, *, source_board_sha256: str, source_run_id
         "source_vintage": source_vintage,
         "code_sha": str(board.get("code_sha") or ""),
         "snapshot_sha256": str(snapshot.get("snapshot_sha256") or ""),
-        "source_board_sha256": source_board_sha256,\n        "source_run_id": source_run_id,\n        "publisher_code_sha": publisher_code_sha,
+        "source_board_sha256": source_board_sha256,
+        "source_run_id": source_run_id,
+        "publisher_code_sha": publisher_code_sha,
         "model": {
             "name": (board.get("model") or {}).get("name"),
             "public_selector_validated": False,
@@ -207,7 +209,9 @@ def atomic_json(path: Path, payload: dict) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", required=True, help="sealed shadow board JSON")
-    parser.add_argument("--output", required=True, help="public-safe data.json path")\n    parser.add_argument("--source-run-id", default=None)\n    parser.add_argument("--publisher-code-sha", default=None)
+    parser.add_argument("--output", required=True, help="public-safe data.json path")
+    parser.add_argument("--source-run-id", default=None)
+    parser.add_argument("--publisher-code-sha", default=None)
     args = parser.parse_args()
 
     raw = Path(args.input).read_bytes()
@@ -215,7 +219,12 @@ def main() -> int:
         board = json.loads(raw)
     except json.JSONDecodeError as exc:
         raise SystemExit(f"shadow board JSON is unreadable: {exc}") from exc
-    payload = build_public_payload(\n        board,\n        source_board_sha256=_sha256_bytes(raw),\n        source_run_id=args.source_run_id,\n        publisher_code_sha=args.publisher_code_sha,\n    )
+    payload = build_public_payload(
+        board,
+        source_board_sha256=_sha256_bytes(raw),
+        source_run_id=args.source_run_id,
+        publisher_code_sha=args.publisher_code_sha,
+    )
     atomic_json(Path(args.output), payload)
     print(json.dumps({
         "output": args.output,
@@ -225,7 +234,9 @@ def main() -> int:
         "shadow_only": payload["summary"]["shadow_only"],
         "quarantined": payload["summary"]["quarantined"],
         "snapshot_sha256": payload["snapshot_sha256"],
-        "source_board_sha256": payload["source_board_sha256"],\n        "source_run_id": payload["source_run_id"],\n        "publisher_code_sha": payload["publisher_code_sha"],
+        "source_board_sha256": payload["source_board_sha256"],
+        "source_run_id": payload["source_run_id"],
+        "publisher_code_sha": payload["publisher_code_sha"],
     }, sort_keys=True))
     return 0
 
