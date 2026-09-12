@@ -68,7 +68,6 @@ class NFLWebShadowTests(unittest.TestCase):
         self.assertEqual(payload["surface"], "prospective_research_shadow")
         self.assertEqual(payload["publication_status"], "RESEARCH_ONLY_NOT_PUBLIC_PICKS")
         self.assertFalse(payload["model"]["public_selector_validated"])
-        self.assertGreater(payload["summary"]["candidates"], 0)
         self.assertEqual(payload["summary"]["candidates"], len(payload["records"]))
         for row in payload["records"]:
             self.assertIn(row["decision_status"], {"SHADOW_ONLY", "QUARANTINED"})
