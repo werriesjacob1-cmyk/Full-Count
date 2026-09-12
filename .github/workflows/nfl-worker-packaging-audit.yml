@@ -1,0 +1,36 @@
+name: NFL Worker Packaging Audit
+
+on:
+  push:
+    branches:
+      - codex/audit-pr90-worker-dry-run-20260912
+
+permissions:
+  contents: read
+
+jobs:
+  dry-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: infra/live-heartbeat/package-lock.json
+      - name: Install exact Worker dependencies
+        working-directory: infra/live-heartbeat
+        run: npm ci
+      - name: Package without deploying
+        working-directory: infra/live-heartbeat
+        run: npx wrangler deploy --dry-run --outdir worker-dist
+      - name: Record package evidence
+        working-directory: infra/live-heartbeat
+        run: |
+          find worker-dist -type f -print -exec sha256sum {} \;
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-worker-dry-run
+          path: infra/live-heartbeat/worker-dist
+          if-no-files-found: error
