@@ -33,6 +33,8 @@ ALLOWED_DECISIONS = {"SHADOW_ONLY", "QUARANTINED"}
 FORBIDDEN_OUTCOME_FIELDS = {
     "actual", "actual_value", "result", "grade", "hit", "miss", "push",
     "settled", "settlement", "outcome", "won", "lost",
+    "actual_passing_yards", "outcome_status", "outcome_side", "selection_result",
+    "eligible_shadow", "graded_at",
 }
 
 
@@ -145,6 +147,10 @@ def build_public_payload(board: dict, *, source_board_sha256: str, source_run_id
     )
     if rebuilt["snapshot_sha256"] != snapshot.get("snapshot_sha256"):
         raise ValueError("sealed snapshot SHA-256 does not match its canonical contents")
+    # seal_snapshot normalizes IDs and metadata. Comparing only its digest
+    # would accept a changed supplied ID/evidence class/schema under an old seal.
+    if rebuilt != snapshot:
+        raise ValueError("sealed snapshot differs from canonical snapshot contents")
 
     records = [_public_record(row) for row in snapshot.get("records") or []]
     ids = [row["id"] for row in records]
@@ -166,11 +172,19 @@ def build_public_payload(board: dict, *, source_board_sha256: str, source_run_id
         raise ValueError("board created_at and sealed snapshot sealed_at disagree")
 
     ct = ZoneInfo("America/Chicago")
+    sealed_dt = datetime.fromisoformat(sealed_at.replace("Z", "+00:00"))
+    vintage_dt = datetime.fromisoformat(source_vintage.replace("Z", "+00:00"))
+    if vintage_dt > sealed_dt:
+        raise ValueError("source_vintage is later than snapshot sealing")
     for row in records:
         captured_dt = datetime.fromisoformat(row["captured_at"].replace("Z", "+00:00"))
         kickoff_dt = datetime.fromisoformat(row["kickoff_at"].replace("Z", "+00:00"))
         if captured_dt >= kickoff_dt:
             raise ValueError(f"record {row['id']!r} was not captured pregame")
+        if captured_dt > vintage_dt:
+            raise ValueError("record capture is later than source_vintage")
+        if sealed_dt >= kickoff_dt:
+            raise ValueError(f"record {row['id']!r} was not sealed pregame")
         if kickoff_dt.astimezone(ct).date().isoformat() != slate_date:
             raise ValueError(f"record {row['id']!r} kickoff is outside the sealed Chicago slate")
 

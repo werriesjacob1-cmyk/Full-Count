@@ -6,6 +6,7 @@ from pathlib import Path
 from nfl.prospective.shadow_snapshot import seal_snapshot
 from nfl.web.build_shadow_site import build_public_payload
 from nfl.web.publish_guard import publication_verdict
+from nfl.web.source_run import validate_source_run, validate_artifact_code, WORKFLOW_PATH
 
 FIXTURE = Path(__file__).resolve().parents[2] / "nfl" / "tests" / "fixtures" / "nfl_shadow_board_minimal.json"
 
@@ -75,6 +76,48 @@ class NFLWebShadowTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "snapshot SHA-256"):
             build_public_payload(board, source_board_sha256="a" * 64)
 
+    def test_normalized_fields_cannot_bypass_seal_verification(self):
+        for field, value in (("evidence_class", "PUBLIC_PICKS"), ("schema_version", 99)):
+            board = copy.deepcopy(self.board)
+            board["snapshot"][field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "canonical snapshot"):
+                build_public_payload(board, source_board_sha256="a" * 64)
+        board = copy.deepcopy(self.board)
+        board["snapshot"]["records"][0]["observation_id"] = "altered-id"
+        with self.assertRaisesRegex(ValueError, "canonical snapshot"):
+            build_public_payload(board, source_board_sha256="a" * 64)
+
+    def test_grading_bridge_fields_are_rejected_even_when_resealed(self):
+        for field in ("actual_passing_yards", "outcome_status", "selection_result", "eligible_shadow"):
+            board = copy.deepcopy(self.board)
+            snap = board["snapshot"]
+            snap["records"][0][field] = "diagnostic"
+            board["snapshot"] = seal_snapshot(snap["records"], **{k: snap[k] for k in ("slate_date", "code_sha", "source_vintage", "sealed_at")})
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "outcome fields"):
+                build_public_payload(board, source_board_sha256="a" * 64)
+
+    def test_sealing_after_kickoff_is_not_prospective(self):
+        board = copy.deepcopy(self.board)
+        snap = board["snapshot"]
+        snap["sealed_at"] = snap["records"][0]["event_open_date"]
+        board["created_at"] = snap["sealed_at"]
+        board["snapshot"] = seal_snapshot(snap["records"], **{k: snap[k] for k in ("slate_date", "code_sha", "source_vintage", "sealed_at")})
+        with self.assertRaisesRegex(ValueError, "not sealed pregame"):
+            build_public_payload(board, source_board_sha256="a" * 64)
+
+    def test_source_run_identity_and_artifact_binding(self):
+        repo = "owner/repo"
+        run = dict(id=123, name="NFL Live Passing-Yards Shadow Board Audit", head_branch="main", status="completed", conclusion="success", path=WORKFLOW_PATH, workflow_id=456, head_sha="a" * 40, repository={"full_name": repo}, head_repository={"full_name": repo})
+        workflow = dict(id=456, path=WORKFLOW_PATH)
+        self.assertEqual(validate_source_run(run, workflow, repository=repo, run_id="123"), "a" * 40)
+        for field, value in (("head_branch", "feature"), ("path", ".github/workflows/impostor.yml"), ("workflow_id", 999), ("conclusion", "failure"), ("head_repository", {"full_name": "fork/repo"})):
+            bad = {**run, field: value}
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                validate_source_run(bad, workflow, repository=repo, run_id="123")
+        with self.assertRaisesRegex(ValueError, "artifact code SHA"):
+            validate_artifact_code(self.board, "a" * 40)
+        validate_artifact_code(self.board, self.board["code_sha"])
+
     def test_post_kickoff_capture_is_rejected(self):
         board = copy.deepcopy(self.board)
         row = board["snapshot"]["records"][0]
@@ -116,8 +159,11 @@ class NFLWebShadowTests(unittest.TestCase):
             "publication_status": "RESEARCH_ONLY_NOT_PUBLIC_PICKS",
             "created_at": None,
             "model": {"public_selector_validated": False},
+            "records": [], "summary": {"candidates": 0}, "snapshot_sha256": None,
         }
         self.assertEqual(publication_verdict(placeholder, candidate), "NEWER")
+        with self.assertRaisesRegex(ValueError, "empty initial placeholder"):
+            publication_verdict({**placeholder, "records": [{"id": "existing"}]}, candidate)
         self.assertEqual(publication_verdict(copy.deepcopy(candidate), candidate), "SAME")
 
         newer = copy.deepcopy(candidate)

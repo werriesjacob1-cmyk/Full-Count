@@ -42,7 +42,7 @@ jobs:
           python-version: '3.11'
 
       - name: Compile NFL web publisher modules
-        run: PYTHONPATH=. python3 -m py_compile nfl/web/build_shadow_site.py nfl/web/publish_guard.py
+        run: PYTHONPATH=. python3 -m py_compile nfl/web/build_shadow_site.py nfl/web/publish_guard.py nfl/web/source_run.py
 
       - name: NFL website safety tests
         run: PYTHONPATH=. python3 nfl/tests/test_nfl_web_shadow.py

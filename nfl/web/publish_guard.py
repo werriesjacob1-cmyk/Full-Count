@@ -36,10 +36,16 @@ def publication_verdict(current: dict | None, candidate: dict) -> str:
     if candidate_time is None:
         raise ValueError("candidate created_at is required")
 
-    if not current or current.get("created_at") is None:
+    if current is None:
         return "NEWER"
     if current.get("publication_status") != "RESEARCH_ONLY_NOT_PUBLIC_PICKS":
         raise ValueError("current NFL website payload has an unexpected publication status")
+    if current.get("created_at") is None:
+        if current.get("records") != [] or (current.get("summary") or {}).get("candidates") != 0 or current.get("snapshot_sha256") is not None:
+            raise ValueError("undated current payload is not an empty initial placeholder")
+        if (current.get("model") or {}).get("public_selector_validated") is not False:
+            raise ValueError("initial placeholder changed the selector boundary")
+        return "NEWER"
 
     current_time = _time(current.get("created_at"), "current created_at")
     if candidate_time > current_time:

@@ -48,7 +48,11 @@ jobs:
         run: |
           python3 - <<'PY'
           import json, os, urllib.request
+          from pathlib import Path
+          from nfl.web.source_run import validate_source_run, WORKFLOW_PATH
           run_id = os.environ["SOURCE_RUN_ID"]
+          if not run_id.isdigit():
+              raise SystemExit("source_run_id must be numeric")
           req = urllib.request.Request(
               f"https://api.github.com/repos/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{run_id}",
               headers={
@@ -60,15 +64,15 @@ jobs:
           )
           with urllib.request.urlopen(req, timeout=30) as response:
               run = json.load(response)
-          expected = {
-              "name": "NFL Live Passing-Yards Shadow Board Audit",
-              "head_branch": "main",
-              "conclusion": "success",
-          }
-          actual = {key: run.get(key) for key in expected}
-          if actual != expected:
-              raise SystemExit(f"refusing source run {run_id}: expected {expected}, got {actual}")
-          print(json.dumps({"source_run_id": int(run_id), "head_sha": run.get("head_sha"), **actual}, sort_keys=True))
+          workflow_req = urllib.request.Request(
+              f"https://api.github.com/repos/{os.environ['GITHUB_REPOSITORY']}/actions/workflows/{WORKFLOW_PATH.rsplit('/', 1)[-1]}",
+              headers=dict(req.header_items()),
+          )
+          with urllib.request.urlopen(workflow_req, timeout=30) as response:
+              workflow = json.load(response)
+          sha = validate_source_run(run, workflow, repository=os.environ['GITHUB_REPOSITORY'], run_id=run_id)
+          Path(os.environ['RUNNER_TEMP'], 'nfl-source-sha.txt').write_text(sha)
+          print(json.dumps({"source_run_id": int(run_id), "head_sha": sha}, sort_keys=True))
           PY
 
       - name: Download exact sealed shadow artifact
@@ -87,6 +91,12 @@ jobs:
             echo "::error::Downloaded artifact did not contain nfl-live-passing-yards-shadow-board.json"
             exit 1
           fi
+          python3 - "$source_board" "$RUNNER_TEMP/nfl-source-sha.txt" <<'PY'
+          import json, sys
+          from pathlib import Path
+          from nfl.web.source_run import validate_artifact_code
+          validate_artifact_code(json.loads(Path(sys.argv[1]).read_bytes()), Path(sys.argv[2]).read_text())
+          PY
           PYTHONPATH=. python3 nfl/web/build_shadow_site.py --input "$source_board" --output "$RUNNER_TEMP/nfl-public-data.json" --source-run-id "$SOURCE_RUN_ID" --publisher-code-sha "$(git rev-parse HEAD)"
           cmp nfl/web/static/index.html docs/nfl/index.html
           cmp nfl/web/static/app.css docs/nfl/app.css
