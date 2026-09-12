@@ -1,6 +1,6 @@
 name: NFL Live Passing-Yards Shadow Board Audit
 
-# Branch-only launch audit.
+# Prospective research launch workflow.
 # Live FanDuel -> strict primary passing-yards normalization -> exact 2026
 # roster identity -> frozen B0 projection -> pooled historical residual score ->
 # official-inactives fail-closed gate -> deterministic sealed shadow snapshot.
@@ -28,6 +28,11 @@ on:
 
 permissions:
   contents: read
+
+# If a delayed older cron overlaps a newer freeze, keep the fresher run.
+concurrency:
+  group: nfl-live-passing-yards-shadow-board
+  cancel-in-progress: true
 
 jobs:
   board:
@@ -542,7 +547,7 @@ jobs:
 
           board = {
               "analysis": "NFL_LIVE_PASSING_YARDS_SHADOW_BOARD_AUDIT",
-              "status": "BRANCH_ONLY_RESEARCH_NO_PUBLICATION",
+              "status": "RESEARCH_ONLY_NO_PUBLICATION",
               "created_at": sealed_at,
               "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
               "target_local_date": TARGET_DATE,
