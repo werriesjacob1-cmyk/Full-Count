@@ -24,6 +24,8 @@ from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
+from nfl.prospective.shadow_snapshot import seal_snapshot
+
 EXPECTED_ANALYSIS = "NFL_LIVE_PASSING_YARDS_SHADOW_BOARD_AUDIT"
 EXPECTED_STATUS = "RESEARCH_ONLY_NO_PUBLICATION"
 ALLOWED_DECISIONS = {"SHADOW_ONLY", "QUARANTINED"}
@@ -133,6 +135,15 @@ def build_public_payload(board: dict, *, source_board_sha256: str, source_run_id
         raise ValueError("snapshot is missing its evidence seal")
     if snapshot.get("code_sha") != board.get("code_sha"):
         raise ValueError("board and sealed snapshot disagree on code SHA")
+    rebuilt = seal_snapshot(
+        snapshot.get("records") or [],
+        slate_date=snapshot.get("slate_date"),
+        code_sha=snapshot.get("code_sha"),
+        source_vintage=snapshot.get("source_vintage"),
+        sealed_at=snapshot.get("sealed_at"),
+    )
+    if rebuilt["snapshot_sha256"] != snapshot.get("snapshot_sha256"):
+        raise ValueError("sealed snapshot SHA-256 does not match its canonical contents")
 
     records = [_public_record(row) for row in snapshot.get("records") or []]
     ids = [row["id"] for row in records]
