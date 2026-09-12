@@ -41,7 +41,10 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Compile NFL web publisher modules\n        run: PYTHONPATH=. python3 -m py_compile nfl/web/build_shadow_site.py nfl/web/publish_guard.py\n\n      - name: NFL website safety tests
+      - name: Compile NFL web publisher modules
+        run: PYTHONPATH=. python3 -m py_compile nfl/web/build_shadow_site.py nfl/web/publish_guard.py
+
+      - name: NFL website safety tests
         run: PYTHONPATH=. python3 nfl/tests/test_nfl_web_shadow.py
 
       - uses: actions/setup-node@v4
