@@ -23,6 +23,7 @@ import tempfile
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from nfl.prospective.shadow_snapshot import seal_snapshot
 
@@ -157,12 +158,28 @@ def build_public_payload(board: dict, *, source_board_sha256: str, source_run_id
     )
     created_at = _strict_utc(board.get("created_at"), "created_at")
     source_vintage = _strict_utc(snapshot.get("source_vintage"), "source_vintage")
+    sealed_at = _strict_utc(snapshot.get("sealed_at"), "sealed_at")
+    slate_date = str(snapshot.get("slate_date") or "")
+    if str(board.get("target_local_date") or "") != slate_date:
+        raise ValueError("board target_local_date and sealed snapshot slate_date disagree")
+    if created_at != sealed_at:
+        raise ValueError("board created_at and sealed snapshot sealed_at disagree")
+
+    ct = ZoneInfo("America/Chicago")
+    for row in records:
+        captured_dt = datetime.fromisoformat(row["captured_at"].replace("Z", "+00:00"))
+        kickoff_dt = datetime.fromisoformat(row["kickoff_at"].replace("Z", "+00:00"))
+        if captured_dt >= kickoff_dt:
+            raise ValueError(f"record {row['id']!r} was not captured pregame")
+        if kickoff_dt.astimezone(ct).date().isoformat() != slate_date:
+            raise ValueError(f"record {row['id']!r} kickoff is outside the sealed Chicago slate")
+
     return {
         "schema_version": 1,
         "sport": "NFL",
         "surface": "prospective_research_shadow",
         "publication_status": "RESEARCH_ONLY_NOT_PUBLIC_PICKS",
-        "slate_date": str(snapshot.get("slate_date") or board.get("target_local_date") or ""),
+        "slate_date": slate_date,
         "created_at": created_at,
         "source_vintage": source_vintage,
         "code_sha": str(board.get("code_sha") or ""),
