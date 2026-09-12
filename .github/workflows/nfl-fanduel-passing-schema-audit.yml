@@ -1,0 +1,151 @@
+name: NFL FanDuel Passing Schema Audit
+
+# Research-only schema census over already archived FanDuel passing-prop bytes.
+# No network fetch, no normalization, no picks, no publication.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-fanduel-passing-schema-audit.yml
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Audit archived passing-prop payload structure
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import glob
+          import gzip
+          import json
+          from collections import Counter, defaultdict
+          from pathlib import Path
+
+          paths = sorted(glob.glob(
+              "nfl/raw/2026-09-11/*/fanduel_nfl/*_tab_passing-props.json.gz"
+          ))
+          if not paths:
+              raise SystemExit("no archived FanDuel passing-prop payloads found")
+
+          top_keys = Counter()
+          attachment_keys = Counter()
+          market_keys = Counter()
+          runner_keys = Counter()
+          market_types = Counter()
+          market_names = Counter()
+          runner_name_shapes = Counter()
+          price_keys = Counter()
+          examples = defaultdict(list)
+          files_ok = 0
+          markets_total = 0
+          runners_total = 0
+
+          for path in paths:
+              with gzip.open(path, "rt", encoding="utf-8") as f:
+                  payload = json.load(f)
+              files_ok += 1
+
+              top_keys.update(payload.keys())
+              attachments = payload.get("attachments") or {}
+              if isinstance(attachments, dict):
+                  attachment_keys.update(attachments.keys())
+              markets = attachments.get("markets") or {}
+              runners = attachments.get("runners") or {}
+
+              if not isinstance(markets, dict):
+                  raise SystemExit(f"{path}: attachments.markets not dict")
+              if runners and not isinstance(runners, dict):
+                  raise SystemExit(f"{path}: attachments.runners not dict")
+
+              for mid, market in markets.items():
+                  if not isinstance(market, dict):
+                      continue
+                  markets_total += 1
+                  market_keys.update(market.keys())
+                  mt = str(
+                      market.get("marketType")
+                      or market.get("marketTypeCode")
+                      or market.get("type")
+                      or ""
+                  )
+                  mn = str(
+                      market.get("marketName")
+                      or market.get("name")
+                      or ""
+                  )
+                  market_types[mt] += 1
+                  market_names[mn] += 1
+                  if len(examples["markets"]) < 30:
+                      examples["markets"].append({
+                          "market_id": mid,
+                          "market_name": mn,
+                          "market_type": mt,
+                          "keys": sorted(market.keys()),
+                          "runner_ids": market.get("runners"),
+                      })
+
+              for rid, runner in runners.items():
+                  if not isinstance(runner, dict):
+                      continue
+                  runners_total += 1
+                  runner_keys.update(runner.keys())
+                  name = str(
+                      runner.get("runnerName")
+                      or runner.get("name")
+                      or ""
+                  )
+                  if " Over " in name:
+                      runner_name_shapes["contains_over"] += 1
+                  elif " Under " in name:
+                      runner_name_shapes["contains_under"] += 1
+                  else:
+                      runner_name_shapes["other"] += 1
+                  prices = runner.get("winRunnerOdds")
+                  if isinstance(prices, dict):
+                      price_keys.update(prices.keys())
+                  if len(examples["runners"]) < 40:
+                      examples["runners"].append({
+                          "runner_id": rid,
+                          "name": name,
+                          "keys": sorted(runner.keys()),
+                          "handicap": runner.get("handicap"),
+                          "result": runner.get("result"),
+                          "winRunnerOdds": prices,
+                      })
+
+          out = {
+              "analysis": "NFL_FANDUEL_PASSING_SCHEMA_AUDIT",
+              "files": len(paths),
+              "files_ok": files_ok,
+              "markets_total": markets_total,
+              "runners_total": runners_total,
+              "top_keys": dict(top_keys),
+              "attachment_keys": dict(attachment_keys),
+              "market_keys": dict(market_keys),
+              "runner_keys": dict(runner_keys),
+              "price_keys": dict(price_keys),
+              "market_types": market_types.most_common(),
+              "market_names": market_names.most_common(),
+              "runner_name_shapes": dict(runner_name_shapes),
+              "examples": dict(examples),
+              "source_paths": [str(Path(p)) for p in paths],
+          }
+
+          path = "/tmp/nfl-fanduel-passing-schema-audit.json"
+          with open(path, "w", encoding="utf-8") as f:
+              json.dump(out, f, indent=2, sort_keys=True)
+          print(json.dumps(out, indent=2, sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-fanduel-passing-schema-audit
+          path: /tmp/nfl-fanduel-passing-schema-audit.json
+          retention-days: 14
