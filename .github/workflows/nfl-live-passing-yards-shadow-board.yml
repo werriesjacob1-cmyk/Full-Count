@@ -75,6 +75,7 @@ jobs:
           from nfl.research import nflverse_history as nh
           from nfl.research.passing_yards_shadow import (
               current_b0_projection,
+              role_continuity,
               score_shadow_candidate,
           )
 
@@ -256,6 +257,7 @@ jobs:
                   "season_type": str(row.get("season_type") or ""),
                   "attempts": attempts,
                   "passing_yards": yards,
+                  "team": str(row.get("team") or "").strip().upper(),
               })
           for rows in prior_by_player.values():
               rows.sort(
@@ -452,6 +454,14 @@ jobs:
               projection = None
               score = None
               history = prior_by_player.get(row["gsis_id"], [])
+              role_state = role_continuity(
+                  row["team"],
+                  history,
+              )
+              if not role_state["role_continuity_gate_pass"]:
+                  quarantine_reasons.append(
+                      role_state["role_continuity_status"]
+                  )
               try:
                   projection_info = current_b0_projection(history)
                   projection = float(projection_info["projection"])
@@ -488,6 +498,7 @@ jobs:
                   "model_scoring_status": (
                       "SCORED" if score is not None else "NOT_SCORED"
                   ),
+                  **role_state,
               }
               if score is not None:
                   record.update(score)
