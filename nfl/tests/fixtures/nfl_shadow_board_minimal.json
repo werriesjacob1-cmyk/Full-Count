@@ -1,0 +1,107 @@
+{
+  "analysis": "NFL_LIVE_PASSING_YARDS_SHADOW_BOARD_AUDIT",
+  "availability": {
+    "bound_inactive_reports": 0,
+    "report_failures": []
+  },
+  "code_sha": "1d4ffe49516743ed6d0610c37a12050c2c40d1a6",
+  "created_at": "2026-09-12T18:52:58Z",
+  "fan_duel": {
+    "market_failures": [],
+    "normalized_primary_candidates": 1,
+    "pregame_target_events": 13
+  },
+  "identity": {
+    "binding_status_counts": {
+      "BOUND": 1
+    },
+    "excluded_unbound_count": 0
+  },
+  "model": {
+    "decision_surface": "SHADOW_ONLY_OR_QUARANTINED",
+    "historical_benchmark_check": {
+      "2024": {
+        "mae": 70.83543371522094,
+        "n": 611
+      },
+      "2025": {
+        "mae": 72.41990815775257,
+        "n": 617
+      }
+    },
+    "name": "NFL_B0_ROLLING_PASSING_YARDS_V0",
+    "pooled_residual_n": 1228,
+    "public_selector_validated": false
+  },
+  "snapshot": {
+    "code_sha": "1d4ffe49516743ed6d0610c37a12050c2c40d1a6",
+    "evidence_class": "PROSPECTIVE_SHADOW",
+    "record_count": 1,
+    "records": [
+      {
+        "availability_gate_pass": false,
+        "availability_status": "UNKNOWN_GAME_COVERAGE",
+        "binding_contract_version": 1,
+        "binding_method": "exact_name+event_team+qb_position",
+        "binding_status": "BOUND",
+        "candidate_count": 1,
+        "captured_at": "2026-09-12T18:52:53Z",
+        "covered_report_count": 0,
+        "decision_status": "QUARANTINED",
+        "esb_id": "WIL176897",
+        "event_away_team": "CHI",
+        "event_home_team": "CAR",
+        "event_id": "35607426",
+        "event_name": "Chicago Bears @ Carolina Panthers",
+        "event_open_date": "2026-09-13T17:01:00.000Z",
+        "gsis_id": "00-0039918",
+        "line": 226.5,
+        "line_gap": 55.5,
+        "market": "passing_yards",
+        "market_fair_over_probability": 0.5,
+        "market_fair_under_probability": 0.5,
+        "market_hold": 0.06103286384976525,
+        "market_id": "734.183813583",
+        "market_name": "Caleb Williams - Passing Yds",
+        "market_time": "2026-09-13T17:01:00.000Z",
+        "market_type": "PLAYER_X_PASSING_YARDS_HIGH",
+        "model_history_n": 5,
+        "model_name": "NFL_B0_ROLLING_PASSING_YARDS_V0",
+        "model_over_probability": 0.7089430894308943,
+        "model_projection": 282.0,
+        "model_scoring_status": "SCORED",
+        "model_under_probability": 0.29105691056910565,
+        "observation_id": "fcnfl-shadow1:063d38945213a44d8a19388c",
+        "over_odds": -113,
+        "over_selection_id": "41519457",
+        "player_name": "Caleb Williams",
+        "prior_team": "CHI",
+        "probability_method": "pooled_B0_empirical_residuals_laplace",
+        "projection": 282.0,
+        "quarantine_reasons": [
+          "UNKNOWN_GAME_COVERAGE"
+        ],
+        "research_direction": "OVER",
+        "research_edge": 0.20894308943089435,
+        "residual_n": 1228,
+        "role_continuity_gate_pass": true,
+        "role_continuity_status": "ROLE_CONTINUITY_CONFIRMED",
+        "roster_status": "ACT",
+        "source": "fanduel_nfl",
+        "source_payload_sha256": "962cb715a99d7b48e0fe5b30ec66a1ce2501d0276b73b94f2c2c0db339b65d4c",
+        "source_url": "https://example.invalid/fanduel",
+        "team": "CHI",
+        "under_odds": -113,
+        "under_selection_id": "41519458"
+      }
+    ],
+    "schema_version": 1,
+    "sealed_at": "2026-09-12T18:52:58Z",
+    "slate_date": "2026-09-13",
+    "snapshot_sha256": "fixture-not-a-real-seal",
+    "source_vintage": "2026-09-12T18:52:56Z",
+    "sport": "NFL"
+  },
+  "status": "RESEARCH_ONLY_NO_PUBLICATION",
+  "target_local_date": "2026-09-13"
+}

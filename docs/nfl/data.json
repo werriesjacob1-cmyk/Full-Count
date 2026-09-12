@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "sport": "NFL",
+  "surface": "prospective_research_shadow",
+  "publication_status": "RESEARCH_ONLY_NOT_PUBLIC_PICKS",
+  "slate_date": "2026-09-13",
+  "created_at": null,
+  "source_vintage": null,
+  "code_sha": null,
+  "snapshot_sha256": null,
+  "source_board_sha256": null,
+  "source_run_id": null,
+  "publisher_code_sha": null,
+  "model": {
+    "name": "NFL_B0_ROLLING_PASSING_YARDS_V0",
+    "public_selector_validated": false,
+    "decision_surface": "SHADOW_ONLY_OR_QUARANTINED",
+    "historical_benchmark_check": {},
+    "pooled_residual_n": 0
+  },
+  "source_health": {
+    "pregame_target_events": 0,
+    "primary_candidates": 0,
+    "market_failure_count": 0,
+    "binding_status_counts": {},
+    "excluded_unbound_count": 0,
+    "bound_inactive_reports": 0,
+    "inactive_report_failure_count": 0
+  },
+  "summary": {
+    "games": 0,
+    "candidates": 0,
+    "shadow_only": 0,
+    "quarantined": 0,
+    "quarantine_reasons": {}
+  },
+  "records": [],
+  "disclaimer": "Prospective research shadow only. These rows are not published picks, the selector is not validated, and quarantined rows are explicitly ineligible."
+}

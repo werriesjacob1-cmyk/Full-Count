@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import worker, { buildDispatchRequest, classifyResponse, dispatchWithOneRetry } from '../src/index.js';
+import worker, { buildDispatchRequest, buildNflDispatchRequest, classifyResponse, dispatchWithOneRetry, dispatchNflWithOneRetry, isNflFreezeDue } from '../src/index.js';
 // Loaded as raw text via Vite's `?raw` suffix rather than node:fs -- these
 // tests run inside the Workers runtime (Miniflare), which doesn't expose a
 // real filesystem the way plain Node does.
@@ -44,6 +44,65 @@ describe('buildDispatchRequest', () => {
   it('throws if no token is provided (fails closed, never sends an unauthenticated dispatch)', () => {
     expect(() => buildDispatchRequest(undefined)).toThrow(/missing GITHUB_PAT/);
     expect(() => buildDispatchRequest('')).toThrow(/missing GITHUB_PAT/);
+  });
+});
+
+describe('NFL freeze dispatch', () => {
+  it('targets the NFL shadow workflow on ref main', async () => {
+    const req = buildNflDispatchRequest(FAKE_TOKEN);
+    expect(req.url).toBe(
+      'https://api.github.com/repos/werriesjacob1-cmyk/Full-Count/actions/workflows/nfl-live-passing-yards-shadow-board.yml/dispatches',
+    );
+    expect(await req.clone().json()).toEqual({ ref: 'main' });
+  });
+
+  it('fires only at the seven preregistered UTC freeze times', () => {
+    const due = [
+      '2026-09-13T15:40:00Z',
+      '2026-09-13T16:50:00Z',
+      '2026-09-13T19:05:00Z',
+      '2026-09-13T19:55:00Z',
+      '2026-09-13T20:15:00Z',
+      '2026-09-13T23:00:00Z',
+      '2026-09-14T00:10:00Z',
+    ];
+    for (const iso of due) expect(isNflFreezeDue(Date.parse(iso)), iso).toBe(true);
+    for (const iso of [
+      '2026-09-13T15:35:00Z',
+      '2026-09-13T15:45:00Z',
+      '2026-09-13T20:10:00Z',
+      '2026-09-14T00:05:00Z',
+      '2026-09-15T15:40:00Z',
+    ]) expect(isNflFreezeDue(Date.parse(iso)), iso).toBe(false);
+  });
+
+  it('uses the same one-retry contract for NFL dispatches', async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(null, { status: 503 }))
+      .mockResolvedValueOnce(new Response(null, { status: 204 }));
+    const outcome = await dispatchNflWithOneRetry(FAKE_TOKEN, fetchImpl);
+    expect(outcome.ok).toBe(true);
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
+  it('scheduled() dispatches MLB plus NFL at a freeze, but only MLB otherwise', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(new Response(null, { status: 204 }));
+    globalThis.fetch = fetchImpl;
+    await worker.scheduled(
+      { cron: '*/5 * * * *', scheduledTime: Date.parse('2026-09-13T15:40:00Z') },
+      { GITHUB_PAT: FAKE_TOKEN },
+      {},
+    );
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+
+    fetchImpl.mockClear();
+    await worker.scheduled(
+      { cron: '*/5 * * * *', scheduledTime: Date.parse('2026-09-13T15:45:00Z') },
+      { GITHUB_PAT: FAKE_TOKEN },
+      {},
+    );
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 });
 

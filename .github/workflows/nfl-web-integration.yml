@@ -1,0 +1,66 @@
+name: NFL Web Integration Tests
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'nfl/web/**'
+      - 'nfl/tests/test_nfl_web_shadow.py'
+      - 'nfl/tests/fixtures/nfl_shadow_board_minimal.json'
+      - 'docs/nfl/**'
+      - 'infra/live-heartbeat/**'
+      - '.github/workflows/nfl-publish-shadow-board.yml'
+      - '.github/workflows/dashboard-deploy.yml'
+      - '.github/workflows/nfl-web-integration.yml'
+      - 'dashboard/static/index.html'
+      - 'docs/index.html'
+  pull_request:
+    paths:
+      - 'nfl/web/**'
+      - 'nfl/tests/test_nfl_web_shadow.py'
+      - 'nfl/tests/fixtures/nfl_shadow_board_minimal.json'
+      - 'docs/nfl/**'
+      - 'infra/live-heartbeat/**'
+      - '.github/workflows/nfl-publish-shadow-board.yml'
+      - '.github/workflows/dashboard-deploy.yml'
+      - '.github/workflows/nfl-web-integration.yml'
+      - 'dashboard/static/index.html'
+      - 'docs/index.html'
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Compile NFL web publisher modules
+        run: PYTHONPATH=. python3 -m py_compile nfl/web/build_shadow_site.py nfl/web/publish_guard.py nfl/web/source_run.py
+
+      - name: NFL website safety tests
+        run: PYTHONPATH=. python3 nfl/tests/test_nfl_web_shadow.py
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: infra/live-heartbeat/package-lock.json
+
+      - name: Cloudflare heartbeat tests
+        working-directory: infra/live-heartbeat
+        run: |
+          npm ci
+          npm test
+
+      - name: Static JavaScript parse check
+        run: node --check nfl/web/static/app.js
+
+      - name: MLB dashboard source/output parity
+        run: cmp dashboard/static/index.html docs/index.html
