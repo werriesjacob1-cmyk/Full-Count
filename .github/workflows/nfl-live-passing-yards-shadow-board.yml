@@ -57,7 +57,7 @@ jobs:
           import os
           import statistics
           from collections import Counter, defaultdict
-          from datetime import datetime, timezone
+          from datetime import datetime, timedelta, timezone
           from pathlib import Path
           from zoneinfo import ZoneInfo
 
@@ -78,10 +78,17 @@ jobs:
           )
 
           CT = ZoneInfo("America/Chicago")
-          TARGET_DATE = (
-              str(os.environ.get("TARGET_LOCAL_DATE") or "").strip()
-              or datetime.now(CT).date().isoformat()
-          )
+          target_override = str(
+              os.environ.get("TARGET_LOCAL_DATE") or ""
+          ).strip()
+          if target_override:
+              TARGET_DATE = target_override
+          else:
+              local_today = datetime.now(CT).date()
+              days_until_sunday = (6 - local_today.weekday()) % 7
+              TARGET_DATE = (
+                  local_today + timedelta(days=days_until_sunday)
+              ).isoformat()
           EVIDENCE_ROOT = Path("/tmp/nfl-shadow-evidence")
           (EVIDENCE_ROOT / "raw" / "fanduel").mkdir(parents=True, exist_ok=True)
           (EVIDENCE_ROOT / "raw" / "official_nfl").mkdir(parents=True, exist_ok=True)
