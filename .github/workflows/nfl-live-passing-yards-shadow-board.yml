@@ -15,6 +15,7 @@ on:
     - cron: '50 16 * * 0'
     - cron: '5 19 * * 0'
     - cron: '55 19 * * 0'
+    - cron: '15 20 * * 0'
     - cron: '0 23 * * 0'
     - cron: '10 0 * * 1'
   push:
@@ -284,13 +285,25 @@ jobs:
               root.body
           )
           discovered = fanduel_nfl.discover_events(root.body)
-          sunday_events = [
+          slate_events = [
               event for event in discovered
               if local_slate(event.get("open_date")) == TARGET_DATE
           ]
+          root_observed_dt = parse_iso(root.observed_at)
+          if root_observed_dt is None:
+              raise SystemExit(
+                  f"unparseable FanDuel observation time: {root.observed_at}"
+              )
+          sunday_events = []
+          for event in slate_events:
+              event_dt = parse_iso(event.get("open_date"))
+              if event_dt is None:
+                  continue
+              if event_dt > root_observed_dt:
+                  sunday_events.append(event)
           if not sunday_events:
               raise SystemExit(
-                  f"no FanDuel game events found for CT date {TARGET_DATE}"
+                  f"no pregame FanDuel events remain for CT date {TARGET_DATE}"
               )
 
           normalized = []
@@ -536,7 +549,8 @@ jobs:
               "fan_duel": {
                   "root_observed_at": root.observed_at,
                   "events_discovered_total": len(discovered),
-                  "target_sunday_events": len(sunday_events),
+                  "target_sunday_events": len(slate_events),
+                  "pregame_target_events": len(sunday_events),
                   "normalized_primary_candidates": len(normalized),
                   "market_failures": market_failures,
               },
@@ -570,7 +584,8 @@ jobs:
 
           print(json.dumps({
               "target_local_date": TARGET_DATE,
-              "target_events": len(sunday_events),
+              "target_events_total": len(slate_events),
+              "pregame_target_events": len(sunday_events),
               "primary_candidates": len(normalized),
               "binding_status_counts": dict(binding_counts),
               "history_status_counts": dict(history_counts),
