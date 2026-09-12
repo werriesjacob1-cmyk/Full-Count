@@ -318,6 +318,7 @@ def bind_report(
     return {
         "binding_contract_version": BINDING_CONTRACT_VERSION,
         "report_title": parsed_report.get("report_title"),
+        "report_published_at": parsed_report.get("report_published_at"),
         "season": int(season),
         "player_count": total,
         "bound_player_count": bound,

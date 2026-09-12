@@ -436,6 +436,7 @@ jobs:
                       roster,
                       season=2026,
                   )
+                  rebound["report_observed_at"] = record.observed_at
                   bound_reports.append(rebound)
               except Exception as exc:
                   report_failures.append({

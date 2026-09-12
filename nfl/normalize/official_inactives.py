@@ -20,10 +20,29 @@ inferred here.
 from __future__ import annotations
 
 from collections import OrderedDict
+import json
+import re
 from html.parser import HTMLParser
 from urllib.parse import urlsplit
 
 PARSER_CONTRACT_VERSION = 1
+
+
+def report_published_at(body: bytes) -> str | None:
+    """Read the article's publication clock, never its later modification time."""
+    values = set()
+    for script in re.findall(r'<script\b[^>]*type=["\']application/ld\+json["\'][^>]*>(.*?)</script>', body.decode('utf-8', errors='replace'), re.I | re.S):
+        try:
+            data = json.loads(script)
+        except (ValueError, TypeError):
+            continue
+        nodes = data if isinstance(data, list) else [data]
+        for node in nodes:
+            if not isinstance(node, dict):
+                continue
+            if node.get('@type') in ('NewsArticle', 'Article') and node.get('datePublished'):
+                values.add(str(node['datePublished']))
+    return next(iter(values)) if len(values) == 1 else None
 
 
 def _clean(parts) -> str:
@@ -239,6 +258,7 @@ def parse_report(body: bytes) -> dict:
     return {
         "parser_contract_version": PARSER_CONTRACT_VERSION,
         "report_title": title,
+        "report_published_at": report_published_at(bytes(body)),
         "team_count": len(teams),
         "player_count": player_count,
         "teams": teams,
