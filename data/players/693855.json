@@ -404,7 +404,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.2,
+          "score": 40.1,
           "notable_signals": 0,
           "matchup": "Houston Astros @ Tampa Bay Rays",
           "game_pk": 822927,
@@ -417,7 +417,10 @@
             "same_hand_ratio": 5.5556,
             "l14_k_pct": 88.2353,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 58.6894,
+            "ump_k_pct": 0.36,
+            "ump_bb_pct": -0.432
           },
           "hit_probability": 0.5843,
           "raw_hit_probability": 0.5532,
@@ -442,12 +445,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4062,
+            "outs_rate": 0.4061,
             "avg_outs_per_start": 14.08
           },
-          "hit_probability": 0.4062,
+          "hit_probability": 0.4061,
           "raw_hit_probability": null,
-          "lift": -0.0467,
+          "lift": -0.0466,
           "reliability": "B",
           "sample_n": 13,
           "projection": {

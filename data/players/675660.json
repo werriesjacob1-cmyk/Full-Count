@@ -370,7 +370,7 @@
       "date": "2026-09-12",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
           "score": 43.6,
           "notable_signals": 0,
@@ -386,21 +386,21 @@
             "l14_k_pct": 73.5294,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6243,
-          "raw_hit_probability": 0.7517,
-          "lift": -0.0696,
+          "hit_probability": 0.4013,
+          "raw_hit_probability": 0.4013,
+          "lift": 0.0367,
           "reliability": "A",
           "sample_n": 17,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 71.5,
+          "score": 71.9,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Milwaukee Brewers",
           "game_pk": 823737,
@@ -409,12 +409,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7565,
+            "outs_rate": 0.7554,
             "avg_outs_per_start": 15.47
           },
-          "hit_probability": 0.7565,
+          "hit_probability": 0.7554,
           "raw_hit_probability": null,
-          "lift": 0.0233,
+          "lift": 0.0265,
           "reliability": "A",
           "sample_n": 17,
           "projection": {
