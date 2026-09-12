@@ -1,0 +1,339 @@
+name: NFL SHRINK50 Passing Yards Diagnostic
+
+# Zero-fit downstream test of the validated SHRINK50 team pass-volume primitive.
+#
+# PRE-REGISTERED:
+# - diagnostic seasons: 2023, 2024, 2025
+# - 2022 is history only
+# - player rolling window: 5 prior appearances
+# - minimum player history: 3
+# - minimum team history: 3
+# - candidate:
+#     SHRINK50 team attempts
+#       * prior QB ratio-of-sums attempt share
+#       * prior QB ratio-of-sums passing yards per attempt
+# - compare on exact frozen B1-comparable passing-yards rows
+# - no fitted coefficients, no feature tuning, no sportsbook lines
+# - gate:
+#     point-estimate MAE improvement in all 3 seasons AND
+#     player-cluster CI upper < 0 in >=2/3 AND
+#     team-cluster CI upper < 0 in >=2/3
+# - no untouched passing-yards holdout is read here
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-shrink50-passing-yards-diagnostic.yml
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Run zero-fit SHRINK50 passing-yards diagnostic
+        env:
+          FULL_COUNT_CODE_SHA: \${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import hashlib
+          import io
+          import json
+          import math
+          import os
+          import random
+          import statistics
+          from collections import defaultdict, deque
+          from datetime import datetime, timezone
+
+          import requests
+
+          from nfl.research import nflverse_history as nh
+          from nfl.research.b1_evaluate import paired_error_rows
+          from nfl.research.b1_history import TEAM_REQUIRED_COLUMNS, build_b1_rows
+          from nfl.research.team_attempt_shrink50 import predict_from_prior
+
+          SEASONS=(2022,2023,2024,2025)
+          TEST_SEASONS=(2023,2024,2025)
+          WINDOW=5
+          MIN_HISTORY=3
+          MIN_TEAM_HISTORY=3
+          BOOTSTRAPS=5000
+          SEED=20260912
+
+          PLAYER_SHA={
+              2022:"ad426c3fe5bf1cc30c3f137fdfe96d054e19d400879ee4413129da49fa7b54be",
+              2023:"f19cb71a5de0dce7fd09376026237c9ee9d5a93fe13815a2ea3ec2d37204cb17",
+              2024:"3ddc45a84f759aa348ce465ae001752c530575455717657cdfe1f8abfcdb4759",
+              2025:"e5e0615b3d96a3eaebfaee91e55afb4a4e7fe0caf057454177bcd7d6ad4bcfc2",
+          }
+          TEAM_SHA={
+              2022:"9803875bd0b74aa49230288d45359c75e45910f1cf1953ea0f07b9d3db35e4d1",
+              2023:"dc5a387daabe8663deaddac492ad7020d47fb1a66048690b355b406cd8e4c454",
+              2024:"b207a1430c2715d03bbf1844c4eae98695f364851ff6025f422febc2c13f5255",
+              2025:"91058a59d894855377b2f39f40c4e7bdbeef96d12144289dc68215209a1c93cb",
+          }
+
+          def finite(v,label):
+              try:
+                  v=float(v)
+              except (TypeError,ValueError) as exc:
+                  raise ValueError(f"invalid {label}: {v!r}") from exc
+              if not math.isfinite(v):
+                  raise ValueError(f"non-finite {label}: {v!r}")
+              return v
+
+          def pct(values,q):
+              values=sorted(values)
+              pos=(len(values)-1)*q
+              lo=int(math.floor(pos)); hi=int(math.ceil(pos))
+              if lo==hi: return values[lo]
+              w=pos-lo
+              return values[lo]*(1-w)+values[hi]*w
+
+          def mae(rows,field):
+              return statistics.fmean(
+                  abs(finite(r[field],field)-finite(r["actual"],"actual"))
+                  for r in rows
+              )
+
+          def cluster_boot(rows,field,seed_offset):
+              groups=defaultdict(list)
+              for row in rows:
+                  key=str(row[field] or "")
+                  if not key:
+                      raise ValueError(f"empty cluster {field}")
+                  groups[key].append(row)
+              keys=sorted(groups)
+              rng=random.Random(SEED+seed_offset)
+              deltas=[]
+              for _ in range(BOOTSTRAPS):
+                  sample=[]
+                  for _ in keys:
+                      sample.extend(groups[rng.choice(keys)])
+                  deltas.append(mae(sample,"shrink_prediction")-mae(sample,"b0_prediction"))
+              return {
+                  "cluster_field":field,
+                  "clusters":len(keys),
+                  "replicates":len(deltas),
+                  "median_delta":pct(deltas,0.5),
+                  "ci95":[pct(deltas,0.025),pct(deltas,0.975)],
+                  "probability_delta_below_zero":
+                      sum(d<0 for d in deltas)/len(deltas),
+              }
+
+          session=requests.Session()
+          session.headers.update({"User-Agent":"Full-Count SHRINK50 passing-yards diagnostic"})
+          players=[]; teams=[]; sources={"player":{},"team":{}}
+
+          for season in SEASONS:
+              purl=nh.player_stats_url(season)
+              pr=session.get(purl,timeout=60); pr.raise_for_status()
+              pd=hashlib.sha256(pr.content).hexdigest()
+              if pd!=PLAYER_SHA[season]:
+                  raise SystemExit(f"{season}: player SHA drift {pd}")
+              prows=list(csv.DictReader(io.StringIO(pr.text)))
+              if not prows:
+                  raise SystemExit(f"{season}: empty player source")
+              pmissing=sorted(nh.REQUIRED_COLUMNS-set(prows[0]))
+              if pmissing:
+                  raise SystemExit(f"{season}: player schema drift {pmissing}")
+              players.extend(prows)
+              sources["player"][str(season)]={"url":purl,"sha256":pd,"rows":len(prows)}
+
+              turl=("https://github.com/nflverse/nflverse-data/releases/download/"
+                    f"stats_team/stats_team_week_{season}.csv")
+              tr=session.get(turl,timeout=60); tr.raise_for_status()
+              td=hashlib.sha256(tr.content).hexdigest()
+              if td!=TEAM_SHA[season]:
+                  raise SystemExit(f"{season}: team SHA drift {td}")
+              trows=list(csv.DictReader(io.StringIO(tr.text)))
+              if not trows:
+                  raise SystemExit(f"{season}: empty team source")
+              tmissing=sorted(TEAM_REQUIRED_COLUMNS-set(trows[0]))
+              if tmissing:
+                  raise SystemExit(f"{season}: team schema drift {tmissing}")
+              teams.extend(trows)
+              sources["team"][str(season)]={"url":turl,"sha256":td,"rows":len(trows)}
+
+          # Build existing prior-only player share/YPA features exactly as B1.
+          built=build_b1_rows(players,teams,rolling_window=WINDOW)
+
+          # Independently build frozen REG-only SHRINK50 team projections.
+          regular=[]
+          seen=set()
+          for raw in teams:
+              if str(raw.get("season_type") or "")!="REG":
+                  continue
+              key=(int(float(raw["season"])),int(float(raw["week"])),str(raw["team"]).strip())
+              if key in seen:
+                  raise SystemExit(f"duplicate REG team-week {key}")
+              seen.add(key)
+              regular.append({
+                  "season":key[0],
+                  "week":key[1],
+                  "team":key[2],
+                  "attempts":finite(raw["attempts"],"team attempts"),
+              })
+          regular.sort(key=lambda r:(r["season"],r["week"],r["team"]))
+          week_rows=defaultdict(list)
+          for r in regular:
+              week_rows[(r["season"],r["week"])].append(r)
+
+          team_hist=defaultdict(lambda:deque(maxlen=WINDOW))
+          league_prior=[]
+          shrink_map={}
+          for sw in sorted(week_rows):
+              season,week=sw
+              for r in sorted(week_rows[sw],key=lambda x:x["team"]):
+                  h=team_hist[r["team"]]
+                  if len(h)>=MIN_TEAM_HISTORY and league_prior:
+                      pred=predict_from_prior(list(h),league_prior)
+                      shrink_map[(season,week,r["team"])]=pred["prediction"]
+              for r in week_rows[sw]:
+                  team_hist[r["team"]].append(r["attempts"])
+                  league_prior.append(r["attempts"])
+
+          built_idx={
+              (int(r["season"]),int(r["week"]),str(r["player_id"])):r
+              for r in built
+              if str(r.get("season_type"))=="REG"
+          }
+
+          reports={}
+          all_rows=[]
+          for season in TEST_SEASONS:
+              paired=paired_error_rows(
+                  built,
+                  "passing_yards",
+                  test_season=season,
+                  test_season_type="REG",
+                  min_history=MIN_HISTORY,
+                  min_team_history=MIN_TEAM_HISTORY,
+              )
+              rows=[]
+              for p in paired:
+                  key=(int(p["season"]),int(p["week"]),str(p["player_id"]))
+                  src=built_idx.get(key)
+                  if src is None:
+                      raise SystemExit(f"missing built source row {key}")
+                  if str(src.get("position") or "").strip().upper()!="QB":
+                      raise SystemExit(f"non-QB in passing yards {key}")
+                  team=str(src["team"])
+                  team_pred=shrink_map.get((season,int(src["week"]),team))
+                  if team_pred is None:
+                      continue
+                  f=src["features"]
+                  share=finite(f["prior_player_pass_attempt_share"],"prior share")
+                  ypa=finite(f["prior_player_pass_yards_per_attempt"],"prior ypa")
+                  if not (0.0<=share<=1.0):
+                      raise SystemExit(f"share outside [0,1] {key}: {share}")
+                  if ypa<0:
+                      raise SystemExit(f"negative ypa {key}: {ypa}")
+                  pred=team_pred*share*ypa
+                  if not math.isfinite(pred) or pred<0:
+                      raise SystemExit(f"invalid prediction {key}")
+                  row={
+                      "season":season,
+                      "week":int(src["week"]),
+                      "player_id":str(src["player_id"]),
+                      "player_name":str(src.get("player_display_name") or ""),
+                      "team":team,
+                      "b0_prediction":finite(p["b0_prediction"],"b0"),
+                      "b1_prediction":finite(p["b1_prediction"],"b1"),
+                      "shrink_prediction":pred,
+                      "actual":finite(p["actual"],"actual"),
+                      "shrink_team_attempts":team_pred,
+                      "prior_share":share,
+                      "prior_ypa":ypa,
+                  }
+                  rows.append(row)
+                  all_rows.append(row)
+
+              if not rows:
+                  raise SystemExit(f"{season}: no diagnostic rows")
+              b0_mae=mae(rows,"b0_prediction")
+              b1_mae=mae(rows,"b1_prediction")
+              s_mae=mae(rows,"shrink_prediction")
+              pb=cluster_boot(rows,"player_id",season*10+1)
+              tb=cluster_boot(rows,"team",season*10+2)
+              reports[str(season)]={
+                  "n":len(rows),
+                  "players":len({r["player_id"] for r in rows}),
+                  "teams":len({r["team"] for r in rows}),
+                  "b0_mae":b0_mae,
+                  "b1_mae":b1_mae,
+                  "shrink50_yards_mae":s_mae,
+                  "delta_vs_b0":s_mae-b0_mae,
+                  "delta_vs_b1":s_mae-b1_mae,
+                  "player_cluster_bootstrap":pb,
+                  "team_cluster_bootstrap":tb,
+              }
+
+          improve_all=all(reports[str(s)]["delta_vs_b0"]<0 for s in TEST_SEASONS)
+          player_ci=sum(reports[str(s)]["player_cluster_bootstrap"]["ci95"][1]<0 for s in TEST_SEASONS)
+          team_ci=sum(reports[str(s)]["team_cluster_bootstrap"]["ci95"][1]<0 for s in TEST_SEASONS)
+          gate=improve_all and player_ci>=2 and team_ci>=2
+
+          output={
+              "analysis":"NFL_SHRINK50_PASSING_YARDS_DIAGNOSTIC",
+              "status":"diagnostic_only_no_holdout_no_promotion",
+              "created_at":datetime.now(timezone.utc).isoformat(),
+              "code_sha":os.environ["FULL_COUNT_CODE_SHA"],
+              "pre_registered":{
+                  "history_only_season":2022,
+                  "diagnostic_seasons":list(TEST_SEASONS),
+                  "rolling_window":WINDOW,
+                  "minimum_player_history":MIN_HISTORY,
+                  "minimum_team_history":MIN_TEAM_HISTORY,
+                  "formula":(
+                      "frozen SHRINK50 team attempts * prior QB ratio-of-sums "
+                      "attempt share * prior QB ratio-of-sums yards per attempt"
+                  ),
+                  "fit_parameters":0,
+                  "sportsbook_lines_read":False,
+                  "holdout_performance_read":False,
+                  "gate":(
+                      "delta MAE < 0 in all 3 seasons; player-cluster CI upper < 0 "
+                      "in >=2/3; team-cluster CI upper < 0 in >=2/3"
+                  ),
+              },
+              "source_pin_run_id":34697604454,
+              "sources":sources,
+              "reports":reports,
+              "decision":{
+                  "improves_point_estimate_all_3":improve_all,
+                  "player_cluster_ci_favorable_seasons":player_ci,
+                  "team_cluster_ci_favorable_seasons":team_ci,
+                  "diagnostic_gate_pass":gate,
+              },
+              "next_if_pass":(
+                  "Freeze formula in code, pin a truly untouched passing-yards "
+                  "holdout, then evaluate exactly once before market scoring."
+              ),
+              "next_if_fail":(
+                  "Do not force SHRINK50 into passing yards. Use frozen B0 as "
+                  "tomorrow's shadow projection floor or stop the market."
+              ),
+          }
+          path="/tmp/nfl-shrink50-passing-yards-diagnostic.json"
+          with open(path,"w",encoding="utf-8") as f:
+              json.dump(output,f,indent=2,sort_keys=True)
+          print(json.dumps(output,indent=2,sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-shrink50-passing-yards-diagnostic
+          path: /tmp/nfl-shrink50-passing-yards-diagnostic.json
+          retention-days: 30
