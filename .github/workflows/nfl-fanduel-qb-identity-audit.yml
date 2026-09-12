@@ -1,0 +1,169 @@
+name: NFL FanDuel QB Identity Audit
+
+# End-to-end identity audit on the latest already-archived 2026 FanDuel vintage:
+# raw passing-prop bytes -> strict primary passing-yards normalization ->
+# exact 2026 roster/event QB binding.
+# No model score, pick, publication, or promotion.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-fanduel-qb-identity-audit.yml
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Normalize latest archive and bind QB identities
+        env:
+          FULL_COUNT_CODE_SHA: \${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import glob
+          import gzip
+          import hashlib
+          import io
+          import json
+          import os
+          from collections import Counter
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          import requests
+
+          from nfl.normalize.fanduel_passing import normalize_payload
+          from nfl.normalize.market_roster_binding import bind_passing_candidate
+
+          ROSTER_URL=(
+              "https://github.com/nflverse/nflverse-data/releases/download/"
+              "rosters/roster_2026.csv"
+          )
+          ROSTER_SHA="fb79560b5c4738a284e4b37f49759cdceaa461eee6f41ea0840e7d0d9eb17026"
+
+          vintages=sorted(glob.glob("nfl/raw/2026-09-11/*"))
+          if not vintages:
+              raise SystemExit("no 2026-09-11 archive vintages")
+          latest=vintages[-1]
+          paths=sorted(glob.glob(
+              latest+"/fanduel_nfl/*_tab_passing-props.json.gz"
+          ))
+          if not paths:
+              raise SystemExit(f"no passing-props payloads in {latest}")
+
+          session=requests.Session()
+          session.headers.update({
+              "User-Agent":"Full-Count NFL FanDuel QB identity audit"
+          })
+          rr=session.get(ROSTER_URL,timeout=60); rr.raise_for_status()
+          digest=hashlib.sha256(rr.content).hexdigest()
+          if digest!=ROSTER_SHA:
+              raise SystemExit(
+                  f"2026 roster source drift {digest}; expected {ROSTER_SHA}"
+              )
+          roster=list(csv.DictReader(io.StringIO(rr.text)))
+          if not roster:
+              raise SystemExit("empty roster")
+
+          normalized=[]
+          rejections=[]
+          per_file=[]
+          for path in paths:
+              with gzip.open(path,"rt",encoding="utf-8") as f:
+                  payload=json.load(f)
+              result=normalize_payload(
+                  payload,
+                  captured_at=Path(latest).name,
+              )
+              normalized.extend(result["candidates"])
+              rejections.extend(result["rejections"])
+              per_file.append({
+                  "path":path,
+                  "stats":result["stats"],
+              })
+
+          bound=[
+              bind_passing_candidate(c,roster,season=2026)
+              for c in normalized
+          ]
+          counts=Counter(r["binding_status"] for r in bound)
+
+          # Fail if a normalized market can silently disappear from binding.
+          if sum(counts.values())!=len(normalized):
+              raise SystemExit("binding population mismatch")
+
+          # Bound rows must carry exact durable identity and an event team.
+          for row in bound:
+              if row["binding_status"]=="BOUND":
+                  if not row.get("gsis_id") or not row.get("team"):
+                      raise SystemExit("BOUND row missing durable identity/team")
+                  if row["team"] not in {
+                      row["event_away_team"],row["event_home_team"]
+                  }:
+                      raise SystemExit("BOUND row team outside event")
+
+          output={
+              "analysis":"NFL_FANDUEL_QB_IDENTITY_AUDIT",
+              "status":"research_only_no_scoring",
+              "created_at":datetime.now(timezone.utc).isoformat(),
+              "code_sha":os.environ["FULL_COUNT_CODE_SHA"],
+              "archive_vintage":latest,
+              "passing_payloads":len(paths),
+              "roster_source":{
+                  "url":ROSTER_URL,
+                  "sha256":digest,
+                  "rows":len(roster),
+              },
+              "normalization":{
+                  "candidate_n":len(normalized),
+                  "rejection_n":len(rejections),
+                  "rejections":rejections,
+                  "files":per_file,
+              },
+              "binding":{
+                  "status_counts":dict(counts),
+                  "all_normalized_bound":
+                      counts.get("BOUND",0)==len(normalized),
+                  "rows":bound,
+              },
+          }
+          path="/tmp/nfl-fanduel-qb-identity-audit.json"
+          with open(path,"w",encoding="utf-8") as f:
+              json.dump(output,f,indent=2,sort_keys=True)
+          print(json.dumps({
+              "archive_vintage":latest,
+              "passing_payloads":len(paths),
+              "normalized":len(normalized),
+              "rejections":len(rejections),
+              "binding_status_counts":dict(counts),
+              "bound_examples":[
+                  {
+                      "player":r["player_name"],
+                      "team":r.get("team"),
+                      "gsis_id":r.get("gsis_id"),
+                      "event":r["event_name"],
+                      "line":r["line"],
+                      "over":r["over_odds"],
+                      "under":r["under_odds"],
+                  }
+                  for r in bound if r["binding_status"]=="BOUND"
+              ][:20],
+          },indent=2,sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-fanduel-qb-identity-audit
+          path: /tmp/nfl-fanduel-qb-identity-audit.json
+          retention-days: 14
