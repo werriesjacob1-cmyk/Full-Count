@@ -23,6 +23,13 @@ BASE = {
 
 
 class ShadowSnapshotTests(unittest.TestCase):
+    def test_live_freeze_cannot_cross_kickoff(self):
+        row = {**BASE, 'event_open_date': '2026-09-13T17:00:00Z'}
+        shadow_snapshot.validate_pregame_timing([row], '2026-09-13T16:50:01Z')
+        for sealed in ('2026-09-13T17:00:00Z', '2026-09-13T17:00:01Z', '2026-09-13T16:49:00Z', '2026-09-13T16:50:01'):
+            with self.subTest(sealed=sealed), self.assertRaises(ValueError):
+                shadow_snapshot.validate_pregame_timing([row], sealed)
+
     def test_observation_id_is_deterministic(self):
         a = shadow_snapshot.observation_id(BASE)
         b = shadow_snapshot.observation_id(dict(reversed(list(BASE.items()))))

@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from datetime import datetime
 from collections.abc import Mapping, Sequence
 from typing import Any
 
@@ -31,6 +32,22 @@ FORBIDDEN_OUTCOME_KEYS = frozenset({
     "settled",
     "outcome",
 })
+
+
+def validate_pregame_timing(records, sealed_at):
+    """Reject a live capture that crossed kickoff before freezing decisions."""
+    def clock(value):
+        try:
+            dt = datetime.fromisoformat(str(value).replace('Z', '+00:00'))
+        except ValueError as exc:
+            raise ValueError('invalid pregame timing') from exc
+        if dt.tzinfo is None:
+            raise ValueError('pregame timing requires timezone')
+        return dt
+    sealed = clock(sealed_at)
+    for row in records:
+        if not clock(row.get('captured_at')) <= sealed < clock(row.get('event_open_date')):
+            raise ValueError('capture and decision sealing must precede kickoff')
 
 
 def _canonical_bytes(value: Any) -> bytes:

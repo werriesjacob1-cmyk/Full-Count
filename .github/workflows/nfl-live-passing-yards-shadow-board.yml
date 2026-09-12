@@ -77,7 +77,7 @@ jobs:
           from nfl.normalize.market_roster_binding import bind_passing_candidate
           from nfl.normalize.official_inactives import parse_report
           from nfl.normalize.pregame_availability import evaluate_candidate
-          from nfl.prospective.shadow_snapshot import seal_snapshot
+          from nfl.prospective.shadow_snapshot import seal_snapshot, validate_pregame_timing
           from nfl.research import nflverse_history as nh
           from nfl.research.passing_yards_shadow import (
               current_b0_projection,
@@ -528,6 +528,7 @@ jobs:
               snapshot_records.append(record)
 
           sealed_at = utcnow()
+          validate_pregame_timing(snapshot_records, sealed_at)
           source_vintage = (
               max(
                   (
