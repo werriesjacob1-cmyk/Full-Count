@@ -1,0 +1,95 @@
+name: NFL Passing Yards Source Pin
+
+# Source-identity-only prerequisite for SHRINK50 -> passing-yards diagnostics.
+# Downloads 2022-2025 weekly player/team sources, records SHA/schema/coverage,
+# and computes NO model predictions or performance.
+on:
+  push:
+    branches:
+      - superchad/nfl-foundation-continuation-20260911
+    paths:
+      - .github/workflows/nfl-passing-yards-source-pin.yml
+
+permissions:
+  contents: read
+
+jobs:
+  pin:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install 'requests~=2.34.2'
+
+      - name: Pin source identity without scoring
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv, hashlib, io, json, os
+          from datetime import datetime, timezone
+          import requests
+          from nfl.research import nflverse_history as nh
+          from nfl.research.b1_history import TEAM_REQUIRED_COLUMNS
+
+          seasons=(2022,2023,2024,2025)
+          session=requests.Session()
+          session.headers.update({"User-Agent":"Full-Count NFL passing-yards source pin"})
+          out={"player":{},"team":{}}
+          for season in seasons:
+              purl=nh.player_stats_url(season)
+              pr=session.get(purl,timeout=60); pr.raise_for_status()
+              prows=list(csv.DictReader(io.StringIO(pr.text)))
+              if not prows:
+                  raise SystemExit(f"{season}: empty player source")
+              pmissing=sorted(nh.REQUIRED_COLUMNS-set(prows[0]))
+              if pmissing:
+                  raise SystemExit(f"{season}: player schema drift {pmissing}")
+              out["player"][str(season)]={
+                  "url":purl,
+                  "sha256":hashlib.sha256(pr.content).hexdigest(),
+                  "rows":len(prows),
+                  "bytes":len(pr.content),
+                  "schema":sorted(prows[0].keys()),
+              }
+
+              turl=("https://github.com/nflverse/nflverse-data/releases/download/"
+                    f"stats_team/stats_team_week_{season}.csv")
+              tr=session.get(turl,timeout=60); tr.raise_for_status()
+              trows=list(csv.DictReader(io.StringIO(tr.text)))
+              if not trows:
+                  raise SystemExit(f"{season}: empty team source")
+              tmissing=sorted(TEAM_REQUIRED_COLUMNS-set(trows[0]))
+              if tmissing:
+                  raise SystemExit(f"{season}: team schema drift {tmissing}")
+              out["team"][str(season)]={
+                  "url":turl,
+                  "sha256":hashlib.sha256(tr.content).hexdigest(),
+                  "rows":len(trows),
+                  "bytes":len(tr.content),
+                  "schema":sorted(trows[0].keys()),
+              }
+
+          payload={
+              "analysis":"NFL_PASSING_YARDS_SOURCE_PIN",
+              "status":"source_identity_only_no_performance",
+              "created_at":datetime.now(timezone.utc).isoformat(),
+              "code_sha":os.environ["FULL_COUNT_CODE_SHA"],
+              "seasons":list(seasons),
+              "sources":out,
+              "performance_inspected":False,
+          }
+          path="/tmp/nfl-passing-yards-source-pin.json"
+          with open(path,"w",encoding="utf-8") as f:
+              json.dump(payload,f,indent=2,sort_keys=True)
+          print(json.dumps(payload,indent=2,sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-passing-yards-source-pin
+          path: /tmp/nfl-passing-yards-source-pin.json
+          retention-days: 30
