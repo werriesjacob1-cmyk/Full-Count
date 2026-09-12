@@ -14,7 +14,7 @@ class NFLWebShadowTests(unittest.TestCase):
         cls.board = json.loads(FIXTURE.read_text(encoding="utf-8"))
 
     def test_builds_only_public_safe_whitelist(self):
-        payload = build_public_payload(copy.deepcopy(self.board), source_artifact_sha256="a" * 64)
+        payload = build_public_payload(copy.deepcopy(self.board), source_board_sha256="a" * 64)
         self.assertEqual(payload["publication_status"], "RESEARCH_ONLY_NOT_PUBLIC_PICKS")
         self.assertFalse(payload["model"]["public_selector_validated"])
         row = payload["records"][0]
@@ -28,29 +28,29 @@ class NFLWebShadowTests(unittest.TestCase):
         board = copy.deepcopy(self.board)
         board["snapshot"]["records"][0]["quarantine_reasons"] = []
         with self.assertRaisesRegex(ValueError, "must explain"):
-            build_public_payload(board, source_artifact_sha256="a" * 64)
+            build_public_payload(board, source_board_sha256="a" * 64)
 
     def test_shadow_only_row_cannot_keep_quarantine_reason(self):
         board = copy.deepcopy(self.board)
         row = board["snapshot"]["records"][0]
         row["decision_status"] = "SHADOW_ONLY"
         with self.assertRaisesRegex(ValueError, "cannot carry"):
-            build_public_payload(board, source_artifact_sha256="a" * 64)
+            build_public_payload(board, source_board_sha256="a" * 64)
 
     def test_outcome_field_is_rejected_not_sanitized_silently(self):
         board = copy.deepcopy(self.board)
         board["snapshot"]["records"][0]["actual"] = 300
         with self.assertRaisesRegex(ValueError, "outcome fields"):
-            build_public_payload(board, source_artifact_sha256="a" * 64)
+            build_public_payload(board, source_board_sha256="a" * 64)
 
     def test_public_selector_transition_fails_closed(self):
         board = copy.deepcopy(self.board)
         board["model"]["public_selector_validated"] = True
         with self.assertRaisesRegex(ValueError, "public_selector_validated"):
-            build_public_payload(board, source_artifact_sha256="a" * 64)
+            build_public_payload(board, source_board_sha256="a" * 64)
 
     def test_opponent_is_derived_from_event_and_bound_team(self):
-        payload = build_public_payload(copy.deepcopy(self.board), source_artifact_sha256="a" * 64)
+        payload = build_public_payload(copy.deepcopy(self.board), source_board_sha256="a" * 64)
         self.assertEqual(payload["records"][0]["opponent"], "CAR")
 
     def test_committed_nfl_static_files_match_source(self):
