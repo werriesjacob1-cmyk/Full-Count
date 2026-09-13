@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-13T08:05:16.395182+00:00",
+  "updated_at": "2026-09-13T12:19:38.588646+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -28755,6 +28755,98 @@
         },
         "qualification_timestamp": "2026-09-13T08:01:41.869245+00:00",
         "board_timestamp": "2026-09-13T08:01:41.845305+00:00",
+        "slate_date": "2026-09-13"
+      }
+    },
+    "fc2:825033:player-615698:strikeouts:4:over": {
+      "canonical_id": "fc2:825033:player-615698:strikeouts:4:over",
+      "settlement_identity": [
+        "825033",
+        [
+          "player",
+          "615698"
+        ],
+        "strikeouts",
+        "4",
+        "over"
+      ],
+      "slate_date": "2026-09-13",
+      "first_published_at": "2026-09-13T12:19:38.588646+00:00",
+      "publication_provenance": {
+        "artifact_id": "42a017cd03da95a8a27670970e9ed102a493e680a745cf565272c87e28271df4",
+        "source_commit": "94e2a4154353a50b24bfb5f46279236c1ae4b27c",
+        "workflow_run_id": "34756680877",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-13T12:19:26.018470+00:00",
+        "data_hash": "a89f4b724f38b5d9f9515170590dd57740bb06f0569a324aa97782c94deff8f1",
+        "live_hash": "9ae5b68ab13f40a5f8c86c2f7ad91f79e946eef34157cea620692116d72525a6"
+      },
+      "snapshot": {
+        "id": "fc2:825033:player-615698:strikeouts:4:over",
+        "identity_version": 2,
+        "game_pk": 825033,
+        "player_id": 615698,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Cal Quantrill",
+        "team": "Texas Rangers",
+        "matchup": "Texas Rangers @ Arizona Diamondbacks",
+        "game_start": "2026-09-13T20:10:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 3.5,
+          "needs": 4
+        },
+        "prop": "Over 3.5 Strikeouts",
+        "hit_probability": 0.6239,
+        "market_odds": -142,
+        "market_implied": 0.5544,
+        "market_edge": 0.0695,
+        "market_hold": 0.0585,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.1 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Expected workload 23.7 batters faced (his own 24.5/start over 2 real starts, shrunk toward the 23.1 league mean)",
+          "Platoon advantage: 5 of 6 projected hitters bat right-handed against this RHP",
+          "Recency-weighted K rate 22.2% (exp. decay, halflife 30d, 13 real starts / 275 BF) \u2014 drives the strikeout probability model"
+        ],
+        "watchouts": [
+          "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average",
+          "Opposing team K% 19.3 \u2014 contact-oriented lineup, tougher matchup",
+          "L14 K% 18.4 (49 PA) \u2014 cold recent form"
+        ],
+        "prob_ci": [
+          0.603,
+          0.723
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 13,
+        "lineup_assumed": null,
+        "base_rate": 0.6958,
+        "lift": -0.0719,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "4ea3c0345",
+          "prediction_timestamp": "2026-09-13T12:16:05.867438+00:00",
+          "odds_fetched_at": "2026-09-13T12:16:01.062328+00:00",
+          "board_generated_at": "2026-09-13T12:16:05.838640+00:00"
+        },
+        "qualification_timestamp": "2026-09-13T12:16:05.867438+00:00",
+        "board_timestamp": "2026-09-13T12:16:05.838640+00:00",
         "slate_date": "2026-09-13"
       }
     }
