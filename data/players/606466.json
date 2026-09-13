@@ -1284,9 +1284,9 @@
       "date": "2026-09-13",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits",
+          "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 67.7,
+          "score": 67.6,
           "notable_signals": 2,
           "matchup": "Texas Rangers @ Arizona Diamondbacks",
           "game_pk": 825033,
@@ -1307,7 +1307,7 @@
             "bvp_ops": 1.962,
             "platoon_barrel_pct": 1.44,
             "platoon_xwoba": 1.14,
-            "opp_catcher_framing": 1.44,
+            "opp_catcher_framing": 0.24,
             "days_rest": 0.0,
             "woba_ahead": 24.5455,
             "woba_behind": 70.9091,
@@ -1315,15 +1315,17 @@
             "getaway_day": -2.0,
             "series_game": 2.0,
             "sp_rp_ops_gap": 0.544,
-            "vs_rp_ops": 0.984
+            "vs_rp_ops": 0.984,
+            "ump_k_pct": 0.024,
+            "ump_bb_pct": -0.168
           },
-          "hit_probability": 0.6251,
-          "raw_hit_probability": 0.6197,
-          "lift": 0.0594,
+          "hit_probability": 0.6935,
+          "raw_hit_probability": 0.7132,
+          "lift": 0.0348,
           "reliability": "A",
           "sample_n": 128,
           "projection": {
-            "stat": "hits",
+            "stat": "hits_runs_rbis",
             "value": 0.5,
             "needs": 1
           }
