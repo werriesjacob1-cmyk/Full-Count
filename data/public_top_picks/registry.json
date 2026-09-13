@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-13T16:34:55.273737+00:00",
+  "updated_at": "2026-09-13T17:49:46.093144+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -29821,6 +29821,105 @@
         },
         "qualification_timestamp": "2026-09-13T16:27:14.105010+00:00",
         "board_timestamp": "2026-09-13T16:27:14.075737+00:00",
+        "slate_date": "2026-09-13"
+      }
+    },
+    "fc2:824628:player-680779:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824628:player-680779:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824628",
+        [
+          "player",
+          "680779"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-13",
+      "first_published_at": "2026-09-13T17:49:46.093144+00:00",
+      "publication_provenance": {
+        "artifact_id": "7b73d9336f00cfc6d368f096245ded303ae1af9ff530cf28860f4288c774ff9e",
+        "source_commit": "85625f667315425c9e2b52acf19131077b53b70e",
+        "workflow_run_id": "34772639238",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-13T17:49:33.451473+00:00",
+        "data_hash": "4a4b72726c1516a82cb05ea10ab91bbfc0b07a59c4091dcc2ec097ef0d393ac3",
+        "live_hash": "e6c5215540ba5499017d28bd40079ff969ab9d4fd116bf7a25c84255a42d12a6"
+      },
+      "snapshot": {
+        "id": "fc2:824628:player-680779:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824628,
+        "player_id": 680779,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Henry Davis",
+        "team": "Pittsburgh Pirates",
+        "matchup": "Pittsburgh Pirates @ Chicago Cubs",
+        "game_start": "2026-09-13T18:20:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6051,
+        "market_odds": -135,
+        "market_implied": 0.5745,
+        "market_edge": 0.0306,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 96.1mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 50.0 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+2.8mph 2nd-half vs 1st-half)",
+          "Platoon: R bat vs LHP (favorable)",
+          "AVG vs xBA: 0.167 vs 0.199 (-0.032) \u2014 underperforming his contact quality, positive regression candidate",
+          "wOBA vs xwOBA: 0.260 vs 0.288 (-0.028) \u2014 underperforming his contact quality, positive regression candidate",
+          "Season barrel% 8.6"
+        ],
+        "watchouts": [
+          "Projected 3.48 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.287 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.311 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.08 runs (league avg 4.245; line 2.5, game total 7) \u2014 a weak offensive environment",
+          "L7 sample is thin (6 PA) \u2014 treat recent-form read with caution",
+          "Opposing bullpen fatigue: 1/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.5918,
+          0.6367
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 83,
+        "lineup_assumed": null,
+        "base_rate": 0.6661,
+        "lift": -0.061,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "974a40bed",
+          "prediction_timestamp": "2026-09-13T17:47:16.018717+00:00",
+          "odds_fetched_at": "2026-09-13T17:47:12.812764+00:00",
+          "board_generated_at": "2026-09-13T17:47:16.006011+00:00"
+        },
+        "qualification_timestamp": "2026-09-13T17:47:16.018717+00:00",
+        "board_timestamp": "2026-09-13T17:47:16.006011+00:00",
         "slate_date": "2026-09-13"
       }
     }
