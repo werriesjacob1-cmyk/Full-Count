@@ -62,6 +62,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-13",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 37.2,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Miami Marlins",
+          "game_pk": 823815,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 48.0,
+            "same_hand_ratio": 33.3333,
+            "l14_k_pct": 100.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6144,
+          "raw_hit_probability": 0.7018,
+          "lift": 0.0984,
+          "reliability": "A",
+          "sample_n": 21,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 13.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 54.8,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Miami Marlins",
+          "game_pk": 823815,
+          "team": "Los Angeles Dodgers",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7368,
+            "avg_outs_per_start": 14.43
+          },
+          "hit_probability": 0.7368,
+          "raw_hit_probability": null,
+          "lift": -0.079,
+          "reliability": "A",
+          "sample_n": 21,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 13.5,
+            "needs": 14
+          }
+        }
+      ]
     }
   ]
 }
