@@ -36,6 +36,42 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-13",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 42.7,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Washington Nationals",
+          "game_pk": 822682,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 83.0,
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 100.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 53.8718,
+            "ump_k_pct": -0.78,
+            "ump_bb_pct": 0.192
+          },
+          "hit_probability": 0.6074,
+          "raw_hit_probability": 0.6671,
+          "lift": 0.0919,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        }
+      ]
     }
   ]
 }

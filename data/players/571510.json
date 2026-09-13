@@ -431,10 +431,10 @@
       "date": "2026-09-13",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 51.0,
-          "notable_signals": 1,
+          "score": 30.8,
+          "notable_signals": 2,
           "matchup": "Pittsburgh Pirates @ Chicago Cubs",
           "game_pk": 824628,
           "team": "Chicago Cubs",
@@ -443,26 +443,29 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 70.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 21.4286,
             "l14_k_pct": 31.7647,
             "tto_penalty": 8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 68.1908,
+            "ump_k_pct": 0.756,
+            "ump_bb_pct": 0.348
           },
-          "hit_probability": 0.6,
-          "raw_hit_probability": 0.6303,
-          "lift": -0.0926,
+          "hit_probability": 0.2739,
+          "raw_hit_probability": 0.2739,
+          "lift": -0.0868,
           "reliability": "A",
           "sample_n": 19,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 67.5,
+          "score": 63.2,
           "notable_signals": 1,
           "matchup": "Pittsburgh Pirates @ Chicago Cubs",
           "game_pk": 824628,
@@ -471,18 +474,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5966,
+            "outs_rate": 0.5461,
             "avg_outs_per_start": 17.26
           },
-          "hit_probability": 0.5966,
+          "hit_probability": 0.5461,
           "raw_hit_probability": null,
-          "lift": 0.1106,
+          "lift": 0.1039,
           "reliability": "A",
           "sample_n": 19,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

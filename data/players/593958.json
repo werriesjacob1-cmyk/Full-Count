@@ -454,9 +454,9 @@
       "date": "2026-09-13",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 50.5,
+          "score": 38.2,
           "notable_signals": 1,
           "matchup": "Texas Rangers @ Arizona Diamondbacks",
           "game_pk": 825033,
@@ -466,26 +466,26 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 58.0,
-            "same_hand_ratio": 61.1111,
+            "same_hand_ratio": 5.5556,
             "l14_k_pct": 20.0,
             "tto_penalty": 8.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6152,
-          "raw_hit_probability": 0.7057,
-          "lift": -0.0774,
+          "hit_probability": 0.517,
+          "raw_hit_probability": 0.517,
+          "lift": 0.0015,
           "reliability": "A",
           "sample_n": 29,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 82.0,
+          "score": 81.1,
           "notable_signals": 1,
           "matchup": "Texas Rangers @ Arizona Diamondbacks",
           "game_pk": 825033,
@@ -494,12 +494,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6144,
+            "outs_rate": 0.6187,
             "avg_outs_per_start": 17.9
           },
-          "hit_probability": 0.6144,
+          "hit_probability": 0.6187,
           "raw_hit_probability": null,
-          "lift": 0.1969,
+          "lift": 0.1765,
           "reliability": "A",
           "sample_n": 29,
           "projection": {

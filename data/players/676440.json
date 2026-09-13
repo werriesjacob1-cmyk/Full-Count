@@ -451,7 +451,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 55.2,
+          "score": 44.4,
           "notable_signals": 0,
           "matchup": "Cleveland Guardians @ Minnesota Twins",
           "game_pk": 823658,
@@ -461,13 +461,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 40.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 56.0974,
+            "ump_k_pct": -0.324,
+            "ump_bb_pct": -0.492
           },
-          "hit_probability": 0.5973,
-          "raw_hit_probability": 0.6169,
-          "lift": -0.0953,
+          "hit_probability": 0.5976,
+          "raw_hit_probability": 0.6185,
+          "lift": -0.0982,
           "reliability": "A",
           "sample_n": 30,
           "projection": {
@@ -479,7 +482,7 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 70.8,
+          "score": 70.1,
           "notable_signals": 1,
           "matchup": "Cleveland Guardians @ Minnesota Twins",
           "game_pk": 823658,
@@ -488,18 +491,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6088,
+            "outs_rate": 0.6125,
             "avg_outs_per_start": 17.07
           },
-          "hit_probability": 0.6088,
+          "hit_probability": 0.6125,
           "raw_hit_probability": null,
-          "lift": 0.1228,
+          "lift": 0.104,
           "reliability": "A",
           "sample_n": 30,
           "projection": {
             "stat": "pitcher_outs",
             "value": 16.5,
             "needs": 17
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Minnesota Twins",
+          "game_pk": 823658,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            676440,
+            657746
+          ],
+          "signals": {
+            "combined_k_edge": 0.1362
+          },
+          "hit_probability": 0.6411,
+          "raw_hit_probability": null,
+          "lift": 0.1362,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

@@ -1804,6 +1804,108 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-13",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 56.9,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Toronto Blue Jays",
+          "game_pk": 822764,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 47.1429,
+            "l7_avg_ev": 90.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 41.9,
+            "season_barrel_pct": 24.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 0.4,
+            "platoon_xwoba": 3.24,
+            "park_hand_index": -0.81,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 29.0909,
+            "woba_behind": 40.0,
+            "pull_park_synergy": -0.1814,
+            "hard_hit_105_rate": -0.2175,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.48,
+            "vs_rp_ops": 0.012,
+            "ump_k_pct": -0.084,
+            "ump_bb_pct": 0.252
+          },
+          "hit_probability": 0.6252,
+          "raw_hit_probability": 0.6198,
+          "lift": 0.0595,
+          "reliability": "A",
+          "sample_n": 134,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 2.3,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Toronto Blue Jays",
+          "game_pk": 822764,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0379
+          },
+          "hit_probability": 0.0379,
+          "raw_hit_probability": null,
+          "lift": -0.0099,
+          "reliability": "A",
+          "sample_n": 134,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.7,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Toronto Blue Jays",
+          "game_pk": 822764,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0154
+          },
+          "hit_probability": 0.0154,
+          "raw_hit_probability": null,
+          "lift": -0.0054,
+          "reliability": "A",
+          "sample_n": 134,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

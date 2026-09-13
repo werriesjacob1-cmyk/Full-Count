@@ -41,9 +41,9 @@
       "date": "2026-09-13",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 51.2,
+          "score": 47.8,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ San Francisco Giants",
           "game_pk": 823171,
@@ -57,21 +57,21 @@
             "l14_k_pct": 0.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.5264,
-          "raw_hit_probability": 0.5264,
-          "lift": -0.1662,
+          "hit_probability": 0.3462,
+          "raw_hit_probability": 0.3462,
+          "lift": -0.1693,
           "reliability": "C",
           "sample_n": 5,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
-          "prop": "Over 12.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 48.9,
+          "score": 50.2,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ San Francisco Giants",
           "game_pk": 823171,
@@ -80,18 +80,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.734,
+            "outs_rate": 0.6855,
             "avg_outs_per_start": 12.6
           },
-          "hit_probability": 0.734,
+          "hit_probability": 0.6855,
           "raw_hit_probability": null,
-          "lift": -0.1116,
+          "lift": -0.0713,
           "reliability": "C",
           "sample_n": 5,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 12.5,
-            "needs": 13
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]
