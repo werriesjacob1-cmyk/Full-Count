@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-12T17:08:33.530397+00:00",
+  "updated_at": "2026-09-13T08:05:16.395182+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -28668,6 +28668,94 @@
         "qualification_timestamp": "2026-09-12T17:05:18.137914+00:00",
         "board_timestamp": "2026-09-12T17:05:18.106683+00:00",
         "slate_date": "2026-09-12"
+      }
+    },
+    "fc2:824225:player-687312:pitcher_outs:15:over": {
+      "canonical_id": "fc2:824225:player-687312:pitcher_outs:15:over",
+      "settlement_identity": [
+        "824225",
+        [
+          "player",
+          "687312"
+        ],
+        "pitcher_outs",
+        "15",
+        "over"
+      ],
+      "slate_date": "2026-09-13",
+      "first_published_at": "2026-09-13T08:05:16.395182+00:00",
+      "publication_provenance": {
+        "artifact_id": "29fb15910285479c0974a4ddc71023611c4fa892bcf2539b3f782c8a0745ece1",
+        "source_commit": "4467fe4481af37957e627b7607cfa55cfdb9783b",
+        "workflow_run_id": "34746698877",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-13T08:05:04.035628+00:00",
+        "data_hash": "f299e663f1474d1f741b2d1cf2563904634102a3dc386eab207acecf6d547783",
+        "live_hash": "81b6225bfcc1f0263f7ad1a056d8057d1b1c7aa129e898a5f01cc16ef565a477"
+      },
+      "snapshot": {
+        "id": "fc2:824225:player-687312:pitcher_outs:15:over",
+        "identity_version": 2,
+        "game_pk": 824225,
+        "player_id": 687312,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Gabriel Hughes",
+        "team": "Colorado Rockies",
+        "matchup": "Colorado Rockies @ Detroit Tigers",
+        "game_start": "2026-09-13T16:10:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 14.5,
+          "needs": 15
+        },
+        "prop": "Over 14.5 Outs Recorded",
+        "hit_probability": 0.7359,
+        "market_odds": -182,
+        "market_implied": 0.6016,
+        "market_edge": 0.1343,
+        "market_hold": 0.0727,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (13.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 15+ outs (5.0 IP) in 73.6% of his last 11 real starts (league 75.2%, avg 14.82 outs/start)"
+        ],
+        "watchouts": [
+          "No positive read here: 1.6 pts BELOW the 75% league base rate for this market"
+        ],
+        "prob_ci": [
+          0.6705,
+          0.8525
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 11,
+        "lineup_assumed": null,
+        "base_rate": 0.7517,
+        "lift": -0.0158,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "77ee947df",
+          "prediction_timestamp": "2026-09-13T08:01:41.869245+00:00",
+          "odds_fetched_at": "2026-09-13T08:01:37.667648+00:00",
+          "board_generated_at": "2026-09-13T08:01:41.845305+00:00"
+        },
+        "qualification_timestamp": "2026-09-13T08:01:41.869245+00:00",
+        "board_timestamp": "2026-09-13T08:01:41.845305+00:00",
+        "slate_date": "2026-09-13"
       }
     }
   }
