@@ -36,6 +36,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-13",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 50.4,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ San Francisco Giants",
+          "game_pk": 823171,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 44.0,
+            "same_hand_ratio": 33.3333,
+            "l14_k_pct": 0.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5264,
+          "raw_hit_probability": 0.5264,
+          "lift": -0.1662,
+          "reliability": "C",
+          "sample_n": 5,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 12.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 49.1,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ San Francisco Giants",
+          "game_pk": 823171,
+          "team": "San Diego Padres",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7357,
+            "avg_outs_per_start": 12.6
+          },
+          "hit_probability": 0.7357,
+          "raw_hit_probability": null,
+          "lift": -0.1131,
+          "reliability": "C",
+          "sample_n": 5,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 12.5,
+            "needs": 13
+          }
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_823171",
+  "name": "San Diego Padres @ San Francisco Giants \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-13",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 56.4,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ San Francisco Giants",
+          "game_pk": 823171,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2809,
+            "away_team_scores_p": 0.2694,
+            "fi_n_starts": 6.0
+          },
+          "hit_probability": 0.5254,
+          "raw_hit_probability": null,
+          "lift": 0.027,
+          "reliability": "C",
+          "sample_n": 6,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 52.5
+          }
+        }
+      ]
+    }
+  ]
+}
