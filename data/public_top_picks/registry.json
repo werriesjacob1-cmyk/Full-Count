@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-13T15:19:47.762239+00:00",
+  "updated_at": "2026-09-13T16:04:47.162309+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -29626,6 +29626,102 @@
         },
         "qualification_timestamp": "2026-09-13T15:16:28.855681+00:00",
         "board_timestamp": "2026-09-13T15:16:28.822263+00:00",
+        "slate_date": "2026-09-13"
+      }
+    },
+    "fc2:824628:player-669707:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824628:player-669707:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824628",
+        [
+          "player",
+          "669707"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-13",
+      "first_published_at": "2026-09-13T16:04:47.162309+00:00",
+      "publication_provenance": {
+        "artifact_id": "7150cf8f94d7f3d3c25780d06e9cc4b0b8f143293ae91be3297ba0d2661f85cd",
+        "source_commit": "a2c3d1338f391a0ecc49ce9f2a7a1af62d52a86e",
+        "workflow_run_id": "34767396231",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-13T16:04:33.689717+00:00",
+        "data_hash": "a054d89217f5a7c3d7d9401beafce386c39d5099a208f9dafe3d0060512d2f21",
+        "live_hash": "4d315943445fb8a6999dad8ee8baea7265f5b1295647476d28a54591dad2bf7a"
+      },
+      "snapshot": {
+        "id": "fc2:824628:player-669707:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824628,
+        "player_id": 669707,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Jared Triolo",
+        "team": "Pittsburgh Pirates",
+        "matchup": "Pittsburgh Pirates @ Chicago Cubs",
+        "game_start": "2026-09-13T18:20:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6398,
+        "market_odds": -155,
+        "market_implied": 0.6078,
+        "market_edge": 0.032,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 12.5 \u2014 hot recent contact",
+          "Platoon: R bat vs LHP (favorable)"
+        ],
+        "watchouts": [
+          "L7 avg EV 82.4mph (league ~88.5) \u2014 cold recent contact",
+          "Projected 3.63 PA (batting slot 8) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.314 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.260 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.13 runs (league avg 4.245; line 2.5, game total 7) \u2014 a weak offensive environment",
+          "Season barrel% 2.5 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 1/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "BvP: 3-for-11 vs Matthew Boyd (standard error \u00b113 pts on a 11-AB career sample -- weighted lightly on that basis, not just because the count looks small)"
+        ],
+        "prob_ci": [
+          0.6265,
+          0.6714
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 102,
+        "lineup_assumed": null,
+        "base_rate": 0.6681,
+        "lift": -0.0283,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "5c88b1cec",
+          "prediction_timestamp": "2026-09-13T15:56:25.456911+00:00",
+          "odds_fetched_at": "2026-09-13T15:56:17.718515+00:00",
+          "board_generated_at": "2026-09-13T15:56:25.434325+00:00"
+        },
+        "qualification_timestamp": "2026-09-13T15:56:25.456911+00:00",
+        "board_timestamp": "2026-09-13T15:56:25.434325+00:00",
         "slate_date": "2026-09-13"
       }
     }
