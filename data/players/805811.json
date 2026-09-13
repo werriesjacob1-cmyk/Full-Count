@@ -2752,6 +2752,109 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-13",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 62.6,
+          "notable_signals": 3,
+          "matchup": "San Diego Padres @ San Francisco Giants",
+          "game_pk": 823171,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 26.5714,
+            "pitch_exploit": 17.7143,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 25.5,
+            "season_barrel_pct": 54.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 37.037,
+            "platoon_barrel_pct": 3.36,
+            "platoon_xwoba": 1.86,
+            "park_hand_index": -2.72,
+            "opp_catcher_framing": 2.16,
+            "days_rest": 0.0,
+            "woba_ahead": 24.5455,
+            "woba_behind": 46.3636,
+            "pull_park_synergy": -0.8568,
+            "hard_hit_105_rate": 0.6275,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -1.208,
+            "vs_rp_ops": 0.12,
+            "ump_k_pct": 0.168,
+            "ump_bb_pct": 0.288
+          },
+          "hit_probability": 0.6216,
+          "raw_hit_probability": 0.6171,
+          "lift": 0.0559,
+          "reliability": "A",
+          "sample_n": 103,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 10.9,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ San Francisco Giants",
+          "game_pk": 823171,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0717
+          },
+          "hit_probability": 0.0717,
+          "raw_hit_probability": null,
+          "lift": 0.0239,
+          "reliability": "A",
+          "sample_n": 103,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 3.7,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ San Francisco Giants",
+          "game_pk": 823171,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0273
+          },
+          "hit_probability": 0.0273,
+          "raw_hit_probability": null,
+          "lift": 0.0065,
+          "reliability": "A",
+          "sample_n": 103,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

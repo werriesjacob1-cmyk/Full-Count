@@ -43,8 +43,8 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 54.0,
-          "notable_signals": 0,
+          "score": 37.4,
+          "notable_signals": 1,
           "matchup": "San Diego Padres @ San Francisco Giants",
           "game_pk": 823171,
           "team": "San Diego Padres",
@@ -53,9 +53,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 44.0,
-            "same_hand_ratio": 61.1111,
+            "same_hand_ratio": 88.8889,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 75.1805,
+            "ump_k_pct": -0.168,
+            "ump_bb_pct": -0.288
           },
           "hit_probability": 0.3462,
           "raw_hit_probability": 0.3462,
@@ -71,7 +74,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 50.1,
+          "score": 49.4,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ San Francisco Giants",
           "game_pk": 823171,
@@ -80,18 +83,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7144,
+            "outs_rate": 0.695,
             "avg_outs_per_start": 12.6
           },
-          "hit_probability": 0.7144,
+          "hit_probability": 0.695,
           "raw_hit_probability": null,
-          "lift": -0.0954,
+          "lift": -0.0792,
           "reliability": "C",
           "sample_n": 5,
           "projection": {
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 0.3,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ San Francisco Giants",
+          "game_pk": 823171,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            601713,
+            657277
+          ],
+          "signals": {
+            "combined_k_edge": -0.3406
+          },
+          "hit_probability": 0.3169,
+          "raw_hit_probability": null,
+          "lift": -0.3406,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

@@ -3581,6 +3581,141 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-13",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 59.5,
+          "notable_signals": 3,
+          "matchup": "San Diego Padres @ San Francisco Giants",
+          "game_pk": 823171,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 46.0,
+            "pitch_exploit": 4.0,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 25.5,
+            "season_barrel_pct": 64.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 55.5556,
+            "bvp_ops": 4.0,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 2.88,
+            "park_hand_index": -2.72,
+            "opp_catcher_framing": 1.08,
+            "days_rest": 0.0,
+            "woba_ahead": 74.5455,
+            "woba_behind": 4.5455,
+            "pull_park_synergy": -1.1614,
+            "hard_hit_105_rate": 1.3275,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.784,
+            "vs_rp_ops": 0.924,
+            "ump_k_pct": 0.168,
+            "ump_bb_pct": 0.288
+          },
+          "hit_probability": 0.6115,
+          "raw_hit_probability": 0.6096,
+          "lift": 0.0458,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 57.0,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ San Francisco Giants",
+          "game_pk": 823171,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 1.68,
+            "sprint_speed": 53.125,
+            "catcher_poptime": 22.8571,
+            "on_base": 54.8944
+          },
+          "hit_probability": 0.1673,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 17.9,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ San Francisco Giants",
+          "game_pk": 823171,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0997
+          },
+          "hit_probability": 0.0997,
+          "raw_hit_probability": null,
+          "lift": 0.0519,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 10.8,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ San Francisco Giants",
+          "game_pk": 823171,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0554
+          },
+          "hit_probability": 0.0554,
+          "raw_hit_probability": null,
+          "lift": 0.0346,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
