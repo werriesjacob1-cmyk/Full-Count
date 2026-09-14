@@ -1,0 +1,91 @@
+{
+  "status": "PRELIMINARY_RESEARCH_ONLY_NOT_A_PUBLIC_PICK",
+  "target_game": "DEN@KC",
+  "target_local_date": "2026-09-14",
+  "week": 1,
+  "kickoff_local": "2026-09-14T19:15:00-05:00",
+  "model": {
+    "name": "NFL_B0_ROLLING_PASSING_YARDS_V0",
+    "source_artifact_run": 34715686590,
+    "source_artifact_id": 10304778237,
+    "source_artifact_digest": "sha256:8dab23ffda6c3b9b3be358624d6aefba3901545f0e84eb679e811fbe3365f6ce",
+    "historical_benchmark": {
+      "2024": {"n": 611, "mae": 70.83543371522094},
+      "2025": {"n": 617, "mae": 72.41990815775257}
+    },
+    "pooled_residual_n": 1228,
+    "probability_method": "pooled_B0_empirical_residuals_laplace"
+  },
+  "candidates": [
+    {
+      "player_name": "Bo Nix",
+      "gsis_id": "00-0039732",
+      "team": "DEN",
+      "last_five_prior_passing_yards": [302, 352, 182, 141, 279],
+      "b0_projection": 251.2,
+      "reference_line": 227.5,
+      "reference_line_status": "NON_AUTHORITATIVE_PRELIMINARY_REFERENCE_RECAPTURE_REQUIRED",
+      "line_gap": 23.7,
+      "model_over_probability": 0.5983739837398374,
+      "model_under_probability": 0.4016260162601626,
+      "sensitivity": {
+        "222.5": 0.6186991869918699,
+        "227.5": 0.5983739837398374,
+        "232.5": 0.5723577235772358,
+        "237.5": 0.5487804878048781
+      },
+      "independent_projection_reference": {
+        "provider": "numberFire via FanDuel Research",
+        "passing_yards": 234.59,
+        "direction_vs_227_5": "OVER"
+      },
+      "preliminary_directional_consensus": "OVER",
+      "final_status": "AWAIT_LIVE_FANDUEL_CAPTURE_AND_OFFICIAL_INACTIVES"
+    },
+    {
+      "player_name": "Patrick Mahomes",
+      "gsis_id": "00-0033873",
+      "team": "KC",
+      "last_five_prior_passing_yards": [276, 352, 261, 160, 189],
+      "b0_projection": 247.6,
+      "reference_line": 223.5,
+      "reference_line_status": "NON_AUTHORITATIVE_PRELIMINARY_REFERENCE_RECAPTURE_REQUIRED",
+      "line_gap": 24.1,
+      "model_over_probability": 0.5983739837398374,
+      "model_under_probability": 0.4016260162601626,
+      "sensitivity": {
+        "218.5": 0.6203252032520326,
+        "223.5": 0.5983739837398374,
+        "228.5": 0.5723577235772358,
+        "233.5": 0.5504065040650407
+      },
+      "independent_projection_reference": {
+        "provider": "numberFire current Week 1 widget",
+        "passing_yards": 219.54,
+        "direction_vs_223_5": "UNDER"
+      },
+      "regime_warnings": [
+        "RETURN_FROM_ACL_LCL_REPAIR_WITH_NO_PRESEASON_GAME_REPS",
+        "STARTING_LEFT_TACKLE_JOSH_SIMMONS_OUT",
+        "B0_AND_INDEPENDENT_CONTEXTUAL_PROJECTION_DISAGREE_ON_DIRECTION"
+      ],
+      "preliminary_directional_consensus": "CONFLICT",
+      "final_status": "PASS_UNLESS_LIVE_EVIDENCE_RESOLVES_REGIME_CONFLICT"
+    }
+  ],
+  "sunday_shadow_artifact_diagnostic": {
+    "normalized_primary_candidates": 26,
+    "bound_qbs": 26,
+    "history_eligible": 25,
+    "market_failures": 0,
+    "decision_counts": {"QUARANTINED": 26},
+    "quarantine_reason_counts": {
+      "UNKNOWN_GAME_COVERAGE": 26,
+      "TEAM_CHANGE_ROLE_UNCERTAINTY": 5,
+      "INSUFFICIENT_HISTORY": 1,
+      "UNKNOWN_NO_HISTORY": 1
+    },
+    "interpretation": "The universal quarantine was caused by lack of same-day official inactive coverage at that early capture. It was not an identity, market normalization, or B0 reproduction failure."
+  },
+  "final_gate": "Do not elevate to final research PICK until exact live FanDuel line/price is captured, identity/role remains clean, a current official inactive report covers both teams, capture/seal are pre-kickoff, source pins are intact, and sensitivity/context review still supports the side."
+}

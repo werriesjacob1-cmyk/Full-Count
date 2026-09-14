@@ -1,0 +1,51 @@
+diff --git a/.github/workflows/nfl-live-passing-yards-shadow-board.yml b/.github/workflows/nfl-live-passing-yards-shadow-board.yml
+--- a/.github/workflows/nfl-live-passing-yards-shadow-board.yml
++++ b/.github/workflows/nfl-live-passing-yards-shadow-board.yml
+@@
+-  workflow_dispatch:
++  workflow_dispatch:
++    inputs:
++      target_local_date:
++        description: 'Optional Chicago-local slate date (strict YYYY-MM-DD). Blank preserves scheduled Sunday behavior.'
++        required: false
++        type: string
++        default: ''
+@@
+       - name: Build live Sunday shadow board without publishing
+         env:
+           FULL_COUNT_CODE_SHA: ${{ github.sha }}
+-          # Optional manual override. Scheduled runs derive the Chicago date.
+-          TARGET_LOCAL_DATE: ''
++          # Manual dispatch may target Thursday/Monday/etc. Scheduled runs keep
++          # the existing next-Sunday behavior when this input is blank.
++          TARGET_LOCAL_DATE: ${{ inputs.target_local_date || '' }}
+@@
+           from nfl.prospective.shadow_snapshot import seal_snapshot, validate_pregame_timing
++          from nfl.prospective.slate_target import resolve_target_local_date
+           from nfl.research import nflverse_history as nh
+@@
+           CT = ZoneInfo("America/Chicago")
+-          target_override = str(
+-              os.environ.get("TARGET_LOCAL_DATE") or ""
+-          ).strip()
+-          if target_override:
+-              TARGET_DATE = target_override
+-          else:
+-              local_today = datetime.now(CT).date()
+-              days_until_sunday = (6 - local_today.weekday()) % 7
+-              TARGET_DATE = (
+-                  local_today + timedelta(days=days_until_sunday)
+-              ).isoformat()
++          TARGET_DATE = resolve_target_local_date(
++              os.environ.get("TARGET_LOCAL_DATE")
++          )
+
+# Acceptance notes:
+# - This patch deliberately does not alter model math, source pins, B0 residuals,
+#   identity binding, inactive gating, snapshot schema, capture/seal timing, or
+#   publication semantics.
+# - `nfl/tests/test_slate_target.py` covers explicit Monday, Sunday fallback,
+#   strict ISO validation, Chicago timezone conversion, and naive-time refusal.
+# - For the 2026-09-14 Week 1 DEN-KC target, keep the existing 2025 projection
+#   history. No 2026 REG row can be strictly prior to a Week 1 target.
+# - Apply only after reconciling moving main and run exact-head NFL + root CI.
