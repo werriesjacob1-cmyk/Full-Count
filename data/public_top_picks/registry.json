@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-14T00:37:27.075641+00:00",
+  "updated_at": "2026-09-14T09:05:19.217855+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -30013,6 +30013,92 @@
         },
         "qualification_timestamp": "2026-09-14T00:34:52.476330+00:00",
         "board_timestamp": "2026-09-14T00:34:52.461617+00:00",
+        "slate_date": "2026-09-14"
+      }
+    },
+    "fc2:823575:player-687064:pitcher_outs:16:over": {
+      "canonical_id": "fc2:823575:player-687064:pitcher_outs:16:over",
+      "settlement_identity": [
+        "823575",
+        [
+          "player",
+          "687064"
+        ],
+        "pitcher_outs",
+        "16",
+        "over"
+      ],
+      "slate_date": "2026-09-14",
+      "first_published_at": "2026-09-14T09:05:19.217855+00:00",
+      "publication_provenance": {
+        "artifact_id": "fd5d8e8761b0c08f2cf10063f5c82f14f736e00c25bdd1b054a7cb440745abc3",
+        "source_commit": "61feb2bfd7e56a0bd2843c9abb873c438dea4263",
+        "workflow_run_id": "34825837866",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-14T09:05:08.482128+00:00",
+        "data_hash": "9b2794b5f7bac5d9442795ba2b9929475478e7f60f14cc58332c5876d918bfa1",
+        "live_hash": "1e42fb25585add00997ed9164544a334604bc71c988d5b3a1111916f9ee43098"
+      },
+      "snapshot": {
+        "id": "fc2:823575:player-687064:pitcher_outs:16:over",
+        "identity_version": 2,
+        "game_pk": 823575,
+        "player_id": 687064,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Brandon Young",
+        "team": "Baltimore Orioles",
+        "matchup": "Baltimore Orioles @ New York Mets",
+        "game_start": "2026-09-14T23:10:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 15.5,
+          "needs": 16
+        },
+        "prop": "Over 15.5 Outs Recorded",
+        "hit_probability": 0.6292,
+        "market_odds": -110,
+        "market_implied": 0.4899,
+        "market_edge": 0.1393,
+        "market_hold": 0.0693,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (14.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 16+ outs (5.1 IP) in 62.9% of his last 25 real starts (league 58.4%, avg 16.88 outs/start)"
+        ],
+        "watchouts": [],
+        "prob_ci": [
+          0.5607,
+          0.7341
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 25,
+        "lineup_assumed": null,
+        "base_rate": 0.584,
+        "lift": 0.0452,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "fbe58e2de",
+          "prediction_timestamp": "2026-09-14T08:56:58.594889+00:00",
+          "odds_fetched_at": "2026-09-14T08:56:56.014032+00:00",
+          "board_generated_at": "2026-09-14T08:56:58.574602+00:00"
+        },
+        "qualification_timestamp": "2026-09-14T08:56:58.594889+00:00",
+        "board_timestamp": "2026-09-14T08:56:58.574602+00:00",
         "slate_date": "2026-09-14"
       }
     }
