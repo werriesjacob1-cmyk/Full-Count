@@ -3445,6 +3445,140 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 45.4,
+          "notable_signals": 2,
+          "matchup": "Atlanta Braves @ Chicago Cubs",
+          "game_pk": 824629,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 79.4286,
+            "l7_avg_ev": 42.7083,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 26.3,
+            "season_barrel_pct": 61.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 18.5185,
+            "bvp_ops": 0.936,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": -0.42,
+            "park_hand_index": 2.48,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "consecutive_games": -0.6,
+            "woba_ahead": 16.3636,
+            "woba_behind": 0.0,
+            "pull_park_synergy": 0.9808,
+            "hard_hit_105_rate": 0.5525,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.52,
+            "vs_rp_ops": -0.264,
+            "ump_k_pct": -0.12,
+            "ump_bb_pct": -0.384
+          },
+          "hit_probability": 0.6424,
+          "raw_hit_probability": 0.6244,
+          "lift": -0.0282,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 33.2,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Chicago Cubs",
+          "game_pk": 824629,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.9,
+            "sprint_speed": 18.75,
+            "catcher_poptime": 17.1429,
+            "on_base": 31.8618
+          },
+          "hit_probability": 0.0601,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 10.1,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Chicago Cubs",
+          "game_pk": 824629,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0687
+          },
+          "hit_probability": 0.0687,
+          "raw_hit_probability": null,
+          "lift": 0.021,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.5,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Chicago Cubs",
+          "game_pk": 824629,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0426
+          },
+          "hit_probability": 0.0426,
+          "raw_hit_probability": null,
+          "lift": 0.0219,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

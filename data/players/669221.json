@@ -799,6 +799,61 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 40.5,
+          "notable_signals": 3,
+          "matchup": "Atlanta Braves @ Chicago Cubs",
+          "game_pk": 824629,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 79.4286,
+            "l7_avg_ev": 38.5,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 11.025,
+            "park_hr_index": 26.3,
+            "season_barrel_pct": 44.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 18.5185,
+            "bvp_ops": -1.728,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": -1.08,
+            "park_hand_index": 2.48,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 2.0,
+            "woba_ahead": 3.6364,
+            "woba_behind": 0.0,
+            "pull_park_synergy": 1.5364,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 3.128,
+            "vs_rp_ops": 1.776,
+            "ump_k_pct": -0.12,
+            "ump_bb_pct": -0.384
+          },
+          "hit_probability": 0.5411,
+          "raw_hit_probability": 0.5588,
+          "lift": -0.0235,
+          "reliability": "D",
+          "sample_n": 24,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

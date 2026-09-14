@@ -2325,6 +2325,111 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 52.4,
+          "notable_signals": 3,
+          "matchup": "Atlanta Braves @ Chicago Cubs",
+          "game_pk": 824629,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 79.4286,
+            "pitch_exploit": 1.7143,
+            "l7_avg_ev": 32.3958,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 26.3,
+            "season_barrel_pct": 4.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": -2.8,
+            "platoon_xwoba": -0.9,
+            "park_hand_index": 2.48,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "consecutive_games": -0.6,
+            "woba_ahead": 51.8182,
+            "woba_behind": 3.6364,
+            "pull_park_synergy": 0.2864,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.832,
+            "vs_rp_ops": 0.444,
+            "ump_k_pct": -0.12,
+            "ump_bb_pct": -0.384
+          },
+          "hit_probability": 0.6284,
+          "raw_hit_probability": 0.6222,
+          "lift": 0.0638,
+          "reliability": "A",
+          "sample_n": 142,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Chicago Cubs",
+          "game_pk": 824629,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0176
+          },
+          "hit_probability": 0.0176,
+          "raw_hit_probability": null,
+          "lift": -0.0301,
+          "reliability": "A",
+          "sample_n": 142,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Chicago Cubs",
+          "game_pk": 824629,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0025
+          },
+          "hit_probability": 0.0025,
+          "raw_hit_probability": null,
+          "lift": -0.0182,
+          "reliability": "A",
+          "sample_n": 142,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
