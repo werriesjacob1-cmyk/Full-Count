@@ -1643,6 +1643,15 @@ Next: run repository CI on the exact pushed head; add multi-event census and MLB
 
 Alligator
 
+## 2026-09-14 — NFL passing-yards negative challenger result
+
+- Added a digest-pinned rolling-origin comparison of frozen B0 against two predeclared passing-role challengers on the fully audited 1999–2025 weekly corpus. The script reproduces the active 2024/2025 B0 populations and MAEs exactly before accepting research output.
+- Both challengers lost to B0 in development, 2020–2022 validation, and 2023–2025 held data. On 1,862 paired held rows, passing-role last-five was +2.0202 MAE yards worse and attempts-3 × YPA-8 was +1.6421 worse. Player-cluster 95% bootstrap intervals were entirely above zero.
+- Recorded both as `REJECTED_RESEARCH_CHALLENGER`. The result argues against more tuning of the same rolling box-score window and prioritizes point-in-time starter/role, plays, pass rate, opponent, weather, injury, and market features.
+- Added two synthetic contracts for prior-only challenger behavior and common-population comparison. No model, selector, probability, grader, workflow, public surface, or production setting changed.
+
+Alligator
+
 ## 2026-09-14 — nflverse full-file quality audit
 
 - Downloaded all 27 canonical 1999–2025 weekly player-stat CSVs to a cache outside Git and recorded full-file SHA-256 evidence for 210,443,404 bytes and 476,159 rows. Added a reproducible streaming auditor and a compact 40 KB machine manifest; raw CSVs remain untracked outside the repository.
