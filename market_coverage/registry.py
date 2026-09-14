@@ -309,7 +309,10 @@ def build_coverage_report(
     *,
     observed_coverage_ids: Iterable[str],
     previous_observed_coverage_ids: Iterable[str] = (),
+    known_before_coverage_ids: Iterable[str] = (),
     capture_complete: bool,
+    capture_scope: Mapping[str, Any] | None = None,
+    coverage_comparison_ready: bool | None = None,
 ) -> dict[str, Any]:
     """Summarize actionable gaps without treating failed capture as loss."""
     rows = registry.get("markets")
@@ -317,6 +320,7 @@ def build_coverage_report(
         raise ValueError("registry markets must be a list")
     current = set(observed_coverage_ids)
     previous = set(previous_observed_coverage_ids)
+    known_before = set(known_before_coverage_ids)
     known = {row["coverage_id"]: row for row in rows}
     unknown_ids = sorted(current.difference(known))
     if unknown_ids:
@@ -325,14 +329,22 @@ def build_coverage_report(
     def ids_where(predicate) -> list[str]:
         return sorted(row["coverage_id"] for row in rows if predicate(row))
 
-    loss = sorted(previous.difference(current)) if capture_complete else []
+    comparable = (
+        bool(capture_complete)
+        if coverage_comparison_ready is None
+        else bool(coverage_comparison_ready)
+    )
+    loss = sorted(previous.difference(current)) if comparable else []
     return {
         "schema_version": SCHEMA_VERSION,
         "registry_generated_at": registry.get("generated_at"),
         "capture_complete": bool(capture_complete),
+        "coverage_comparison_ready": comparable,
+        "capture_scope": dict(capture_scope) if capture_scope else None,
+        "observed_coverage_ids": sorted(current),
         "known_market_count": len(rows),
         "observed_market_count": len(current),
-        "newly_discovered": sorted(current.difference(previous)),
+        "newly_discovered": sorted(current.difference(known_before)),
         "not_normalized": ids_where(
             lambda row: not row.get("capabilities", {}).get("normalized")
         ),
@@ -348,6 +360,15 @@ def build_coverage_report(
         ),
         "unexplained_coverage_loss": loss,
         "coverage_loss_suppressed_due_to_incomplete_capture": (
-            sorted(previous.difference(current)) if not capture_complete else []
+            sorted(previous.difference(current)) if not comparable else []
+        ),
+        "coverage_loss_suppression_reason": (
+            None
+            if comparable
+            else (
+                "CAPTURE_INCOMPLETE"
+                if not capture_complete
+                else "NO_IDENTICAL_PRIOR_SCOPE"
+            )
         ),
     }

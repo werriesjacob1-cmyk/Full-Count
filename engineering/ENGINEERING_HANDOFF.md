@@ -1643,6 +1643,15 @@ Next: run repository CI on the exact pushed head; add multi-event census and MLB
 
 Alligator
 
+## 2026-09-14 — Fail-closed market capture completeness
+
+- Replaced the market coverage CLI's manual completeness switch with a versioned capture plan. The plan records sport, sportsbook, event universe, requested tabs, and the logical name and SHA-256 of the event-discovery artifact.
+- A complete report now requires exactly one payload for every event-by-tab pair. Missing, unexpected, duplicate, unidentified, or untabbed payloads fail before registry/report publication.
+- Coverage disappearance is evaluated only against a prior complete report with the identical deterministic scope ID. A first capture, partial capture, or changed slate cannot create a false market-removal alert.
+- Added the capture-plan contract and four focused tests; all 12 market coverage tests and Python compilation pass locally. No live workflow, model, selector, grader, public surface, or production path changed.
+
+Alligator
+
 ## 2026-09-14 — Candidate-funnel audit correction
 
 - Corrected the total-sports roadmap after checking repository history: commit `63f9d5699` already fixed the duplicate-pair rewrite-forever bug and added compact records. The logger remains unwired, so representative live full-universe validation and storage selection are still required before activation.

@@ -168,7 +168,7 @@ The infrastructure is not cross-sport. NFL does not use the MLB backtest/challen
 ### Phase 1 — market coverage control plane
 
 1. Land the source-agnostic registry and raw-payload census foundation from this branch.
-2. Add a FanDuel NFL multi-event census job that consumes already archived bytes and writes a compact daily registry/report artifact.
+2. Add a FanDuel NFL multi-event census job that consumes already archived bytes, supplies a discovery-digested event/tab capture plan, and writes a compact daily registry/report artifact.
 3. Add MLB census before `MARKET_MAP` filtering.
 4. Track newly discovered, disappeared, malformed, unsupported, unnormalized, no-history, and no-grader families. Suppress disappearance claims whenever capture is partial or failed.
 5. Add book adapters only after preserving book-native identifiers and line ladders.
@@ -234,11 +234,12 @@ The infrastructure is not cross-sport. NFL does not use the MLB backtest/challen
 This branch now contains:
 
 - `market_coverage/registry.py`: shared lifecycle vocabulary, deterministic coverage IDs, exhaustive FanDuel market extraction, durable merge semantics, digest provenance, explicit classifications, and fail-closed loss reporting.
-- `market_coverage/cli.py`: atomic registry/report generation from archived raw FanDuel payloads.
+- `market_coverage/cli.py`: atomic registry/report generation from archived raw FanDuel payloads. A report can claim complete capture only after verifying every event-by-tab pair in a discovery-digested capture plan; coverage loss requires a prior complete report with the identical deterministic scope.
+- `market_coverage/CAPTURE_PLAN.md`: capture-plan contract and bounded completeness semantics.
 - `market_coverage/classifications/nfl_fanduel.json`: the current passing-yards control's explicit capabilities and blockers. No other family is silently promoted.
 - `data/market_coverage/registry.json`: 107 families from the bounded live census.
 - `engineering/evidence/nfl_market_coverage_report_2026-09-12.json`: machine-readable gap counts.
-- `test_market_coverage_registry.py`: unknown-family retention, aggregation, malformed identity, raw-digest provenance, explicit status, preservation, invalid status, and incomplete-capture loss suppression.
+- `test_market_coverage_registry.py`: unknown-family retention, aggregation, malformed identity, raw-digest provenance, explicit status preservation, invalid status, exact event-tab scope verification, same-scope comparison, and incomplete-capture loss suppression.
 
 Initial result: 107 known/observed, 106 unnormalized, 15 unrepresented alternate families, 107 without graders. One observed passing-yards source type is `PROSPECTIVE_SHADOW`; every other observed family remains `DISCOVERED`.
 

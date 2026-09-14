@@ -3,6 +3,12 @@
 import copy
 import unittest
 
+from market_coverage.cli import (
+    _payload_event_ids,
+    _previous_scope_ids,
+    _verify_capture_plan,
+)
+
 from market_coverage.registry import (
     build_coverage_report,
     coverage_id,
@@ -172,6 +178,85 @@ class RegistryTests(unittest.TestCase):
             capture_complete=True,
         )
         self.assertEqual(complete["unexplained_coverage_loss"], [cid])
+
+
+class CapturePlanTests(unittest.TestCase):
+    def test_complete_scope_requires_exact_event_tab_cartesian_product(self):
+        plan = {
+            "schema_version": 1,
+            "sport": "NFL",
+            "sportsbook": "FANDUEL",
+            "event_ids": ["e1", "e2"],
+            "tabs": ["popular", "player-passing"],
+            "discovery_artifact": "events.json",
+            "discovery_sha256": "a" * 64,
+        }
+        pairs = [
+            ("e1", "popular"), ("e1", "player-passing"),
+            ("e2", "popular"), ("e2", "player-passing"),
+        ]
+        scope = _verify_capture_plan(plan, sport="nfl", observed_pairs=pairs)
+        self.assertTrue(scope["verified"])
+        self.assertEqual(scope["expected_event_tab_pairs"], 4)
+        self.assertTrue(scope["scope_id"].startswith("fc-capture1:"))
+
+    def test_incomplete_or_duplicate_scope_fails_closed(self):
+        plan = {
+            "schema_version": 1,
+            "sport": "NFL",
+            "sportsbook": "FANDUEL",
+            "event_ids": ["e1"],
+            "tabs": ["popular", "player-passing"],
+            "discovery_artifact": "events.json",
+            "discovery_sha256": "a" * 64,
+        }
+        with self.assertRaisesRegex(ValueError, "capture plan mismatch"):
+            _verify_capture_plan(
+                plan, sport="NFL",
+                observed_pairs=[("e1", "popular"), ("e1", "popular")],
+            )
+
+    def test_payload_event_identity_uses_events_and_markets(self):
+        raw = payload(market("MONEY_LINE", "Moneyline", event_id="e1"))
+        raw["attachments"]["events"] = {"e2": {"eventId": "e2"}}
+        self.assertEqual(_payload_event_ids(raw), {"e1", "e2"})
+
+    def test_prior_observations_require_the_identical_verified_scope(self):
+        scope = {"scope_id": "fc-capture1:same", "verified": True}
+        report = {
+            "capture_complete": True,
+            "capture_scope": scope,
+            "observed_coverage_ids": ["b", "a"],
+        }
+        self.assertEqual(_previous_scope_ids(report, scope), (["b", "a"], True))
+        self.assertEqual(
+            _previous_scope_ids(report, {"scope_id": "fc-capture1:different"}),
+            ([], False),
+        )
+
+    def test_discovery_and_disappearance_use_separate_baselines(self):
+        observations = extract_fanduel_observations(
+            payload(market("MONEY_LINE", "Moneyline")),
+            sport="NFL", observed_at=NOW, source_artifact="one",
+        )
+        registry = update_registry(
+            new_registry(generated_at=NOW), observations, generated_at=NOW
+        )
+        current = coverage_id("NFL", "FANDUEL", "MONEY_LINE")
+        missing = coverage_id("NFL", "FANDUEL", "TOTAL_POINTS")
+        report = build_coverage_report(
+            registry,
+            observed_coverage_ids=[current],
+            previous_observed_coverage_ids=[current, missing],
+            known_before_coverage_ids=[],
+            capture_complete=True,
+            coverage_comparison_ready=False,
+        )
+        self.assertEqual(report["newly_discovered"], [current])
+        self.assertEqual(report["unexplained_coverage_loss"], [])
+        self.assertEqual(
+            report["coverage_loss_suppressed_due_to_incomplete_capture"], [missing]
+        )
 
 
 if __name__ == "__main__":
