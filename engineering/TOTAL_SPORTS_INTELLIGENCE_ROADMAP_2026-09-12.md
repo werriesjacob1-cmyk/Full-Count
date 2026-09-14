@@ -141,7 +141,7 @@ Unknown MLB source markets are not yet recorded by the new registry. The next ad
 
 MLB has substantial research components: `eval_lib.py`, backtest schemas and replay, calibration audits, market benchmarks, equal-volume challenger comparisons, `accuracy_lab.py`, `champion_challenger.py`, publication-aware grading, and error-oriented reports.
 
-The infrastructure is not cross-sport. NFL does not use the MLB backtest/challenger stack. There is no shared learning ledger, error taxonomy, experiment registry, missed-opportunity engine, or research-priority engine. `backtest/candidate_funnel_logger.py` can represent broader MLB candidate evidence but is not wired into production and has known dedup/storage sizing concerns.
+The infrastructure is not cross-sport. NFL does not use the MLB backtest/challenger stack. There is no shared learning ledger, error taxonomy, experiment registry, missed-opportunity engine, or research-priority engine. `backtest/candidate_funnel_logger.py` can represent broader MLB candidate evidence but is not wired into production. Its duplicate-pair rewrite bug was fixed in `63f9d5699`, and compact output exists; live full-universe validation and storage selection remain open.
 
 ## P. Biggest accuracy blind spots
 
@@ -177,7 +177,7 @@ The infrastructure is not cross-sport. NFL does not use the MLB backtest/challen
 
 1. Define a compact cross-sport frozen-candidate schema with evidence identity, price, probability, eligibility, rejection reason, and model/selector versions.
 2. Size storage outside git using representative full-universe captures; compare Parquet/object storage, Actions artifacts, and compact JSONL manifests.
-3. Repair candidate-funnel dedup before MLB wiring.
+3. Re-verify the repaired candidate-funnel dedup and compaction against representative live full-universe snapshots before MLB wiring.
 4. Add immutable experiment, hypothesis, negative-result, and error-taxonomy schemas.
 5. Build missed-opportunity analysis only from frozen pregame candidates joined to later outcomes.
 

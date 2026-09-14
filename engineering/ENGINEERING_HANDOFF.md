@@ -1643,6 +1643,13 @@ Next: run repository CI on the exact pushed head; add multi-event census and MLB
 
 Alligator
 
+## 2026-09-14 — Candidate-funnel audit correction
+
+- Corrected the total-sports roadmap after checking repository history: commit `63f9d5699` already fixed the duplicate-pair rewrite-forever bug and added compact records. The logger remains unwired, so representative live full-universe validation and storage selection are still required before activation.
+- The older handoff text above is retained as historical audit context; it must not be read as the current dedup state.
+
+Alligator
+
 ## 2026-09-14 — nflverse weekly-stat source availability audit
 
 - Range-read the canonical nflverse weekly player-stat assets for all 27 seasons from 1999 through 2025. Every asset returned HTTP 206, exposed `ETag` and `Last-Modified`, and satisfied the existing 19-column FULL COUNT player-stat contract.
