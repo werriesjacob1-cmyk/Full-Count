@@ -56,7 +56,7 @@
   /** More new rows than this at once means the VIEW changed, not a lead. */
   const MAX_NEW_PER_TICK   = 3;
 
-  const ROW_SELECTOR = 'tbody tr, [role="row"], [role="listitem"], li[data-id], tr[data-id]';
+  const ROW_SELECTOR = 'button.cny-list__row, tbody tr, [role="row"], [role="listitem"], li[data-id], tr[data-id]';
 
   const ID_ATTRS = [
     'data-lead-id', 'data-leadid', 'data-lead',
