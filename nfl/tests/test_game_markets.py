@@ -174,7 +174,7 @@ class GameMarketNormalizerTests(unittest.TestCase):
         payload["attachments"]["markets"]["734.168694353"]["runners"][0]["winRunnerOdds"] = {}
         rows, failures = self.normalize(payload, event_id="35601246")
         self.assertNotIn("moneyline", {r["canonical_market"] for r in rows})
-        self.assertTrue(any("winRunnerOdds" in f["reason"] for f in failures))
+        self.assertTrue(any("americanDisplayOdds" in f["reason"] for f in failures))
 
     def test_unrecognized_market_type_is_ignored(self):
         payload = observed_payload()
