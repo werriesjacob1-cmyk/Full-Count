@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_824465",
+  "name": "Los Angeles Dodgers @ Cincinnati Reds \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-14",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 62.0,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Cincinnati Reds",
+          "game_pk": 824465,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.3063,
+            "away_team_scores_p": 0.3096,
+            "fi_n_starts": 20.0
+          },
+          "hit_probability": 0.5211,
+          "raw_hit_probability": null,
+          "lift": 0.0195,
+          "reliability": "A",
+          "sample_n": 20,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 52.1
+          }
+        }
+      ]
+    }
+  ]
+}

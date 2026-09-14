@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_823656",
+  "name": "New York Yankees @ Minnesota Twins \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-14",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 59.9,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Minnesota Twins",
+          "game_pk": 823656,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2876,
+            "away_team_scores_p": 0.3327,
+            "fi_n_starts": 15.0
+          },
+          "hit_probability": 0.5246,
+          "raw_hit_probability": null,
+          "lift": 0.023,
+          "reliability": "B",
+          "sample_n": 15,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 52.5
+          }
+        }
+      ]
+    }
+  ]
+}

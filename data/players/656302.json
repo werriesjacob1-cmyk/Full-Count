@@ -444,6 +444,68 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-13",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 47.4,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ Toronto Blue Jays",
+          "game_pk": 822764,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 76.0,
+            "same_hand_ratio": 43.75,
+            "l14_k_pct": 48.8235,
+            "env_neutral": 50.0,
+            "ump_accuracy": 45.4459,
+            "ump_k_pct": 0.084,
+            "ump_bb_pct": -0.252
+          },
+          "hit_probability": 0.6161,
+          "raw_hit_probability": 0.7105,
+          "lift": 0.1006,
+          "reliability": "A",
+          "sample_n": 27,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 60.2,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ Toronto Blue Jays",
+          "game_pk": 822764,
+          "team": "Toronto Blue Jays",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5349,
+            "avg_outs_per_start": 17.93
+          },
+          "hit_probability": 0.5349,
+          "raw_hit_probability": null,
+          "lift": 0.0927,
+          "reliability": "A",
+          "sample_n": 27,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,69 @@
+{
+  "player_id": 689818,
+  "name": "David Sandlin",
+  "snapshots": [
+    {
+      "date": "2026-09-13",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 40.2,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ St. Louis Cardinals",
+          "game_pk": 823008,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 37.0,
+            "same_hand_ratio": 75.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 45.4809,
+            "ump_k_pct": 0.288,
+            "ump_bb_pct": 0.276
+          },
+          "hit_probability": 0.5897,
+          "raw_hit_probability": 0.5797,
+          "lift": 0.0742,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Chicago White Sox @ St. Louis Cardinals",
+          "game_pk": 823008,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            689818,
+            700241
+          ],
+          "signals": {
+            "combined_k_edge": 0.1054
+          },
+          "hit_probability": 0.6054,
+          "raw_hit_probability": null,
+          "lift": 0.1054,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
+          }
+        }
+      ]
+    }
+  ]
+}

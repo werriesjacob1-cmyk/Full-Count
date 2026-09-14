@@ -2661,6 +2661,140 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-13",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 43.9,
+          "notable_signals": 3,
+          "matchup": "New York Mets @ New York Yankees",
+          "game_pk": 823495,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "pitch_exploit": 2.8571,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 8.325,
+            "park_hr_index": 35.3,
+            "season_barrel_pct": 28.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 2.0,
+            "platoon_xwoba": 0.6,
+            "park_hand_index": 3.55,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 0.0,
+            "woba_ahead": 37.2727,
+            "woba_behind": 19.0909,
+            "pull_park_synergy": 2.2365,
+            "hard_hit_105_rate": 0.3475,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.952,
+            "vs_rp_ops": -0.156,
+            "ump_k_pct": 0.852,
+            "ump_bb_pct": 0.444
+          },
+          "hit_probability": 0.6303,
+          "raw_hit_probability": 0.6236,
+          "lift": 0.0646,
+          "reliability": "A",
+          "sample_n": 95,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 37.0,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ New York Yankees",
+          "game_pk": 823495,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 1.02,
+            "sprint_speed": 6.25,
+            "catcher_poptime": 20.0,
+            "on_base": 74.0883
+          },
+          "hit_probability": 0.032,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 95,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 8.1,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ New York Yankees",
+          "game_pk": 823495,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0605
+          },
+          "hit_probability": 0.0605,
+          "raw_hit_probability": null,
+          "lift": 0.0127,
+          "reliability": "A",
+          "sample_n": 95,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 2.1,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ New York Yankees",
+          "game_pk": 823495,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.021
+          },
+          "hit_probability": 0.021,
+          "raw_hit_probability": null,
+          "lift": 0.0002,
+          "reliability": "A",
+          "sample_n": 95,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
