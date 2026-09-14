@@ -139,6 +139,53 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 34.0,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Los Angeles Angels",
+          "game_pk": 823981,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 23.4286,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 37.037,
+            "park_hand_index": -1.5,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 0.0,
+            "woba_ahead": 15.4545,
+            "woba_behind": 19.0909,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "ump_k_pct": 0.252,
+            "ump_bb_pct": -0.12
+          },
+          "hit_probability": 0.5492,
+          "raw_hit_probability": 0.5646,
+          "lift": -0.0154,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

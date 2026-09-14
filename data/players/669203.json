@@ -71,8 +71,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 45.5,
-          "notable_signals": 0,
+          "score": 25.8,
+          "notable_signals": 1,
           "matchup": "Miami Marlins @ Arizona Diamondbacks",
           "game_pk": 825034,
           "team": "Arizona Diamondbacks",
@@ -81,8 +81,11 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 48.0,
-            "same_hand_ratio": 43.75,
-            "env_neutral": 50.0
+            "same_hand_ratio": 75.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 79.411,
+            "ump_k_pct": 0.444,
+            "ump_bb_pct": 0.156
           },
           "hit_probability": 0.6139,
           "raw_hit_probability": 0.6991,

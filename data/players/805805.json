@@ -756,6 +756,56 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 25.8,
+          "notable_signals": 1,
+          "matchup": "New York Yankees @ Minnesota Twins",
+          "game_pk": 823656,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 44.2857,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 78.9,
+            "season_barrel_pct": 29.3333,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 1.68,
+            "platoon_xwoba": -2.22,
+            "park_hand_index": -1.79,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 42.7273,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.12,
+            "vs_rp_ops": -3.36,
+            "ump_k_pct": 0.24,
+            "ump_bb_pct": -0.252
+          },
+          "hit_probability": 0.4127,
+          "raw_hit_probability": 0.4127,
+          "lift": -0.1519,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

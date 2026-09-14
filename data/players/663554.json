@@ -446,7 +446,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 56.5,
+          "score": 58.0,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ Colorado Rockies",
           "game_pk": 824308,
@@ -455,18 +455,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6036,
+            "outs_rate": 0.6004,
             "avg_outs_per_start": 15.57
           },
-          "hit_probability": 0.6024,
-          "raw_hit_probability": 0.6036,
-          "lift": 0.0184,
+          "hit_probability": 0.5997,
+          "raw_hit_probability": 0.6004,
+          "lift": 0.0312,
           "reliability": "A",
           "sample_n": 23,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 6.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ Colorado Rockies",
+          "game_pk": 824308,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            663554,
+            608372
+          ],
+          "signals": {
+            "combined_k_edge": 0.0977
+          },
+          "hit_probability": 0.681,
+          "raw_hit_probability": null,
+          "lift": 0.0977,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 6.5,
+            "needs": 7
           }
         }
       ]

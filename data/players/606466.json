@@ -1381,6 +1381,107 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 79.3,
+          "notable_signals": 3,
+          "matchup": "Miami Marlins @ Arizona Diamondbacks",
+          "game_pk": 825034,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 36.5714,
+            "pitch_exploit": 12.0,
+            "l7_avg_ev": 55.6771,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 3.15,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 44.6667,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": 1.44,
+            "platoon_xwoba": 1.14,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 27.2727,
+            "woba_behind": 70.9091,
+            "hard_hit_105_rate": 1.4775,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.672,
+            "vs_rp_ops": 1.092,
+            "ump_k_pct": -0.444,
+            "ump_bb_pct": -0.156
+          },
+          "hit_probability": 0.6252,
+          "raw_hit_probability": 0.6198,
+          "lift": 0.0606,
+          "reliability": "A",
+          "sample_n": 129,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 19.4,
+          "notable_signals": 1,
+          "matchup": "Miami Marlins @ Arizona Diamondbacks",
+          "game_pk": 825034,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1057
+          },
+          "hit_probability": 0.1057,
+          "raw_hit_probability": null,
+          "lift": 0.058,
+          "reliability": "A",
+          "sample_n": 129,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 9.2,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Arizona Diamondbacks",
+          "game_pk": 825034,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0491
+          },
+          "hit_probability": 0.0491,
+          "raw_hit_probability": null,
+          "lift": 0.0284,
+          "reliability": "A",
+          "sample_n": 129,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
