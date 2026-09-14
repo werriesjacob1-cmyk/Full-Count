@@ -112,13 +112,14 @@ def _validate_columns(rows: list[Mapping[str, Any]]) -> None:
             )
 
 
-def _empty_id_row_is_audited_structural_zero(row: Mapping[str, Any]) -> bool:
-    """Return True only for the audited anonymous zero rows in nflverse stats.
+def _missing_id_row_is_audited_structural_zero(row: Mapping[str, Any]) -> bool:
+    """Return True only for audited missing-identity zero rows in nflverse stats.
 
-    Live source audit on 2026-09-11 found exactly 22 such rows in each of
-    2023/2024/2025: blank player_id, blank display name, blank position, and
-    zero tracked offensive production. Those are source scaffolding, not player
-    games, and may be excluded.
+    The 1999-2025 full-file audit on 2026-09-14 found 523 blank-ID rows and
+    another 42 rows using the literal sentinel ``0`` in 1999-2000. All had a
+    blank display name, blank position, and zero tracked offensive production.
+    Those are source scaffolding, not player games, and may be excluded. The
+    active 2023/2024/2025 inputs still contain exactly 22 blank-ID rows each.
 
     The exception is intentionally narrow. A future empty-ID row with a name,
     a position, or any non-zero tracked offense is a source-integrity incident,
@@ -179,8 +180,8 @@ def build_prior_only_rows(
     seen_keys = set()
     for row in rows:
         player_id = str(row["player_id"]).strip()
-        if not player_id:
-            if _empty_id_row_is_audited_structural_zero(row):
+        if player_id in {"", "0"}:
+            if _missing_id_row_is_audited_structural_zero(row):
                 continue
             has_offense = False
             for stat in NUMERIC_STATS:
@@ -195,9 +196,9 @@ def build_prior_only_rows(
                     has_offense = True
                     break
             if has_offense:
-                raise ValueError("empty player_id row carries offense")
+                raise ValueError("missing player_id row carries offense")
             raise ValueError(
-                "empty player_id row is not an audited structural zero"
+                "missing player_id row is not an audited structural zero"
             )
         season = _to_int(row["season"], "season")
         week = _to_int(row["week"], "week")

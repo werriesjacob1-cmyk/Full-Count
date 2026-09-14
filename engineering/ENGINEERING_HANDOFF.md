@@ -1643,6 +1643,18 @@ Next: run repository CI on the exact pushed head; add multi-event census and MLB
 
 Alligator
 
+## 2026-09-14 — nflverse full-file quality audit
+
+- Downloaded all 27 canonical 1999–2025 weekly player-stat CSVs to a cache outside Git and recorded full-file SHA-256 evidence for 210,443,404 bytes and 476,159 rows. Added a reproducible streaming auditor and a compact 40 KB machine manifest; raw CSVs remain untracked outside the repository.
+- The required 19-column contract, 11 numeric offensive fields, per-file season identity, `REG`/`POST` season types, and player-season-week-type uniqueness all passed. The audit found 11,365 non-sentinel player IDs and no ID with multiple nonblank display names or positions.
+- Identified 523 blank-ID structural zero rows, 42 additional literal-`0` structural rows in 1999–2000, seven nonzero rows without a stable ID, 19 identified rows missing display name and position, six rows missing opponent, and one row missing team. The seven nonzero missing-identity rows remain quarantined by failure; no identity was inferred.
+- Corrected `nflverse_history.py` so literal `0` cannot become a false cross-team player history. It is excluded only under the existing strict structural-zero rule; any tracked offense still fails closed. Three focused tests pass.
+- No raw corpus, normalized warehouse, model, selector, grader, workflow, public surface, or production path changed.
+
+Next: define an immutable external object layout and explicit quarantine schema, then validate schedule/team completeness and target-specific row eligibility before any historical challenger uses the expanded corpus.
+
+Alligator
+
 ## 2026-09-14 — Fail-closed market capture completeness
 
 - Replaced the market coverage CLI's manual completeness switch with a versioned capture plan. The plan records sport, sportsbook, event universe, requested tabs, and the logical name and SHA-256 of the event-discovery artifact.
