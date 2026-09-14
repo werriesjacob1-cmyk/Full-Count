@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-14T09:39:43.144628+00:00",
+  "updated_at": "2026-09-14T11:10:19.429742+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -30187,6 +30187,94 @@
         },
         "qualification_timestamp": "2026-09-14T09:36:25.030467+00:00",
         "board_timestamp": "2026-09-14T09:36:25.012847+00:00",
+        "slate_date": "2026-09-14"
+      }
+    },
+    "fc2:824308:player-663554:pitcher_outs:16:over": {
+      "canonical_id": "fc2:824308:player-663554:pitcher_outs:16:over",
+      "settlement_identity": [
+        "824308",
+        [
+          "player",
+          "663554"
+        ],
+        "pitcher_outs",
+        "16",
+        "over"
+      ],
+      "slate_date": "2026-09-14",
+      "first_published_at": "2026-09-14T11:10:19.429742+00:00",
+      "publication_provenance": {
+        "artifact_id": "3be30019fb0fee62d7c0fdc307e4067edae7a83b4755b53a16b6dca161f1e587",
+        "source_commit": "7b07febdd61eaa48cfbe6629ce418aaa2186465e",
+        "workflow_run_id": "34836545450",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-14T11:10:05.298066+00:00",
+        "data_hash": "685816a123875a6231eab4a7f82478af8ae486d8a8dd18354f81b4f588b06842",
+        "live_hash": "24e303394c02ddbef684c4c57545c135bfe7c963aab068966cc2a107623ea55f"
+      },
+      "snapshot": {
+        "id": "fc2:824308:player-663554:pitcher_outs:16:over",
+        "identity_version": 2,
+        "game_pk": 824308,
+        "player_id": 663554,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Casey Mize",
+        "team": "San Diego Padres",
+        "matchup": "San Diego Padres @ Colorado Rockies",
+        "game_start": "2026-09-15T00:40:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 15.5,
+          "needs": 16
+        },
+        "prop": "Over 15.5 Outs Recorded",
+        "hit_probability": 0.6036,
+        "market_odds": -112,
+        "market_implied": 0.4939,
+        "market_edge": 0.1097,
+        "market_hold": 0.0696,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (11.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 16+ outs (5.1 IP) in 60.4% of his last 23 real starts (league 58.4%, avg 15.57 outs/start)"
+        ],
+        "watchouts": [
+          "Barely above this market's base rate \u2014 the high percentage is mostly the market being easy, not a strong read on this player"
+        ],
+        "prob_ci": [
+          0.5351,
+          0.7085
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 23,
+        "lineup_assumed": null,
+        "base_rate": 0.584,
+        "lift": 0.0196,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "b3c089c98",
+          "prediction_timestamp": "2026-09-14T11:01:45.379395+00:00",
+          "odds_fetched_at": "2026-09-14T11:01:41.494699+00:00",
+          "board_generated_at": "2026-09-14T11:01:45.358177+00:00"
+        },
+        "qualification_timestamp": "2026-09-14T11:01:45.379395+00:00",
+        "board_timestamp": "2026-09-14T11:01:45.358177+00:00",
         "slate_date": "2026-09-14"
       }
     }
