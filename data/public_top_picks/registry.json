@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-14T18:57:26.135370+00:00",
+  "updated_at": "2026-09-14T19:25:05.032722+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -30655,6 +30655,105 @@
         },
         "qualification_timestamp": "2026-09-14T18:50:17.590407+00:00",
         "board_timestamp": "2026-09-14T18:50:17.577539+00:00",
+        "slate_date": "2026-09-14"
+      }
+    },
+    "fc2:824465:player-663886:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824465:player-663886:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824465",
+        [
+          "player",
+          "663886"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-14",
+      "first_published_at": "2026-09-14T19:25:05.032722+00:00",
+      "publication_provenance": {
+        "artifact_id": "be8ddd855cec4016ea4608ca8100f81561f4d9d3e2406dc1f7a2830d36bea191",
+        "source_commit": "aed7647d91c76a35a075f254715cc088e60d923d",
+        "workflow_run_id": "34886475939",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-14T19:24:53.344901+00:00",
+        "data_hash": "dedbdc897de24b43dac156f7c7b4741e8f65e4d66361d0a1401c5ab19a0f3979",
+        "live_hash": "a123757e318f5b53f2993079b97eb9dac883bf061edde4bba2a2e27fca7fe979"
+      },
+      "snapshot": {
+        "id": "fc2:824465:player-663886:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824465,
+        "player_id": 663886,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Tyler Stephenson",
+        "team": "Cincinnati Reds",
+        "matchup": "Los Angeles Dodgers @ Cincinnati Reds",
+        "game_start": "2026-09-14T22:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6646,
+        "market_odds": -170,
+        "market_implied": 0.6296,
+        "market_edge": 0.035,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 91.9mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 30.8 \u2014 hot recent contact",
+          "Platoon: R bat vs LHP (favorable)",
+          "Projected 4.1 PA (batting slot 4)",
+          "Hitters batting ahead of him: 0.350 wOBA (league ~.320)",
+          "Pitch-type exploit: RV/100 +2.4 vs SI (opposing SP throws it 18.3% of the time)",
+          "Season barrel% 12.5",
+          "Sharp money backing Cincinnati Reds (money% +10 pts vs ticket%)"
+        ],
+        "watchouts": [
+          "Opposing SP ERA 2.83 \u2014 elite pitcher, tough matchup",
+          "Hitter batting behind him: 0.324 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 2.91 runs (league avg 4.245; line 2.5, game total 7.5) \u2014 a weak offensive environment",
+          "Wind blowing IN (6mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 0/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6538,
+          0.6877
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 117,
+        "lineup_assumed": null,
+        "base_rate": 0.6712,
+        "lift": -0.0066,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "a7f569472",
+          "prediction_timestamp": "2026-09-14T19:22:16.393085+00:00",
+          "odds_fetched_at": "2026-09-14T19:22:11.495970+00:00",
+          "board_generated_at": "2026-09-14T19:22:16.371541+00:00"
+        },
+        "qualification_timestamp": "2026-09-14T19:22:16.393085+00:00",
+        "board_timestamp": "2026-09-14T19:22:16.371541+00:00",
         "slate_date": "2026-09-14"
       }
     }
