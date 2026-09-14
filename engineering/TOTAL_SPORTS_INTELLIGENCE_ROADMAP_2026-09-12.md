@@ -240,6 +240,11 @@ This branch now contains:
 - `data/market_coverage/registry.json`: 107 families from the bounded live census.
 - `engineering/evidence/nfl_market_coverage_report_2026-09-12.json`: machine-readable gap counts.
 - `test_market_coverage_registry.py`: unknown-family retention, aggregation, malformed identity, raw-digest provenance, explicit status preservation, invalid status, exact event-tab scope verification, same-scope comparison, and incomplete-capture loss suppression.
+- `nfl/research/nflverse_quarantine.py`: deterministic row-level source-defect
+  classification with full-file digest verification, stable quarantine IDs,
+  explicit structural exclusions, and empty allowed-use sets for research
+  blockers. Full-corpus ledger generation remains gated on re-acquiring the
+  audited external cache.
 
 Initial result: 107 known/observed, 106 unnormalized, 15 unrepresented alternate families, 107 without graders. One observed passing-yards source type is `PROSPECTIVE_SHADOW`; every other observed family remains `DISCOVERED`.
 
