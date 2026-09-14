@@ -1642,3 +1642,13 @@ The work is isolated on `codex/total-sports-foundations-20260912`, based on `db0
 Next: run repository CI on the exact pushed head; add multi-event census and MLB pre-filter adapters only after this schema is reviewed; then design compact frozen-candidate and experiment ledgers with measured storage costs before wiring any live capture.
 
 Alligator
+
+## 2026-09-14 — Codex unattended permission preflight
+
+- Completed the authorized harmless permission warm-up and wrote `engineering/evidence/CODEX_PERMISSION_PREFLIGHT_2026-09-14.md` with the complete capability matrix, skips, failures, and future manual approvals.
+- Confirmed unattended readiness for ordinary shell/repository work, local Git, remote fetch, GitHub connector reads and reversible branch/PR writes, Issue #91 relay, Actions inspection, connector artifact download, Python/Node execution, public research endpoints, nflverse, MLB Stats API, the existing FanDuel public read path, signed-in Cloudflare read-only inspection, browser reads, subagents, and supervised long-running processes.
+- Local Git CLI push has no credential helper; reversible branch writes work through the authenticated GitHub connector. npm and Docker are absent locally. Python package metadata works, but pip download/install is blocked by Windows ACL behavior in pip-created temporary child directories; use CI for dependency installs.
+- All ordinary probe files were removed. The untracked `.codex_pip_tmp` and `.pip-tmp` directories remain because Windows denies access even after an exact turn-scoped filesystem grant. They contain only failed pip temporary state and are excluded from staging.
+- Posted the remote approval relay, active preflight summary, and native cleanup limitation to Issue #91. No production/public state, secrets, models, selectors, graders, or immutable evidence changed.
+
+Alligator
