@@ -1700,3 +1700,11 @@ Alligator
 - Posted the remote approval relay, active preflight summary, and native cleanup limitation to Issue #91. No production/public state, secrets, models, selectors, graders, or immutable evidence changed.
 
 Alligator
+
+## 2026-09-14 — Foundation branch synchronized with current main
+
+- Rechecked protected `main` at `bca7f798e09f7a8b440ebb9ed8ae8cc45e2ac4db` and merged it cleanly into the total-sports foundation branch.
+- The upstream delta updated generated MLB calibration and public data artifacts only: `backtest/calibration_recheck_report.json`, `backtest/calibrators_by_market.json`, `docs/data.json`, and `docs/live.json`. No foundation file required conflict resolution.
+- The branch remains draft-only. Re-run root and NFL suites on the published merge head before treating it as reviewable evidence.
+
+Alligator
