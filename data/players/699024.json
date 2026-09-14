@@ -455,6 +455,54 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 59.3,
+          "notable_signals": 1,
+          "matchup": "San Francisco Giants @ St. Louis Cardinals",
+          "game_pk": 823006,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 42.8571,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 35.5,
+            "season_barrel_pct": 32.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": 4.0,
+            "platoon_xwoba": 3.72,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 0.0,
+            "woba_ahead": 60.0,
+            "woba_behind": 65.4545,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -3.544,
+            "vs_rp_ops": -1.14,
+            "ump_k_pct": -0.348,
+            "ump_bb_pct": -0.024
+          },
+          "hit_probability": 0.6573,
+          "raw_hit_probability": 0.6443,
+          "lift": 0.0927,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

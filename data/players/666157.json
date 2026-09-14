@@ -462,7 +462,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 46.0,
+          "score": 46.3,
           "notable_signals": 0,
           "matchup": "Los Angeles Dodgers @ Cincinnati Reds",
           "game_pk": 824465,
@@ -472,13 +472,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 35.0,
-            "same_hand_ratio": 75.0,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 49.4118,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 65.3183,
+            "ump_k_pct": -0.516,
+            "ump_bb_pct": -0.12
           },
-          "hit_probability": 0.5035,
-          "raw_hit_probability": 0.5035,
-          "lift": -0.0097,
+          "hit_probability": 0.505,
+          "raw_hit_probability": 0.505,
+          "lift": -0.0111,
           "reliability": "A",
           "sample_n": 18,
           "projection": {
@@ -488,9 +491,9 @@
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 40.4,
+          "score": 15.1,
           "notable_signals": 0,
           "matchup": "Los Angeles Dodgers @ Cincinnati Reds",
           "game_pk": 824465,
@@ -499,18 +502,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6519,
+            "outs_rate": 0.4377,
             "avg_outs_per_start": 14.94
           },
-          "hit_probability": 0.6519,
-          "raw_hit_probability": null,
-          "lift": -0.1222,
+          "hit_probability": 0.4377,
+          "raw_hit_probability": 0.4377,
+          "lift": -0.1463,
           "reliability": "A",
           "sample_n": 18,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]

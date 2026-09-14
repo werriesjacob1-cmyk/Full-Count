@@ -189,6 +189,52 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-14",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 40.1,
+          "notable_signals": 2,
+          "matchup": "Los Angeles Dodgers @ Cincinnati Reds",
+          "game_pk": 824465,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 9.4286,
+            "l7_avg_ev": 52.125,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 35.8,
+            "season_barrel_pct": 30.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 4.62,
+            "opp_catcher_framing": 1.08,
+            "days_rest": 0.0,
+            "woba_ahead": 30.9091,
+            "woba_behind": 33.6364,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "ump_k_pct": 0.516,
+            "ump_bb_pct": 0.12
+          },
+          "hit_probability": 0.5661,
+          "raw_hit_probability": 0.5766,
+          "lift": 0.0015,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

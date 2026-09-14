@@ -241,9 +241,9 @@
       "date": "2026-09-14",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 52.4,
+          "score": 40.6,
           "notable_signals": 0,
           "matchup": "San Francisco Giants @ St. Louis Cardinals",
           "game_pk": 823006,
@@ -255,23 +255,26 @@
             "opp_team_k_pct": 44.0,
             "same_hand_ratio": 61.1111,
             "l14_k_pct": 10.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 52.5296,
+            "ump_k_pct": 0.348,
+            "ump_bb_pct": 0.024
           },
-          "hit_probability": 0.5257,
-          "raw_hit_probability": 0.5257,
-          "lift": 0.0125,
+          "hit_probability": 0.3518,
+          "raw_hit_probability": 0.3518,
+          "lift": -0.0098,
           "reliability": "C",
           "sample_n": 6,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 48.4,
+          "score": 21.5,
           "notable_signals": 0,
           "matchup": "San Francisco Giants @ St. Louis Cardinals",
           "game_pk": 823006,
@@ -280,18 +283,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.8037,
+            "outs_rate": 0.4325,
             "avg_outs_per_start": 15.33
           },
-          "hit_probability": 0.8037,
-          "raw_hit_probability": null,
-          "lift": 0.0296,
+          "hit_probability": 0.4325,
+          "raw_hit_probability": 0.4325,
+          "lift": -0.0992,
           "reliability": "C",
           "sample_n": 6,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 16.5,
+            "needs": 17
           }
         }
       ]

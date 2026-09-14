@@ -494,8 +494,8 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 55.1,
-          "notable_signals": 0,
+          "score": 33.9,
+          "notable_signals": 1,
           "matchup": "Detroit Tigers @ Toronto Blue Jays",
           "game_pk": 822765,
           "team": "Toronto Blue Jays",
@@ -507,11 +507,14 @@
             "same_hand_ratio": 61.1111,
             "l14_k_pct": 0.0,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 78.489,
+            "ump_k_pct": 0.072,
+            "ump_bb_pct": 0.156
           },
-          "hit_probability": 0.3086,
-          "raw_hit_probability": 0.3086,
-          "lift": -0.054,
+          "hit_probability": 0.3081,
+          "raw_hit_probability": 0.3081,
+          "lift": -0.0535,
           "reliability": "A",
           "sample_n": 29,
           "projection": {
@@ -521,9 +524,9 @@
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 35.4,
+          "score": 31.8,
           "notable_signals": 0,
           "matchup": "Detroit Tigers @ Toronto Blue Jays",
           "game_pk": 822765,
@@ -532,18 +535,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4911,
+            "outs_rate": 0.417,
             "avg_outs_per_start": 16.86
           },
-          "hit_probability": 0.4911,
-          "raw_hit_probability": null,
-          "lift": -0.0406,
+          "hit_probability": 0.417,
+          "raw_hit_probability": 0.417,
+          "lift": -0.0155,
           "reliability": "A",
           "sample_n": 29,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

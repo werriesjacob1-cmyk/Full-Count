@@ -425,7 +425,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 52.1,
+          "score": 43.1,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ New York Mets",
           "game_pk": 823575,
@@ -438,11 +438,14 @@
             "same_hand_ratio": 43.75,
             "l14_k_pct": 20.0,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.7227,
+            "ump_k_pct": -0.048,
+            "ump_bb_pct": 0.252
           },
-          "hit_probability": 0.6076,
-          "raw_hit_probability": 0.6676,
-          "lift": -0.087,
+          "hit_probability": 0.6077,
+          "raw_hit_probability": 0.6684,
+          "lift": -0.0885,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
@@ -452,10 +455,10 @@
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 59.4,
-          "notable_signals": 1,
+          "score": 62.3,
+          "notable_signals": 0,
           "matchup": "Baltimore Orioles @ New York Mets",
           "game_pk": 823575,
           "team": "Baltimore Orioles",
@@ -463,18 +466,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5868,
+            "outs_rate": 0.6292,
             "avg_outs_per_start": 16.88
           },
-          "hit_probability": 0.5868,
-          "raw_hit_probability": null,
-          "lift": 0.0551,
+          "hit_probability": 0.6235,
+          "raw_hit_probability": 0.6292,
+          "lift": 0.0395,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 15.5,
+            "needs": 16
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.8,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ New York Mets",
+          "game_pk": 823575,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            687064,
+            804636
+          ],
+          "signals": {
+            "combined_k_edge": 0.2621
+          },
+          "hit_probability": 0.6858,
+          "raw_hit_probability": null,
+          "lift": 0.2621,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]
