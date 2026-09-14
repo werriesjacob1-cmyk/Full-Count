@@ -1643,6 +1643,32 @@ Next: run repository CI on the exact pushed head; add multi-event census and MLB
 
 Alligator
 
+## 2026-09-14 — Deterministic nflverse quarantine contract
+
+- Added `nfl/research/nflverse_quarantine.py` and eight focused tests. The
+  generator verifies each audited source byte length and SHA-256 before
+  scanning, assigns stable IDs from source/line/reason/row provenance, and
+  fails closed on malformed values or count drift.
+- Structural zero rows have one explicit source-accounting use and remain
+  excluded from player history. Missing identity with offense, unresolved
+  identity metadata, and missing team/opponent rows receive an empty
+  `allowed_uses` list; identities and fields are never inferred.
+- The previously audited external cache directory is currently empty. No
+  row-level evidence was fabricated from aggregate counts. Re-acquisition of
+  the 27 public files is pending exact approval request `5670896965` on Issue
+  #91 plus any native network permission still required.
+- Eleven quarantine/history unit tests, Python compilation, and
+  `git diff --check` pass locally. No raw data, model, selector, grader,
+  workflow, public surface, production system, or immutable prediction
+  evidence changed.
+
+Next: after authorization, reproduce all 27 committed source digests and
+476,159 rows, generate the compact ledger, verify its exact reason/disposition
+counts, and add those measured results to this handoff before publishing a
+draft PR.
+
+Alligator
+
 ## 2026-09-14 — nflverse full-file quality audit
 
 - Downloaded all 27 canonical 1999–2025 weekly player-stat CSVs to a cache outside Git and recorded full-file SHA-256 evidence for 210,443,404 bytes and 476,159 rows. Added a reproducible streaming auditor and a compact 40 KB machine manifest; raw CSVs remain untracked outside the repository.
