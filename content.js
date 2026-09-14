@@ -600,13 +600,11 @@
 
     for (const entry of fresh) {
       if (acted.has(entry.key)) continue;
-      if (assigneeState(entry.row) === 'assigned') {                    // GATE 4
-        log('row already shows an assigned rep — skipping');
-        acted.add(entry.key);
-        continue;
-      }
-      if (!freshEnough(entry.row)) { acted.add(entry.key); continue; }  // GATE 5
-      if (!rateLimitOk()) return;                                       // GATE 6
+      // CarNow attaches a CarNow rep name to new leads while they wait for a
+      // dealership salesperson to join. A visible name is therefore NOT an
+      // ownership signal and must never block a newly-arrived lead.
+      if (!freshEnough(entry.row)) { acted.add(entry.key); continue; }  // GATE 4
+      if (!rateLimitOk()) return;                                       // GATE 5
       act(entry, source);
     }
   }
