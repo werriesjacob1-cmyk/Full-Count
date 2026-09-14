@@ -22,6 +22,7 @@ on:
     branches:
       - superchad/nfl-foundation-continuation-20260911
       - superchad/nfl-sunday-shadow-launch-20260912
+      # Temporary one-day research trigger; remove before merge.
       - codex/nfl-mnf-trigger-20260914
     paths:
       - .github/workflows/nfl-live-passing-yards-shadow-board.yml
