@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-13T17:49:46.093144+00:00",
+  "updated_at": "2026-09-14T00:37:27.075641+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -29921,6 +29921,99 @@
         "qualification_timestamp": "2026-09-13T17:47:16.018717+00:00",
         "board_timestamp": "2026-09-13T17:47:16.006011+00:00",
         "slate_date": "2026-09-13"
+      }
+    },
+    "fc2:823575:player-687064:strikeouts:4:over": {
+      "canonical_id": "fc2:823575:player-687064:strikeouts:4:over",
+      "settlement_identity": [
+        "823575",
+        [
+          "player",
+          "687064"
+        ],
+        "strikeouts",
+        "4",
+        "over"
+      ],
+      "slate_date": "2026-09-14",
+      "first_published_at": "2026-09-14T00:37:27.075641+00:00",
+      "publication_provenance": {
+        "artifact_id": "1ab8c94d9f5c86869ee5633d94bcf893bcf24b4ecbe8d825aaf8e8cc0a4ff189",
+        "source_commit": "b0094fe662eec74ed5e38d91e9d43c01b77686db",
+        "workflow_run_id": "34793153495",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-14T00:37:13.188629+00:00",
+        "data_hash": "082520933dc1d3274fd124cd0d70656431c8bce70d222fc949a179f6b7706a0d",
+        "live_hash": "f2718e6cc4684b0930610b648979abd2c79e41fb8bc5c9957b67211ceb33c5a1"
+      },
+      "snapshot": {
+        "id": "fc2:823575:player-687064:strikeouts:4:over",
+        "identity_version": 2,
+        "game_pk": 823575,
+        "player_id": 687064,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Brandon Young",
+        "team": "Baltimore Orioles",
+        "matchup": "Baltimore Orioles @ New York Mets",
+        "game_start": "2026-09-14T23:10:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 3.5,
+          "needs": 4
+        },
+        "prop": "Over 3.5 Strikeouts",
+        "hit_probability": 0.6076,
+        "market_odds": -125,
+        "market_implied": 0.5239,
+        "market_edge": 0.0837,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Opposing team K% 22.4",
+          "Expected workload 23.7 batters faced (his own 24.5/start over 2 real starts, shrunk toward the 23.1 league mean)",
+          "3 of 8 projected hitters bat right-handed against this RHP"
+        ],
+        "watchouts": [
+          "Significant TTO K% drop-off (TTO1 30.0% -> TTO3 18.5%) \u2014 caution deep into the start",
+          "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average",
+          "L14 K% 18.4 (49 PA) \u2014 cold recent form",
+          "Recency-weighted K rate 18.0% (exp. decay, halflife 30d, 25 real starts / 605 BF) \u2014 drives a below-average strikeout-probability read"
+        ],
+        "prob_ci": [
+          0.5867,
+          0.7067
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 25,
+        "lineup_assumed": null,
+        "base_rate": 0.6946,
+        "lift": -0.087,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "d07cda3fe",
+          "prediction_timestamp": "2026-09-14T00:34:52.476330+00:00",
+          "odds_fetched_at": "2026-09-14T00:34:48.499676+00:00",
+          "board_generated_at": "2026-09-14T00:34:52.461617+00:00"
+        },
+        "qualification_timestamp": "2026-09-14T00:34:52.476330+00:00",
+        "board_timestamp": "2026-09-14T00:34:52.461617+00:00",
+        "slate_date": "2026-09-14"
       }
     }
   }
