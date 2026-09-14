@@ -1643,6 +1643,17 @@ Next: run repository CI on the exact pushed head; add multi-event census and MLB
 
 Alligator
 
+## 2026-09-14 — nflverse weekly-stat source availability audit
+
+- Range-read the canonical nflverse weekly player-stat assets for all 27 seasons from 1999 through 2025. Every asset returned HTTP 206, exposed `ETag` and `Last-Modified`, and satisfied the existing 19-column FULL COUNT player-stat contract.
+- Observed one shared 150-column header across all seasons. Combined reported corpus size is 210,443,404 bytes, about 200.7 MiB, which supports a controlled cache/object-store ingestion design without committing raw CSVs to Git.
+- Added a compact sanitized manifest and `engineering/NFLVERSE_WEEKLY_STATS_SOURCE_AUDIT_2026-09-14.md`. Expiring signed redirect URLs are excluded. The source repository's declared CC BY 4.0 license and attribution requirement are recorded.
+- This is source/header evidence only. No full season was downloaded, no row-level quality or semantic stability claim was made, and no model, selector, grader, workflow, public surface, or production path changed.
+
+Next: download each season to an immutable cache outside Git, compute full-byte SHA-256, and produce row/identity/null/season-boundary quality reports before creating normalized warehouse partitions.
+
+Alligator
+
 ## 2026-09-14 — Codex unattended permission preflight
 
 - Completed the authorized harmless permission warm-up and wrote `engineering/evidence/CODEX_PERMISSION_PREFLIGHT_2026-09-14.md` with the complete capability matrix, skips, failures, and future manual approvals.

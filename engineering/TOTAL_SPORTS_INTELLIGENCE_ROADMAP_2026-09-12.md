@@ -27,6 +27,8 @@ The repository contains temporal transformation code, not a committed NFL wareho
 - Current 2026 projections use 2025 prior appearances, including legitimate postseason appearances.
 - No NFL play-by-play, drive, participation, route, pressure, formation, personnel, coaching, historical injury, historical odds, or line-movement warehouse is committed.
 
+A bounded source audit completed on 2026-09-14 found that nflverse exposes the weekly player-stat CSV for every season from 1999 through 2025. All 27 assets share one observed 150-column header and satisfy the current 19-column feature contract. Their combined reported size is 210,443,404 bytes. This establishes source availability and header compatibility only; the seasons have not yet been fully downloaded, digested, quality-audited, or incorporated into any model. See `engineering/NFLVERSE_WEEKLY_STATS_SOURCE_AUDIT_2026-09-14.md`.
+
 ## C. Exact NFL seasons currently used
 
 | Use | Seasons |
@@ -35,6 +37,7 @@ The repository contains temporal transformation code, not a committed NFL wareho
 | B0 held historical benchmark/residual population | 2024, 2025 regular seasons |
 | Current projection history | 2025, including postseason |
 | Current roster identity | 2026 |
+| Additional weekly-stat source availability verified for future research | 1999–2025; header contract only, not yet ingested |
 
 The URL builder accepts other plausible years, but accepting a year parameter is not evidence that those seasons have been downloaded, validated, or warehoused.
 
