@@ -1627,3 +1627,75 @@ No merge, production deploy, official picks, model changes, or MLB ledger mutati
 - Activation requires explicit Jacob authorization and either a direct Worker deployment from reviewed main (outside Workers Builds), or restored build capacity. Narrowing watch paths to infra/live-heartbeat/** prevents unrelated generated-data rebuilds but does not restore already exhausted minutes. No payment/upgrade, deployment, or settings change authorized/performed.
 
 - Live capture now explicitly validates captured_at <= sealed_at < kickoff for every row before sealing; crossing kickoff fails the run rather than freezing late eligibility. Added a regression covering equality, late sealing, reversed chronology and naive timestamps. Cloudflare cron history confirms successes at 19:30:48Z/19:35:45Z/19:40:51Z, matching GitHub dispatch creation one to two seconds later.
+
+## 2026-09-12 — Total sports intelligence foundation (Codex)
+
+The work is isolated on `codex/total-sports-foundations-20260912`, based on `db095b30d5f66192a40a558c286db03dfb42da1b`. Remote `main` had advanced to `787cc0389063e62c8bbb59a722d300ac049582a8` at final local validation because scheduled MLB workflows continue to commit generated state. Rebase and re-run exact-head validation before any integration decision.
+
+- Added `market_coverage/registry.py`, a source-agnostic coverage control plane with deterministic IDs, explicit lifecycle/capability classifications, first/last observation provenance, and fail-closed handling for malformed or unknown market families.
+- Added `market_coverage/cli.py`, which consumes archived FanDuel payload bytes, records their SHA-256 digests, and atomically writes a compact registry and coverage-gap report. Raw sportsbook payloads and machine-local paths are not committed.
+- Seeded the registry from a bounded live census of one Buffalo at Houston event across eight verified FanDuel tabs. The capture observed 107 source market families. Only the already-operating primary passing-yards family is classified `PROSPECTIVE_SHADOW`; 106 remain unnormalized, 15 observed alternate families lack normalized ladder representation, and all 107 lack an active NFL grader.
+- Added explicit passing-yards classifications and eight contract tests covering unknown-family retention, malformed identity, aggregation, digest validation, explicit lifecycle preservation, invalid classifications, and incomplete-capture loss suppression. The tests and Python compilation pass locally.
+- Added `engineering/TOTAL_SPORTS_INTELLIGENCE_ROADMAP_2026-09-12.md` with the required A–T repository truth, data and market inventory, blind spots, phased roadmap, completed work, delegation candidates, and remaining owner actions.
+- No NFL capture, model, selector, grader, public surface, workflow, MLB behavior, or immutable history was changed. No production activation or promotion is part of this branch.
+
+Next: run repository CI on the exact pushed head; add multi-event census and MLB pre-filter adapters only after this schema is reviewed; then design compact frozen-candidate and experiment ledgers with measured storage costs before wiring any live capture.
+
+Alligator
+
+## 2026-09-14 — nflverse full-file quality audit
+
+- Downloaded all 27 canonical 1999–2025 weekly player-stat CSVs to a cache outside Git and recorded full-file SHA-256 evidence for 210,443,404 bytes and 476,159 rows. Added a reproducible streaming auditor and a compact 40 KB machine manifest; raw CSVs remain untracked outside the repository.
+- The required 19-column contract, 11 numeric offensive fields, per-file season identity, `REG`/`POST` season types, and player-season-week-type uniqueness all passed. The audit found 11,365 non-sentinel player IDs and no ID with multiple nonblank display names or positions.
+- Identified 523 blank-ID structural zero rows, 42 additional literal-`0` structural rows in 1999–2000, seven nonzero rows without a stable ID, 19 identified rows missing display name and position, six rows missing opponent, and one row missing team. The seven nonzero missing-identity rows remain quarantined by failure; no identity was inferred.
+- Corrected `nflverse_history.py` so literal `0` cannot become a false cross-team player history. It is excluded only under the existing strict structural-zero rule; any tracked offense still fails closed. Three focused tests pass.
+- No raw corpus, normalized warehouse, model, selector, grader, workflow, public surface, or production path changed.
+
+Next: define an immutable external object layout and explicit quarantine schema, then validate schedule/team completeness and target-specific row eligibility before any historical challenger uses the expanded corpus.
+
+Alligator
+
+## 2026-09-14 — Fail-closed market capture completeness
+
+- Replaced the market coverage CLI's manual completeness switch with a versioned capture plan. The plan records sport, sportsbook, event universe, requested tabs, and the logical name and SHA-256 of the event-discovery artifact.
+- A complete report now requires exactly one payload for every event-by-tab pair. Missing, unexpected, duplicate, unidentified, or untabbed payloads fail before registry/report publication.
+- Coverage disappearance is evaluated only against a prior complete report with the identical deterministic scope ID. A first capture, partial capture, or changed slate cannot create a false market-removal alert.
+- Added the capture-plan contract and four focused tests; all 12 market coverage tests and Python compilation pass locally. No live workflow, model, selector, grader, public surface, or production path changed.
+
+Alligator
+
+## 2026-09-14 — Candidate-funnel audit correction
+
+- Corrected the total-sports roadmap after checking repository history: commit `63f9d5699` already fixed the duplicate-pair rewrite-forever bug and added compact records. The logger remains unwired, so representative live full-universe validation and storage selection are still required before activation.
+- The older handoff text above is retained as historical audit context; it must not be read as the current dedup state.
+
+Alligator
+
+## 2026-09-14 — nflverse weekly-stat source availability audit
+
+- Range-read the canonical nflverse weekly player-stat assets for all 27 seasons from 1999 through 2025. Every asset returned HTTP 206, exposed `ETag` and `Last-Modified`, and satisfied the existing 19-column FULL COUNT player-stat contract.
+- Observed one shared 150-column header across all seasons. Combined reported corpus size is 210,443,404 bytes, about 200.7 MiB, which supports a controlled cache/object-store ingestion design without committing raw CSVs to Git.
+- Added a compact sanitized manifest and `engineering/NFLVERSE_WEEKLY_STATS_SOURCE_AUDIT_2026-09-14.md`. Expiring signed redirect URLs are excluded. The source repository's declared CC BY 4.0 license and attribution requirement are recorded.
+- This is source/header evidence only. No full season was downloaded, no row-level quality or semantic stability claim was made, and no model, selector, grader, workflow, public surface, or production path changed.
+
+Next: download each season to an immutable cache outside Git, compute full-byte SHA-256, and produce row/identity/null/season-boundary quality reports before creating normalized warehouse partitions.
+
+Alligator
+
+## 2026-09-14 — Codex unattended permission preflight
+
+- Completed the authorized harmless permission warm-up and wrote `engineering/evidence/CODEX_PERMISSION_PREFLIGHT_2026-09-14.md` with the complete capability matrix, skips, failures, and future manual approvals.
+- Confirmed unattended readiness for ordinary shell/repository work, local Git, remote fetch, GitHub connector reads and reversible branch/PR writes, Issue #91 relay, Actions inspection, connector artifact download, Python/Node execution, public research endpoints, nflverse, MLB Stats API, the existing FanDuel public read path, signed-in Cloudflare read-only inspection, browser reads, subagents, and supervised long-running processes.
+- Local Git CLI push has no credential helper; reversible branch writes work through the authenticated GitHub connector. npm and Docker are absent locally. Python package metadata works, but pip download/install is blocked by Windows ACL behavior in pip-created temporary child directories; use CI for dependency installs.
+- All ordinary probe files were removed. The untracked `.codex_pip_tmp` and `.pip-tmp` directories remain because Windows denies access even after an exact turn-scoped filesystem grant. They contain only failed pip temporary state and are excluded from staging.
+- Posted the remote approval relay, active preflight summary, and native cleanup limitation to Issue #91. No production/public state, secrets, models, selectors, graders, or immutable evidence changed.
+
+Alligator
+
+## 2026-09-14 — Foundation branch synchronized with current main
+
+- Rechecked protected `main` at `bca7f798e09f7a8b440ebb9ed8ae8cc45e2ac4db` and merged it cleanly into the total-sports foundation branch.
+- The upstream delta updated generated MLB calibration and public data artifacts only: `backtest/calibration_recheck_report.json`, `backtest/calibrators_by_market.json`, `docs/data.json`, and `docs/live.json`. No foundation file required conflict resolution.
+- The branch remains draft-only. Re-run root and NFL suites on the published merge head before treating it as reviewable evidence.
+
+Alligator

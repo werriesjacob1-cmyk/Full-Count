@@ -1,0 +1,5157 @@
+{
+  "generated_at": "2026-09-12T23:39:12.177000Z",
+  "markets": [
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:c351403c91c2c917a6291efa",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436356"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "1st Half Winner"
+      ],
+      "source_market_type": "1ST_HALF_WINNER",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:516b2020006671878f637012",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436314"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "1st Quarter Spread"
+      ],
+      "source_market_type": "1ST_QUARTER_HANDICAP",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:a51e2b97d709ea38dcc9dd5e",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436333"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 28,
+      "source_artifacts": [
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "1st Team Touchdown Scorer"
+      ],
+      "source_market_type": "1ST_TEAM_TOUCHDOWN_SCORER",
+      "source_payload_sha256s": [
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:1ac74c877446d656e12dfa67",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436334"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "2nd Quarter Spread"
+      ],
+      "source_market_type": "2ND_QUARTER_HANDICAP",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:8b370d0e495533155017cc86",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436357"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "3rd Quarter Spread"
+      ],
+      "source_market_type": "3RD_QUARTER_HANDICAP",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:49764045494c93a6e64e0908",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436383"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "4th Quarter Spread"
+      ],
+      "source_market_type": "4TH_QUARTER_HANDICAP",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular"
+      ]
+    },
+    {
+      "alternate": true,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:a611afc56c08b5ebd1623af6",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436407"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 102,
+      "source_artifacts": [
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "Alternate Spread"
+      ],
+      "source_market_type": "ALTERNATE_HANDICAP",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular"
+      ]
+    },
+    {
+      "alternate": true,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:9c437babe098b367aec617ff",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436423"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 112,
+      "source_artifacts": [
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "Alternate Total Points"
+      ],
+      "source_market_type": "ALTERNATE_TOTAL",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:5a82f9c99e1bd067750c37af",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436414"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 28,
+      "source_artifacts": [
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "Anytime 1st Half TD Scorer"
+      ],
+      "source_market_type": "ANYTIME_1ST_HALF_TD_SCORER",
+      "source_payload_sha256s": [
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:c2de69ae178d05cc07afe0ac",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436326"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 28,
+      "source_artifacts": [
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "Anytime 1st Quarter TD Scorer"
+      ],
+      "source_market_type": "ANYTIME_1ST_QTR_TD_SCORER",
+      "source_payload_sha256s": [
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:5685cbbe6c773dd95b74b339",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436420"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 29,
+      "source_artifacts": [
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "Anytime 2nd Half TD Scorer"
+      ],
+      "source_market_type": "ANYTIME_2ND_HALF_TD_SCORER",
+      "source_payload_sha256s": [
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:e59d5cf94800209c4f227c80",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436369"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 29,
+      "source_artifacts": [
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "Anytime 2nd Quarter TD Scorer"
+      ],
+      "source_market_type": "ANYTIME_2ND_QTR_TD_SCORER",
+      "source_payload_sha256s": [
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:0cac79adf5be4b5c0227c20b",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436375"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 29,
+      "source_artifacts": [
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "Anytime 3rd Quarter TD Scorer"
+      ],
+      "source_market_type": "ANYTIME_3RD_QTR_TD_SCORER",
+      "source_payload_sha256s": [
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:0d1703256c0e0b7969b0f820",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436348"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 29,
+      "source_artifacts": [
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "Anytime 4th Quarter TD Scorer"
+      ],
+      "source_market_type": "ANYTIME_4TH_QTR_TD_SCORER",
+      "source_payload_sha256s": [
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:f43b8d831f8c0ea8f92db270",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436373"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 58,
+      "source_artifacts": [
+        "popular:popular.json",
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "Any Time Touchdown Scorer"
+      ],
+      "source_market_type": "ANY_TIME_TOUCHDOWN_SCORER",
+      "source_payload_sha256s": [
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:b5e49df36083b83ce9168927",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185995859"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 6,
+      "source_artifacts": [
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "Josh Allen Drive 1 Passing Yds BUF Bills"
+      ],
+      "source_market_type": "AWAY_DRIVE_X_PASSING_YDS_-_PLAYER_Y",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:76e10010f9bbe8f26ba4c6af",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185995808",
+        "734.185995819",
+        "734.185995820",
+        "734.185995829",
+        "734.185995867"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 5,
+      "observation_count": 1,
+      "runner_instances": 15,
+      "source_artifacts": [
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "D.J. Moore Drive 1 Receiving Yds BUF Bills",
+        "Dalton Kincaid Drive 1 Receiving Yds BUF Bills",
+        "Dawson Knox Drive 1 Receiving Yds BUF Bills",
+        "James Cook Drive 1 Receiving Yds BUF Bills",
+        "Khalil Shakir Drive 1 Receiving Yds BUF Bills"
+      ],
+      "source_market_type": "AWAY_DRIVE_X_RECEIVING_YDS_-_PLAYER_Y",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:c9d9b910aafc580a8d331514",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185995826",
+        "734.185995848"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 1,
+      "runner_instances": 8,
+      "source_artifacts": [
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "James Cook Drive 1 Rushing Yds BUF Bills",
+        "Josh Allen Drive 1 Rushing Yds BUF Bills"
+      ],
+      "source_market_type": "AWAY_DRIVE_X_RUSHING_YDS_-_PLAYER_Y",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:2a56b416a22769eb031e8e93",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185995827"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 26,
+      "source_artifacts": [
+        "popular:popular.json",
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "BUF Bills 1st Drive - To Score a TD"
+      ],
+      "source_market_type": "AWAY_TEAM_1ST_DRIVE_-_TO_SCORE_A_TD",
+      "source_payload_sha256s": [
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": true,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:f757669bcddeed108397c67b",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436408"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 80,
+      "source_artifacts": [
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "BUF Bills Alternate Total"
+      ],
+      "source_market_type": "AWAY_TEAM_ALTERNATE_TOTAL",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:8fc5bcb66be8b725d5f2f97d",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185995854"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 20,
+      "source_artifacts": [
+        "popular:popular.json",
+        "receiving-props:receiving-props.json"
+      ],
+      "source_market_names": [
+        "BUF Bills Drive 1 - Player to Catch a Pass"
+      ],
+      "source_market_type": "AWAY_TEAM_DRIVE_X_-_PLAYER_TO_CATCH_A_PASS",
+      "source_payload_sha256s": [
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "receiving-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:0eceeb456a20803511223ae4",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436382"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "BUF Bills Total Points"
+      ],
+      "source_market_type": "AWAY_TEAM_TOTAL_POINTS",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:c12d7b23d8b5cf687590178f",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436347"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "Both Teams to Score 1+ TD in Each Half"
+      ],
+      "source_market_type": "BOTH_TEAMS_TO_SCORE_1+_TD_IN_EACH_HALF",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:cadbb8a8add8715f11a53e34",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436395"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "Both Teams to Score 10+ Points"
+      ],
+      "source_market_type": "BOTH_TEAMS_TO_SCORE_10_POINTS",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:24e5a75d1da98562153a4ee7",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436409"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "Both Teams to Score 2+ TD in Each Half"
+      ],
+      "source_market_type": "BOTH_TEAMS_TO_SCORE_2+_TD_IN_EACH_HALF",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:1f493f2a7883abd4557375cb",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185395486"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 28,
+      "source_artifacts": [
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "Either Player - Anytime Touchdown Scorer"
+      ],
+      "source_market_type": "EITHER_PLAYER_-_ANY_TIME_TOUCHDOWN_SCORER",
+      "source_payload_sha256s": [
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:f603eebfc67104d6f74d19df",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185395488"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 28,
+      "source_artifacts": [
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "Either Player - First Touchdown Scorer"
+      ],
+      "source_market_type": "EITHER_PLAYER_-_FIRST_TOUCHDOWN_SCORER",
+      "source_payload_sha256s": [
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:1e97e4fcadb01041a3eb0cf1",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185395489"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 28,
+      "source_artifacts": [
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "Either Player - To Score 2+ Touchdowns"
+      ],
+      "source_market_type": "EITHER_PLAYER_-_TO_SCORE_2+_TOUCHDOWNS",
+      "source_payload_sha256s": [
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:6900e248ceac6ada04c58291",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185931250"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 39,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "Exact Game Winning Margin"
+      ],
+      "source_market_type": "EXACT_SCORE_DIFFERENTIAL_-_GAME_WINNING_MARGIN",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:b1a3826ba80c1960156e0a1a",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185931404"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 73,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "Exact Team Winning Margin"
+      ],
+      "source_market_type": "EXACT_SCORE_DIFFERENTIAL_-_TEAM_WINNING_MARGIN",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:c42191de8c462bde08c99d36",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436363"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "1st Half Spread"
+      ],
+      "source_market_type": "FIRST_HALF_HANDICAP",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:d26f0cc0101e97761447dbaa",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436349"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "1st Half Total"
+      ],
+      "source_market_type": "FIRST_HALF_TOTAL",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:4d50be546d929ecefb876d6e",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436368"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 6,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "First Scoring Play"
+      ],
+      "source_market_type": "FIRST_SCORING_PLAY",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:2563627270dff27c71167e5d",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436324"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 58,
+      "source_artifacts": [
+        "popular:popular.json",
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "First Touchdown Scorer"
+      ],
+      "source_market_type": "FIRST_TOUCHDOWN_SCORER",
+      "source_payload_sha256s": [
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:3d109361fb7a1045f5d87cbf",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185588712"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 32,
+      "source_artifacts": [
+        "game-specials:game-specials.json",
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "Game Specials - Popular"
+      ],
+      "source_market_type": "GAME_SPECIALS_-_FEATURED",
+      "source_payload_sha256s": [
+        "253df7c60faa5d77ec38549f001743639e82ba07feb374ad0f0cba008103a557",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "game-specials",
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:61311dc40523b18805162f0a",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185585930"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 3,
+      "observation_count": 3,
+      "runner_instances": 48,
+      "source_artifacts": [
+        "d-st:d-st.json",
+        "game-specials:game-specials.json",
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "Game Specials - Kicking"
+      ],
+      "source_market_type": "GAME_SPECIALS_-_KICKING",
+      "source_payload_sha256s": [
+        "253df7c60faa5d77ec38549f001743639e82ba07feb374ad0f0cba008103a557",
+        "5a4f393fcf7e7a220a13445bc5be038473e78b35fd79d57851f30265bb5381b1",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "d-st",
+        "game-specials",
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:79644be1823dd8d5849cbe01",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185587532"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 3,
+      "observation_count": 3,
+      "runner_instances": 48,
+      "source_artifacts": [
+        "game-specials:game-specials.json",
+        "passing-props:passing-props.json",
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "Game Specials - Passing"
+      ],
+      "source_market_type": "GAME_SPECIALS_-_PASSING",
+      "source_payload_sha256s": [
+        "253df7c60faa5d77ec38549f001743639e82ba07feb374ad0f0cba008103a557",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610",
+        "c4e53ae2afd0e9be13a7410f046819fd779da4437c8c476413850276dc921aeb"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "game-specials",
+        "passing-props",
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:6c65a3cd169fcc66c6f618e7",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185589558"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 3,
+      "observation_count": 3,
+      "runner_instances": 51,
+      "source_artifacts": [
+        "game-specials:game-specials.json",
+        "popular:popular.json",
+        "receiving-props:receiving-props.json"
+      ],
+      "source_market_names": [
+        "Game Specials - Receiving"
+      ],
+      "source_market_type": "GAME_SPECIALS_-_RECEIVING",
+      "source_payload_sha256s": [
+        "253df7c60faa5d77ec38549f001743639e82ba07feb374ad0f0cba008103a557",
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "game-specials",
+        "popular",
+        "receiving-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:5ba92eed4872fbf4c8b4b497",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185590156"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 3,
+      "observation_count": 3,
+      "runner_instances": 51,
+      "source_artifacts": [
+        "game-specials:game-specials.json",
+        "popular:popular.json",
+        "rushing-props:rushing-props.json"
+      ],
+      "source_market_names": [
+        "Game Specials - Rushing"
+      ],
+      "source_market_type": "GAME_SPECIALS_-_RUSHING",
+      "source_payload_sha256s": [
+        "253df7c60faa5d77ec38549f001743639e82ba07feb374ad0f0cba008103a557",
+        "2b893d693d3c87417e9cd75a297a8fbc542844b30f383576cbfd9f77acde11c3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "game-specials",
+        "popular",
+        "rushing-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:14db8805a24add95810817aa",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185590283"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 3,
+      "observation_count": 3,
+      "runner_instances": 27,
+      "source_artifacts": [
+        "game-specials:game-specials.json",
+        "popular:popular.json",
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "Game Specials - Touchdowns"
+      ],
+      "source_market_type": "GAME_SPECIALS_-_TOUCHDOWNS",
+      "source_payload_sha256s": [
+        "253df7c60faa5d77ec38549f001743639e82ba07feb374ad0f0cba008103a557",
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "game-specials",
+        "popular",
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:3ddccf5599a02fd2e984018a",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185995844"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 6,
+      "source_artifacts": [
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "C.J. Stroud Drive 1 Passing Yds HOU Texans"
+      ],
+      "source_market_type": "HOME_DRIVE_X_PASSING_YDS_-_PLAYER_Y",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:a63f3085c87ecbd4ffb37db2",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185995811",
+        "734.185995816",
+        "734.185995823",
+        "734.185995856",
+        "734.185995863"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 5,
+      "observation_count": 1,
+      "runner_instances": 16,
+      "source_artifacts": [
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "Dalton Schultz Drive 1 Receiving Yds HOU Texans",
+        "Jaylin Noel Drive 1 Receiving Yds HOU Texans",
+        "Kayshon Boutte Drive 1 Receiving Yds HOU Texans",
+        "Nico Collins Drive 1 Receiving Yds HOU Texans",
+        "Xavier Hutchinson Drive 1 Receiving Yds HOU Texans"
+      ],
+      "source_market_type": "HOME_DRIVE_X_RECEIVING_YDS_-_PLAYER_Y",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:71c99b2eccca2308f1b57bb1",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185995866"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 5,
+      "source_artifacts": [
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "David Montgomery Drive 1 Rushing Yds HOU Texans"
+      ],
+      "source_market_type": "HOME_DRIVE_X_RUSHING_YDS_-_PLAYER_Y",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:8520ca13511f9de7715b1d98",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185995833"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 28,
+      "source_artifacts": [
+        "popular:popular.json",
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "HOU Texans 1st Drive - To Score a TD"
+      ],
+      "source_market_type": "HOME_TEAM_1ST_DRIVE_-_TO_SCORE_A_TD",
+      "source_payload_sha256s": [
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": true,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:2810f0320438f7904aaf5bb3",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436354"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 80,
+      "source_artifacts": [
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "HOU Texans Alternate Total"
+      ],
+      "source_market_type": "HOME_TEAM_ALTERNATE_TOTAL",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:d03daaeceb58afc8765e36ce",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185995878"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 28,
+      "source_artifacts": [
+        "popular:popular.json",
+        "receiving-props:receiving-props.json"
+      ],
+      "source_market_names": [
+        "HOU Texans Drive 1 - Player to Catch a Pass"
+      ],
+      "source_market_type": "HOME_TEAM_DRIVE_X_-_PLAYER_TO_CATCH_A_PASS",
+      "source_payload_sha256s": [
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "receiving-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:27c4db80d163a5f998ab1eff",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436428"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "HOU Texans Total Points"
+      ],
+      "source_market_type": "HOME_TEAM_TOTAL_POINTS",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:b47975f2947cf8d138a761dc",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436394"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 58,
+      "source_artifacts": [
+        "popular:popular.json",
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "Last Touchdown Scorer"
+      ],
+      "source_market_type": "LAST_TOUCHDOWN_SCORER",
+      "source_payload_sha256s": [
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:24df020ca4ef22a171bf9b34",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.168995624"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 8,
+      "observation_count": 8,
+      "runner_instances": 16,
+      "source_artifacts": [
+        "d-st:d-st.json",
+        "game-specials:game-specials.json",
+        "passing-props:passing-props.json",
+        "popular:popular.json",
+        "receiving-props:receiving-props.json",
+        "rushing-props:rushing-props.json",
+        "scoring:scoring.json",
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "Spread"
+      ],
+      "source_market_type": "MATCH_HANDICAP_(2-WAY)",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d",
+        "253df7c60faa5d77ec38549f001743639e82ba07feb374ad0f0cba008103a557",
+        "2b893d693d3c87417e9cd75a297a8fbc542844b30f383576cbfd9f77acde11c3",
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80",
+        "5a4f393fcf7e7a220a13445bc5be038473e78b35fd79d57851f30265bb5381b1",
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610",
+        "c4e53ae2afd0e9be13a7410f046819fd779da4437c8c476413850276dc921aeb"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "d-st",
+        "game-specials",
+        "passing-props",
+        "popular",
+        "receiving-props",
+        "rushing-props",
+        "scoring",
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:c354890231b928fb8b2d029f",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.168995622"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 8,
+      "observation_count": 8,
+      "runner_instances": 16,
+      "source_artifacts": [
+        "d-st:d-st.json",
+        "game-specials:game-specials.json",
+        "passing-props:passing-props.json",
+        "popular:popular.json",
+        "receiving-props:receiving-props.json",
+        "rushing-props:rushing-props.json",
+        "scoring:scoring.json",
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "Moneyline"
+      ],
+      "source_market_type": "MONEY_LINE",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d",
+        "253df7c60faa5d77ec38549f001743639e82ba07feb374ad0f0cba008103a557",
+        "2b893d693d3c87417e9cd75a297a8fbc542844b30f383576cbfd9f77acde11c3",
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80",
+        "5a4f393fcf7e7a220a13445bc5be038473e78b35fd79d57851f30265bb5381b1",
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610",
+        "c4e53ae2afd0e9be13a7410f046819fd779da4437c8c476413850276dc921aeb"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "d-st",
+        "game-specials",
+        "passing-props",
+        "popular",
+        "receiving-props",
+        "rushing-props",
+        "scoring",
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:6c104ac44753b8487daa9180",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183438273"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 4,
+      "source_artifacts": [
+        "passing-props:passing-props.json",
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "Most Passing Yards"
+      ],
+      "source_market_type": "MOST_PASSING_YARDS",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610",
+        "c4e53ae2afd0e9be13a7410f046819fd779da4437c8c476413850276dc921aeb"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "passing-props",
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:0a28a4afab485c67d0f9b3a0",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183438245"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 26,
+      "source_artifacts": [
+        "popular:popular.json",
+        "receiving-props:receiving-props.json"
+      ],
+      "source_market_names": [
+        "Most Receiving Yards"
+      ],
+      "source_market_type": "MOST_RECEIVING_YARDS",
+      "source_payload_sha256s": [
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "receiving-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:4e53013d9ac93bb5fbfccf79",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183438264"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 10,
+      "source_artifacts": [
+        "popular:popular.json",
+        "rushing-props:rushing-props.json"
+      ],
+      "source_market_names": [
+        "Most Rushing Yards"
+      ],
+      "source_market_type": "MOST_RUSHING_YARDS",
+      "source_payload_sha256s": [
+        "2b893d693d3c87417e9cd75a297a8fbc542844b30f383576cbfd9f77acde11c3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "rushing-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:1a39b91c4ee3c478c4462a54",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185585889"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 16,
+      "source_artifacts": [
+        "game-specials:game-specials.json",
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "Game Specials - Featured"
+      ],
+      "source_market_type": "NFL_MATCH_SPECIALS",
+      "source_payload_sha256s": [
+        "253df7c60faa5d77ec38549f001743639e82ba07feb374ad0f0cba008103a557",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "game-specials",
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:89909ceb6c29f0f51584e3c6",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183438118"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 12,
+      "source_artifacts": [
+        "receiving-props:receiving-props.json"
+      ],
+      "source_market_names": [
+        "Player to Record a 10+ Yard Reception"
+      ],
+      "source_market_type": "PLAYERS_WITH_10+_YARDS_RECEPTION",
+      "source_payload_sha256s": [
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "receiving-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:969ce11de0bfac38efa874f7",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183438126"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 12,
+      "source_artifacts": [
+        "receiving-props:receiving-props.json"
+      ],
+      "source_market_names": [
+        "Player to Record a 15+ Yard Reception"
+      ],
+      "source_market_type": "PLAYERS_WITH_15+_YARDS_RECEPTION",
+      "source_payload_sha256s": [
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "receiving-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:9b85ae1d3fa813f7eb7b0ccd",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183438114"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 12,
+      "source_artifacts": [
+        "receiving-props:receiving-props.json"
+      ],
+      "source_market_names": [
+        "Player To Record a 20+ Yard Reception"
+      ],
+      "source_market_type": "PLAYERS_WITH_20+_YARDS_RECEPTION",
+      "source_payload_sha256s": [
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "receiving-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:ab0db9defa121157e8b2bbff",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183438111"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 9,
+      "source_artifacts": [
+        "receiving-props:receiving-props.json"
+      ],
+      "source_market_names": [
+        "Player To Record a 30+ Yard Reception"
+      ],
+      "source_market_type": "PLAYERS_WITH_30+_YARDS_RECEPTION",
+      "source_payload_sha256s": [
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "receiving-props"
+      ]
+    },
+    {
+      "alternate": true,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:b934558f64d7b2008e608277",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183438210",
+        "734.183438271"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 4,
+      "observation_count": 2,
+      "runner_instances": 14,
+      "source_artifacts": [
+        "passing-props:passing-props.json",
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "C.J. Stroud - Alt Passing TDs",
+        "Josh Allen - Alt Passing TDs"
+      ],
+      "source_market_type": "PLAYER_X_ALT_PASSING_TOUCHDOWNS_HIGH",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610",
+        "c4e53ae2afd0e9be13a7410f046819fd779da4437c8c476413850276dc921aeb"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "passing-props",
+        "popular"
+      ]
+    },
+    {
+      "alternate": true,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:c21be16f778142f22d1d979d",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183438286",
+        "734.183438291"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 4,
+      "observation_count": 2,
+      "runner_instances": 36,
+      "source_artifacts": [
+        "passing-props:passing-props.json",
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "C.J. Stroud - Alt Passing Yds",
+        "Josh Allen - Alt Passing Yds"
+      ],
+      "source_market_type": "PLAYER_X_ALT_PASSING_YARDS_HIGH",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610",
+        "c4e53ae2afd0e9be13a7410f046819fd779da4437c8c476413850276dc921aeb"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "passing-props",
+        "popular"
+      ]
+    },
+    {
+      "alternate": true,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:8e54549b7e856906b3cd1430",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183438219"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 24,
+      "source_artifacts": [
+        "popular:popular.json",
+        "receiving-props:receiving-props.json"
+      ],
+      "source_market_names": [
+        "Nico Collins - Alt Receiving Yds"
+      ],
+      "source_market_type": "PLAYER_X_ALT_RECEIVING_YARDS_HIGH",
+      "source_payload_sha256s": [
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "receiving-props"
+      ]
+    },
+    {
+      "alternate": true,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:2d2379525ecc8c609343f226",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.184447363",
+        "734.184447366",
+        "734.184885797",
+        "734.184961283",
+        "734.185595338",
+        "734.185995432"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 12,
+      "observation_count": 2,
+      "runner_instances": 94,
+      "source_artifacts": [
+        "popular:popular.json",
+        "receiving-props:receiving-props.json"
+      ],
+      "source_market_names": [
+        "David Montgomery - Alt Receiving Yds",
+        "Dawson Knox - Alt Receiving Yds",
+        "James Cook - Alt Receiving Yds",
+        "Jaylin Noel - Alt Receiving Yds",
+        "Josh Palmer - Alt Receiving Yds",
+        "Woody Marks - Alt Receiving Yds"
+      ],
+      "source_market_type": "PLAYER_X_ALT_RECEIVING_YARDS_LOW",
+      "source_payload_sha256s": [
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "receiving-props"
+      ]
+    },
+    {
+      "alternate": true,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:2db829c61d17a1f476616638",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183438235",
+        "734.183438242",
+        "734.183438292",
+        "734.184446654",
+        "734.184448985",
+        "734.185030870"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 12,
+      "observation_count": 2,
+      "runner_instances": 144,
+      "source_artifacts": [
+        "popular:popular.json",
+        "receiving-props:receiving-props.json"
+      ],
+      "source_market_names": [
+        "D.J. Moore - Alt Receiving Yds",
+        "Dalton Kincaid - Alt Receiving Yds",
+        "Dalton Schultz - Alt Receiving Yds",
+        "Kayshon Boutte - Alt Receiving Yds",
+        "Khalil Shakir - Alt Receiving Yds",
+        "Xavier Hutchinson - Alt Receiving Yds"
+      ],
+      "source_market_type": "PLAYER_X_ALT_RECEIVING_YARDS_MEDIUM",
+      "source_payload_sha256s": [
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "receiving-props"
+      ]
+    },
+    {
+      "alternate": true,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:ac5fe9932658dfe6cad5f27d",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183438253"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 18,
+      "source_artifacts": [
+        "popular:popular.json",
+        "receiving-props:receiving-props.json"
+      ],
+      "source_market_names": [
+        "Nico Collins - Alt Receptions"
+      ],
+      "source_market_type": "PLAYER_X_ALT_RECEPTIONS_HIGH",
+      "source_payload_sha256s": [
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "receiving-props"
+      ]
+    },
+    {
+      "alternate": true,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:5dec8c4ec8c2325847e3a995",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.184447368",
+        "734.184885796",
+        "734.184961276",
+        "734.185595325",
+        "734.185595345",
+        "734.185995433"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 12,
+      "observation_count": 2,
+      "runner_instances": 50,
+      "source_artifacts": [
+        "popular:popular.json",
+        "receiving-props:receiving-props.json"
+      ],
+      "source_market_names": [
+        "David Montgomery - Alt Receptions",
+        "Dawson Knox - Alt Receptions",
+        "James Cook - Alt Receptions",
+        "Jaylin Noel - Alt Receptions",
+        "Josh Palmer - Alt Receptions",
+        "Woody Marks - Alt Receptions"
+      ],
+      "source_market_type": "PLAYER_X_ALT_RECEPTIONS_LOW",
+      "source_payload_sha256s": [
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "receiving-props"
+      ]
+    },
+    {
+      "alternate": true,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:42206e914309d7549985c108",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183438232",
+        "734.183438261",
+        "734.183438283",
+        "734.184446652",
+        "734.184448982",
+        "734.185030868"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 12,
+      "observation_count": 2,
+      "runner_instances": 82,
+      "source_artifacts": [
+        "popular:popular.json",
+        "receiving-props:receiving-props.json"
+      ],
+      "source_market_names": [
+        "D.J. Moore - Alt Receptions",
+        "Dalton Kincaid - Alt Receptions",
+        "Dalton Schultz - Alt Receptions",
+        "Kayshon Boutte - Alt Receptions",
+        "Khalil Shakir - Alt Receptions",
+        "Xavier Hutchinson - Alt Receptions"
+      ],
+      "source_market_type": "PLAYER_X_ALT_RECEPTIONS_MEDIUM",
+      "source_payload_sha256s": [
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "receiving-props"
+      ]
+    },
+    {
+      "alternate": true,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:85619507694b5d51286a129d",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183438256"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 20,
+      "source_artifacts": [
+        "popular:popular.json",
+        "rushing-props:rushing-props.json"
+      ],
+      "source_market_names": [
+        "James Cook - Alt Rushing Yds"
+      ],
+      "source_market_type": "PLAYER_X_ALT_RUSHING_YARDS_HIGH",
+      "source_payload_sha256s": [
+        "2b893d693d3c87417e9cd75a297a8fbc542844b30f383576cbfd9f77acde11c3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "rushing-props"
+      ]
+    },
+    {
+      "alternate": true,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:4038323738e8415e2d5247dc",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.184445332"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 12,
+      "source_artifacts": [
+        "popular:popular.json",
+        "rushing-props:rushing-props.json"
+      ],
+      "source_market_names": [
+        "C.J. Stroud - Alt Rushing Yds"
+      ],
+      "source_market_type": "PLAYER_X_ALT_RUSHING_YARDS_LOW",
+      "source_payload_sha256s": [
+        "2b893d693d3c87417e9cd75a297a8fbc542844b30f383576cbfd9f77acde11c3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "rushing-props"
+      ]
+    },
+    {
+      "alternate": true,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:895832c037aee6e9540d5e5c",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183438226",
+        "734.183438247",
+        "734.183438289"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 6,
+      "observation_count": 2,
+      "runner_instances": 64,
+      "source_artifacts": [
+        "popular:popular.json",
+        "rushing-props:rushing-props.json"
+      ],
+      "source_market_names": [
+        "David Montgomery - Alt Rushing Yds",
+        "Josh Allen - Alt Rushing Yds",
+        "Woody Marks - Alt Rushing Yds"
+      ],
+      "source_market_type": "PLAYER_X_ALT_RUSHING_YARDS_MEDIUM",
+      "source_payload_sha256s": [
+        "2b893d693d3c87417e9cd75a297a8fbc542844b30f383576cbfd9f77acde11c3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "rushing-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:e9276815769923192eb83940",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436367",
+        "734.183436427"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 4,
+      "observation_count": 2,
+      "runner_instances": 8,
+      "source_artifacts": [
+        "passing-props:passing-props.json",
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "C.J. Stroud - Passing TDs",
+        "Josh Allen - Passing TDs"
+      ],
+      "source_market_type": "PLAYER_X_PASSING_TOUCHDOWNS_HIGH",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610",
+        "c4e53ae2afd0e9be13a7410f046819fd779da4437c8c476413850276dc921aeb"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "passing-props",
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [
+        "GRADER_NOT_ACTIVE",
+        "SELECTOR_NOT_VALIDATED"
+      ],
+      "canonical_market": "passing_yards",
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": true,
+        "historical_validated": true,
+        "ingested": true,
+        "model_research": true,
+        "normalized": true,
+        "prospective_capture": true,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:31d4a77faf64a10842a679de",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436353",
+        "734.183436398"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "PROSPECTIVE_SHADOW",
+      "market_instances": 4,
+      "observation_count": 2,
+      "runner_instances": 8,
+      "source_artifacts": [
+        "passing-props:passing-props.json",
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "C.J. Stroud - Passing Yds",
+        "Josh Allen - Passing Yds"
+      ],
+      "source_market_type": "PLAYER_X_PASSING_YARDS_HIGH",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610",
+        "c4e53ae2afd0e9be13a7410f046819fd779da4437c8c476413850276dc921aeb"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Frozen B0 passing-yards control is captured prospectively; public selector and grading remain inactive",
+      "tabs": [
+        "passing-props",
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:400610a0c18716d9f2162b77",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183438117"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 4,
+      "source_artifacts": [
+        "popular:popular.json",
+        "receiving-props:receiving-props.json"
+      ],
+      "source_market_names": [
+        "Nico Collins - Receiving Yds"
+      ],
+      "source_market_type": "PLAYER_X_RECEIVING_YARDS_HIGH",
+      "source_payload_sha256s": [
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "receiving-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:0ee7fa65bb3206c12b92169a",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.184447360",
+        "734.184447369",
+        "734.184885794",
+        "734.184961282",
+        "734.185595317",
+        "734.185995435"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 12,
+      "observation_count": 2,
+      "runner_instances": 24,
+      "source_artifacts": [
+        "popular:popular.json",
+        "receiving-props:receiving-props.json"
+      ],
+      "source_market_names": [
+        "David Montgomery - Receiving Yds",
+        "Dawson Knox - Receiving Yds",
+        "James Cook - Receiving Yds",
+        "Jaylin Noel - Receiving Yds",
+        "Josh Palmer - Receiving Yds",
+        "Woody Marks - Receiving Yds"
+      ],
+      "source_market_type": "PLAYER_X_RECEIVING_YARDS_LOW",
+      "source_payload_sha256s": [
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "receiving-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:3024135cc2e203039881555f",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183438112",
+        "734.183438121",
+        "734.183438124",
+        "734.184446655",
+        "734.184448983",
+        "734.185030869"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 12,
+      "observation_count": 2,
+      "runner_instances": 24,
+      "source_artifacts": [
+        "popular:popular.json",
+        "receiving-props:receiving-props.json"
+      ],
+      "source_market_names": [
+        "D.J. Moore - Receiving Yds",
+        "Dalton Kincaid - Receiving Yds",
+        "Dalton Schultz - Receiving Yds",
+        "Kayshon Boutte - Receiving Yds",
+        "Khalil Shakir - Receiving Yds",
+        "Xavier Hutchinson - Receiving Yds"
+      ],
+      "source_market_type": "PLAYER_X_RECEIVING_YARDS_MEDIUM",
+      "source_payload_sha256s": [
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "receiving-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:08aca761514266f996c80921",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183438113"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 4,
+      "source_artifacts": [
+        "popular:popular.json",
+        "receiving-props:receiving-props.json"
+      ],
+      "source_market_names": [
+        "Nico Collins - Total Receptions"
+      ],
+      "source_market_type": "PLAYER_X_RECEPTIONS_HIGH",
+      "source_payload_sha256s": [
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "receiving-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:c8440bd7bb618a1aded3770c",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.184447364",
+        "734.184885799",
+        "734.184961274",
+        "734.185595318",
+        "734.185595331",
+        "734.185995431"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 12,
+      "observation_count": 2,
+      "runner_instances": 24,
+      "source_artifacts": [
+        "popular:popular.json",
+        "receiving-props:receiving-props.json"
+      ],
+      "source_market_names": [
+        "David Montgomery - Total Receptions",
+        "Dawson Knox - Total Receptions",
+        "James Cook - Total Receptions",
+        "Jaylin Noel - Total Receptions",
+        "Josh Palmer - Total Receptions",
+        "Woody Marks - Total Receptions"
+      ],
+      "source_market_type": "PLAYER_X_RECEPTIONS_LOW",
+      "source_payload_sha256s": [
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "receiving-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:1ee21a887d311e705c652c7d",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183438108",
+        "734.183438110",
+        "734.183438119",
+        "734.184446646",
+        "734.184448980",
+        "734.185030866"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 12,
+      "observation_count": 2,
+      "runner_instances": 24,
+      "source_artifacts": [
+        "popular:popular.json",
+        "receiving-props:receiving-props.json"
+      ],
+      "source_market_names": [
+        "D.J. Moore - Total Receptions",
+        "Dalton Kincaid - Total Receptions",
+        "Dalton Schultz - Total Receptions",
+        "Kayshon Boutte - Total Receptions",
+        "Khalil Shakir - Total Receptions",
+        "Xavier Hutchinson - Total Receptions"
+      ],
+      "source_market_type": "PLAYER_X_RECEPTIONS_MEDIUM",
+      "source_payload_sha256s": [
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "receiving-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:7f48da66b20a9eae119d33f8",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183437204"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 4,
+      "source_artifacts": [
+        "popular:popular.json",
+        "rushing-props:rushing-props.json"
+      ],
+      "source_market_names": [
+        "James Cook - Rushing Yds"
+      ],
+      "source_market_type": "PLAYER_X_RUSHING_YARDS_HIGH",
+      "source_payload_sha256s": [
+        "2b893d693d3c87417e9cd75a297a8fbc542844b30f383576cbfd9f77acde11c3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "rushing-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:91e698f9a704d0a9525301b1",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.184445330"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 4,
+      "source_artifacts": [
+        "popular:popular.json",
+        "rushing-props:rushing-props.json"
+      ],
+      "source_market_names": [
+        "C.J. Stroud - Rushing Yds"
+      ],
+      "source_market_type": "PLAYER_X_RUSHING_YARDS_LOW",
+      "source_payload_sha256s": [
+        "2b893d693d3c87417e9cd75a297a8fbc542844b30f383576cbfd9f77acde11c3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "rushing-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:0a4caedccad08eb1ce7b885c",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436386",
+        "734.183437202",
+        "734.183437203"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 6,
+      "observation_count": 2,
+      "runner_instances": 12,
+      "source_artifacts": [
+        "popular:popular.json",
+        "rushing-props:rushing-props.json"
+      ],
+      "source_market_names": [
+        "David Montgomery - Rushing Yds",
+        "Josh Allen - Rushing Yds",
+        "Woody Marks - Rushing Yds"
+      ],
+      "source_market_type": "PLAYER_X_RUSHING_YARDS_MEDIUM",
+      "source_payload_sha256s": [
+        "2b893d693d3c87417e9cd75a297a8fbc542844b30f383576cbfd9f77acde11c3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "rushing-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:9d4a89d752efdf9297568aff",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436424"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "Race To 10"
+      ],
+      "source_market_type": "RACE_TO_10",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:50e74d371ec21f54b7e2d16d",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436384"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "Race To 15"
+      ],
+      "source_market_type": "RACE_TO_15",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:c0070bc46d3ec58f630f25aa",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436404"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "Race To 20"
+      ],
+      "source_market_type": "RACE_TO_20",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:e227fdf64df33093c29caed8",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436389"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "Race To 25"
+      ],
+      "source_market_type": "RACE_TO_25",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:f4fafaa3558a95f529520087",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436317"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "Race To 30"
+      ],
+      "source_market_type": "RACE_TO_30",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:12cbd6fc5d3dee49bbdb2a5b",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436397"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "Race To 5"
+      ],
+      "source_market_type": "RACE_TO_5",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:a18a47287e84816ea50b3137",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436328"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "d-st:d-st.json"
+      ],
+      "source_market_names": [
+        "Team to Have 1st Field Goal"
+      ],
+      "source_market_type": "TEAM_TO_HAVE_1ST_FIELD_GOAL",
+      "source_payload_sha256s": [
+        "5a4f393fcf7e7a220a13445bc5be038473e78b35fd79d57851f30265bb5381b1"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "d-st"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:7ebacc5995cc4e97e004e953",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436425"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "Team to Score First"
+      ],
+      "source_market_type": "TEAM_TO_SCORE_FIRST",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:5cb7f7a23316c3a10ff47bfd",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436320"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "Team to Score Last"
+      ],
+      "source_market_type": "TEAM_TO_SCORE_LAST",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:1e1021eada8c3f60dd843224",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.168995623"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 8,
+      "observation_count": 8,
+      "runner_instances": 16,
+      "source_artifacts": [
+        "d-st:d-st.json",
+        "game-specials:game-specials.json",
+        "passing-props:passing-props.json",
+        "popular:popular.json",
+        "receiving-props:receiving-props.json",
+        "rushing-props:rushing-props.json",
+        "scoring:scoring.json",
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "Total Points"
+      ],
+      "source_market_type": "TOTAL_POINTS_(OVER/UNDER)",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d",
+        "253df7c60faa5d77ec38549f001743639e82ba07feb374ad0f0cba008103a557",
+        "2b893d693d3c87417e9cd75a297a8fbc542844b30f383576cbfd9f77acde11c3",
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80",
+        "5a4f393fcf7e7a220a13445bc5be038473e78b35fd79d57851f30265bb5381b1",
+        "aa6e29ec78997c14471857951324a8ed50670eb31db126c65d4b5073a05848e3",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610",
+        "c4e53ae2afd0e9be13a7410f046819fd779da4437c8c476413850276dc921aeb"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "d-st",
+        "game-specials",
+        "passing-props",
+        "popular",
+        "receiving-props",
+        "rushing-props",
+        "scoring",
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:71d4b7d3640d06af17930e0a",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436344"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "Total Touchdowns - BUF Bills"
+      ],
+      "source_market_type": "TOTAL_TOUCHDOWNS_-_AWAY_TEAM",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:e0161af37bfe7cb38f009d95",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436392"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "Total Touchdowns - HOU Texans"
+      ],
+      "source_market_type": "TOTAL_TOUCHDOWNS_-_HOME_TEAM",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:63aaae2b4dff17ac8ca851db",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436351"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "Total Touchdowns Scored"
+      ],
+      "source_market_type": "TOTAL_TOUCHDOWNS_SCORED",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:be614eb5ddada7d82ebc9569",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185584531"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 18,
+      "source_artifacts": [
+        "d-st:d-st.json",
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "Player To Record A Sack"
+      ],
+      "source_market_type": "TO_RECORD_1+_SACK",
+      "source_payload_sha256s": [
+        "5a4f393fcf7e7a220a13445bc5be038473e78b35fd79d57851f30265bb5381b1",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "d-st",
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:744f3ac1f92f0d41ae87bded",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436335"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 56,
+      "source_artifacts": [
+        "popular:popular.json",
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "To Score 2+ Touchdowns"
+      ],
+      "source_market_type": "TO_SCORE_2+_TOUCHDOWNS",
+      "source_payload_sha256s": [
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:f0f6c7ae7afa47726945268f",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436421"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 2,
+      "observation_count": 2,
+      "runner_instances": 28,
+      "source_artifacts": [
+        "popular:popular.json",
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "To Score 3+ Touchdowns"
+      ],
+      "source_market_type": "TO_SCORE_3+_TOUCHDOWNS",
+      "source_payload_sha256s": [
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:6932f3f48427fdd42efa96fe",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436413"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 4,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "To Score Every Quarter"
+      ],
+      "source_market_type": "TO_SCORE_EVERY_QUARTER",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:2adf56204907c14283e6aee3",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436405"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "To Score First And Lose"
+      ],
+      "source_market_type": "TO_SCORE_FIRST_AND_LOSE",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:e4dd585e18a59db3d62c5239",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436322"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "To Score First And Win"
+      ],
+      "source_market_type": "TO_SCORE_FIRST_AND_WIN",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:3beca5ad10811a017a7ffc69",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436366"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 2,
+      "source_artifacts": [
+        "popular:popular.json"
+      ],
+      "source_market_names": [
+        "Will there be Overtime?"
+      ],
+      "source_market_type": "WILL_THERE_BE_OVERTIME",
+      "source_payload_sha256s": [
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:933d11456d23a2dbb2e9b6eb",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436419"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 12,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "Winning Margin"
+      ],
+      "source_market_type": "WINNING_MARGIN",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:7a5182a040699fcd9a8cabe1",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436362"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 8,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "Winning Margin (10-point Bands)"
+      ],
+      "source_market_type": "WINNING_MARGIN_(10-POINT_BANDS)",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:63404e059c9b9f08d89808e2",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.168995625"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 4,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "Winning Margin (4-Way)"
+      ],
+      "source_market_type": "WINNING_MARGIN_(4-WAY)",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:bca7e116ab7354683439bd24",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.183436378"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 1,
+      "observation_count": 1,
+      "runner_instances": 14,
+      "source_artifacts": [
+        "scoring:scoring.json"
+      ],
+      "source_market_names": [
+        "Winning Margin (5-point Bands)"
+      ],
+      "source_market_type": "WINNING_MARGIN_(5-POINT_BANDS)",
+      "source_payload_sha256s": [
+        "11104861d3dfb80f7cdbcf77b621bb19f6b6b892437a8b6ec6d58797008f593d"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "scoring"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:282876972b92151cb430daa2",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185995879",
+        "734.185995881"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 4,
+      "observation_count": 2,
+      "runner_instances": 56,
+      "source_artifacts": [
+        "popular:popular.json",
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "2nd Buffalo Bills TD Scorer",
+        "3rd Buffalo Bills TD Scorer"
+      ],
+      "source_market_type": "X_AWAY_TEAM_TD_SCORER",
+      "source_payload_sha256s": [
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:87edf1f01835cf3cea0deef3",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185995872",
+        "734.185995880"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 4,
+      "observation_count": 2,
+      "runner_instances": 60,
+      "source_artifacts": [
+        "popular:popular.json",
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "2nd Houston Texans TD Scorer",
+        "3rd Houston Texans TD Scorer"
+      ],
+      "source_market_type": "X_HOME_TEAM_TD_SCORER",
+      "source_payload_sha256s": [
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "td-scorer-props"
+      ]
+    },
+    {
+      "alternate": false,
+      "blockers": [],
+      "canonical_market": null,
+      "capabilities": {
+        "grader": false,
+        "historical_data_available": false,
+        "historical_validated": false,
+        "ingested": true,
+        "model_research": false,
+        "normalized": false,
+        "prospective_capture": false,
+        "public_eligible": false,
+        "selector_research": false
+      },
+      "coverage_id": "fc-market1:6e5dcf9aac427136e928facd",
+      "example_event_ids": [
+        "35610167"
+      ],
+      "example_market_ids": [
+        "734.185995876",
+        "734.185995882"
+      ],
+      "first_seen_at": "2026-09-12T23:39:12.177000Z",
+      "last_seen_at": "2026-09-12T23:39:12.177000Z",
+      "lifecycle_status": "DISCOVERED",
+      "market_instances": 4,
+      "observation_count": 2,
+      "runner_instances": 116,
+      "source_artifacts": [
+        "popular:popular.json",
+        "td-scorer-props:td-scorer-props.json"
+      ],
+      "source_market_names": [
+        "2nd Touchdown Scorer",
+        "3rd Touchdown Scorer"
+      ],
+      "source_market_type": "X_TOUCHDOWN_SCORER",
+      "source_payload_sha256s": [
+        "3241a53544cebcb6bc7c4f68a7963faff4972c82b1316081d4798aa9173b9f80",
+        "b8fb411efce39a87104edebddc61d2daaccf1d44b4e0acac58a7c57f35fdd610"
+      ],
+      "sport": "NFL",
+      "sportsbook": "FANDUEL",
+      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "tabs": [
+        "popular",
+        "td-scorer-props"
+      ]
+    }
+  ],
+  "schema_version": 1
+}
