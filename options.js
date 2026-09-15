@@ -11,6 +11,7 @@ const DEFAULTS = Object.freeze({
   dryRun: true,
   soundAlert: true,
   debug: false,
+  phonePushEnabled: true,
   maxLeadAgeMin: 5,
   minClaimIntervalSec: 10,
   maxClaimsPerSession: 200,
@@ -19,7 +20,7 @@ const DEFAULTS = Object.freeze({
   myName: ''
 });
 
-const TOGGLES = ['autoClaim', 'scheduleEnabled', 'dryRun', 'soundAlert', 'debug', 'returnToList'];
+const TOGGLES = ['autoClaim', 'scheduleEnabled', 'dryRun', 'soundAlert', 'debug', 'phonePushEnabled', 'returnToList'];
 const NUMBERS = ['maxLeadAgeMin', 'minClaimIntervalSec', 'maxClaimsPerSession', 'returnDelaySec'];
 const TEXTS = ['myName'];
 const $ = (id) => document.getElementById(id);
@@ -55,6 +56,48 @@ function scheduleActive(now = new Date()) {
     const windows = ACTIVE_WINDOWS[keys[now.getDay()]] || [];
     const minuteOfDay = now.getHours() * 60 + now.getMinutes();
     return windows.some(([start, end]) => minuteOfDay >= start && minuteOfDay < end);
+  }
+}
+
+/* -------------------------------------------------------------------- */
+/* Phone push                                                           */
+/* -------------------------------------------------------------------- */
+
+function randomTopic() {
+  const bytes = new Uint8Array(18);
+  crypto.getRandomValues(bytes);
+  let token = '';
+  for (const b of bytes) token += b.toString(16).padStart(2, '0');
+  return 'carnow-' + token;
+}
+
+async function ensureNtfyTopic() {
+  let { ntfyTopic = '' } = await chrome.storage.local.get({ ntfyTopic: '' });
+  if (!ntfyTopic) {
+    ntfyTopic = randomTopic();
+    await chrome.storage.local.set({ ntfyTopic });
+  }
+  $('ntfyTopic').textContent = ntfyTopic;
+  return ntfyTopic;
+}
+
+async function testPhonePush() {
+  const status = $('ntfyStatus');
+  status.textContent = 'Sending test…';
+  try {
+    const result = await chrome.runtime.sendMessage({ type: 'TEST_NTFY' });
+    if (result && result.ok) {
+      status.textContent = 'Test sent ✓';
+      status.style.color = '#16a34a';
+    } else {
+      status.textContent = result && result.skipped === 'disabled'
+        ? 'Turn phone notifications ON first.'
+        : 'Test failed — check setup.';
+      status.style.color = '#dc2626';
+    }
+  } catch {
+    status.textContent = 'Test failed — extension worker unavailable.';
+    status.style.color = '#dc2626';
   }
 }
 
@@ -234,6 +277,20 @@ async function refresh() {
 
 $('refresh').addEventListener('click', refresh);
 
+$('copyNtfyTopic').addEventListener('click', async () => {
+  const topic = await ensureNtfyTopic();
+  try {
+    await navigator.clipboard.writeText(topic);
+    $('ntfyStatus').textContent = 'Topic copied ✓';
+    $('ntfyStatus').style.color = '#16a34a';
+  } catch {
+    $('ntfyStatus').textContent = 'Could not copy automatically.';
+    $('ntfyStatus').style.color = '#dc2626';
+  }
+});
+
+$('testNtfy').addEventListener('click', testPhonePush);
+
 $('clear').addEventListener('click', async () => {
   if (!confirm('Clear the claim history? Settings are not affected.')) return;
   await chrome.storage.local.set({ claimHistory: [] });
@@ -244,6 +301,7 @@ $('clear').addEventListener('click', async () => {
 
 (async () => {
   await loadSettings();
+  await ensureNtfyTopic();
   wireToggles();
   await refresh();
   setInterval(reflectArmState, 30 * 1000);
