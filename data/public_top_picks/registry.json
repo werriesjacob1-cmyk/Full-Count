@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-15T22:20:22.926380+00:00",
+  "updated_at": "2026-09-15T23:14:44.202434+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -33964,6 +33964,104 @@
         },
         "qualification_timestamp": "2026-09-15T22:17:36.669177+00:00",
         "board_timestamp": "2026-09-15T22:17:36.640011+00:00",
+        "slate_date": "2026-09-15"
+      }
+    },
+    "fc2:824143:player-664774:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824143:player-664774:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824143",
+        [
+          "player",
+          "664774"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-15",
+      "first_published_at": "2026-09-15T23:14:44.202434+00:00",
+      "publication_provenance": {
+        "artifact_id": "fb60c9b50ed4a5934f6e722d66ca2b5ab6ef67af76997ae3ec748da6d471199c",
+        "source_commit": "359f48d9eeea4c61d10d3185bca824316b0a1ce6",
+        "workflow_run_id": "35034569115",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-15T23:14:30.106168+00:00",
+        "data_hash": "bb770556e29eccf4c0672c7df070d3295bd37a7a39bd99e0ebb66d551f93f1f6",
+        "live_hash": "07e3e61020df0ab0906008cbf952136edea6179fb534d815e86c7353dbaacaae"
+      },
+      "snapshot": {
+        "id": "fc2:824143:player-664774:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824143,
+        "player_id": 664774,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "LaMonte Wade Jr.",
+        "team": "Houston Astros",
+        "matchup": "Kansas City Royals @ Houston Astros",
+        "game_start": "2026-09-16T00:10:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6305,
+        "market_odds": -150,
+        "market_implied": 0.6,
+        "market_edge": 0.0305,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.5 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Platoon: L bat vs RHP (favorable)",
+          "Hitter batting behind him: 0.335 wOBA (league ~.320)",
+          "Team implied for 4.36 runs (league avg 4.245; line 4.5, game total 8)",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "L7 avg EV 79.0mph (league ~88.5) \u2014 cold recent contact",
+          "L7 barrel% 0.0 \u2014 cold recent contact",
+          "Opposing SP ERA 3.25 \u2014 elite pitcher, tough matchup",
+          "Projected 3.61 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.297 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "L7 sample is thin (2 PA) \u2014 treat recent-form read with caution",
+          "Season barrel% 3.8 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 0/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6172,
+          0.6621
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 47,
+        "lineup_assumed": null,
+        "base_rate": 0.6746,
+        "lift": -0.0441,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "416b32b02",
+          "prediction_timestamp": "2026-09-15T23:07:08.744484+00:00",
+          "odds_fetched_at": "2026-09-15T23:07:03.371848+00:00",
+          "board_generated_at": "2026-09-15T23:07:08.724688+00:00"
+        },
+        "qualification_timestamp": "2026-09-15T23:07:08.744484+00:00",
+        "board_timestamp": "2026-09-15T23:07:08.724688+00:00",
         "slate_date": "2026-09-15"
       }
     }
