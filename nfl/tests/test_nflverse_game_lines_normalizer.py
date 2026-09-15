@@ -55,8 +55,9 @@ class NflverseGameLineNormalizerTests(unittest.TestCase):
 
     def test_duplicate_game_id_is_excluded(self):
         result = normalize(row(), row())
-        self.assertEqual(result["stats"]["normalized"], 1)
-        self.assertEqual(result["excluded"][0]["reason"], "DUPLICATE_GAME_ID")
+        self.assertEqual(result["stats"]["normalized"], 0)
+        self.assertEqual(len(result["excluded"]), 2)
+        self.assertEqual({item["reason"] for item in result["excluded"]}, {"DUPLICATE_GAME_ID"})
 
     def test_missing_prices_do_not_invent_prices_or_drop_outcome(self):
         got = normalize(row(away_spread_odds="", home_spread_odds="", under_odds="", over_odds=""))["normalized"][0]
