@@ -132,9 +132,9 @@ chrome.notifications.onClicked.addListener(async (id) => {
 /* Phone push via ntfy                                                  */
 /* -------------------------------------------------------------------- */
 
-async function sendPhonePush({ title, message, priority = 'default', tags = 'white_check_mark', actions = '' }) {
+async function sendPhonePush({ title, message, priority = 'default', tags = 'white_check_mark', actions = '', force = false }) {
   const { phonePushEnabled } = await getSettings();
-  if (!phonePushEnabled) return { ok: false, skipped: 'disabled' };
+  if (!phonePushEnabled && !force) return { ok: false, skipped: 'disabled' };
 
   const { ntfyTopic = '' } = await chrome.storage.local.get({ ntfyTopic: '' });
   if (!ntfyTopic) return { ok: false, skipped: 'no-topic' };
@@ -226,7 +226,8 @@ async function applyRemoteCommand(command, eventId) {
     title: 'CarNow remote applied',
     message: spec.label + ' • command received by work PC',
     priority: 'high',
-    tags: spec.autoClaim ? 'white_check_mark,computer' : 'stop_sign,computer'
+    tags: spec.autoClaim ? 'white_check_mark,computer' : 'stop_sign,computer',
+    force: true
   });
   await debugLog('remote command applied', command, patch);
   return true;
@@ -285,7 +286,8 @@ async function sendRemoteControlPanel() {
     message: 'Control your work-PC claimer from your phone. Commands are picked up within about 30 seconds.',
     priority: 'default',
     tags: 'computer,iphone',
-    actions
+    actions,
+    force: true
   });
 }
 
@@ -488,3 +490,4 @@ chrome.action.onClicked.addListener(() => {
 // Runs on every worker start, including a restart after eviction.
 void ensureAlarm();
 void ensureControlTopic();
+void pollRemoteCommands();
