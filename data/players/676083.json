@@ -416,6 +416,94 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-15",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 52.7,
+          "notable_signals": 1,
+          "matchup": "Miami Marlins @ Arizona Diamondbacks",
+          "game_pk": 825030,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 23.0,
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 0.0,
+            "tto_penalty": 8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.4891,
+          "raw_hit_probability": 0.4891,
+          "lift": -0.2013,
+          "reliability": "A",
+          "sample_n": 22,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 51.4,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Arizona Diamondbacks",
+          "game_pk": 825030,
+          "team": "Miami Marlins",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7046,
+            "avg_outs_per_start": 15.0
+          },
+          "hit_probability": 0.6826,
+          "raw_hit_probability": 0.7046,
+          "lift": -0.1054,
+          "reliability": "A",
+          "sample_n": 22,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 32.2,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Arizona Diamondbacks",
+          "game_pk": 825030,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            676083,
+            647336
+          ],
+          "signals": {
+            "combined_k_edge": -0.0962
+          },
+          "hit_probability": 0.4652,
+          "raw_hit_probability": null,
+          "lift": -0.0962,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
+          }
+        }
+      ]
     }
   ]
 }

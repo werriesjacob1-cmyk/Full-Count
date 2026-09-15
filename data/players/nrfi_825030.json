@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_825030",
+  "name": "Miami Marlins @ Arizona Diamondbacks \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-15",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 61.9,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Arizona Diamondbacks",
+          "game_pk": 825030,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2668,
+            "away_team_scores_p": 0.2957,
+            "fi_n_starts": 20.0
+          },
+          "hit_probability": 0.5164,
+          "raw_hit_probability": null,
+          "lift": 0.018,
+          "reliability": "A",
+          "sample_n": 20,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 51.6
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -305,6 +305,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-15",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 53.8,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ St. Louis Cardinals",
+          "game_pk": 823007,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 37.0,
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 7.6471,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.604,
+          "raw_hit_probability": 0.6498,
+          "lift": -0.0864,
+          "reliability": "C",
+          "sample_n": 7,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 48.6,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ St. Louis Cardinals",
+          "game_pk": 823007,
+          "team": "San Francisco Giants",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7483,
+            "avg_outs_per_start": 14.86
+          },
+          "hit_probability": 0.7145,
+          "raw_hit_probability": 0.7483,
+          "lift": -0.0735,
+          "reliability": "C",
+          "sample_n": 7,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        }
+      ]
     }
   ]
 }

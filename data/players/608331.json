@@ -307,6 +307,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-15",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 38.9,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Minnesota Twins",
+          "game_pk": 823654,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 41.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 96.4706,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.603,
+          "raw_hit_probability": 0.6451,
+          "lift": 0.0953,
+          "reliability": "A",
+          "sample_n": 18,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 67.5,
+          "notable_signals": 1,
+          "matchup": "New York Yankees @ Minnesota Twins",
+          "game_pk": 823654,
+          "team": "New York Yankees",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6436,
+            "avg_outs_per_start": 16.5
+          },
+          "hit_probability": 0.6351,
+          "raw_hit_probability": 0.6436,
+          "lift": 0.0607,
+          "reliability": "A",
+          "sample_n": 18,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }

@@ -412,6 +412,66 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-15",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 47.5,
+          "notable_signals": 1,
+          "matchup": "Detroit Tigers @ Toronto Blue Jays",
+          "game_pk": 822762,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 22.0,
+            "same_hand_ratio": 88.8889,
+            "l14_k_pct": 29.4118,
+            "tto_penalty": 8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6155,
+          "raw_hit_probability": 0.7074,
+          "lift": -0.0749,
+          "reliability": "B",
+          "sample_n": 9,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 13.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 49.2,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Toronto Blue Jays",
+          "game_pk": 822762,
+          "team": "Detroit Tigers",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7309,
+            "avg_outs_per_start": 13.56
+          },
+          "hit_probability": 0.702,
+          "raw_hit_probability": 0.7309,
+          "lift": -0.1254,
+          "reliability": "B",
+          "sample_n": 9,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 13.5,
+            "needs": 14
+          }
+        }
+      ]
     }
   ]
 }
