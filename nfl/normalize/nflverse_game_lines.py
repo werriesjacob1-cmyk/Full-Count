@@ -7,6 +7,7 @@ import csv
 import hashlib
 import json
 import math
+from collections import Counter
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Iterable, Mapping
@@ -83,9 +84,13 @@ def normalize_rows(
     acquired = _utc(acquired_at)
     normalized = []
     excluded = []
-    seen = set()
-    for row_number, raw in enumerate(rows, 2):
-        row = dict(raw)
+    materialized = [(row_number, dict(raw)) for row_number, raw in enumerate(rows, 2)]
+    id_counts = Counter(
+        str(row.get("game_id") or "").strip()
+        for _, row in materialized
+        if str(row.get("game_id") or "").strip()
+    )
+    for row_number, row in materialized:
         missing = sorted(REQUIRED.difference(row))
         game_id = str(row.get("game_id") or "").strip() or None
         if missing:
@@ -94,10 +99,9 @@ def normalize_rows(
         if game_id is None:
             excluded.append({"row_number": row_number, "game_id": None, "reason": "MISSING_GAME_ID"})
             continue
-        if game_id in seen:
+        if id_counts[game_id] > 1:
             excluded.append({"row_number": row_number, "game_id": game_id, "reason": "DUPLICATE_GAME_ID"})
             continue
-        seen.add(game_id)
         away = str(row["away_team"] or "").strip()
         home = str(row["home_team"] or "").strip()
         if not away or not home or away == home:
