@@ -215,9 +215,13 @@ try:
     # corrupt the page's real DATA for every check after this one.
     forced = page.evaluate(
         "() => { const old = new Date(Date.now() - 11 * 3600 * 1000).toISOString();"
+        "  const freshPrice = new Date(Date.now() - 60 * 1000).toISOString();"
         "  const d = Object.assign({}, DATA, {"
         "    generated_at: old,"
-        "    freshness: Object.assign({}, DATA.freshness, {model_basis_at: old})});"
+        "    prices_updated_at: freshPrice,"
+        "    odds_fetched_at: freshPrice,"
+        "    freshness: Object.assign({}, DATA.freshness, {"
+        "      model_basis_at: old, market_prices_at: freshPrice})});"
         "  return boardFreshnessState(Date.now(), d); }")
     # Precondition, asserted separately and FIRST. A fixture that fails to
     # apply must fail as "the fixture did not age the board", never as "the
