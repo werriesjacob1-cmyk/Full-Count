@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-15T08:09:48.612929+00:00",
+  "updated_at": "2026-09-15T13:25:16.243586+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -31722,6 +31722,94 @@
         },
         "qualification_timestamp": "2026-09-15T08:04:00.448504+00:00",
         "board_timestamp": "2026-09-15T08:04:00.419582+00:00",
+        "slate_date": "2026-09-15"
+      }
+    },
+    "fc2:825030:player-647336:pitcher_outs:15:over": {
+      "canonical_id": "fc2:825030:player-647336:pitcher_outs:15:over",
+      "settlement_identity": [
+        "825030",
+        [
+          "player",
+          "647336"
+        ],
+        "pitcher_outs",
+        "15",
+        "over"
+      ],
+      "slate_date": "2026-09-15",
+      "first_published_at": "2026-09-15T13:25:16.243586+00:00",
+      "publication_provenance": {
+        "artifact_id": "c3acf33ebf597e411d6e920af70a86cc203923e2468fadc31afefc41e5c18154",
+        "source_commit": "2eea0e9218955f0adec3eaf3e8b042cee4fc3885",
+        "workflow_run_id": "34974589279",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-15T13:25:01.908521+00:00",
+        "data_hash": "a363872e197791f836af073dcf39c519c35f763e0713e87eaa5e31416c37de32",
+        "live_hash": "6f162d81ca0df74c1df4bd5f8228184ac98879caef3867c495eab374344f0331"
+      },
+      "snapshot": {
+        "id": "fc2:825030:player-647336:pitcher_outs:15:over",
+        "identity_version": 2,
+        "game_pk": 825030,
+        "player_id": 647336,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Michael Soroka",
+        "team": "Arizona Diamondbacks",
+        "matchup": "Miami Marlins @ Arizona Diamondbacks",
+        "game_start": "2026-09-16T01:40:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 14.5,
+          "needs": 15
+        },
+        "prop": "Over 14.5 Outs Recorded",
+        "hit_probability": 0.7346,
+        "market_odds": -136,
+        "market_implied": 0.5354,
+        "market_edge": 0.1992,
+        "market_hold": 0.0763,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (20.1 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 15+ outs (5.0 IP) in 77.7% of his last 18 real starts (league 77.6%, avg 15.89 outs/start)"
+        ],
+        "watchouts": [
+          "Barely above this market's base rate \u2014 the high percentage is mostly the market being easy, not a strong read on this player"
+        ],
+        "prob_ci": [
+          0.6693,
+          0.8513
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 18,
+        "lineup_assumed": null,
+        "base_rate": 0.7761,
+        "lift": -0.0415,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "aebb7d1c3",
+          "prediction_timestamp": "2026-09-15T13:19:24.076898+00:00",
+          "odds_fetched_at": "2026-09-15T13:19:18.617714+00:00",
+          "board_generated_at": "2026-09-15T13:19:24.040588+00:00"
+        },
+        "qualification_timestamp": "2026-09-15T13:19:24.076898+00:00",
+        "board_timestamp": "2026-09-15T13:19:24.040588+00:00",
         "slate_date": "2026-09-15"
       }
     }
