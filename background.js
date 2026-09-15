@@ -17,6 +17,7 @@ const DEFAULTS = Object.freeze({
   soundAlert: true,
   debug: false,
   phonePushEnabled: true,
+  phoneRemoteEnabled: true,
   maxLeadAgeMin: 5,
   minClaimIntervalSec: 10,
   maxClaimsPerSession: 200,
@@ -131,7 +132,7 @@ chrome.notifications.onClicked.addListener(async (id) => {
 /* Phone push via ntfy                                                  */
 /* -------------------------------------------------------------------- */
 
-async function sendPhonePush({ title, message, priority = 'default', tags = 'white_check_mark' }) {
+async function sendPhonePush({ title, message, priority = 'default', tags = 'white_check_mark', actions = '' }) {
   const { phonePushEnabled } = await getSettings();
   if (!phonePushEnabled) return { ok: false, skipped: 'disabled' };
 
@@ -144,7 +145,8 @@ async function sendPhonePush({ title, message, priority = 'default', tags = 'whi
       headers: {
         'Title': title,
         'Priority': priority,
-        'Tags': tags
+        'Tags': tags,
+        ...(actions ? { 'Actions': actions } : {})
       },
       body: message
     });
@@ -175,6 +177,115 @@ async function sendConfirmedClaimPush(payload) {
     message: 'Confirmed as yours • ' + source + ' • ' + when,
     priority: 'high',
     tags: 'white_check_mark,car'
+  });
+}
+
+/* -------------------------------------------------------------------- */
+/* Phone remote control via a second private ntfy topic                 */
+/* -------------------------------------------------------------------- */
+
+const REMOTE_COMMANDS = Object.freeze({
+  CARNOW_ON: { autoClaim: true, scheduleEnabled: false, dryRun: false, label: 'LIVE MANUAL' },
+  CARNOW_SCHEDULE: { autoClaim: true, scheduleEnabled: true, dryRun: false, label: 'FOLLOW SCHEDULE' },
+  CARNOW_OFF: { autoClaim: false, label: 'OFF' }
+});
+
+function randomTopic(prefix) {
+  const bytes = new Uint8Array(18);
+  crypto.getRandomValues(bytes);
+  let token = '';
+  for (const b of bytes) token += b.toString(16).padStart(2, '0');
+  return prefix + '-' + token;
+}
+
+async function ensureControlTopic() {
+  let { ntfyControlTopic = '' } = await chrome.storage.local.get({ ntfyControlTopic: '' });
+  if (!ntfyControlTopic) {
+    ntfyControlTopic = randomTopic('carnow-control');
+    await chrome.storage.local.set({ ntfyControlTopic });
+  }
+  return ntfyControlTopic;
+}
+
+async function applyRemoteCommand(command, eventId) {
+  const spec = REMOTE_COMMANDS[command];
+  if (!spec) return false;
+
+  const patch = { autoClaim: spec.autoClaim };
+  if ('scheduleEnabled' in spec) patch.scheduleEnabled = spec.scheduleEnabled;
+  if ('dryRun' in spec) patch.dryRun = spec.dryRun;
+  await chrome.storage.sync.set(patch);
+
+  const { processedRemoteIds = [] } = await chrome.storage.local.get({ processedRemoteIds: [] });
+  if (eventId && !processedRemoteIds.includes(eventId)) {
+    processedRemoteIds.push(eventId);
+    await chrome.storage.local.set({ processedRemoteIds: processedRemoteIds.slice(-50) });
+  }
+
+  await sendPhonePush({
+    title: 'CarNow remote applied',
+    message: spec.label + ' • command received by work PC',
+    priority: 'high',
+    tags: spec.autoClaim ? 'white_check_mark,computer' : 'stop_sign,computer'
+  });
+  await debugLog('remote command applied', command, patch);
+  return true;
+}
+
+async function pollRemoteCommands() {
+  const { phoneRemoteEnabled } = await getSettings();
+  if (!phoneRemoteEnabled) return;
+
+  const topic = await ensureControlTopic();
+  const { processedRemoteIds = [] } = await chrome.storage.local.get({ processedRemoteIds: [] });
+  const seenIds = new Set(processedRemoteIds);
+
+  try {
+    const response = await fetch(
+      'https://ntfy.sh/' + encodeURIComponent(topic) + '/json?poll=1&since=all',
+      { cache: 'no-store' }
+    );
+    if (!response.ok) throw new Error('ntfy control HTTP ' + response.status);
+    const text = await response.text();
+    const events = text.split(/\r?\n/).filter(Boolean).map((line) => {
+      try { return JSON.parse(line); } catch { return null; }
+    }).filter(Boolean);
+
+    for (const event of events) {
+      if (event.event !== 'message' || !event.id || seenIds.has(event.id)) continue;
+      const command = String(event.message || '').trim().toUpperCase();
+      if (!REMOTE_COMMANDS[command]) continue;
+      await applyRemoteCommand(command, event.id);
+      seenIds.add(event.id);
+    }
+  } catch (err) {
+    await debugLog('remote poll failed', err && err.message ? err.message : err);
+  }
+}
+
+async function sendRemoteControlPanel() {
+  const { phoneRemoteEnabled } = await getSettings();
+  if (!phoneRemoteEnabled) return { ok: false, skipped: 'disabled' };
+
+  const topic = await ensureControlTopic();
+  const makeUrl = (command) =>
+    'https://ntfy.sh/' + encodeURIComponent(topic) +
+    '/publish?message=' + encodeURIComponent(command) +
+    '&title=' + encodeURIComponent('CarNow Remote') +
+    '&tags=' + encodeURIComponent('computer');
+
+  const actions = [
+    'http, ON NOW, ' + makeUrl('CARNOW_ON') + ', method=GET',
+    'http, SCHEDULE, ' + makeUrl('CARNOW_SCHEDULE') + ', method=GET',
+    'http, OFF, ' + makeUrl('CARNOW_OFF') + ', method=GET'
+  ].join('; ');
+
+  return sendPhonePush({
+    title: 'CarNow remote controls',
+    message: 'Control your work-PC claimer from your phone. Commands are picked up within about 30 seconds.',
+    priority: 'default',
+    tags: 'computer,iphone',
+    actions
   });
 }
 
@@ -235,6 +346,7 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     catch { livePorts.delete(port); }
   }
   await pushSweep();
+  await pollRemoteCommands();
 });
 
 /* -------------------------------------------------------------------- */
@@ -320,6 +432,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
+  if (message.type === 'SEND_REMOTE_PANEL') {
+    (async () => {
+      const result = await sendRemoteControlPanel();
+      sendResponse(result);
+    })();
+    return true;
+  }
+
   if (message.type === 'GET_STATUS') {
     (async () => {
       const [{ claimHistory = [] }, settings] = await Promise.all([
@@ -348,6 +468,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
   if (Object.keys(seed).length) await chrome.storage.sync.set(seed);
 
   await ensureAlarm();
+  await ensureControlTopic();
   const { claimHistory = [] } = await chrome.storage.local.get({ claimHistory: [] });
   await refreshBadge(claimHistory);
   console.log('[CarNow AC / sw] installed:', details.reason);
@@ -355,6 +476,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 
 chrome.runtime.onStartup.addListener(async () => {
   await ensureAlarm();
+  await ensureControlTopic();
   const { claimHistory = [] } = await chrome.storage.local.get({ claimHistory: [] });
   await refreshBadge(claimHistory);
 });
@@ -365,3 +487,4 @@ chrome.action.onClicked.addListener(() => {
 
 // Runs on every worker start, including a restart after eviction.
 void ensureAlarm();
+void ensureControlTopic();
