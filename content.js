@@ -130,6 +130,7 @@
   let lastClaimAt = 0;
   let lastLiveHelpNavAt = 0;
   let scheduleWasActive = null;
+  let claimInFlight = false;
 
   /* Claiming navigates to the lead detail page, which ends this page's life.
    * The hand-off rides in sessionStorage: it is per-tab, same-origin, and
@@ -513,12 +514,28 @@
    * owning rep. Set "My name in CarNow" and this confirms the lead landed on
    * YOU rather than merely being claimed by somebody.
    */
+  function isClaimDetailPage() {
+    const text = norm(document.body ? document.body.textContent : '').slice(0, 20000);
+    const hasDetails = /\bDetails\b/i.test(text);
+    const hasCustomerInfo = /\bCustomer Information\b/i.test(text);
+    const hasLeadSections = /\bNotes\b/i.test(text) || /\bAppointments\b/i.test(text);
+    return hasDetails && hasCustomerInfo && hasLeadSections;
+  }
+
   function verifyClaim() {
-    const text = norm(document.body ? document.body.textContent : '').slice(0, 12000);
-    const claimed = /\bclaimed\b/i.test(text);
+    const text = norm(document.body ? document.body.textContent : '').slice(0, 20000);
+    const detailPage = isClaimDetailPage();
+    const claimedText = /\bclaimed\b/i.test(text);
     const name = norm(settings.myName);
-    const mine = name ? text.toLowerCase().includes(name.toLowerCase()) : null;
-    return { claimed, mine };
+    const namePresent = name ? text.toLowerCase().includes(name.toLowerCase()) : null;
+
+    // In CarNow, a click that successfully lands on this customer-detail
+    // screen is the successful claim transition. Treat reaching it as
+    // authoritative even if Angular has not painted the green "Claimed" pill
+    // or salesperson name yet.
+    const claimed = claimedText || detailPage;
+    const mine = detailPage ? true : namePresent;
+    return { claimed, mine, detailPage, claimedText, namePresent };
   }
 
   async function waitForClaimVerification(timeoutMs = 7000) {
@@ -558,6 +575,7 @@
       if (returnTimer) clearTimeout(returnTimer);
       returnTimer = setTimeout(() => {
         log('returning to the list to keep watching');
+        claimInFlight = false;
         try {
           // history.back keeps the SPA warm; assign is the fallback if the
           // route does not actually change.
@@ -688,40 +706,50 @@
 
     const label = norm(row.textContent).slice(0, 80);
     const dry = settings.dryRun;
+    const returnTo = location.href;
+
+    const record = {
+      ts: Date.now(),
+      label,
+      signature: key,
+      url: returnTo,
+      source,
+      dryRun: dry,
+      elapsedMs: 0
+    };
 
     if (!dry) {
       const target = clickTargetFor(row);
       if (!target) {
-        // Obscured. Un-mark it so the next tick can retry once it is clear.
         acted.delete(key);
         return;
       }
+
+      // One lead gets one attempt. Persist its identity and handoff BEFORE
+      // CarNow's row click can synchronously change the SPA route.
+      baseline.add(key);
+      claimInFlight = true;
+      saveHandoff(record, returnTo);
+
       try {
         fireClick(target);
       } catch (err) {
         warn('click failed', err);
+        claimInFlight = false;
         acted.delete(key);
+        baseline.delete(key);
+        try { sessionStorage.removeItem(PENDING_KEY); } catch { /* noop */ }
         return;
       }
       claimsThisSession++;
       lastClaimAt = Date.now();
     }
 
-    const record = {
-      ts: Date.now(),
-      label,
-      signature: key,
-      url: location.href,
-      source,
-      dryRun: dry,
-      elapsedMs: Math.round((performance.now() - started) * 100) / 100
-    };
-
-    log((dry ? 'WOULD CLAIM (dry run)' : 'CLAIMED') + ' via ' + source +
+    record.elapsedMs = Math.round((performance.now() - started) * 100) / 100;
+    log((dry ? 'WOULD CLAIM (dry run)' : 'CLAIM ATTEMPT') + ' via ' + source +
         ' in ' + record.elapsedMs + 'ms —', label);
     beep();
     report(record);
-    if (!dry) saveHandoff(record, location.href);
   }
 
   /* ---------------------------------------------------------------- */
@@ -729,7 +757,7 @@
   /* ---------------------------------------------------------------- */
 
   function evaluate(source) {
-    if (torndown || !settings.autoClaim) return;
+    if (torndown || !settings.autoClaim || claimInFlight) return;
 
     const rows = collectRows();
     const liveHelpList = rows.length ? isLiveHelpListPage(rows) : false;
@@ -1034,11 +1062,14 @@
       // checkNavigation, so consume the hand-off before arming.
       const pending = takeHandoff();
       if (pending) {
+        claimInFlight = true;
         void (async () => {
           await reportVerification(pending, 'after reload');
           if (settings.returnToList && pending.returnTo && pending.returnTo !== location.href) {
-            returnTimer = setTimeout(() => location.assign(pending.returnTo),
-                                     Math.max(0, settings.returnDelaySec) * 1000);
+            returnTimer = setTimeout(() => {
+              claimInFlight = false;
+              location.assign(pending.returnTo);
+            }, Math.max(0, settings.returnDelaySec) * 1000);
           }
         })();
       }
@@ -1071,6 +1102,8 @@
       dryRun: settings.dryRun,
       baselineRows: baseline.size,
       claimsThisSession,
+      claimInFlight,
+      onClaimDetailPage: isClaimDetailPage(),
       newSinceArmed: Array.from(seen.keys()),
       onFirstPage: onFirstPage(),
       liveHelpList: isLiveHelpListPage(collectRows()),
