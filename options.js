@@ -25,14 +25,14 @@ const TEXTS = ['myName'];
 const $ = (id) => document.getElementById(id);
 
 const SCHEDULE_TZ = 'America/Chicago';
-const WORK_SHIFTS = Object.freeze({
-  mon: [11 * 60, 20 * 60],
-  tue: [11 * 60, 20 * 60],
-  wed: null,
-  thu: [9 * 60 + 45, 17 * 60],
-  fri: [9 * 60 + 45, 17 * 60],
-  sat: [8 * 60 + 30, 19 * 60],
-  sun: null
+const ACTIVE_WINDOWS = Object.freeze({
+  sun: [[0, 24 * 60]],
+  mon: [[0, 8 * 60 + 45], [11 * 60, 24 * 60]],
+  tue: [[0, 8 * 60 + 45], [11 * 60, 24 * 60]],
+  wed: [[0, 6 * 60], [20 * 60, 24 * 60]],
+  thu: [[0, 17 * 60], [20 * 60, 24 * 60]],
+  fri: [[0, 17 * 60], [20 * 60, 24 * 60]],
+  sat: [[0, 24 * 60]]
 });
 
 function scheduleActive(now = new Date()) {
@@ -47,16 +47,14 @@ function scheduleActive(now = new Date()) {
     const hour = parseInt(parts.find((p) => p.type === 'hour')?.value || '0', 10);
     const minute = parseInt(parts.find((p) => p.type === 'minute')?.value || '0', 10);
     const weekday = (parts.find((p) => p.type === 'weekday')?.value || '').toLowerCase();
-    const shift = WORK_SHIFTS[weekday];
-    if (!shift) return true;
     const minuteOfDay = hour * 60 + minute;
-    return minuteOfDay < shift[0] || minuteOfDay >= shift[1];
+    const windows = ACTIVE_WINDOWS[weekday] || [];
+    return windows.some(([start, end]) => minuteOfDay >= start && minuteOfDay < end);
   } catch {
     const keys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-    const shift = WORK_SHIFTS[keys[now.getDay()]];
-    if (!shift) return true;
+    const windows = ACTIVE_WINDOWS[keys[now.getDay()]] || [];
     const minuteOfDay = now.getHours() * 60 + now.getMinutes();
-    return minuteOfDay < shift[0] || minuteOfDay >= shift[1];
+    return windows.some(([start, end]) => minuteOfDay >= start && minuteOfDay < end);
   }
 }
 
@@ -90,10 +88,10 @@ function reflectArmState() {
     banner.textContent = 'LIVE MANUAL — schedule override is OFF; auto-claim runs continuously';
     banner.className = 'banner live';
   } else if (scheduledNow) {
-    banner.textContent = 'LIVE — outside scheduled work hours';
+    banner.textContent = 'LIVE — current time is inside an active schedule window';
     banner.className = 'banner live';
   } else {
-    banner.textContent = 'SCHEDULED STANDBY — paused during your work shift';
+    banner.textContent = 'SCHEDULED STANDBY — current time is outside an active schedule window';
     banner.className = 'banner idle';
   }
 }
