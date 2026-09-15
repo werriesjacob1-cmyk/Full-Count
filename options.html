@@ -241,6 +241,30 @@
       </div>
     </div>
 
+    <p class="section-title">Phone remote control</p>
+    <div class="card">
+      <div class="row">
+        <div>
+          <div class="label">Phone remote control</div>
+          <div class="hint">Lets your phone switch the claimer between LIVE MANUAL, FOLLOW SCHEDULE, and OFF.
+            Commands are checked about every 30 seconds while the work PC is awake and Chrome is running.</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="phoneRemoteEnabled" aria-label="Phone remote control">
+          <span class="track"></span>
+        </label>
+      </div>
+      <div class="row">
+        <div>
+          <div class="label">Send controls to my phone</div>
+          <div class="hint">Sends an ntfy notification with three buttons: ON NOW, SCHEDULE, and OFF.
+            Keep that notification in the ntfy app as your remote control panel.</div>
+          <div class="hint" id="remoteStatus"></div>
+        </div>
+        <button class="btn" id="sendRemotePanel" type="button">Send controls</button>
+      </div>
+    </div>
+
     <p class="section-title">Automatic schedule</p>
     <div class="card">
       <div class="row">
