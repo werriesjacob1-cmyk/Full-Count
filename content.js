@@ -376,11 +376,35 @@
    * YOU rather than merely being claimed by somebody.
    */
   function verifyClaim() {
-    const text = norm(document.body ? document.body.textContent : '').slice(0, 4000);
+    const text = norm(document.body ? document.body.textContent : '').slice(0, 12000);
     const claimed = /\bclaimed\b/i.test(text);
     const name = norm(settings.myName);
     const mine = name ? text.toLowerCase().includes(name.toLowerCase()) : null;
     return { claimed, mine };
+  }
+
+  async function waitForClaimVerification(timeoutMs = 7000) {
+    const started = Date.now();
+    let last = verifyClaim();
+    while (Date.now() - started < timeoutMs) {
+      if (last.claimed && last.mine !== false) return last;
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      last = verifyClaim();
+    }
+    return last;
+  }
+
+  async function reportVerification(pending, phase) {
+    const result = await waitForClaimVerification();
+    const ok = result.claimed && result.mine !== false;
+    (ok ? log : warn)('claim ' + (ok ? 'confirmed' : 'NOT confirmed') + ' ' + phase, result);
+    try {
+      chrome.runtime.sendMessage({
+        type: 'CLAIM_VERIFIED',
+        payload: { ...pending, verified: ok, claimedText: result.claimed, mine: result.mine }
+      }, () => void chrome.runtime.lastError);
+    } catch { /* no context */ }
+    return ok;
   }
 
   function onNavigated(from, to) {
@@ -388,38 +412,27 @@
     const pending = takeHandoff();
     if (!pending) return;
 
-    const result = verifyClaim();
-    const ok = result.claimed && result.mine !== false;
+    void (async () => {
+      await reportVerification(pending, 'on the detail page');
 
-    if (ok) {
-      log('claim confirmed on the detail page', result);
-    } else {
-      warn('claim NOT confirmed — page shows claimed=' + result.claimed + ', mine=' + result.mine);
-    }
-    try {
-      chrome.runtime.sendMessage({
-        type: 'CLAIM_VERIFIED',
-        payload: { ...pending, verified: ok, claimedText: result.claimed, mine: result.mine }
-      }, () => void chrome.runtime.lastError);
-    } catch { /* no context */ }
+      if (!settings.returnToList || !pending.returnTo || pending.returnTo === to) return;
 
-    if (!settings.returnToList || !pending.returnTo || pending.returnTo === to) return;
-
-    if (returnTimer) clearTimeout(returnTimer);
-    returnTimer = setTimeout(() => {
-      log('returning to the list to keep watching');
-      try {
-        // history.back keeps the SPA warm; assign is the fallback if the
-        // route does not actually change.
-        const before = location.href;
-        history.back();
-        setTimeout(() => {
-          if (location.href === before) location.assign(pending.returnTo);
-        }, 1200);
-      } catch {
-        location.assign(pending.returnTo);
-      }
-    }, Math.max(0, settings.returnDelaySec) * 1000);
+      if (returnTimer) clearTimeout(returnTimer);
+      returnTimer = setTimeout(() => {
+        log('returning to the list to keep watching');
+        try {
+          // history.back keeps the SPA warm; assign is the fallback if the
+          // route does not actually change.
+          const before = location.href;
+          history.back();
+          setTimeout(() => {
+            if (location.href === before) location.assign(pending.returnTo);
+          }, 1200);
+        } catch {
+          location.assign(pending.returnTo);
+        }
+      }, Math.max(0, settings.returnDelaySec) * 1000);
+    })();
   }
 
   function checkNavigation() {
@@ -473,6 +486,11 @@
            '— refusing to click through it');
       return null;
     }
+
+    // Live CarNow rows are <button class="cny-list__row" ng-click="...">.
+    // Click the button itself so Angular's row handler is the direct target;
+    // descendants are only used above to prove the row is not covered.
+    if (row.matches && row.matches('button.cny-list__row')) return row;
     return hit;
   }
 
@@ -815,19 +833,13 @@
       // checkNavigation, so consume the hand-off before arming.
       const pending = takeHandoff();
       if (pending) {
-        const result = verifyClaim();
-        const ok = result.claimed && result.mine !== false;
-        (ok ? log : warn)('claim ' + (ok ? 'confirmed' : 'NOT confirmed') + ' after reload', result);
-        try {
-          chrome.runtime.sendMessage({
-            type: 'CLAIM_VERIFIED',
-            payload: { ...pending, verified: ok, claimedText: result.claimed, mine: result.mine }
-          }, () => void chrome.runtime.lastError);
-        } catch { /* no context */ }
-        if (settings.returnToList && pending.returnTo && pending.returnTo !== location.href) {
-          returnTimer = setTimeout(() => location.assign(pending.returnTo),
-                                   Math.max(0, settings.returnDelaySec) * 1000);
-        }
+        void (async () => {
+          await reportVerification(pending, 'after reload');
+          if (settings.returnToList && pending.returnTo && pending.returnTo !== location.href) {
+            returnTimer = setTimeout(() => location.assign(pending.returnTo),
+                                     Math.max(0, settings.returnDelaySec) * 1000);
+          }
+        })();
       }
 
       if (restoreBaseline()) {
