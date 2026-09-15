@@ -7,6 +7,7 @@
 
 const DEFAULTS = Object.freeze({
   autoClaim: true,
+  scheduleEnabled: true,
   dryRun: true,
   soundAlert: true,
   debug: false,
@@ -18,30 +19,44 @@ const DEFAULTS = Object.freeze({
   myName: ''
 });
 
-const TOGGLES = ['autoClaim', 'dryRun', 'soundAlert', 'debug', 'returnToList'];
+const TOGGLES = ['autoClaim', 'scheduleEnabled', 'dryRun', 'soundAlert', 'debug', 'returnToList'];
 const NUMBERS = ['maxLeadAgeMin', 'minClaimIntervalSec', 'maxClaimsPerSession', 'returnDelaySec'];
 const TEXTS = ['myName'];
 const $ = (id) => document.getElementById(id);
 
 const SCHEDULE_TZ = 'America/Chicago';
-const SCHEDULE_START_MIN = 20 * 60;
-const SCHEDULE_END_MIN = 8 * 60 + 45;
+const WORK_SHIFTS = Object.freeze({
+  mon: [11 * 60, 20 * 60],
+  tue: [11 * 60, 20 * 60],
+  wed: null,
+  thu: [9 * 60 + 45, 17 * 60],
+  fri: [9 * 60 + 45, 17 * 60],
+  sat: [8 * 60 + 30, 19 * 60],
+  sun: null
+});
 
 function scheduleActive(now = new Date()) {
   try {
     const parts = new Intl.DateTimeFormat('en-US', {
       timeZone: SCHEDULE_TZ,
       hour12: false,
+      weekday: 'short',
       hour: '2-digit',
       minute: '2-digit'
     }).formatToParts(now);
     const hour = parseInt(parts.find((p) => p.type === 'hour')?.value || '0', 10);
     const minute = parseInt(parts.find((p) => p.type === 'minute')?.value || '0', 10);
+    const weekday = (parts.find((p) => p.type === 'weekday')?.value || '').toLowerCase();
+    const shift = WORK_SHIFTS[weekday];
+    if (!shift) return true;
     const minuteOfDay = hour * 60 + minute;
-    return minuteOfDay >= SCHEDULE_START_MIN || minuteOfDay < SCHEDULE_END_MIN;
+    return minuteOfDay < shift[0] || minuteOfDay >= shift[1];
   } catch {
+    const keys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    const shift = WORK_SHIFTS[keys[now.getDay()]];
+    if (!shift) return true;
     const minuteOfDay = now.getHours() * 60 + now.getMinutes();
-    return minuteOfDay >= SCHEDULE_START_MIN || minuteOfDay < SCHEDULE_END_MIN;
+    return minuteOfDay < shift[0] || minuteOfDay >= shift[1];
   }
 }
 
@@ -60,21 +75,25 @@ async function loadSettings() {
 /** The banner has to make the current mode impossible to misread. */
 function reflectArmState() {
   const enabled = $('autoClaim').checked;
+  const followSchedule = $('scheduleEnabled').checked;
   const dry = $('dryRun').checked;
   const scheduledNow = scheduleActive();
   const banner = $('armState');
 
   if (!enabled) {
-    banner.textContent = 'OFF — not watching for leads';
+    banner.textContent = 'OFF — master switch is off';
     banner.className = 'banner idle';
   } else if (dry) {
     banner.textContent = 'DRY RUN — new leads are detected and announced, never clicked';
     banner.className = 'banner dry';
+  } else if (!followSchedule) {
+    banner.textContent = 'LIVE MANUAL — schedule override is OFF; auto-claim runs continuously';
+    banner.className = 'banner live';
   } else if (scheduledNow) {
-    banner.textContent = 'LIVE OVERNIGHT — auto-claim active until 8:45 AM CT';
+    banner.textContent = 'LIVE — outside scheduled work hours';
     banner.className = 'banner live';
   } else {
-    banner.textContent = 'SCHEDULED STANDBY — auto-claim starts automatically at 8:00 PM CT';
+    banner.textContent = 'SCHEDULED STANDBY — paused during your work shift';
     banner.className = 'banner idle';
   }
 }
