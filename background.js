@@ -16,6 +16,7 @@ const DEFAULTS = Object.freeze({
   dryRun: true,
   soundAlert: true,
   debug: false,
+  phonePushEnabled: true,
   maxLeadAgeMin: 5,
   minClaimIntervalSec: 10,
   maxClaimsPerSession: 200,
@@ -127,6 +128,57 @@ chrome.notifications.onClicked.addListener(async (id) => {
 });
 
 /* -------------------------------------------------------------------- */
+/* Phone push via ntfy                                                  */
+/* -------------------------------------------------------------------- */
+
+async function sendPhonePush({ title, message, priority = 'default', tags = 'white_check_mark' }) {
+  const { phonePushEnabled } = await getSettings();
+  if (!phonePushEnabled) return { ok: false, skipped: 'disabled' };
+
+  const { ntfyTopic = '' } = await chrome.storage.local.get({ ntfyTopic: '' });
+  if (!ntfyTopic) return { ok: false, skipped: 'no-topic' };
+
+  try {
+    const response = await fetch('https://ntfy.sh/' + encodeURIComponent(ntfyTopic), {
+      method: 'POST',
+      headers: {
+        'Title': title,
+        'Priority': priority,
+        'Tags': tags
+      },
+      body: message
+    });
+    if (!response.ok) throw new Error('ntfy HTTP ' + response.status);
+    await debugLog('phone push sent', title);
+    return { ok: true };
+  } catch (err) {
+    console.warn('[CarNow AC / sw] phone push failed', err);
+    return { ok: false, error: err && err.message ? err.message : String(err) };
+  }
+}
+
+async function sendConfirmedClaimPush(payload) {
+  const sourceRaw = payload && payload.source ? String(payload.source) : 'CarNow';
+  const source = sourceRaw === 'live-help'
+    ? 'Live Help Needed'
+    : sourceRaw.includes('observer') || sourceRaw.includes('poll') || sourceRaw.includes('alarm')
+      ? 'Conversations'
+      : sourceRaw;
+  const when = new Date(payload && payload.ts ? payload.ts : Date.now()).toLocaleTimeString([], {
+    hour: 'numeric',
+    minute: '2-digit'
+  });
+
+  // Intentionally excludes customer names/phone numbers.
+  return sendPhonePush({
+    title: 'CarNow lead claimed ✅',
+    message: 'Confirmed as yours • ' + source + ' • ' + when,
+    priority: 'high',
+    tags: 'white_check_mark,car'
+  });
+}
+
+/* -------------------------------------------------------------------- */
 /* Keep-alive                                                           */
 /* -------------------------------------------------------------------- */
 
@@ -222,6 +274,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }).catch(() => []);
       await writeChain;
 
+      if (verified) {
+        await sendConfirmedClaimPush(message.payload || {});
+      }
+
       // Silence is fine when it worked; a failure needs to be seen.
       if (!verified) {
         const why = !claimedText
@@ -249,6 +305,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'HEARTBEAT') {
     sendResponse({ ok: true, ts: Date.now() });
     return false;
+  }
+
+  if (message.type === 'TEST_NTFY') {
+    (async () => {
+      const result = await sendPhonePush({
+        title: 'CarNow notifications are working ✅',
+        message: 'Your phone will be notified after a lead is confirmed as yours.',
+        priority: 'high',
+        tags: 'white_check_mark,car'
+      });
+      sendResponse(result);
+    })();
+    return true;
   }
 
   if (message.type === 'GET_STATUS') {
