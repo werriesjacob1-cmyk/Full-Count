@@ -12,7 +12,7 @@ const DEFAULTS = Object.freeze({
   debug: false,
   maxLeadAgeMin: 5,
   minClaimIntervalSec: 10,
-  maxClaimsPerSession: 10,
+  maxClaimsPerSession: 200,
   returnToList: true,
   returnDelaySec: 5,
   myName: ''
