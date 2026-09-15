@@ -213,12 +213,30 @@
     <div class="card">
       <div class="row">
         <div>
-          <div class="label">Overnight auto-claim window</div>
-          <div class="hint">Claims are allowed only from <strong>8:00 PM through 8:44 AM Central Time</strong>.
-            At 8:45 AM the extension stops clicking automatically. Outside the window it keeps existing
-            rows baselined so daytime activity cannot be mistaken for a new overnight lead.</div>
+          <div class="label">Follow my work schedule</div>
+          <div class="hint">When ON, auto-claim runs when you are off work and pauses during your listed shifts.
+            Turn this OFF for a manual always-on override. The master Auto-Claim switch above can still shut
+            everything off instantly.</div>
         </div>
-        <div style="font-weight:700;white-space:nowrap">8:00 PM–8:45 AM CT</div>
+        <label class="switch">
+          <input type="checkbox" id="scheduleEnabled" aria-label="Follow my work schedule">
+          <span class="track"></span>
+        </label>
+      </div>
+      <div class="row">
+        <div>
+          <div class="label">Your weekly schedule</div>
+          <div class="hint">
+            <strong>Mon:</strong> pause 11:00 AM–8:00 PM<br>
+            <strong>Tue:</strong> pause 11:00 AM–8:00 PM<br>
+            <strong>Wed:</strong> run all day<br>
+            <strong>Thu:</strong> pause 9:45 AM–5:00 PM<br>
+            <strong>Fri:</strong> pause 9:45 AM–5:00 PM<br>
+            <strong>Sat:</strong> pause 8:30 AM–7:00 PM<br>
+            <strong>Sun:</strong> run all day
+          </div>
+        </div>
+        <div style="font-weight:700;white-space:nowrap">Central Time</div>
       </div>
     </div>
 
