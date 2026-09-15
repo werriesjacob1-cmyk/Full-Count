@@ -31,6 +31,7 @@
 
   const DEFAULTS = Object.freeze({
     autoClaim: true,
+    scheduleEnabled: true,
     dryRun: true,              // detect + alert, never click
     soundAlert: true,
     debug: false,
@@ -67,11 +68,19 @@
   ];
   const LIVE_HELP_NAV_COOLDOWN_MS = 5000;
 
-  // Automatic overnight production window, always evaluated in Nashville
-  // time so Windows/Chrome locale changes cannot shift the schedule.
+  // Jacob's weekly work schedule. Auto-claim is active OUTSIDE these work
+  // hours, plus all day Wednesday and Sunday. Time is always Nashville /
+  // Central, so DST is handled automatically.
   const SCHEDULE_TZ = 'America/Chicago';
-  const SCHEDULE_START_MIN = 20 * 60;      // 8:00 PM
-  const SCHEDULE_END_MIN = 8 * 60 + 45;   // 8:45 AM
+  const WORK_SHIFTS = Object.freeze({
+    mon: [11 * 60, 20 * 60],          // 11:00 AM–8:00 PM
+    tue: [11 * 60, 20 * 60],          // 11:00 AM–8:00 PM
+    wed: null,                         // off — run all day
+    thu: [9 * 60 + 45, 17 * 60],      // 9:45 AM–5:00 PM
+    fri: [9 * 60 + 45, 17 * 60],      // 9:45 AM–5:00 PM
+    sat: [8 * 60 + 30, 19 * 60],      // 8:30 AM–7:00 PM
+    sun: null                          // run all day
+  });
 
   const ID_ATTRS = [
     'data-lead-id', 'data-leadid', 'data-lead',
@@ -183,24 +192,37 @@
       const parts = new Intl.DateTimeFormat('en-US', {
         timeZone: SCHEDULE_TZ,
         hour12: false,
+        weekday: 'short',
         hour: '2-digit',
         minute: '2-digit'
       }).formatToParts(now);
       const hour = parseInt(parts.find((p) => p.type === 'hour')?.value || '0', 10);
       const minute = parseInt(parts.find((p) => p.type === 'minute')?.value || '0', 10);
-      return { hour, minute, minuteOfDay: hour * 60 + minute };
+      const weekday = (parts.find((p) => p.type === 'weekday')?.value || '').toLowerCase();
+      return { hour, minute, weekday, minuteOfDay: hour * 60 + minute };
     } catch {
-      return { hour: now.getHours(), minute: now.getMinutes(), minuteOfDay: now.getHours() * 60 + now.getMinutes() };
+      const keys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+      return {
+        hour: now.getHours(),
+        minute: now.getMinutes(),
+        weekday: keys[now.getDay()],
+        minuteOfDay: now.getHours() * 60 + now.getMinutes()
+      };
     }
   }
 
+  // True means the schedule allows automatic claiming right now.
+  // The listed work shifts are the PAUSED windows.
   function scheduleActive(now = new Date()) {
-    const { minuteOfDay } = centralClockParts(now);
-    return minuteOfDay >= SCHEDULE_START_MIN || minuteOfDay < SCHEDULE_END_MIN;
+    const { weekday, minuteOfDay } = centralClockParts(now);
+    const shift = WORK_SHIFTS[weekday];
+    if (!shift) return true; // Wednesday + Sunday: run all day.
+    const [start, end] = shift;
+    return minuteOfDay < start || minuteOfDay >= end;
   }
 
   function scheduleLabel() {
-    return '8:00 PM–8:45 AM CT';
+    return 'Outside work hours; Wed + Sun all day';
   }
 
   function stripVolatile(text) {
@@ -712,14 +734,16 @@
 
     const rows = collectRows();
     const liveHelpList = rows.length ? isLiveHelpListPage(rows) : false;
-    const scheduled = scheduleActive();
+    const scheduled = settings.scheduleEnabled ? scheduleActive() : true;
 
-    // Outside the overnight window, never click. Keep absorbing every visible
-    // normal-list row into the baseline so the 8:00 PM transition cannot treat
-    // a day's worth of existing conversations as newly arrived.
+    // During scheduled work hours, never click. Keep absorbing every visible
+    // normal-list row into the baseline so the transition back to scheduled
+    // auto-claim cannot treat existing conversations as newly arrived.
     if (!scheduled) {
       if (scheduleWasActive !== false) {
-        log('schedule OFF — standing down until 8:00 PM CT');
+        log(settings.scheduleEnabled
+          ? 'schedule PAUSED — inside work hours'
+          : 'manual mode enabled');
       }
       scheduleWasActive = false;
       for (const entry of rows) baseline.add(entry.key);
@@ -727,11 +751,11 @@
       return;
     }
 
-    // Crossing into the production window: normal conversation rows already
-    // on screen are old and must stay baselined. A Live Help queue is
-    // different: anything waiting there at 8:00 PM is actionable work.
+    // Crossing from a paused work shift into an active period: normal
+    // conversation rows already on screen are old and stay baselined. A Live
+    // Help queue is different: anything waiting there is actionable work.
     if (scheduleWasActive === false) {
-      log('schedule LIVE — ' + scheduleLabel());
+      log(settings.scheduleEnabled ? 'schedule LIVE — ' + scheduleLabel() : 'manual LIVE override');
       seen.clear();
       acted.clear();
       if (liveHelpList) {
@@ -1051,8 +1075,9 @@
       newSinceArmed: Array.from(seen.keys()),
       onFirstPage: onFirstPage(),
       liveHelpList: isLiveHelpListPage(collectRows()),
-      scheduleActive: scheduleActive(),
-      schedule: scheduleLabel()
+      scheduleEnabled: settings.scheduleEnabled,
+      scheduleActive: settings.scheduleEnabled ? scheduleActive() : true,
+      schedule: settings.scheduleEnabled ? scheduleLabel() : 'Manual always-on mode'
     }),
     rows: () => collectRows().map((e) => ({
       key: e.key,
