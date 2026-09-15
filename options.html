@@ -209,6 +209,38 @@
       </div>
     </div>
 
+    <p class="section-title">Phone notifications</p>
+    <div class="card">
+      <div class="row">
+        <div>
+          <div class="label">Phone push notifications</div>
+          <div class="hint">Free push notifications through ntfy after a lead is confirmed as yours.
+            Customer names and phone numbers are not sent.</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="phonePushEnabled" aria-label="Phone push notifications">
+          <span class="track"></span>
+        </label>
+      </div>
+      <div class="row" style="align-items:flex-start">
+        <div style="min-width:0;flex:1">
+          <div class="label">Your private ntfy topic</div>
+          <div class="hint">Install the ntfy app on your phone, tap Subscribe, and enter this exact topic.
+            Treat it like a password.</div>
+          <code id="ntfyTopic" style="display:block;margin-top:8px;word-break:break-all;font-size:12px">Creating…</code>
+        </div>
+        <button class="btn" id="copyNtfyTopic" type="button">Copy topic</button>
+      </div>
+      <div class="row">
+        <div>
+          <div class="label">Test your phone</div>
+          <div class="hint">Subscribe to the topic in ntfy first, then send a test notification.</div>
+          <div class="hint" id="ntfyStatus"></div>
+        </div>
+        <button class="btn" id="testNtfy" type="button">Send test</button>
+      </div>
+    </div>
+
     <p class="section-title">Automatic schedule</p>
     <div class="card">
       <div class="row">
