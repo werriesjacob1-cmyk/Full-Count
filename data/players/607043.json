@@ -3945,6 +3945,136 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-15",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 42.4,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Texas Rangers",
+          "game_pk": 822849,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 59.4286,
+            "l7_avg_ev": 50.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 43.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -1.52,
+            "platoon_xwoba": 0.66,
+            "park_hand_index": -0.21,
+            "opp_catcher_framing": -0.96,
+            "days_rest": 2.0,
+            "woba_ahead": 26.3636,
+            "woba_behind": 41.8182,
+            "pull_park_synergy": -0.0639,
+            "hard_hit_105_rate": 0.0125,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.176,
+            "vs_rp_ops": 0.084,
+            "ump_k_pct": 0.192,
+            "ump_bb_pct": 0.504
+          },
+          "hit_probability": 0.6226,
+          "raw_hit_probability": 0.6178,
+          "lift": 0.0573,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 41.3,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Texas Rangers",
+          "game_pk": 822849,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 5.46,
+            "sprint_speed": 25.0,
+            "catcher_poptime": 11.4286,
+            "on_base": 61.6123
+          },
+          "hit_probability": 0.0489,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 4.6,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Texas Rangers",
+          "game_pk": 822849,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0471
+          },
+          "hit_probability": 0.0471,
+          "raw_hit_probability": null,
+          "lift": -0.0006,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.9,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Texas Rangers",
+          "game_pk": 822849,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.032
+          },
+          "hit_probability": 0.032,
+          "raw_hit_probability": null,
+          "lift": 0.0113,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

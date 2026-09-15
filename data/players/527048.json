@@ -451,7 +451,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 30.8,
+          "score": 29.1,
           "notable_signals": 0,
           "matchup": "Atlanta Braves @ Chicago Cubs",
           "game_pk": 824627,
@@ -461,7 +461,7 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 42.0,
-            "same_hand_ratio": 57.1429,
+            "same_hand_ratio": 12.5,
             "l14_k_pct": 0.0,
             "env_neutral": 50.0,
             "ump_accuracy": 60.6598,
@@ -482,7 +482,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 11.1,
+          "score": 11.9,
           "notable_signals": 0,
           "matchup": "Atlanta Braves @ Chicago Cubs",
           "game_pk": 824627,
@@ -491,18 +491,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4128,
+            "outs_rate": 0.4112,
             "avg_outs_per_start": 15.29
           },
-          "hit_probability": 0.4128,
-          "raw_hit_probability": 0.4128,
-          "lift": -0.151,
+          "hit_probability": 0.4112,
+          "raw_hit_probability": 0.4112,
+          "lift": -0.1446,
           "reliability": "A",
           "sample_n": 24,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Chicago Cubs",
+          "game_pk": 824627,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            527048,
+            592332
+          ],
+          "signals": {
+            "combined_k_edge": 0.0678
+          },
+          "hit_probability": 0.671,
+          "raw_hit_probability": null,
+          "lift": 0.0678,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

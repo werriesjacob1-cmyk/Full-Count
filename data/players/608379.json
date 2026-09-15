@@ -436,18 +436,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7005,
+            "outs_rate": 0.6964,
             "avg_outs_per_start": 18.9
           },
-          "hit_probability": 0.6795,
-          "raw_hit_probability": 0.7005,
-          "lift": 0.26,
+          "hit_probability": 0.6764,
+          "raw_hit_probability": 0.6964,
+          "lift": 0.2808,
           "reliability": "A",
           "sample_n": 29,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 1,
+          "matchup": "Kansas City Royals @ Houston Astros",
+          "game_pk": 824143,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            608379,
+            686613
+          ],
+          "signals": {
+            "combined_k_edge": 0.055
+          },
+          "hit_probability": 0.7029,
+          "raw_hit_probability": null,
+          "lift": 0.055,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

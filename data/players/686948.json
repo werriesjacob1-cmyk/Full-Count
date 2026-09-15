@@ -2764,9 +2764,9 @@
       "date": "2026-09-15",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 78.0,
+          "score": 78.4,
           "notable_signals": 2,
           "matchup": "Atlanta Braves @ Chicago Cubs",
           "game_pk": 824627,
@@ -2780,14 +2780,14 @@
             "pitch_exploit": 1.7143,
             "l7_avg_ev": 77.1023,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 43.7,
+            "park_hr_index": 43.9,
             "season_barrel_pct": 63.3333,
             "lineup_slot": 100.0,
             "bullpen_fatigue": 18.5185,
             "platoon_barrel_pct": 5.0,
             "platoon_xwoba": 3.78,
             "park_hand_index": 4.2,
-            "opp_catcher_framing": -0.12,
+            "opp_catcher_framing": 0.6,
             "days_rest": 0.0,
             "consecutive_games": -1.2,
             "woba_behind": 50.9091,
@@ -2802,13 +2802,13 @@
             "ump_k_pct": -0.444,
             "ump_bb_pct": -0.204
           },
-          "hit_probability": 0.7139,
-          "raw_hit_probability": 0.7507,
-          "lift": 0.0416,
+          "hit_probability": 0.6543,
+          "raw_hit_probability": 0.642,
+          "lift": 0.089,
           "reliability": "A",
           "sample_n": 128,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }

@@ -455,8 +455,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 41.6,
-          "notable_signals": 0,
+          "score": 41.0,
+          "notable_signals": 1,
           "matchup": "San Diego Padres @ Colorado Rockies",
           "game_pk": 824307,
           "team": "San Diego Padres",
@@ -465,10 +465,13 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 59.0,
-            "same_hand_ratio": 92.8571,
+            "same_hand_ratio": 0.0,
             "l14_k_pct": 100.0,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 80.5003,
+            "ump_k_pct": 0.0,
+            "ump_bb_pct": -0.024
           },
           "hit_probability": 0.6062,
           "raw_hit_probability": 0.6608,
@@ -484,7 +487,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 45.8,
+          "score": 47.0,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ Colorado Rockies",
           "game_pk": 824307,
@@ -493,18 +496,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6757,
+            "outs_rate": 0.6739,
             "avg_outs_per_start": 14.34
           },
-          "hit_probability": 0.6605,
-          "raw_hit_probability": 0.6757,
-          "lift": -0.1147,
+          "hit_probability": 0.6591,
+          "raw_hit_probability": 0.6739,
+          "lift": -0.1055,
           "reliability": "A",
           "sample_n": 29,
           "projection": {
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.8,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ Colorado Rockies",
+          "game_pk": 824307,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            621111,
+            607536
+          ],
+          "signals": {
+            "combined_k_edge": 0.2966
+          },
+          "hit_probability": 0.6245,
+          "raw_hit_probability": null,
+          "lift": 0.2966,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
           }
         }
       ]

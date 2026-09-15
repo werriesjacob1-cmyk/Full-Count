@@ -219,7 +219,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 44.3,
+          "score": 45.8,
           "notable_signals": 0,
           "matchup": "Miami Marlins @ Arizona Diamondbacks",
           "game_pk": 825030,
@@ -231,7 +231,10 @@
             "opp_team_k_pct": 49.0,
             "same_hand_ratio": 43.75,
             "l14_k_pct": 58.8235,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 65.6167,
+            "ump_k_pct": -0.468,
+            "ump_bb_pct": -0.216
           },
           "hit_probability": 0.5154,
           "raw_hit_probability": 0.5154,
@@ -247,7 +250,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 57.7,
+          "score": 58.4,
           "notable_signals": 0,
           "matchup": "Miami Marlins @ Arizona Diamondbacks",
           "game_pk": 825030,
@@ -256,12 +259,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5993,
+            "outs_rate": 0.5973,
             "avg_outs_per_start": 15.89
           },
-          "hit_probability": 0.5988,
-          "raw_hit_probability": 0.5993,
-          "lift": 0.035,
+          "hit_probability": 0.5972,
+          "raw_hit_probability": 0.5973,
+          "lift": 0.0414,
           "reliability": "A",
           "sample_n": 18,
           "projection": {

@@ -352,12 +352,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7424,
+            "outs_rate": 0.7375,
             "avg_outs_per_start": 14.86
           },
-          "hit_probability": 0.7103,
-          "raw_hit_probability": 0.7424,
-          "lift": -0.0649,
+          "hit_probability": 0.7068,
+          "raw_hit_probability": 0.7375,
+          "lift": -0.0578,
           "reliability": "C",
           "sample_n": 7,
           "projection": {
@@ -367,9 +367,9 @@
           }
         },
         {
-          "prop": "Over 7.5 Combined Strikeouts",
+          "prop": "Over 6.5 Combined Strikeouts",
           "type": "pitcher_combo",
-          "score": 41.1,
+          "score": 55.0,
           "notable_signals": 0,
           "matchup": "San Francisco Giants @ St. Louis Cardinals",
           "game_pk": 823007,
@@ -381,17 +381,17 @@
             669467
           ],
           "signals": {
-            "combined_k_edge": -0.0485
+            "combined_k_edge": -0.0046
           },
-          "hit_probability": 0.4842,
+          "hit_probability": 0.6433,
           "raw_hit_probability": null,
-          "lift": -0.0485,
+          "lift": -0.0046,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
             "stat": "combined_strikeouts",
-            "value": 7.5,
-            "needs": 8
+            "value": 6.5,
+            "needs": 7
           }
         }
       ]
