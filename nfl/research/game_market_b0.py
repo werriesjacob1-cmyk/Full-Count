@@ -219,6 +219,8 @@ def _bootstrap_mae_delta(
     iterations: int = 2000,
     seed: int = 20260914,
 ) -> dict[str, Any]:
+    if isinstance(iterations, bool) or not isinstance(iterations, int) or iterations <= 0:
+        raise GameMarketB0Error("bootstrap iterations must be a positive integer")
     if not rows:
         return {
             "unit": "game_id", "games": 0, "iterations": iterations, "seed": seed,
@@ -240,7 +242,7 @@ def _bootstrap_mae_delta(
         "games": n,
         "iterations": iterations,
         "seed": seed,
-        "mae_delta_model_minus_close_p2_5": deltas[int(iterations * 0.025)],
+        "mae_delta_model_minus_close_p2_5": deltas[min(iterations - 1, int(iterations * 0.025))],
         "mae_delta_model_minus_close_p50": statistics.median(deltas),
         "mae_delta_model_minus_close_p97_5": deltas[min(iterations - 1, int(iterations * 0.975))],
     }
@@ -260,10 +262,14 @@ def evaluate_against_closing_market(
     home margin (`home_score-away_score`). Closing data are benchmark controls
     only and never flow back into B0 predictions.
     """
-    predictions = {str(row["game_id"]): dict(row) for row in prediction_rows}
-    if len(predictions) != len(list(prediction_rows)) if False else False:
-        pass
-    # Build outcome index explicitly so duplicate game IDs fail closed.
+    predictions: dict[str, dict[str, Any]] = {}
+    for source in prediction_rows:
+        row = dict(source)
+        game_id = _text(row.get("game_id"), "game_id")
+        if game_id in predictions:
+            raise GameMarketB0Error(f"duplicate prediction game_id: {game_id}")
+        predictions[game_id] = row
+
     outcomes: dict[str, dict[str, Any]] = {}
     for source in outcome_rows:
         row = dict(source)
