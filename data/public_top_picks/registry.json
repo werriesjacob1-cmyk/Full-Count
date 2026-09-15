@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-15T20:15:55.842725+00:00",
+  "updated_at": "2026-09-15T20:31:20.666997+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -33174,6 +33174,206 @@
         },
         "qualification_timestamp": "2026-09-15T20:11:16.758289+00:00",
         "board_timestamp": "2026-09-15T20:11:16.725071+00:00",
+        "slate_date": "2026-09-15"
+      }
+    },
+    "fc2:822849:player-596115:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:822849:player-596115:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "822849",
+        [
+          "player",
+          "596115"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-15",
+      "first_published_at": "2026-09-15T20:31:20.666997+00:00",
+      "publication_provenance": {
+        "artifact_id": "242f778f6fdd4cd82a525ac024b9de56eda7b6508716b9c35e98c15da57ae599",
+        "source_commit": "4b55a8f16abbf8e5e2787d63da64fd76e27cce31",
+        "workflow_run_id": "35019198673",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-15T20:30:54.604651+00:00",
+        "data_hash": "9e9eec2616d94b4b5b3d3c03c532ecaf9c159cd3e12fa66768627112637fba32",
+        "live_hash": "d81c01490815018ad1b0b65b5834e52d813f41f46f418a4ce95ca6518918ecfd"
+      },
+      "snapshot": {
+        "id": "fc2:822849:player-596115:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 822849,
+        "player_id": 596115,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Trevor Story",
+        "team": "Boston Red Sox",
+        "matchup": "Boston Red Sox @ Texas Rangers",
+        "game_start": "2026-09-16T00:05:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.7001,
+        "market_odds": -180,
+        "market_implied": 0.6429,
+        "market_edge": 0.0572,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.5 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 16.7 \u2014 hot recent contact",
+          "Projected 3.94 PA (batting slot 6)",
+          "Hitters batting ahead of him: 0.346 wOBA (league ~.320)",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "L7 avg EV 81.0mph (league ~88.5) \u2014 cold recent contact",
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Hitter batting behind him: 0.271 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.82 runs (league avg 4.245; line 3.5, game total 8) \u2014 a weak offensive environment",
+          "Activated from the 60-day injured list 16 day(s) ago \u2014 early performance back can be inconsistent",
+          "Public heavy on Boston Red Sox (money% trails tickets% by 15 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 4.8 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 0/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Boston Red Sox (money% -15 pts vs ticket%) \u2014 smart money moving away from this side",
+          "BvP: 2-for-18 vs Jacob deGrom (standard error \u00b17 pts on a 18-AB career sample -- weighted lightly on that basis, not just because the count looks small)"
+        ],
+        "prob_ci": [
+          0.6833,
+          0.742
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 54,
+        "lineup_assumed": null,
+        "base_rate": 0.6732,
+        "lift": 0.0269,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "d4fa79b60",
+          "prediction_timestamp": "2026-09-15T20:21:28.446037+00:00",
+          "odds_fetched_at": "2026-09-15T20:21:21.640740+00:00",
+          "board_generated_at": "2026-09-15T20:21:28.420791+00:00"
+        },
+        "qualification_timestamp": "2026-09-15T20:21:28.446037+00:00",
+        "board_timestamp": "2026-09-15T20:21:28.420791+00:00",
+        "slate_date": "2026-09-15"
+      }
+    },
+    "fc2:822849:player-686765:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:822849:player-686765:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "822849",
+        [
+          "player",
+          "686765"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-15",
+      "first_published_at": "2026-09-15T20:31:20.666997+00:00",
+      "publication_provenance": {
+        "artifact_id": "242f778f6fdd4cd82a525ac024b9de56eda7b6508716b9c35e98c15da57ae599",
+        "source_commit": "4b55a8f16abbf8e5e2787d63da64fd76e27cce31",
+        "workflow_run_id": "35019198673",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-15T20:30:54.604651+00:00",
+        "data_hash": "9e9eec2616d94b4b5b3d3c03c532ecaf9c159cd3e12fa66768627112637fba32",
+        "live_hash": "d81c01490815018ad1b0b65b5834e52d813f41f46f418a4ce95ca6518918ecfd"
+      },
+      "snapshot": {
+        "id": "fc2:822849:player-686765:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 822849,
+        "player_id": 686765,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Nick Sogard",
+        "team": "Boston Red Sox",
+        "matchup": "Boston Red Sox @ Texas Rangers",
+        "game_start": "2026-09-16T00:05:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6727,
+        "market_odds": -170,
+        "market_implied": 0.6296,
+        "market_edge": 0.0431,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.0 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 89.8mph (league ~88.5)",
+          "L7 barrel% 16.7 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+2.8mph 2nd-half vs 1st-half)",
+          "Platoon: S bat vs RHP (handedness unknown)",
+          "Pitch-type exploit: RV/100 +1.8 vs FF (opposing SP throws it 41.9% of the time)",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "Projected 3.56 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.320 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.321 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.82 runs (league avg 4.245; line 3.5, game total 8) \u2014 a weak offensive environment",
+          "Public heavy on Boston Red Sox (money% trails tickets% by 15 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 4.5 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 0/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Boston Red Sox (money% -15 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.6619,
+          0.6958
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 53,
+        "lineup_assumed": null,
+        "base_rate": 0.6732,
+        "lift": -0.0005,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "d4fa79b60",
+          "prediction_timestamp": "2026-09-15T20:21:28.446037+00:00",
+          "odds_fetched_at": "2026-09-15T20:21:21.640740+00:00",
+          "board_generated_at": "2026-09-15T20:21:28.420791+00:00"
+        },
+        "qualification_timestamp": "2026-09-15T20:21:28.446037+00:00",
+        "board_timestamp": "2026-09-15T20:21:28.420791+00:00",
         "slate_date": "2026-09-15"
       }
     }
