@@ -12,6 +12,7 @@ const DEFAULTS = Object.freeze({
   soundAlert: true,
   debug: false,
   phonePushEnabled: true,
+  phoneRemoteEnabled: true,
   maxLeadAgeMin: 5,
   minClaimIntervalSec: 10,
   maxClaimsPerSession: 200,
@@ -20,7 +21,7 @@ const DEFAULTS = Object.freeze({
   myName: ''
 });
 
-const TOGGLES = ['autoClaim', 'scheduleEnabled', 'dryRun', 'soundAlert', 'debug', 'phonePushEnabled', 'returnToList'];
+const TOGGLES = ['autoClaim', 'scheduleEnabled', 'dryRun', 'soundAlert', 'debug', 'phonePushEnabled', 'phoneRemoteEnabled', 'returnToList'];
 const NUMBERS = ['maxLeadAgeMin', 'minClaimIntervalSec', 'maxClaimsPerSession', 'returnDelaySec'];
 const TEXTS = ['myName'];
 const $ = (id) => document.getElementById(id);
@@ -290,6 +291,31 @@ $('copyNtfyTopic').addEventListener('click', async () => {
 });
 
 $('testNtfy').addEventListener('click', testPhonePush);
+
+$('sendRemotePanel').addEventListener('click', async () => {
+  const status = $('remoteStatus');
+  status.textContent = 'Sending controls to phone…';
+  status.style.color = '';
+  try {
+    const result = await chrome.runtime.sendMessage({ type: 'SEND_REMOTE_PANEL' });
+    if (result && result.ok) {
+      status.textContent = 'Remote controls sent ✓';
+      status.style.color = '#16a34a';
+    } else if (result && result.skipped === 'disabled') {
+      status.textContent = 'Turn phone remote control ON first.';
+      status.style.color = '#dc2626';
+    } else if (result && result.skipped === 'no-topic') {
+      status.textContent = 'Set up phone notifications first.';
+      status.style.color = '#dc2626';
+    } else {
+      status.textContent = 'Could not send remote controls.';
+      status.style.color = '#dc2626';
+    }
+  } catch {
+    status.textContent = 'Could not reach extension worker.';
+    status.style.color = '#dc2626';
+  }
+});
 
 $('clear').addEventListener('click', async () => {
   if (!confirm('Clear the claim history? Settings are not affected.')) return;
