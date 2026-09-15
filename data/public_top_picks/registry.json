@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-15T19:50:25.094291+00:00",
+  "updated_at": "2026-09-15T20:15:55.842725+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -33075,6 +33075,105 @@
         },
         "qualification_timestamp": "2026-09-15T19:46:58.960304+00:00",
         "board_timestamp": "2026-09-15T19:46:58.926277+00:00",
+        "slate_date": "2026-09-15"
+      }
+    },
+    "fc2:822849:player-679822:hits:1:over": {
+      "canonical_id": "fc2:822849:player-679822:hits:1:over",
+      "settlement_identity": [
+        "822849",
+        [
+          "player",
+          "679822"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-15",
+      "first_published_at": "2026-09-15T20:15:55.842725+00:00",
+      "publication_provenance": {
+        "artifact_id": "bc030c700d007fe18aa69f730786b0bf69bab0dcf614bf9497e9d367d199cab1",
+        "source_commit": "86653703945936b19f151dcaee0fe6b2bc9c790c",
+        "workflow_run_id": "35018290938",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-15T20:15:41.851731+00:00",
+        "data_hash": "a1329545e3711bc09489cf900d31015e4d118ddb23cb13bf9c8bd370ac82d378",
+        "live_hash": "4f71124abe7dbda0f2260366c5944f7e4c6238ac401d6c9d108681f4cf78707d"
+      },
+      "snapshot": {
+        "id": "fc2:822849:player-679822:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 822849,
+        "player_id": 679822,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Justin Foscue",
+        "team": "Texas Rangers",
+        "matchup": "Boston Red Sox @ Texas Rangers",
+        "game_start": "2026-09-16T00:05:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6525,
+        "market_odds": -150,
+        "market_implied": 0.6,
+        "market_edge": 0.0525,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 87.9mph (league ~88.5)",
+          "L7 barrel% 14.3 \u2014 hot recent contact",
+          "Platoon: R bat vs LHP (favorable)",
+          "Projected 4.5 PA (batting slot 1) \u2014 a favorable lineup slot",
+          "Team implied for 4.17 runs (league avg 4.245; line 3.5, game total 8)",
+          "Pitch-type exploit: RV/100 +2.0 vs CH (opposing SP throws it 26.0% of the time)",
+          "Season barrel% 11.2",
+          "Hitter batting behind him: 0.329 wOBA (league ~.320)",
+          "Dome \u2014 weather neutral",
+          "Sharp money backing Texas Rangers (money% +15 pts vs ticket%)"
+        ],
+        "watchouts": [
+          "wOBA vs xwOBA: 0.356 vs 0.329 (+0.027) \u2014 outperforming his contact quality, regression risk",
+          "L7 sample is thin (7 PA) \u2014 treat recent-form read with caution",
+          "Opposing bullpen fatigue: 0/8 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6404,
+          0.6645
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 89,
+        "lineup_assumed": null,
+        "base_rate": 0.5653,
+        "lift": 0.0872,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "c6580cf0b",
+          "prediction_timestamp": "2026-09-15T20:11:16.758289+00:00",
+          "odds_fetched_at": "2026-09-15T20:11:11.292035+00:00",
+          "board_generated_at": "2026-09-15T20:11:16.725071+00:00"
+        },
+        "qualification_timestamp": "2026-09-15T20:11:16.758289+00:00",
+        "board_timestamp": "2026-09-15T20:11:16.725071+00:00",
         "slate_date": "2026-09-15"
       }
     }
