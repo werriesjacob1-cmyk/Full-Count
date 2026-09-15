@@ -23,6 +23,28 @@ const NUMBERS = ['maxLeadAgeMin', 'minClaimIntervalSec', 'maxClaimsPerSession', 
 const TEXTS = ['myName'];
 const $ = (id) => document.getElementById(id);
 
+const SCHEDULE_TZ = 'America/Chicago';
+const SCHEDULE_START_MIN = 20 * 60;
+const SCHEDULE_END_MIN = 8 * 60 + 45;
+
+function scheduleActive(now = new Date()) {
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: SCHEDULE_TZ,
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit'
+    }).formatToParts(now);
+    const hour = parseInt(parts.find((p) => p.type === 'hour')?.value || '0', 10);
+    const minute = parseInt(parts.find((p) => p.type === 'minute')?.value || '0', 10);
+    const minuteOfDay = hour * 60 + minute;
+    return minuteOfDay >= SCHEDULE_START_MIN || minuteOfDay < SCHEDULE_END_MIN;
+  } catch {
+    const minuteOfDay = now.getHours() * 60 + now.getMinutes();
+    return minuteOfDay >= SCHEDULE_START_MIN || minuteOfDay < SCHEDULE_END_MIN;
+  }
+}
+
 /* -------------------------------------------------------------------- */
 /* Settings                                                             */
 /* -------------------------------------------------------------------- */
@@ -37,14 +59,24 @@ async function loadSettings() {
 
 /** The banner has to make the current mode impossible to misread. */
 function reflectArmState() {
-  const live = $('autoClaim').checked && !$('dryRun').checked;
+  const enabled = $('autoClaim').checked;
+  const dry = $('dryRun').checked;
+  const scheduledNow = scheduleActive();
   const banner = $('armState');
-  banner.textContent = !$('autoClaim').checked
-    ? 'OFF — not watching for leads'
-    : live
-      ? 'LIVE — new leads will be clicked automatically'
-      : 'DRY RUN — new leads are detected and announced, never clicked';
-  banner.className = 'banner ' + (!$('autoClaim').checked ? 'idle' : live ? 'live' : 'dry');
+
+  if (!enabled) {
+    banner.textContent = 'OFF — not watching for leads';
+    banner.className = 'banner idle';
+  } else if (dry) {
+    banner.textContent = 'DRY RUN — new leads are detected and announced, never clicked';
+    banner.className = 'banner dry';
+  } else if (scheduledNow) {
+    banner.textContent = 'LIVE OVERNIGHT — auto-claim active until 8:45 AM CT';
+    banner.className = 'banner live';
+  } else {
+    banner.textContent = 'SCHEDULED STANDBY — auto-claim starts automatically at 8:00 PM CT';
+    banner.className = 'banner idle';
+  }
 }
 
 let savedTimer = null;
@@ -197,4 +229,5 @@ $('clear').addEventListener('click', async () => {
   await loadSettings();
   wireToggles();
   await refresh();
+  setInterval(reflectArmState, 30 * 1000);
 })();
