@@ -2235,15 +2235,21 @@
     },
     {
       "alternate": false,
-      "blockers": [],
-      "canonical_market": null,
+      "blockers": [
+        "GRADER_NOT_ACTIVE",
+        "HISTORICAL_DATA_NOT_VALIDATED",
+        "MODEL_NOT_RESEARCHED",
+        "PROSPECTIVE_CAPTURE_NOT_ACTIVE",
+        "SELECTOR_NOT_VALIDATED"
+      ],
+      "canonical_market": "spread",
       "capabilities": {
         "grader": false,
         "historical_data_available": false,
         "historical_validated": false,
         "ingested": true,
         "model_research": false,
-        "normalized": false,
+        "normalized": true,
         "prospective_capture": false,
         "public_eligible": false,
         "selector_research": false
@@ -2257,7 +2263,7 @@
       ],
       "first_seen_at": "2026-09-12T23:39:12.177000Z",
       "last_seen_at": "2026-09-12T23:39:12.177000Z",
-      "lifecycle_status": "DISCOVERED",
+      "lifecycle_status": "NORMALIZED",
       "market_instances": 8,
       "observation_count": 8,
       "runner_instances": 16,
@@ -2287,7 +2293,7 @@
       ],
       "sport": "NFL",
       "sportsbook": "FANDUEL",
-      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "status_reason": "Primary pregame two-way spread has a fail-closed normalizer; historical, model, capture, selector, and grading validation remain inactive",
       "tabs": [
         "d-st",
         "game-specials",
@@ -4299,15 +4305,21 @@
     },
     {
       "alternate": false,
-      "blockers": [],
-      "canonical_market": null,
+      "blockers": [
+        "GRADER_NOT_ACTIVE",
+        "HISTORICAL_DATA_NOT_VALIDATED",
+        "MODEL_NOT_RESEARCHED",
+        "PROSPECTIVE_CAPTURE_NOT_ACTIVE",
+        "SELECTOR_NOT_VALIDATED"
+      ],
+      "canonical_market": "game_total",
       "capabilities": {
         "grader": false,
         "historical_data_available": false,
         "historical_validated": false,
         "ingested": true,
         "model_research": false,
-        "normalized": false,
+        "normalized": true,
         "prospective_capture": false,
         "public_eligible": false,
         "selector_research": false
@@ -4321,7 +4333,7 @@
       ],
       "first_seen_at": "2026-09-12T23:39:12.177000Z",
       "last_seen_at": "2026-09-12T23:39:12.177000Z",
-      "lifecycle_status": "DISCOVERED",
+      "lifecycle_status": "NORMALIZED",
       "market_instances": 8,
       "observation_count": 8,
       "runner_instances": 16,
@@ -4351,7 +4363,7 @@
       ],
       "sport": "NFL",
       "sportsbook": "FANDUEL",
-      "status_reason": "Observed in sportsbook payload; not yet classified",
+      "status_reason": "Primary pregame game total has a fail-closed normalizer; historical, model, capture, selector, and grading validation remain inactive",
       "tabs": [
         "d-st",
         "game-specials",

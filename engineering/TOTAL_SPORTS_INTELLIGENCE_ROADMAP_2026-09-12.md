@@ -58,9 +58,9 @@ This is one-event evidence, not a claim that 107 is FanDuel's permanent or exhau
 
 ## E. NFL markets that were invisible to Full Count decisions
 
-Of the 107 live-observed source families, 106 have no normalizer. Fifteen were recognized as alternate families but have no represented normalized ladder. Every source family lacks an active NFL grader.
+Of the 107 live-observed source families, 104 have no normalizer. Primary passing yards, the full-game two-way spread, and the full-game game total have strict normalizers. Fifteen observed alternate families still have no represented normalized ladder. Every source family lacks an active NFL grader.
 
-The previous implementation explicitly ignored alternate passing yards, passing touchdowns, receiving, rushing, spreads, totals, moneylines, and unknown types. The registry now makes those gaps visible without pretending they are modeled.
+The passing-yards path still ignores alternate passing yards, passing touchdowns, receiving, rushing, moneylines, and unknown types. A separate primary game-line normalizer now accepts only full-game spread and total contracts; it does not model or select them. The registry makes the remaining gaps visible without pretending they are modeled.
 
 ## F. Current NFL player-prop coverage
 
@@ -81,15 +81,15 @@ Passing-yard alternates and every other player family are discovery-only. There 
 | Market | Feed observed | Normalized | Historical dataset | Model | Prospective capture | Grader |
 | --- | --- | --- | --- | --- | --- | --- |
 | Moneyline | Yes | No | No | No | No | No |
-| Full-game spread | Yes | No | No | No | No | No |
+| Full-game spread | Yes | Yes | No | No | No | No |
 | Alternate spread | Yes | No | No | No | No | No |
-| Full-game total | Yes | No | No | No | No | No |
+| Full-game total | Yes | Yes | No | No | No | No |
 | Alternate total | Yes | No | No | No | No | No |
 | Team totals/alternates | Yes | No | No | No | No | No |
 | First-half winner/spread/total | Yes | No | No | No | No | No |
 | Quarter spreads | Yes | No | No | No | No | No |
 
-Spreads and totals are therefore the highest-value game-market research gap, exactly as the mission prioritizes.
+Historical spread/total data, market baselines, models, prospective capture, and grading remain the highest-value game-market research gaps.
 
 ## H. Current coaching data
 

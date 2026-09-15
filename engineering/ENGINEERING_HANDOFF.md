@@ -1643,6 +1643,8 @@ Next: run repository CI on the exact pushed head; add multi-event census and MLB
 
 Alligator
 
+
+
 ## 2026-09-14 — nflverse full-file quality audit
 
 - Downloaded all 27 canonical 1999–2025 weekly player-stat CSVs to a cache outside Git and recorded full-file SHA-256 evidence for 210,443,404 bytes and 476,159 rows. Added a reproducible streaming auditor and a compact 40 KB machine manifest; raw CSVs remain untracked outside the repository.
@@ -1697,5 +1699,34 @@ Alligator
 - Rechecked protected `main` at `bca7f798e09f7a8b440ebb9ed8ae8cc45e2ac4db` and merged it cleanly into the total-sports foundation branch.
 - The upstream delta updated generated MLB calibration and public data artifacts only: `backtest/calibration_recheck_report.json`, `backtest/calibrators_by_market.json`, `docs/data.json`, and `docs/live.json`. No foundation file required conflict resolution.
 - The branch remains draft-only. Re-run root and NFL suites on the published merge head before treating it as reviewable evidence.
+
+Alligator
+
+## 2026-09-15 — Fail-closed NFL primary spread/total normalization
+
+- Added a research-only FanDuel normalizer for exact full-game two-way spread
+  and total market types. It binds event teams and sides, requires an explicit
+  pregame/open state, active runners, kickoff-clock agreement, coherent lines,
+  distinct selection IDs, two nonzero prices, and rejects conflicting
+  duplicate market IDs.
+- Preserved capture, raw-digest, source, event, market, and selection
+  provenance on every normalized row. Alternate, period, and team markets
+  remain outside the contract.
+- Replayed unmodified raw bytes from DEN-KC capture run `34906529900`:
+  Denver +2.5 (-115) / Kansas City -2.5 (-105), and total 43.5 with Over -102
+  / Under -120. Both primary markets normalized with zero rejection; raw
+  payload SHA-256 is
+  `7e4a3e89ebb6fd9055728a65110d5578e740094da846c8340c9bd3837129196f`.
+- Advanced only those two coverage-registry families to `NORMALIZED`.
+  Historical data, modeling, prospective capture, selection, grading, and
+  public eligibility all remain inactive and explicitly blocked.
+- All 19 focused tests pass. The dependency-free NFL suite passes 92 tests;
+  two source-adapter modules remain locally unimportable because `requests` is
+  unavailable, so exact-head Linux CI is required.
+- No raw sportsbook artifact, workflow, model, selector, grader, public
+  surface, production system, or immutable evidence was changed.
+
+Next: validate historical schedule/score source contracts and point-in-time
+availability for spread/total market-only baselines before any model research.
 
 Alligator
