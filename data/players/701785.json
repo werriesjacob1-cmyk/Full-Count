@@ -1922,6 +1922,136 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-15",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 56.6,
+          "notable_signals": 2,
+          "matchup": "New York Yankees @ Minnesota Twins",
+          "game_pk": 823654,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 6.5714,
+            "pitch_exploit": 9.1429,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 87.8571,
+            "park_hr_index": 33.2,
+            "season_barrel_pct": 4.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -2.96,
+            "platoon_xwoba": -1.5,
+            "park_hand_index": -0.94,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 4.0,
+            "woba_ahead": 42.7273,
+            "woba_behind": 32.7273,
+            "pull_park_synergy": -0.7699,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.272,
+            "vs_rp_ops": 0.24,
+            "ump_k_pct": 0.024,
+            "ump_bb_pct": -0.12
+          },
+          "hit_probability": 0.6563,
+          "raw_hit_probability": 0.6435,
+          "lift": 0.091,
+          "reliability": "C",
+          "sample_n": 30,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 42.6,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Minnesota Twins",
+          "game_pk": 823654,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 1.02,
+            "sprint_speed": 18.75,
+            "catcher_poptime": 20.0,
+            "on_base": 71.2092
+          },
+          "hit_probability": 0.0425,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 30,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 7.7,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Minnesota Twins",
+          "game_pk": 823654,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0591
+          },
+          "hit_probability": 0.0591,
+          "raw_hit_probability": null,
+          "lift": 0.0114,
+          "reliability": "C",
+          "sample_n": 30,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.0,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Minnesota Twins",
+          "game_pk": 823654,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0283
+          },
+          "hit_probability": 0.0283,
+          "raw_hit_probability": null,
+          "lift": 0.0076,
+          "reliability": "C",
+          "sample_n": 30,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

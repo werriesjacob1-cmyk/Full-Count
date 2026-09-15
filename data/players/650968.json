@@ -156,6 +156,107 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-15",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 26.5,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ New York Mets",
+          "game_pk": 823574,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 65.4286,
+            "l7_avg_ev": 34.375,
+            "l7_barrel_pct": 0.0,
+            "park_hr_index": 34.3,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -1.32,
+            "park_hand_index": -0.07,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 2.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -0.0088,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": 0.312,
+            "ump_bb_pct": 0.336
+          },
+          "hit_probability": 0.6188,
+          "raw_hit_probability": 0.615,
+          "lift": 0.0535,
+          "reliability": "C",
+          "sample_n": 26,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ New York Mets",
+          "game_pk": 823574,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0191
+          },
+          "hit_probability": 0.0191,
+          "raw_hit_probability": null,
+          "lift": -0.0286,
+          "reliability": "C",
+          "sample_n": 26,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ New York Mets",
+          "game_pk": 823574,
+          "team": "Baltimore Orioles",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0083
+          },
+          "hit_probability": 0.0083,
+          "raw_hit_probability": null,
+          "lift": -0.0124,
+          "reliability": "C",
+          "sample_n": 26,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

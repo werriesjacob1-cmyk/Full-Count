@@ -2743,6 +2743,108 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-15",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 50.8,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Houston Astros",
+          "game_pk": 824143,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 21.4286,
+            "l7_avg_ev": 74.7656,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 12.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 0.0,
+            "bvp_ops": 1.578,
+            "platoon_barrel_pct": -2.08,
+            "platoon_xwoba": 0.42,
+            "park_hand_index": 1.78,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 2.0,
+            "woba_ahead": 100.0,
+            "woba_behind": 16.3636,
+            "pull_park_synergy": 1.0591,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.488,
+            "vs_rp_ops": 1.356,
+            "ump_k_pct": -0.456,
+            "ump_bb_pct": -0.288
+          },
+          "hit_probability": 0.6992,
+          "raw_hit_probability": 0.7234,
+          "lift": 0.0269,
+          "reliability": "A",
+          "sample_n": 143,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Houston Astros",
+          "game_pk": 824143,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0057
+          },
+          "hit_probability": 0.0057,
+          "raw_hit_probability": null,
+          "lift": -0.042,
+          "reliability": "A",
+          "sample_n": 143,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Houston Astros",
+          "game_pk": 824143,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0025
+          },
+          "hit_probability": 0.0025,
+          "raw_hit_probability": null,
+          "lift": -0.0182,
+          "reliability": "A",
+          "sample_n": 143,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
