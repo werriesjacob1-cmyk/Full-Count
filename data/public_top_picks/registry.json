@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-15T07:34:51.154488+00:00",
+  "updated_at": "2026-09-15T08:09:48.612929+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -31634,6 +31634,94 @@
         },
         "qualification_timestamp": "2026-09-15T07:22:12.220689+00:00",
         "board_timestamp": "2026-09-15T07:22:12.196274+00:00",
+        "slate_date": "2026-09-15"
+      }
+    },
+    "fc2:824384:player-663436:pitcher_outs:15:over": {
+      "canonical_id": "fc2:824384:player-663436:pitcher_outs:15:over",
+      "settlement_identity": [
+        "824384",
+        [
+          "player",
+          "663436"
+        ],
+        "pitcher_outs",
+        "15",
+        "over"
+      ],
+      "slate_date": "2026-09-15",
+      "first_published_at": "2026-09-15T08:09:48.612929+00:00",
+      "publication_provenance": {
+        "artifact_id": "6b19ecd4fe7712dd4049b2ef2e8899c8fc6382d5bda62855b3dff46ac81a8012",
+        "source_commit": "13d03828233a4746eb012e5adefe39f7570dfeed",
+        "workflow_run_id": "34945218257",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-15T08:09:35.519219+00:00",
+        "data_hash": "db5838c18a233d61d06d0a8b44e6feb73719ea3eadf8141f4f7bada1d345435d",
+        "live_hash": "2951fd2755de381e431b65ff847e3b0d29771ab4538675a54b7711b8ffb10297"
+      },
+      "snapshot": {
+        "id": "fc2:824384:player-663436:pitcher_outs:15:over",
+        "identity_version": 2,
+        "game_pk": 824384,
+        "player_id": 663436,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Davis Martin",
+        "team": "Chicago White Sox",
+        "matchup": "Chicago White Sox @ Cleveland Guardians",
+        "game_start": "2026-09-15T22:40:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 14.5,
+          "needs": 15
+        },
+        "prop": "Over 14.5 Outs Recorded",
+        "hit_probability": 0.7299,
+        "market_odds": -132,
+        "market_implied": 0.5298,
+        "market_edge": 0.2001,
+        "market_hold": 0.0739,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (20.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 15+ outs (5.0 IP) in 77.0% of his last 26 real starts (league 77.6%, avg 15.65 outs/start)"
+        ],
+        "watchouts": [
+          "No positive read here: 0.6 pts BELOW the 78% league base rate for this market"
+        ],
+        "prob_ci": [
+          0.6645,
+          0.8465
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 26,
+        "lineup_assumed": null,
+        "base_rate": 0.7761,
+        "lift": -0.0462,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "f75cd7be5",
+          "prediction_timestamp": "2026-09-15T08:04:00.448504+00:00",
+          "odds_fetched_at": "2026-09-15T08:03:53.994321+00:00",
+          "board_generated_at": "2026-09-15T08:04:00.419582+00:00"
+        },
+        "qualification_timestamp": "2026-09-15T08:04:00.448504+00:00",
+        "board_timestamp": "2026-09-15T08:04:00.419582+00:00",
         "slate_date": "2026-09-15"
       }
     }
