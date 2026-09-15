@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-15T13:25:16.243586+00:00",
+  "updated_at": "2026-09-15T14:25:19.241643+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -31810,6 +31810,92 @@
         },
         "qualification_timestamp": "2026-09-15T13:19:24.076898+00:00",
         "board_timestamp": "2026-09-15T13:19:24.040588+00:00",
+        "slate_date": "2026-09-15"
+      }
+    },
+    "fc2:823574:player-640455:pitcher_outs:17:over": {
+      "canonical_id": "fc2:823574:player-640455:pitcher_outs:17:over",
+      "settlement_identity": [
+        "823574",
+        [
+          "player",
+          "640455"
+        ],
+        "pitcher_outs",
+        "17",
+        "over"
+      ],
+      "slate_date": "2026-09-15",
+      "first_published_at": "2026-09-15T14:25:19.241643+00:00",
+      "publication_provenance": {
+        "artifact_id": "bfc0678122ffb978cbfb24e090046656e4f09841812cd3e1baa3207df19608f2",
+        "source_commit": "86125549cba2ec3e24b22d136a24158bae09a4a7",
+        "workflow_run_id": "34981205283",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-15T14:24:51.030140+00:00",
+        "data_hash": "6e98beb6e8d1abe6d94e559606aba47c73d4293bcc4881e063898deb0a83961b",
+        "live_hash": "e47d8c4afea5ba968e46532357e01bba39d90d80b574f06f2a12c6d381afd954"
+      },
+      "snapshot": {
+        "id": "fc2:823574:player-640455:pitcher_outs:17:over",
+        "identity_version": 2,
+        "game_pk": 823574,
+        "player_id": 640455,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Sean Manaea",
+        "team": "New York Mets",
+        "matchup": "Baltimore Orioles @ New York Mets",
+        "game_start": "2026-09-15T23:10:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 16.5,
+          "needs": 17
+        },
+        "prop": "Over 16.5 Outs Recorded",
+        "hit_probability": 0.6278,
+        "market_odds": -118,
+        "market_implied": 0.5061,
+        "market_edge": 0.1217,
+        "market_hold": 0.0696,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (12.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 17+ outs (5.2 IP) in 63.4% of his last 16 real starts (league 49.3%, avg 16.94 outs/start)"
+        ],
+        "watchouts": [],
+        "prob_ci": [
+          0.5552,
+          0.6959
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 16,
+        "lineup_assumed": null,
+        "base_rate": 0.4933,
+        "lift": 0.1345,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "fbb966b50",
+          "prediction_timestamp": "2026-09-15T14:19:46.634125+00:00",
+          "odds_fetched_at": "2026-09-15T14:19:41.858114+00:00",
+          "board_generated_at": "2026-09-15T14:19:46.600769+00:00"
+        },
+        "qualification_timestamp": "2026-09-15T14:19:46.634125+00:00",
+        "board_timestamp": "2026-09-15T14:19:46.600769+00:00",
         "slate_date": "2026-09-15"
       }
     }
