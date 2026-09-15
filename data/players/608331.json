@@ -314,7 +314,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 38.9,
+          "score": 36.0,
           "notable_signals": 0,
           "matchup": "New York Yankees @ Minnesota Twins",
           "game_pk": 823654,
@@ -324,13 +324,13 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 41.0,
-            "same_hand_ratio": 75.0,
+            "same_hand_ratio": 0.0,
             "l14_k_pct": 96.4706,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.603,
-          "raw_hit_probability": 0.6451,
-          "lift": 0.0953,
+          "hit_probability": 0.6033,
+          "raw_hit_probability": 0.6467,
+          "lift": 0.0924,
           "reliability": "A",
           "sample_n": 18,
           "projection": {
@@ -340,10 +340,10 @@
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 67.6,
-          "notable_signals": 1,
+          "score": 42.6,
+          "notable_signals": 0,
           "matchup": "New York Yankees @ Minnesota Twins",
           "game_pk": 823654,
           "team": "New York Yankees",
@@ -351,18 +351,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6436,
+            "outs_rate": 0.4983,
             "avg_outs_per_start": 16.5
           },
-          "hit_probability": 0.6351,
-          "raw_hit_probability": 0.6436,
-          "lift": 0.0607,
+          "hit_probability": 0.5126,
+          "raw_hit_probability": 0.4983,
+          "lift": 0.0193,
           "reliability": "A",
           "sample_n": 18,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 16.5,
+            "needs": 17
           }
         }
       ]

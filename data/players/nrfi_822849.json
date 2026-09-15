@@ -1,6 +1,6 @@
 {
-  "player_id": "nrfi_824466",
-  "name": "Los Angeles Dodgers @ Cincinnati Reds \u2014 1st Inning (Both Teams)",
+  "player_id": "nrfi_822849",
+  "name": "Boston Red Sox @ Texas Rangers \u2014 1st Inning (Both Teams)",
   "snapshots": [
     {
       "date": "2026-09-15",
@@ -8,27 +8,27 @@
         {
           "prop": "A run scores in the 1st (either team)",
           "type": "game",
-          "score": 61.6,
+          "score": 57.2,
           "notable_signals": 0,
-          "matchup": "Los Angeles Dodgers @ Cincinnati Reds",
-          "game_pk": 824466,
+          "matchup": "Boston Red Sox @ Texas Rangers",
+          "game_pk": 822849,
           "team": null,
           "side": "both",
           "lean": "YRFI",
           "combo_player_ids": null,
           "signals": {
-            "home_team_scores_p": 0.2947,
-            "away_team_scores_p": 0.3106,
-            "fi_n_starts": 23.0
+            "home_team_scores_p": 0.2744,
+            "away_team_scores_p": 0.3412,
+            "fi_n_starts": 11.0
           },
-          "hit_probability": 0.5138,
+          "hit_probability": 0.522,
           "raw_hit_probability": null,
-          "lift": 0.0122,
-          "reliability": "A",
-          "sample_n": 23,
+          "lift": 0.0204,
+          "reliability": "B",
+          "sample_n": 11,
           "projection": {
             "stat": "nrfi_combined",
-            "value": 51.4
+            "value": 52.2
           }
         }
       ]
