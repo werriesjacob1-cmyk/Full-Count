@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-15T14:25:19.241643+00:00",
+  "updated_at": "2026-09-15T19:03:33.086602+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -31896,6 +31896,105 @@
         },
         "qualification_timestamp": "2026-09-15T14:19:46.634125+00:00",
         "board_timestamp": "2026-09-15T14:19:46.600769+00:00",
+        "slate_date": "2026-09-15"
+      }
+    },
+    "fc2:824384:player-545341:hits:1:over": {
+      "canonical_id": "fc2:824384:player-545341:hits:1:over",
+      "settlement_identity": [
+        "824384",
+        [
+          "player",
+          "545341"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-15",
+      "first_published_at": "2026-09-15T19:03:33.086602+00:00",
+      "publication_provenance": {
+        "artifact_id": "235943c441a47c1ae531ff79cc74b91a8db66ec5b2151aa26347c55428ac5791",
+        "source_commit": "6de6899d5ee77f9ee74e63b9f2f64b349bfe76c7",
+        "workflow_run_id": "35010177565",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-15T19:03:12.080563+00:00",
+        "data_hash": "6506af5d331881f6c2832b47eebfe38ca9d13fb6a6ce1166e7f882abb5e0f76e",
+        "live_hash": "93df7a794d3fee13ec231fc9e4f115f138d99cd76bee6bb3b9ce19739cbe4dee"
+      },
+      "snapshot": {
+        "id": "fc2:824384:player-545341:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 824384,
+        "player_id": 545341,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Randal Grichuk",
+        "team": "Chicago White Sox",
+        "matchup": "Chicago White Sox @ Cleveland Guardians",
+        "game_start": "2026-09-15T22:40:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6781,
+        "market_odds": -170,
+        "market_implied": 0.6296,
+        "market_edge": 0.0485,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.5 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 94.8mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 45.5 \u2014 hot recent contact",
+          "Platoon: R bat vs LHP (favorable)",
+          "Projected 4.43 PA (batting slot 2) \u2014 a favorable lineup slot",
+          "Team implied for 4.21 runs (league avg 4.245; line 3.5, game total 9)",
+          "Season barrel% 11.0",
+          "Hitters batting ahead of him: 0.329 wOBA (league ~.320)",
+          "Hitter batting behind him: 0.361 wOBA (league ~.320)",
+          "Sharp money backing Chicago White Sox (money% +10 pts vs ticket%)"
+        ],
+        "watchouts": [
+          "Opposing SP ERA 3.65 \u2014 elite pitcher, tough matchup",
+          "wOBA vs xwOBA: 0.374 vs 0.333 (+0.041) \u2014 outperforming his contact quality, regression risk",
+          "Wind blowing IN (13mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 1/11 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6661,
+          0.6902
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 102,
+        "lineup_assumed": null,
+        "base_rate": 0.5653,
+        "lift": 0.1128,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "2e17ba324",
+          "prediction_timestamp": "2026-09-15T18:46:04.417365+00:00",
+          "odds_fetched_at": "2026-09-15T18:45:58.569847+00:00",
+          "board_generated_at": "2026-09-15T18:46:04.383954+00:00"
+        },
+        "qualification_timestamp": "2026-09-15T18:46:04.417365+00:00",
+        "board_timestamp": "2026-09-15T18:46:04.383954+00:00",
         "slate_date": "2026-09-15"
       }
     }
