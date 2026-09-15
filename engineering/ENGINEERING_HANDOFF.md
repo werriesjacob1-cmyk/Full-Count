@@ -1762,3 +1762,26 @@ chronological leakage audit and market-only baseline experiment before any
 spread/total challenger is eligible for prospective shadow capture.
 
 Alligator
+
+## 2026-09-15 — Source-labeled historical spread/total normalization
+
+- Added a deterministic normalizer for settled nflverse schedule rows under
+  the explicit `NFLVERSE_SCHEDULE_UNKNOWN_BOOK` source class.
+- Preserved exact source repository, commit, file digest, acquisition time,
+  and original game ID on every output row. Book-specific and line-movement
+  eligibility remain false by construction.
+- Made nflverse's home-favorite spread convention explicit as sportsbook-style
+  away/home handicaps, and derived spread/total outcomes with explicit pushes.
+- A digest-pinned full-file replay normalized all 7,292 settled games. It kept
+  all 256 future/unsettled rows as `UNSETTLED_GAME` exclusions, with 5,311
+  complete spread-price pairs and 5,308 complete total-price pairs.
+- Added nine focused tests for outcomes, pushes, unsettled rows, duplicate
+  IDs, source-result inconsistencies, missing prices, invalid identities and
+  lines, and provenance rejection.
+- No model, selector, prospective capture, grader, workflow, public surface,
+  or production path was activated.
+
+Next: define chronological folds and a leakage-audited market-only baseline.
+Keep the unknown-book baseline separate from sealed FanDuel evidence.
+
+Alligator
