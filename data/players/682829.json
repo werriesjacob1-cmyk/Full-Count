@@ -3786,6 +3786,135 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-15",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 60.6,
+          "notable_signals": 3,
+          "matchup": "Los Angeles Dodgers @ Cincinnati Reds",
+          "game_pk": 824466,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 3.4286,
+            "pitch_exploit": 1.7143,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 47.9,
+            "season_barrel_pct": 88.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 3.72,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 52.7273,
+            "hard_hit_105_rate": 2.1725,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.664,
+            "vs_rp_ops": 2.472,
+            "ump_k_pct": -0.468,
+            "ump_bb_pct": -0.252
+          },
+          "hit_probability": 0.6499,
+          "raw_hit_probability": 0.6386,
+          "lift": 0.0846,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 60.0,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Dodgers @ Cincinnati Reds",
+          "game_pk": 824466,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 2.58,
+            "sprint_speed": 34.375,
+            "catcher_poptime": 31.4286,
+            "on_base": 100.0
+          },
+          "hit_probability": 0.1581,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 26.3,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Dodgers @ Cincinnati Reds",
+          "game_pk": 824466,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1335
+          },
+          "hit_probability": 0.1335,
+          "raw_hit_probability": null,
+          "lift": 0.0858,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.1,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Cincinnati Reds",
+          "game_pk": 824466,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0409
+          },
+          "hit_probability": 0.0409,
+          "raw_hit_probability": null,
+          "lift": 0.0202,
+          "reliability": "A",
+          "sample_n": 131,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

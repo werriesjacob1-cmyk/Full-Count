@@ -2885,6 +2885,136 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-15",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 19.0,
+          "notable_signals": 1,
+          "matchup": "Detroit Tigers @ Toronto Blue Jays",
+          "game_pk": 822762,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 37.1429,
+            "l7_avg_ev": 21.6875,
+            "l7_barrel_pct": 21.4286,
+            "bat_speed_trend": 14.1,
+            "park_hr_index": 67.8,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": -4.24,
+            "platoon_xwoba": -3.24,
+            "park_hand_index": -0.66,
+            "opp_catcher_framing": -0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 9.0909,
+            "woba_behind": 67.2727,
+            "pull_park_synergy": -0.3326,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.216,
+            "vs_rp_ops": 0.528,
+            "ump_k_pct": 0.168,
+            "ump_bb_pct": 0.324
+          },
+          "hit_probability": 0.6967,
+          "raw_hit_probability": 0.719,
+          "lift": 0.0252,
+          "reliability": "A",
+          "sample_n": 147,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 31.7,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Toronto Blue Jays",
+          "game_pk": 822762,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.9,
+            "sprint_speed": 25.0,
+            "catcher_poptime": 0.0,
+            "on_base": 32.8215
+          },
+          "hit_probability": 0.0409,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 147,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Toronto Blue Jays",
+          "game_pk": 822762,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0056
+          },
+          "hit_probability": 0.0056,
+          "raw_hit_probability": null,
+          "lift": -0.0421,
+          "reliability": "A",
+          "sample_n": 147,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Toronto Blue Jays",
+          "game_pk": 822762,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0024
+          },
+          "hit_probability": 0.0024,
+          "raw_hit_probability": null,
+          "lift": -0.0183,
+          "reliability": "A",
+          "sample_n": 147,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

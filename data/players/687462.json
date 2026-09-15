@@ -1978,6 +1978,108 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-15",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 27.4,
+          "notable_signals": 2,
+          "matchup": "Milwaukee Brewers @ Pittsburgh Pirates",
+          "game_pk": 823333,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 0.15,
+            "park_hr_index": 61.5,
+            "season_barrel_pct": 20.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -0.24,
+            "platoon_xwoba": 0.12,
+            "park_hand_index": 1.51,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 4.0,
+            "woba_ahead": 50.9091,
+            "woba_behind": 24.5455,
+            "pull_park_synergy": 0.6025,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.312,
+            "vs_rp_ops": -0.348,
+            "ump_k_pct": -0.252,
+            "ump_bb_pct": -0.372
+          },
+          "hit_probability": 0.6756,
+          "raw_hit_probability": 0.6812,
+          "lift": 0.0041,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.4,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ Pittsburgh Pirates",
+          "game_pk": 823333,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0304
+          },
+          "hit_probability": 0.0304,
+          "raw_hit_probability": null,
+          "lift": -0.0173,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ Pittsburgh Pirates",
+          "game_pk": 823333,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0109
+          },
+          "hit_probability": 0.0109,
+          "raw_hit_probability": null,
+          "lift": -0.0098,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -2637,6 +2637,110 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-15",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 44.6,
+          "notable_signals": 2,
+          "matchup": "Detroit Tigers @ Toronto Blue Jays",
+          "game_pk": 822762,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 37.1429,
+            "pitch_exploit": 10.2857,
+            "l7_avg_ev": 73.3594,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 4.8,
+            "park_hr_index": 67.8,
+            "season_barrel_pct": 72.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 4.24,
+            "platoon_xwoba": 0.12,
+            "park_hand_index": -0.66,
+            "opp_catcher_framing": -0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 22.7273,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -0.499,
+            "hard_hit_105_rate": 2.4,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.184,
+            "vs_rp_ops": -0.348,
+            "ump_k_pct": 0.168,
+            "ump_bb_pct": 0.324
+          },
+          "hit_probability": 0.6739,
+          "raw_hit_probability": 0.6783,
+          "lift": 0.0024,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 28.6,
+          "notable_signals": 1,
+          "matchup": "Detroit Tigers @ Toronto Blue Jays",
+          "game_pk": 822762,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1426
+          },
+          "hit_probability": 0.1426,
+          "raw_hit_probability": null,
+          "lift": 0.0949,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 9.4,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Toronto Blue Jays",
+          "game_pk": 822762,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0501
+          },
+          "hit_probability": 0.0501,
+          "raw_hit_probability": null,
+          "lift": 0.0294,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

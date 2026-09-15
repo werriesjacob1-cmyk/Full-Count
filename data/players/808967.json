@@ -386,9 +386,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 85.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 92.8571,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 52.0384,
+            "ump_k_pct": 0.468,
+            "ump_bb_pct": 0.252
           },
           "hit_probability": 0.2671,
           "raw_hit_probability": 0.2671,
@@ -425,6 +428,34 @@
             "stat": "pitcher_outs",
             "value": 18.5,
             "needs": 19
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 34.3,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Cincinnati Reds",
+          "game_pk": 824466,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            808967,
+            695076
+          ],
+          "signals": {
+            "combined_k_edge": -0.1149
+          },
+          "hit_probability": 0.5147,
+          "raw_hit_probability": null,
+          "lift": -0.1149,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]
