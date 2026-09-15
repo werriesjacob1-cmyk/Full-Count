@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-09-15",
+  "source": {
+    "repository": "https://github.com/nflverse/nfldata",
+    "commit": "8ed09b2fe3ea42332b2249a995737e13dd931ff3",
+    "classification": "NFLVERSE_SCHEDULE_UNKNOWN_BOOK",
+    "declared_license": "CC-BY-4.0"
+  },
+  "files": {
+    "games": {
+      "path": "data/games.csv",
+      "bytes": 2177838,
+      "sha256": "26332ae5d8d8d0481f0670cf5e3849497a415351d4026ae5bee15a5aab96d188"
+    },
+    "closing_lines": {
+      "path": "data/closing_lines.csv",
+      "bytes": 942229,
+      "sha256": "3571e1c9fc8d7396f405fb7c17d43c15676d335ffc932fbb03ff18da691d1729"
+    },
+    "initial_lines": {
+      "path": "data/initial_lines.csv",
+      "bytes": 45068,
+      "sha256": "654770173d11fdb2074537d520f6b1213d663e3bbf47689e5cc9994c1af255e5"
+    }
+  }
+}
