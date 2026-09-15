@@ -12,6 +12,7 @@
 
 const DEFAULTS = Object.freeze({
   autoClaim: true,
+  scheduleEnabled: true,
   dryRun: true,
   soundAlert: true,
   debug: false,
