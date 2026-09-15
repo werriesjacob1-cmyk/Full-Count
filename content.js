@@ -68,18 +68,20 @@
   ];
   const LIVE_HELP_NAV_COOLDOWN_MS = 5000;
 
-  // Jacob's weekly work schedule. Auto-claim is active OUTSIDE these work
-  // hours, plus all day Wednesday and Sunday. Time is always Nashville /
-  // Central, so DST is handled automatically.
+  // Exact weekly auto-claim schedule supplied by Jacob. Time is always
+  // Nashville / Central, so DST is handled automatically.
   const SCHEDULE_TZ = 'America/Chicago';
-  const WORK_SHIFTS = Object.freeze({
-    mon: [11 * 60, 20 * 60],          // 11:00 AM–8:00 PM
-    tue: [11 * 60, 20 * 60],          // 11:00 AM–8:00 PM
-    wed: null,                         // off — run all day
-    thu: [9 * 60 + 45, 17 * 60],      // 9:45 AM–5:00 PM
-    fri: [9 * 60 + 45, 17 * 60],      // 9:45 AM–5:00 PM
-    sat: [8 * 60 + 30, 19 * 60],      // 8:30 AM–7:00 PM
-    sun: null                          // run all day
+
+  // Active windows by weekday, in minutes after midnight. Intervals are
+  // [start, end): start inclusive, end exclusive.
+  const ACTIVE_WINDOWS = Object.freeze({
+    sun: [[0, 24 * 60]],                         // all day
+    mon: [[0, 8 * 60 + 45], [11 * 60, 24 * 60]],
+    tue: [[0, 8 * 60 + 45], [11 * 60, 24 * 60]],
+    wed: [[0, 6 * 60], [20 * 60, 24 * 60]],
+    thu: [[0, 17 * 60], [20 * 60, 24 * 60]],
+    fri: [[0, 17 * 60], [20 * 60, 24 * 60]],
+    sat: [[0, 24 * 60]]                          // continuous all day / night
   });
 
   const ID_ATTRS = [
@@ -211,18 +213,15 @@
     }
   }
 
-  // True means the schedule allows automatic claiming right now.
-  // The listed work shifts are the PAUSED windows.
+  // True means the exact weekly schedule allows automatic claiming now.
   function scheduleActive(now = new Date()) {
     const { weekday, minuteOfDay } = centralClockParts(now);
-    const shift = WORK_SHIFTS[weekday];
-    if (!shift) return true; // Wednesday + Sunday: run all day.
-    const [start, end] = shift;
-    return minuteOfDay < start || minuteOfDay >= end;
+    const windows = ACTIVE_WINDOWS[weekday] || [];
+    return windows.some(([start, end]) => minuteOfDay >= start && minuteOfDay < end);
   }
 
   function scheduleLabel() {
-    return 'Outside work hours; Wed + Sun all day';
+    return 'Custom weekly schedule';
   }
 
   function stripVolatile(text) {
@@ -736,13 +735,13 @@
     const liveHelpList = rows.length ? isLiveHelpListPage(rows) : false;
     const scheduled = settings.scheduleEnabled ? scheduleActive() : true;
 
-    // During scheduled work hours, never click. Keep absorbing every visible
-    // normal-list row into the baseline so the transition back to scheduled
-    // auto-claim cannot treat existing conversations as newly arrived.
+    // Outside the active schedule windows, never click. Keep absorbing every
+    // visible normal-list row into the baseline so the next active transition
+    // cannot treat existing conversations as newly arrived.
     if (!scheduled) {
       if (scheduleWasActive !== false) {
         log(settings.scheduleEnabled
-          ? 'schedule PAUSED — inside work hours'
+          ? 'schedule PAUSED — outside an active window'
           : 'manual mode enabled');
       }
       scheduleWasActive = false;
