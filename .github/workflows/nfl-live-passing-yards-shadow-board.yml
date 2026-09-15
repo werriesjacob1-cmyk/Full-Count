@@ -22,9 +22,17 @@ on:
     branches:
       - superchad/nfl-foundation-continuation-20260911
       - superchad/nfl-sunday-shadow-launch-20260912
+      # Temporary one-day research trigger; remove before merge.
+      - codex/nfl-mnf-trigger-20260914
     paths:
       - .github/workflows/nfl-live-passing-yards-shadow-board.yml
   workflow_dispatch:
+    inputs:
+      target_local_date:
+        description: 'Optional Chicago-local slate date (strict YYYY-MM-DD). Blank preserves scheduled Sunday behavior.'
+        required: false
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -52,8 +60,9 @@ jobs:
       - name: Build live Sunday shadow board without publishing
         env:
           FULL_COUNT_CODE_SHA: ${{ github.sha }}
-          # Optional manual override. Scheduled runs derive the Chicago date.
-          TARGET_LOCAL_DATE: ''
+          # Manual dispatch may target Thursday/Monday/etc. Scheduled runs keep
+          # the existing next-Sunday behavior when this input is blank.
+          TARGET_LOCAL_DATE: ${{ inputs.target_local_date || (github.ref_name == 'codex/nfl-mnf-trigger-20260914' && '2026-09-14') || '' }}
         run: |
           PYTHONPATH=. python3 - <<'PY'
           import csv
@@ -78,6 +87,7 @@ jobs:
           from nfl.normalize.official_inactives import parse_report
           from nfl.normalize.pregame_availability import evaluate_candidate
           from nfl.prospective.shadow_snapshot import seal_snapshot, validate_pregame_timing
+          from nfl.prospective.slate_target import resolve_target_local_date
           from nfl.research import nflverse_history as nh
           from nfl.research.passing_yards_shadow import (
               current_b0_projection,
@@ -86,17 +96,9 @@ jobs:
           )
 
           CT = ZoneInfo("America/Chicago")
-          target_override = str(
-              os.environ.get("TARGET_LOCAL_DATE") or ""
-          ).strip()
-          if target_override:
-              TARGET_DATE = target_override
-          else:
-              local_today = datetime.now(CT).date()
-              days_until_sunday = (6 - local_today.weekday()) % 7
-              TARGET_DATE = (
-                  local_today + timedelta(days=days_until_sunday)
-              ).isoformat()
+          TARGET_DATE = resolve_target_local_date(
+              os.environ.get("TARGET_LOCAL_DATE")
+          )
           EVIDENCE_ROOT = Path("/tmp/nfl-shadow-evidence")
           (EVIDENCE_ROOT / "raw" / "fanduel").mkdir(parents=True, exist_ok=True)
           (EVIDENCE_ROOT / "raw" / "official_nfl").mkdir(parents=True, exist_ok=True)
@@ -108,7 +110,7 @@ jobs:
               "rosters/roster_2026.csv"
           )
           ROSTER_SHA = (
-              "ffdc6f358df0597365b1889332577692c484a283a758d9956b92b2730d0fcd1c"
+              "bdab6ecee12d44a46d4913f81cb9f33f83f18422457a82f273970ae54df614f3"
           )
           PLAYER_SHA = {
               2023: "f19cb71a5de0dce7fd09376026237c9ee9d5a93fe13815a2ea3ec2d37204cb17",
