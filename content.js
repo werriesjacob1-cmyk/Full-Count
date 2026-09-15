@@ -58,6 +58,15 @@
 
   const ROW_SELECTOR = 'button.cny-list__row, tbody tr, [role="row"], [role="listitem"], li[data-id], tr[data-id]';
 
+  const LIVE_HELP_RE = /\blive\s+help\s+needed!?\b/i;
+  const OPPORTUNITY_DASHBOARD_MARKERS = [
+    'BuyNow Deal Confirmed',
+    'Credit App Completed',
+    'Documents Submitted',
+    'Unclaimed Prospect'
+  ];
+  const LIVE_HELP_NAV_COOLDOWN_MS = 5000;
+
   const ID_ATTRS = [
     'data-lead-id', 'data-leadid', 'data-lead',
     'data-conversation-id', 'data-conversationid',
@@ -102,6 +111,7 @@
 
   let claimsThisSession = 0;
   let lastClaimAt = 0;
+  let lastLiveHelpNavAt = 0;
 
   /* Claiming navigates to the lead detail page, which ends this page's life.
    * The hand-off rides in sessionStorage: it is per-tab, same-origin, and
@@ -258,6 +268,81 @@
       if (root && root.host && root.host.isConnected) push(root);
     }
     return rows;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Live Help Needed                                                  */
+  /* ---------------------------------------------------------------- */
+
+  function liveHelpCountFromText(text) {
+    const s = norm(text);
+    let m = s.match(/\b(\d+)\s+Live\s+Help\s+Needed!?\b/i);
+    if (!m) m = s.match(/\bLive\s+Help\s+Needed!?\s+(\d+)\b/i);
+    return m ? parseInt(m[1], 10) : null;
+  }
+
+  function isOpportunityDashboard() {
+    const text = norm(document.body ? document.body.textContent : '');
+    if (!/\bOpportunities\b/i.test(text)) return false;
+    let markers = 0;
+    for (const label of OPPORTUNITY_DASHBOARD_MARKERS) {
+      if (text.includes(label)) markers++;
+    }
+    return markers >= 2;
+  }
+
+  function findLiveHelpDashboardTarget() {
+    if (!isOpportunityDashboard()) return null;
+    let candidates = [];
+    try {
+      candidates = Array.from(document.querySelectorAll(
+        'button, a, [role="button"], [ng-click], [onclick]'
+      ));
+    } catch { return null; }
+
+    // Prefer the smallest visible clickable whose own text contains the
+    // positive Live Help count. This avoids clicking a giant parent panel.
+    const matches = [];
+    for (const el of candidates) {
+      if (!isVisible(el)) continue;
+      const text = norm(el.textContent);
+      if (!LIVE_HELP_RE.test(text)) continue;
+      const count = liveHelpCountFromText(text);
+      if (!(count > 0)) continue;
+      const r = el.getBoundingClientRect();
+      matches.push({ el, count, area: Math.max(1, r.width * r.height), text });
+    }
+    matches.sort((a, b) => a.area - b.area);
+    return matches[0] || null;
+  }
+
+  function maybeOpenLiveHelpDashboard() {
+    const match = findLiveHelpDashboardTarget();
+    if (!match) return false;
+    if (Date.now() - lastLiveHelpNavAt < LIVE_HELP_NAV_COOLDOWN_MS) return false;
+
+    lastLiveHelpNavAt = Date.now();
+    log('LIVE HELP dashboard count=' + match.count + ' — opening queue');
+    try {
+      match.el.click();
+      return true;
+    } catch (err) {
+      warn('LIVE HELP dashboard click failed', err);
+      return false;
+    }
+  }
+
+  function isLiveHelpListPage(rows) {
+    if (!rows || !rows.length) return false;
+    const text = norm(document.body ? document.body.textContent : '').slice(0, 12000);
+    if (!/\bOpportunities\b/i.test(text) || !LIVE_HELP_RE.test(text)) return false;
+    // The dashboard itself has several opportunity-category labels; the
+    // dedicated queue page does not. This keeps the two modes separate.
+    let markers = 0;
+    for (const label of OPPORTUNITY_DASHBOARD_MARKERS) {
+      if (text.includes(label)) markers++;
+    }
+    return markers < 2;
   }
 
   /* ---------------------------------------------------------------- */
@@ -593,8 +678,39 @@
   function evaluate(source) {
     if (torndown || !settings.autoClaim) return;
 
+    // On the Opportunities dashboard, a positive Live Help Needed count is
+    // itself an actionable signal. Open that queue so the waiting lead row
+    // becomes available to the normal click machinery.
+    if (maybeOpenLiveHelpDashboard()) return;
+
     const rows = collectRows();
     if (!rows.length) return;
+
+    const liveHelpList = isLiveHelpListPage(rows);
+
+    // A Live Help queue contains only leads that are actively asking for a
+    // salesperson. Do not baseline them away on entry: they are the work.
+    if (liveHelpList) {
+      if (!armed) {
+        armed = true;
+        console.log('%c[CarNow AC] LIVE HELP ARMED', 'color:#16a34a;font-weight:bold',
+          '— ' + rows.length + ' waiting row(s) eligible.' +
+          (settings.dryRun ? ' DRY RUN: will alert only, no clicks.' : ' LIVE: will click waiting rows.'));
+      }
+
+      if (!onFirstPage()) { log('LIVE HELP not on page 1 — standing down'); return; }
+
+      for (const entry of rows) {
+        if (acted.has(entry.key) || baseline.has(entry.key)) continue;
+        if (!rateLimitOk()) return;
+        // Persist this row in the pre-claim baseline carried through the
+        // navigation hand-off so it cannot be re-clicked on return.
+        baseline.add(entry.key);
+        act(entry, 'live-help');
+        return; // one navigation-producing click per evaluation
+      }
+      return;
+    }
 
     if (!armed) { captureBaseline(rows); return; }
 
@@ -621,8 +737,8 @@
       // CarNow attaches a CarNow rep name to new leads while they wait for a
       // dealership salesperson to join. A visible name is therefore NOT an
       // ownership signal and must never block a newly-arrived lead.
-      if (!freshEnough(entry.row)) { acted.add(entry.key); continue; }  // GATE 4
-      if (!rateLimitOk()) return;                                       // GATE 5
+      if (!freshEnough(entry.row)) { acted.add(entry.key); continue; }
+      if (!rateLimitOk()) return;
       act(entry, source);
     }
   }
@@ -871,7 +987,8 @@
       baselineRows: baseline.size,
       claimsThisSession,
       newSinceArmed: Array.from(seen.keys()),
-      onFirstPage: onFirstPage()
+      onFirstPage: onFirstPage(),
+      liveHelpList: isLiveHelpListPage(collectRows())
     }),
     rows: () => collectRows().map((e) => ({
       key: e.key,
