@@ -67,6 +67,12 @@
   ];
   const LIVE_HELP_NAV_COOLDOWN_MS = 5000;
 
+  // Automatic overnight production window, always evaluated in Nashville
+  // time so Windows/Chrome locale changes cannot shift the schedule.
+  const SCHEDULE_TZ = 'America/Chicago';
+  const SCHEDULE_START_MIN = 20 * 60;      // 8:00 PM
+  const SCHEDULE_END_MIN = 8 * 60 + 45;   // 8:45 AM
+
   const ID_ATTRS = [
     'data-lead-id', 'data-leadid', 'data-lead',
     'data-conversation-id', 'data-conversationid',
@@ -112,6 +118,7 @@
   let claimsThisSession = 0;
   let lastClaimAt = 0;
   let lastLiveHelpNavAt = 0;
+  let scheduleWasActive = null;
 
   /* Claiming navigates to the lead detail page, which ends this page's life.
    * The hand-off rides in sessionStorage: it is per-tab, same-origin, and
@@ -170,6 +177,31 @@
   /* ---------------------------------------------------------------- */
 
   const norm = (s) => (s || '').replace(/\s+/g, ' ').trim();
+
+  function centralClockParts(now = new Date()) {
+    try {
+      const parts = new Intl.DateTimeFormat('en-US', {
+        timeZone: SCHEDULE_TZ,
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit'
+      }).formatToParts(now);
+      const hour = parseInt(parts.find((p) => p.type === 'hour')?.value || '0', 10);
+      const minute = parseInt(parts.find((p) => p.type === 'minute')?.value || '0', 10);
+      return { hour, minute, minuteOfDay: hour * 60 + minute };
+    } catch {
+      return { hour: now.getHours(), minute: now.getMinutes(), minuteOfDay: now.getHours() * 60 + now.getMinutes() };
+    }
+  }
+
+  function scheduleActive(now = new Date()) {
+    const { minuteOfDay } = centralClockParts(now);
+    return minuteOfDay >= SCHEDULE_START_MIN || minuteOfDay < SCHEDULE_END_MIN;
+  }
+
+  function scheduleLabel() {
+    return '8:00 PM–8:45 AM CT';
+  }
 
   function stripVolatile(text) {
     let out = text;
@@ -678,15 +710,45 @@
   function evaluate(source) {
     if (torndown || !settings.autoClaim) return;
 
+    const rows = collectRows();
+    const liveHelpList = rows.length ? isLiveHelpListPage(rows) : false;
+    const scheduled = scheduleActive();
+
+    // Outside the overnight window, never click. Keep absorbing every visible
+    // normal-list row into the baseline so the 8:00 PM transition cannot treat
+    // a day's worth of existing conversations as newly arrived.
+    if (!scheduled) {
+      if (scheduleWasActive !== false) {
+        log('schedule OFF — standing down until 8:00 PM CT');
+      }
+      scheduleWasActive = false;
+      for (const entry of rows) baseline.add(entry.key);
+      if (rows.length) armed = true;
+      return;
+    }
+
+    // Crossing into the production window: normal conversation rows already
+    // on screen are old and must stay baselined. A Live Help queue is
+    // different: anything waiting there at 8:00 PM is actionable work.
+    if (scheduleWasActive === false) {
+      log('schedule LIVE — ' + scheduleLabel());
+      seen.clear();
+      acted.clear();
+      if (liveHelpList) {
+        for (const entry of rows) baseline.delete(entry.key);
+      } else {
+        for (const entry of rows) baseline.add(entry.key);
+        if (rows.length) armed = true;
+      }
+    }
+    scheduleWasActive = true;
+
     // On the Opportunities dashboard, a positive Live Help Needed count is
     // itself an actionable signal. Open that queue so the waiting lead row
     // becomes available to the normal click machinery.
     if (maybeOpenLiveHelpDashboard()) return;
 
-    const rows = collectRows();
     if (!rows.length) return;
-
-    const liveHelpList = isLiveHelpListPage(rows);
 
     // A Live Help queue contains only leads that are actively asking for a
     // salesperson. Do not baseline them away on entry: they are the work.
@@ -988,7 +1050,9 @@
       claimsThisSession,
       newSinceArmed: Array.from(seen.keys()),
       onFirstPage: onFirstPage(),
-      liveHelpList: isLiveHelpListPage(collectRows())
+      liveHelpList: isLiveHelpListPage(collectRows()),
+      scheduleActive: scheduleActive(),
+      schedule: scheduleLabel()
     }),
     rows: () => collectRows().map((e) => ({
       key: e.key,
