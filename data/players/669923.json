@@ -581,7 +581,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 73.7,
+          "score": 73.8,
           "notable_signals": 1,
           "matchup": "Seattle Mariners @ Los Angeles Angels",
           "game_pk": 823979,
@@ -590,46 +590,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5712,
+            "outs_rate": 0.5692,
             "avg_outs_per_start": 17.71
           },
-          "hit_probability": 0.5752,
-          "raw_hit_probability": 0.5712,
-          "lift": 0.1718,
+          "hit_probability": 0.5735,
+          "raw_hit_probability": 0.5692,
+          "lift": 0.1811,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
-          }
-        },
-        {
-          "prop": "Over 10.5 Combined Strikeouts",
-          "type": "pitcher_combo",
-          "score": 6.7,
-          "notable_signals": 0,
-          "matchup": "Seattle Mariners @ Los Angeles Angels",
-          "game_pk": 823979,
-          "team": null,
-          "side": null,
-          "lean": null,
-          "combo_player_ids": [
-            669923,
-            579328
-          ],
-          "signals": {
-            "combined_k_edge": -0.2128
-          },
-          "hit_probability": 0.3839,
-          "raw_hit_probability": null,
-          "lift": -0.2128,
-          "reliability": "D",
-          "sample_n": 0,
-          "projection": {
-            "stat": "combined_strikeouts",
-            "value": 10.5,
-            "needs": 11
           }
         }
       ]
