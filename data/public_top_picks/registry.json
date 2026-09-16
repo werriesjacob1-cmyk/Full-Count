@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-16T07:35:44.607521+00:00",
+  "updated_at": "2026-09-16T07:40:01.123724+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -34222,6 +34222,99 @@
         "lineup_assumed": null,
         "base_rate": 0.7295,
         "lift": -0.021,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "682f72fd7",
+          "prediction_timestamp": "2026-09-16T07:28:15.729281+00:00",
+          "odds_fetched_at": "2026-09-16T07:28:07.707828+00:00",
+          "board_generated_at": "2026-09-16T07:28:15.699865+00:00"
+        },
+        "qualification_timestamp": "2026-09-16T07:28:15.729281+00:00",
+        "board_timestamp": "2026-09-16T07:28:15.699865+00:00",
+        "slate_date": "2026-09-16"
+      }
+    },
+    "fc2:825031:player-687473:strikeouts:4:over": {
+      "canonical_id": "fc2:825031:player-687473:strikeouts:4:over",
+      "settlement_identity": [
+        "825031",
+        [
+          "player",
+          "687473"
+        ],
+        "strikeouts",
+        "4",
+        "over"
+      ],
+      "slate_date": "2026-09-16",
+      "first_published_at": "2026-09-16T07:40:01.123724+00:00",
+      "publication_provenance": {
+        "artifact_id": "273ee14d6356de0d6b128d1c8ece4389e1b68e234decbbefe423dd8c69456a5a",
+        "source_commit": "10d901fae801ee17dca679a436d516caf93f61a6",
+        "workflow_run_id": "35069428578",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-16T07:39:49.521482+00:00",
+        "data_hash": "a1a74fd6b4aeb6b645cc15cd1807dca630485dac46fcc1e6555a0b3f7dd09b05",
+        "live_hash": "5797956526c996833a5ea3ffa69ddf0ab9264dd324a986ae424cea58d5b6f891"
+      },
+      "snapshot": {
+        "id": "fc2:825031:player-687473:strikeouts:4:over",
+        "identity_version": 2,
+        "game_pk": 825031,
+        "player_id": 687473,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Ryan Gusto",
+        "team": "Miami Marlins",
+        "matchup": "Miami Marlins @ Arizona Diamondbacks",
+        "game_start": "2026-09-17T01:40:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 3.5,
+          "needs": 4
+        },
+        "prop": "Over 3.5 Strikeouts",
+        "hit_probability": 0.6054,
+        "market_odds": -102,
+        "market_implied": 0.4761,
+        "market_edge": 0.1293,
+        "market_hold": 0.0605,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (13.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Expected workload 23.9 batters faced (his own 25.0/start over 2 real starts, shrunk toward the 23.1 league mean)",
+          "Platoon advantage: 4 of 6 projected hitters bat right-handed against this RHP",
+          "Maintains K rate through the order (TTO1 10.0% -> TTO3 13.3%)"
+        ],
+        "watchouts": [
+          "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average",
+          "Opposing team K% 19.4 \u2014 contact-oriented lineup, tougher matchup",
+          "L14 K% 14.0 (50 PA) \u2014 cold recent form",
+          "Recency-weighted K rate 17.4% (exp. decay, halflife 30d, 16 real starts / 310 BF) \u2014 drives a below-average strikeout-probability read"
+        ],
+        "prob_ci": [
+          0.5845,
+          0.7046
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 16,
+        "lineup_assumed": null,
+        "base_rate": 0.6931,
+        "lift": -0.0877,
         "lift_reference_rate": null,
         "stable_lift": null,
         "versions": {
