@@ -431,7 +431,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 46.7,
+          "score": 41.6,
           "notable_signals": 1,
           "matchup": "Boston Red Sox @ Texas Rangers",
           "game_pk": 822846,
@@ -440,15 +440,15 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "opp_team_k_pct": 59.0,
+            "opp_team_k_pct": 58.0,
             "same_hand_ratio": 5.5556,
             "l14_k_pct": 29.4118,
             "tto_penalty": 8.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.5285,
-          "raw_hit_probability": 0.5285,
-          "lift": 0.0193,
+          "hit_probability": 0.5286,
+          "raw_hit_probability": 0.5286,
+          "lift": 0.0191,
           "reliability": "A",
           "sample_n": 18,
           "projection": {
@@ -458,9 +458,9 @@
           }
         },
         {
-          "prop": "Over 17.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 49.9,
+          "score": 91.3,
           "notable_signals": 1,
           "matchup": "Boston Red Sox @ Texas Rangers",
           "game_pk": 822846,
@@ -469,18 +469,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4731,
+            "outs_rate": 0.7635,
             "avg_outs_per_start": 17.5
           },
-          "hit_probability": 0.4907,
-          "raw_hit_probability": 0.4731,
-          "lift": 0.0983,
+          "hit_probability": 0.7251,
+          "raw_hit_probability": 0.7635,
+          "lift": 0.1709,
           "reliability": "A",
           "sample_n": 18,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 17.5,
-            "needs": 18
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]

@@ -477,9 +477,9 @@
             "tto_penalty": -8.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6121,
-          "raw_hit_probability": 0.6904,
-          "lift": -0.081,
+          "hit_probability": 0.6122,
+          "raw_hit_probability": 0.6906,
+          "lift": -0.0813,
           "reliability": "A",
           "sample_n": 16,
           "projection": {
@@ -489,9 +489,9 @@
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 56.7,
+          "score": 22.2,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ New York Mets",
           "game_pk": 823576,
@@ -500,18 +500,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7014,
+            "outs_rate": 0.4005,
             "avg_outs_per_start": 15.0
           },
-          "hit_probability": 0.6802,
-          "raw_hit_probability": 0.7014,
-          "lift": -0.0582,
+          "hit_probability": 0.4005,
+          "raw_hit_probability": 0.4005,
+          "lift": -0.068,
           "reliability": "A",
           "sample_n": 16,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 16.5,
+            "needs": 17
           }
         }
       ]

@@ -520,9 +520,9 @@
       "date": "2026-09-16",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.8,
+          "score": 37.6,
           "notable_signals": 1,
           "matchup": "Philadelphia Phillies @ Washington Nationals",
           "game_pk": 822680,
@@ -532,26 +532,26 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 48.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 100.0,
             "tto_penalty": 8.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6146,
-          "raw_hit_probability": 0.7028,
-          "lift": 0.1054,
+          "hit_probability": 0.4269,
+          "raw_hit_probability": 0.4269,
+          "lift": 0.2007,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 6.5,
+            "needs": 7
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 80.5,
+          "score": 79.6,
           "notable_signals": 1,
           "matchup": "Philadelphia Phillies @ Washington Nationals",
           "game_pk": 822680,
@@ -560,18 +560,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6387,
+            "outs_rate": 0.5936,
             "avg_outs_per_start": 17.2
           },
-          "hit_probability": 0.6312,
-          "raw_hit_probability": 0.6387,
-          "lift": 0.1644,
+          "hit_probability": 0.5941,
+          "raw_hit_probability": 0.5936,
+          "lift": 0.1936,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

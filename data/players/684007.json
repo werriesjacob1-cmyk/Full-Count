@@ -425,9 +425,9 @@
       "date": "2026-09-16",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 52.0,
+          "score": 50.8,
           "notable_signals": 0,
           "matchup": "Atlanta Braves @ Chicago Cubs",
           "game_pk": 824626,
@@ -437,25 +437,25 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 46.0,
-            "same_hand_ratio": 75.0,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 16.4706,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6224,
-          "raw_hit_probability": 0.7422,
-          "lift": -0.0707,
+          "hit_probability": 0.5858,
+          "raw_hit_probability": 0.5604,
+          "lift": 0.0763,
           "reliability": "A",
           "sample_n": 29,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 55.2,
+          "score": 55.7,
           "notable_signals": 1,
           "matchup": "Atlanta Braves @ Chicago Cubs",
           "game_pk": 824626,
@@ -464,18 +464,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5372,
+            "outs_rate": 0.4972,
             "avg_outs_per_start": 16.79
           },
-          "hit_probability": 0.5462,
-          "raw_hit_probability": 0.5372,
-          "lift": 0.0794,
+          "hit_probability": 0.5116,
+          "raw_hit_probability": 0.4972,
+          "lift": 0.1111,
           "reliability": "A",
           "sample_n": 29,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

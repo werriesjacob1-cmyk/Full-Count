@@ -313,7 +313,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 35.8,
+          "score": 37.0,
           "notable_signals": 0,
           "matchup": "Kansas City Royals @ Houston Astros",
           "game_pk": 824140,
@@ -323,13 +323,13 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 39.0,
-            "same_hand_ratio": 12.5,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 100.0,
             "env_neutral": 50.0
           },
           "hit_probability": 0.5977,
-          "raw_hit_probability": 0.6187,
-          "lift": 0.0885,
+          "raw_hit_probability": 0.6189,
+          "lift": 0.0882,
           "reliability": "B",
           "sample_n": 10,
           "projection": {
@@ -339,9 +339,9 @@
           }
         },
         {
-          "prop": "Over 12.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 24.9,
+          "score": 15.0,
           "notable_signals": 0,
           "matchup": "Kansas City Royals @ Houston Astros",
           "game_pk": 824140,
@@ -350,18 +350,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6226,
+            "outs_rate": 0.5249,
             "avg_outs_per_start": 12.7
           },
-          "hit_probability": 0.6181,
-          "raw_hit_probability": 0.6226,
-          "lift": -0.2089,
+          "hit_probability": 0.5356,
+          "raw_hit_probability": 0.5249,
+          "lift": -0.1974,
           "reliability": "B",
           "sample_n": 10,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 12.5,
-            "needs": 13
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]
