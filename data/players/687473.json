@@ -515,7 +515,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 52.8,
+          "score": 31.2,
           "notable_signals": 1,
           "matchup": "Miami Marlins @ Arizona Diamondbacks",
           "game_pk": 825031,
@@ -525,10 +525,13 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 24.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 57.1429,
             "l14_k_pct": 0.0,
             "tto_penalty": 8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.7697,
+            "ump_k_pct": -0.012,
+            "ump_bb_pct": 0.336
           },
           "hit_probability": 0.6054,
           "raw_hit_probability": 0.6569,
@@ -553,18 +556,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.3822,
+            "outs_rate": 0.3795,
             "avg_outs_per_start": 12.94
           },
-          "hit_probability": 0.3822,
-          "raw_hit_probability": 0.3822,
-          "lift": -0.3524,
+          "hit_probability": 0.3795,
+          "raw_hit_probability": 0.3795,
+          "lift": -0.3454,
           "reliability": "A",
           "sample_n": 16,
           "projection": {
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 51.4,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Arizona Diamondbacks",
+          "game_pk": 825031,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            687473,
+            518876
+          ],
+          "signals": {
+            "combined_k_edge": -0.0346
+          },
+          "hit_probability": 0.5654,
+          "raw_hit_probability": null,
+          "lift": -0.0346,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
           }
         }
       ]

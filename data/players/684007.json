@@ -427,8 +427,8 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 50.8,
-          "notable_signals": 0,
+          "score": 29.5,
+          "notable_signals": 1,
           "matchup": "Atlanta Braves @ Chicago Cubs",
           "game_pk": 824626,
           "team": "Chicago Cubs",
@@ -439,7 +439,10 @@
             "opp_team_k_pct": 46.0,
             "same_hand_ratio": 43.75,
             "l14_k_pct": 16.4706,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 77.0438,
+            "ump_k_pct": -0.804,
+            "ump_bb_pct": -0.108
           },
           "hit_probability": 0.5858,
           "raw_hit_probability": 0.5604,
@@ -455,7 +458,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 55.7,
+          "score": 60.1,
           "notable_signals": 1,
           "matchup": "Atlanta Braves @ Chicago Cubs",
           "game_pk": 824626,
@@ -464,12 +467,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4975,
+            "outs_rate": 0.4907,
             "avg_outs_per_start": 16.79
           },
-          "hit_probability": 0.5119,
-          "raw_hit_probability": 0.4975,
-          "lift": 0.1097,
+          "hit_probability": 0.506,
+          "raw_hit_probability": 0.4907,
+          "lift": 0.1436,
           "reliability": "A",
           "sample_n": 29,
           "projection": {

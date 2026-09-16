@@ -495,7 +495,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 41.2,
+          "score": 29.1,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ Colorado Rockies",
           "game_pk": 824306,
@@ -507,7 +507,10 @@
             "opp_team_k_pct": 58.0,
             "same_hand_ratio": 21.4286,
             "l14_k_pct": 2.3529,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 49.6662,
+            "ump_k_pct": 1.092,
+            "ump_bb_pct": 0.156
           },
           "hit_probability": 0.4299,
           "raw_hit_probability": 0.4299,
@@ -523,7 +526,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 43.5,
+          "score": 46.5,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ Colorado Rockies",
           "game_pk": 824306,
@@ -532,18 +535,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5393,
+            "outs_rate": 0.5344,
             "avg_outs_per_start": 16.07
           },
-          "hit_probability": 0.548,
-          "raw_hit_probability": 0.5393,
-          "lift": -0.0079,
+          "hit_probability": 0.5438,
+          "raw_hit_probability": 0.5344,
+          "lift": 0.0154,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.8,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ Colorado Rockies",
+          "game_pk": 824306,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            592662,
+            690279
+          ],
+          "signals": {
+            "combined_k_edge": 0.2901
+          },
+          "hit_probability": 0.6026,
+          "raw_hit_probability": null,
+          "lift": 0.2901,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

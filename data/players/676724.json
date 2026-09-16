@@ -3056,6 +3056,139 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-16",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 47.1,
+          "notable_signals": 1,
+          "matchup": "Baltimore Orioles @ New York Mets",
+          "game_pk": 823576,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 68.0,
+            "pitch_exploit": 8.5714,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.9,
+            "season_barrel_pct": 32.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 2.16,
+            "platoon_xwoba": 0.78,
+            "park_hand_index": -0.41,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 37.2727,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -0.2612,
+            "hard_hit_105_rate": 0.3075,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.872,
+            "vs_rp_ops": -0.204,
+            "ump_k_pct": -0.024,
+            "ump_bb_pct": 0.096
+          },
+          "hit_probability": 0.6274,
+          "raw_hit_probability": 0.6214,
+          "lift": 0.0641,
+          "reliability": "A",
+          "sample_n": 98,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 32.2,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ New York Mets",
+          "game_pk": 823576,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -3.12,
+            "sprint_speed": 6.25,
+            "catcher_poptime": 5.7143,
+            "on_base": 70.2495
+          },
+          "hit_probability": 0.031,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 98,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 7.7,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ New York Mets",
+          "game_pk": 823576,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0589
+          },
+          "hit_probability": 0.0589,
+          "raw_hit_probability": null,
+          "lift": 0.0112,
+          "reliability": "A",
+          "sample_n": 98,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 2.0,
+          "notable_signals": 0,
+          "matchup": "Baltimore Orioles @ New York Mets",
+          "game_pk": 823576,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0205
+          },
+          "hit_probability": 0.0205,
+          "raw_hit_probability": null,
+          "lift": -0.0003,
+          "reliability": "A",
+          "sample_n": 98,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
