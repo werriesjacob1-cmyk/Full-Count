@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-16T19:00:00.651981+00:00",
+  "updated_at": "2026-09-16T19:54:53.710200+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -35594,6 +35594,105 @@
         },
         "qualification_timestamp": "2026-09-16T18:53:23.330234+00:00",
         "board_timestamp": "2026-09-16T18:53:23.305974+00:00",
+        "slate_date": "2026-09-16"
+      }
+    },
+    "fc2:822680:player-686611:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:822680:player-686611:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "822680",
+        [
+          "player",
+          "686611"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-16",
+      "first_published_at": "2026-09-16T19:54:53.710200+00:00",
+      "publication_provenance": {
+        "artifact_id": "5436b3aaef9057de9d5387b49cd8e384b35ad899be3d13f9e047ea3f85536a3b",
+        "source_commit": "7f2302b9c5f268de663937e144cba3e628cf1480",
+        "workflow_run_id": "35143145901",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-16T19:54:40.299262+00:00",
+        "data_hash": "0185df198984ece7c7d94c5d3bee8e02ae7a7bf1ec7955fcadc479fbc744c8bb",
+        "live_hash": "7d239e94193b9c81c0692f5f6bb36f14a6894995da3137f86aaf2becb018aaf3"
+      },
+      "snapshot": {
+        "id": "fc2:822680:player-686611:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 822680,
+        "player_id": 686611,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Dylan Crews",
+        "team": "Washington Nationals",
+        "matchup": "Philadelphia Phillies @ Washington Nationals",
+        "game_start": "2026-09-16T22:45:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6892,
+        "market_odds": -190,
+        "market_implied": 0.6552,
+        "market_edge": 0.034,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 35.7 \u2014 hot recent contact",
+          "Hitter batting behind him: 0.341 wOBA (league ~.320)",
+          "Season barrel% 9.3",
+          "Wind blowing OUT (6mph) \u2014 HR boost"
+        ],
+        "watchouts": [
+          "L7 avg EV 85.8mph (league ~88.5) \u2014 cold recent contact",
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Opposing SP ERA 3.14 \u2014 elite pitcher, tough matchup",
+          "Projected 3.81 PA (batting slot 7) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.305 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Team implied for 3.74 runs (league avg 4.245; line 3.5, game total 9) \u2014 a weak offensive environment",
+          "Public heavy on Washington Nationals (money% trails tickets% by 13 pts) \u2014 sharp money is fading this side",
+          "Opposing bullpen fatigue: 0/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Washington Nationals (money% -13 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.6784,
+          0.7124
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 97,
+        "lineup_assumed": null,
+        "base_rate": 0.6743,
+        "lift": 0.0149,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "3c03b7b37",
+          "prediction_timestamp": "2026-09-16T19:49:43.125526+00:00",
+          "odds_fetched_at": "2026-09-16T19:49:36.463621+00:00",
+          "board_generated_at": "2026-09-16T19:49:43.110780+00:00"
+        },
+        "qualification_timestamp": "2026-09-16T19:49:43.125526+00:00",
+        "board_timestamp": "2026-09-16T19:49:43.110780+00:00",
         "slate_date": "2026-09-16"
       }
     }
