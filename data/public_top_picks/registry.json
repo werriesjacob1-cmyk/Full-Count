@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-16T07:40:01.123724+00:00",
+  "updated_at": "2026-09-16T08:40:35.130668+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -34329,6 +34329,94 @@
         },
         "qualification_timestamp": "2026-09-16T07:28:15.729281+00:00",
         "board_timestamp": "2026-09-16T07:28:15.699865+00:00",
+        "slate_date": "2026-09-16"
+      }
+    },
+    "fc2:824467:player-671096:pitcher_outs:15:over": {
+      "canonical_id": "fc2:824467:player-671096:pitcher_outs:15:over",
+      "settlement_identity": [
+        "824467",
+        [
+          "player",
+          "671096"
+        ],
+        "pitcher_outs",
+        "15",
+        "over"
+      ],
+      "slate_date": "2026-09-16",
+      "first_published_at": "2026-09-16T08:40:35.130668+00:00",
+      "publication_provenance": {
+        "artifact_id": "ed32421eda3ae928e77e80b3bf3bd4d35ac70ac22422892783016b590301cd5f",
+        "source_commit": "4179633b8cac9b386980e7cc2d07d62dcfaac034",
+        "workflow_run_id": "35074781122",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-16T08:40:20.097500+00:00",
+        "data_hash": "7e6c811934a8ae10dc38316375981a6c006d2d437c812911d1fe51e3de174b8f",
+        "live_hash": "4d4c4f9f46d6d245762d749ae1b98f2c10613f84b751eff6e1789ae4fb2ac1fb"
+      },
+      "snapshot": {
+        "id": "fc2:824467:player-671096:pitcher_outs:15:over",
+        "identity_version": 2,
+        "game_pk": 824467,
+        "player_id": 671096,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Andrew Abbott",
+        "team": "Cincinnati Reds",
+        "matchup": "Los Angeles Dodgers @ Cincinnati Reds",
+        "game_start": "2026-09-16T22:40:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 14.5,
+          "needs": 15
+        },
+        "prop": "Over 14.5 Outs Recorded",
+        "hit_probability": 0.7033,
+        "market_odds": -114,
+        "market_implied": 0.5,
+        "market_edge": 0.2033,
+        "market_hold": 0.0654,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (21.0 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 15+ outs (5.0 IP) in 73.3% of his last 30 real starts (league 73.0%, avg 15.43 outs/start)"
+        ],
+        "watchouts": [
+          "Barely above this market's base rate \u2014 the high percentage is mostly the market being easy, not a strong read on this player"
+        ],
+        "prob_ci": [
+          0.638,
+          0.8199
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 30,
+        "lineup_assumed": null,
+        "base_rate": 0.7295,
+        "lift": -0.0262,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "9ccb7f957",
+          "prediction_timestamp": "2026-09-16T08:32:28.578505+00:00",
+          "odds_fetched_at": "2026-09-16T08:32:22.962942+00:00",
+          "board_generated_at": "2026-09-16T08:32:28.475489+00:00"
+        },
+        "qualification_timestamp": "2026-09-16T08:32:28.578505+00:00",
+        "board_timestamp": "2026-09-16T08:32:28.475489+00:00",
         "slate_date": "2026-09-16"
       }
     }
