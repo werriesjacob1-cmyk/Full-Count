@@ -506,6 +506,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-16",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 54.5,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Texas Rangers",
+          "game_pk": 822846,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 44.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 0.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6137,
+          "raw_hit_probability": 0.6981,
+          "lift": -0.0794,
+          "reliability": "A",
+          "sample_n": 31,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 40.0,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Texas Rangers",
+          "game_pk": 822846,
+          "team": "Texas Rangers",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5221,
+            "avg_outs_per_start": 15.65
+          },
+          "hit_probability": 0.5332,
+          "raw_hit_probability": 0.5221,
+          "lift": -0.0198,
+          "reliability": "A",
+          "sample_n": 31,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }
