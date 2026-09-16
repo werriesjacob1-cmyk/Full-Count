@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-16T20:30:02.639246+00:00",
+  "updated_at": "2026-09-16T20:59:24.868204+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -35789,6 +35789,105 @@
         },
         "qualification_timestamp": "2026-09-16T20:22:00.812012+00:00",
         "board_timestamp": "2026-09-16T20:22:00.787027+00:00",
+        "slate_date": "2026-09-16"
+      }
+    },
+    "fc2:822846:player-643376:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:822846:player-643376:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "822846",
+        [
+          "player",
+          "643376"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-16",
+      "first_published_at": "2026-09-16T20:59:24.868204+00:00",
+      "publication_provenance": {
+        "artifact_id": "11228299042a649ad36988121fb2f2469882519e504e940e73c2158a75b0c601",
+        "source_commit": "453cd21e6483a6f53e70293a0e4ba83499e90afe",
+        "workflow_run_id": "35149575075",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-16T20:59:12.368354+00:00",
+        "data_hash": "70634ef66d323a3017bbd9aeddb6ddaa1efb2efdb1c16cf32efeb4cf5c49b5da",
+        "live_hash": "0057e7d2362d284903ac492377ebc6fe868726e059a717d721238594dee3c71b"
+      },
+      "snapshot": {
+        "id": "fc2:822846:player-643376:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 822846,
+        "player_id": 643376,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Danny Jansen",
+        "team": "Texas Rangers",
+        "matchup": "Boston Red Sox @ Texas Rangers",
+        "game_start": "2026-09-17T00:05:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6372,
+        "market_odds": -145,
+        "market_implied": 0.5918,
+        "market_edge": 0.0454,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.9 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 88.4mph (league ~88.5)",
+          "L7 barrel% 50.0 \u2014 hot recent contact",
+          "Platoon: R bat vs LHP (favorable)",
+          "Hitter batting behind him: 0.356 wOBA (league ~.320)",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "Opposing SP ERA 3.69 \u2014 elite pitcher, tough matchup",
+          "Projected 3.56 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.290 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Team implied for 3.88 runs (league avg 4.245; line 3.5, game total 8) \u2014 a weak offensive environment",
+          "Public heavy on Texas Rangers (money% trails tickets% by 15 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 6.7 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 0/8 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Texas Rangers (money% -15 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.6239,
+          0.6688
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 55,
+        "lineup_assumed": null,
+        "base_rate": 0.6732,
+        "lift": -0.036,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "7aca3a72e",
+          "prediction_timestamp": "2026-09-16T20:47:19.516342+00:00",
+          "odds_fetched_at": "2026-09-16T20:47:12.667840+00:00",
+          "board_generated_at": "2026-09-16T20:47:19.491836+00:00"
+        },
+        "qualification_timestamp": "2026-09-16T20:47:19.516342+00:00",
+        "board_timestamp": "2026-09-16T20:47:19.491836+00:00",
         "slate_date": "2026-09-16"
       }
     }
