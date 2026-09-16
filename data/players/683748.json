@@ -2143,6 +2143,140 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-16",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 47.6,
+          "notable_signals": 3,
+          "matchup": "Athletics @ Tampa Bay Rays",
+          "game_pk": 822926,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 38.8571,
+            "pitch_exploit": 20.0,
+            "l7_avg_ev": 73.4821,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 58.6667,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 16.6667,
+            "platoon_barrel_pct": -3.52,
+            "platoon_xwoba": -2.82,
+            "park_hand_index": -1.55,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "woba_ahead": 16.3636,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -0.6293,
+            "hard_hit_105_rate": 1.565,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.912,
+            "vs_rp_ops": -0.108,
+            "ump_k_pct": -0.264,
+            "ump_bb_pct": -0.084
+          },
+          "hit_probability": 0.5987,
+          "raw_hit_probability": 0.6002,
+          "lift": 0.0354,
+          "reliability": "B",
+          "sample_n": 64,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 53.2,
+          "notable_signals": 1,
+          "matchup": "Athletics @ Tampa Bay Rays",
+          "game_pk": 822926,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -1.62,
+            "sprint_speed": 25.0,
+            "catcher_poptime": 28.5714,
+            "on_base": 94.2418
+          },
+          "hit_probability": 0.1357,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 64,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 20.2,
+          "notable_signals": 1,
+          "matchup": "Athletics @ Tampa Bay Rays",
+          "game_pk": 822926,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1092
+          },
+          "hit_probability": 0.1092,
+          "raw_hit_probability": null,
+          "lift": 0.0615,
+          "reliability": "B",
+          "sample_n": 64,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.2,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Tampa Bay Rays",
+          "game_pk": 822926,
+          "team": "Tampa Bay Rays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0173
+          },
+          "hit_probability": 0.0173,
+          "raw_hit_probability": null,
+          "lift": -0.0035,
+          "reliability": "B",
+          "sample_n": 64,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
