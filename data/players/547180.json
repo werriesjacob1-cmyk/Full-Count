@@ -2984,6 +2984,111 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-16",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 76.8,
+          "notable_signals": 3,
+          "matchup": "Philadelphia Phillies @ Washington Nationals",
+          "game_pk": 822680,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 100.0,
+            "l7_avg_ev": 49.4531,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 10.425,
+            "park_hr_index": 67.4,
+            "season_barrel_pct": 52.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": 0.8,
+            "platoon_xwoba": 0.42,
+            "park_hand_index": 2.41,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "woba_ahead": 6.3636,
+            "woba_behind": 40.9091,
+            "pull_park_synergy": 1.2146,
+            "hard_hit_105_rate": 1.285,
+            "team_total_move": 6.0,
+            "team_total_open": 4.0,
+            "getaway_day": -2.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.168,
+            "vs_rp_ops": 1.776,
+            "ump_k_pct": -0.24,
+            "ump_bb_pct": 0.12
+          },
+          "hit_probability": 0.6226,
+          "raw_hit_probability": 0.6178,
+          "lift": 0.0593,
+          "reliability": "A",
+          "sample_n": 150,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 17.4,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ Washington Nationals",
+          "game_pk": 822680,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.098
+          },
+          "hit_probability": 0.098,
+          "raw_hit_probability": null,
+          "lift": 0.0503,
+          "reliability": "A",
+          "sample_n": 150,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.7,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Washington Nationals",
+          "game_pk": 822680,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0313
+          },
+          "hit_probability": 0.0313,
+          "raw_hit_probability": null,
+          "lift": 0.0105,
+          "reliability": "A",
+          "sample_n": 150,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -426,7 +426,7 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 40.6,
+          "score": 39.7,
           "notable_signals": 0,
           "matchup": "Milwaukee Brewers @ Pittsburgh Pirates",
           "game_pk": 823332,
@@ -436,9 +436,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 70.0,
-            "same_hand_ratio": 57.1429,
+            "same_hand_ratio": 33.3333,
             "l14_k_pct": 94.1176,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 49.637,
+            "ump_k_pct": 0.324,
+            "ump_bb_pct": 0.288
           },
           "hit_probability": 0.3537,
           "raw_hit_probability": 0.3537,
@@ -454,7 +457,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 38.3,
+          "score": 38.4,
           "notable_signals": 0,
           "matchup": "Milwaukee Brewers @ Pittsburgh Pirates",
           "game_pk": 823332,
@@ -463,12 +466,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4274,
+            "outs_rate": 0.4279,
             "avg_outs_per_start": 16.56
           },
-          "hit_probability": 0.4274,
-          "raw_hit_probability": 0.4274,
-          "lift": 0.0269,
+          "hit_probability": 0.4279,
+          "raw_hit_probability": 0.4279,
+          "lift": 0.0257,
           "reliability": "A",
           "sample_n": 16,
           "projection": {
