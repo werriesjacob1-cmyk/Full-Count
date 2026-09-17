@@ -118,6 +118,49 @@ never mutated, same as the existing grader — verified by the existing test's
 `test_inputs_are_not_mutated_and_grade_is_deterministic` pattern; the new
 tests should include the same check.
 
+## Implementation status (2026-09-17, ~22:40Z — Claude, Codex usage exhausted)
+
+Codex's implementation branch (`codex/nfl-tonight-player-prop-ingest-20260917`)
+was never pushed before it hit its usage limit; only the alt-ladder finding
+above survived, as a text comment on Issue #91. Everything below was written
+fresh against this spec rather than recovered.
+
+- **Normalizer**: `nfl/normalize/player_prop_markets.py`. Covers every row in
+  the table above except `passing_yards`/`passing_yards_alt` (left to the
+  existing validated `fanduel_passing.py`, per this spec) and
+  `reception_yardage_threshold` (still deferred exactly as flagged — needs
+  per-target play-by-play verification this clock didn't allow).
+- **Binding**: this spec originally said reuse `market_roster_binding.py`
+  exactly and do not build a second binding path. That turned out to be
+  unbuildable as written: `bind_passing_candidate` hardcodes a QB-only
+  position check and structurally cannot bind an RB rushing-yards candidate
+  or a DL record-a-sack candidate. Built `nfl/normalize/player_prop_roster_binding.py`
+  instead — same exact-name + event-team + single-survivor + non-empty-GSIS-ID
+  discipline, generalized with a `MARKET_POSITION_GROUPS` table so each
+  canonical market only binds to roster positions that plausibly appear in
+  that market (includes DL/LB/DB in the touchdown-count markets, since a
+  defensive pick-six is a real anytime-TD candidate per the mechanism note
+  above). `market_roster_binding.py` itself is untouched.
+- **Grader**: `nfl/prospective/player_prop_grader.py`. Field names settled
+  during implementation differ slightly from the sketch above:
+  `gsis_id` (not `player_gsis_id`), `stat_value` (not `final_stat_value`) —
+  this section is now the source of truth for field names, not the "Required
+  fields" section below. `VOID_DNP` is checked before HIT/MISS/PUSH on every
+  shape, exactly as specified. One settlement rule this spec left open is now
+  settled: `record_a_sack` HITs on any recorded sack credit greater than
+  zero, not only a full 1.0 — a shared half-sack still counts as "recorded a
+  sack" by standard sportsbook convention. Every other YES/NO market keeps
+  the plain `stat_value >= threshold` rule.
+- **Tests**: `nfl/tests/test_player_prop_markets_normalizer.py` (26),
+  `nfl/tests/test_player_prop_roster_binding.py` (12),
+  `nfl/tests/test_player_prop_grader.py` (29). Full NFL suite green
+  (150/150) at time of writing.
+- **Not yet done**: wiring a live capture for tonight's DET@BUF game against
+  this pipeline before kickoff (2026-09-18T00:15Z), and the box-score outcome
+  source that supplies `player_prop_grader`'s `outcome` mapping (`appeared`,
+  `stat_value`) — this module grades whatever outcome it's given but does not
+  itself fetch one.
+
 ## What "graded" means in tonight's summary — do not blur this
 
 - `passing_yards` / `passing_touchdowns`: this is the ONLY family with a
