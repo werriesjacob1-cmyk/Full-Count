@@ -2,6 +2,8 @@
 
 const HEALTH_STALE_MS = 20000;
 const RELOAD_COOLDOWN_MS = 2 * 60 * 1000;
+const HEALTH_PREFIX = 'carnowHealthTab:';
+const RELOAD_PREFIX = 'carnowHealthReload:';
 const healthByTab = new Map();
 const lastReloadByTab = new Map();
 
@@ -12,6 +14,29 @@ async function appendHealthDiagnostic(type, detail = {}) {
     const log = [...(stored[key] || []), { ts: Date.now(), type, build: '1.6.0', ...detail }].slice(-500);
     await chrome.storage.local.set({ [key]: log });
   } catch { /* storage unavailable */ }
+}
+
+async function restoreSessionHealth() {
+  try {
+    const all = await chrome.storage.session.get(null);
+    for (const [key, value] of Object.entries(all)) {
+      if (key.startsWith(HEALTH_PREFIX)) {
+        const tabId = Number(key.slice(HEALTH_PREFIX.length));
+        if (Number.isFinite(tabId) && value) healthByTab.set(tabId, value);
+      } else if (key.startsWith(RELOAD_PREFIX)) {
+        const tabId = Number(key.slice(RELOAD_PREFIX.length));
+        if (Number.isFinite(tabId)) lastReloadByTab.set(tabId, Number(value || 0));
+      }
+    }
+  } catch { /* session storage unavailable */ }
+}
+
+function persistTabHealth(tabId, entry) {
+  chrome.storage.session.set({ [HEALTH_PREFIX + tabId]: entry }).catch(() => {});
+}
+
+function persistReload(tabId, ts) {
+  chrome.storage.session.set({ [RELOAD_PREFIX + tabId]: ts }).catch(() => {});
 }
 
 function healthVerdict(entry, now = Date.now()) {
@@ -34,6 +59,7 @@ async function maybeRecoverTab(tabId, entry) {
   if (now - lastReload < RELOAD_COOLDOWN_MS) return;
 
   lastReloadByTab.set(tabId, now);
+  persistReload(tabId, now);
   await appendHealthDiagnostic('self-heal-reload', {
     tabId,
     staleMs: now - entry.lastSeen,
@@ -70,6 +96,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     const entry = { lastSeen: Date.now(), payload, inFlightSince };
     healthByTab.set(tabId, entry);
+    persistTabHealth(tabId, entry);
     const nowVerdict = healthVerdict(entry);
 
     if (was !== nowVerdict) {
@@ -117,6 +144,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 chrome.tabs.onRemoved.addListener((tabId) => {
   healthByTab.delete(tabId);
   lastReloadByTab.delete(tabId);
+  chrome.storage.session.remove([HEALTH_PREFIX + tabId, RELOAD_PREFIX + tabId]).catch(() => {});
 });
 
 chrome.alarms.onAlarm.addListener(async (alarm) => {
@@ -127,8 +155,11 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     if (now - entry.lastSeen > 10 * 60 * 1000) {
       healthByTab.delete(tabId);
       lastReloadByTab.delete(tabId);
+      chrome.storage.session.remove([HEALTH_PREFIX + tabId, RELOAD_PREFIX + tabId]).catch(() => {});
       continue;
     }
     await maybeRecoverTab(tabId, entry);
   }
 });
+
+void restoreSessionHealth();
