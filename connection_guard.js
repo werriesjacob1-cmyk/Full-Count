@@ -6,52 +6,59 @@
   window.__carnowConnectionGuardLoaded = true;
 
   const CHECK_MS = 2000;
-  const STALE_MS = 45000;
-  let port = null;
-  let lastContact = 0;
+  let backupPort = null;
   let torndown = false;
   let worker = null;
+  let checking = false;
 
-  function connect() {
-    if (torndown || port) return;
+  function connectBackup() {
+    if (torndown || backupPort) return;
     try {
       const next = chrome.runtime.connect({ name: 'carnow-keepalive' });
-      port = next;
-      lastContact = Date.now();
-
-      next.onMessage.addListener(() => {
-        lastContact = Date.now();
-      });
-
+      backupPort = next;
       next.onDisconnect.addListener(() => {
         void chrome.runtime.lastError;
-        if (port === next) port = null;
+        if (backupPort === next) backupPort = null;
       });
     } catch {
-      port = null;
+      backupPort = null;
     }
   }
 
-  function check() {
-    if (torndown) return;
+  function disconnectBackup() {
+    if (!backupPort) return;
+    const old = backupPort;
+    backupPort = null;
+    try { old.disconnect(); } catch { /* noop */ }
+  }
 
-    if (!port) {
-      connect();
-      return;
-    }
+  async function check() {
+    if (torndown || checking) return;
+    checking = true;
+    try {
+      const status = await chrome.runtime.sendMessage({ type: 'GET_STATUS' });
+      const ports = status && status.ok ? Number(status.ports || 0) : 0;
 
-    // The background worker sends HEARTBEAT about every 30 seconds. If that
-    // traffic disappears, rebuild the port instead of leaving a zombie link.
-    if (lastContact && Date.now() - lastContact > STALE_MS) {
-      try { port.disconnect(); } catch { /* noop */ }
-      port = null;
-      connect();
+      // content.js has a legacy keepalive port that intentionally rotates
+      // every four minutes. Keep one backup only while that primary link is
+      // absent, then drop the backup as soon as the primary reconnects. This
+      // keeps the worker reachable without permanently double-counting tabs.
+      if (ports === 0) {
+        connectBackup();
+      } else if (backupPort && ports > 1) {
+        disconnectBackup();
+      }
+    } catch {
+      // sendMessage itself wakes a sleeping worker. If it still fails, keep a
+      // durable port open and retry on the next Worker-driven tick.
+      connectBackup();
+    } finally {
+      checking = false;
     }
   }
 
-  // Use a Worker timer so Chrome background-tab throttling cannot postpone
-  // recovery for minutes. This is intentionally independent of content.js's
-  // legacy port, which used to rotate itself every four minutes.
+  // A Worker timer is used so a background CarNow tab does not wait minutes
+  // for Chrome's normal setTimeout throttling before repairing its link.
   try {
     const src = 'setInterval(function(){postMessage("tick")},' + CHECK_MS + ')';
     const url = URL.createObjectURL(new Blob([src], { type: 'text/javascript' }));
@@ -62,7 +69,7 @@
     setInterval(check, CHECK_MS);
   }
 
-  connect();
+  void check();
 
   window.addEventListener('pagehide', () => {
     torndown = true;
@@ -70,9 +77,6 @@
       try { worker.terminate(); } catch { /* noop */ }
       worker = null;
     }
-    if (port) {
-      try { port.disconnect(); } catch { /* noop */ }
-      port = null;
-    }
+    disconnectBackup();
   });
 })();
