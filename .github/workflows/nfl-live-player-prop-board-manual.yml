@@ -7,18 +7,29 @@ name: NFL Live Player-Prop Board Capture (manual)
 # alt-ladders, and touchdown/sack single-threshold markets
 # (player_prop_markets.py + player_prop_roster_binding.py).
 #
-# workflow_dispatch ONLY. No schedule, no push trigger, no automatic firing
-# of any kind -- this workflow can be dispatched against its own branch
-# before that branch is ever merged, precisely so a pregame capture can run
-# without needing production merge approval first (see nfl-publish-guard.py
-# / PR #121 for why an automatic trigger on a not-yet-reviewed workflow is
-# the wrong default here).
+# workflow_dispatch is the intended long-term trigger, but GitHub's
+# workflow_dispatch API only recognizes a workflow once it has been
+# registered from the default branch -- it 404s for a file that exists only
+# on a feature branch. The `push` trigger below, scoped to this exact
+# not-yet-merged branch and this exact file, is this repo's own established
+# workaround for that (see the now-deleted nfl-live-probe.yml /
+# nfl-empty-id-audit.yml "Branch-Only" precedents, and the passing-yards
+# board's own push trigger during its pre-merge development): it fires once
+# on push to this named branch, not on a schedule, and stops mattering once
+# this PR merges or the branch is deleted. This is NOT an automatic trigger
+# in the PR-#121 sense -- it never fires again without a human deliberately
+# pushing a new commit to this exact branch name.
 #
 # Writes ONLY a GitHub Actions build artifact (raw payloads + a bound,
 # UNGRADED candidate board). No commit, no push, no public PLAY, no
 # publication, no production promotion, no scoring/model/prediction for any
 # market beyond what fanduel_passing.py itself already validates.
 on:
+  push:
+    branches:
+      - claude/nfl-live-player-prop-board-20260917
+    paths:
+      - .github/workflows/nfl-live-player-prop-board-manual.yml
   workflow_dispatch:
     inputs:
       target_event_id:
