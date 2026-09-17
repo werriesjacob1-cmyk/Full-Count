@@ -45,10 +45,13 @@ MARKET_POSITION_GROUPS: dict[str, frozenset[str]] = {
     "receptions": frozenset({"RB", "WR", "TE"}),
     "receptions_alt": frozenset({"RB", "WR", "TE"}),
     "rush_plus_rec_yards": frozenset({"RB", "WR", "TE", "QB"}),
-    "anytime_touchdown": frozenset({"QB", "RB", "WR", "TE"}),
-    "two_plus_touchdowns": frozenset({"QB", "RB", "WR", "TE"}),
-    "three_plus_touchdowns": frozenset({"QB", "RB", "WR", "TE"}),
-    "four_plus_touchdowns": frozenset({"QB", "RB", "WR", "TE"}),
+    # Includes defensive groups: a defensive pick-six or fumble-return TD is a
+    # real, if uncommon, FanDuel anytime-TD candidate, and excluding DL/LB/DB
+    # would silently mis-grade a legitimate candidate as POSITION_MISMATCH.
+    "anytime_touchdown": frozenset({"QB", "RB", "WR", "TE", "DL", "LB", "DB"}),
+    "two_plus_touchdowns": frozenset({"QB", "RB", "WR", "TE", "DL", "LB", "DB"}),
+    "three_plus_touchdowns": frozenset({"QB", "RB", "WR", "TE", "DL", "LB", "DB"}),
+    "four_plus_touchdowns": frozenset({"QB", "RB", "WR", "TE", "DL", "LB", "DB"}),
     "record_a_sack": frozenset({"DL", "LB", "DB"}),
 }
 
