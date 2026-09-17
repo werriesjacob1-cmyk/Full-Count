@@ -1627,3 +1627,113 @@ No merge, production deploy, official picks, model changes, or MLB ledger mutati
 - Activation requires explicit Jacob authorization and either a direct Worker deployment from reviewed main (outside Workers Builds), or restored build capacity. Narrowing watch paths to infra/live-heartbeat/** prevents unrelated generated-data rebuilds but does not restore already exhausted minutes. No payment/upgrade, deployment, or settings change authorized/performed.
 
 - Live capture now explicitly validates captured_at <= sealed_at < kickoff for every row before sealing; crossing kickoff fails the run rather than freezing late eligibility. Added a regression covering equality, late sealing, reversed chronology and naive timestamps. Cloudflare cron history confirms successes at 19:30:48Z/19:35:45Z/19:40:51Z, matching GitHub dispatch creation one to two seconds later.
+
+## 2026-09-17 — MLB dashboard: past-picks History page
+
+Agent: Claude
+
+Branch: `claude/mlb-history-dashboard-20260917`
+
+PR: [#127 — MLB dashboard: add past-picks History page](https://github.com/werriesjacob1-cmyk/Full-Count/pull/127) (open, unmerged)
+
+Objective: Direct request from Jacob, verbatim: "the thing I want the most
+right now is increased accuracy and to be able to see past days top picks -
+right now they just disappear." This entry covers only the second half
+(past-picks visibility); the accuracy half is tracked separately below.
+
+What I inspected:
+
+- `results/grades_{date}.json` (written daily by `grade_results.py`): already
+  a complete per-day grade record (hit/miss/void/ungraded, actual stat,
+  threshold, settlement_state) for every published Top Pick. Confirmed the
+  frontend never read this file at all -- only the aggregate
+  `results/history.json` (Performance page) was ever surfaced.
+- `dashboard-refresh.yml` (2-hour full-rebuild workflow) vs. `dashboard-live.yml`
+  (5-minute loop, documented tight timeout budget/incident history) --
+  confirmed the refresh workflow was the safe integration point for a
+  read-only, independent build step.
+- `dashboard/prepare_pages_artifact.py`: its `shutil.copytree(source,
+  destination)` copies all of `docs/` into the Pages artifact before
+  selectively rewriting `data.json`/`live.json`/`publication_manifest.json` --
+  confirmed a new `docs/history.json` needs zero changes to deploy/verify
+  scripts to be picked up.
+- `dashboard/verify_pages_artifact.py`'s `REQUIRED_FILES`: existence-only
+  check, does not reject extra files.
+- `test_build_dashboard.py`'s "StaticSourceParityTests" (check 15): confirmed
+  `dashboard/static/{index.html,app.css,app.js}` are the only real frontend
+  source; `docs/{name}` is unconditionally overwritten build output, byte-
+  compared against the source on every real build (citing a real 2026-08-25
+  incident of a fix landing only in `docs/app.js` and silently reverting).
+
+What I changed:
+
+- Added `dashboard/build_history.py`: builds `docs/history.json`, trimming
+  each `grades_*.json` day down to public-safe fields (drops
+  `publication_run_id`/`identity_version`/etc.), keeping `hit_rate` honestly
+  `null` on an ungraded day rather than fabricating 0%, 45-day retention.
+  Read-only against `results/`; never grades or mutates settlement state.
+- Wired it into `dashboard-refresh.yml` as a new step plus a `cp`/`git add
+  docs/history.json` inside the existing commit-retry loop.
+- Added a "History" route to `dashboard/static/{index.html,app.js,app.css}`:
+  nav link, `page-history` container, `renderHistory()`
+  (lazy-fetches/caches `history.json` independently of `data.json` so it
+  works even if the main board fetch is slow/failed), `renderHistoryContent()`
+  (per-day `<details>` accordion, newest first), `historyPickCard()` (reuses
+  `esc()`/`fmtOdds()`/`pct()`/`pctBig()`/`humanizeReason()`/`capSentence()` --
+  no new formatting logic invented). Copied all three files byte-identical
+  into `docs/`.
+- Generated an initial `docs/history.json` (25 days, 380 picks) and committed
+  it, so the page has real content immediately instead of waiting for the
+  next scheduled `dashboard-refresh.yml` run.
+
+Architectural decisions:
+
+- Kept the archive in its own file rather than folding it into `data.json`
+  or `history.json` (the existing aggregate file) -- lazy-loaded, so it never
+  adds weight to the always-loaded homepage payload or the 5-minute live
+  loop.
+- No new ranking/formatting logic: every number and sentence a history card
+  shows is a direct republication of what `grade_results.py` already decided
+  or what an existing render helper already knows how to format.
+
+Tests added: `test_build_history.py` (9 tests): real-shaped day summary,
+honest null hit_rate on ungraded days, internal-field stripping, empty-day
+omission, retention window, sort order, malformed-file skip, non-dict-row
+skip, stable top-level schema.
+
+Test results:
+
+- `test_build_history.py`: 9/9 passed.
+- `test_pages_contract_v3.py`: 11/11 passed (workflow YAML/contract
+  unaffected by the new step).
+- `test_build_dashboard.py`: 147/147 checks passed, including
+  StaticSourceParityTests against the edited `dashboard/static/*` files.
+
+Behavior intentionally unchanged: model/scoring/probability/recommendation
+code, `data.json`/`live.json` writers, the 5-minute live-update loop, and
+every existing route/render path.
+
+Risks / known limitations: `docs/history.json` will keep growing until the
+45-day retention window starts trimming; not yet observed through a real
+scheduled `dashboard-refresh.yml` run post-merge.
+
+New issues discovered (accuracy, separate from this feature): computed
+directly from real `results/grades_*.json` files -- Top Pick hit rate is
+54.2% overall (199-168, n=367), 56.3% over the last 14 days (n=229). By stat:
+`hits` 62.8% (n=78), `hits_runs_rbis` 54.5% (n=191), `strikeouts` 52.3%
+(n=65), but `pitcher_outs` only **36.4%** (12-21, n=33). This is a real,
+evidence-backed gap, not yet root-caused. The picks-generation model itself
+(`generate_picks.py`'s scoring/probability logic) is not modified by this PR;
+investigating the `pitcher_outs` underperformance is separate follow-up work.
+
+Recommended next work: independent review of PR #127 before merge (do not
+merge without explicit Jacob authorization, per project convention); after
+merge, verify a real scheduled `dashboard-refresh.yml` run produces and
+commits `docs/history.json` correctly; root-cause the `pitcher_outs`
+36.4% hit rate as a dedicated follow-up.
+
+Information Claude should know when resuming: the History page's backend
+(`build_history.py`) and frontend (`app.js` route) are both complete and
+tested; only post-merge observation of the real workflow run remains. The
+`pitcher_outs` accuracy finding is real and unresolved -- it should stay
+visible to Jacob as ongoing work, not be treated as closed by this PR.
