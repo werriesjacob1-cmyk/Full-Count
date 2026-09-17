@@ -13,6 +13,12 @@ The bridge is asynchronous. Agents must not claim they have a direct realtime
 connection to each other. An agent communicates by posting a structured Issue
 #91 comment, then the other agent reads and acknowledges it when active.
 
+Agent availability is asymmetric. Codex may run from an active task or a
+scheduled wake. Claude Code reads the bridge when Jacob invokes it or when a
+separate Claude wake has been configured. Silence therefore means only that
+the other agent has not acknowledged the message; it is never acceptance,
+authorization, or evidence that the other agent is continuously polling.
+
 Jacob is final authority. Bridge comments do not authorize merges, production
 deployments, official/public picks, grading activation, model promotion,
 immutable-evidence changes, purchases, wagers, or access/security changes
@@ -75,6 +81,12 @@ Alligator
 Use a stable workstream ID such as `NFL-GAME-C2-20260917`. One agent owns a
 workstream at a time. Use `codex/` branches for Codex and `claude/` branches
 for Claude Code.
+
+A claim becomes stale after more than 12 hours without a status message. The
+other agent must not silently take it. Post a `CONFLICT ALERT` identifying the
+claim and proposing release or reassignment. Jacob, the current owner, or a
+documented joint agreement resolves ownership before overlapping edits begin.
+A usage limit, offline agent, or stale claim never implies consent.
 
 ## Ownership and conflict prevention
 
