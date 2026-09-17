@@ -1,5 +1,5 @@
 MLB DAILY DATA PACKAGE V5 — 2026-09-17
-Generated : 2026-09-17  00:58:32
+Generated : 2026-09-17  01:49:43
 Season    : 2026
 Windows   : L3 2026-09-14→2026-09-16 | L7 2026-09-10→2026-09-16 | L14 2026-09-03→2026-09-16 | L30 2026-08-18→2026-09-16
 Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards | FIC | Open-Meteo | Covers.com
@@ -52,7 +52,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
     9. Jake Mangum (S) — LF  [proj ~585 PA/yr]
 
 ────────────────────────────────────────────────────────────
-  Los Angeles Dodgers (92-59)  @  Cincinnati Reds (70-81)
+  Los Angeles Dodgers (92-60)  @  Cincinnati Reds (71-81)
   12:40 PM ET  |  Great American Ball Park  |  Scheduled
   Series: Game 4 of 4  🚌 GETAWAY DAY  📅 SEPTEMBER (expanded roster)
   HP Ump : TBD
@@ -82,7 +82,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
     9. Matt McLain (R) — 2B  [proj ~585 PA/yr]
 
 ────────────────────────────────────────────────────────────
-  Athletics (61-90)  @  Tampa Bay Rays (91-59)
+  Athletics (61-91)  @  Tampa Bay Rays (92-59)
   1:10 PM ET  |  Tropicana Field  |  Scheduled
   Series: Game 3 of 3  🚌 GETAWAY DAY  📋 GAME 3 (full adjustment)  📅 SEPTEMBER (expanded roster)
   HP Ump : TBD
@@ -172,7 +172,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
     9. Jorge Barrosa (S) — LF  [proj ~585 PA/yr]
 
 ────────────────────────────────────────────────────────────
-  Philadelphia Phillies (83-68)  @  New York Mets (69-82)
+  Philadelphia Phillies (84-68)  @  New York Mets (69-82)
   7:15 PM ET  |  Citi Field  |  Scheduled
   Series: Game 1 of 4  🔵 SERIES OPENER  📅 SEPTEMBER (expanded roster)
   HP Ump : TBD
@@ -1212,7 +1212,6 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   🚨 THRESHOLD CROSSING ALERTS — Non-linear edge indicators
 
   💨 San Diego Padres @ Colorado Rockies: Wind 10mph — THRESHOLD CROSSED (10+mph = significant carry effect)
-  💨 Detroit Tigers @ Chicago White Sox: Wind 10mph — THRESHOLD CROSSED (10+mph = significant carry effect)
 
   Pitcher velocity threshold alerts (see Section 23 for per-pitcher detail)
   Rule: If last-start velo is >1.5mph below season avg → 🚨 RED FLAG
@@ -1229,22 +1228,24 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
     Milwaukee Brewers relievers (L7):
       Ashby                     IP:3.0  Apps:2  Pitches:51  🟡 MODERATE
       Hall                      IP:3.0  Apps:3  Pitches:50  🟡 MODERATE
-      Uribe                     IP:2.0  Apps:2  Pitches:37  🟡 MODERATE
+      Uribe                     IP:3.0  Apps:3  Pitches:43  🟡 MODERATE
+      Senzatela                 IP:1.3  Apps:3  Pitches:36  🟡 MODERATE
       Stallings                 IP:3.0  Apps:1  Pitches:30  🟢 FRESH
       Romero                    IP:1.4  Apps:2  Pitches:29  🟢 FRESH
-      Senzatela                 IP:1.2  Apps:3  Pitches:26  🟢 FRESH
+      Megill                    IP:2.0  Apps:2  Pitches:24  🟢 FRESH
       Patrick                   IP:1.1  Apps:1  Pitches:22  🟢 FRESH
       Harrison                  IP:0.0  Apps:1  Pitches:17  🟢 FRESH
-      Megill                    IP:1.0  Apps:1  Pitches:16  🟢 FRESH
+      Drohan                    IP:0.2  Apps:1  Pitches:11  🟢 FRESH
     Pittsburgh Pirates relievers (L7):
       Kelly                     IP:6.0  Apps:2  Pitches:89  🔴 FATIGUED
+      Mlodzinski                IP:3.2  Apps:2  Pitches:66  🔴 FATIGUED
       Curtis                    IP:3.0  Apps:1  Pitches:62  🔴 FATIGUED
       Soto                      IP:1.1  Apps:2  Pitches:48  🟡 MODERATE
-      Mlodzinski                IP:1.2  Apps:2  Pitches:40  🟡 MODERATE
       Eisert                    IP:2.1  Apps:1  Pitches:23  🟢 FRESH
       Weaver                    IP:2.0  Apps:2  Pitches:22  🟢 FRESH
       Montgomery                IP:2.0  Apps:2  Pitches:21  🟢 FRESH
       Ramírez                   IP:1.2  Apps:2  Pitches:21  🟢 FRESH
+      Doval                     IP:1.0  Apps:1  Pitches:11  🟢 FRESH
       Dotel                     IP:0.2  Apps:1  Pitches:10  🟢 FRESH
 
   Los Angeles Dodgers @ Cincinnati Reds:
@@ -1252,28 +1253,29 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
       Miller                    IP:2.1  Apps:1  Pitches:47  🟡 MODERATE
       Henriquez                 IP:1.2  Apps:2  Pitches:43  🟡 MODERATE
       Stewart                   IP:2.0  Apps:3  Pitches:38  🟡 MODERATE
+      Dreyer                    IP:2.0  Apps:2  Pitches:38  🟡 MODERATE
       Vesia                     IP:2.2  Apps:3  Pitches:38  🟡 MODERATE
       Phillips                  IP:1.1  Apps:2  Pitches:35  🟡 MODERATE
       Scott                     IP:1.1  Apps:2  Pitches:29  🟢 FRESH
       Halvorsen                 IP:2.0  Apps:2  Pitches:27  🟢 FRESH
       Treinen                   IP:2.0  Apps:2  Pitches:25  🟢 FRESH
       Wrobleski                 IP:2.0  Apps:1  Pitches:25  🟢 FRESH
-      Dreyer                    IP:1.0  Apps:1  Pitches:9  🟢 FRESH
+      Bubic                     IP:1.0  Apps:1  Pitches:19  🟢 FRESH
     Cincinnati Reds relievers (L7):
+      Ashcraft                  IP:2.1  Apps:3  Pitches:67  🔴 FATIGUED
       Garcia                    IP:3.2  Apps:3  Pitches:61  🔴 FATIGUED
       Mey                       IP:2.0  Apps:2  Pitches:53  🟡 MODERATE
+      Pagán                     IP:3.0  Apps:3  Pitches:52  🟡 MODERATE
       Williamson                IP:4.0  Apps:1  Pitches:47  🟡 MODERATE
-      Ashcraft                  IP:1.1  Apps:2  Pitches:45  🟡 MODERATE
       Santillan                 IP:2.0  Apps:2  Pitches:36  🟡 MODERATE
       Antone                    IP:2.2  Apps:4  Pitches:34  🟡 MODERATE
       Johnson                   IP:1.2  Apps:2  Pitches:32  🟡 MODERATE
-      Pagán                     IP:2.0  Apps:2  Pitches:31  🟡 MODERATE
       Burke                     IP:3.0  Apps:3  Pitches:25  🟢 FRESH
       Trevino                   IP:2.0  Apps:1  Pitches:19  🟢 FRESH
 
   Athletics @ Tampa Bay Rays:
     Athletics relievers (L7):
-      Harris                    IP:3.0  Apps:4  Pitches:59  🟡 MODERATE
+      Harris                    IP:3.2  Apps:4  Pitches:62  🔴 FATIGUED
       Estes                     IP:3.0  Apps:1  Pitches:54  🟡 MODERATE
       Blewett                   IP:2.4  Apps:3  Pitches:51  🟡 MODERATE
       Johnson                   IP:4.1  Apps:2  Pitches:46  🟡 MODERATE
@@ -1290,9 +1292,9 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
       Johnson                   IP:0.4  Apps:2  Pitches:41  🟡 MODERATE
       Booser                    IP:2.3  Apps:3  Pitches:31  🟡 MODERATE
       Legumina                  IP:1.2  Apps:2  Pitches:31  🟡 MODERATE
+      Sulser                    IP:2.0  Apps:2  Pitches:25  🟢 FRESH
       Wells                     IP:2.0  Apps:2  Pitches:24  🟢 FRESH
       Hopkins                   IP:1.0  Apps:1  Pitches:22  🟢 FRESH
-      Sulser                    IP:1.0  Apps:1  Pitches:13  🟢 FRESH
       Matz                      IP:1.0  Apps:1  Pitches:10  🟢 FRESH
 
   San Diego Padres @ Colorado Rockies:
@@ -1320,11 +1322,11 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
   Kansas City Royals @ Houston Astros:
     Kansas City Royals relievers (L7):
       Pearson                   IP:2.0  Apps:2  Pitches:39  🟡 MODERATE
+      Kimbrel                   IP:0.2  Apps:2  Pitches:30  🟢 FRESH
       Lange                     IP:1.0  Apps:1  Pitches:25  🟢 FRESH
       Thomas                    IP:1.2  Apps:2  Pitches:24  🟢 FRESH
       Cuas                      IP:1.0  Apps:1  Pitches:19  🟢 FRESH
       McGee                     IP:1.0  Apps:1  Pitches:17  🟢 FRESH
-      Kimbrel                   IP:0.1  Apps:1  Pitches:16  🟢 FRESH
       Erceg                     IP:1.0  Apps:1  Pitches:14  🟢 FRESH
       Hoffman                   IP:1.0  Apps:1  Pitches:11  🟢 FRESH
       Cruz                      IP:1.0  Apps:1  Pitches:10  🟢 FRESH
@@ -1334,25 +1336,25 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
       Blanco                    IP:4.1  Apps:1  Pitches:62  🔴 FATIGUED
       Sousa                     IP:2.2  Apps:3  Pitches:44  🟡 MODERATE
       Blubaugh                  IP:2.0  Apps:2  Pitches:34  🟡 MODERATE
+      King                      IP:1.4  Apps:3  Pitches:32  🟡 MODERATE
       Abreu                     IP:2.1  Apps:3  Pitches:26  🟢 FRESH
-      King                      IP:1.2  Apps:2  Pitches:26  🟢 FRESH
       De Los Santos             IP:0.2  Apps:1  Pitches:24  🟢 FRESH
       Hader                     IP:2.0  Apps:2  Pitches:21  🟢 FRESH
 
   Philadelphia Phillies @ New York Mets:
     Philadelphia Phillies relievers (L7):
-      Alvarado                  IP:2.2  Apps:3  Pitches:48  🟡 MODERATE
+      Alvarado                  IP:3.2  Apps:4  Pitches:64  🔴 FATIGUED
       Kerkering                 IP:1.1  Apps:1  Pitches:39  🟡 MODERATE
+      Duran                     IP:2.0  Apps:2  Pitches:38  🟡 MODERATE
       Raley                     IP:0.3  Apps:2  Pitches:36  🟡 MODERATE
       Banks                     IP:2.0  Apps:1  Pitches:35  🟡 MODERATE
       Shugart                   IP:3.2  Apps:3  Pitches:34  🟡 MODERATE
       Holman                    IP:0.1  Apps:1  Pitches:34  🟡 MODERATE
       Bowlan                    IP:1.2  Apps:2  Pitches:33  🟡 MODERATE
       McFarlane                 IP:2.0  Apps:2  Pitches:29  🟢 FRESH
-      Duran                     IP:1.0  Apps:1  Pitches:17  🟢 FRESH
       Stubbs                    IP:1.1  Apps:1  Pitches:15  🟢 FRESH
     New York Mets relievers (L7):
-      Weisenburger              IP:3.1  Apps:2  Pitches:50  🟡 MODERATE
+      Weisenburger              IP:5.2  Apps:2  Pitches:92  🔴 FATIGUED
       Senga                     IP:2.0  Apps:2  Pitches:41  🟡 MODERATE
       Pintaro                   IP:2.0  Apps:2  Pitches:37  🟡 MODERATE
       Lavender                  IP:2.2  Apps:2  Pitches:34  🟡 MODERATE
@@ -1391,7 +1393,7 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
     Boston Red Sox relievers (L7):
       Morán                     IP:3.1  Apps:2  Pitches:46  🟡 MODERATE
       Chapman                   IP:2.0  Apps:2  Pitches:41  🟡 MODERATE
-      Weissert                  IP:1.2  Apps:2  Pitches:29  🟢 FRESH
+      Weissert                  IP:1.3  Apps:3  Pitches:33  🟡 MODERATE
       Miller                    IP:1.1  Apps:2  Pitches:28  🟢 FRESH
       Whitlock                  IP:1.2  Apps:2  Pitches:20  🟢 FRESH
       Bello                     IP:1.2  Apps:1  Pitches:19  🟢 FRESH
@@ -1400,11 +1402,11 @@ Sources   : FanGraphs | Statcast/Baseball Savant | MLB Stats API | UmpScorecards
     Texas Rangers relievers (L7):
       Latz                      IP:3.3  Apps:3  Pitches:66  🔴 FATIGUED
       Garcia                    IP:3.1  Apps:4  Pitches:47  🟡 MODERATE
-      Eovaldi                   IP:2.2  Apps:1  Pitches:45  🟡 MODERATE
+      Eovaldi                   IP:2.2  Apps:2  Pitches:45  🟡 MODERATE
       Silseth                   IP:1.2  Apps:2  Pitches:39  🟡 MODERATE
+      Junis                     IP:2.0  Apps:3  Pitches:36  🟡 MODERATE
       Alexander                 IP:2.0  Apps:2  Pitches:35  🟡 MODERATE
       Montgomery                IP:2.0  Apps:1  Pitches:24  🟢 FRESH
-      Junis                     IP:1.0  Apps:2  Pitches:23  🟢 FRESH
       Ahlstrom                  IP:1.0  Apps:1  Pitches:20  🟢 FRESH
       Macko                     IP:0.1  Apps:1  Pitches:20  🟢 FRESH
 
@@ -6869,34 +6871,34 @@ pc_bucket
 
   [FanGraphs unavailable this run — official team batting via MLB Stats API / Statcast instead]
                      Team    PA   AVG   OBP   SLG   OPS   HR    R   SB     K%    BB% BABIP
-0            Chicago Cubs  6010  .251  .340  .431  .771  210  815  107 21.100 10.700  .291
-1     Los Angeles Dodgers  5812  .255  .337  .421  .758  188  751   68 20.500 10.100  .295
-2    Washington Nationals  5854  .248  .323  .426  .749  200  778  166 21.800  9.000  .290
-3       Milwaukee Brewers  5916  .259  .342  .405  .747  146  788  148 21.600 10.600  .316
-4        Colorado Rockies  5768  .254  .324  .419  .743  168  712  101 22.700  8.300  .307
+0            Chicago Cubs  6023  .252  .340  .432  .772  211  817  107 21.100 10.700  .291
+1     Los Angeles Dodgers  5821  .255  .337  .420  .757  188  751   68 20.500 10.200  .295
+2    Washington Nationals  5861  .247  .323  .426  .749  200  778  166 21.900  9.000  .289
+3       Milwaukee Brewers  5924  .259  .341  .405  .746  146  788  148 21.600 10.600  .315
+4        Colorado Rockies  5781  .254  .324  .418  .742  168  713  101 22.800  8.300  .307
 5          Tampa Bay Rays  5693  .260  .328  .407  .735  162  688  153 18.400  8.300  .297
-6      Pittsburgh Pirates  5877  .253  .330  .402  .732  174  723  126 24.100  9.100  .313
-7           Miami Marlins  5744  .249  .327  .401  .728  156  677  151 21.900  9.100  .299
-8          Boston Red Sox  5734  .247  .322  .403  .725  157  667  102 21.500  8.500  .294
-9          Houston Astros  5698  .239  .313  .409  .722  200  673   45 21.700  8.700  .276
-10      Chicago White Sox  5800  .235  .319  .403  .722  195  711   85 24.200  9.500  .284
-11         Atlanta Braves  5698  .247  .311  .410  .721  192  702   80 21.700  7.700  .287
-12       New York Yankees  5672  .235  .312  .409  .721  209  697  146 24.600  9.600  .281
-13              Athletics  5758  .245  .317  .403  .720  185  660   84 22.500  8.500  .291
+6      Pittsburgh Pirates  5888  .253  .330  .402  .732  174  723  126 24.100  9.100  .314
+7           Miami Marlins  5749  .249  .327  .401  .728  156  677  151 22.000  9.000  .299
+8          Boston Red Sox  5744  .247  .322  .403  .725  157  668  103 21.500  8.500  .295
+9       Chicago White Sox  5800  .235  .319  .403  .722  195  711   85 24.200  9.500  .284
+10         Houston Astros  5708  .239  .313  .408  .721  200  673   45 21.700  8.700  .276
+11       New York Yankees  5672  .235  .312  .409  .721  209  697  146 24.600  9.600  .281
+12         Atlanta Braves  5710  .247  .310  .410  .720  192  704   80 21.700  7.700  .287
+13              Athletics  5759  .245  .317  .403  .720  185  660   84 22.500  8.500  .291
 14        Minnesota Twins  5748  .243  .317  .403  .720  176  692   86 21.100  8.500  .284
 15   San Francisco Giants  5748  .248  .310  .408  .718  175  649   77 21.500  7.500  .291
-16          Texas Rangers  5660  .243  .318  .399  .717  173  629   73 22.800  8.700  .292
+16          Texas Rangers  5671  .244  .318  .399  .717  173  631   73 22.900  8.700  .293
 17         Detroit Tigers  5780  .239  .317  .399  .716  171  683   55 22.800  9.300  .287
-18     Kansas City Royals  5682  .245  .315  .398  .713  156  636  122 20.900  8.500  .288
-19   Arizona Diamondbacks  5757  .243  .316  .396  .712  151  675  101 19.400  8.800  .281
-20  Philadelphia Phillies  5698  .242  .312  .399  .711  177  681  101 21.900  8.500  .283
-21      Baltimore Orioles  5774  .234  .315  .396  .711  188  687   76 24.900  9.700  .287
-22       San Diego Padres  5642  .241  .317  .393  .710  169  652  151 21.500  9.300  .283
-23        Cincinnati Reds  5683  .229  .307  .396  .703  202  629  104 25.500  9.400  .278
-24          New York Mets  5713  .238  .308  .394  .702  190  650   82 22.400  8.600  .279
+18     Kansas City Royals  5694  .245  .315  .399  .714  157  638  122 20.900  8.500  .288
+19   Arizona Diamondbacks  5760  .244  .316  .396  .712  151  675  101 19.400  8.800  .281
+20  Philadelphia Phillies  5703  .241  .312  .399  .711  177  681  101 21.900  8.500  .283
+21       San Diego Padres  5655  .241  .317  .394  .711  170  654  152 21.500  9.200  .283
+22      Baltimore Orioles  5783  .234  .315  .396  .711  188  688   76 24.900  9.700  .287
+23        Cincinnati Reds  5692  .230  .307  .396  .703  202  631  104 25.500  9.400  .279
+24          New York Mets  5723  .238  .308  .394  .702  190  650   82 22.400  8.600  .279
 25    St. Louis Cardinals  5820  .242  .316  .382  .698  158  693   97 20.700  8.400  .283
 26      Toronto Blue Jays  5721  .249  .311  .385  .696  148  619   75 19.100  7.600  .286
-27       Seattle Mariners  5700  .232  .312  .380  .692  175  617  104 23.200  9.000  .278
+27       Seattle Mariners  5707  .232  .312  .380  .692  175  619  104 23.200  9.000  .278
 28    Cleveland Guardians  5766  .236  .314  .375  .689  147  631  139 21.000  9.400  .280
 29     Los Angeles Angels  5649  .234  .308  .372  .680  146  612   84 25.400  8.200  .296
 
@@ -6907,35 +6909,35 @@ pc_bucket
   [FanGraphs unavailable this run — official team pitching via MLB Stats API / Statcast instead]
                      Team   ERA  WHIP      IP   K/9  BB/9  HR/9     K%    BB%  SV  BS  Holds
 0        New York Yankees  3.19  1.16  1362.0  9.01  3.02  1.03 24.200  8.100  44  28     86
-1       Milwaukee Brewers  3.57  1.19  1354.2  9.65  3.23  1.08 25.900  8.700  47  19     77
-2          Boston Red Sox  3.59  1.24  1346.1  8.76  2.91  0.98 23.300  7.700  42  14     89
-3          Atlanta Braves  3.63  1.25  1354.2  8.44  3.39  1.12 22.300  9.000  47  19    101
+1       Milwaukee Brewers  3.56  1.19  1357.2  9.65  3.22  1.08 25.900  8.600  48  19     79
+2          Boston Red Sox  3.60  1.24  1348.1  8.78  2.92  0.98 23.300  7.700  42  14     89
+3          Atlanta Braves  3.64  1.25  1357.1  8.44  3.39  1.13 22.300  8.900  47  19    101
 4          Detroit Tigers  3.64  1.22  1347.0  8.10  3.17  1.04 21.500  8.400  30  32     70
-5     Los Angeles Dodgers  3.65  1.16  1343.0  9.39  3.09  1.13 25.200  8.300  43  21     95
-6          Tampa Bay Rays  3.75  1.14  1347.2  8.17  2.51  1.26 22.100  6.800  56  18    109
+5     Los Angeles Dodgers  3.65  1.16  1344.2  9.39  3.10  1.12 25.200  8.300  43  22     95
+6          Tampa Bay Rays  3.75  1.14  1348.0  8.17  2.51  1.26 22.100  6.800  57  18    111
 7     Cleveland Guardians  3.80  1.26  1358.2  9.61  3.35  1.11 25.200  8.800  42  16    106
 8       Toronto Blue Jays  3.92  1.30  1360.0  8.78  3.71  1.05 23.000  9.700  51  16     99
-9        San Diego Padres  3.96  1.29  1337.2  8.22  3.42  1.14 21.600  9.000  47  18     99
-10  Philadelphia Phillies  3.99  1.28  1348.1  9.83  3.02  1.20 25.700  7.900  39  23     69
-11   Arizona Diamondbacks  4.09  1.28  1354.0  7.07  3.00  1.13 18.600  7.900  37  17     79
-12          Miami Marlins  4.10  1.28  1338.0  8.27  3.57  1.06 21.600  9.300  32  20     86
+9        San Diego Padres  3.96  1.29  1341.1  8.24  3.42  1.13 21.700  9.000  47  18     99
+10  Philadelphia Phillies  3.99  1.28  1350.1  9.84  3.03  1.20 25.700  7.900  40  23     70
+11   Arizona Diamondbacks  4.09  1.28  1355.0  7.08  3.00  1.13 18.600  7.900  37  17     79
+12          Miami Marlins  4.10  1.28  1338.1  8.26  3.56  1.06 21.500  9.300  32  20     86
 13      Chicago White Sox  4.12  1.31  1351.2  8.31  3.60  1.13 21.600  9.300  38  29     57
-14      Baltimore Orioles  4.15  1.35  1361.1  8.11  3.37  1.10 21.000  8.700  44  22     80
-15           Chicago Cubs  4.18  1.27  1362.0  7.84  3.11  1.50 20.700  8.200  33  27     52
-16          New York Mets  4.18  1.30  1352.2  9.06  3.45  1.18 23.500  9.000  29  19     70
-17     Pittsburgh Pirates  4.19  1.30  1354.0  9.23  3.67  0.96 23.900  9.500  34  23     71
-18     Los Angeles Angels  4.19  1.34  1332.1  9.11  4.06  1.04 23.500 10.500  24  28     87
+14      Baltimore Orioles  4.14  1.35  1364.0  8.11  3.36  1.10 21.000  8.700  44  22     80
+15          New York Mets  4.18  1.30  1354.2  9.08  3.44  1.18 23.600  8.900  29  19     70
+16           Chicago Cubs  4.18  1.27  1365.0  7.83  3.10  1.50 20.700  8.200  33  27     52
+17     Pittsburgh Pirates  4.19  1.30  1356.1  9.22  3.66  0.96 23.900  9.500  34  24     71
+18     Los Angeles Angels  4.21  1.34  1333.1  9.12  4.06  1.04 23.500 10.500  24  28     87
 19       Seattle Mariners  4.22  1.25  1340.1  8.66  2.71  1.25 22.900  7.100  33  25     77
 20    St. Louis Cardinals  4.28  1.36  1364.2  8.02  3.51  1.00 20.700  9.100  45  30     95
-21          Texas Rangers  4.31  1.31  1325.2  8.64  3.12  1.24 22.400  8.100  42  18     76
+21          Texas Rangers  4.31  1.31  1327.2  8.64  3.13  1.23 22.400  8.100  42  18     76
 22   San Francisco Giants  4.34  1.36  1351.0  7.61  3.80  0.96 19.600  9.800  29  25     84
-23         Houston Astros  4.52  1.35  1342.0  8.86  4.08  1.29 22.900 10.500  48  11     83
-24     Kansas City Royals  4.62  1.39  1332.1  7.39  3.63  1.24 19.100  9.400  36  24     76
+23         Houston Astros  4.52  1.35  1344.2  8.85  4.08  1.30 22.800 10.500  48  11     83
+24     Kansas City Royals  4.61  1.38  1335.1  7.39  3.63  1.24 19.100  9.400  36  24     76
 25        Minnesota Twins  4.67  1.38  1344.2  8.55  3.70  1.19 21.800  9.400  41  19    101
-26   Washington Nationals  4.72  1.39  1355.0  7.94  3.78  1.35 20.200  9.600  37  39     74
-27        Cincinnati Reds  4.86  1.45  1343.0  8.22  4.22  1.35 20.600 10.600  40  22     82
+26   Washington Nationals  4.71  1.39  1356.0  7.94  3.80  1.35 20.200  9.700  37  39     74
+27        Cincinnati Reds  4.85  1.45  1345.0  8.23  4.23  1.34 20.600 10.600  40  22     83
 28              Athletics  5.39  1.50  1344.0  8.50  3.97  1.51 21.200  9.900  37  28     83
-29       Colorado Rockies  5.58  1.53  1325.2  7.01  3.45  1.41 17.400  8.500  32  24     60
+29       Colorado Rockies  5.58  1.53  1328.2  7.00  3.44  1.42 17.400  8.500  32  24     60
 
 ════════════════════════════════════════════════════════════════════════
   SECTION 51: FANGRAPHS TEAM FIELDING 2026 + error rates
@@ -6946,12 +6948,12 @@ pc_bucket
 0            Chicago Cubs  .990   56      33  116  4.06   6          85  30  .261
 1    Arizona Diamondbacks  .989   59      22  130  3.97   4          90  20  .182
 2     Los Angeles Dodgers  .989   59      28   86  3.91  18          98  26  .210
-3        San Diego Padres  .988   63      33  119  4.00   1          98  49  .333
+3        San Diego Padres  .988   63      33  119  4.01   1          98  49  .333
 4          Atlanta Braves  .988   65      30  126  3.93   5         109  19  .148
 5     St. Louis Cardinals  .988   68      27  148  4.05   9         110  27  .197
 6      Kansas City Royals  .988   67      43  134  4.04  12          69  34  .330
-7           Texas Rangers  .988   65      37   95  3.89   3          92  24  .207
-8       Milwaukee Brewers  .987   67      30  112  3.88   7          69  31  .310
+7           Texas Rangers  .988   65      37   95  3.89   3          93  24  .205
+8       Milwaukee Brewers  .987   67      30  114  3.88   7          69  31  .310
 9          Houston Astros  .987   67      36  119  3.83   8         122  39  .242
 10        Minnesota Twins  .987   69      31  103  3.86   7         128  21  .141
 11         Detroit Tigers  .987   72      35  124  4.02   5          84  31  .270
@@ -6963,15 +6965,15 @@ pc_bucket
 17    Cleveland Guardians  .985   80      47   98  3.87   8          98  20  .169
 18     Los Angeles Angels  .985   82      39  101  3.95   9         109  30  .216
 19        Cincinnati Reds  .984   87      38  108  3.91   3         140  33  .191
-20         Tampa Bay Rays  .984   87      45   95  3.89   6         119  33  .217
+20         Tampa Bay Rays  .984   87      45   95  3.88   6         119  33  .217
 21       New York Yankees  .984   90      40  117  3.97   7          69  21  .233
 22      Baltimore Orioles  .983   92      42  114  3.96   6          82  35  .299
 23      Toronto Blue Jays  .983   92      46  102  3.95   3         139  43  .236
 24          New York Mets  .983   90      46   92  3.87  12          65  30  .316
 25     Pittsburgh Pirates  .983   92      51  124  3.89   7          94  31  .248
-26       Colorado Rockies  .982   94      43  121  3.95   8         125  26  .172
+26       Colorado Rockies  .982   94      43  122  3.95   8         126  26  .171
 27          Miami Marlins  .982   95      54  106  3.95  13         127  40  .240
-28   Washington Nationals  .982   98      41  127  4.02   9         114  33  .224
+28   Washington Nationals  .982   98      41  128  4.02   9         114  33  .224
 29   San Francisco Giants  .982  102      57  137  4.06  10         131  36  .216
 
 ════════════════════════════════════════════════════════════════════════
@@ -6979,10 +6981,10 @@ pc_bucket
 ════════════════════════════════════════════════════════════════════════
 
   [FanGraphs unavailable this run — real SP/RP splits via MLB Stats API / Statcast instead]
-  Starters (366 pitchers, 29253.7 IP): ERA 4.16  K/9 8.38  BB/9 3.23  WHIP 1.289
-  Relievers (490 pitchers, 10992.9 IP): ERA 4.33  K/9 8.88  BB/9 3.99  WHIP 1.37
+  Starters (366 pitchers, 29280.1 IP): ERA 4.16  K/9 8.39  BB/9 3.23  WHIP 1.289
+  Relievers (490 pitchers, 11005.5 IP): ERA 4.32  K/9 8.88  BB/9 3.99  WHIP 1.37
 
-  K/9 gap (RP - SP): 0.5 — relievers miss more bats per inning,
+  K/9 gap (RP - SP): 0.49 — relievers miss more bats per inning,
   which is why late-game PAs are worse for contact props and better for K props.
 
 
@@ -7004,7 +7006,7 @@ pc_bucket
 
   HOMERUNS:
      1. Kyle Schwarber            ?     45
-     2. Pete Crow-Armstrong       ?     43
+     2. Pete Crow-Armstrong       ?     44
      3. Junior Caminero           ?     41
      4. Yordan Alvarez            ?     39
      5. Matt Olson                ?     39
@@ -7019,11 +7021,11 @@ pc_bucket
      2. Hunter Goodman            ?     868
      3. Tyler Stephenson          ?     846
      4. Dillon Dingler            ?     838
-     5. William Contreras         ?     832
+     5. William Contreras         ?     836
      6. Cal Raleigh               ?     809
-     7. Carter Jensen             ?     771
-     8. Carson Kelly              ?     754
-     9. Gabriel Moreno            ?     745
+     7. Carter Jensen             ?     772
+     8. Carson Kelly              ?     757
+     9. Gabriel Moreno            ?     747
     10. Austin Wells              ?     736
 
   BATTINGAVERAGE:
@@ -7040,8 +7042,8 @@ pc_bucket
 
   RBI:
      1. Alec Burleson             ?     111
-     2. Sal Stewart               ?     107
-     3. Pete Crow-Armstrong       ?     104
+     2. Sal Stewart               ?     108
+     3. Pete Crow-Armstrong       ?     105
      4. Pete Alonso               ?     102
      5. Jordan Walker             ?     100
      6. Yordan Alvarez            ?     98
@@ -7058,8 +7060,8 @@ pc_bucket
      5. Sean Burke                ?     23
      6. Chase Burns               ?     22
      7. George Kirby              ?     22
-     8. Spencer Arrighetti        ?     21
-     9. Robbie Ray                ?     21
+     8. Robbie Ray                ?     22
+     9. Spencer Arrighetti        ?     21
     10. Logan Webb                ?     21
 
   RUNS:
@@ -7071,7 +7073,7 @@ pc_bucket
      6. William Contreras         ?     421
      7. Cal Raleigh               ?     418
      8. Keibert Ruiz              ?     413
-     9. Carson Kelly              ?     410
+     9. Carson Kelly              ?     412
     10. Jonah Heim                ?     402
 
   STRIKEOUTS:
@@ -7091,11 +7093,11 @@ pc_bucket
      2. Cristopher Sánchez        ?     17
      3. Chase Burns               ?     15
      4. Foster Griffin            ?     15
-     5. Jacob Misiorowski         ?     15
-     6. Eduardo Rodriguez         ?     15
-     7. Braxton Ashcraft          ?     14
-     8. Jesús Luzardo             ?     14
-     9. Nick Martinez             ?     14
+     5. Nick Martinez             ?     15
+     6. Jacob Misiorowski         ?     15
+     7. Eduardo Rodriguez         ?     15
+     8. Braxton Ashcraft          ?     14
+     9. Jesús Luzardo             ?     14
     10. Drew Rasmussen            ?     14
 
   EARNEDRUNAVERAGE:
@@ -7131,20 +7133,20 @@ pc_bucket
      6. Aroldis Chapman           ?     34
      7. Louis Varland             ?     34
      8. Raisel Iglesias           ?     33
-     9. Jhoan Duran               ?     30
+     9. Jhoan Duran               ?     31
     10. Jacob Latz                ?     30
 
   ONBASEPLUSSLUGGING:
-     1. Yordan Alvarez            ?     1.020
-     2. Pete Crow-Armstrong       ?     .950
-     3. James Wood                ?     .911
-     4. Willson Contreras         ?     .909
+     1. Yordan Alvarez            ?     1.018
+     2. Pete Crow-Armstrong       ?     .957
+     3. James Wood                ?     .909
+     4. Willson Contreras         ?     .906
      5. Shohei Ohtani             ?     .902
      6. Junior Caminero           ?     .898
-     7. Jake Bauers               ?     .886
-     8. Elly De La Cruz           ?     .884
+     7. Jake Bauers               ?     .891
+     8. Elly De La Cruz           ?     .885
      9. Ben Rice                  ?     .884
-    10. Bryce Harper              ?     .881
+    10. Bryce Harper              ?     .879
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -7208,243 +7210,243 @@ San Francisco Giants 63 89 .414 29.5  ☠
 
   Brice Turang:
     Home Games           AVG:.286  OBP:.386  SLG:.473  HR:9  PA:333 🟢
-    Away Games           AVG:.241  OBP:.346  SLG:.409  HR:10  PA:302 🟢
+    Away Games           AVG:.241  OBP:.346  SLG:.410  HR:10  PA:307 🟢
     Day Games            AVG:.253  OBP:.377  SLG:.409  HR:7  PA:225 🟢
-    Night Games          AVG:.271  OBP:.361  SLG:.460  HR:12  PA:410 🟢
+    Night Games          AVG:.271  OBP:.362  SLG:.461  HR:12  PA:415 🟢
     vs Left              AVG:.212  OBP:.301  SLG:.297  HR:2  PA:189 🟢
-    vs Right             AVG:.288  OBP:.394  SLG:.507  HR:17  PA:446 🟢
+    vs Right             AVG:.288  OBP:.394  SLG:.507  HR:17  PA:451 🟢
 
   Jackson Chourio:
     Home Games           AVG:.300  OBP:.385  SLG:.532  HR:15  PA:270 🟢
-    Away Games           AVG:.279  OBP:.305  SLG:.445  HR:8  PA:259 🟢
+    Away Games           AVG:.278  OBP:.303  SLG:.440  HR:8  PA:264 🟢
     Day Games            AVG:.242  OBP:.318  SLG:.391  HR:5  PA:179 🟢
-    Night Games          AVG:.313  OBP:.360  SLG:.536  HR:18  PA:350 🟢
+    Night Games          AVG:.311  OBP:.358  SLG:.530  HR:18  PA:355 🟢
     vs Left              AVG:.314  OBP:.385  SLG:.536  HR:7  PA:156 🟢
-    vs Right             AVG:.279  OBP:.330  SLG:.468  HR:16  PA:373 🟢
+    vs Right             AVG:.278  OBP:.328  SLG:.464  HR:16  PA:378 🟢
 
   Jake Bauers:
     Home Games           AVG:.249  OBP:.360  SLG:.476  HR:15  PA:272 🟢
-    Away Games           AVG:.290  OBP:.425  SLG:.516  HR:11  PA:268 🟢
+    Away Games           AVG:.291  OBP:.429  SLG:.518  HR:11  PA:273 🟢
     Day Games            AVG:.263  OBP:.382  SLG:.494  HR:9  PA:191 🟢
-    Night Games          AVG:.273  OBP:.398  SLG:.497  HR:17  PA:349 🟢
+    Night Games          AVG:.273  OBP:.401  SLG:.498  HR:17  PA:354 🟢
     vs Left              AVG:.270  OBP:.380  SLG:.540  HR:8  PA:150 🟢
-    vs Right             AVG:.269  OBP:.397  SLG:.478  HR:18  PA:390 🟢
+    vs Right             AVG:.269  OBP:.400  SLG:.480  HR:18  PA:395 🟢
 
   William Contreras:
     Home Games           AVG:.284  OBP:.356  SLG:.446  HR:11  PA:312 🟢
-    Away Games           AVG:.260  OBP:.328  SLG:.393  HR:6  PA:290 🟢
+    Away Games           AVG:.258  OBP:.325  SLG:.390  HR:6  PA:295 🟢
     Day Games            AVG:.297  OBP:.378  SLG:.442  HR:4  PA:188 🟢
-    Night Games          AVG:.261  OBP:.326  SLG:.410  HR:13  PA:414 🟢
+    Night Games          AVG:.260  OBP:.325  SLG:.408  HR:13  PA:419 🟢
     vs Left              AVG:.276  OBP:.351  SLG:.414  HR:4  PA:174 🟢
-    vs Right             AVG:.270  OBP:.339  SLG:.423  HR:13  PA:428 🟢
+    vs Right             AVG:.269  OBP:.337  SLG:.420  HR:13  PA:433 🟢
 
   Christian Yelich:
     Home Games           AVG:.271  OBP:.346  SLG:.429  HR:6  PA:240 🟢
-    Away Games           AVG:.207  OBP:.291  SLG:.340  HR:5  PA:228 🟢
+    Away Games           AVG:.207  OBP:.289  SLG:.337  HR:5  PA:233 🟢
     Day Games            AVG:.254  OBP:.327  SLG:.425  HR:4  PA:151 🟢
-    Night Games          AVG:.233  OBP:.315  SLG:.366  HR:7  PA:317 🟢
+    Night Games          AVG:.232  OBP:.314  SLG:.363  HR:7  PA:322 🟢
     vs Left              AVG:.216  OBP:.287  SLG:.342  HR:2  PA:123 🟡 MED SAMPLE
-    vs Right             AVG:.248  OBP:.330  SLG:.401  HR:9  PA:345 🟢
+    vs Right             AVG:.248  OBP:.329  SLG:.397  HR:9  PA:350 🟢
 
   Joey Ortiz:
     Home Games           AVG:.298  OBP:.349  SLG:.461  HR:6  PA:197 🟢
-    Away Games           AVG:.239  OBP:.306  SLG:.350  HR:3  PA:185 🟢
+    Away Games           AVG:.240  OBP:.305  SLG:.347  HR:3  PA:189 🟢
     Day Games            AVG:.234  OBP:.316  SLG:.365  HR:2  PA:157 🟢
-    Night Games          AVG:.294  OBP:.336  SLG:.436  HR:7  PA:225 🟢
+    Night Games          AVG:.293  OBP:.335  SLG:.433  HR:7  PA:229 🟢
     vs Left              AVG:.236  OBP:.297  SLG:.346  HR:2  PA:140 🟡 MED SAMPLE
-    vs Right             AVG:.290  OBP:.346  SLG:.444  HR:7  PA:242 🟢
+    vs Right             AVG:.289  OBP:.344  SLG:.440  HR:7  PA:246 🟢
 
   Luis Lara:
     Home Games           AVG:.304  OBP:.341  SLG:.405  HR:1  PA:85 🟡 MED SAMPLE
-    Away Games           AVG:.220  OBP:.316  SLG:.305  HR:0  PA:95 🟡 MED SAMPLE
+    Away Games           AVG:.221  OBP:.313  SLG:.302  HR:0  PA:99 🟡 MED SAMPLE
     Day Games            AVG:.200  OBP:.262  SLG:.267  HR:0  PA:65 🟡 MED SAMPLE
-    Night Games          AVG:.297  OBP:.365  SLG:.406  HR:1  PA:115 🟡 MED SAMPLE
+    Night Games          AVG:.295  OBP:.361  SLG:.400  HR:1  PA:119 🟡 MED SAMPLE
     vs Left              AVG:.246  OBP:.295  SLG:.333  HR:0  PA:61 🟡 MED SAMPLE
-    vs Right             AVG:.269  OBP:.345  SLG:.365  HR:1  PA:119 🟡 MED SAMPLE
+    vs Right             AVG:.269  OBP:.341  SLG:.361  HR:1  PA:123 🟡 MED SAMPLE
 
   Andrew Vaughn:
     Home Games           AVG:.292  OBP:.380  SLG:.445  HR:3  PA:158 🟢
-    Away Games           AVG:.336  OBP:.416  SLG:.471  HR:3  PA:161 🟢
+    Away Games           AVG:.338  OBP:.417  SLG:.472  HR:3  PA:163 🟢
     Day Games            AVG:.288  OBP:.359  SLG:.423  HR:2  PA:117 🟡 MED SAMPLE
-    Night Games          AVG:.329  OBP:.421  SLG:.480  HR:4  PA:202 🟢
+    Night Games          AVG:.331  OBP:.422  SLG:.480  HR:4  PA:204 🟢
     vs Left              AVG:.351  OBP:.433  SLG:.541  HR:2  PA:127 🟡 MED SAMPLE
-    vs Right             AVG:.289  OBP:.375  SLG:.404  HR:4  PA:192 🟢
+    vs Right             AVG:.292  OBP:.376  SLG:.405  HR:4  PA:194 🟢
 
   Cooper Pratt:
     Home Games           AVG:.223  OBP:.248  SLG:.320  HR:2  PA:115 🟡 MED SAMPLE
-    Away Games           AVG:.326  OBP:.431  SLG:.421  HR:1  PA:117 🟡 MED SAMPLE
+    Away Games           AVG:.333  OBP:.433  SLG:.424  HR:1  PA:121 🟡 MED SAMPLE
     Day Games            AVG:.233  OBP:.290  SLG:.283  HR:0  PA:72 🟡 MED SAMPLE
-    Night Games          AVG:.290  OBP:.363  SLG:.406  HR:3  PA:160 🟢
+    Night Games          AVG:.296  OBP:.366  SLG:.408  HR:3  PA:164 🟢
     vs Left              AVG:.216  OBP:.283  SLG:.314  HR:1  PA:62 🟡 MED SAMPLE
-    vs Right             AVG:.293  OBP:.361  SLG:.388  HR:2  PA:170 🟢
+    vs Right             AVG:.298  OBP:.364  SLG:.391  HR:2  PA:174 🟢
 
   Konnor Griffin:
-    Home Games           AVG:.273  OBP:.325  SLG:.417  HR:3  PA:151 🟢
+    Home Games           AVG:.278  OBP:.327  SLG:.424  HR:3  PA:156 🟢
     Away Games           AVG:.244  OBP:.302  SLG:.339  HR:2  PA:139 🟡 MED SAMPLE
     Day Games            AVG:.243  OBP:.302  SLG:.374  HR:1  PA:126 🟡 MED SAMPLE
-    Night Games          AVG:.272  OBP:.323  SLG:.384  HR:4  PA:164 🟢
+    Night Games          AVG:.276  OBP:.325  SLG:.391  HR:4  PA:169 🟢
     vs Left              AVG:.314  OBP:.347  SLG:.457  HR:1  PA:75 🟡 MED SAMPLE
-    vs Right             AVG:.240  OBP:.302  SLG:.352  HR:4  PA:215 🟢
+    vs Right             AVG:.244  OBP:.305  SLG:.358  HR:4  PA:220 🟢
 
   Brandon Lowe:
-    Home Games           AVG:.258  OBP:.324  SLG:.484  HR:16  PA:309 🟢
+    Home Games           AVG:.262  OBP:.329  SLG:.496  HR:17  PA:313 🟢
     Away Games           AVG:.257  OBP:.329  SLG:.470  HR:14  PA:304 🟢
     Day Games            AVG:.261  OBP:.344  SLG:.491  HR:14  PA:253 🟢
-    Night Games          AVG:.255  OBP:.314  SLG:.468  HR:16  PA:360 🟢
-    vs Left              AVG:.216  OBP:.260  SLG:.369  HR:7  PA:192 🟢
+    Night Games          AVG:.259  OBP:.319  SLG:.479  HR:17  PA:364 🟢
+    vs Left              AVG:.220  OBP:.264  SLG:.373  HR:7  PA:193 🟢
     vs Right             AVG:.279  OBP:.358  SLG:.536  HR:24  PA:424 🟢
 
   Bryan Reynolds:
-    Home Games           AVG:.302  OBP:.428  SLG:.496  HR:8  PA:318 🟢
+    Home Games           AVG:.298  OBP:.422  SLG:.489  HR:8  PA:322 🟢
     Away Games           AVG:.231  OBP:.312  SLG:.366  HR:9  PA:340 🟢
     Day Games            AVG:.262  OBP:.383  SLG:.412  HR:7  PA:282 🟢
-    Night Games          AVG:.265  OBP:.356  SLG:.436  HR:10  PA:376 🟢
-    vs Left              AVG:.288  OBP:.371  SLG:.460  HR:7  PA:224 🟢
+    Night Games          AVG:.262  OBP:.353  SLG:.431  HR:10  PA:380 🟢
+    vs Left              AVG:.286  OBP:.369  SLG:.457  HR:7  PA:225 🟢
     vs Right             AVG:.249  OBP:.364  SLG:.404  HR:10  PA:437 🟢
 
   Oneil Cruz:
-    Home Games           AVG:.267  OBP:.355  SLG:.429  HR:6  PA:183 🟢
+    Home Games           AVG:.273  OBP:.358  SLG:.448  HR:7  PA:187 🟢
     Away Games           AVG:.274  OBP:.368  SLG:.514  HR:12  PA:201 🟢
     Day Games            AVG:.260  OBP:.376  SLG:.445  HR:6  PA:173 🟢
-    Night Games          AVG:.279  OBP:.351  SLG:.495  HR:12  PA:211 🟢
-    vs Left              AVG:.310  OBP:.366  SLG:.469  HR:4  PA:123 🟡 MED SAMPLE
-    vs Right             AVG:.251  OBP:.360  SLG:.475  HR:14  PA:261 🟢
+    Night Games          AVG:.284  OBP:.353  SLG:.510  HR:13  PA:215 🟢
+    vs Left              AVG:.313  OBP:.368  SLG:.470  HR:4  PA:125 🟡 MED SAMPLE
+    vs Right             AVG:.253  OBP:.361  SLG:.489  HR:15  PA:263 🟢
 
   Rafael Flores:
-    Home Games           AVG:.400  OBP:.464  SLG:.700  HR:4  PA:56 🟡 MED SAMPLE
+    Home Games           AVG:.389  OBP:.450  SLG:.722  HR:5  PA:60 🟡 MED SAMPLE
     Away Games           AVG:.186  OBP:.240  SLG:.371  HR:4  PA:75 🟡 MED SAMPLE
     Day Games            AVG:.226  OBP:.255  SLG:.509  HR:5  PA:55 🟡 MED SAMPLE
-    Night Games          AVG:.313  OBP:.395  SLG:.507  HR:3  PA:76 🟡 MED SAMPLE
+    Night Games          AVG:.310  OBP:.388  SLG:.535  HR:4  PA:80 🟡 MED SAMPLE
     vs Left              AVG:.283  OBP:.358  SLG:.550  HR:5  PA:67 🟡 MED SAMPLE
-    vs Right             AVG:.270  OBP:.313  SLG:.508  HR:4  PA:67 🟡 MED SAMPLE
+    vs Right             AVG:.266  OBP:.309  SLG:.500  HR:4  PA:68 🟡 MED SAMPLE
 
   Ryan O'Hearn:
-    Home Games           AVG:.299  OBP:.362  SLG:.567  HR:13  PA:207 🟢
+    Home Games           AVG:.304  OBP:.365  SLG:.565  HR:13  PA:211 🟢
     Away Games           AVG:.232  OBP:.298  SLG:.335  HR:5  PA:205 🟢
     Day Games            AVG:.241  OBP:.311  SLG:.432  HR:9  PA:183 🟢
-    Night Games          AVG:.286  OBP:.345  SLG:.467  HR:9  PA:229 🟢
-    vs Left              AVG:.214  OBP:.268  SLG:.342  HR:4  PA:127 🟡 MED SAMPLE
-    vs Right             AVG:.290  OBP:.358  SLG:.502  HR:14  PA:285 🟢
+    Night Games          AVG:.290  OBP:.348  SLG:.467  HR:9  PA:233 🟢
+    vs Left              AVG:.212  OBP:.266  SLG:.339  HR:4  PA:128 🟡 MED SAMPLE
+    vs Right             AVG:.295  OBP:.361  SLG:.504  HR:14  PA:288 🟢
 
   Ronny Simon:
-    Home Games           AVG:.333  OBP:.333  SLG:.381  HR:0  PA:22 🔴 LOW SAMPLE
+    Home Games           AVG:.360  OBP:.360  SLG:.440  HR:0  PA:26 🔴 LOW SAMPLE
     Away Games           AVG:.250  OBP:.357  SLG:.250  HR:0  PA:14 🔴 LOW SAMPLE
     Day Games            AVG:.125  OBP:.125  SLG:.125  HR:0  PA:8 🔴 LOW SAMPLE
-    Night Games          AVG:.360  OBP:.407  SLG:.400  HR:0  PA:28 🔴 LOW SAMPLE
+    Night Games          AVG:.379  OBP:.419  SLG:.448  HR:0  PA:32 🔴 LOW SAMPLE
     vs Left              AVG:.250  OBP:.250  SLG:.250  HR:0  PA:13 🔴 LOW SAMPLE
-    vs Right             AVG:.375  OBP:.423  SLG:.458  HR:0  PA:26 🔴 LOW SAMPLE
+    vs Right             AVG:.360  OBP:.407  SLG:.440  HR:0  PA:27 🔴 LOW SAMPLE
 
   Jacob Gonzalez:
-    Home Games           AVG:.235  OBP:.303  SLG:.321  HR:1  PA:89 🟡 MED SAMPLE
+    Home Games           AVG:.229  OBP:.297  SLG:.313  HR:1  PA:91 🟡 MED SAMPLE
     Away Games           AVG:.218  OBP:.260  SLG:.387  HR:5  PA:128 🟡 MED SAMPLE
     Day Games            AVG:.202  OBP:.272  SLG:.369  HR:4  PA:92 🟡 MED SAMPLE
-    Night Games          AVG:.241  OBP:.282  SLG:.353  HR:2  PA:125 🟡 MED SAMPLE
+    Night Games          AVG:.237  OBP:.278  SLG:.347  HR:2  PA:127 🟡 MED SAMPLE
     vs Left              AVG:.259  OBP:.394  SLG:.407  HR:0  PA:33 🔴 LOW SAMPLE
     vs Right             AVG:.217  OBP:.254  SLG:.349  HR:6  PA:186 🟢
 
   Jake Mangum:
-    Home Games           AVG:.311  OBP:.370  SLG:.411  HR:3  PA:212 🟢
+    Home Games           AVG:.309  OBP:.367  SLG:.407  HR:3  PA:216 🟢
     Away Games           AVG:.256  OBP:.309  SLG:.329  HR:1  PA:239 🟢
     Day Games            AVG:.320  OBP:.394  SLG:.440  HR:3  PA:200 🟢
-    Night Games          AVG:.252  OBP:.293  SLG:.312  HR:1  PA:251 🟢
+    Night Games          AVG:.252  OBP:.292  SLG:.311  HR:1  PA:255 🟢
     vs Left              AVG:.270  OBP:.331  SLG:.339  HR:1  PA:128 🟡 MED SAMPLE
-    vs Right             AVG:.284  OBP:.339  SLG:.375  HR:3  PA:325 🟢
+    vs Right             AVG:.285  OBP:.340  SLG:.376  HR:3  PA:327 🟢
 
   Tommy Edman:
     Home Games           AVG:.254  OBP:.338  SLG:.349  HR:2  PA:144 🟡 MED SAMPLE
-    Away Games           AVG:.254  OBP:.336  SLG:.415  HR:4  PA:146 🟡 MED SAMPLE
+    Away Games           AVG:.246  OBP:.331  SLG:.403  HR:4  PA:151 🟢
     Day Games            AVG:.119  OBP:.200  SLG:.119  HR:0  PA:65 🟡 MED SAMPLE
-    Night Games          AVG:.294  OBP:.377  SLG:.462  HR:6  PA:225 🟢
-    vs Left              AVG:.232  OBP:.351  SLG:.390  HR:3  PA:97 🟡 MED SAMPLE
-    vs Right             AVG:.264  OBP:.330  SLG:.379  HR:3  PA:193 🟢
+    Night Games          AVG:.289  OBP:.373  SLG:.453  HR:6  PA:230 🟢
+    vs Left              AVG:.226  OBP:.350  SLG:.381  HR:3  PA:100 🟡 MED SAMPLE
+    vs Right             AVG:.261  OBP:.326  SLG:.375  HR:3  PA:195 🟢
 
   Mookie Betts:
     Home Games           AVG:.252  OBP:.323  SLG:.456  HR:10  PA:229 🟢
-    Away Games           AVG:.239  OBP:.299  SLG:.402  HR:10  PA:254 🟢
+    Away Games           AVG:.248  OBP:.309  SLG:.408  HR:10  PA:259 🟢
     Day Games            AVG:.250  OBP:.330  SLG:.370  HR:3  PA:103 🟡 MED SAMPLE
-    Night Games          AVG:.244  OBP:.305  SLG:.443  HR:17  PA:380 🟢
-    vs Left              AVG:.230  OBP:.299  SLG:.381  HR:5  PA:154 🟢
-    vs Right             AVG:.252  OBP:.316  SLG:.449  HR:15  PA:329 🟢
+    Night Games          AVG:.250  OBP:.312  SLG:.446  HR:17  PA:385 🟢
+    vs Left              AVG:.241  OBP:.312  SLG:.390  HR:5  PA:157 🟢
+    vs Right             AVG:.254  OBP:.317  SLG:.449  HR:15  PA:331 🟢
 
   Will Smith:
     Home Games           AVG:.241  OBP:.341  SLG:.464  HR:7  PA:132 🟡 MED SAMPLE
-    Away Games           AVG:.229  OBP:.321  SLG:.271  HR:0  PA:112 🟡 MED SAMPLE
+    Away Games           AVG:.240  OBP:.333  SLG:.290  HR:0  PA:117 🟡 MED SAMPLE
     Day Games            AVG:.364  OBP:.517  SLG:.409  HR:0  PA:29 🔴 LOW SAMPLE
-    Night Games          AVG:.220  OBP:.307  SLG:.371  HR:7  PA:215 🟢
-    vs Left              AVG:.138  OBP:.286  SLG:.190  HR:1  PA:70 🟡 MED SAMPLE
-    vs Right             AVG:.273  OBP:.351  SLG:.447  HR:6  PA:174 🟢
+    Night Games          AVG:.226  OBP:.314  SLG:.379  HR:7  PA:220 🟢
+    vs Left              AVG:.164  OBP:.311  SLG:.230  HR:1  PA:74 🟡 MED SAMPLE
+    vs Right             AVG:.272  OBP:.349  SLG:.444  HR:6  PA:175 🟢
 
   Freddie Freeman:
     Home Games           AVG:.257  OBP:.324  SLG:.370  HR:8  PA:296 🟢
-    Away Games           AVG:.333  OBP:.418  SLG:.524  HR:8  PA:318 🟢
+    Away Games           AVG:.327  OBP:.412  SLG:.514  HR:8  PA:323 🟢
     Day Games            AVG:.214  OBP:.280  SLG:.321  HR:3  PA:157 🟢
-    Night Games          AVG:.324  OBP:.405  SLG:.492  HR:13  PA:457 🟢
-    vs Left              AVG:.258  OBP:.327  SLG:.379  HR:5  PA:202 🟢
-    vs Right             AVG:.315  OBP:.396  SLG:.483  HR:11  PA:412 🟢
+    Night Games          AVG:.320  OBP:.400  SLG:.486  HR:13  PA:462 🟢
+    vs Left              AVG:.253  OBP:.320  SLG:.371  HR:5  PA:206 🟢
+    vs Right             AVG:.314  OBP:.395  SLG:.482  HR:11  PA:413 🟢
 
   Teoscar Hernandez:
     Home Games           AVG:.279  OBP:.347  SLG:.428  HR:6  PA:222 🟢
-    Away Games           AVG:.253  OBP:.323  SLG:.434  HR:9  PA:223 🟢
+    Away Games           AVG:.248  OBP:.320  SLG:.426  HR:9  PA:228 🟢
     Day Games            AVG:.229  OBP:.309  SLG:.325  HR:2  PA:94 🟡 MED SAMPLE
-    Night Games          AVG:.275  OBP:.342  SLG:.459  HR:13  PA:351 🟢
-    vs Left              AVG:.304  OBP:.400  SLG:.548  HR:7  PA:135 🟡 MED SAMPLE
-    vs Right             AVG:.250  OBP:.306  SLG:.384  HR:8  PA:310 🟢
+    Night Games          AVG:.272  OBP:.340  SLG:.453  HR:13  PA:356 🟢
+    vs Left              AVG:.299  OBP:.399  SLG:.538  HR:7  PA:138 🟡 MED SAMPLE
+    vs Right             AVG:.248  OBP:.304  SLG:.381  HR:8  PA:312 🟢
 
   Miguel Rojas:
     Home Games           AVG:.287  OBP:.336  SLG:.426  HR:1  PA:110 🟡 MED SAMPLE
-    Away Games           AVG:.250  OBP:.282  SLG:.346  HR:2  PA:119 🟡 MED SAMPLE
+    Away Games           AVG:.248  OBP:.286  SLG:.343  HR:2  PA:121 🟡 MED SAMPLE
     Day Games            AVG:.188  OBP:.263  SLG:.229  HR:0  PA:57 🟡 MED SAMPLE
-    Night Games          AVG:.293  OBP:.324  SLG:.433  HR:3  PA:172 🟢
-    vs Left              AVG:.292  OBP:.333  SLG:.453  HR:3  PA:150 🟢
+    Night Games          AVG:.291  OBP:.326  SLG:.430  HR:3  PA:174 🟢
+    vs Left              AVG:.290  OBP:.336  SLG:.449  HR:3  PA:152 🟢
     vs Right             AVG:.221  OBP:.260  SLG:.250  HR:0  PA:79 🟡 MED SAMPLE
 
   Kyle Tucker:
     Home Games           AVG:.187  OBP:.287  SLG:.285  HR:4  PA:282 🟢
-    Away Games           AVG:.264  OBP:.364  SLG:.461  HR:11  PA:302 🟢
+    Away Games           AVG:.264  OBP:.363  SLG:.457  HR:11  PA:306 🟢
     Day Games            AVG:.263  OBP:.359  SLG:.391  HR:1  PA:153 🟢
-    Night Games          AVG:.213  OBP:.316  SLG:.368  HR:14  PA:431 🟢
-    vs Left              AVG:.240  OBP:.337  SLG:.413  HR:4  PA:175 🟢
-    vs Right             AVG:.220  OBP:.323  SLG:.357  HR:11  PA:409 🟢
+    Night Games          AVG:.213  OBP:.315  SLG:.367  HR:14  PA:435 🟢
+    vs Left              AVG:.237  OBP:.333  SLG:.408  HR:4  PA:177 🟢
+    vs Right             AVG:.222  OBP:.324  SLG:.358  HR:11  PA:411 🟢
 
   Enrique Hernandez:
     Home Games           AVG:.225  OBP:.279  SLG:.450  HR:2  PA:43 🔴 LOW SAMPLE
-    Away Games           AVG:.226  OBP:.294  SLG:.323  HR:1  PA:34 🔴 LOW SAMPLE
+    Away Games           AVG:.235  OBP:.297  SLG:.324  HR:1  PA:37 🔴 LOW SAMPLE
     Day Games            AVG:.273  OBP:.333  SLG:.273  HR:0  PA:12 🔴 LOW SAMPLE
-    Night Games          AVG:.217  OBP:.277  SLG:.417  HR:3  PA:65 🟡 MED SAMPLE
-    vs Left              AVG:.190  OBP:.261  SLG:.357  HR:2  PA:46 🔴 LOW SAMPLE
-    vs Right             AVG:.276  OBP:.323  SLG:.448  HR:1  PA:31 🔴 LOW SAMPLE
+    Night Games          AVG:.222  OBP:.279  SLG:.413  HR:3  PA:68 🟡 MED SAMPLE
+    vs Left              AVG:.182  OBP:.250  SLG:.341  HR:2  PA:48 🔴 LOW SAMPLE
+    vs Right             AVG:.300  OBP:.344  SLG:.467  HR:1  PA:32 🔴 LOW SAMPLE
 
   Alex Call:
     Home Games           AVG:.213  OBP:.319  SLG:.275  HR:0  PA:94 🟡 MED SAMPLE
-    Away Games           AVG:.263  OBP:.387  SLG:.342  HR:1  PA:93 🟡 MED SAMPLE
+    Away Games           AVG:.256  OBP:.379  SLG:.333  HR:1  PA:95 🟡 MED SAMPLE
     Day Games            AVG:.280  OBP:.410  SLG:.340  HR:0  PA:61 🟡 MED SAMPLE
-    Night Games          AVG:.217  OBP:.325  SLG:.292  HR:1  PA:126 🟡 MED SAMPLE
-    vs Left              AVG:.305  OBP:.417  SLG:.441  HR:1  PA:72 🟡 MED SAMPLE
+    Night Games          AVG:.213  OBP:.320  SLG:.287  HR:1  PA:128 🟡 MED SAMPLE
+    vs Left              AVG:.295  OBP:.405  SLG:.426  HR:1  PA:74 🟡 MED SAMPLE
     vs Right             AVG:.196  OBP:.313  SLG:.227  HR:0  PA:115 🟡 MED SAMPLE
 
   Dane Myers:
-    Home Games           AVG:.299  OBP:.390  SLG:.409  HR:3  PA:146 🟡 MED SAMPLE
+    Home Games           AVG:.295  OBP:.384  SLG:.424  HR:4  PA:151 🟢
     Away Games           AVG:.238  OBP:.327  SLG:.343  HR:3  PA:165 🟢
     Day Games            AVG:.330  OBP:.418  SLG:.435  HR:2  PA:134 🟡 MED SAMPLE
-    Night Games          AVG:.219  OBP:.311  SLG:.329  HR:4  PA:177 🟢
-    vs Left              AVG:.296  OBP:.383  SLG:.470  HR:4  PA:133 🟡 MED SAMPLE
-    vs Right             AVG:.245  OBP:.337  SLG:.303  HR:2  PA:178 🟢
+    Night Games          AVG:.219  OBP:.308  SLG:.344  HR:5  PA:182 🟢
+    vs Left              AVG:.288  OBP:.375  SLG:.458  HR:4  PA:136 🟡 MED SAMPLE
+    vs Right             AVG:.248  OBP:.339  SLG:.325  HR:3  PA:180 🟢
 
   Elly De La Cruz:
-    Home Games           AVG:.306  OBP:.399  SLG:.544  HR:14  PA:291 🟢
+    Home Games           AVG:.306  OBP:.400  SLG:.553  HR:15  PA:295 🟢
     Away Games           AVG:.268  OBP:.329  SLG:.491  HR:13  PA:298 🟢
     Day Games            AVG:.267  OBP:.328  SLG:.424  HR:7  PA:229 🟢
-    Night Games          AVG:.299  OBP:.386  SLG:.579  HR:20  PA:360 🟢
-    vs Left              AVG:.346  OBP:.410  SLG:.641  HR:10  PA:173 🟢
-    vs Right             AVG:.261  OBP:.344  SLG:.465  HR:17  PA:416 🟢
+    Night Games          AVG:.299  OBP:.387  SLG:.586  HR:21  PA:364 🟢
+    vs Left              AVG:.344  OBP:.411  SLG:.636  HR:10  PA:175 🟢
+    vs Right             AVG:.262  OBP:.344  SLG:.473  HR:18  PA:418 🟢
 
   Sal Stewart:
-    Home Games           AVG:.254  OBP:.338  SLG:.458  HR:14  PA:325 🟢
+    Home Games           AVG:.260  OBP:.343  SLG:.462  HR:14  PA:329 🟢
     Away Games           AVG:.278  OBP:.332  SLG:.481  HR:17  PA:328 🟢
     Day Games            AVG:.249  OBP:.323  SLG:.489  HR:14  PA:254 🟢
-    Night Games          AVG:.277  OBP:.343  SLG:.458  HR:17  PA:399 🟢
-    vs Left              AVG:.276  OBP:.373  SLG:.476  HR:8  PA:169 🟢
-    vs Right             AVG:.263  OBP:.322  SLG:.468  HR:23  PA:484 🟢
+    Night Games          AVG:.282  OBP:.347  SLG:.461  HR:17  PA:403 🟢
+    vs Left              AVG:.286  OBP:.380  SLG:.483  HR:8  PA:171 🟢
+    vs Right             AVG:.264  OBP:.323  SLG:.468  HR:23  PA:486 🟢
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -7579,7 +7581,7 @@ San Francisco Giants 63 89 .414 29.5  ☠
   2026-09-12   CIN    4   2   1   2    1   0   .263
   2026-09-13   CIN    3   2   0   0    1   0   .265
   2026-09-15   PIT    1   0   0   0    4   1   .265
-  2026-09-16   PIT    3   1   0   1    1   1   .265
+  2026-09-16   PIT    4   1   0   1    1   1   .265
 
   Jackson Chourio — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -7590,7 +7592,7 @@ San Francisco Giants 63 89 .414 29.5  ☠
   2026-09-12   CIN    3   1   0   0    2   1   .295
   2026-09-13   CIN    4   0   0   0    0   2   .292
   2026-09-15   PIT    5   0   0   0    0   1   .289
-  2026-09-16   PIT    4   1   0   0    0   1   .289
+  2026-09-16   PIT    5   1   0   0    0   1   .288
 
   Jake Bauers — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -7601,7 +7603,7 @@ San Francisco Giants 63 89 .414 29.5  ☠
   2026-09-12   CIN    4   1   0   2    1   2   .269
   2026-09-13   CIN    4   1   1   1    0   1   .269
   2026-09-15   PIT    4   1   0   0    0   2   .269
-  2026-09-16   PIT    2   0   0   0    2   2   .268
+  2026-09-16   PIT    3   1   0   0    2   2   .269
 
   William Contreras — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -7612,7 +7614,7 @@ San Francisco Giants 63 89 .414 29.5  ☠
   2026-09-11   CIN    5   2   1   6    0   0   .272
   2026-09-12   CIN    3   1   1   3    2   0   .273
   2026-09-15   PIT    5   1   0   0    0   0   .272
-  2026-09-16   PIT    4   1   0   0    0   1   .272
+  2026-09-16   PIT    5   1   0   0    0   1   .271
 
   Christian Yelich — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -7623,7 +7625,7 @@ San Francisco Giants 63 89 .414 29.5  ☠
   2026-09-12   CIN    5   2   0   1    0   1   .241
   2026-09-13   CIN    3   1   0   0    1   1   .241
   2026-09-15   PIT    3   0   0   0    1   1   .240
-  2026-09-16   PIT    4   1   0   2    0   2   .240
+  2026-09-16   PIT    5   1   0   2    0   2   .239
 
   Joey Ortiz — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -7667,7 +7669,7 @@ San Francisco Giants 63 89 .414 29.5  ☠
   2026-09-11   CIN    4   1   0   0    1   1   .263
   2026-09-12   CIN    5   3   0   1    0   1   .272
   2026-09-13   CIN    3   1   0   0    0   0   .273
-  2026-09-16   PIT    3   2   0   1    0   0   .279
+  2026-09-16   PIT    4   2   0   1    0   0   .277
 
   Konnor Griffin — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -7678,7 +7680,7 @@ San Francisco Giants 63 89 .414 29.5  ☠
   2026-09-12   CHC    4   0   0   0    0   1   .262
   2026-09-13   CHC    5   1   0   0    0   0   .261
   2026-09-15   MIL    5   1   0   0    0   1   .259
-  2026-09-16   MIL    3   2   0   0    0   0   .264
+  2026-09-16   MIL    5   2   0   0    0   1   .262
 
   Brandon Lowe — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -7689,7 +7691,7 @@ San Francisco Giants 63 89 .414 29.5  ☠
   2026-09-12   CHC    4   1   0   0    1   1   .257
   2026-09-13   CHC    2   1   0   2    0   1   .258
   2026-09-15   MIL    5   1   1   1    0   2   .258
-  2026-09-16   MIL    2   1   1   2    1   1   .259
+  2026-09-16   MIL    3   2   1   2    1   1   .260
 
   Bryan Reynolds — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -7700,7 +7702,7 @@ San Francisco Giants 63 89 .414 29.5  ☠
   2026-09-12   CHC    5   1   0   0    0   2   .264
   2026-09-13   CHC    4   2   0   1    1   1   .266
   2026-09-15   MIL    4   0   0   0    0   2   .264
-  2026-09-16   MIL    3   0   0   0    0   2   .262
+  2026-09-16   MIL    4   0   0   0    0   2   .262
 
   Oneil Cruz — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -7711,7 +7713,7 @@ San Francisco Giants 63 89 .414 29.5  ☠
   2026-09-12   CHC    5   0   0   0    0   1   .273
   2026-09-13   CHC    2   1   0   0    3   0   .274
   2026-09-15   MIL    4   0   0   0    0   4   .271
-  2026-09-16   MIL    3   1   1   1    0   2   .271
+  2026-09-16   MIL    4   2   1   1    0   2   .274
 
   Rafael Flores — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -7722,7 +7724,7 @@ San Francisco Giants 63 89 .414 29.5  ☠
   2026-09-12   CHC    1   1   0   0    0   0   .250
   2026-09-13   CHC    4   1   0   0    0   2   .250
   2026-09-15   MIL    4   4   0   0    0   0   .275
-  2026-09-16   MIL    3   1   1   1    0   2   .276
+  2026-09-16   MIL    4   1   1   1    0   2   .274
 
   Ryan O'Hearn — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -7731,14 +7733,14 @@ San Francisco Giants 63 89 .414 29.5  ☠
   2026-09-12   CHC    4   1   1   3    0   1   .268
   2026-09-13   CHC    4   0   0   0    0   1   .266
   2026-09-15   MIL    3   1   0   0    1   1   .266
-  2026-09-16   MIL    3   1   0   0    0   0   .267
+  2026-09-16   MIL    4   2   0   0    0   0   .269
 
   Ronny Simon — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
   -------------------------------------------------------
   2026-09-09   CWS    1   0   0   0    0   0   .281
   2026-09-15   MIL    1   1   0   0    0   0   .303
-  2026-09-16   MIL    3   2   0   0    0   1   .333
+  2026-09-16   MIL    4   2   0   0    0   1   .324
 
   Jacob Gonzalez — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -7760,7 +7762,7 @@ San Francisco Giants 63 89 .414 29.5  ☠
   2026-09-12   CHC    4   0   0   0    0   1   .281
   2026-09-13   CHC    3   2   0   0    1   0   .284
   2026-09-15   MIL    4   0   0   0    0   0   .281
-  2026-09-16   MIL    2   0   0   0    0   0   .280
+  2026-09-16   MIL    4   1   0   0    0   1   .281
 
   Tommy Edman — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -7771,7 +7773,7 @@ San Francisco Giants 63 89 .414 29.5  ☠
   2026-09-13   MIA    1   0   0   0    0   0   .257
   2026-09-14   CIN    4   0   0   0    0   1   .253
   2026-09-15   CIN    3   1   0   0    0   0   .254
-  2026-09-16   CIN    3   0   0   1    1   0   .251
+  2026-09-16   CIN    4   0   0   1    1   1   .250
 
   Mookie Betts — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -7782,7 +7784,7 @@ San Francisco Giants 63 89 .414 29.5  ☠
   2026-09-13   MIA    4   2   0   1    1   0   .250
   2026-09-14   CIN    4   0   0   0    0   0   .248
   2026-09-15   CIN    4   0   0   0    0   1   .245
-  2026-09-16   CIN    3   2   0   0    1   0   .248
+  2026-09-16   CIN    4   3   0   0    1   0   .250
 
   Will Smith — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -7793,7 +7795,7 @@ San Francisco Giants 63 89 .414 29.5  ☠
   2026-09-12   MIA    1   0   0   0    0   0   .239
   2026-09-13   MIA    3   1   0   0    2   1   .240
   2026-09-14   CIN    4   0   0   0    0   1   .236
-  2026-09-16   CIN    3   2   0   1    1   0   .242
+  2026-09-16   CIN    4   2   0   1    1   1   .241
 
   Freddie Freeman — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -7804,7 +7806,7 @@ San Francisco Giants 63 89 .414 29.5  ☠
   2026-09-12   MIA    4   0   0   0    0   0   .295
   2026-09-13   MIA    4   0   0   0    0   1   .293
   2026-09-15   CIN    5   3   0   0    0   0   .296
-  2026-09-16   CIN    4   0   0   0    0   2   .293
+  2026-09-16   CIN    5   0   0   0    0   3   .293
 
   Teoscar Hernandez — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -7815,7 +7817,7 @@ San Francisco Giants 63 89 .414 29.5  ☠
   2026-09-12   MIA    3   0   0   0    1   1   .265
   2026-09-14   CIN    3   1   1   2    1   1   .265
   2026-09-15   CIN    3   1   1   2    1   1   .266
-  2026-09-16   CIN    3   0   0   0    1   1   .264
+  2026-09-16   CIN    4   0   0   0    1   2   .263
 
   Miguel Rojas — Game Logs L14:
   Date         Opp    AB  H   HR  RBI  BB  K   AVG
@@ -7837,7 +7839,7 @@ San Francisco Giants 63 89 .414 29.5  ☠
   2026-09-13   MIA    4   0   0   0    1   1   .226
   2026-09-14   CIN    2   1   1   1    2   0   .227
   2026-09-15   CIN    2   0   0   0    2   1   .226
-  2026-09-16   CIN    3   1   0   0    0   0   .227
+  2026-09-16   CIN    4   1   0   0    0   0   .226
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -7846,36 +7848,36 @@ San Francisco Giants 63 89 .414 29.5  ☠
 
   Player                       2026_BABIP Career_BABIP   Delta Signal
   ----------------------------------------------------------------------
-  Brice Turang                      0.338        0.318  +0.020 🟡 Normal
-  Jackson Chourio                   0.344        0.323  +0.021 🟡 Normal
-  Jake Bauers                       0.333        0.289  +0.044 🔴 DUE DOWN
+  Brice Turang                      0.337        0.318  +0.019 🟡 Normal
+  Jackson Chourio                   0.343        0.322  +0.021 🟡 Normal
+  Jake Bauers                       0.336        0.289  +0.047 🔴 DUE DOWN
   William Contreras                 0.293        0.318  -0.025 🟡 Normal
-  Christian Yelich                  0.313        0.344  -0.031 🟢 DUE UP
+  Christian Yelich                  0.312        0.344  -0.032 🟢 DUE UP
   Joey Ortiz                        0.313        0.282  +0.031 🔴 DUE DOWN
-  Luis Lara                         0.336        0.336  +0.000 🟡 Normal
+  Luis Lara                         0.333        0.333  +0.000 🟡 Normal
   Andrew Vaughn                     0.366        0.297  +0.069 🔴 DUE DOWN
-  Cooper Pratt                      0.325        0.325  +0.000 🟡 Normal
-  Konnor Griffin                    0.346        0.346  +0.000 🟡 Normal
-  Brandon Lowe                      0.321        0.298  +0.023 🟡 Normal
-  Bryan Reynolds                    0.332        0.327  +0.005 🟡 Normal
-  Oneil Cruz                        0.388        0.325  +0.063 🔴 DUE DOWN
-  Rafael Flores                     0.329        0.333  -0.004 🟡 Normal
-  Ryan O'Hearn                      0.303        0.297  +0.006 🟡 Normal
-  Ronny Simon                       0.387        0.316  +0.071 🔴 DUE DOWN
+  Cooper Pratt                      0.323        0.323  +0.000 🟡 Normal
+  Konnor Griffin                    0.344        0.344  +0.000 🟡 Normal
+  Brandon Lowe                      0.323        0.299  +0.024 🟡 Normal
+  Bryan Reynolds                    0.331        0.327  +0.004 🟡 Normal
+  Oneil Cruz                        0.392        0.326  +0.066 🔴 DUE DOWN
+  Rafael Flores                     0.325        0.329  -0.004 🟡 Normal
+  Ryan O'Hearn                      0.305        0.297  +0.008 🟡 Normal
+  Ronny Simon                       0.375        0.313  +0.062 🔴 DUE DOWN
   Jacob Gonzalez                    0.252        0.252  +0.000 🟡 Normal
-  Jake Mangum                       0.343        0.344  -0.001 🟡 Normal
+  Jake Mangum                       0.345        0.345  +0.000 🟡 Normal
   Tommy Edman                       0.304        0.291  +0.013 🟡 Normal
-  Mookie Betts                      0.243        0.296  -0.053 🟢 DUE UP
+  Mookie Betts                      0.245        0.296  -0.051 🟢 DUE UP
   Will Smith                        0.262        0.283  -0.021 🟡 Normal
   Freddie Freeman                   0.335        0.341  -0.006 🟡 Normal
   Teoscar Hernandez                 0.338        0.326  +0.012 🟡 Normal
   Miguel Rojas                      0.281        0.286  -0.005 🟡 Normal
-  Kyle Tucker                       0.253        0.279  -0.026 🟡 Normal
+  Kyle Tucker                       0.252        0.279  -0.027 🟡 Normal
   Enrique Hernandez                 0.304        0.268  +0.036 🔴 DUE DOWN
   Alex Call                         0.290        0.284  +0.006 🟡 Normal
-  Dane Myers                        0.342        0.326  +0.016 🟡 Normal
+  Dane Myers                        0.340        0.326  +0.014 🟡 Normal
   Elly De La Cruz                   0.362        0.349  +0.013 🟡 Normal
-  Sal Stewart                       0.300        0.296  +0.004 🟡 Normal
+  Sal Stewart                       0.301        0.298  +0.003 🟡 Normal
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -10112,19 +10114,19 @@ San Francisco Giants 63 89 .414 29.5  ☠
   Boston Red Sox @ Texas Rangers — Globe Life Field:
   LF(332ft/8ft wall)  CF(407ft)  RF(326ft/8ft wall)
   Surface: grass  Humidor: YES  Batter Eye: easy
-  Air density: 0.9109  Altitude bonus: 1.0000
-  Wind pull-side boost: 0.969  Oppo-side boost: 1.031
-  PULL HITTERS HR INDEX: 1.064
-  OPPO HITTERS HR INDEX: 1.132
+  Air density: 0.9140  Altitude bonus: 1.0000
+  Wind pull-side boost: 0.975  Oppo-side boost: 1.025
+  PULL HITTERS HR INDEX: 1.067
+  OPPO HITTERS HR INDEX: 1.121
   ✅ HUMIDOR: ball stored at ~50°F/50% humidity — reduces carry vs dry conditions
 
   Minnesota Twins @ Los Angeles Angels — Angel Stadium:
   LF(330ft/8ft wall)  CF(396ft)  RF(330ft/8ft wall)
   Surface: grass  Humidor: No  Batter Eye: easy
-  Air density: 0.9639  Altitude bonus: 1.1536
-  Wind pull-side boost: 1.024  Oppo-side boost: 0.976
-  PULL HITTERS HR INDEX: 1.225
-  OPPO HITTERS HR INDEX: 1.168
+  Air density: 0.9635  Altitude bonus: 1.1536
+  Wind pull-side boost: 1.026  Oppo-side boost: 0.974
+  PULL HITTERS HR INDEX: 1.229
+  OPPO HITTERS HR INDEX: 1.166
 
 
 ════════════════════════════════════════════════════════════════════════
@@ -14454,18 +14456,18 @@ San Francisco Giants 63 89 .414 29.5  ☠
 5     Christian Vázquez   C  636.000   .997   2    4  9.72
 6     Francisco Alvarez   C  674.000   .995   4    5  9.68
 7       Shea Langeliers   C  634.000   .996   3    3  9.62
-8          Luis Torrens   C  630.200   .997   2    2  9.56
+8          Luis Torrens   C  632.200   .997   2    2  9.58
 9             Bo Naylor   C  211.000   .996   1    1  9.55
 10        Casey Schmitt  1B  115.200   .984   2   11  9.55
 11            Kyle Teel   C  217.100  1.000   0    0  9.54
 12       Endy Rodríguez   C  273.200   .986   4    1  9.49
 13         Alex Jackson   C  151.000   .981   3    0  9.48
 14          Ali Sánchez   C  237.000   .984   4    0  9.46
-15          Yainer Diaz   C  616.000   .995   3    2  9.44
-16     Sebastián Rivero   C  144.100   .981   3    0  9.44
-17         Austin Wells   C  908.100   .993   7    3  9.42
-18       Carlos Narváez   C  702.200   .992   6    2  9.42
-19         Danny Jansen   C  426.100   .989   5    1  9.42
+15     Sebastián Rivero   C  144.100   .981   3    0  9.44
+16         Austin Wells   C  908.100   .993   7    3  9.42
+17       Carlos Narváez   C  702.200   .992   6    2  9.42
+18         Danny Jansen   C  428.100   .989   5    1  9.42
+19          Yainer Diaz   C  619.100   .995   3    2  9.41
 20       Chadwick Tromp   C  132.000   .986   2    1  9.41
 21       Dalton Rushing   C  472.100   .998   1    1  9.38
 22           Elias Díaz   C  499.000   .989   6    0  9.36
@@ -14474,21 +14476,21 @@ San Francisco Giants 63 89 .414 29.5  ☠
 25         J.C. Escarra   C  216.200   .991   2    5  9.29
 26        Freddy Fermin   C  636.200   .989   7    4  9.27
 27        Rafael Devers  1B  874.200   .991   8   77  9.25
-28    Rafael Flores Jr.   C  215.100   .991   2    1  9.25
+28   Moisés Ballesteros   C  147.100   .993   1    1  9.24
 29           Sandy León   C  134.200   .993   1    2  9.20
-30   Moisés Ballesteros   C  146.100   .993   1    1  9.18
+30         Jose Trevino   C  352.000   .984   6    2  9.20
 31         Gary Sánchez   C  314.000   .994   2    1  9.17
 32      Hunter Feduccia   C  588.100   .992   5    1  9.17
-33        Jhonny Pereda   C  231.100  1.000   0    0  9.16
-34            Drew Romo   C  495.000   .986   7    1  9.15
-35         Jose Trevino   C  350.000   .983   6    2  9.15
+33    Rafael Flores Jr.   C  217.100   .991   2    1  9.17
+34        Jhonny Pereda   C  231.100  1.000   0    0  9.16
+35            Drew Romo   C  495.000   .986   7    1  9.15
 36   Brandon Valenzuela   C  590.200   .985   9    3  9.14
-37       Samuel Basallo   C  489.200   .998   1    3  9.13
+37       Samuel Basallo   C  492.000   .998   1    3  9.11
 38            Coby Mayo  1B  111.000  1.000   0   11  9.08
 39       Garrett Stubbs   C  143.000   .993   1    0  9.06
 40          Curtis Mead  1B  201.000   .981   4   16  9.04
 41       Bryce Eldridge  1B  338.200   .997   1   36  9.03
-42             Joe Mack   C  730.200   .986  10    4  8.99
+42             Joe Mack   C  731.100   .986  10    4  8.99
 43          Connor Wong   C  543.100   .993   4    0  8.97
 44        Alec Burleson  1B 1271.200   .994   8  125  8.95
 45       Salvador Perez  1B  185.000   .989   2   20  8.95
@@ -14502,10 +14504,10 @@ San Francisco Giants 63 89 .414 29.5  ☠
 53     Tyler Stephenson   C  878.000   .995   4    4  8.85
 54          Nick Sogard  1B  107.000   .981   2   11  8.83
 55         Daniel Susac   C  351.000   .994   2    4  8.82
-56          TJ Rumfield  1B 1087.100   .994   6   93  8.79
-57        Drake Baldwin   C  662.200   .997   2    2  8.78
-58      Adley Rutschman   C  613.200   .988   7    4  8.77
-59        Michael Busch  1B 1317.000   .997   4  106  8.75
+56      Adley Rutschman   C  615.200   .989   7    4  8.81
+57          TJ Rumfield  1B 1087.100   .994   6   93  8.79
+58        Drake Baldwin   C  662.200   .997   2    2  8.78
+59        Michael Busch  1B 1320.000   .997   4  106  8.77
 60          Edgar Quero   C  438.000   .984   7    0  8.75
 61       Luis Campusano   C  423.000   .993   3    3  8.74
 62     Eduardo Valencia   C  129.200   .984   2    1  8.72
@@ -14520,7 +14522,7 @@ San Francisco Giants 63 89 .414 29.5  ☠
 71         Ryan Jeffers   C  619.200   .993   4    4  8.61
 72  Adrian Del Castillo   C  137.100   .992   1    0  8.61
 73          Pedro Pagés   C  509.100   .990   5    4  8.58
-74           Harry Ford   C  221.000  1.000   0    1  8.55
+74           Harry Ford   C  222.000  1.000   0    1  8.55
 75       Griffin Conine  1B  129.000  1.000   0   12  8.51
 76        Mickey Gasper   C  110.000  1.000   0    0  8.51
 77      Luis García Jr.  1B  933.100   .994   5   77  8.51
@@ -14545,8 +14547,8 @@ San Francisco Giants 63 89 .414 29.5  ☠
 10                 Griffin, Konnor     804606      134  PIT       SS   20               122  50.000     4.270        29.900
 11                   Ruiz, Esteury     665923      146  MIA       RF   27                64  26.000     4.310        29.900
 12                Acuña, Luisangel     682668      145  CWS       SS   24               100  42.000     4.220        29.800
-13                    Turner, Trea     607208      143  PHI       SS   33               219  84.000     4.250        29.800
-14               Mitchell, Garrett     669003      158  MIL       CF   27               195  65.000     4.070        29.800
+13               Mitchell, Garrett     669003      158  MIL       CF   27               195  65.000     4.070        29.800
+14                    Turner, Trea     607208      143  PHI       SS   33               219  84.000     4.250        29.800
 15                Scott II, Victor     687363      138  STL       CF   25                72  29.000     4.160        29.700
 16                   Buxton, Byron     621439      142  MIN       CF   32               112  36.000     4.150        29.700
 17                     Eaton, Nate     681987      111  BOS       LF   29                15   6.000       NaN        29.700
@@ -14558,8 +14560,8 @@ San Francisco Giants 63 89 .414 29.5  ☠
 23                    Mangum, Jake     663968      134  PIT       CF   30               213  62.000     4.040        29.500
 24                Crawford, Justin     702222      143  PHI       CF   22               203  71.000     4.170        29.500
 25            Crow-Armstrong, Pete     691718      112  CHC       CF   24               184  40.000     4.260        29.500
-26                     Hill, Derek     656537      143  PHI       CF   30                62  15.000     4.280        29.500
-27               Simpson, Chandler     802415      139   TB       LF   25               320 117.000     3.960        29.500
+26               Simpson, Chandler     802415      139   TB       LF   25               320 117.000     3.960        29.500
+27                     Hill, Derek     656537      143  PHI       CF   30                62  15.000     4.280        29.500
 28                 Fernandez, Jose     699912      109   AZ       3B   22                74   9.000     4.360        29.500
 29                     Ewing, A.J.     805999      121  NYM       CF   21               147  48.000     4.150        29.500
 30                 Teodosio, Bryce     669326      108  LAA       LF   27                19   4.000     4.220        29.400
@@ -14579,8 +14581,8 @@ San Francisco Giants 63 89 .414 29.5  ☠
 44              Lockridge, Brandon     663604      158  MIL       LF   29                51   8.000     4.310        29.200
 45                    Young, Jacob     696285      120  WSH       CF   26               167  26.000     4.300        29.200
 46                  Walker, Jordan     691023      138  STL       RF   24               215  29.000     4.350        29.100
-47                    Thomas, Lane     657041      144  ATL       CF   30               126  16.000     4.380        29.100
-48                   Marte, Noelvi     682622      113  CIN       RF   24                81   6.000     4.360        29.100
+47                   Marte, Noelvi     682622      113  CIN       RF   24                81   6.000     4.360        29.100
+48                    Thomas, Lane     657041      144  ATL       CF   30               126  16.000     4.380        29.100
 49                    Malgeri, Ben     701162      116  DET       RF   26                43   3.000     4.280        29.100
 50                     Ortiz, Joey     687401      158  MIL       SS   27               153  16.000     4.290        29.100
 51                 Hicklen, Brewer     676551      144  ATL       RF   30                18   2.000       NaN        29.100
@@ -14592,22 +14594,22 @@ San Francisco Giants 63 89 .414 29.5  ☠
 57                Cheng, Tsung-Che     691907      111  BOS       SS   24                14   1.000       NaN        29.000
 58                   Duran, Jarren     680776      111  BOS       LF   29               179  11.000     4.240        29.000
 59               Rafaela, Ceddanne     678882      111  BOS       CF   25               240  31.000     4.130        29.000
-60                  Jones, Spencer     682987      147  NYY       RF   25                64   8.000     4.270        28.900
-61                      Rave, John     670231      118   KC       RF   28                47   7.000     4.220        28.900
-62                 Koss, Christian     683766      137   SF       SS   28                81   2.000     4.320        28.900
-63             Tatis Jr., Fernando     665487      135   SD       RF   27               244  32.000     4.310        28.900
+60                      Rave, John     670231      118   KC       RF   28                47   7.000     4.220        28.900
+61                  Jones, Spencer     682987      147  NYY       RF   25                64   8.000     4.270        28.900
+62             Tatis Jr., Fernando     665487      135   SD       RF   27               244  32.000     4.310        28.900
+63                 Koss, Christian     683766      137   SF       SS   28                81   2.000     4.320        28.900
 64                  Taveras, Leody     665750      110  BAL       CF   27               154  36.000     4.260        28.900
 65                    Furman, Nate     801501      137   SF       2B   24                14   2.000       NaN        28.900
 66                Robert Jr., Luis     673357      110  BAL       CF   28                75   6.000     4.340        28.900
-67                 McAdoo, Charles     807727      141  TOR       2B   24                36     NaN     4.400        28.900
-68                 Duran, Ezequiel     677649      140  TEX       SS   27               206  14.000     4.280        28.900
+67                 Duran, Ezequiel     677649      140  TEX       SS   27               206  14.000     4.280        28.900
+68                 McAdoo, Charles     807727      141  TOR       2B   24                36     NaN     4.400        28.900
 69                    Wiemer, Joey     686894      120  WSH       RF   27                31   1.000     4.270        28.900
 70                   Pratt, Cooper     806198      158  MIL       SS   21                89   3.000     4.410        28.900
 71               Holliday, Jackson     702616      110  BAL       2B   22               117   7.000     4.240        28.900
-72                  Harris, Dustin     687957      135   SD       LF   26                45     NaN     4.170        28.900
-73                    Carter, Evan     694497      140  TEX       CF   23               133  39.000     4.150        28.900
-74                  Gonzales, Nick     693304      134  PIT       3B   27               248  12.000     4.320        28.800
-75                Morales, Yohandy     691002      120  WSH       1B   24                12     NaN       NaN        28.800
+72                    Carter, Evan     694497      140  TEX       CF   23               133  39.000     4.150        28.900
+73                  Harris, Dustin     687957      135   SD       LF   26                45     NaN     4.170        28.900
+74                Morales, Yohandy     691002      120  WSH       1B   24                12     NaN       NaN        28.800
+75                  Gonzales, Nick     693304      134  PIT       3B   27               248  12.000     4.320        28.800
 76                   Carrigg, Cole     694249      115  COL       CF   24               114   7.000     4.240        28.800
 77                   Meckler, Wade     685133      108  LAA       LF   26               127  26.000     4.120        28.800
 78                   Arroyo, Edwin     695490      113  CIN       2B   22                43   1.000     4.270        28.800
@@ -14616,8 +14618,8 @@ San Francisco Giants 63 89 .414 29.5  ☠
 81                 Keaschall, Luke     807712      142  MIN       2B   23               213   1.000     4.250        28.800
 82                    Benson, Will     666181      113  CIN       RF   28                24   6.000       NaN        28.800
 83                   Kim, Hyeseong     808975      119  LAD       SS   27                52     NaN     4.090        28.800
-84                  Clarke, Denzel     672016      133  ATH       CF   26                29   4.000     4.320        28.700
-85               Domínguez, Jasson     691176      147  NYY       RF   23                71  13.000     4.270        28.800
+84               Domínguez, Jasson     691176      147  NYY       RF   23                71  13.000     4.270        28.800
+85                  Clarke, Denzel     672016      133  ATH       CF   26                29   4.000     4.320        28.700
 86                Rodríguez, Julio     677594      136  SEA       CF   25               200  26.000     4.340        28.700
 87                     Hinds, Rece     677956      110  BAL       RF   25                15     NaN       NaN        28.700
 88                    Simon, Ronny     682927      134  PIT       RF   26                18   2.000       NaN        28.700
@@ -14630,16 +14632,16 @@ San Francisco Giants 63 89 .414 29.5  ☠
 95                 Peters, Tristan     671976      145  CWS       CF   26               180   7.000     4.270        28.600
 96                     Raley, Luke     670042      136  SEA       RF   31                78     NaN     4.310        28.600
 97                     Trout, Mike     545361      108  LAA       CF   34               158   7.000     4.420        28.600
-98                   Sosa, Edmundo     624641      143  PHI       LF   30                84  12.000     4.420        28.600
+98                  Peraza, Oswald     672724      108  LAA       2B   26               117     NaN     4.390        28.600
 99                      Clark, Max     703601      116  DET       CF   21                59   2.000     4.230        28.600
-100                 Peraza, Oswald     672724      108  LAA       2B   26               117     NaN     4.390        28.600
+100                  Sosa, Edmundo     624641      143  PHI       LF   30                84  12.000     4.420        28.600
 101                  Benge, Carson     701807      121  NYM       RF   23               203  11.000     4.270        28.600
 102                  Rodden, Brock     801126      136  SEA       SS   26                21     NaN       NaN        28.600
 103                 Lawlar, Jordan     691783      109   AZ       CF   23                27   7.000     4.390        28.600
 104               Fulford, Braxton     690924      115  COL        C   27                21   1.000       NaN        28.600
 105                    Lopez, Otto     672640      146  MIA       SS   27               312   4.000     4.210        28.500
-106                   Vilade, Ryan     668723      139   TB       RF   27                77     NaN     4.450        28.600
-107                  Halpin, Petey     690984      114  CLE       CF   24                50   1.000     4.340        28.500
+106                  Halpin, Petey     690984      114  CLE       CF   24                50   1.000     4.340        28.500
+107                   Vilade, Ryan     668723      139   TB       RF   27                77     NaN     4.450        28.600
 108                  Turang, Brice     668930      158  MIL       2B   26               242   4.000     4.280        28.500
 109                 Vargas, Miguel     678246      145  CWS       3B   26               173   4.000     4.380        28.500
 110                  Rosario, Amed     642708      147  NYY       3B   30                71   2.000     4.400        28.500
@@ -14658,100 +14660,100 @@ San Francisco Giants 63 89 .414 29.5  ☠
 123                   Hill, Turner     806367      137   SF       LF   27                42     NaN     4.230        28.400
 124                      Veen, Zac     691728      115  COL       LF   24                19   1.000       NaN        28.400
 125             Montgomery, Braden     695731      145  CWS       RF   23               143     NaN     4.350        28.400
-126                     Lara, Luis     800325      158  MIL       RF   21                77   4.000     4.260        28.400
-127               Alexander, Blaze     677942      110  BAL       3B   27               102   4.000     4.400        28.400
-128                 Volpe, Anthony     683011      147  NYY       SS   25                76     NaN     4.340        28.400
+126                 Volpe, Anthony     683011      147  NYY       SS   25                76     NaN     4.340        28.400
+127                     Lara, Luis     800325      158  MIL       RF   21                77   4.000     4.260        28.400
+128               Alexander, Blaze     677942      110  BAL       3B   27               102   4.000     4.400        28.400
 129             Hernández, Teoscar     606192      119  LAD       LF   33               138   1.000     4.390        28.300
-130           Hernández, Heriberto     681715      146  MIA       LF   26               133     NaN     4.380        28.300
-131                Loperfido, Joey     694388      117  HOU       LF   27                42   1.000     4.280        28.300
-132               Rodriguez, Jesus     683679      137   SF        C   24                26     NaN     4.430        28.300
-133                   Fraley, Jake     641584      139   TB       RF   31                28   1.000     4.270        28.300
-134                  Triolo, Jared     669707      134  PIT       SS   28               147     NaN     4.420        28.300
-135                   Reyes, Felix     694025      143  PHI       LF   25                12     NaN       NaN        28.300
-136                  Hoerner, Nico     663538      112  CHC       2B   29               275     NaN     4.370        28.300
-137                Edwards, Xavier     669364      146  MIA       2B   26               225   8.000     4.220        28.300
+130               Rodriguez, Jesus     683679      137   SF        C   24                26     NaN     4.430        28.300
+131           Hernández, Heriberto     681715      146  MIA       LF   26               133     NaN     4.380        28.300
+132                   Fraley, Jake     641584      139   TB       RF   31                28   1.000     4.270        28.300
+133                Loperfido, Joey     694388      117  HOU       LF   27                42   1.000     4.280        28.300
+134                  Hoerner, Nico     663538      112  CHC       2B   29               275     NaN     4.370        28.300
+135                Edwards, Xavier     669364      146  MIA       2B   26               225   8.000     4.220        28.300
+136                   Reyes, Felix     694025      143  PHI       LF   25                12     NaN       NaN        28.300
+137                  Triolo, Jared     669707      134  PIT       SS   28               147     NaN     4.420        28.300
 138                   Genao, Angel     694197      114  CLE       2B   22                73     NaN     4.350        28.300
 139                  Stott, Bryson     681082      143  PHI       2B   28               195   3.000     4.270        28.300
-140                Swanson, Dansby     621020      112  CHC       SS   32               167   1.000     4.330        28.300
-141                 Vierling, Matt     663837      116  DET       CF   29                93   1.000     4.500        28.300
-142             Chisholm Jr., Jazz     665862      147  NYY       2B   28               123   7.000     4.220        28.300
+140                 Vierling, Matt     663837      116  DET       CF   29                93   1.000     4.500        28.300
+141             Chisholm Jr., Jazz     665862      147  NYY       2B   28               123   7.000     4.220        28.300
+142                Swanson, Dansby     621020      112  CHC       SS   32               167   1.000     4.330        28.300
 143                    Cruz, Oneil     665833      134  PIT       CF   27               130  10.000     4.370        28.300
 144                    Pages, Andy     681624      119  LAD       CF   25               181     NaN     4.370        28.300
-145                    Haase, Eric     606992      137   SF        C   33                21     NaN     4.480        28.300
-146                  Caissie, Owen     683357      146  MIA       RF   23                90     NaN     4.300        28.300
+145                  Caissie, Owen     683357      146  MIA       RF   23                90     NaN     4.300        28.300
+146                    Haase, Eric     606992      137   SF        C   33                21     NaN     4.480        28.300
 147                Bazzana, Travis     683953      114  CLE       2B   23               161   7.000     4.210        28.300
 148                  Spence, Lucas     828599      117  HOU       CF   23                15     NaN       NaN        28.300
 149                Meadows, Parker     678009      116  DET       CF   26                16     NaN       NaN        28.300
 150                      Adell, Jo     666176      114  CLE       RF   27               203     NaN     4.530        28.200
 151                 Watson, Kahlil     696135      114  CLE       RF   23                27     NaN     4.300        28.300
-152               Moore, Christian     695681      108  LAA       2B   23                30     NaN     4.480        28.200
-153                Langford, Wyatt     694671      140  TEX       LF   24               137   2.000     4.350        28.200
+152                Langford, Wyatt     694671      140  TEX       LF   24               137   2.000     4.350        28.200
+153                 Pérez, Wenceel     672761      116  DET       RF   26                69     NaN     4.280        28.200
 154                 Semien, Marcus     543760      121  NYM       2B   35               156     NaN     4.430        28.200
-155                 Pérez, Wenceel     672761      116  DET       RF   26                69     NaN     4.280        28.200
+155               Moore, Christian     695681      108  LAA       2B   23                30     NaN     4.480        28.200
 156                 Johnson, Bryce     669369      135   SD       RF   30                20   1.000       NaN        28.200
-157              Rodríguez, Héctor     699302      113  CIN       RF   22                57     NaN     4.210        28.200
-158              Henderson, Gunnar     683002      110  BAL       SS   25               217   2.000     4.250        28.200
-159                 Antonacci, Sam     803011      145  CWS       LF   23               227     NaN     4.320        28.200
-160               Shewmake, Braden     669699      158  MIL       SS   28                32     NaN     4.430        28.200
-161               McGonigle, Kevin     805808      116  DET       SS   21               223   4.000     4.350        28.200
-162                 Moniak, Mickey     666160      115  COL       LF   28               109   1.000     4.370        28.200
-163                  Thomas, Colby     687515      133  ATH       RF   25                34     NaN     4.330        28.200
-164                    Lee, Hao-Yu     701678      116  DET       2B   23               120     NaN     4.410        28.200
-165                  Haggerty, Sam     664059      140  TEX      NaN   32                16   1.000       NaN        28.200
-166                Saggese, Thomas     695336      138  STL       SS   24                55     NaN     4.290        28.200
+157              Henderson, Gunnar     683002      110  BAL       SS   25               217   2.000     4.250        28.200
+158                 Antonacci, Sam     803011      145  CWS       LF   23               227     NaN     4.320        28.200
+159               Shewmake, Braden     669699      158  MIL       SS   28                32     NaN     4.430        28.200
+160              Rodríguez, Héctor     699302      113  CIN       RF   22                57     NaN     4.210        28.200
+161                 Moniak, Mickey     666160      115  COL       LF   28               109   1.000     4.370        28.200
+162               McGonigle, Kevin     805808      116  DET       SS   21               223   4.000     4.350        28.200
+163                    Lee, Hao-Yu     701678      116  DET       2B   23               120     NaN     4.410        28.200
+164                  Thomas, Colby     687515      133  ATH       RF   25                34     NaN     4.330        28.200
+165                Saggese, Thomas     695336      138  STL       SS   24                55     NaN     4.290        28.200
+166                  Haggerty, Sam     664059      140  TEX      NaN   32                16   1.000       NaN        28.200
 167                Reynolds, Bryan     668804      134  PIT       LF   31               221     NaN     4.400        28.200
 168                  Castro, Willi     650489      115  COL       2B   29               151   1.000     4.270        28.100
 169                Williamson, Ben     810938      139   TB       2B   25               123     NaN     4.500        28.100
 170                   Davis, Henry     680779      134  PIT        C   26                86     NaN     4.490        28.100
 171                   House, Brady     691781      120  WSH       3B   23               124     NaN     4.410        28.100
-172                 Clement, Ernie     676391      141  TOR       2B   30               242   4.000     4.330        28.100
-173                   Loftin, Nick     679845      118   KC       3B   27               162     NaN     4.530        28.100
-174                   Edman, Tommy     669242      119  LAD       2B   31               108   1.000     4.320        28.100
-175                 Realmuto, J.T.     592663      143  PHI        C   35               153     NaN     4.430        28.100
-176        De Los Santos, Deyvison     691277      146  MIA       1B   23                10     NaN       NaN        28.100
-177                Tovar, Ezequiel     678662      115  COL       SS   24               143     NaN     4.380        28.100
+172        De Los Santos, Deyvison     691277      146  MIA       1B   23                10     NaN       NaN        28.100
+173                   Edman, Tommy     669242      119  LAD       2B   31               108   1.000     4.320        28.100
+174                 Realmuto, J.T.     592663      143  PHI        C   35               153     NaN     4.430        28.100
+175                   Loftin, Nick     679845      118   KC       3B   27               162     NaN     4.530        28.100
+176                 Clement, Ernie     676391      141  TOR       2B   30               242   4.000     4.330        28.100
+177                  Norby, Connor     681393      115  COL       1B   26               114     NaN     4.520        28.100
 178                    Keith, Colt     690993      116  DET       3B   24               141   1.000     4.330        28.100
-179                 Cowser, Colton     681297      110  BAL       CF   26                93     NaN     4.230        28.100
-180                  Norby, Connor     681393      115  COL       1B   26               114     NaN     4.520        28.100
-181               Valdez, Esmerlyn     699013      134  PIT       RF   22                69     NaN     4.560        28.100
-182                  Chapman, Matt     656305      137   SF       3B   33               133     NaN     4.440        28.100
-183               Mesa Jr., Victor     683748      139   TB       RF   24                68     NaN     4.320        28.100
+179                Tovar, Ezequiel     678662      115  COL       SS   24               143     NaN     4.380        28.100
+180                 Cowser, Colton     681297      110  BAL       CF   26                93     NaN     4.230        28.100
+181                  Chapman, Matt     656305      137   SF       3B   33               133     NaN     4.440        28.100
+182               Valdez, Esmerlyn     699013      134  PIT       RF   22                69     NaN     4.560        28.100
+183                  Abreu, Wilyer     677800      111  BOS       RF   27               188   4.000     4.280        28.100
 184                 Nimmo, Brandon     607043      140  TEX       RF   33               223   8.000     4.230        28.100
-185                  Abreu, Wilyer     677800      111  BOS       RF   27               188   4.000     4.280        28.100
-186                 Marsh, Brandon     669016      143  PHI       LF   28               172     NaN     4.390        28.000
-187                   Black, Tyler     672012      158  MIL       DH   25                14     NaN       NaN        28.000
-188                     Lowe, Josh     666139      108  LAA       LF   28                71   2.000     4.320        28.000
-189                 O'Neill, Tyler     641933      110  BAL       RF   31                68     NaN     4.490        28.000
-190                Caballero, José     676609      147  NYY       SS   29               140     NaN     4.280        28.000
-191                 Nishida, Rikuu     807747      145  CWS       RF   25                13   2.000       NaN        28.000
-192                Callahan, Brett     814430      116  DET       LF   24                16     NaN       NaN        28.000
+185               Mesa Jr., Victor     683748      139   TB       RF   24                68     NaN     4.320        28.100
+186                   Black, Tyler     672012      158  MIL       DH   25                14     NaN       NaN        28.000
+187                 Marsh, Brandon     669016      143  PHI       LF   28               172     NaN     4.390        28.000
+188                Caballero, José     676609      147  NYY       SS   29               140     NaN     4.280        28.000
+189                Callahan, Brett     814430      116  DET       LF   24                16     NaN       NaN        28.000
+190                     Lowe, Josh     666139      108  LAA       LF   28                71   2.000     4.320        28.000
+191                 O'Neill, Tyler     641933      110  BAL       RF   31                68     NaN     4.490        28.000
+192                 Nishida, Rikuu     807747      145  CWS       RF   25                13   2.000       NaN        28.000
 193                Sullivan, Brett     664954      115  COL        C   32                73     NaN     4.350        28.000
 194                 Schmitt, Casey     669477      137   SF       LF   27               114     NaN     4.530        28.000
 195                    Smith, Josh     669701      141  TOR       2B   28                69     NaN     4.380        28.000
 196                   Beck, Jordan     687597      115  COL       RF   25                47     NaN     4.420        28.000
 197                  Clemens, Kody     665019      142  MIN       2B   30               158   1.000     4.320        28.000
-198                  Outman, James     681546      116  DET       CF   29                55   1.000     4.280        28.000
-199                   Jiménez, Leo     677870      146  MIA       3B   25                72     NaN     4.480        28.000
+198                   Jiménez, Leo     677870      146  MIA       3B   25                72     NaN     4.480        28.000
+199                  Outman, James     681546      116  DET       CF   29                55   1.000     4.280        28.000
 200                Callihan, Tyler     682997      134  PIT       RF   26                28     NaN       NaN        28.000
 201                Williams, Alika     675961      133  ATH       SS   27                89     NaN     4.410        28.000
 202                     Cole, Zach     805904      117  HOU       LF   25                15   1.000       NaN        28.000
 203                Laureano, Ramón     657656      135   SD       LF   31                59     NaN     4.300        28.000
 204              Cronenworth, Jake     630105      135   SD       2B   32               131   1.000     4.330        28.000
-205                  Suzuki, Seiya     673548      112  CHC       RF   31               181     NaN     4.400        27.900
+205                      Happ, Ian     664023      112  CHC       LF   31               187     NaN     4.370        27.900
 206                  Durbin, Caleb     702332      111  BOS       3B   26               227     NaN     4.400        28.000
-207                      Happ, Ian     664023      112  CHC       LF   31               187     NaN     4.370        27.900
+207                  Suzuki, Seiya     673548      112  CHC       RF   31               181     NaN     4.400        27.900
 208                 Slater, Austin     596103      139   TB       RF   33                26     NaN     4.430        27.900
-209                    Jarvis, Jim     805347      144  ATL       SS   25                64     NaN     4.330        27.900
-210                   Meyers, Jake     676694      117  HOU       CF   30                58     NaN     4.490        27.900
-211                     Mayo, Coby     691723      110  BAL       3B   24               113     NaN     4.470        27.900
-212                McKinstry, Zach     656716      116  DET       RF   31               154     NaN     4.310        27.900
-213                  Marsee, Jakob     805300      146  MIA       CF   25               156     NaN     4.390        27.900
+209                   Meyers, Jake     676694      117  HOU       CF   30                58     NaN     4.490        27.900
+210                    Jarvis, Jim     805347      144  ATL       SS   25                64     NaN     4.330        27.900
+211                McKinstry, Zach     656716      116  DET       RF   31               154     NaN     4.310        27.900
+212                  Marsee, Jakob     805300      146  MIA       CF   25               156     NaN     4.390        27.900
+213                     Mayo, Coby     691723      110  BAL       3B   24               113     NaN     4.470        27.900
 214             Morel, Christopher     666624      121  NYM       1B   27                32     NaN     4.480        27.900
 215                     Neto, Zach     687263      108  LAA       SS   25               162     NaN     4.390        27.900
-216                    Myers, Dane     667472      113  CIN       CF   30               105     NaN     4.430        27.900
-217                  Riley, Austin     663586      144  ATL       3B   29               167     NaN     4.540        27.900
+216                  Riley, Austin     663586      144  ATL       3B   29               167     NaN     4.540        27.900
+217                  Walls, Taylor     670764      139   TB       SS   29               130     NaN     4.380        27.900
 218              Culpepper, Kaelen     701785      142  MIN       SS   23                45     NaN     4.400        27.900
-219                  Walls, Taylor     670764      139   TB       SS   29               130     NaN     4.380        27.900
+219                    Myers, Dane     667472      113  CIN       CF   30               105     NaN     4.430        27.900
 220                  Dezenzo, Zach     701305      117  HOU       LF   26                35     NaN     4.510        27.900
 221                  Ramírez, José     608070      114  CLE       3B   33               159     NaN     4.350        27.900
 222                     Tena, José     677588      120  WSH       DH   25               104   2.000     4.230        27.900
@@ -14763,26 +14765,26 @@ San Francisco Giants 63 89 .414 29.5  ☠
 228                     Call, Alex     669743      119  LAD       LF   31                80     NaN     4.360        27.800
 229                Giménez, Andrés     665926      141  TOR       SS   27               159   1.000     4.290        27.800
 230          Kuroda-Grauer, Joshua     811965      133  ATH       3B   23                37     NaN     4.440        27.800
-231               Williams, Carson     700246      139   TB       SS   23                10     NaN       NaN        27.800
-232                Hernaiz, Darell     687231      133  ATH       SS   24                47     NaN     4.340        27.800
+231                Hernaiz, Darell     687231      133  ATH       SS   24                47     NaN     4.340        27.800
+232               Williams, Carson     700246      139   TB       SS   23                10     NaN       NaN        27.800
 233                  Story, Trevor     596115      111  BOS       SS   33                84     NaN     4.420        27.800
 234                 Wilson, Weston     642215      136  SEA       3B   31                47     NaN     4.540        27.800
-235                   Thomas, Alek     677950      119  LAD       CF   26                47     NaN     4.290        27.800
-236                 Jensen, Carter     695600      118   KC        C   22               153     NaN     4.370        27.800
+235                 Jensen, Carter     695600      118   KC        C   22               153     NaN     4.370        27.800
+236                   Thomas, Alek     677950      119  LAD       CF   26                47     NaN     4.290        27.800
 237                  Adames, Willy     642715      137   SF       SS   30               132     NaN     4.430        27.800
 238             Garcia, Jhostynxon     691373      134  PIT       CF   23                19     NaN     4.370        27.700
 239                  Jackson, Alex     656577      142  MIN        C   30                27     NaN     4.510        27.700
 240                    Yorke, Nick     694377      134  PIT       3B   24                44     NaN     4.490        27.700
 241                India, Jonathan     663697      118   KC       2B   29                14     NaN       NaN        27.700
-242                 Garcia, Maikel     672580      118   KC       3B   26               127     NaN     4.490        27.700
-243                 Schuemann, Max     680474      147  NYY       LF   29                37     NaN       NaN        27.700
-244                   Lewis, Royce     668904      142  MIN       1B   27               134     NaN     4.350        27.700
-245                 Ohtani, Shohei     660271      119  LAD       DH   31               179     NaN     4.230        27.700
+242                 Schuemann, Max     680474      147  NYY       LF   29                37     NaN       NaN        27.700
+243                 Garcia, Maikel     672580      118   KC       3B   26               127     NaN     4.490        27.700
+244                 Ohtani, Shohei     660271      119  LAD       DH   31               179     NaN     4.230        27.700
+245                   Lewis, Royce     668904      142  MIN       1B   27               134     NaN     4.350        27.700
 246                 Freeman, Tyler     671289      115  COL       RF   27               112     NaN     4.500        27.700
 247              McCutchen, Andrew     457705      140  TEX      NaN   39                20     NaN     4.510        27.700
 248                   Sogard, Nick     686765      111  BOS       2B   28                78     NaN     4.420        27.700
-249                 Wetherholt, JJ     802139      138  STL       2B   23               208     NaN     4.240        27.700
-250                     Muncy, Max     691777      133  ATH       3B   23                77     NaN     4.460        27.700
+249                     Muncy, Max     691777      133  ATH       3B   23                77     NaN     4.460        27.700
+250                 Wetherholt, JJ     802139      138  STL       2B   23               208     NaN     4.240        27.700
 251                   Lopez, Nicky     670032      140  TEX       2B   31               113     NaN     4.220        27.600
 252                Martínez, Angel     682657      114  CLE       LF   24               141     NaN     4.410        27.600
 253            Franklin, Christian     681047      110  BAL       CF   26                18     NaN     4.540        27.600
@@ -14790,173 +14792,173 @@ San Francisco Giants 63 89 .414 29.5  ☠
 255                 Anthony, Roman     701350      111  BOS       DH   22                69     NaN     4.410        27.600
 256              Thompson, Sterlin     694514      115  COL       DH   25                30     NaN     4.430        27.600
 257             Schneemann, Daniel     682177      114  CLE       3B   29                87     NaN     4.420        27.600
-258             Harris II, Michael     671739      144  ATL       CF   25               233   3.000     4.280        27.600
-259                 Guzman, Denzer     694203      108  LAA       3B   22                94     NaN     4.480        27.600
-260                 Foscue, Justin     679822      140  TEX       2B   27                65     NaN     4.470        27.600
+258                 Guzman, Denzer     694203      108  LAA       3B   22                94     NaN     4.480        27.600
+259             Harris II, Michael     671739      144  ATL       CF   25               233   3.000     4.280        27.600
+260                     Peck, John     807726      116  DET       SS   23                17     NaN       NaN        27.600
 261                   Wong, Connor     657136      111  BOS        C   30                91     NaN     4.470        27.600
-262                     Peck, John     807726      116  DET       SS   23                17     NaN       NaN        27.600
+262                 Foscue, Justin     679822      140  TEX       2B   27                65     NaN     4.470        27.600
 263                  Rooker, Brent     667670      133  ATH       DH   31                47     NaN     4.570        27.600
-264              Velázquez, Nelson     676369      117  HOU       LF   27                33     NaN     4.470        27.600
-265                Stubbs, Garrett     596117      143  PHI        C   33                21     NaN     4.320        27.600
+264                Stubbs, Garrett     596117      143  PHI        C   33                21     NaN     4.320        27.600
+265              Velázquez, Nelson     676369      117  HOU       LF   27                33     NaN     4.470        27.600
 266                 Collins, Isaac     686555      118   KC       LF   28               166   1.000     4.430        27.600
-267                   Millas, Drew     686452      120  WSH        C   28                57     NaN     4.410        27.600
-268                   Altuve, Jose     514888      117  HOU       2B   36               201  17.000     4.340        27.600
+267                   Altuve, Jose     514888      117  HOU       2B   36               201  17.000     4.340        27.600
+268                   Millas, Drew     686452      120  WSH        C   28                57     NaN     4.410        27.600
 269               Pereira, Everson     677592      138  STL       RF   25                37     NaN     4.410        27.600
-270                   Young, Jared     676724      121  NYM       1B   30               146     NaN     4.370        27.500
-271                     Rivas, Leo     660844      136  SEA       3B   28                38     NaN       NaN        27.500
+270                     Rivas, Leo     660844      136  SEA       3B   28                38     NaN       NaN        27.500
+271                   Young, Jared     676724      121  NYM       1B   30               146     NaN     4.370        27.500
 272                      Tawa, Tim     694374      109   AZ       1B   27                98     NaN     4.480        27.500
-273               Basabe, Osleivis     678545      137   SF       2B   25                47     NaN     4.420        27.500
-274                   Ward, Taylor     621493      136  SEA       LF   32               183     NaN     4.500        27.500
+273                   Ward, Taylor     621493      136  SEA       LF   32               183     NaN     4.500        27.500
+274               Basabe, Osleivis     678545      137   SF       2B   25                47     NaN     4.420        27.500
 275                  Gilbert, Drew     687551      137   SF       CF   25               136     NaN     4.350        27.500
 276               Trammell, Taylor     666211      117  HOU       LF   28                81     NaN     4.270        27.500
 277                  Lee, Jung Hoo     808982      137   SF       RF   27               258     NaN     4.300        27.500
 278                Bader, Harrison     664056      137   SF       CF   32                38     NaN     4.440        27.500
-279                 Fermin, Freddy     666023      135   SD        C   31                74     NaN     4.560        27.500
-280            Kiner-Falefa, Isiah     643396      111  BOS       2B   31                65     NaN     4.420        27.500
-281                     Bleday, JJ     668709      113  CIN       LF   28               120     NaN     4.420        27.500
+279            Kiner-Falefa, Isiah     643396      111  BOS       2B   31                65     NaN     4.420        27.500
+280                     Bleday, JJ     668709      113  CIN       LF   28               120     NaN     4.420        27.500
+281                 Fermin, Freddy     666023      135   SD        C   31                74     NaN     4.560        27.500
 282                 Durán, Rodolfo     660710      135   SD        C   28                35     NaN     4.470        27.500
 283                 Nootbaar, Lars     663457      109   AZ       LF   28               102     NaN     4.330        27.400
-284                 Whitcomb, Shay     694376      137   SF       3B   27                23     NaN     4.510        27.400
-285                Varsho, Daulton     662139      117  HOU       CF   29               168     NaN     4.290        27.400
+284                Varsho, Daulton     662139      117  HOU       CF   29               168     NaN     4.290        27.400
+285                 Whitcomb, Shay     694376      137   SF       3B   27                23     NaN     4.510        27.400
 286                Rocchio, Brayan     677587      114  CLE       SS   25               204     NaN     4.490        27.400
 287              Yelich, Christian     592885      158  MIL       DH   34               174   2.000     4.460        27.400
 288                 Mayer, Marcelo     691785      111  BOS       2B   23                92     NaN     4.450        27.400
 289                Meidroth, Chase     805367      145  CWS       2B   24               235     NaN     4.410        27.400
 290             Contreras, Willson     575929      111  BOS       1B   34               148     NaN     4.600        27.400
 291                     Naylor, Bo     666310      158  MIL        C   26                25     NaN     4.410        27.300
-292                   Kwan, Steven     680757      114  CLE       CF   28               253   1.000     4.300        27.300
-293                   Burger, Jake     669394      140  TEX       1B   30               177     NaN     4.460        27.300
-294                Andujar, Miguel     609280      135   SD       DH   31               124     NaN     4.460        27.300
+292                   Burger, Jake     669394      140  TEX       1B   30               177     NaN     4.460        27.300
+293                   Kwan, Steven     680757      114  CLE       CF   28               253   1.000     4.300        27.300
+294                Bellinger, Cody     641355      147  NYY       LF   30               164     NaN     4.230        27.300
 295                Dingler, Dillon     693307      116  DET        C   27               195     NaN     4.520        27.300
-296                Bellinger, Cody     641355      147  NYY       LF   30               164     NaN     4.230        27.300
+296                Andujar, Miguel     609280      135   SD       DH   31               124     NaN     4.460        27.300
 297                Rushing, Dalton     687221      119  LAD        C   25                66     NaN     4.450        27.300
 298          Rincones Jr., Gabriel     687282      143  PHI       RF   25                28     NaN     4.450        27.300
 299                Grichuk, Randal     545341      145  CWS      NaN   34                85     NaN     4.570        27.300
 300                Jenkins, Walker     805805      142  MIN       CF   21                20     NaN       NaN        27.300
-301                    Isbel, Kyle     664728      118   KC       CF   29               105     NaN     4.450        27.300
-302                    Ford, Harry     695670      120  WSH        C   23                47     NaN     4.570        27.300
+301                    Ford, Harry     695670      120  WSH        C   23                47     NaN     4.570        27.300
+302                    Isbel, Kyle     664728      118   KC       CF   29               105     NaN     4.450        27.300
 303                    Roden, Alan     702176      142  MIN       RF   26                31     NaN     4.480        27.300
 304                Goodman, Hunter     696100      115  COL        C   26               130   1.000     4.570        27.300
-305                  Torres, Bryan     663494      138  STL       LF   28                58     NaN     4.360        27.200
-306                    Wood, James     695578      120  WSH       RF   23               166   4.000     4.280        27.200
+305                    Wood, James     695578      120  WSH       RF   23               166   4.000     4.280        27.200
+306                  Torres, Bryan     663494      138  STL       LF   28                58     NaN     4.360        27.200
 307                    Short, Zack     670097      121  NYM       SS   31                10     NaN       NaN        27.200
 308                 O'Hoppe, Logan     681351      140  TEX        C   26                86     NaN     4.530        27.200
-309                  Ramos, Heliot     671218      147  NYY       LF   26               149     NaN     4.490        27.200
-310            Piñango, Yohendrick     682818      141  TOR       LF   24                63     NaN     4.490        27.200
-311                 Song, Sung-Mun     823550      135   SD       2B   29                56     NaN     4.310        27.200
-312              Castellanos, Nick     592206      135   SD       RF   34                31     NaN     4.460        27.200
+309                 Song, Sung-Mun     823550      135   SD       2B   29                56     NaN     4.310        27.200
+310              Castellanos, Nick     592206      135   SD       RF   34                31     NaN     4.460        27.200
+311                  Ramos, Heliot     671218      147  NYY       LF   26               149     NaN     4.490        27.200
+312            Piñango, Yohendrick     682818      141  TOR       LF   24                63     NaN     4.490        27.200
 313                    Kepler, Max     596146      109   AZ       LF   33                41     NaN     4.390        27.200
 314                  Harper, Bryce     547180      143  PHI       1B   33               202     NaN     4.470        27.200
 315              Acuña Jr., Ronald     660670      144  ATL       RF   28               114   1.000     4.460        27.200
-316                Delgado, Raynel     669384      117  HOU       3B   26                18     NaN     4.420        27.200
-317               Ramírez, Agustín     682663      146  MIA       DH   24                84     NaN     4.700        27.200
+316               Ramírez, Agustín     682663      146  MIA       DH   24                84     NaN     4.700        27.200
+317                Delgado, Raynel     669384      117  HOU       3B   26                18     NaN     4.420        27.200
 318                     Muncy, Max     571970      119  LAD       3B   35               143     NaN     4.420        27.200
 319                   Fermín, José     665877      138  STL       3B   27               133     NaN     4.480        27.200
 320             Monasterio, Andruw     655316      111  BOS       SS   29               103     NaN     4.490        27.200
-321                 Correa, Carlos     621043      117  HOU       SS   31                58     NaN     4.610        27.200
-322                   Hays, Austin     669720      135   SD       LF   30                36     NaN     4.480        27.200
+321                   Hays, Austin     669720      135   SD       LF   30                36     NaN     4.480        27.200
+322                 Correa, Carlos     621043      117  HOU       SS   31                58     NaN     4.610        27.200
 323                   Melendez, MJ     669004      121  NYM       DH   27                29     NaN       NaN        27.200
 324               Arozarena, Randy     668227      136  SEA       LF   31               213     NaN     4.410        27.100
 325                  Rengifo, Luis     650859      135   SD       3B   29               161     NaN     4.360        27.100
-326                    Smith, Will     669257      119  LAD        C   31                63     NaN     4.580        27.100
-327                  Albies, Ozzie     645277      144  ATL       2B   29               214     NaN     4.270        27.100
+326                  Albies, Ozzie     645277      144  ATL       2B   29               214     NaN     4.270        27.100
+327                    Smith, Will     669257      119  LAD        C   31                63     NaN     4.580        27.100
 328              Jackson, Jeremiah     669236      110  BAL       2B   26                99     NaN     4.660        27.100
 329                    Brito, Juan     682877      113  CIN       2B   24                36     NaN       NaN        27.100
 330              Yastrzemski, Mike     573262      144  ATL       LF   35               121     NaN     4.410        27.100
 331                  Vivas, Jorbit     678391      120  WSH       2B   25               145     NaN     4.490        27.100
-332                     Keys, Sean     815873      141  TOR       DH   23                11     NaN       NaN        27.100
-333              Soderstrom, Tyler     691016      133  ATH       LF   24               170     NaN     4.420        27.100
+332              Soderstrom, Tyler     691016      133  ATH       LF   24               170     NaN     4.420        27.100
+333                     Keys, Sean     815873      141  TOR       DH   23                11     NaN       NaN        27.100
 334               Bogaerts, Xander     593428      135   SD       SS   33               220     NaN     4.480        27.100
 335                Kelenic, Jarred     672284      140  TEX       RF   26                21     NaN     4.370        27.100
 336                   Karros, Kyle     691720      115  COL       3B   23               158     NaN     4.610        27.100
 337                  Emerson, Colt     806068      136  SEA       SS   20                73     NaN     4.370        27.000
-338                   Báez, Javier     595879      116  DET       SS   33                87     NaN     4.520        27.000
-339                    Joe, Connor     656582      136  SEA       RF   33                12     NaN       NaN        27.000
-340               Vargas, Ildemaro     545121      109   AZ       1B   34               186   1.000     4.430        27.000
-341              Stephenson, Tyler     663886      113  CIN        C   29                99     NaN     4.590        27.000
+338              Stephenson, Tyler     663886      113  CIN        C   29                99     NaN     4.590        27.000
+339               Vargas, Ildemaro     545121      109   AZ       1B   34               186   1.000     4.430        27.000
+340                    Joe, Connor     656582      136  SEA       RF   33                12     NaN       NaN        27.000
+341                   Báez, Javier     595879      116  DET       SS   33                87     NaN     4.520        27.000
 342                  Lukes, Nathan     664770      141  TOR       RF   31               186     NaN     4.410        27.000
 343                  Freeman, Cody     683227      140  TEX       3B   25                32     NaN     4.540        27.000
-344               Feduccia, Hunter     676439      119  LAD        C   29                71     NaN     4.540        27.000
-345                Caglianone, Jac     695506      118   KC       RF   23               208     NaN     4.430        27.000
-346                  Lowe, Brandon     664040      134  PIT       2B   31               173     NaN     4.380        27.000
-347                 Refsnyder, Rob     608701      136  SEA       DH   35                32     NaN     4.550        27.000
-348                  Wilson, Jacob     805779      133  ATH       SS   24               150   1.000     4.490        27.000
+344                  Lowe, Brandon     664040      134  PIT       2B   31               173     NaN     4.380        27.000
+345               Feduccia, Hunter     676439      119  LAD        C   29                71     NaN     4.540        27.000
+346                Caglianone, Jac     695506      118   KC       RF   23               208     NaN     4.430        27.000
+347                  Wilson, Jacob     805779      133  ATH       SS   24               150   1.000     4.490        27.000
+348                 Refsnyder, Rob     608701      136  SEA       DH   35                32     NaN     4.550        27.000
 349                   Mead, Curtis     678554      111  BOS       3B   25               111     NaN     4.670        27.000
 350               Springer, George     543807      141  TOR       DH   36               166     NaN     4.610        27.000
 351                Rodríguez, Endy     682848      134  PIT        C   26                43     NaN       NaN        27.000
-352               Perdomo, Geraldo     672695      109   AZ       SS   26               234     NaN     4.500        27.000
-353              Lindor, Francisco     596019      121  NYM       SS   32               124     NaN     4.470        27.000
+352              Lindor, Francisco     596019      121  NYM       SS   32               124     NaN     4.470        27.000
+353               Perdomo, Geraldo     672695      109   AZ       SS   26               234     NaN     4.500        27.000
 354                Grissom, Vaughn     687093      108  LAA       1B   25               167     NaN     4.580        26.900
 355                 Freeland, Alex     690976      119  LAD       2B   24                87     NaN     4.500        26.900
 356                 Murray, Tanner     695020      145  CWS       LF   26                11     NaN       NaN        26.900
 357                  Crooks, Jimmy     699625      138  STL        C   24                32     NaN     4.480        26.900
 358               Schneider, Davis     676914      141  TOR       LF   27                30     NaN     4.570        26.900
-359                  Susac, Daniel     691740      137   SF        C   25                48     NaN     4.590        26.900
-360               Bericoto, Victor     682674      137   SF       LF   24                33     NaN     4.680        26.900
-361                   Bauers, Jake     641343      158  MIL       1B   30               164     NaN     4.480        26.900
+359               Bericoto, Victor     682674      137   SF       LF   24                33     NaN     4.680        26.900
+360                   Bauers, Jake     641343      158  MIL       1B   30               164     NaN     4.480        26.900
+361                  Susac, Daniel     691740      137   SF        C   25                48     NaN     4.590        26.900
 362                Hayes, Ke'Bryan     663647      113  CIN       3B   29                57     NaN     4.600        26.900
 363               Carpenter, Kerry     681481      116  DET       RF   28                55     NaN     4.440        26.900
 364                 Gonzalez, Romy     663853      111  BOS       DH   29                30     NaN     4.490        26.900
 365                    Allen, Nick     669397      117  HOU       SS   27                64     NaN     4.480        26.900
 366                   Fortes, Nick     663743      139   TB        C   29               137     NaN     4.510        26.800
 367                Massey, Michael     686681      118   KC       2B   28               147     NaN     4.490        26.800
-368                    Baty, Brett     683146      121  NYM       3B   26               154     NaN     4.430        26.800
-369                  O'Hearn, Ryan     656811      134  PIT       RF   32               136     NaN     4.580        26.800
+368                  O'Hearn, Ryan     656811      134  PIT       RF   32               136     NaN     4.580        26.800
+369                    Baty, Brett     683146      121  NYM       3B   26               154     NaN     4.430        26.800
 370             Murakami, Munetaka     808959      145  CWS       1B   26               111     NaN     4.390        26.800
-371                 Grisham, Trent     663757      147  NYY       CF   29               149     NaN     4.510        26.800
-372                 Arias, Gabriel     672356      112  CHC       3B   26                42     NaN     4.630        26.800
+371                 Arias, Gabriel     672356      112  CHC       3B   26                42     NaN     4.630        26.800
+372                 Grisham, Trent     663757      147  NYY       CF   29               149     NaN     4.510        26.800
 373               Groover, LuJames     694410      109   AZ       1B   24                20     NaN     4.630        26.800
 374                  Jansen, Danny     643376      140  TEX        C   31                50     NaN     4.620        26.800
-375                 Madrigal, Nick     663611      139   TB       2B   29                32     NaN     4.380        26.800
-376                   Marte, Ketel     606466      109   AZ       2B   32               192   1.000     4.490        26.800
-377                      Rice, Ben     700250      147  NYY       DH   27               180     NaN     4.560        26.800
-378                   Arraez, Luis     650333      143  PHI       2B   29               246     NaN     4.560        26.800
+375                   Marte, Ketel     606466      109   AZ       2B   32               192   1.000     4.490        26.800
+376                 Madrigal, Nick     663611      139   TB       2B   29                32     NaN     4.380        26.800
+377                   Arraez, Luis     650333      143  PHI       2B   29               246     NaN     4.560        26.800
+378                      Rice, Ben     700250      147  NYY       DH   27               180     NaN     4.560        26.800
 379                Dubón, Mauricio     643289      144  ATL       LF   31               216     NaN     4.450        26.800
-380                   Urías, Ramón     602104      138  STL       3B   32                32     NaN     4.650        26.800
-381                   White, Tommy     695720      133  ATH       1B   23                70     NaN     4.640        26.800
+380                   White, Tommy     695720      133  ATH       1B   23                70     NaN     4.640        26.800
+381                   Urías, Ramón     602104      138  STL       3B   32                32     NaN     4.650        26.800
 382                     Friedl, TJ     670770      113  CIN       CF   30                71     NaN     4.440        26.700
 383               Palacios, Richie     680700      139   TB       2B   29               127     NaN     4.420        26.700
 384                 Gasper, Mickey     681508      111  BOS       DH   30                76     NaN     4.450        26.700
-385  Encarnacion-Strand, Christian     687952      110  BAL       3B   26                47     NaN     4.610        26.700
-386                     Ward, Ryan     669899      119  LAD       LF   28                19     NaN       NaN        26.700
-387                   Judge, Aaron     592450      147  NYY       RF   34                79     NaN     4.840        26.700
-388                    Sosa, Lenyn     672820      141  TOR       2B   26                40     NaN     4.720        26.700
-389                Larnach, Trevor     663616      142  MIN       LF   29               151     NaN     4.610        26.700
-390                     Teel, Kyle     691019      145  CWS        C   24                33     NaN     4.500        26.700
+385                     Ward, Ryan     669899      119  LAD       LF   28                19     NaN       NaN        26.700
+386  Encarnacion-Strand, Christian     687952      110  BAL       3B   26                47     NaN     4.610        26.700
+387                    Sosa, Lenyn     672820      141  TOR       2B   26                40     NaN     4.720        26.700
+388                   Judge, Aaron     592450      147  NYY       RF   34                79     NaN     4.840        26.700
+389                     Teel, Kyle     691019      145  CWS        C   24                33     NaN     4.500        26.700
+390                Larnach, Trevor     663616      142  MIN       LF   29               151     NaN     4.610        26.700
 391                Julien, Edouard     666397      115  COL       2B   27                98     NaN     4.550        26.700
 392               Butler, Lawrence     671732      133  ATH       RF   25               168     NaN     4.460        26.700
 393             Encarnacion, Jerar     666464      137   SF       RF   28                14     NaN       NaN        26.700
 394             Montgomery, Colson     695657      145  CWS       SS   24               126     NaN     4.650        26.600
 395                     Bart, Joey     663698      145  CWS        C   29                41     NaN     4.690        26.600
-396               Caminero, Junior     691406      139   TB       3B   22               235   1.000     4.550        26.600
+396                Conine, Griffin     665052      146  MIA       RF   28                77     NaN     4.470        26.600
 397                    Kurtz, Nick     701762      133  ATH       1B   23               102     NaN     4.470        26.600
-398                Conine, Griffin     665052      146  MIA       RF   28                77     NaN     4.470        26.600
+398               Caminero, Junior     691406      139   TB       3B   22               235   1.000     4.550        26.600
 399                  Greene, Riley     682985      116  DET       LF   25               163     NaN     4.720        26.600
 400                   Stewart, Sal     701398      113  CIN       1B   22               198     NaN     4.680        26.600
 401               Rutschman, Adley     668939      111  BOS        C   28               129     NaN     4.430        26.600
 402             Benintendi, Andrew     643217      145  CWS       DH   31               138     NaN     4.470        26.600
-403                  Betts, Mookie     605141      119  LAD       SS   33               139     NaN     4.590        26.600
-404                  Wagaman, Eric     676572      121  NYM       1B   28                16   1.000     4.650        26.600
-405                  Torrens, Luis     620443      121  NYM        C   30               112     NaN     4.640        26.600
+403                  Torrens, Luis     620443      121  NYM        C   30               112     NaN     4.640        26.600
+404                  Betts, Mookie     605141      119  LAD       SS   33               139     NaN     4.590        26.600
+405                  Wagaman, Eric     676572      121  NYM       1B   28                16   1.000     4.650        26.600
 406                  Sheets, Gavin     657757      135   SD       1B   30               139     NaN     4.510        26.600
 407                   Tucker, Kyle     663656      119  LAD       RF   29               166     NaN     4.530        26.600
 408             Hernández, Enrique     571771      119  LAD       3B   34                24     NaN     4.580        26.500
 409                  Amador, Adael     691182      115  COL       2B   23                31     NaN       NaN        26.500
-410                Gonzalez, Jacob     694378      134  PIT       1B   24                70     NaN     4.550        26.500
-411                 Pauley, Graham     688363      146  MIA       3B   25                52     NaN     4.590        26.500
+410                 Pauley, Graham     688363      146  MIA       3B   25                52     NaN     4.590        26.500
+411                Gonzalez, Jacob     694378      134  PIT       1B   24                70     NaN     4.550        26.500
 412                 García, Adolis     666969      143  PHI       RF   33                68     NaN     4.500        26.500
 413                     Bohm, Alec     664761      143  PHI       3B   29               242     NaN     4.690        26.500
 414               Canzone, Dominic     686527      136  SEA       DH   28               151     NaN     4.490        26.500
 415                DeLauter, Chase     800050      114  CLE       RF   24               203     NaN     4.530        26.500
 416         Guerrero Jr., Vladimir     665489      141  TOR       1B   27               228     NaN     4.570        26.500
-417                Walton, Donovan     622268      133  ATH       2B   32                95     NaN     4.460        26.400
-418              Espinal, Santiago     669289      119  LAD       3B   31                23     NaN     4.440        26.400
-419             Torkelson, Spencer     679529      116  DET       1B   26               131     NaN     4.730        26.400
+417              Espinal, Santiago     669289      119  LAD       3B   31                23     NaN     4.440        26.400
+418             Torkelson, Spencer     679529      116  DET       1B   26               131     NaN     4.730        26.400
+419                Walton, Donovan     622268      133  ATH       2B   32                95     NaN     4.460        26.400
 420                  Stowers, Kyle     669065      146  MIA       1B   28               123     NaN     4.540        26.400
 421                  Moncada, Yoán     660162      108  LAA       3B   31                27     NaN     4.390        26.400
-422               García Jr., Luis     671277      147  NYY       1B   26               199     NaN     4.380        26.400
+422                Okamoto, Kazuma     672960      141  TOR       3B   30               163     NaN     4.490        26.400
 423                Cavanaugh, Drew     701852      137   SF        C   24                38     NaN     4.540        26.400
-424                Okamoto, Kazuma     672960      141  TOR       3B   30               163     NaN     4.490        26.400
+424               García Jr., Luis     671277      147  NYY       1B   26               199     NaN     4.380        26.400
 425                 Sánchez, Jesús     660821      109   AZ       LF   28                97     NaN     4.560        26.400
 426                   Rogers, Jake     668670      145  CWS        C   31                44     NaN     4.710        26.400
 427                  Prieto, César     693409      138  STL       3B   27                14     NaN       NaN        26.400
@@ -14967,29 +14969,29 @@ San Francisco Giants 63 89 .414 29.5  ☠
 432                  Jeffers, Ryan     680777      142  MIN        C   29               117     NaN     4.660        26.300
 433                Locklear, Tyler     682988      109   AZ       1B   25                19     NaN     4.670        26.300
 434                   McNeil, Jeff     643446      133  ATH       2B   34               165     NaN     4.350        26.300
-435           Del Castillo, Adrian     680728      109   AZ       DH   26                48     NaN     4.550        26.300
-436                Marchán, Rafael     665561      143  PHI        C   27                26     NaN       NaN        26.200
+435                Marchán, Rafael     665561      143  PHI        C   27                26     NaN       NaN        26.200
+436           Del Castillo, Adrian     680728      109   AZ       DH   26                48     NaN     4.550        26.300
 437                    Rojas, Josh     668942      118   KC       3B   32                35   1.000     4.440        26.200
 438                  Bregman, Alex     608324      112  CHC       3B   32               215     NaN     4.660        26.200
 439                 Johnston, Troy     687859      115  COL       RF   29               152     NaN     4.510        26.200
-440                    Bernal, Leo     699024      138  STL        C   22                22     NaN       NaN        26.200
-441                  Gray, Tristan     656484      142  MIN       SS   30                50     NaN     4.610        26.200
+440                  Gray, Tristan     656484      142  MIN       SS   30                50     NaN     4.610        26.200
+441                    Bernal, Leo     699024      138  STL        C   22                22     NaN       NaN        26.200
 442                  Escarra, J.C.     641555      147  NYY        C   31                41     NaN     4.570        26.200
 443                 Crawford, J.P.     641487      136  SEA       SS   31               134     NaN     4.600        26.200
 444                Moreno, Gabriel     672515      109   AZ        C   26               192     NaN     4.490        26.200
 445              Yoshida, Masataka     807799      111  BOS       DH   32               126     NaN     4.420        26.100
-446                Suárez, Eugenio     553993      113  CIN       DH   34               100     NaN     4.740        26.100
-447                  Rojas, Miguel     500743      119  LAD       2B   37                96     NaN     4.580        26.100
+446                  Rojas, Miguel     500743      119  LAD       2B   37                96     NaN     4.580        26.100
+447                Suárez, Eugenio     553993      113  CIN       DH   34               100     NaN     4.740        26.100
 448                  Herrera, Iván     671056      138  STL       DH   26               245     NaN     4.720        26.100
 449                   Wagner, Will     695238      135   SD       DH   27                21     NaN     4.610        26.100
-450           Gurriel Jr., Lourdes     666971      109   AZ       LF   32                66     NaN     4.630        26.100
-451                 Cortes, Carlos     666126      133  ATH       RF   29               134     NaN     4.590        26.100
+450                 Cortes, Carlos     666126      133  ATH       RF   29               134     NaN     4.590        26.100
+451           Gurriel Jr., Lourdes     666971      109   AZ       LF   32                66     NaN     4.630        26.100
 452                    Díaz, Yandy     650490      139   TB       DH   34               261     NaN     4.640        26.100
 453                 Devers, Rafael     646240      137   SF       1B   29               194     NaN     4.600        26.100
 454                 Smith, Dominic     642086      144  ATL       DH   31               100     NaN     4.530        26.100
-455                  Frazier, Adam     624428      108  LAA       2B   34                52     NaN     4.660        26.100
+455                   Bichette, Bo     666182      121  NYM       3B   28               229     NaN     4.690        26.100
 456               Alfonzo, Eliezer     672613      119  LAD        C   26                12     NaN       NaN        26.100
-457                   Bichette, Bo     666182      121  NYM       3B   28               229     NaN     4.690        26.100
+457                  Frazier, Adam     624428      108  LAA       2B   34                52     NaN     4.660        26.100
 458                 Polanco, Jorge     593871      121  NYM       DH   32                42     NaN     4.360        26.100
 459                      Mack, Joe     691788      146  MIA        C   23               105     NaN     4.580        26.100
 460                     Bell, Josh     605137      142  MIN       DH   33               185     NaN     4.700        26.000
@@ -14999,11 +15001,11 @@ San Francisco Giants 63 89 .414 29.5  ☠
 464             Contreras, William     661388      158  MIL        C   28               200     NaN     4.600        26.000
 465                  Wallner, Matt     670242      142  MIN       RF   28                35     NaN     4.430        26.000
 466                   Soler, Jorge     624585      108  LAA       DH   34                93     NaN     4.810        26.000
-467                Heineman, Tyler     623168      108  LAA        C   35                69     NaN     4.560        26.000
-468              Conforto, Michael     624424      112  CHC       DH   33                85     NaN     4.610        25.900
+467              Conforto, Michael     624424      112  CHC       DH   33                85     NaN     4.610        25.900
+468                Heineman, Tyler     623168      108  LAA        C   35                69     NaN     4.560        26.000
 469                    Urías, Luis     649966      141  TOR       2B   29                20     NaN     4.620        25.900
-470                 Busch, Michael     683737      112  CHC       1B   28               202     NaN     4.650        25.900
-471                   Raleigh, Cal     663728      136  SEA        C   29                83     NaN     4.700        25.900
+470                   Raleigh, Cal     663728      136  SEA        C   29                83     NaN     4.700        25.900
+471                 Busch, Michael     683737      112  CHC       1B   28               202     NaN     4.650        25.900
 472              Walker, Christian     572233      117  HOU       1B   35               206     NaN     4.690        25.900
 473                 Baldwin, Drake     686948      144  ATL        C   25               187     NaN     4.450        25.900
 474                  Serven, Brian     661531      133  ATH        C   31                21     NaN     4.670        25.900
@@ -15025,9 +15027,9 @@ San Francisco Giants 63 89 .414 29.5  ☠
 490               Aranda, Jonathan     666018      139   TB       1B   28               166     NaN     4.570        25.700
 491                Lowe, Nathaniel     663993      114  CLE       1B   30               128     NaN     4.600        25.600
 492                   Murphy, Sean     669221      144  ATL        C   31                32     NaN     4.810        25.600
-493            Valenzuela, Brandon     678218      141  TOR        C   25                68     NaN     4.720        25.600
-494               Seigler, Anthony     678011      111  BOS       2B   27                58     NaN     4.660        25.600
-495                Campusano, Luis     669134      135   SD        C   27                68     NaN     4.860        25.600
+493               Seigler, Anthony     678011      111  BOS       2B   27                58     NaN     4.660        25.600
+494                Campusano, Luis     669134      135   SD        C   27                68     NaN     4.860        25.600
+495            Valenzuela, Brandon     678218      141  TOR        C   25                68     NaN     4.720        25.600
 496                Marte, Starling     516782      118   KC       RF   37                61     NaN     4.460        25.600
 497                Schwarber, Kyle     656941      143  PHI       DH   33               121     NaN     4.560        25.600
 498               Navarreto, Brian     640459      146  MIA        C   31                15     NaN       NaN        25.500
@@ -15679,6 +15681,6 @@ San Francisco Giants 63 89 .414 29.5  ☠
   Nolan McLean             vs Philadelphia Phillies    team K% 21.9
   Framber Valdez           vs Chicago White Sox        team K% 24.2 🎯 high-K lineup
   Erick Fedde              vs Detroit Tigers           team K% 22.8
-  Sonny Gray               vs Texas Rangers            team K% 22.8
+  Sonny Gray               vs Texas Rangers            team K% 22.9
   Taj Bradley              vs Los Angeles Angels       team K% 25.4 🎯 high-K lineup
   Walbert Ureña            vs Minnesota Twins          team K% 21.1
