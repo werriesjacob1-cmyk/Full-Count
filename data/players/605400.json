@@ -580,7 +580,7 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 15.0,
+          "score": 15.4,
           "notable_signals": 0,
           "matchup": "Philadelphia Phillies @ New York Mets",
           "game_pk": 823573,
@@ -601,6 +601,34 @@
             "stat": "pitcher_outs",
             "value": 16.5,
             "needs": 17
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823573,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            605400,
+            690997
+          ],
+          "signals": {
+            "combined_k_edge": 0.0426
+          },
+          "hit_probability": 0.5838,
+          "raw_hit_probability": null,
+          "lift": 0.0426,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]

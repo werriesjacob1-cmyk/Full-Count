@@ -1243,6 +1243,106 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-17",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 27.5,
+          "notable_signals": 1,
+          "matchup": "Minnesota Twins @ Los Angeles Angels",
+          "game_pk": 823978,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 10.8571,
+            "l7_avg_ev": 88.75,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 34.7,
+            "season_barrel_pct": 24.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -0.32,
+            "platoon_xwoba": 0.12,
+            "opp_catcher_framing": -1.32,
+            "days_rest": 0.0,
+            "woba_ahead": 6.3636,
+            "woba_behind": 0.0,
+            "hard_hit_105_rate": -0.1425,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.224,
+            "vs_rp_ops": -1.224,
+            "ump_k_pct": -0.204,
+            "ump_bb_pct": 0.12
+          },
+          "hit_probability": 0.6496,
+          "raw_hit_probability": 0.6365,
+          "lift": -0.018,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 3.1,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Los Angeles Angels",
+          "game_pk": 823978,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0409
+          },
+          "hit_probability": 0.0409,
+          "raw_hit_probability": null,
+          "lift": -0.0068,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 3.9,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Los Angeles Angels",
+          "game_pk": 823978,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0282
+          },
+          "hit_probability": 0.0282,
+          "raw_hit_probability": null,
+          "lift": 0.0075,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
