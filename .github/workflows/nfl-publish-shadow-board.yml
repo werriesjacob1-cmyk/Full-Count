@@ -2,10 +2,19 @@ name: NFL Shadow Board Publish
 
 # Website bridge only: sealed research artifact -> public-safe docs/nfl/data.json.
 # It never scores, grades, changes eligibility, or creates a public pick.
+#
+# MANUAL-DISPATCH ONLY, DELIBERATELY. This used to also trigger automatically
+# on `workflow_run` completion of the live shadow-board audit. That auto-trigger
+# never actually fired successful data in 17 attempts (2026-09-13 through
+# 2026-09-14) because the audit workflow only runs on non-main branches -- but
+# it meant the ONLY thing standing between an empty public placeholder and real
+# pregame research numbers reaching the live site was an unmerged branch, not a
+# deliberate control. As NFL capture/publish workflows get merged closer to
+# main this week, that gap gets more dangerous, not less. Publishing to the
+# public page is now always an explicit, single action someone takes -- never a
+# side effect of a merge nobody was specifically thinking about when they made
+# it. See Issue #91 for the full finding.
 on:
-  workflow_run:
-    workflows: [NFL Live Passing-Yards Shadow Board Audit]
-    types: [completed]
   workflow_dispatch:
     inputs:
       source_run_id:
