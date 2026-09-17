@@ -58,7 +58,7 @@ jobs:
       - name: Capture + normalize + bind one event's full player-prop board
         env:
           FULL_COUNT_CODE_SHA: ${{ github.sha }}
-          TARGET_EVENT_ID: ${{ inputs.target_event_id }}
+          TARGET_EVENT_ID: ${{ inputs.target_event_id || '35599552' }}
         run: |
           PYTHONPATH=. python3 - <<'PY'
           import csv
