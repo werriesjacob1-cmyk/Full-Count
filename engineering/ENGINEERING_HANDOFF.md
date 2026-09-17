@@ -1627,3 +1627,18 @@ No merge, production deploy, official picks, model changes, or MLB ledger mutati
 - Activation requires explicit Jacob authorization and either a direct Worker deployment from reviewed main (outside Workers Builds), or restored build capacity. Narrowing watch paths to infra/live-heartbeat/** prevents unrelated generated-data rebuilds but does not restore already exhausted minutes. No payment/upgrade, deployment, or settings change authorized/performed.
 
 - Live capture now explicitly validates captured_at <= sealed_at < kickoff for every row before sealing; crossing kickoff fails the run rather than freezing late eligibility. Added a regression covering equality, late sealing, reversed chronology and naive timestamps. Cloudflare cron history confirms successes at 19:30:48Z/19:35:45Z/19:40:51Z, matching GitHub dispatch creation one to two seconds later.
+
+## 2026-09-17 — DET@BUF player-prop ingestion and settlement checkpoint (Codex + Claude Code)
+
+- Coordination runs through Issue #91. Claude supplied the settlement contract in draft PR #120; Codex claimed implementation workstream `NFL-TONIGHT-PLAYER-PROP-INGEST-20260917`.
+- Live FanDuel event `35599552` was captured from all eight research tabs. The capture disproved one draft assumption: `PLAYER_X_ALT_*` markets are one-sided priced threshold ladders, not paired OVER/UNDER lines. The raw-tab digests and proposed correction are recorded in Issue #91 comment `5717514457`.
+- Added a selection-level normalizer for primary numeric, alternate ladder, touchdown, sack, and longest-reception markets; extended the existing exact-name/event-team GSIS binding module; and added deterministic player-prop settlement with `VOID_DNP`, complete-participation/stat gates, complete-play-by-play gating for longest reception, and all-credited-touchdown coverage gating.
+- Prediction claims remain narrow: only passing yards with an explicitly recorded pregame prediction can be `prediction_graded`; all other markets are `market_only_settled`.
+- Local live evidence at approximately 16:08Z normalized 453 unique selections. Before explicit team-defense quarantine, 449 bound and four team-defense runners remained unresolved; the normalizer now classifies those as `NON_PLAYER_SELECTION`. Twenty inactive/unpriced runner observations were also quarantined. No conflicting duplicate selection values were found.
+- Raw captures remain local research evidence under `work/captures/35599552/`; the first bound artifact SHA-256 is `8d3876d1c1f5dc6c8e7d9160f137f783ec600fb4630375908c9403b5f6b2a2fc`. It is not a GitHub Actions artifact or public evidence.
+- The nflverse 2026 roster source drifted from the existing workflow pin `ffdc6f...` to observed SHA-256 `debbcd7c9d0e52e13fe013b5ea25a8a7615431760b1b782cf2fca21ed06d3ca6`. Do not silently repin; audit and record the source before any authoritative scheduled capture.
+- Focused local suites pass: new normalizer (10 tests after team-defense regression), new binding (5), new grader (11), existing passing normalizer (10), and existing passing binder (7). A capture workflow, authoritative outcome adapter, and scheduled pre-lock execution remain unfinished.
+
+No merge, production deployment, public pick, grading activation, model promotion, wager, purchase, access/security change, or immutable-evidence modification was performed.
+
+Alligator
