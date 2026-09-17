@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-16T20:59:24.868204+00:00",
+  "updated_at": "2026-09-17T01:10:49.469316+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -35889,6 +35889,98 @@
         "qualification_timestamp": "2026-09-16T20:47:19.516342+00:00",
         "board_timestamp": "2026-09-16T20:47:19.491836+00:00",
         "slate_date": "2026-09-16"
+      }
+    },
+    "fc2:824548:player-607200:strikeouts:4:over": {
+      "canonical_id": "fc2:824548:player-607200:strikeouts:4:over",
+      "settlement_identity": [
+        "824548",
+        [
+          "player",
+          "607200"
+        ],
+        "strikeouts",
+        "4",
+        "over"
+      ],
+      "slate_date": "2026-09-17",
+      "first_published_at": "2026-09-17T01:10:49.469316+00:00",
+      "publication_provenance": {
+        "artifact_id": "06e4251681304c96d389333c14765322a6288cd44181eb96f8b464a50b40b746",
+        "source_commit": "3386bda6b7b07591ecb1f529f31f8ba1d5173891",
+        "workflow_run_id": "35169243432",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-17T01:10:36.435381+00:00",
+        "data_hash": "fe0b4044db36ce53e28e932fa30ceeeee16ff6259aeed02d38e0215730b7991e",
+        "live_hash": "894a4c46c6f0501d5f843625341f67d04f32c26475052ed7fec5b1f511b74d91"
+      },
+      "snapshot": {
+        "id": "fc2:824548:player-607200:strikeouts:4:over",
+        "identity_version": 2,
+        "game_pk": 824548,
+        "player_id": 607200,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Erick Fedde",
+        "team": "Chicago White Sox",
+        "matchup": "Detroit Tigers @ Chicago White Sox",
+        "game_start": "2026-09-17T23:40:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 3.5,
+          "needs": 4
+        },
+        "prop": "Over 3.5 Strikeouts",
+        "hit_probability": 0.6016,
+        "market_odds": 118,
+        "market_implied": 0.4333,
+        "market_edge": 0.1683,
+        "market_hold": 0.0587,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (17.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Opposing team K% 22.8",
+          "Expected workload 22.2 batters faced (his own 20.0/start over 1 real start, shrunk toward the 23.1 league mean)",
+          "Platoon advantage: 5 of 9 projected hitters bat right-handed against this RHP"
+        ],
+        "watchouts": [
+          "Workload estimate rests on only 1 start in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average",
+          "L14 K% 7.5 (40 PA) \u2014 cold recent form",
+          "Recency-weighted K rate 17.8% (exp. decay, halflife 30d, 14 real starts / 283 BF) \u2014 drives a below-average strikeout-probability read"
+        ],
+        "prob_ci": [
+          0.5807,
+          0.7007
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 14,
+        "lineup_assumed": null,
+        "base_rate": 0.6989,
+        "lift": -0.0973,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "7bf03b982",
+          "prediction_timestamp": "2026-09-17T01:04:45.335314+00:00",
+          "odds_fetched_at": "2026-09-17T01:04:37.291234+00:00",
+          "board_generated_at": "2026-09-17T01:04:45.327466+00:00"
+        },
+        "qualification_timestamp": "2026-09-17T01:04:45.335314+00:00",
+        "board_timestamp": "2026-09-17T01:04:45.327466+00:00",
+        "slate_date": "2026-09-17"
       }
     }
   }
