@@ -18,9 +18,10 @@
       });
       const patch = {};
 
-      // Distinct leads may arrive back-to-back. Same-lead repeat protection is
-      // handled by the baseline/acted/in-flight guards, not a long global wait.
-      if (Number(current.minClaimIntervalSec) > 1) patch.minClaimIntervalSec = 1;
+      // 500ms is long enough to stop a single evaluation pass from dispatching
+      // two navigation-producing clicks, but short enough that a second real
+      // lead is not forced to sit behind the old 10-second throttle.
+      if (Number(current.minClaimIntervalSec) > 0.5) patch.minClaimIntervalSec = 0.5;
       if (Number(current.maxClaimsPerSession) < 200) patch.maxClaimsPerSession = 200;
 
       if (Object.keys(patch).length) await chrome.storage.sync.set(patch);
