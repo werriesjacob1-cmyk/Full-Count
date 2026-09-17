@@ -19,25 +19,58 @@ and recorded zero.**
 
 ## New `canonical_market` values
 
-| canonical_market | source_market_type | line shape | stat compared |
+Two DIFFERENT line shapes exist and must not be conflated -- verified against
+live payloads, not assumed (see "Corrected finding" below for the mistake this
+replaces).
+
+**Primary markets** (`PLAYER_X_<STAT>_HIGH/LOW/MEDIUM`, no `_ALT_`): a single
+paired OVER/UNDER line, exactly like `fanduel_passing.py`'s existing contract
+-- two runners, `result.type` in {OVER, UNDER}, matching `handicap` on both
+sides, one American price each.
+
+**Alt-ladder markets** (`PLAYER_X_ALT_<STAT>_HIGH/LOW`): NOT a two-sided line.
+Verified live (event 35599552, passing-props tab, sha256
+`86736dcda7f34fa8035e47d804c3f8f7959f1c951ada3e792edc9ea32cfcbfa9`): each is a
+ladder of independent one-sided runners, e.g. `"Jared Goff 175+ Yards"`,
+`"200+ Yards"`, `"225+ Yards"` ... each runner carries `handicap=0`,
+`result={}` (no OVER/UNDER side field at all), one American price, and its
+threshold embedded only in `runnerName` text. Each rung settles independently:
+a player can clear the 175+ rung and miss the 300+ rung in the same game, and
+both are real, separate graded outcomes, not one line.
+
+| canonical_market | source_market_type | shape | stat compared |
 |---|---|---|---|
-| `passing_yards` | `PLAYER_X_PASSING_YARDS_HIGH` (+ `_ALT_`) | OVER/UNDER numeric | final passing yards |
-| `passing_touchdowns` | `PLAYER_X_PASSING_TOUCHDOWNS_HIGH` (+ `_ALT_`) | OVER/UNDER numeric | final passing TDs |
-| `rushing_yards` | `PLAYER_X_RUSHING_YARDS_HIGH/LOW` (+ `_ALT_`) | OVER/UNDER numeric | final rushing yards |
-| `receiving_yards` | `PLAYER_X_RECEIVING_YARDS_HIGH/LOW` (+ `_ALT_`) | OVER/UNDER numeric | final receiving yards |
-| `receptions` | `PLAYER_X_RECEPTIONS_HIGH/LOW` (+ `_ALT_`) | OVER/UNDER numeric | final receptions |
-| `rush_plus_rec_yards` | `PLAYER_X_RUSHING_+_RECEIVING_YARDS` | OVER/UNDER numeric | rushing + receiving yards, summed after binding both stats to the SAME player, never summed across two different rows |
-| `anytime_touchdown` | `ANY_TIME_TOUCHDOWN_SCORER` | YES/NO (no numeric line) | any TD credited to the player (rushing, receiving, or return — see settlement rule) |
+| `passing_yards` | `PLAYER_X_PASSING_YARDS_HIGH` | primary OVER/UNDER | final passing yards |
+| `passing_yards_alt` | `PLAYER_X_ALT_PASSING_YARDS_HIGH` | ladder, threshold parsed from `runnerName` | final passing yards |
+| `passing_touchdowns` | `PLAYER_X_PASSING_TOUCHDOWNS_HIGH` | primary OVER/UNDER | final passing TDs |
+| `passing_touchdowns_alt` | `PLAYER_X_ALT_PASSING_TOUCHDOWNS_HIGH` | ladder | final passing TDs |
+| `rushing_yards` | `PLAYER_X_RUSHING_YARDS_HIGH/LOW` | primary OVER/UNDER | final rushing yards |
+| `rushing_yards_alt` | `PLAYER_X_ALT_RUSHING_YARDS_HIGH/LOW` | ladder | final rushing yards |
+| `receiving_yards` | `PLAYER_X_RECEIVING_YARDS_HIGH/LOW` | primary OVER/UNDER | final receiving yards |
+| `receiving_yards_alt` | `PLAYER_X_ALT_RECEIVING_YARDS_HIGH/LOW` | ladder | final receiving yards |
+| `receptions` | `PLAYER_X_RECEPTIONS_HIGH/LOW` | primary OVER/UNDER | final receptions |
+| `receptions_alt` | `PLAYER_X_ALT_RECEPTIONS_HIGH/LOW` | ladder | final receptions |
+| `rush_plus_rec_yards` | `PLAYER_X_RUSHING_+_RECEIVING_YARDS` | primary OVER/UNDER | rushing + receiving yards, summed after binding both stats to the SAME player, never summed across two different rows |
+| `anytime_touchdown` | `ANY_TIME_TOUCHDOWN_SCORER` | YES/NO (no line) | any TD credited to the player (rushing, receiving, or return -- see settlement rule) |
 | `two_plus_touchdowns` | `TO_SCORE_2+_TOUCHDOWNS` | YES/NO, threshold=2 | count of TDs >= threshold |
 | `three_plus_touchdowns` | `TO_SCORE_3+_TOUCHDOWNS` | YES/NO, threshold=3 | count of TDs >= threshold |
 | `four_plus_touchdowns` | `TO_SCORE_4+_TOUCHDOWNS` | YES/NO, threshold=4 | count of TDs >= threshold |
 | `record_a_sack` | `TO_RECORD_1+_SACK` | YES/NO, threshold=1 | defensive player's sack count >= 1 |
-| `reception_yardage_threshold` | `PLAYERS_WITH_10+/15+/20+/30+_YARDS_RECEPTION` | YES/NO, threshold=10/15/20/30 | player recorded at least one single reception of >= threshold yards (NOT total receiving yards — this is a longest-single-catch threshold, confirm against play-by-play `receiving_yards` per-target, not the box-score season total) |
+| `reception_yardage_threshold` | `PLAYERS_WITH_10+/15+/20+/30+_YARDS_RECEPTION` | YES/NO, threshold=10/15/20/30 | player recorded at least one single reception of >= threshold yards (a longest-single-catch threshold -- must be checked against per-target play-by-play, not the box-score season total) |
 
 Confirmed NOT offered on this book for this game, do not build for tonight:
 completions, attempts, interceptions thrown, tackles+assists, individual
 kicker/FG-made markets. (Live-checked against event 35599552, all 8 tabs,
 2026-09-17.)
+
+### Corrected finding (2026-09-17, ~16:08Z)
+
+The first version of this spec described alt markets as two-sided OVER/UNDER,
+matching the primary-market shape. That was wrong, caught before it was coded:
+alt markets are one-sided threshold ladders. Confirmed independently against
+the live payload a second time (sha256 match exact) before revising this
+table. `_ALT_` markets therefore need their OWN normalizer branch, not a reuse
+of the primary two-sided parser with a relaxed check.
 
 ## Player identity binding
 
