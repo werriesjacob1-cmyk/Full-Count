@@ -317,7 +317,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 50.4,
+          "score": 49.1,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ Colorado Rockies",
           "game_pk": 824305,
@@ -327,13 +327,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 45.0,
-            "same_hand_ratio": 88.8889,
+            "same_hand_ratio": 100.0,
             "l14_k_pct": 29.4118,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 32.7689,
+            "ump_k_pct": -0.228,
+            "ump_bb_pct": -0.144
           },
-          "hit_probability": 0.5995,
-          "raw_hit_probability": 0.6279,
-          "lift": -0.0994,
+          "hit_probability": 0.5993,
+          "raw_hit_probability": 0.6269,
+          "lift": -0.0975,
           "reliability": "B",
           "sample_n": 10,
           "projection": {
@@ -343,9 +346,9 @@
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 57.6,
+          "score": 0,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ Colorado Rockies",
           "game_pk": 824305,
@@ -354,18 +357,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7344,
+            "outs_rate": 0.3414,
             "avg_outs_per_start": 14.7
           },
-          "hit_probability": 0.7046,
-          "raw_hit_probability": 0.7344,
-          "lift": -0.0871,
+          "hit_probability": 0.3414,
+          "raw_hit_probability": 0.3414,
+          "lift": -0.2357,
           "reliability": "B",
           "sample_n": 10,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]

@@ -3929,6 +3929,136 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-17",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 79.3,
+          "notable_signals": 2,
+          "matchup": "San Diego Padres @ Colorado Rockies",
+          "game_pk": 824305,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 15.1429,
+            "pitch_exploit": 4.5714,
+            "l7_avg_ev": 10.9135,
+            "l7_barrel_pct": 95.7143,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 56.2,
+            "season_barrel_pct": 16.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 41.6667,
+            "platoon_barrel_pct": -1.6,
+            "platoon_xwoba": 0.36,
+            "park_hand_index": 0.98,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_behind": 29.0909,
+            "pull_park_synergy": 0.5076,
+            "getaway_day": -2.0,
+            "series_game": 3.0,
+            "sp_rp_ops_gap": 0.688,
+            "vs_rp_ops": 1.884,
+            "ump_k_pct": 0.228,
+            "ump_bb_pct": 0.144
+          },
+          "hit_probability": 0.7223,
+          "raw_hit_probability": 0.7667,
+          "lift": 0.0548,
+          "reliability": "A",
+          "sample_n": 133,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 77.9,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ Colorado Rockies",
+          "game_pk": 824305,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -4.98,
+            "sprint_speed": 84.375,
+            "catcher_poptime": 14.2857,
+            "on_base": 89.4434
+          },
+          "hit_probability": 0.2053,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 133,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Colorado Rockies",
+          "game_pk": 824305,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0249
+          },
+          "hit_probability": 0.0249,
+          "raw_hit_probability": null,
+          "lift": -0.0228,
+          "reliability": "A",
+          "sample_n": 133,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.0,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Colorado Rockies",
+          "game_pk": 824305,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0403
+          },
+          "hit_probability": 0.0403,
+          "raw_hit_probability": null,
+          "lift": 0.0196,
+          "reliability": "A",
+          "sample_n": 133,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

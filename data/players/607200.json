@@ -160,7 +160,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 56.1,
+          "score": 50.0,
           "notable_signals": 0,
           "matchup": "Detroit Tigers @ Chicago White Sox",
           "game_pk": 824548,
@@ -170,13 +170,13 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 58.0,
-            "same_hand_ratio": 88.8889,
+            "same_hand_ratio": 61.1111,
             "l14_k_pct": 0.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6016,
-          "raw_hit_probability": 0.638,
-          "lift": -0.0973,
+          "hit_probability": 0.6014,
+          "raw_hit_probability": 0.637,
+          "lift": -0.0954,
           "reliability": "B",
           "sample_n": 14,
           "projection": {
@@ -186,9 +186,9 @@
           }
         },
         {
-          "prop": "Over 13.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 68.8,
+          "score": 43.4,
           "notable_signals": 0,
           "matchup": "Detroit Tigers @ Chicago White Sox",
           "game_pk": 824548,
@@ -197,18 +197,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7967,
+            "outs_rate": 0.6978,
             "avg_outs_per_start": 14.5
           },
-          "hit_probability": 0.7475,
-          "raw_hit_probability": 0.7967,
-          "lift": -0.0747,
+          "hit_probability": 0.6775,
+          "raw_hit_probability": 0.6978,
+          "lift": -0.1486,
           "reliability": "B",
           "sample_n": 14,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 13.5,
-            "needs": 14
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]
