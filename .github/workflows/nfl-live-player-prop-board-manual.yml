@@ -1,0 +1,319 @@
+name: NFL Live Player-Prop Board Capture (manual)
+
+# Manual, one-off pregame capture for a single named event, covering every
+# FanDuel NFL player-prop market this repo can normalize + bind to a durable
+# roster identity: passing yards (fanduel_passing.py, the one validated
+# family) plus rushing/receiving/receptions/passing-TDs/rush+rec-yards,
+# alt-ladders, and touchdown/sack single-threshold markets
+# (player_prop_markets.py + player_prop_roster_binding.py).
+#
+# workflow_dispatch ONLY. No schedule, no push trigger, no automatic firing
+# of any kind -- this workflow can be dispatched against its own branch
+# before that branch is ever merged, precisely so a pregame capture can run
+# without needing production merge approval first (see nfl-publish-guard.py
+# / PR #121 for why an automatic trigger on a not-yet-reviewed workflow is
+# the wrong default here).
+#
+# Writes ONLY a GitHub Actions build artifact (raw payloads + a bound,
+# UNGRADED candidate board). No commit, no push, no public PLAY, no
+# publication, no production promotion, no scoring/model/prediction for any
+# market beyond what fanduel_passing.py itself already validates.
+on:
+  workflow_dispatch:
+    inputs:
+      target_event_id:
+        description: 'FanDuel eventId to capture (default: tonight''s DET@BUF)'
+        required: false
+        default: '35599552'
+
+permissions:
+  contents: read
+
+jobs:
+  board:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install NFL dependencies only
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r nfl/requirements-nfl.txt
+          python3 -m pip install 'requests~=2.34.2'
+
+      - name: Capture + normalize + bind one event's full player-prop board
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+          TARGET_EVENT_ID: ${{ inputs.target_event_id }}
+        run: |
+          PYTHONPATH=. python3 - <<'PY'
+          import csv
+          import hashlib
+          import io
+          import json
+          import os
+          from collections import Counter
+          from pathlib import Path
+
+          import requests
+
+          from nfl.archive.provenance import CHECKED_AND_FOUND, utcnow
+          from nfl.archive.sources import fanduel_nfl
+          from nfl.normalize import fanduel_passing
+          from nfl.normalize import player_prop_markets
+          from nfl.normalize.market_roster_binding import bind_passing_candidate
+          from nfl.normalize.player_prop_roster_binding import (
+              MARKET_POSITION_GROUPS,
+              bind_player_prop_candidate,
+          )
+
+          TARGET_EVENT_ID = str(os.environ["TARGET_EVENT_ID"]).strip()
+          if not TARGET_EVENT_ID:
+              raise SystemExit("target_event_id is required")
+
+          EVIDENCE_ROOT = Path("/tmp/nfl-player-prop-board")
+          (EVIDENCE_ROOT / "raw" / "fanduel").mkdir(parents=True, exist_ok=True)
+          (EVIDENCE_ROOT / "model_sources").mkdir(parents=True, exist_ok=True)
+
+          ROSTER_URL = (
+              "https://github.com/nflverse/nflverse-data/releases/download/"
+              "rosters/roster_2026.csv"
+          )
+          # nflverse republishes this file weekly (observed: last-modified
+          # 2026-09-17T12:36Z, week=2 column) at the SAME URL, so the SHA the
+          # passing-yards board pinned on 2026-09-14 is already stale here.
+          # Re-pinned after an explicit repin audit run right before writing
+          # this workflow: fetched live, confirmed 2978 well-formed rows
+          # including current DET/BUF rosters, non-corrupted.
+          ROSTER_SHA = (
+              "debbcd7c9d0e52e13fe013b5ea25a8a7615431760b1b782cf2fca21ed06d3ca6"
+          )
+
+          session = requests.Session()
+          session.headers.update({
+              "User-Agent": "Full-Count NFL live player-prop board capture"
+          })
+
+          # ---------- current roster, pinned as in the passing-yards board ----------
+          rr = session.get(ROSTER_URL, timeout=60)
+          rr.raise_for_status()
+          roster_sha = hashlib.sha256(rr.content).hexdigest()
+          if roster_sha != ROSTER_SHA:
+              raise SystemExit(
+                  f"2026 roster drift {roster_sha} != pinned {ROSTER_SHA}"
+              )
+          roster = list(csv.DictReader(io.StringIO(rr.text)))
+          if not roster:
+              raise SystemExit("empty 2026 roster")
+          (EVIDENCE_ROOT / "model_sources" / "roster_2026.csv").write_bytes(
+              rr.content
+          )
+
+          # ---------- discover + confirm the target event ----------
+          root = fanduel_nfl._fetch_first_healthy_host(
+              "root_nfl_page",
+              f"content-managed-page?page=CUSTOM&customPageId=nfl&_ak={fanduel_nfl.AK}",
+              {"feed": "nfl root", "audit": "player_prop_board"},
+              session,
+          )
+          if root.outcome != CHECKED_AND_FOUND:
+              raise SystemExit(
+                  f"FanDuel root not conclusive: {root.outcome} {root.failure_reason}"
+              )
+          (EVIDENCE_ROOT / "raw" / "fanduel" / "root_nfl_page.json").write_bytes(
+              root.body
+          )
+          discovered = fanduel_nfl.discover_events(root.body)
+          target = next(
+              (e for e in discovered if str(e["event_id"]) == TARGET_EVENT_ID),
+              None,
+          )
+          if target is None:
+              raise SystemExit(
+                  f"event {TARGET_EVENT_ID} not found among "
+                  f"{len(discovered)} discovered events"
+              )
+
+          ctx = {
+              "event_id": TARGET_EVENT_ID,
+              "event_name": target["name"],
+              "open_date": target.get("open_date"),
+              "audit": "player_prop_board",
+          }
+          baseline = fanduel_nfl._fetch_first_healthy_host(
+              f"event_{TARGET_EVENT_ID}_no_tab",
+              f"event-page?eventId={TARGET_EVENT_ID}&_ak={fanduel_nfl.AK}",
+              {**ctx, "tab": None},
+              session,
+          )
+          if baseline.outcome != CHECKED_AND_FOUND:
+              raise SystemExit(
+                  f"event baseline not conclusive: {baseline.outcome} "
+                  f"{baseline.failure_reason}"
+              )
+          (EVIDENCE_ROOT / "raw" / "fanduel" / f"event_{TARGET_EVENT_ID}_no_tab.json").write_bytes(
+              baseline.body
+          )
+          baseline_ids = fanduel_nfl._market_ids(baseline.body)
+
+          # ---------- capture + normalize every prop tab ----------
+          candidates = []
+          rejections = []
+          tab_failures = []
+          market_types_seen = set()
+          market_types_covered = set()
+
+          KNOWN_PASSING_YARDS_TYPES = set(fanduel_passing.PRIMARY_TYPES)
+          KNOWN_OTHER_TYPES = set(player_prop_markets.ALL_KNOWN_TYPES)
+
+          def dedup_key(row):
+              return (
+                  row.get("shape"),
+                  row.get("market"),
+                  row.get("market_id"),
+                  row.get("player_name"),
+                  row.get("threshold"),
+                  row.get("line"),
+              )
+
+          seen_keys = set()
+
+          for tab in fanduel_nfl.PROP_TABS:
+              record = fanduel_nfl._fetch_first_healthy_host(
+                  f"event_{TARGET_EVENT_ID}_tab_{tab}",
+                  f"event-page?eventId={TARGET_EVENT_ID}&tab={tab}&_ak={fanduel_nfl.AK}",
+                  {**ctx, "tab": tab},
+                  session,
+              )
+              record = fanduel_nfl._classify_tab_payload(record, baseline_ids)
+              if record.outcome != CHECKED_AND_FOUND:
+                  tab_failures.append({
+                      "tab": tab,
+                      "outcome": record.outcome,
+                      "failure_reason": record.failure_reason,
+                  })
+                  continue
+
+              (EVIDENCE_ROOT / "raw" / "fanduel" / f"event_{TARGET_EVENT_ID}_tab_{tab}.json").write_bytes(
+                  record.body
+              )
+              payload_sha = hashlib.sha256(record.body).hexdigest()
+              payload = json.loads(record.body)
+
+              for raw_market in (payload.get("attachments") or {}).get("markets", {}).values():
+                  if isinstance(raw_market, dict):
+                      market_types_seen.add(str(raw_market.get("marketType") or ""))
+
+              passing_result = fanduel_passing.normalize_payload(
+                  payload, captured_at=record.observed_at,
+              )
+              market_types_covered |= KNOWN_PASSING_YARDS_TYPES
+              for row in passing_result["candidates"]:
+                  key = dedup_key({**row, "shape": "primary"})
+                  if key in seen_keys:
+                      continue
+                  seen_keys.add(key)
+                  row["shape"] = "primary"
+                  row["source_payload_sha256"] = payload_sha
+                  row["source_url"] = record.url
+                  row["source_tab"] = tab
+                  candidates.append(row)
+              rejections.extend({
+                  **rej, "source_tab": tab, "normalizer": "fanduel_passing",
+              } for rej in passing_result["rejections"])
+
+              other_result = player_prop_markets.normalize_payload(
+                  payload, captured_at=record.observed_at,
+              )
+              market_types_covered |= KNOWN_OTHER_TYPES
+              for row in other_result["candidates"]:
+                  key = dedup_key(row)
+                  if key in seen_keys:
+                      continue
+                  seen_keys.add(key)
+                  row["source_payload_sha256"] = payload_sha
+                  row["source_url"] = record.url
+                  row["source_tab"] = tab
+                  candidates.append(row)
+              rejections.extend({
+                  **rej, "source_tab": tab, "normalizer": "player_prop_markets",
+              } for rej in other_result["rejections"])
+
+          uncovered_market_types = sorted(
+              market_types_seen - market_types_covered - {""}
+          )
+
+          # ---------- durable identity ----------
+          bound = []
+          unmapped = []
+          for candidate in candidates:
+              market = candidate.get("market")
+              if market == "passing_yards":
+                  bound.append(bind_passing_candidate(candidate, roster, season=2026))
+              elif market in MARKET_POSITION_GROUPS:
+                  bound.append(bind_player_prop_candidate(candidate, roster, season=2026))
+              else:
+                  unmapped.append(candidate)
+
+          binding_counts = Counter(row["binding_status"] for row in bound)
+          market_counts = Counter(row["market"] for row in bound)
+
+          sealed_at = utcnow()
+          board = {
+              "analysis": "NFL_LIVE_PLAYER_PROP_BOARD_CAPTURE",
+              "status": "RESEARCH_ONLY_NO_PUBLICATION",
+              "grading_status": "PREGAME_CAPTURE_NOT_GRADED",
+              "created_at": sealed_at,
+              "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+              "event": {
+                  "event_id": TARGET_EVENT_ID,
+                  "event_name": target["name"],
+                  "open_date": target.get("open_date"),
+                  "root_observed_at": root.observed_at,
+              },
+              "coverage": {
+                  "market_types_seen": sorted(market_types_seen),
+                  "market_types_covered": sorted(market_types_covered),
+                  "uncovered_market_types": uncovered_market_types,
+                  "tab_failures": tab_failures,
+              },
+              "candidates": {
+                  "raw_normalized_count": len(candidates),
+                  "bound_count": len(bound),
+                  "unmapped_count": len(unmapped),
+                  "binding_status_counts": dict(binding_counts),
+                  "market_counts": dict(market_counts),
+                  "rejections": rejections,
+                  "unmapped": unmapped,
+                  "bound": bound,
+              },
+              "identity": {
+                  "roster_sha256": roster_sha,
+              },
+          }
+
+          path = EVIDENCE_ROOT / "nfl-live-player-prop-board.json"
+          with path.open("w", encoding="utf-8") as f:
+              json.dump(board, f, indent=2, sort_keys=True)
+
+          print(json.dumps({
+              "event_id": TARGET_EVENT_ID,
+              "event_name": target["name"],
+              "raw_normalized_count": len(candidates),
+              "bound_count": len(bound),
+              "unmapped_count": len(unmapped),
+              "binding_status_counts": dict(binding_counts),
+              "market_counts": dict(market_counts),
+              "uncovered_market_types": uncovered_market_types,
+              "tab_failures": tab_failures,
+          }, indent=2, sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nfl-live-player-prop-board
+          path: /tmp/nfl-player-prop-board
+          retention-days: 90
