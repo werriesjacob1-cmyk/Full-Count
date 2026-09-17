@@ -230,8 +230,16 @@ class FailClosedGuardTests(unittest.TestCase):
     def test_unsupported_market_is_rejected(self):
         with self.assertRaises(PlayerPropGradeError):
             grade_player_prop_market(
-                primary_market(market="passing_yards"), outcome(), side="OVER"
+                primary_market(market="reception_yardage_threshold"),
+                outcome(), side="OVER",
             )
+
+    def test_passing_yards_is_a_supported_primary_market(self):
+        result = grade_player_prop_market(
+            primary_market(market="passing_yards"),
+            outcome(stat_value=300), side="OVER",
+        )
+        self.assertEqual(result["settlement"], "HIT")
 
     def test_naive_timestamp_is_rejected(self):
         with self.assertRaises(PlayerPropGradeError):
