@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-17T15:20:41.226503+00:00",
+  "updated_at": "2026-09-17T22:17:13.298216+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -36368,6 +36368,106 @@
         },
         "qualification_timestamp": "2026-09-17T15:07:28.947832+00:00",
         "board_timestamp": "2026-09-17T15:07:28.933540+00:00",
+        "slate_date": "2026-09-17"
+      }
+    },
+    "fc2:822845:player-670032:hits:1:over": {
+      "canonical_id": "fc2:822845:player-670032:hits:1:over",
+      "settlement_identity": [
+        "822845",
+        [
+          "player",
+          "670032"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-17",
+      "first_published_at": "2026-09-17T22:17:13.298216+00:00",
+      "publication_provenance": {
+        "artifact_id": "8d9b053f848bdf4bc35e33d3f6fb0b8e5ed21582b93a478ee22125f1f69903ea",
+        "source_commit": "2f0305669b8a26e8fcae1516e82037d997335872",
+        "workflow_run_id": "35280729191",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-17T22:17:00.337703+00:00",
+        "data_hash": "1ff591239b6c52a043a68d04adcca07332330c30a8234579d81f58717bea0dc2",
+        "live_hash": "d0f2a92818fc7f301731e1648b080bf85dfc3e89c40a1c129cd7e01dc8782ac6"
+      },
+      "snapshot": {
+        "id": "fc2:822845:player-670032:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 822845,
+        "player_id": 670032,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Nicky Lopez",
+        "team": "Texas Rangers",
+        "matchup": "Boston Red Sox @ Texas Rangers",
+        "game_start": "2026-09-18T00:05:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.605,
+        "market_odds": -135,
+        "market_implied": 0.5745,
+        "market_edge": 0.0305,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Platoon: L bat vs RHP (favorable)",
+          "Pitch-type exploit: RV/100 +2.1 vs SI (opposing SP throws it 21.6% of the time)",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "L7 avg EV 68.6mph (league ~88.5) \u2014 cold recent contact",
+          "L7 barrel% 0.0 \u2014 cold recent contact",
+          "Opposing SP ERA 2.76 \u2014 elite pitcher, tough matchup",
+          "Projected 3.81 PA (batting slot 7) \u2014 a tough lineup slot for plate appearances",
+          "AVG vs xBA: 0.271 vs 0.239 (+0.032) \u2014 outperforming his contact quality, regression risk",
+          "Team implied for 3.73 runs (league avg 4.245; line 3.5, game total 8) \u2014 a weak offensive environment",
+          "Season barrel% 0.0 \u2014 below-average barrel rate",
+          "Hitters batting ahead of him: 0.320 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.287 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Opposing bullpen fatigue: 0/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "BvP: 2-for-16 vs Sonny Gray (standard error \u00b18 pts on a 16-AB career sample -- weighted lightly on that basis, not just because the count looks small)"
+        ],
+        "prob_ci": [
+          0.5962,
+          0.6336
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 86,
+        "lineup_assumed": null,
+        "base_rate": 0.5618,
+        "lift": 0.0432,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "087bad45d",
+          "prediction_timestamp": "2026-09-17T22:10:34.440801+00:00",
+          "odds_fetched_at": "2026-09-17T22:10:29.358755+00:00",
+          "board_generated_at": "2026-09-17T22:10:34.427697+00:00"
+        },
+        "qualification_timestamp": "2026-09-17T22:10:34.440801+00:00",
+        "board_timestamp": "2026-09-17T22:10:34.427697+00:00",
         "slate_date": "2026-09-17"
       }
     }
