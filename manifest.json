@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "CarNow Lead Auto-Claimer",
-  "version": "1.5.4",
+  "version": "1.6.0",
   "description": "Watches CarNow dashboards for incoming leads and claims them automatically.",
 
   "minimum_chrome_version": "116",
@@ -20,14 +20,22 @@
   ],
 
   "background": {
-    "service_worker": "background.js",
+    "service_worker": "background_v2.js",
     "type": "module"
   },
 
   "content_scripts": [
     {
       "matches": ["https://*.carnow.com/*"],
-      "js": ["preflight.js", "content.js", "claim_guard.js", "realtime_watchdog.js", "connection_guard.js"],
+      "js": [
+        "preflight.js",
+        "reliability_policy.js",
+        "content.js",
+        "claim_guard.js",
+        "realtime_watchdog.js",
+        "connection_guard.js",
+        "diagnostics.js"
+      ],
       "run_at": "document_idle",
       "all_frames": false
     }
