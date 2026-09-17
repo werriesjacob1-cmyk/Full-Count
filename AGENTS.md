@@ -5,11 +5,12 @@ Repository memory:
 - Read `engineering/PROJECT_STATE.md` for the current technical map.
 - Read `engineering/ENGINEERING_HANDOFF.md` for chronological decisions and work.
 - Use `engineering/AUDIT/README.md` for the Pre-Phase-V audit index and finding rules.
+- Read `engineering/AGENT_BRIDGE_PROTOCOL.md` and new GitHub Issue #91 comments before claiming significant work.
 
 1. Full Count is an MLB betting analytics/research system.
 2. Current project stage is PRE-PHASE-V hardening. Phase V has NOT begun.
 3. Claude built/reviewed substantial portions of Phases 1–4.
-4. Codex and Claude are collaborating asynchronously through repository documentation and git history.
+4. Codex and Claude Code collaborate asynchronously through repository history and GitHub Issue #91. Each must claim, report, hand off, and release work using the Agent Bridge protocol.
 5. ChatGPT may act as architecture/adversarial reviewer.
 6. Any engineer may challenge prior decisions with evidence.
 7. Read `engineering/PROJECT_STATE.md` before significant work.
