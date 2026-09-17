@@ -1,9 +1,11 @@
 """Deterministic, outcome-only grading for normalized NFL player-prop markets.
 
 Sibling to ``game_market_grader.py``, same fail-closed discipline: consumes a
-bound candidate record (the output of ``player_prop_markets.normalize_payload``
-plus ``player_prop_roster_binding.bind_player_prop_candidate``) and one
-authoritative box-score outcome, and never selects bets, estimates
+bound candidate record -- the output of either ``player_prop_markets.normalize_payload``
+plus ``player_prop_roster_binding.bind_player_prop_candidate``, or
+``fanduel_passing.normalize_payload`` plus
+``market_roster_binding.bind_passing_candidate`` for ``passing_yards`` itself
+-- and one authoritative box-score outcome, and never selects bets, estimates
 probabilities, or mutates either input.
 
 Settlement rules, one per market shape:
@@ -38,8 +40,8 @@ from datetime import datetime
 from typing import Any, Mapping
 
 PRIMARY_MARKETS = {
-    "passing_touchdowns", "rushing_yards", "receiving_yards", "receptions",
-    "rush_plus_rec_yards",
+    "passing_yards", "passing_touchdowns", "rushing_yards", "receiving_yards",
+    "receptions", "rush_plus_rec_yards",
 }
 ALT_LADDER_MARKETS = {
     "passing_touchdowns_alt", "rushing_yards_alt", "receiving_yards_alt",
