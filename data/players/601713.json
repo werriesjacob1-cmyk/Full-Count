@@ -133,7 +133,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 49.6,
+          "score": 48.8,
           "notable_signals": 0,
           "matchup": "Miami Marlins @ San Diego Padres",
           "game_pk": 823252,
@@ -145,7 +145,10 @@
             "opp_team_k_pct": 49.0,
             "same_hand_ratio": 75.0,
             "l14_k_pct": 32.9412,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 41.4577,
+            "ump_k_pct": 0.564,
+            "ump_bb_pct": -0.012
           },
           "hit_probability": 0.4974,
           "raw_hit_probability": 0.4974,
@@ -161,7 +164,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 38.3,
+          "score": 38.5,
           "notable_signals": 0,
           "matchup": "Miami Marlins @ San Diego Padres",
           "game_pk": 823252,
@@ -170,12 +173,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6305,
+            "outs_rate": 0.6267,
             "avg_outs_per_start": 12.5
           },
-          "hit_probability": 0.6245,
-          "raw_hit_probability": 0.6305,
-          "lift": -0.1365,
+          "hit_probability": 0.6214,
+          "raw_hit_probability": 0.6267,
+          "lift": -0.1321,
           "reliability": "C",
           "sample_n": 6,
           "projection": {

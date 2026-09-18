@@ -433,8 +433,8 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 29.8,
-          "notable_signals": 0,
+          "score": 32.7,
+          "notable_signals": 1,
           "matchup": "Minnesota Twins @ Los Angeles Angels",
           "game_pk": 823977,
           "team": "Minnesota Twins",
@@ -445,7 +445,10 @@
             "opp_team_k_pct": 84.0,
             "same_hand_ratio": 0.0,
             "l14_k_pct": 4.7059,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 79.7672,
+            "ump_k_pct": 0.552,
+            "ump_bb_pct": 0.192
           },
           "hit_probability": 0.3604,
           "raw_hit_probability": 0.3604,
@@ -461,7 +464,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 77.1,
+          "score": 77.8,
           "notable_signals": 0,
           "matchup": "Minnesota Twins @ Los Angeles Angels",
           "game_pk": 823977,
@@ -470,12 +473,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.791,
+            "outs_rate": 0.7893,
             "avg_outs_per_start": 15.65
           },
-          "hit_probability": 0.7437,
-          "raw_hit_probability": 0.791,
-          "lift": -0.0173,
+          "hit_probability": 0.7426,
+          "raw_hit_probability": 0.7893,
+          "lift": -0.0109,
           "reliability": "A",
           "sample_n": 20,
           "projection": {

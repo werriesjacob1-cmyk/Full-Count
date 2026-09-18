@@ -3700,6 +3700,134 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 75.4,
+          "notable_signals": 2,
+          "matchup": "Milwaukee Brewers @ Baltimore Orioles",
+          "game_pk": 824790,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 44.2857,
+            "pitch_exploit": 7.4286,
+            "l7_avg_ev": 57.6974,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 32.1,
+            "season_barrel_pct": 61.3333,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 3.28,
+            "platoon_xwoba": 1.86,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "woba_behind": 60.0,
+            "hard_hit_105_rate": 0.5875,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.112,
+            "vs_rp_ops": 0.276,
+            "ump_k_pct": -0.36,
+            "ump_bb_pct": -0.264
+          },
+          "hit_probability": 0.6689,
+          "raw_hit_probability": 0.6534,
+          "lift": 0.1084,
+          "reliability": "A",
+          "sample_n": 118,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 56.1,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ Baltimore Orioles",
+          "game_pk": 824790,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -2.94,
+            "sprint_speed": 46.875,
+            "catcher_poptime": 2.8571,
+            "on_base": 90.4031
+          },
+          "hit_probability": 0.1222,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 118,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 10.5,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ Baltimore Orioles",
+          "game_pk": 824790,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0701
+          },
+          "hit_probability": 0.0701,
+          "raw_hit_probability": null,
+          "lift": 0.0224,
+          "reliability": "A",
+          "sample_n": 118,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 6.4,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ Baltimore Orioles",
+          "game_pk": 824790,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0381
+          },
+          "hit_probability": 0.0381,
+          "raw_hit_probability": null,
+          "lift": 0.0174,
+          "reliability": "A",
+          "sample_n": 118,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
