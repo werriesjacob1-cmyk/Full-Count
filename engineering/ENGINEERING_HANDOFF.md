@@ -1976,3 +1976,29 @@ Keep the unknown-book baseline separate from sealed FanDuel evidence.
 
 Alligator
 
+
+## 2026-09-17 — Existing NFL game-market B0 reconciled and reproduced
+
+- Reused the strict prior-scoring and B0 implementation from draft PRs #110
+  and #111 instead of creating a competing spread/total model path.
+- Re-pinned the offline runner to the audited
+  `nflverse/nfldata@8ed09b2fe3ea42332b2249a995737e13dd931ff3`
+  `games.csv` bytes and exact SHA-256.
+- Made the evaluator reject any closing-market row that is not explicitly
+  `NFLVERSE_PFR_CLOSING`,
+  `RETROSPECTIVE_BENCHMARK_CONTROL_ONLY`, and ineligible as a point-in-time
+  feature.
+- Reproduced 6,906 eligible historical REG predictions. On the 816-game
+  2023-2025 holdout, B0 margin MAE was 10.473 versus 9.744 for the closing
+  control; B0 total MAE was 10.719 versus 10.121. Both paired bootstrap delta
+  intervals remained above zero.
+- B0 remains a research control only. It has no selector, calibrated
+  probability, prospective capture, grader, publication, deployment, or
+  production eligibility.
+
+Next: preserve B0 unchanged and predeclare a development-only home-field
+challenger before testing it on validation and held-out partitions. Then add
+strictly prior opportunity/context features without using closing lines as
+prediction inputs.
+
+Alligator
