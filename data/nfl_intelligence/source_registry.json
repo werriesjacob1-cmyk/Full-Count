@@ -334,6 +334,44 @@
       "restrictions": [
         "no purchase or scraping expansion authorization implied"
       ]
+    },
+    {
+      "source_id": "NFL_DRAFT_COMBINE_COLLEGE_PRIORS",
+      "status": "DISCOVERY",
+      "intended_use": [
+        "rookie_priors",
+        "athletic_profile",
+        "draft_capital",
+        "college_production"
+      ],
+      "historical_coverage_claim": "not yet source-audited in repo",
+      "current_season_policy": "bind prospect identity and draft/combine vintage before use",
+      "point_in_time_class": "PRE_NFL_PRIOR_ONLY_AFTER_SOURCE_AUDIT",
+      "repo_evidence": [],
+      "restrictions": [
+        "college competition and era adjustments required",
+        "do not treat draft capital as direct NFL ability"
+      ]
+    },
+    {
+      "source_id": "NEWS_TRANSACTIONS_CONTRACTS",
+      "status": "DISCOVERY",
+      "intended_use": [
+        "transactions",
+        "role_change_context",
+        "contract_context",
+        "narrative_hypotheses"
+      ],
+      "historical_coverage_claim": "no structured claim ledger or complete archive established",
+      "current_season_policy": "archive claim/source/speaker/publication/observation timestamps and contradictions",
+      "point_in_time_class": "PREGAME_CLAIM_VINTAGE_REQUIRED",
+      "repo_evidence": [
+        "engineering/TOTAL_SPORTS_INTELLIGENCE_ROADMAP_2026-09-12.md"
+      ],
+      "restrictions": [
+        "news claims are not facts until verified",
+        "speaker reliability must be measured by claim type"
+      ]
     }
   ]
 }
