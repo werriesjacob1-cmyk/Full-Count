@@ -2175,3 +2175,45 @@ Next: require exact-head CI on the integrity-port PR, merge the port if green
 under Jacob's authorized #97 disposition, then close superseded PR #97.
 
 Alligator
+
+## 2026-09-18 — NFL QB continuity + starter-availability features (ingestion only)
+
+- Workstream `NFL-DATA-GAP-INJURIES-QB-CONTINUITY-20260918` (Issue #91 claim,
+  comment `5732934991`), PR #133, branch
+  `claude/nfl-injury-qb-continuity-push-20260918`.
+- Two named-hypothesis, strictly-prior feature substrates, built to the exact
+  "do not ingest without a named model hypothesis" constraint: (1)
+  `nfl/research/qb_continuity_features.py` -- incumbent-starter identity and
+  consecutive-start tenure entering a game, inferred from already-ingested
+  nflverse weekly player-stat attempts (no depth-chart "starter" flag exists
+  anywhere in this repo, so this reuses the same max-attempts proxy
+  `passing_yards_baseline_research.py` already relies on); (2)
+  `nfl/research/injury_availability_features.py` -- a pregame `starter_out`
+  flag from nflverse's weekly injury-report release
+  (`injuries_{season}.csv`), verified live this session against the real
+  source (2009+ coverage confirmed present, 2008 confirmed absent, matching
+  `nflreadr::load_injuries()`'s own documented floor).
+- Real finding worth preserving: nflverse's injury-report data (Wed-Fri
+  practice-report status) is NOT the same population as this repo's existing
+  `nfl/normalize/official_inactives.py` system, which captures the literal
+  final inactive list but only forward/live with no bulk historical archive.
+  The two are kept explicitly distinct rather than blurred into one
+  "availability" concept. Scope was also narrowed honestly: "starter-tier"
+  covers QB only for now -- no comparable usage-based starter proxy exists in
+  this repo yet for RB/WR/TE.
+- Both modules split every row into a `features` block (built only from
+  games completed before the target game) and a separate `target` block
+  (that game's own realized facts), with tests proving structurally that
+  `features` never contains current-game information and that appending a
+  future week never changes an already-emitted past row.
+- Ingestion and feature construction only -- explicitly NOT wired into any
+  challenger model, and no correlation/MAE-improvement number was computed
+  against anything yet. That integration is deliberate follow-up work once a
+  challenger evaluation harness exists (see the parallel
+  `NFL-GAME-MARKET-C2-FEATURE-CHALLENGER-20260918` workstream).
+- 26 new tests pass; full existing 38-file `nfl/tests/test_*.py` suite passes
+  unchanged (verified independently after rebasing onto current `main`, not
+  only taken on the delegated subagent's own report).
+- No model, selector, production, or public-pick change.
+
+Alligator
