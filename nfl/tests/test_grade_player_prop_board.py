@@ -6,9 +6,16 @@ actually produces (verified against a live-downloaded board artifact,
 2026-09-17), not an assumed/simplified schema.
 """
 import unittest
+from copy import deepcopy
 
 from nfl.research import box_score_outcomes as outcomes
-from nfl.research.grade_player_prop_board import grade_bound_candidates
+from nfl.research.grade_player_prop_board import (
+    PlayerPropBoardIntegrityError,
+    grade_bound_candidates,
+    grade_player_prop_board,
+    seal_player_prop_board,
+    verify_player_prop_board,
+)
 
 
 def _row(**overrides):
@@ -81,7 +88,67 @@ def _board_row(**overrides):
     return row
 
 
+def _sealed_board(*rows):
+    bound = list(rows or [_board_row()])
+    return seal_player_prop_board({
+        "analysis": "NFL_LIVE_PLAYER_PROP_BOARD_CAPTURE",
+        "status": "RESEARCH_ONLY_NO_PUBLICATION",
+        "grading_status": "PREGAME_CAPTURE_NOT_GRADED",
+        "created_at": "2025-09-07T16:05:00Z",
+        "code_sha": "test-sha",
+        "event": {
+            "event_id": "999",
+            "event_name": "Pittsburgh Steelers @ New York Jets",
+            "open_date": "2025-09-07T17:00:00Z",
+        },
+        "coverage": {},
+        "candidates": {
+            "raw_normalized_count": len(bound),
+            "bound_count": len(bound),
+            "unmapped_count": 0,
+            "bound": bound,
+            "unmapped": [],
+            "rejections": [],
+        },
+        "identity": {"roster_sha256": "b" * 64},
+    })
+
+
 class GradeBoundCandidatesTests(unittest.TestCase):
+    def test_complete_sealed_board_verifies_before_grading(self):
+        board = _sealed_board()
+        result = grade_player_prop_board(board, PLAYER_OUTCOMES)
+        self.assertEqual(result["source_board_sha256"], board["board_sha256"])
+        self.assertEqual(result["event_id"], "999")
+        self.assertEqual(result["graded_count"], 1)
+        self.assertEqual(result["graded"][0]["settlement"], "HIT")
+
+    def test_post_seal_mutation_fails_before_grading(self):
+        board = _sealed_board()
+        board["candidates"]["bound"][0]["line"] = 1.5
+        with self.assertRaisesRegex(PlayerPropBoardIntegrityError, "hash mismatch"):
+            grade_player_prop_board(board, PLAYER_OUTCOMES)
+
+    def test_missing_digest_and_population_drift_fail_closed(self):
+        board = _sealed_board()
+        without_digest = deepcopy(board)
+        without_digest.pop("board_sha256")
+        with self.assertRaisesRegex(PlayerPropBoardIntegrityError, "board_sha256"):
+            verify_player_prop_board(without_digest)
+
+        drifted = deepcopy(board)
+        drifted["candidates"]["bound_count"] = 2
+        drifted.pop("board_sha256")
+        with self.assertRaisesRegex(PlayerPropBoardIntegrityError, "bound_count"):
+            seal_player_prop_board(drifted)
+
+    def test_post_kickoff_board_cannot_be_sealed(self):
+        board = _sealed_board()
+        board.pop("board_sha256")
+        board["created_at"] = "2025-09-07T17:00:00Z"
+        with self.assertRaisesRegex(PlayerPropBoardIntegrityError, "strictly precede kickoff"):
+            seal_player_prop_board(board)
+
     def test_real_passing_yards_primary_candidate_grades_hit(self):
         result = grade_bound_candidates([_board_row()], PLAYER_OUTCOMES)
         self.assertEqual(result["graded_count"], 1)

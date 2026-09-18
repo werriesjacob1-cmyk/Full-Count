@@ -2031,3 +2031,24 @@ Alligator
 - Added two synthetic contracts for prior-only challenger behavior and common-population comparison. No model, selector, probability, grader, workflow, public surface, or production setting changed.
 
 Alligator
+
+## 2026-09-18 — Seal generalized NFL player-prop boards before grading
+
+- Added a deterministic SHA-256 seal over the complete research board wrapper,
+  including event identity, coverage, fixed candidate populations, provenance,
+  and roster digest.
+- The full-board grader now verifies that seal, exact population counts,
+  candidate event identity, and capture <= seal < kickoff chronology before
+  grading any outcome. Missing seals, post-seal mutation, population drift, and
+  late seals fail closed.
+- The manual research capture emits the seal for future artifacts. The
+  lower-level candidate-list grader remains available for internal settlement
+  logic, including the already preserved 2026-09-17 artifact.
+- Sixty-four focused generalized normalizer/outcome/grader tests pass. No
+  selector, official pick, publication, deployment, model promotion, or grading
+  activation was added.
+
+Next: require exact-head CI on the integrity-port PR, merge the port if green
+under Jacob's authorized #97 disposition, then close superseded PR #97.
+
+Alligator
