@@ -1628,6 +1628,174 @@ No merge, production deploy, official picks, model changes, or MLB ledger mutati
 
 - Live capture now explicitly validates captured_at <= sealed_at < kickoff for every row before sealing; crossing kickoff fails the run rather than freezing late eligibility. Added a regression covering equality, late sealing, reversed chronology and naive timestamps. Cloudflare cron history confirms successes at 19:30:48Z/19:35:45Z/19:40:51Z, matching GitHub dispatch creation one to two seconds later.
 
+## 2026-09-12 — Total sports intelligence foundation (Codex)
+
+The work is isolated on `codex/total-sports-foundations-20260912`, based on `db095b30d5f66192a40a558c286db03dfb42da1b`. Remote `main` had advanced to `787cc0389063e62c8bbb59a722d300ac049582a8` at final local validation because scheduled MLB workflows continue to commit generated state. Rebase and re-run exact-head validation before any integration decision.
+
+- Added `market_coverage/registry.py`, a source-agnostic coverage control plane with deterministic IDs, explicit lifecycle/capability classifications, first/last observation provenance, and fail-closed handling for malformed or unknown market families.
+- Added `market_coverage/cli.py`, which consumes archived FanDuel payload bytes, records their SHA-256 digests, and atomically writes a compact registry and coverage-gap report. Raw sportsbook payloads and machine-local paths are not committed.
+- Seeded the registry from a bounded live census of one Buffalo at Houston event across eight verified FanDuel tabs. The capture observed 107 source market families. Only the already-operating primary passing-yards family is classified `PROSPECTIVE_SHADOW`; 106 remain unnormalized, 15 observed alternate families lack normalized ladder representation, and all 107 lack an active NFL grader.
+- Added explicit passing-yards classifications and eight contract tests covering unknown-family retention, malformed identity, aggregation, digest validation, explicit lifecycle preservation, invalid classifications, and incomplete-capture loss suppression. The tests and Python compilation pass locally.
+- Added `engineering/TOTAL_SPORTS_INTELLIGENCE_ROADMAP_2026-09-12.md` with the required A–T repository truth, data and market inventory, blind spots, phased roadmap, completed work, delegation candidates, and remaining owner actions.
+- No NFL capture, model, selector, grader, public surface, workflow, MLB behavior, or immutable history was changed. No production activation or promotion is part of this branch.
+
+Next: run repository CI on the exact pushed head; add multi-event census and MLB pre-filter adapters only after this schema is reviewed; then design compact frozen-candidate and experiment ledgers with measured storage costs before wiring any live capture.
+
+Alligator
+
+
+
+## 2026-09-14 — Deterministic nflverse quarantine contract
+
+- Added `nfl/research/nflverse_quarantine.py` and eight focused tests. The
+  generator verifies each audited source byte length and SHA-256 before
+  scanning, assigns stable IDs from source/line/reason/row provenance, and
+  fails closed on malformed values or count drift.
+- Structural zero rows have one explicit source-accounting use and remain
+  excluded from player history. Missing identity with offense, unresolved
+  identity metadata, and missing team/opponent rows receive an empty
+  `allowed_uses` list; identities and fields are never inferred.
+- The previously audited external cache directory is currently empty. No
+  row-level evidence was fabricated from aggregate counts. Re-acquisition of
+  the 27 public files is pending exact approval request `5670896965` on Issue
+  #91 plus any native network permission still required.
+- Eleven quarantine/history unit tests, Python compilation, and
+  `git diff --check` pass locally. No raw data, model, selector, grader,
+  workflow, public surface, production system, or immutable prediction
+  evidence changed.
+
+Next: after authorization, reproduce all 27 committed source digests and
+476,159 rows, generate the compact ledger, verify its exact reason/disposition
+counts, and add those measured results to this handoff before publishing a
+draft PR.
+
+Alligator
+
+## 2026-09-14 — nflverse full-file quality audit
+
+- Downloaded all 27 canonical 1999–2025 weekly player-stat CSVs to a cache outside Git and recorded full-file SHA-256 evidence for 210,443,404 bytes and 476,159 rows. Added a reproducible streaming auditor and a compact 40 KB machine manifest; raw CSVs remain untracked outside the repository.
+- The required 19-column contract, 11 numeric offensive fields, per-file season identity, `REG`/`POST` season types, and player-season-week-type uniqueness all passed. The audit found 11,365 non-sentinel player IDs and no ID with multiple nonblank display names or positions.
+- Identified 523 blank-ID structural zero rows, 42 additional literal-`0` structural rows in 1999–2000, seven nonzero rows without a stable ID, 19 identified rows missing display name and position, six rows missing opponent, and one row missing team. The seven nonzero missing-identity rows remain quarantined by failure; no identity was inferred.
+- Corrected `nflverse_history.py` so literal `0` cannot become a false cross-team player history. It is excluded only under the existing strict structural-zero rule; any tracked offense still fails closed. Three focused tests pass.
+- No raw corpus, normalized warehouse, model, selector, grader, workflow, public surface, or production path changed.
+
+Next: define an immutable external object layout and explicit quarantine schema, then validate schedule/team completeness and target-specific row eligibility before any historical challenger uses the expanded corpus.
+
+Alligator
+
+## 2026-09-14 — Fail-closed market capture completeness
+
+- Replaced the market coverage CLI's manual completeness switch with a versioned capture plan. The plan records sport, sportsbook, event universe, requested tabs, and the logical name and SHA-256 of the event-discovery artifact.
+- A complete report now requires exactly one payload for every event-by-tab pair. Missing, unexpected, duplicate, unidentified, or untabbed payloads fail before registry/report publication.
+- Coverage disappearance is evaluated only against a prior complete report with the identical deterministic scope ID. A first capture, partial capture, or changed slate cannot create a false market-removal alert.
+- Added the capture-plan contract and four focused tests; all 12 market coverage tests and Python compilation pass locally. No live workflow, model, selector, grader, public surface, or production path changed.
+
+Alligator
+
+## 2026-09-14 — Candidate-funnel audit correction
+
+- Corrected the total-sports roadmap after checking repository history: commit `63f9d5699` already fixed the duplicate-pair rewrite-forever bug and added compact records. The logger remains unwired, so representative live full-universe validation and storage selection are still required before activation.
+- The older handoff text above is retained as historical audit context; it must not be read as the current dedup state.
+
+Alligator
+
+## 2026-09-14 — nflverse weekly-stat source availability audit
+
+- Range-read the canonical nflverse weekly player-stat assets for all 27 seasons from 1999 through 2025. Every asset returned HTTP 206, exposed `ETag` and `Last-Modified`, and satisfied the existing 19-column FULL COUNT player-stat contract.
+- Observed one shared 150-column header across all seasons. Combined reported corpus size is 210,443,404 bytes, about 200.7 MiB, which supports a controlled cache/object-store ingestion design without committing raw CSVs to Git.
+- Added a compact sanitized manifest and `engineering/NFLVERSE_WEEKLY_STATS_SOURCE_AUDIT_2026-09-14.md`. Expiring signed redirect URLs are excluded. The source repository's declared CC BY 4.0 license and attribution requirement are recorded.
+- This is source/header evidence only. No full season was downloaded, no row-level quality or semantic stability claim was made, and no model, selector, grader, workflow, public surface, or production path changed.
+
+Next: download each season to an immutable cache outside Git, compute full-byte SHA-256, and produce row/identity/null/season-boundary quality reports before creating normalized warehouse partitions.
+
+Alligator
+
+## 2026-09-14 — Codex unattended permission preflight
+
+- Completed the authorized harmless permission warm-up and wrote `engineering/evidence/CODEX_PERMISSION_PREFLIGHT_2026-09-14.md` with the complete capability matrix, skips, failures, and future manual approvals.
+- Confirmed unattended readiness for ordinary shell/repository work, local Git, remote fetch, GitHub connector reads and reversible branch/PR writes, Issue #91 relay, Actions inspection, connector artifact download, Python/Node execution, public research endpoints, nflverse, MLB Stats API, the existing FanDuel public read path, signed-in Cloudflare read-only inspection, browser reads, subagents, and supervised long-running processes.
+- Local Git CLI push has no credential helper; reversible branch writes work through the authenticated GitHub connector. npm and Docker are absent locally. Python package metadata works, but pip download/install is blocked by Windows ACL behavior in pip-created temporary child directories; use CI for dependency installs.
+- All ordinary probe files were removed. The untracked `.codex_pip_tmp` and `.pip-tmp` directories remain because Windows denies access even after an exact turn-scoped filesystem grant. They contain only failed pip temporary state and are excluded from staging.
+- Posted the remote approval relay, active preflight summary, and native cleanup limitation to Issue #91. No production/public state, secrets, models, selectors, graders, or immutable evidence changed.
+
+Alligator
+
+## 2026-09-14 — Foundation branch synchronized with current main
+
+- Rechecked protected `main` at `bca7f798e09f7a8b440ebb9ed8ae8cc45e2ac4db` and merged it cleanly into the total-sports foundation branch.
+- The upstream delta updated generated MLB calibration and public data artifacts only: `backtest/calibration_recheck_report.json`, `backtest/calibrators_by_market.json`, `docs/data.json`, and `docs/live.json`. No foundation file required conflict resolution.
+- The branch remains draft-only. Re-run root and NFL suites on the published merge head before treating it as reviewable evidence.
+
+Alligator
+
+## 2026-09-15 — Fail-closed NFL primary spread/total normalization
+
+- Added a research-only FanDuel normalizer for exact full-game two-way spread
+  and total market types. It binds event teams and sides, requires an explicit
+  pregame/open state, active runners, kickoff-clock agreement, coherent lines,
+  distinct selection IDs, two nonzero prices, and rejects conflicting
+  duplicate market IDs.
+- Preserved capture, raw-digest, source, event, market, and selection
+  provenance on every normalized row. Alternate, period, and team markets
+  remain outside the contract.
+- Replayed unmodified raw bytes from DEN-KC capture run `34906529900`:
+  Denver +2.5 (-115) / Kansas City -2.5 (-105), and total 43.5 with Over -102
+  / Under -120. Both primary markets normalized with zero rejection; raw
+  payload SHA-256 is
+  `7e4a3e89ebb6fd9055728a65110d5578e740094da846c8340c9bd3837129196f`.
+- Advanced only those two coverage-registry families to `NORMALIZED`.
+  Historical data, modeling, prospective capture, selection, grading, and
+  public eligibility all remain inactive and explicitly blocked.
+- All 19 focused tests pass. The dependency-free NFL suite passes 92 tests;
+  two source-adapter modules remain locally unimportable because `requests` is
+  unavailable, so exact-head Linux CI is required.
+- No raw sportsbook artifact, workflow, model, selector, grader, public
+  surface, production system, or immutable evidence was changed.
+
+Next: validate historical schedule/score source contracts and point-in-time
+availability for spread/total market-only baselines before any model research.
+
+Alligator
+
+## 2026-09-17 — Canonical NFL full-game market normalizer consolidated
+
+- Consolidated draft PR #99's moneyline coverage into the stricter #114
+  `fanduel_game_lines` contract instead of retaining a second record schema.
+- Moneyline, spread, and game total now share event identity, exact kickoff,
+  open/pregame state, active-side cardinality, nonzero two-sided prices, and
+  non-empty distinct selection-ID gates.
+- Multiple distinct primary IDs for one event/family fail closed. The registry
+  labels moneyline only `NORMALIZED`; capture, model, selector, grader, and
+  public eligibility remain false.
+- Twenty-one focused tests pass. No selector, promotion, publication, or
+  deployment behavior was added.
+
+Next: restack snapshot, identity, explicit-final outcome, and grading contracts
+on this one canonical record shape and validate one sealed end-to-end fixture.
+
+Alligator
+
+## 2026-09-17 — Canonical NFL game-market evidence chain completed
+
+- Restacked the research-only snapshot, nflverse identity binding, explicit
+  ESPN final-outcome adapter, and settlement grader on the canonical
+  moneyline/spread/game-total record.
+- Identity binding now re-creates and verifies the deterministic snapshot seal
+  before trusting team, kickoff, source, or market fields. Post-seal mutation
+  fails closed.
+- A single integration contract exercises FanDuel normalization, deterministic
+  sealing, exact nflverse team/kickoff binding, explicit ESPN finality, and
+  spread settlement. The combined focused suite passes 76 tests.
+- This establishes evidence and grading plumbing only. It adds no selector,
+  model promotion, official pick, public publication, deployment, or grading
+  activation.
+
+Next: require exact-head CI for every restacked branch before the authorized
+merge sequence, then preserve the rejected C1 challenger as a labeled negative
+result.
+
+Alligator
+
 ## 2026-09-17 — MLB dashboard: past-picks History page
 
 Agent: Claude
@@ -1860,3 +2028,150 @@ in `pitcher_outs` and `hits_runs_rbis` and absent in plain `hits`. Do not
 tune model weights off this finding alone; the recommended next step
 (argmax-selection calibration audit against the larger backtest pool) has
 not been done yet.
+
+## 2026-09-15 — nflverse game-line source contract audit
+
+- Added a reproducible, dependency-free audit for pinned `games.csv`,
+  `closing_lines.csv`, and `initial_lines.csv` bytes from
+  `nflverse/nfldata@8ed09b2fe3ea42332b2249a995737e13dd931ff3`.
+- Classified the broad line source as `NFLVERSE_SCHEDULE_UNKNOWN_BOOK` because
+  it supplies neither sportsbook identity nor line-capture timestamps. It may
+  support a generic historical outcome/line baseline, but it must not be used
+  as FanDuel history, book-specific CLV, or precise open-to-close evidence.
+- Audited 7,548 schedule games across 1999–2026, including 7,292 settled rows.
+  Every settled row has spread and total lines; 5,311 have two spread prices
+  and 5,308 have two total prices. No duplicate game IDs or score/result
+  inconsistencies were found.
+- Audited 20,490 legacy closing-line rows for 3,415 games from 2006–2018. All
+  two-runner spread and total pairs are coherent, but only 8,850 rows carry
+  odds and the source has no sportsbook or timestamp fields.
+- Audited 1,088 2021 WSGT initial-line rows. The file contains spread and total
+  thresholds without prices or timestamps, so it is a narrow reference rather
+  than a broad opening-price substrate.
+- Compared the nearest nflverse revisions around the sealed DEN–KC capture.
+  nflverse held 42.5 at -110/-110 while sealed FanDuel was 43.5 at -102/-120;
+  the spread prices also differed. This is direct evidence against silently
+  substituting the generic source for captured FanDuel quotes.
+- Raw CSVs remain outside Git. No ingestion, model, selector, prospective
+  capture, grader, workflow, public surface, or production path was activated.
+
+Next: build a source-labeled normalized historical game table, then run a
+chronological leakage audit and market-only baseline experiment before any
+spread/total challenger is eligible for prospective shadow capture.
+
+Alligator
+
+
+## 2026-09-17 — Historical line provenance correction
+
+- Reconciled the game-line audit with nflreadr's primary schedule dictionary,
+  which identifies `spread_line` and `total_line` as closing lines sourced from
+  Pro-Football-Reference.
+- Replaced the overly broad unknown-book label with
+  `NFLVERSE_PFR_CLOSING`. The underlying sportsbook and capture timestamp are
+  still unavailable.
+- The source is now explicitly restricted to
+  `RETROSPECTIVE_BENCHMARK_CONTROL_ONLY`; it is never a point-in-time model
+  feature, FanDuel history, book-specific CLV source, or line-movement source.
+
+Alligator
+
+## 2026-09-15 — Source-labeled historical spread/total normalization
+
+- Added a deterministic normalizer for settled nflverse schedule rows under
+  the explicit `NFLVERSE_SCHEDULE_UNKNOWN_BOOK` source class.
+- Preserved exact source repository, commit, file digest, acquisition time,
+  and original game ID on every output row. Book-specific and line-movement
+  eligibility remain false by construction.
+- Made nflverse's home-favorite spread convention explicit as sportsbook-style
+  away/home handicaps, and derived spread/total outcomes with explicit pushes.
+- A digest-pinned full-file replay normalized all 7,292 settled games. It kept
+  all 256 future/unsettled rows as `UNSETTLED_GAME` exclusions, with 5,311
+  complete spread-price pairs and 5,308 complete total-price pairs.
+- Added nine focused tests for outcomes, pushes, unsettled rows, duplicate
+  IDs, source-result inconsistencies, missing prices, invalid identities and
+  lines, and provenance rejection.
+- No model, selector, prospective capture, grader, workflow, public surface,
+  or production path was activated.
+
+Next: define chronological folds and a leakage-audited market-only baseline.
+Keep the unknown-book baseline separate from sealed FanDuel evidence.
+
+Alligator
+
+
+## 2026-09-17 — Existing NFL game-market B0 reconciled and reproduced
+
+- Reused the strict prior-scoring and B0 implementation from draft PRs #110
+  and #111 instead of creating a competing spread/total model path.
+- Re-pinned the offline runner to the audited
+  `nflverse/nfldata@8ed09b2fe3ea42332b2249a995737e13dd931ff3`
+  `games.csv` bytes and exact SHA-256.
+- Made the evaluator reject any closing-market row that is not explicitly
+  `NFLVERSE_PFR_CLOSING`,
+  `RETROSPECTIVE_BENCHMARK_CONTROL_ONLY`, and ineligible as a point-in-time
+  feature.
+- Reproduced 6,906 eligible historical REG predictions. On the 816-game
+  2023-2025 holdout, B0 margin MAE was 10.473 versus 9.744 for the closing
+  control; B0 total MAE was 10.719 versus 10.121. Both paired bootstrap delta
+  intervals remained above zero.
+- B0 remains a research control only. It has no selector, calibrated
+  probability, prospective capture, grader, publication, deployment, or
+  production eligibility.
+
+Next: preserve B0 unchanged and predeclare a development-only home-field
+challenger before testing it on validation and held-out partitions. Then add
+strictly prior opportunity/context features without using closing lines as
+prediction inputs.
+
+Alligator
+
+## 2026-09-17 — Development-only NFL game-market C1 rejected
+
+- Reused the predeclared additive-bias challenger from draft PR #112 and ran
+  it on the reconciled, digest-pinned B0 population.
+- Fit only 5,095 development games from 2000-2019. The fitted corrections were
+  +2.570805 home-margin points and +0.032159 total points.
+- Kept the fit population independent of closing-line availability by using
+  explicit-final scoring outcomes rather than the market-control subset.
+- Margin MAE improved by only 0.057833 points on validation and 0.038350 on
+  the 816-game holdout. The held paired bootstrap interval crossed zero.
+- Total MAE worsened slightly on both validation and held-out data.
+- C1 is explicitly rejected for promotion. No correction is activated in a
+  selector, probability model, prospective capture, grader, or public path.
+
+Next: use B0 as the unchanged control and reconcile the existing strictly
+prior opportunity/context feature stack (#106-#109 and #113) before defining
+the next challenger.
+
+Alligator
+
+## 2026-09-14 — NFL passing-yards negative challenger result
+
+- Added a digest-pinned rolling-origin comparison of frozen B0 against two predeclared passing-role challengers on the fully audited 1999–2025 weekly corpus. The script reproduces the active 2024/2025 B0 populations and MAEs exactly before accepting research output.
+- Both challengers lost to B0 in development, 2020–2022 validation, and 2023–2025 held data. On 1,862 paired held rows, passing-role last-five was +2.0202 MAE yards worse and attempts-3 × YPA-8 was +1.6421 worse. Player-cluster 95% bootstrap intervals were entirely above zero.
+- Recorded both as `REJECTED_RESEARCH_CHALLENGER`. The result argues against more tuning of the same rolling box-score window and prioritizes point-in-time starter/role, plays, pass rate, opponent, weather, injury, and market features.
+- Added two synthetic contracts for prior-only challenger behavior and common-population comparison. No model, selector, probability, grader, workflow, public surface, or production setting changed.
+
+Alligator
+
+## 2026-09-18 — Seal generalized NFL player-prop boards before grading
+
+- Added a deterministic SHA-256 seal over the complete research board wrapper,
+  including event identity, coverage, fixed candidate populations, provenance,
+  and roster digest.
+- The full-board grader now verifies that seal, exact population counts,
+  candidate event identity, and capture <= seal < kickoff chronology before
+  grading any outcome. Missing seals, post-seal mutation, population drift, and
+  late seals fail closed.
+- The manual research capture emits the seal for future artifacts. The
+  lower-level candidate-list grader remains available for internal settlement
+  logic, including the already preserved 2026-09-17 artifact.
+- Sixty-four focused generalized normalizer/outcome/grader tests pass. No
+  selector, official pick, publication, deployment, model promotion, or grading
+  activation was added.
+
+Next: require exact-head CI on the integrity-port PR, merge the port if green
+under Jacob's authorized #97 disposition, then close superseded PR #97.
+
+Alligator

@@ -80,6 +80,7 @@ jobs:
               MARKET_POSITION_GROUPS,
               bind_player_prop_candidate,
           )
+          from nfl.research.grade_player_prop_board import seal_player_prop_board
 
           TARGET_EVENT_ID = str(os.environ["TARGET_EVENT_ID"]).strip()
           if not TARGET_EVENT_ID:
@@ -305,6 +306,7 @@ jobs:
                   "roster_sha256": roster_sha,
               },
           }
+          board = seal_player_prop_board(board)
 
           path = EVIDENCE_ROOT / "nfl-live-player-prop-board.json"
           with path.open("w", encoding="utf-8") as f:
