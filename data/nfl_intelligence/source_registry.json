@@ -207,20 +207,23 @@
     },
     {
       "source_id": "COACH_PLAYCALLER_HISTORY",
-      "status": "DISCOVERY",
+      "status": "PARTIAL",
       "intended_use": [
         "coach_regime",
         "coordinator_regime",
         "playcaller_regime"
       ],
-      "historical_coverage_claim": "none warehoused",
-      "current_season_policy": "create dated responsibility intervals with citations/confidence",
-      "point_in_time_class": "PIT_REQUIRES_DATED_INTERVALS",
+      "historical_coverage_claim": "Can be constructed from PFR team-season HC/OC/DC/scheme scaffold plus dated contemporaneous playcaller override evidence. Exact exhaustive historical playcaller intervals remain incomplete.",
+      "current_season_policy": "maintain separate role intervals for HC/OC/DC and actual offensive/defensive playcaller; update only from timestamped evidence",
+      "point_in_time_class": "COMPOSITE_REGIME_WITH_DATED_OVERRIDES",
       "repo_evidence": [
-        "engineering/TOTAL_SPORTS_INTELLIGENCE_ROADMAP_2026-09-12.md"
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_4_2026-09-18.md"
       ],
       "restrictions": [
-        "title does not always equal playcalling responsibility"
+        "title != playcaller",
+        "midseason changes need effective date",
+        "shared responsibilities allowed",
+        "unknown responsibility must remain UNKNOWN"
       ]
     },
     {
@@ -585,6 +588,48 @@
         "not raw tracking coordinates",
         "charting arrives after games and is only prior-history for future targets",
         "coverage/schema must be audited season by season before modeling"
+      ]
+    },
+    {
+      "source_id": "PFR_TEAM_SEASON_COACHING",
+      "status": "PARTIAL",
+      "intended_use": [
+        "head_coach_history",
+        "offensive_coordinator_history",
+        "defensive_coordinator_history",
+        "scheme_labels",
+        "defensive_alignment"
+      ],
+      "historical_coverage_claim": "Pro-Football-Reference team-season pages expose head coach, OC, DC, notable assistants, offensive scheme and defensive alignment for historical seasons. Systematic season/team crawl depth has not yet been repo-audited.",
+      "current_season_policy": "use as broad team-season regime scaffold; snapshot source page and effective season; do not infer playcaller from coordinator title",
+      "point_in_time_class": "SEASON_LEVEL_HISTORICAL_REGIME_SCAFFOLD",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_4_2026-09-18.md"
+      ],
+      "restrictions": [
+        "coordinator title does not imply playcalling responsibility",
+        "midseason changes require dated overrides",
+        "scheme labels are coarse and source-defined"
+      ]
+    },
+    {
+      "source_id": "NFL_OFFICIAL_PLAYCALLER_REPORTING",
+      "status": "PROSPECTIVE_ONLY",
+      "intended_use": [
+        "offensive_playcaller_change",
+        "defensive_playcaller_change",
+        "dated_responsibility_override"
+      ],
+      "historical_coverage_claim": "NFL.com/team reporting can explicitly document playcalling responsibility changes; no exhaustive historical archive has yet been reconstructed.",
+      "current_season_policy": "capture explicit dated statements about who calls plays; preserve publication time, effective date, source reference and confidence",
+      "point_in_time_class": "DATED_CONTEMPORANEOUS_RESPONSIBILITY_EVIDENCE",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_4_2026-09-18.md"
+      ],
+      "restrictions": [
+        "absence of report is not proof of playcaller",
+        "HC/OC titles alone cannot fill missing responsibility",
+        "shared or partial playcalling must be representable"
       ]
     }
   ]
