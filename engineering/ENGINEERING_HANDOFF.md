@@ -2175,3 +2175,67 @@ Next: require exact-head CI on the integrity-port PR, merge the port if green
 under Jacob's authorized #97 disposition, then close superseded PR #97.
 
 Alligator
+
+## 2026-09-18 — Freeze the full-board MLB candidate universe at generation time
+
+- Workstream `MLB-BOARD-FREEZE-INSTRUMENTATION-20260918` (Issue #91 claim,
+  comment `5732775823`), branch `claude/mlb-board-freeze-20260918`, PR #132.
+- Direct follow-up to the same-day selector/argmax diagnosis and
+  `hits_runs_rbis` mechanism trace (see the entry immediately above this one
+  on the `claude/hits-runs-rbis-mechanism-20260918` branch / PR #131): both
+  investigations converged on one missing artifact -- `results/grades_*.json`'s
+  `picks` field is regenerated at grading time, not preserved from generation
+  time, so every past calibration evaluation measured the wrong population.
+  This entry documents the fix for that gap, kept in its own PR per direct
+  instruction not to mix it with #131's documentation-only content.
+- New module `board_freeze.py` captures the complete candidate universe --
+  kept, QC-rejected, and lineup-assumed-holdout -- at the exact generation/
+  selection boundary inside `generate_picks.py`'s `main()`, immediately after
+  `_rec_metadata`/`top10`/`ranked` are finalized and before `write_json`'s
+  mutable output. Read-only: every field is copied from an already-computed
+  value (score, hit_probability, calibration, market price, recommendation
+  status); no new scoring, probability, calibration, ranking, or eligibility
+  decision is introduced anywhere in this module.
+- Identity reuses `dashboard/live_state.py`'s proven v2 `canonical_prop_id`
+  scheme verbatim rather than inventing a second scheme for the same
+  candidates. Selection-surface membership (top pick / category board /
+  moonshot / shadow) is matched by that content identity, not Python object
+  identity, because `by_category`/`moonshots`/`deep_moonshots`/
+  `shadow_tracking` are built as fresh copied dicts with no shared identity
+  to the base candidate pool (see `generate_picks.main()`'s own comment on
+  this).
+- Sealed with a SHA-256 over canonical JSON, matching
+  `nfl/prospective/game_market_snapshot.py`'s `seal_game_market_snapshot` and
+  `nfl/prospective/shadow_snapshot.py`'s `seal_snapshot` discipline. Fails
+  closed (raises, writes nothing) on: a missing required replay field, a
+  duplicate candidate identity, missing provenance, or a seal attempted at or
+  after the slate's earliest first pitch. Verification rebuilds the board
+  byte-for-byte from its own stored content rather than trusting a stored
+  hash.
+- Wired into `generate_picks.py`'s `main()` inside a non-fatal try/except,
+  matching the existing pattern for `render_board`/`parlay_builder`/
+  `render_full_board` -- a freeze failure warns and skips the artifact, never
+  blocks the night's actual picks from shipping.
+- Twelve tests in `test_board_freeze.py` prove the acceptance criteria set in
+  the Issue #91 claim: a real Top Pick decision can be replayed from the
+  frozen board; selected and non-selected candidates stay distinguishable
+  with explicit rejection reasons per bucket (QC-rejected, lineup-assumed
+  holdout, positive-read-floor reject); a postgame-timed seal and a tampered
+  record are both rejected; duplicate identity and missing provenance fail
+  closed; `final_rank` matches the real `rank_for_board` ordering so the
+  artifact supports rank/argmax calibration analysis. Full existing root test
+  suite (excluding the unrelated browser e2e UI test) passes unchanged.
+- Explicitly NOT done here: no historical backfill of past dates (the freeze
+  only covers runs from this change forward -- there is no way to
+  retroactively reconstruct a full candidate pool for a past slate that was
+  never captured), no model/calibrator/selector change, no duplication of
+  Codex's independent calibration check
+  (`MLB-TOP-PICK-CALIBRATION-INDEPENDENT-CHECK-20260918`).
+- Next: once merged, accumulate a few nights of real frozen boards, then
+  actually run the rank/argmax calibration analysis this artifact was built
+  to enable -- compare calibration measured on the full frozen pool against
+  calibration measured on the argmax-selected/published subset, the direct
+  test of the winner's-curse hypothesis that PR #131 could not run for lack
+  of this data.
+
+Alligator
