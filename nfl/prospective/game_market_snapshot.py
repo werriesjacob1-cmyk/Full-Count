@@ -140,3 +140,21 @@ def seal_game_market_snapshot(
         "public_eligible": False,
     }
     return {**body, "snapshot_sha256": _canonical_hash(body)}
+
+
+def verify_game_market_snapshot(snapshot: Mapping[str, Any]) -> str:
+    """Rebuild a sealed snapshot and require byte-semantic equality."""
+    if not isinstance(snapshot, Mapping):
+        raise GameMarketSnapshotError("snapshot must be a mapping")
+    expected = _sha256_hex(snapshot.get("snapshot_sha256"), "snapshot_sha256")
+    rebuilt = seal_game_market_snapshot(
+        snapshot.get("records"),
+        snapshot.get("failures"),
+        event_id=snapshot.get("event_id"),
+        sealed_at=snapshot.get("sealed_at"),
+    )
+    if rebuilt["snapshot_sha256"] != expected:
+        raise GameMarketSnapshotError("snapshot hash mismatch")
+    if dict(snapshot) != rebuilt:
+        raise GameMarketSnapshotError("snapshot content does not match canonical seal")
+    return expected
