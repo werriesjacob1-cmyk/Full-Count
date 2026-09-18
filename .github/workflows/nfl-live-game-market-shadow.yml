@@ -92,8 +92,9 @@ jobs:
               'target_local_date': data['target_local_date'],
               'discovered': discovered,
               'accounted': accounted,
-              'board_built': sum(e['status'] == 'BOARD_BUILT' for e in data['events']),
-              'no_play': sum(e['status'] == 'NO_PLAY' for e in data['events']),
+              'event_board_built': sum(e['status'] == 'BOARD_BUILT' for e in data['events']),
+              'event_no_play': sum(e['status'] == 'NO_PLAY' for e in data['events']),
+              'market_decision_counts': data['market_decision_counts'],
               'manifest_sha256': data['manifest_sha256'],
           })
           PY
