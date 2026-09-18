@@ -225,7 +225,7 @@
     },
     {
       "source_id": "WEATHER",
-      "status": "DISCOVERY",
+      "status": "PARTIAL",
       "intended_use": [
         "wind",
         "gust",
@@ -233,12 +233,17 @@
         "temperature",
         "humidity"
       ],
-      "historical_coverage_claim": "not audited",
-      "current_season_policy": "preserve forecast observation time and game-location binding",
-      "point_in_time_class": "PREGAME_FORECAST_VINTAGE_REQUIRED",
-      "repo_evidence": [],
+      "historical_coverage_claim": "Leakage-safe archived forecast data is available through Open-Meteo products for recent seasons; long-horizon historical weather/reanalysis is available much deeper but is not equivalent to a pregame forecast.",
+      "current_season_policy": "capture exact forecast run/lead time before kickoff and retain model, run initialization, observation time, stadium coordinates and raw digest",
+      "point_in_time_class": "PREGAME_FORECAST_RUN_REQUIRED__OBSERVED_OR_REANALYSIS_EVALUATION_ONLY",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_2026-09-18.md",
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_2_2026-09-18.md"
+      ],
       "restrictions": [
-        "do not substitute observed postgame weather for pregame forecast in historical prediction tests"
+        "do not use postgame observed weather as if it were a pregame forecast",
+        "roof status must be modeled separately",
+        "forecast model/version and lead time matter"
       ]
     },
     {
@@ -504,6 +509,48 @@
       "restrictions": [
         "status field semantics require audit by era",
         "do not substitute season-level roster for weekly state"
+      ]
+    },
+    {
+      "source_id": "NFL_COM_OFFICIAL_INJURY_REPORT",
+      "status": "PROSPECTIVE_ONLY",
+      "intended_use": [
+        "practice_participation",
+        "injury_designation",
+        "game_status",
+        "current_week_availability"
+      ],
+      "historical_coverage_claim": "NFL.com exposes official current weekly injury reports; systematic historical archive depth has not yet been verified.",
+      "current_season_policy": "capture official NFL injury report repeatedly during the week with observed_at/source digest; preserve DNP/limited/full and game-status progression rather than only latest state",
+      "point_in_time_class": "PREGAME_PROSPECTIVE_OFFICIAL_REPORT",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_2_2026-09-18.md"
+      ],
+      "restrictions": [
+        "do not overwrite earlier practice states",
+        "game status and practice status are distinct",
+        "official inactive list remains separate and later"
+      ]
+    },
+    {
+      "source_id": "OPEN_METEO_FORECAST_ARCHIVE",
+      "status": "PARTIAL",
+      "intended_use": [
+        "historical_pregame_weather",
+        "prospective_weather",
+        "forecast_lead_time_research"
+      ],
+      "historical_coverage_claim": "Open-Meteo Historical Forecast coverage begins around 2021-2022; Previous Runs provides fixed 1-7 day lead-time archives mostly from Jan 2024 (some model fields deeper); Single Runs preserves exact run initialization, with ECMWF IFS HRES from Mar 2024 and most other models from Apr 2026.",
+      "current_season_policy": "for each game capture exact run initialization and lead time at defined clocks; preserve weather model/provider, stadium coordinates, valid time and raw response digest",
+      "point_in_time_class": "TRUE_ARCHIVED_FORECAST_RUNS_FOR_SUPPORTED_PERIODS",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_2_2026-09-18.md"
+      ],
+      "restrictions": [
+        "Historical Forecast stitched series is not identical to one exact forecast run",
+        "model versions change across years",
+        "older ERA5/reanalysis is outcome-context research, not a pregame forecast",
+        "roof status must gate outdoor weather exposure"
       ]
     }
   ]
