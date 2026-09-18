@@ -480,6 +480,82 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 30.2,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Pittsburgh Pirates",
+          "game_pk": 823331,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 6.5714,
+            "l7_avg_ev": 7.5,
+            "l7_barrel_pct": 87.8571,
+            "park_hr_index": 37.2,
+            "season_barrel_pct": 0.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -1.08,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 46.3636,
+            "woba_behind": 27.2727,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.264,
+            "vs_rp_ops": 0.132,
+            "ump_k_pct": 0.048,
+            "ump_bb_pct": -0.264
+          },
+          "hit_probability": 0.6682,
+          "raw_hit_probability": 0.6529,
+          "lift": 0.1077,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 49.5,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Pittsburgh Pirates",
+          "game_pk": 823331,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -4.62,
+            "sprint_speed": 43.75,
+            "catcher_poptime": 0.0,
+            "on_base": 71.2092
+          },
+          "hit_probability": 0.1727,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

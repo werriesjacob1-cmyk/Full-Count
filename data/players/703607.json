@@ -4472,6 +4472,135 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 58.2,
+          "notable_signals": 1,
+          "matchup": "Athletics @ Cleveland Guardians",
+          "game_pk": 824383,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 12.0,
+            "l7_avg_ev": 39.0909,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.3,
+            "season_barrel_pct": 34.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 15.1515,
+            "platoon_barrel_pct": -1.28,
+            "platoon_xwoba": -0.6,
+            "park_hand_index": 0.01,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "woba_behind": 59.0909,
+            "pull_park_synergy": 0.0009,
+            "hard_hit_105_rate": 0.1925,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.208,
+            "vs_rp_ops": -0.6,
+            "ump_k_pct": 0.132,
+            "ump_bb_pct": 0.252
+          },
+          "hit_probability": 0.6404,
+          "raw_hit_probability": 0.6313,
+          "lift": 0.0799,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 78.7,
+          "notable_signals": 1,
+          "matchup": "Athletics @ Cleveland Guardians",
+          "game_pk": 824383,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 4.86,
+            "sprint_speed": 100.0,
+            "catcher_poptime": 0.0,
+            "on_base": 76.0077
+          },
+          "hit_probability": 0.1803,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 6.5,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Cleveland Guardians",
+          "game_pk": 824383,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0543
+          },
+          "hit_probability": 0.0543,
+          "raw_hit_probability": null,
+          "lift": 0.0066,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.6,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Cleveland Guardians",
+          "game_pk": 824383,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0189
+          },
+          "hit_probability": 0.0189,
+          "raw_hit_probability": null,
+          "lift": -0.0018,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
