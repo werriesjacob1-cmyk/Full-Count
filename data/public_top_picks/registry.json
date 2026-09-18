@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-17T22:17:13.298216+00:00",
+  "updated_at": "2026-09-18T01:13:44.015829+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -36469,6 +36469,99 @@
         "qualification_timestamp": "2026-09-17T22:10:34.440801+00:00",
         "board_timestamp": "2026-09-17T22:10:34.427697+00:00",
         "slate_date": "2026-09-17"
+      }
+    },
+    "fc2:823252:player-663969:strikeouts:4:over": {
+      "canonical_id": "fc2:823252:player-663969:strikeouts:4:over",
+      "settlement_identity": [
+        "823252",
+        [
+          "player",
+          "663969"
+        ],
+        "strikeouts",
+        "4",
+        "over"
+      ],
+      "slate_date": "2026-09-18",
+      "first_published_at": "2026-09-18T01:13:44.015829+00:00",
+      "publication_provenance": {
+        "artifact_id": "98693f02ff1f27b7b780fc6e8f7b6c126c37e14a9df6db6844c664e0f37e7236",
+        "source_commit": "33bde6dd53d75ca79b77b428b14dfe3473e639e2",
+        "workflow_run_id": "35294280099",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-18T01:13:31.367666+00:00",
+        "data_hash": "da96841937cb91cd77af28da866a239d6e7c445dc8d89af16050e2651e19aebf",
+        "live_hash": "0288d4fa42f6e14c25fc0e7e3aa52fbf56ca3de13e7e584e38af5f6d1e5ee8c7"
+      },
+      "snapshot": {
+        "id": "fc2:823252:player-663969:strikeouts:4:over",
+        "identity_version": 2,
+        "game_pk": 823252,
+        "player_id": 663969,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Tyler Phillips",
+        "team": "Miami Marlins",
+        "matchup": "Miami Marlins @ San Diego Padres",
+        "game_start": "2026-09-19T01:40:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 3.5,
+          "needs": 4
+        },
+        "prop": "Over 3.5 Strikeouts",
+        "hit_probability": 0.607,
+        "market_odds": 104,
+        "market_implied": 0.4628,
+        "market_edge": 0.1442,
+        "market_hold": 0.0592,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (15.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Opposing team K% 21.5",
+          "Expected workload 20.9 batters faced (his own 18.0/start over 2 real starts, shrunk toward the 23.1 league mean)",
+          "Platoon advantage: 6 of 9 projected hitters bat right-handed against this RHP",
+          "Maintains K rate through the order (TTO1 9.1% -> TTO3 23.5%)"
+        ],
+        "watchouts": [
+          "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average",
+          "L14 K% 16.7 (36 PA) \u2014 cold recent form",
+          "Recency-weighted K rate 20.1% (exp. decay, halflife 30d, 18 real starts / 345 BF) \u2014 drives a below-average strikeout-probability read"
+        ],
+        "prob_ci": [
+          0.586,
+          0.7062
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 18,
+        "lineup_assumed": null,
+        "base_rate": 0.6993,
+        "lift": -0.0923,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "116a6a7f6",
+          "prediction_timestamp": "2026-09-18T01:06:02.396048+00:00",
+          "odds_fetched_at": "2026-09-18T01:05:57.963992+00:00",
+          "board_generated_at": "2026-09-18T01:06:02.385555+00:00"
+        },
+        "qualification_timestamp": "2026-09-18T01:06:02.396048+00:00",
+        "board_timestamp": "2026-09-18T01:06:02.385555+00:00",
+        "slate_date": "2026-09-18"
       }
     }
   }
