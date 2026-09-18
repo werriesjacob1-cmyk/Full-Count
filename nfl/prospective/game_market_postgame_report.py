@@ -319,7 +319,8 @@ def build_slate_postgame_report(
         bucket["wagers"] += 1
         bucket["stake_units"] += row["stake_units"]
         bucket["profit_units"] += row["profit_units"]
-        bucket[row["settlement"].lower() + "es" if row["settlement"] == "PUSH" else row["settlement"].lower() + "s"] += 1
+        settlement_bucket = {"HIT": "hits", "MISS": "misses", "PUSH": "pushes"}[row["settlement"]]
+        bucket[settlement_bucket] += 1
 
     for bucket in by_market.values():
         stake = bucket["stake_units"]
