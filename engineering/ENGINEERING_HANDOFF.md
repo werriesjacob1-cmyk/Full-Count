@@ -1905,3 +1905,50 @@ Information Claude should know when resuming: the History page's backend
 tested; only post-merge observation of the real workflow run remains. The
 `pitcher_outs` accuracy finding is real and unresolved -- it should stay
 visible to Jacob as ongoing work, not be treated as closed by this PR.
+
+## 2026-09-15 — nflverse game-line source contract audit
+
+- Added a reproducible, dependency-free audit for pinned `games.csv`,
+  `closing_lines.csv`, and `initial_lines.csv` bytes from
+  `nflverse/nfldata@8ed09b2fe3ea42332b2249a995737e13dd931ff3`.
+- Classified the broad line source as `NFLVERSE_SCHEDULE_UNKNOWN_BOOK` because
+  it supplies neither sportsbook identity nor line-capture timestamps. It may
+  support a generic historical outcome/line baseline, but it must not be used
+  as FanDuel history, book-specific CLV, or precise open-to-close evidence.
+- Audited 7,548 schedule games across 1999–2026, including 7,292 settled rows.
+  Every settled row has spread and total lines; 5,311 have two spread prices
+  and 5,308 have two total prices. No duplicate game IDs or score/result
+  inconsistencies were found.
+- Audited 20,490 legacy closing-line rows for 3,415 games from 2006–2018. All
+  two-runner spread and total pairs are coherent, but only 8,850 rows carry
+  odds and the source has no sportsbook or timestamp fields.
+- Audited 1,088 2021 WSGT initial-line rows. The file contains spread and total
+  thresholds without prices or timestamps, so it is a narrow reference rather
+  than a broad opening-price substrate.
+- Compared the nearest nflverse revisions around the sealed DEN–KC capture.
+  nflverse held 42.5 at -110/-110 while sealed FanDuel was 43.5 at -102/-120;
+  the spread prices also differed. This is direct evidence against silently
+  substituting the generic source for captured FanDuel quotes.
+- Raw CSVs remain outside Git. No ingestion, model, selector, prospective
+  capture, grader, workflow, public surface, or production path was activated.
+
+Next: build a source-labeled normalized historical game table, then run a
+chronological leakage audit and market-only baseline experiment before any
+spread/total challenger is eligible for prospective shadow capture.
+
+Alligator
+
+
+## 2026-09-17 — Historical line provenance correction
+
+- Reconciled the game-line audit with nflreadr's primary schedule dictionary,
+  which identifies `spread_line` and `total_line` as closing lines sourced from
+  Pro-Football-Reference.
+- Replaced the overly broad unknown-book label with
+  `NFLVERSE_PFR_CLOSING`. The underlying sportsbook and capture timestamp are
+  still unavailable.
+- The source is now explicitly restricted to
+  `RETROSPECTIVE_BENCHMARK_CONTROL_ONLY`; it is never a point-in-time model
+  feature, FanDuel history, book-specific CLV source, or line-movement source.
+
+Alligator

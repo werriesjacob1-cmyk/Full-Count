@@ -29,6 +29,8 @@ The repository contains temporal transformation code, not a committed NFL wareho
 
 A full-file audit completed on 2026-09-14 after the bounded source check. All 27 weekly player-stat assets from 1999 through 2025 were cached outside Git, SHA-256 digested, and streamed through row-level contract checks: 210,443,404 bytes and 476,159 rows with no duplicate player-season-week-type keys, required-column gaps, numeric blanks, numeric parse failures, or cross-file season mismatches. The audit also found 523 blank-ID structural zeros, 42 literal-`0` structural IDs in 1999–2000, seven nonzero rows without stable identity, and smaller name/position/team/opponent gaps. None of this data has been normalized or incorporated into a model. See `engineering/NFLVERSE_WEEKLY_STATS_FULL_AUDIT_2026-09-14.md`.
 
+A separate full-file game-line audit on 2026-09-15 verified 7,548 schedule rows from 1999 through 2026, including 7,292 settled games with spread and total lines. nflreadr identifies these as Pro-Football-Reference closing lines; the file has no underlying sportsbook identity or line-capture timestamp. It is classified `NFLVERSE_PFR_CLOSING`: eligible only as a retrospective closing-market control, and ineligible as a point-in-time feature, FanDuel-specific calibration source, book-specific closing-line-value source, or line-movement source. See `engineering/NFLVERSE_GAME_LINES_SOURCE_AUDIT_2026-09-15.md`.
+
 ## C. Exact NFL seasons currently used
 
 | Use | Seasons |
@@ -81,9 +83,9 @@ Passing-yard alternates and every other player family are discovery-only. There 
 | Market | Feed observed | Normalized | Historical dataset | Model | Prospective capture | Grader |
 | --- | --- | --- | --- | --- | --- | --- |
 | Moneyline | Yes | No | No | No | No | No |
-| Full-game spread | Yes | Yes | No | No | No | No |
+| Full-game spread | Yes | Yes | PFR closing control audited; retrospective only | No | No | No |
 | Alternate spread | Yes | No | No | No | No | No |
-| Full-game total | Yes | Yes | No | No | No | No |
+| Full-game total | Yes | Yes | PFR closing control audited; retrospective only | No | No | No |
 | Alternate total | Yes | No | No | No | No | No |
 | Team totals/alternates | Yes | No | No | No | No | No |
 | First-half winner/spread/total | Yes | No | No | No | No | No |
