@@ -158,15 +158,19 @@ class AdapterReconstructionTests(unittest.TestCase):
         self.assertEqual(pick["combo_player_ids"], [5004, 5005])
         self.assertTrue(all(isinstance(pid, int) for pid in pick["combo_player_ids"]))
 
-    def test_real_projection_schema_never_carries_a_line_key_so_frozen_line_is_none(self):
-        """Documents the real-schema gap found while building this adapter:
-        board_freeze.py reads projection.get("line"), but every score_*()
-        function in generate_picks.py sets "value", never "line" -- so a
-        real frozen record's own `line` field is expected to be None, and
-        this adapter must not (and does not) depend on it."""
+    def test_real_projection_schema_populates_frozen_line_from_value_not_a_missing_line_key(self):
+        """Regression test for the real-schema gap found while building this
+        adapter and fixed in PR #139: board_freeze.py used to read
+        projection.get("line"), but every score_*() function in
+        generate_picks.py sets "value", never "line" -- so a real frozen
+        record's own `line` field used to be None. Now that
+        build_candidate_snapshot() reads projection.get("value"), the frozen
+        `line` field carries the real value. The adapter never depended on
+        this field either way (it reconstructs projection.value from needs
+        independently), which this test also confirms."""
         frozen = _freeze_one(_candidate(5001, stat="hits", needs=2, prop="Over 1.5 Hits"))
         record = _by_stat(frozen, "hits")
-        self.assertIsNone(record["line"])
+        self.assertEqual(record["line"], 1.5)
         pick, reason = bfg._to_gradeable_pick(record)
         self.assertIsNone(reason)
         self.assertEqual(pick["projection"]["value"], 1.5)  # derived from needs, not `line`
