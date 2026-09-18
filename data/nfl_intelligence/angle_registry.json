@@ -1,0 +1,2482 @@
+{
+  "schema_version": 1,
+  "sport": "NFL",
+  "purpose": "Permanent exhaustive intelligence angle registry. Explore broadly; promote narrowly.",
+  "statuses": {
+    "GREEN": "validated incremental signal",
+    "YELLOW": "active experiment",
+    "BLUE": "source available or plausible; experiment not yet completed",
+    "RED": "tested and rejected",
+    "GRAY": "currently inaccessible, rights/cost blocked, or insufficient coverage"
+  },
+  "multi_year_doctrine": {
+    "required": true,
+    "horizons_to_test": [
+      "last_game",
+      "last_3",
+      "last_5",
+      "last_8",
+      "current_season",
+      "trailing_1_season",
+      "trailing_2_seasons",
+      "trailing_3_plus_seasons",
+      "career_or_regime",
+      "league_or_position_prior"
+    ],
+    "architecture": "long_term_prior + current_regime + current_season + recent_form_deviation",
+    "evaluation": "rolling_origin_walk_forward",
+    "era_normalization_required": true
+  },
+  "angles": [
+    {
+      "angle_id": "QB-OPPORTUNITY",
+      "category": "quarterback",
+      "hypothesis": "QB opportunity is better predicted by dropbacks/attempts than recent passing yards alone",
+      "target_markets": [
+        "passing_yards",
+        "completions",
+        "attempts",
+        "passing_tds"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "weekly_stats",
+        "play_by_play",
+        "coach_regime"
+      ],
+      "multi_year_policy": "career+regime+season+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "QB-PRESSURE-RESPONSE",
+      "category": "quarterback",
+      "hypothesis": "QB efficiency changes predictably under pressure and blitz",
+      "target_markets": [
+        "passing_yards",
+        "passing_tds",
+        "interceptions",
+        "spread",
+        "total"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play",
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "career+regime+season+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "QB-COVERAGE-RESPONSE",
+      "category": "quarterback",
+      "hypothesis": "QB performance differs by man/zone and shell family",
+      "target_markets": [
+        "passing_yards",
+        "completions",
+        "passing_tds",
+        "interceptions"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "career+regime+season",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "QB-SCRAMBLE",
+      "category": "quarterback",
+      "hypothesis": "QB scramble/designed-run tendency changes pass and rush opportunity",
+      "target_markets": [
+        "passing_yards",
+        "rushing_yards",
+        "attempts",
+        "total"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play"
+      ],
+      "multi_year_policy": "career+regime+season+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "QB-CONTINUITY",
+      "category": "quarterback",
+      "hypothesis": "starter continuity and QB changes alter margin and offensive efficiency",
+      "target_markets": [
+        "spread",
+        "total",
+        "passing_yards"
+      ],
+      "status": "YELLOW",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "weekly_stats",
+        "qb_continuity_features"
+      ],
+      "multi_year_policy": "multi-season+current-regime",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "ACTIVE_EXPERIMENT",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "QB-WEATHER",
+      "category": "quarterback",
+      "hypothesis": "wind/precipitation effects vary by QB depth profile and arm style",
+      "target_markets": [
+        "passing_yards",
+        "completions",
+        "total"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "weather",
+        "play_by_play"
+      ],
+      "multi_year_policy": "multi-season player+environment",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "QB-CHEMISTRY",
+      "category": "quarterback",
+      "hypothesis": "QB-receiver continuity affects target efficiency and explosive production",
+      "target_markets": [
+        "passing_yards",
+        "receiving_yards",
+        "receptions"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "weekly_stats",
+        "participation",
+        "rosters"
+      ],
+      "multi_year_policy": "multi-season relationship+current-role",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "WR-ROUTE-OPPORTUNITY",
+      "category": "receiver",
+      "hypothesis": "routes and targets per route predict receiving volume better than recent yards",
+      "target_markets": [
+        "receiving_yards",
+        "receptions"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "participation",
+        "snap_counts",
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "career+regime+season+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "WR-ALIGNMENT",
+      "category": "receiver",
+      "hypothesis": "slot/wide/backfield alignment changes matchup and target expectation",
+      "target_markets": [
+        "receiving_yards",
+        "receptions"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "career+current-regime+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "WR-COVERAGE",
+      "category": "receiver",
+      "hypothesis": "receiver efficiency varies by coverage family and defender leverage",
+      "target_markets": [
+        "receiving_yards",
+        "receptions"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "career+season",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "WR-ROUTE-TREE",
+      "category": "receiver",
+      "hypothesis": "route-family distribution and route-specific efficiency improve receiving projections",
+      "target_markets": [
+        "receiving_yards",
+        "receptions"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "career+regime+season",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "WR-GRAVITY",
+      "category": "receiver",
+      "hypothesis": "double teams/brackets/decoy routes redistribute teammate opportunity",
+      "target_markets": [
+        "receiving_yards",
+        "receptions"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "multi-season+current-regime",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "WR-OPEN-UNTARGETED",
+      "category": "receiver",
+      "hypothesis": "open-but-untargeted rate separates receiver route-winning from QB decisions",
+      "target_markets": [
+        "receiving_yards",
+        "receptions"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "multi-season+current-QB",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "RB-ROLE",
+      "category": "running_back",
+      "hypothesis": "rush share and situational role predict carries and yards",
+      "target_markets": [
+        "rushing_yards",
+        "carries",
+        "receiving_yards"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "weekly_stats",
+        "participation",
+        "play_by_play"
+      ],
+      "multi_year_policy": "career+season+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "RB-RUN-SCHEME",
+      "category": "running_back",
+      "hypothesis": "RB efficiency depends on run concept and opponent front",
+      "target_markets": [
+        "rushing_yards",
+        "carries"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "tracking_or_charting",
+        "play_by_play"
+      ],
+      "multi_year_policy": "multi-season+regime+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "RB-BOX",
+      "category": "running_back",
+      "hypothesis": "box count and defender geometry affect rushing efficiency",
+      "target_markets": [
+        "rushing_yards"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "multi-season+season",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "RB-GOAL-LINE",
+      "category": "running_back",
+      "hypothesis": "inside-5/10 and goal-line role predicts TD and rushing opportunity",
+      "target_markets": [
+        "rushing_yards",
+        "touchdowns"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play",
+        "participation"
+      ],
+      "multi_year_policy": "career+season+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "OL-CONTINUITY",
+      "category": "offensive_line",
+      "hypothesis": "OL continuity affects protection and rushing efficiency",
+      "target_markets": [
+        "spread",
+        "total",
+        "passing_yards",
+        "rushing_yards"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "snap_counts",
+        "ol_continuity_prior"
+      ],
+      "multi_year_policy": "multi-season+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "OL-AVAILABILITY",
+      "category": "offensive_line",
+      "hypothesis": "current starting-five injuries/replacements change pressure and run efficiency",
+      "target_markets": [
+        "spread",
+        "total",
+        "passing_yards",
+        "rushing_yards"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "injuries",
+        "depth_charts",
+        "inactives"
+      ],
+      "multi_year_policy": "current-regime+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "OL-BLOCKING-MATCHUP",
+      "category": "offensive_line",
+      "hypothesis": "pass/run block matchup quality improves pressure and rushing projections",
+      "target_markets": [
+        "spread",
+        "total",
+        "passing_yards",
+        "rushing_yards"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "advanced_blocking",
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "multi-season+current-personnel",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "DEF-PRESSURE",
+      "category": "defense",
+      "hypothesis": "pressure/blitz/simulated-pressure tendencies alter QB efficiency and sacks",
+      "target_markets": [
+        "spread",
+        "total",
+        "passing_yards",
+        "interceptions"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play",
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "coordinator-regime+season+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "DEF-COVERAGE",
+      "category": "defense",
+      "hypothesis": "coverage-family tendencies alter opponent route and passing outcomes",
+      "target_markets": [
+        "spread",
+        "total",
+        "passing_yards",
+        "receiving_yards",
+        "receptions"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "coordinator-regime+season+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "DEF-RUN-FRONT",
+      "category": "defense",
+      "hypothesis": "front structure and run-fit tendencies alter scheme-specific rushing efficiency",
+      "target_markets": [
+        "spread",
+        "total",
+        "rushing_yards"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "coordinator-regime+season",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "COACH-REGIME",
+      "category": "coaching",
+      "hypothesis": "HC/OC/DC/playcaller regime is a structural break for team tendencies",
+      "target_markets": [
+        "spread",
+        "total",
+        "all_player_props"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "coach_history"
+      ],
+      "multi_year_policy": "career+current-regime",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "COACH-PROE",
+      "category": "coaching",
+      "hypothesis": "playcaller pass-over-expectation and neutral pass rate persist enough to improve opportunity models",
+      "target_markets": [
+        "spread",
+        "total",
+        "passing_yards",
+        "receptions",
+        "rushing_yards"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play",
+        "coach_history"
+      ],
+      "multi_year_policy": "career+current-regime+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "COACH-PACE",
+      "category": "coaching",
+      "hypothesis": "playcaller pace/no-huddle tendencies improve play-volume forecasts",
+      "target_markets": [
+        "total",
+        "passing_yards",
+        "receptions",
+        "rushing_yards"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play",
+        "coach_history"
+      ],
+      "multi_year_policy": "career+current-regime+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "COACH-SCORE-RESPONSE",
+      "category": "coaching",
+      "hypothesis": "playcaller behavior conditional on lead/deficit improves game-script projections",
+      "target_markets": [
+        "spread",
+        "total",
+        "passing_yards",
+        "rushing_yards"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play",
+        "coach_history"
+      ],
+      "multi_year_policy": "career+regime",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "COACH-OPENING-SCRIPT",
+      "category": "coaching",
+      "hypothesis": "opening-script tendencies produce predictable early usage deviations",
+      "target_markets": [
+        "first_half",
+        "player_props"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play",
+        "coach_history"
+      ],
+      "multi_year_policy": "current-regime+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "COACH-HALFTIME",
+      "category": "coaching",
+      "hypothesis": "halftime adjustment tendencies persist within coaching regimes",
+      "target_markets": [
+        "second_half",
+        "spread",
+        "total"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play",
+        "coach_history"
+      ],
+      "multi_year_policy": "current-regime+multi-season",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "PERSONNEL-GROUP",
+      "category": "scheme",
+      "hypothesis": "11/12/13/21 and empty personnel predict play family and matchup",
+      "target_markets": [
+        "spread",
+        "total",
+        "player_props"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "regime+season+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "FORMATION",
+      "category": "scheme",
+      "hypothesis": "formation and condensed/bunch/trips alignment alter route/run efficiency",
+      "target_markets": [
+        "spread",
+        "total",
+        "player_props"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "regime+season",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "MOTION",
+      "category": "scheme",
+      "hypothesis": "motion and shifts create measurable target/run efficiency changes",
+      "target_markets": [
+        "spread",
+        "total",
+        "player_props"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "regime+season",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "PRE-SNAP-DISGUISE",
+      "category": "scheme",
+      "hypothesis": "pre/post-snap shell rotation and disguised pressure affect QB outcomes",
+      "target_markets": [
+        "passing_yards",
+        "interceptions",
+        "spread",
+        "total"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "defensive-regime+season",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "GAME-STATE",
+      "category": "game_state",
+      "hypothesis": "team tendencies vary materially by score/down/time state",
+      "target_markets": [
+        "spread",
+        "total",
+        "player_props"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play"
+      ],
+      "multi_year_policy": "multi-season+regime+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "GARBAGE-TIME",
+      "category": "game_state",
+      "hypothesis": "garbage-time usage should be separated from normal-state opportunity",
+      "target_markets": [
+        "passing_yards",
+        "receptions",
+        "rushing_yards"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play"
+      ],
+      "multi_year_policy": "multi-season+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "RED-ZONE",
+      "category": "game_state",
+      "hypothesis": "red-zone and goal-line behavior improves scoring and TD-related forecasts",
+      "target_markets": [
+        "total",
+        "team_total",
+        "touchdowns"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play"
+      ],
+      "multi_year_policy": "multi-season+regime",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "FOURTH-DOWN",
+      "category": "game_state",
+      "hypothesis": "coach fourth-down aggression changes possession and scoring distributions",
+      "target_markets": [
+        "spread",
+        "total"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play",
+        "coach_history"
+      ],
+      "multi_year_policy": "multi-season+regime",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "INJURY-PROGRESSION",
+      "category": "availability",
+      "hypothesis": "DNP/LP/FP progression and injury context improve availability/workload estimates",
+      "target_markets": [
+        "spread",
+        "total",
+        "player_props"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "injuries",
+        "practice_reports"
+      ],
+      "multi_year_policy": "multi-season+current-week",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "OFFICIAL-INACTIVES",
+      "category": "availability",
+      "hypothesis": "official inactive status materially changes player and team projections",
+      "target_markets": [
+        "spread",
+        "total",
+        "player_props"
+      ],
+      "status": "GREEN",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "official_inactives"
+      ],
+      "multi_year_policy": "prospective-current",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "EXISTS_OR_PARTIAL",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "REPLACEMENT-GRAPH",
+      "category": "availability",
+      "hypothesis": "explicit replacement player and redistribution improve injury adjustments",
+      "target_markets": [
+        "spread",
+        "total",
+        "player_props"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "depth_charts",
+        "participation",
+        "rosters",
+        "inactives"
+      ],
+      "multi_year_policy": "multi-season+current-regime",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "WEATHER",
+      "category": "environment",
+      "hypothesis": "wind/gust/precipitation/temp/roof materially affect specific play styles",
+      "target_markets": [
+        "total",
+        "passing_yards",
+        "kicking"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "weather",
+        "stadium"
+      ],
+      "multi_year_policy": "multi-season",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "SURFACE-ALTITUDE",
+      "category": "environment",
+      "hypothesis": "surface, roof, altitude and stadium context affect efficiency/injury/kicking",
+      "target_markets": [
+        "spread",
+        "total",
+        "player_props"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "stadium",
+        "surface"
+      ],
+      "multi_year_policy": "multi-season",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "TRAVEL-CIRCADIAN",
+      "category": "environment",
+      "hypothesis": "travel distance/time zones/rest interact with performance",
+      "target_markets": [
+        "spread",
+        "total"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "schedule",
+        "stadium"
+      ],
+      "multi_year_policy": "multi-season",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "SHORT-REST",
+      "category": "environment",
+      "hypothesis": "rest differential/short week/overtime prior game affects efficiency and availability",
+      "target_markets": [
+        "spread",
+        "total",
+        "player_props"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "schedule",
+        "play_by_play"
+      ],
+      "multi_year_policy": "multi-season",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "OFFICIALS",
+      "category": "officials",
+      "hypothesis": "crew-specific penalty tendencies affect passing environment and drive extension",
+      "target_markets": [
+        "spread",
+        "total",
+        "passing_yards"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "official_assignments",
+        "penalties"
+      ],
+      "multi_year_policy": "multi-season+crew",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "TEAM-PENALTIES",
+      "category": "penalties",
+      "hypothesis": "team-specific penalty tendencies affect drives and explosive-play realization",
+      "target_markets": [
+        "spread",
+        "total"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play",
+        "penalties"
+      ],
+      "multi_year_policy": "multi-season+regime",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "SPECIAL-TEAMS",
+      "category": "special_teams",
+      "hypothesis": "field position, kicker, punter and return quality affect scoring/margin",
+      "target_markets": [
+        "spread",
+        "total"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play",
+        "kicking_stats"
+      ],
+      "multi_year_policy": "multi-season+season",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "TURNOVER-PROCESS",
+      "category": "turnovers",
+      "hypothesis": "expected turnover process is more predictive than realized turnover margin",
+      "target_markets": [
+        "spread",
+        "total"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play",
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "multi-season+regime",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "EXPLOSIVE-PROCESS",
+      "category": "explosives",
+      "hypothesis": "expected explosive-play rate improves tail and total forecasts",
+      "target_markets": [
+        "spread",
+        "total",
+        "passing_yards",
+        "receiving_yards"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play",
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "multi-season+regime",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "DRIVE-EFFICIENCY",
+      "category": "drives",
+      "hypothesis": "EPA/drive, TD/drive, three-and-out and field position improve team scoring models",
+      "target_markets": [
+        "spread",
+        "total",
+        "team_total"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play"
+      ],
+      "multi_year_policy": "multi-season+season+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "MARKET-MOVEMENT",
+      "category": "market",
+      "hypothesis": "properly timestamped market movement contains information not captured by football features",
+      "target_markets": [
+        "spread",
+        "total",
+        "player_props"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "prospective_market_snapshots"
+      ],
+      "multi_year_policy": "prospective-only unless legitimate history",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "CROSS-BOOK",
+      "category": "market",
+      "hypothesis": "cross-book disagreement and lead/lag can identify stale prices",
+      "target_markets": [
+        "spread",
+        "total",
+        "player_props"
+      ],
+      "status": "GRAY",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "multi_book_market"
+      ],
+      "multi_year_policy": "prospective",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "CROSS-MARKET",
+      "category": "market",
+      "hypothesis": "incoherence among game/team/player derivatives can identify mispricing",
+      "target_markets": [
+        "spread",
+        "total",
+        "player_props"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "market_snapshots"
+      ],
+      "multi_year_policy": "prospective+legitimate-history",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "CORRELATION",
+      "category": "portfolio",
+      "hypothesis": "joint outcome correlations improve portfolio/SGP construction after prediction quality",
+      "target_markets": [
+        "portfolio"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "model_distributions",
+        "prospective_results"
+      ],
+      "multi_year_policy": "multi-year+prospective",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "ROOKIE-PRIORS",
+      "category": "priors",
+      "hypothesis": "college/draft/athletic priors improve sparse NFL projections for new players",
+      "target_markets": [
+        "player_props"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "draft",
+        "combine",
+        "college_stats"
+      ],
+      "multi_year_policy": "multi-year cohorts",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "AGE-WORKLOAD",
+      "category": "priors",
+      "hypothesis": "age and accumulated workload change expected efficiency/durability",
+      "target_markets": [
+        "player_props"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "weekly_stats",
+        "injuries"
+      ],
+      "multi_year_policy": "multi-year career",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "TEAM-CONTINUITY",
+      "category": "continuity",
+      "hypothesis": "returning starters and unit continuity improve early-season priors",
+      "target_markets": [
+        "spread",
+        "total"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "rosters",
+        "snap_counts",
+        "coach_history"
+      ],
+      "multi_year_policy": "multi-year",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "SCHEME-FAMILIARITY",
+      "category": "continuity",
+      "hypothesis": "repeated exposure to scheme/coaches may alter matchup efficiency",
+      "target_markets": [
+        "spread",
+        "total",
+        "player_props"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "coach_history",
+        "schedule"
+      ],
+      "multi_year_policy": "multi-year skeptical",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "ADAPTATION-SELF-SCOUT",
+      "category": "coaching",
+      "hypothesis": "teams systematically alter exposed tendencies after bye/midseason self-scout",
+      "target_markets": [
+        "spread",
+        "total",
+        "player_props"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play",
+        "coach_history"
+      ],
+      "multi_year_policy": "multi-year regime",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "WITHIN-GAME-FATIGUE",
+      "category": "fatigue",
+      "hypothesis": "consecutive snaps and rotation depth alter late-drive efficiency",
+      "target_markets": [
+        "live_or_game_markets"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play",
+        "participation"
+      ],
+      "multi_year_policy": "multi-season",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "FIELD-POSITION",
+      "category": "drives",
+      "hypothesis": "drive-start field position and hidden yards improve scoring distributions",
+      "target_markets": [
+        "spread",
+        "total"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "play_by_play",
+        "special_teams"
+      ],
+      "multi_year_policy": "multi-season",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "EXPECTED-TARGET-CATCH-YAC",
+      "category": "tracking",
+      "hypothesis": "expected target/catch/YAC separates opportunity from player skill",
+      "target_markets": [
+        "receiving_yards",
+        "receptions"
+      ],
+      "status": "GRAY",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "all available tracking seasons",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "EXPECTED-PRESSURE-SACK",
+      "category": "tracking",
+      "hypothesis": "expected pressure/sack separates rush, protection and QB behavior",
+      "target_markets": [
+        "passing_yards",
+        "sacks",
+        "spread",
+        "total"
+      ],
+      "status": "GRAY",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "all available tracking seasons",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "EXPECTED-RUSHING",
+      "category": "tracking",
+      "hypothesis": "expected rushing yards and actual-minus-expected improve RB/OL/front evaluation",
+      "target_markets": [
+        "rushing_yards"
+      ],
+      "status": "GRAY",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "tracking_or_charting"
+      ],
+      "multi_year_policy": "all available tracking seasons",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "FILM-STRUCTURED",
+      "category": "film",
+      "hypothesis": "structured film/charting adds residual signal beyond quantitative data",
+      "target_markets": [
+        "spread",
+        "total",
+        "player_props"
+      ],
+      "status": "GRAY",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "licensed_charting"
+      ],
+      "multi_year_policy": "multi-season if rights permit",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "FILM-VISION",
+      "category": "film",
+      "hypothesis": "visual film agent can extract residual tactical signal not captured by structured sources",
+      "target_markets": [
+        "spread",
+        "total",
+        "player_props"
+      ],
+      "status": "GRAY",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "legally_usable_video"
+      ],
+      "multi_year_policy": "future only after structured residual-value proof",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    },
+    {
+      "angle_id": "NARRATIVE",
+      "category": "skeptical",
+      "hypothesis": "narrative factors only matter if independently repeatable after controlling football context",
+      "target_markets": [
+        "spread",
+        "total",
+        "player_props"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "news",
+        "schedule",
+        "contracts"
+      ],
+      "multi_year_policy": "multi-year skeptical",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "NOT_YET_INTEGRATED",
+      "dependencies": [],
+      "owner": null,
+      "active_workstream": null,
+      "last_reviewed": "2026-09-18"
+    }
+  ]
+}
