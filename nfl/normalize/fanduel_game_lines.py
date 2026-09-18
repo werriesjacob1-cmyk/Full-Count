@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Strict normalization for FanDuel NFL primary spread and game-total markets.
+"""Strict normalization for FanDuel NFL primary full-game markets.
 
-This module only interprets the two primary, pregame event markets observed in
-the bounded FanDuel census. Alternate spreads/totals, team totals, period
-markets, models, selections, and grading are outside this contract.
+This module interprets the primary pregame moneyline, spread, and game-total
+markets observed in the bounded FanDuel census. Alternate spreads/totals, team
+totals, period markets, models, selections, and grading are outside this
+contract.
 """
 from __future__ import annotations
 
@@ -13,10 +14,12 @@ from datetime import datetime, timezone
 from typing import Any
 
 
+MONEYLINE_TYPE = "MONEY_LINE"
 SPREAD_TYPE = "MATCH_HANDICAP_(2-WAY)"
 TOTAL_TYPE = "TOTAL_POINTS_(OVER/UNDER)"
-PRIMARY_TYPES = frozenset({SPREAD_TYPE, TOTAL_TYPE})
+PRIMARY_TYPES = frozenset({MONEYLINE_TYPE, SPREAD_TYPE, TOTAL_TYPE})
 PRIMARY_NAMES = {
+    MONEYLINE_TYPE: "Moneyline",
     SPREAD_TYPE: "Spread",
     TOTAL_TYPE: "Total Points",
 }
@@ -194,6 +197,8 @@ def _base_row(
 ) -> dict[str, Any]:
     return {
         "source": "fanduel_nfl",
+        "sportsbook": "FANDUEL",
+        "sport": "NFL",
         "event_id": str(market["eventId"]),
         "event_name": event_name,
         "event_open_date": event.get("openDate"),
@@ -201,6 +206,8 @@ def _base_row(
         "market_name": str(market["marketName"]),
         "market_type": str(market["marketType"]),
         "market_time": market.get("marketTime"),
+        "market_status": "OPEN",
+        "in_play": False,
         "captured_at": captured_at,
         "source_payload_sha256": source_payload_sha256,
         "source_artifact": source_artifact,
@@ -216,7 +223,7 @@ def normalize_payload(
     source_artifact: str | None = None,
     source_url: str | None = None,
 ) -> dict[str, Any]:
-    """Normalize primary NFL event spread and total markets, failing closed."""
+    """Normalize primary NFL full-game markets, failing closed."""
     if not isinstance(payload, Mapping):
         raise ValueError("payload must be a mapping")
     capture_clock = _utc(captured_at)
@@ -294,7 +301,7 @@ def normalize_payload(
             source_artifact=source_name,
             source_url=source_location,
         )
-        if market_type == SPREAD_TYPE:
+        if market_type in {MONEYLINE_TYPE, SPREAD_TYPE}:
             sides, error = _active_sides(
                 market, frozenset({"AWAY", "HOME"})
             )
@@ -311,16 +318,6 @@ def normalize_payload(
             ):
                 _reject(rejections, market, "TEAM_IDENTITY_MISMATCH")
                 continue
-            away_line = _finite_number(away.get("handicap"))
-            home_line = _finite_number(home.get("handicap"))
-            if away_line is None or home_line is None:
-                _reject(rejections, market, "MISSING_LINE")
-                continue
-            if not math.isclose(
-                away_line + home_line, 0.0, rel_tol=0.0, abs_tol=1e-12
-            ):
-                _reject(rejections, market, "SPREAD_NOT_OPPOSING")
-                continue
             away_odds = _american_odds(away)
             home_odds = _american_odds(home)
             if away_odds is None or home_odds is None:
@@ -336,16 +333,31 @@ def normalize_payload(
                 _reject(rejections, market, "INVALID_SELECTION_ID")
                 continue
             row.update({
-                "market": "spread",
+                "market": (
+                    "moneyline" if market_type == MONEYLINE_TYPE else "spread"
+                ),
                 "away_team": away_team,
                 "home_team": home_team,
-                "away_line": away_line,
-                "home_line": home_line,
                 "away_odds": away_odds,
                 "home_odds": home_odds,
                 "away_selection_id": away_selection_id,
                 "home_selection_id": home_selection_id,
             })
+            if market_type == SPREAD_TYPE:
+                away_line = _finite_number(away.get("handicap"))
+                home_line = _finite_number(home.get("handicap"))
+                if away_line is None or home_line is None:
+                    _reject(rejections, market, "MISSING_LINE")
+                    continue
+                if not math.isclose(
+                    away_line + home_line, 0.0, rel_tol=0.0, abs_tol=1e-12
+                ):
+                    _reject(rejections, market, "SPREAD_NOT_OPPOSING")
+                    continue
+                row.update({
+                    "away_line": away_line,
+                    "home_line": home_line,
+                })
         else:
             sides, error = _active_sides(
                 market, frozenset({"OVER", "UNDER"})
@@ -414,11 +426,24 @@ def normalize_payload(
             conflicted_ids.add(market_id)
             _reject(rejections, market, "DUPLICATE_MARKET_CONFLICT")
 
-    candidates.extend(
-        sorted(
-            accepted_by_id.values(),
-            key=lambda row: (row["event_id"], row["market"], row["market_id"]),
-        )
+    by_family: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    for row in accepted_by_id.values():
+        by_family.setdefault((row["event_id"], row["market"]), []).append(row)
+    for (event_id, market_name), rows in sorted(by_family.items()):
+        if len(rows) == 1:
+            candidates.append(rows[0])
+            continue
+        for row in rows:
+            rejections.append({
+                "market_id": row["market_id"],
+                "event_id": event_id,
+                "market_name": row["market_name"],
+                "market_type": row["market_type"],
+                "reason": "DUPLICATE_PRIMARY_MARKET",
+                "detail": market_name,
+            })
+    candidates.sort(
+        key=lambda row: (row["event_id"], row["market"], row["market_id"])
     )
     stats["normalized"] = len(candidates)
     stats["rejected"] = len(rejections)

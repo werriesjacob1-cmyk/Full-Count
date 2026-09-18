@@ -1643,6 +1643,8 @@ Next: run repository CI on the exact pushed head; add multi-event census and MLB
 
 Alligator
 
+
+
 ## 2026-09-14 — Deterministic nflverse quarantine contract
 
 - Added `nfl/research/nflverse_quarantine.py` and eight focused tests. The
@@ -1752,6 +1754,24 @@ Alligator
 
 Next: validate historical schedule/score source contracts and point-in-time
 availability for spread/total market-only baselines before any model research.
+
+Alligator
+
+## 2026-09-17 — Canonical NFL full-game market normalizer consolidated
+
+- Consolidated draft PR #99's moneyline coverage into the stricter #114
+  `fanduel_game_lines` contract instead of retaining a second record schema.
+- Moneyline, spread, and game total now share event identity, exact kickoff,
+  open/pregame state, active-side cardinality, nonzero two-sided prices, and
+  non-empty distinct selection-ID gates.
+- Multiple distinct primary IDs for one event/family fail closed. The registry
+  labels moneyline only `NORMALIZED`; capture, model, selector, grader, and
+  public eligibility remain false.
+- Twenty-one focused tests pass. No selector, promotion, publication, or
+  deployment behavior was added.
+
+Next: restack snapshot, identity, explicit-final outcome, and grading contracts
+on this one canonical record shape and validate one sealed end-to-end fixture.
 
 Alligator
 
