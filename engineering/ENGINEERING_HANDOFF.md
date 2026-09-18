@@ -2176,6 +2176,112 @@ under Jacob's authorized #97 disposition, then close superseded PR #97.
 
 Alligator
 
+## 2026-09-18 — Freeze the full-board MLB candidate universe at generation time
+
+- Workstream `MLB-BOARD-FREEZE-INSTRUMENTATION-20260918` (Issue #91 claim,
+  comment `5732775823`), branch `claude/mlb-board-freeze-20260918`, PR #132.
+- Direct follow-up to the same-day selector/argmax diagnosis and
+  `hits_runs_rbis` mechanism trace (see the entry immediately above this one
+  on the `claude/hits-runs-rbis-mechanism-20260918` branch / PR #131): both
+  investigations converged on one missing artifact -- `results/grades_*.json`'s
+  `picks` field is regenerated at grading time, not preserved from generation
+  time, so every past calibration evaluation measured the wrong population.
+  This entry documents the fix for that gap, kept in its own PR per direct
+  instruction not to mix it with #131's documentation-only content.
+- New module `board_freeze.py` captures the complete candidate universe --
+  kept, QC-rejected, and lineup-assumed-holdout -- at the exact generation/
+  selection boundary inside `generate_picks.py`'s `main()`, immediately after
+  `_rec_metadata`/`top10`/`ranked` are finalized and before `write_json`'s
+  mutable output. Read-only: every field is copied from an already-computed
+  value (score, hit_probability, calibration, market price, recommendation
+  status); no new scoring, probability, calibration, ranking, or eligibility
+  decision is introduced anywhere in this module.
+- Identity reuses `dashboard/live_state.py`'s proven v2 `canonical_prop_id`
+  scheme verbatim rather than inventing a second scheme for the same
+  candidates. Selection-surface membership (top pick / category board /
+  moonshot / shadow) is matched by that content identity, not Python object
+  identity, because `by_category`/`moonshots`/`deep_moonshots`/
+  `shadow_tracking` are built as fresh copied dicts with no shared identity
+  to the base candidate pool (see `generate_picks.main()`'s own comment on
+  this).
+- Sealed with a SHA-256 over canonical JSON, matching
+  `nfl/prospective/game_market_snapshot.py`'s `seal_game_market_snapshot` and
+  `nfl/prospective/shadow_snapshot.py`'s `seal_snapshot` discipline. Fails
+  closed (raises, writes nothing) on: a missing required replay field, a
+  duplicate candidate identity, missing provenance, or a seal attempted at or
+  after the slate's earliest first pitch. Verification rebuilds the board
+  byte-for-byte from its own stored content rather than trusting a stored
+  hash.
+- Wired into `generate_picks.py`'s `main()` inside a non-fatal try/except,
+  matching the existing pattern for `render_board`/`parlay_builder`/
+  `render_full_board` -- a freeze failure warns and skips the artifact, never
+  blocks the night's actual picks from shipping.
+- Twelve tests in `test_board_freeze.py` prove the acceptance criteria set in
+  the Issue #91 claim: a real Top Pick decision can be replayed from the
+  frozen board; selected and non-selected candidates stay distinguishable
+  with explicit rejection reasons per bucket (QC-rejected, lineup-assumed
+  holdout, positive-read-floor reject); a postgame-timed seal and a tampered
+  record are both rejected; duplicate identity and missing provenance fail
+  closed; `final_rank` matches the real `rank_for_board` ordering so the
+  artifact supports rank/argmax calibration analysis. Full existing root test
+  suite (excluding the unrelated browser e2e UI test) passes unchanged.
+- Explicitly NOT done here: no historical backfill of past dates (the freeze
+  only covers runs from this change forward -- there is no way to
+  retroactively reconstruct a full candidate pool for a past slate that was
+  never captured), no model/calibrator/selector change, no duplication of
+  Codex's independent calibration check
+  (`MLB-TOP-PICK-CALIBRATION-INDEPENDENT-CHECK-20260918`).
+- Next: once merged, accumulate a few nights of real frozen boards, then
+  actually run the rank/argmax calibration analysis this artifact was built
+  to enable -- compare calibration measured on the full frozen pool against
+  calibration measured on the argmax-selected/published subset, the direct
+  test of the winner's-curse hypothesis that PR #131 could not run for lack
+  of this data.
+
+Alligator
+
+## 2026-09-18 — NFL QB continuity + starter-availability features (ingestion only)
+
+- Workstream `NFL-DATA-GAP-INJURIES-QB-CONTINUITY-20260918` (Issue #91 claim,
+  comment `5732934991`), PR #133, branch
+  `claude/nfl-injury-qb-continuity-push-20260918`.
+- Two named-hypothesis, strictly-prior feature substrates, built to the exact
+  "do not ingest without a named model hypothesis" constraint: (1)
+  `nfl/research/qb_continuity_features.py` -- incumbent-starter identity and
+  consecutive-start tenure entering a game, inferred from already-ingested
+  nflverse weekly player-stat attempts (no depth-chart "starter" flag exists
+  anywhere in this repo, so this reuses the same max-attempts proxy
+  `passing_yards_baseline_research.py` already relies on); (2)
+  `nfl/research/injury_availability_features.py` -- a pregame `starter_out`
+  flag from nflverse's weekly injury-report release
+  (`injuries_{season}.csv`), verified live this session against the real
+  source (2009+ coverage confirmed present, 2008 confirmed absent, matching
+  `nflreadr::load_injuries()`'s own documented floor).
+- Real finding worth preserving: nflverse's injury-report data (Wed-Fri
+  practice-report status) is NOT the same population as this repo's existing
+  `nfl/normalize/official_inactives.py` system, which captures the literal
+  final inactive list but only forward/live with no bulk historical archive.
+  The two are kept explicitly distinct rather than blurred into one
+  "availability" concept. Scope was also narrowed honestly: "starter-tier"
+  covers QB only for now -- no comparable usage-based starter proxy exists in
+  this repo yet for RB/WR/TE.
+- Both modules split every row into a `features` block (built only from
+  games completed before the target game) and a separate `target` block
+  (that game's own realized facts), with tests proving structurally that
+  `features` never contains current-game information and that appending a
+  future week never changes an already-emitted past row.
+- Ingestion and feature construction only -- explicitly NOT wired into any
+  challenger model, and no correlation/MAE-improvement number was computed
+  against anything yet. That integration is deliberate follow-up work once a
+  challenger evaluation harness exists (see the parallel
+  `NFL-GAME-MARKET-C2-FEATURE-CHALLENGER-20260918` workstream).
+- 26 new tests pass; full existing 38-file `nfl/tests/test_*.py` suite passes
+  unchanged (verified independently after rebasing onto current `main`, not
+  only taken on the delegated subagent's own report).
+- No model, selector, production, or public-pick change.
+
+Alligator
+
 ## 2026-09-18 — NFL C2: first feature-based game-market challenger, REJECTED (real negative result)
 
 - Workstream `NFL-GAME-MARKET-C2-FEATURE-CHALLENGER-20260918` (Issue #91
@@ -2254,11 +2360,14 @@ Alligator
   subagent's own report.
 - No model/selector promotion, no production change, no prospective/shadow
   predictions. C2 remains research-only, exactly like B0/C1.
-- Next: the NFL data-gap features from the parallel
-  `NFL-DATA-GAP-INJURIES-QB-CONTINUITY-20260918` workstream (PR #133) are
-  not yet wired into C2 or any evaluation -- a natural next step once that
-  merges, since C2's stable total-prediction win plus a QB-continuity/
-  availability signal could plausibly help margin, the axis C2 alone did
-  not clear.
+- Next: the NFL data-gap features from
+  `NFL-DATA-GAP-INJURIES-QB-CONTINUITY-20260918` (PR #133, merged) are not
+  yet wired into C2 or any evaluation -- queued as the
+  `NFL-C3-MARGIN-AVAILABILITY-20260918` workstream, since C2's stable
+  total-prediction win plus a QB-continuity/availability signal could
+  plausibly help margin, the axis C2 alone did not clear. A dedicated
+  totals-only challenger (`NFL-GAME-MARKET-C2-TOTALS-ONLY-20260918`) is
+  also queued to test whether the total signal survives independently of
+  the margin failure.
 
 Alligator

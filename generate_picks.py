@@ -4840,6 +4840,12 @@ def main() -> int:
                                         board_generated_at=_board_generated_at)
 
     gated = [c for c in candidates if c["score"] >= MIN_QUALITY_SCORE]
+    # Captured before the positive-read-floor reassignment below can replace
+    # `gated` with a fallback pool -- board_freeze.py needs the ORIGINAL
+    # quality-gate outcome for every candidate, independent of whether the
+    # floor check below ends up falling back to the full pool on a thin
+    # night. See board_freeze.freeze_board's own docstring.
+    _gated_pool_for_freeze = gated
 
     # POSITIVE-READ FLOOR. A pick has to beat the league base rate for its own
     # market before it can be recommended at all -- only then does
@@ -4919,6 +4925,42 @@ def main() -> int:
               recommendation_metadata=_rec_metadata)
     persist_player_snapshots(candidates)
     print(f"Wrote {len(top10)} picks to {PICKS_FILE} and {PICKS_JSON_FILE}")
+
+    # FULL-BOARD FREEZE. Instrumentation only -- see board_freeze.py's own
+    # module docstring for why this exists (PR #131's convergent finding
+    # that no frozen full-board snapshot exists at generation time, so every
+    # past calibration evaluation measured the wrong population). Captures
+    # the complete candidate universe (kept + QC-rejected + lineup-assumed
+    # holdout) computed above, at the exact boundary before write_json wrote
+    # the mutable board/grading-facing artifacts. Sealed before any game on
+    # the slate can start, so no outcome can contaminate it. Never fatal to
+    # the pipeline itself: a freeze failure is a real problem worth seeing,
+    # but it must not block tonight's actual picks from shipping.
+    try:
+        import board_freeze
+        _sealed_at = datetime.now(timezone.utc).isoformat()
+        _game_start_times = {str(gm["game_pk"]): gm["game_start_utc"]
+                             for gm in game_meta if gm.get("game_start_utc")}
+        _frozen_records = board_freeze.freeze_board(
+            date=m.TODAY, board_generated_at=_board_generated_at,
+            candidates=candidates, qc_rejected=_qc_rejected,
+            assumed_lineup=assumed_lineup, gated=_gated_pool_for_freeze,
+            with_read=with_read, no_read=no_read, ranked=ranked, top10=top10,
+            by_category=by_category, moonshots=moonshots,
+            deep_moonshots=deep_moonshots, shadow_tracking=shadow_tracking,
+            provenance=_rec_metadata,
+        )
+        _frozen_board = board_freeze.seal_board(
+            date=m.TODAY, board_generated_at=_board_generated_at,
+            sealed_at=_sealed_at, game_start_times=_game_start_times,
+            records=_frozen_records, provenance=_rec_metadata,
+        )
+        _frozen_path = os.path.join(OUTPUT_DIR, f"board_freeze_{m.TODAY}.json")
+        board_freeze.write_frozen_board(_frozen_board, _frozen_path)
+        print(f"Sealed full-board freeze ({_frozen_board['record_count']} candidates) "
+              f"to {_frozen_path}")
+    except Exception as e:
+        m.warn(f"Full-board freeze failed ({e}) — picks JSON/markdown are unaffected")
 
     # Readable board + a couple of real example parlays, generated every run
     # instead of left as a manual step someone has to remember. Never fatal:
