@@ -2371,3 +2371,66 @@ Alligator
   the margin failure.
 
 Alligator
+
+## 2026-09-18 — MLB board-freeze grader: the frozen full board can now be graded
+
+- Workstream `MLB-BOARD-FREEZE-GRADER-20260918` (Issue #91 claim, comment
+  `5733695642`), branch `claude/mlb-board-freeze-grader-push-20260918`.
+- `board_freeze_grader.py` grades the COMPLETE `board_freeze.py` candidate
+  universe (kept, QC-rejected, lineup-assumed-holdout alike) against real
+  outcomes, not just the tiny published-Top-Pick subset -- the direct
+  prerequisite for the rank/argmax calibration analysis this project has
+  been building toward since PR #131. Verifies the frozen board's own seal
+  first (`board_freeze.verify_board_seal`) and refuses to grade anything if
+  it doesn't check out; reuses `grade_results.grade_pick`/
+  `fetch_game_statuses` unmodified via an adapter, never a new grading
+  rule; writes a separate, additive `output/board_freeze_graded_{date}.json`
+  artifact, never mutating the frozen input.
+- **Real latent bug found in `board_freeze.py` itself, not fixed here (out
+  of this PR's two-new-files scope)**: `build_candidate_snapshot()` reads
+  `projection.get("line")` into the frozen record's `line` field, but every
+  `score_*()` function in `generate_picks.py` sets `projection["value"]`,
+  never `"line"` -- `"line"` only exists on the pre-selection option dicts
+  `_pick_line()`/`_batter_options()` choose between, not the final
+  candidate. A real frozen board's `line` field will therefore be `None`
+  for every candidate produced so far. The grader adapter doesn't depend on
+  it (reconstructs `projection.value` as `needs - 0.5`, the same "Over
+  X.5" convention every scorer already commits to), so grading is
+  unaffected, but `board_freeze.py` should get a follow-up fix to actually
+  populate `line` correctly for anyone reading the raw frozen artifact
+  directly.
+- Other real adapter findings, each verified against `generate_picks.py`'s
+  actual code rather than assumed: candidate `type` (batter/pitcher/
+  pitcher_combo) isn't stored on a frozen record at all and is derived
+  from `stat`, matching `test_grade_results.py`'s own independent rule;
+  `side` needs no reconstruction because `grade_pick`'s own
+  `first_inning_run` branch already derives it from `team`/`matchup` when
+  absent; `lean` (YRFI/NRFI) is safely recoverable from the frozen
+  record's `market_side` field for exactly the two stats that carry it,
+  and grades `ungraded` with an honest reason on any record where it
+  isn't; `first_inning_run` candidates are filtered out of
+  `generate_picks.py`'s own persisted candidate list before a frozen board
+  ever sees them (only feed `nrfi_combined`, which is fully supported) --
+  the adapter still supports the family for robustness, but it is
+  currently unreachable in production; frozen `game_pk`/`player_id`/
+  `combo_player_ids` are JSON-safe strings and are coerced back to native
+  int identity for `grade_results.py`'s box-score/schedule lookups.
+- 23 new tests pass, covering: adapter reconstruction for `hits` (the
+  negative control), `hits_runs_rbis` + `pitcher_outs` (the two markets
+  the original calibration audit found most overconfident), and
+  `combined_strikeouts`; full end-to-end grading against realistic
+  box-score fixtures; tamper/unsealed-board fail-closed rejection;
+  byte-identical immutability of the frozen input before and after
+  grading; join-back by `board_sha256` and `candidate_id` across all three
+  eligibility buckets in one board; the unrecoverable-lean `ungraded`
+  case. Full existing root `test_*.py` suite (excluding the unrelated
+  browser e2e test) passes unchanged -- verified independently by me after
+  rebasing onto current `main`, not only taken on the delegated
+  subagent's own report. `board_freeze.py`, `test_board_freeze.py`, and
+  `grade_results.py` are all untouched.
+- No model, selector, calibration, or production change anywhere.
+- Next: once a few real slates accumulate frozen + graded boards, run the
+  actual rank/argmax calibration analysis this and PR #132 together were
+  built to enable, plus fix the `projection.line` gap noted above.
+
+Alligator
