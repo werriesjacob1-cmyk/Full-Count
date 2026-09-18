@@ -1775,6 +1775,27 @@ on this one canonical record shape and validate one sealed end-to-end fixture.
 
 Alligator
 
+## 2026-09-17 — Canonical NFL game-market evidence chain completed
+
+- Restacked the research-only snapshot, nflverse identity binding, explicit
+  ESPN final-outcome adapter, and settlement grader on the canonical
+  moneyline/spread/game-total record.
+- Identity binding now re-creates and verifies the deterministic snapshot seal
+  before trusting team, kickoff, source, or market fields. Post-seal mutation
+  fails closed.
+- A single integration contract exercises FanDuel normalization, deterministic
+  sealing, exact nflverse team/kickoff binding, explicit ESPN finality, and
+  spread settlement. The combined focused suite passes 76 tests.
+- This establishes evidence and grading plumbing only. It adds no selector,
+  model promotion, official pick, public publication, deployment, or grading
+  activation.
+
+Next: require exact-head CI for every restacked branch before the authorized
+merge sequence, then preserve the rejected C1 challenger as a labeled negative
+result.
+
+Alligator
+
 ## 2026-09-17 — MLB dashboard: past-picks History page
 
 Agent: Claude
