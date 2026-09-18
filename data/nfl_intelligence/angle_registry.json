@@ -920,6 +920,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
+        "PFR_TEAM_SEASON_COACHING",
+        "NFL_OFFICIAL_PLAYCALLER_REPORTING",
         "COACH_PLAYCALLER_HISTORY"
       ],
       "multi_year_policy": "career+current-regime",
@@ -958,9 +960,11 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
+        "PFR_TEAM_SEASON_COACHING",
+        "NFL_OFFICIAL_PLAYCALLER_REPORTING",
+        "COACH_PLAYCALLER_HISTORY",
         "NFLVERSE_FTN_CHARTING",
-        "NFLFASTR_PLAY_BY_PLAY",
-        "COACH_PLAYCALLER_HISTORY"
+        "NFLFASTR_PLAY_BY_PLAY"
       ],
       "multi_year_policy": "career+current-regime+recent",
       "regime_sensitive": true,
@@ -997,9 +1001,11 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
+        "PFR_TEAM_SEASON_COACHING",
+        "NFL_OFFICIAL_PLAYCALLER_REPORTING",
+        "COACH_PLAYCALLER_HISTORY",
         "NFLVERSE_FTN_CHARTING",
-        "NFLFASTR_PLAY_BY_PLAY",
-        "COACH_PLAYCALLER_HISTORY"
+        "NFLFASTR_PLAY_BY_PLAY"
       ],
       "multi_year_policy": "career+current-regime+recent",
       "regime_sensitive": true,
@@ -1036,8 +1042,10 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "NFLFASTR_PLAY_BY_PLAY",
-        "COACH_PLAYCALLER_HISTORY"
+        "PFR_TEAM_SEASON_COACHING",
+        "NFL_OFFICIAL_PLAYCALLER_REPORTING",
+        "COACH_PLAYCALLER_HISTORY",
+        "NFLFASTR_PLAY_BY_PLAY"
       ],
       "multi_year_policy": "career+regime",
       "regime_sensitive": true,
@@ -1072,8 +1080,10 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "NFLFASTR_PLAY_BY_PLAY",
-        "COACH_PLAYCALLER_HISTORY"
+        "PFR_TEAM_SEASON_COACHING",
+        "NFL_OFFICIAL_PLAYCALLER_REPORTING",
+        "COACH_PLAYCALLER_HISTORY",
+        "NFLFASTR_PLAY_BY_PLAY"
       ],
       "multi_year_policy": "current-regime+recent",
       "regime_sensitive": true,
@@ -1109,8 +1119,10 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "NFLFASTR_PLAY_BY_PLAY",
-        "COACH_PLAYCALLER_HISTORY"
+        "PFR_TEAM_SEASON_COACHING",
+        "NFL_OFFICIAL_PLAYCALLER_REPORTING",
+        "COACH_PLAYCALLER_HISTORY",
+        "NFLFASTR_PLAY_BY_PLAY"
       ],
       "multi_year_policy": "current-regime+multi-season",
       "regime_sensitive": true,
@@ -2180,6 +2192,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
+        "PFR_TEAM_SEASON_COACHING",
+        "NFL_OFFICIAL_PLAYCALLER_REPORTING",
         "COACH_PLAYCALLER_HISTORY",
         "NFLVERSE_SCHEDULES_AND_PFR_LINES"
       ],
@@ -2217,8 +2231,10 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "NFLFASTR_PLAY_BY_PLAY",
-        "COACH_PLAYCALLER_HISTORY"
+        "PFR_TEAM_SEASON_COACHING",
+        "NFL_OFFICIAL_PLAYCALLER_REPORTING",
+        "COACH_PLAYCALLER_HISTORY",
+        "NFLFASTR_PLAY_BY_PLAY"
       ],
       "multi_year_policy": "multi-year regime",
       "regime_sensitive": true,
