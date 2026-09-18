@@ -21,8 +21,22 @@ def runner(side, name, line, odds, selection_id):
     }
 
 
-def payload(*, include_spread=True, include_total=True):
+def payload(*, include_moneyline=True, include_spread=True, include_total=True):
     markets = {}
+    if include_moneyline:
+        markets["m"] = {
+            "marketId": "734.moneyline",
+            "eventId": 999,
+            "marketName": "Moneyline",
+            "marketType": "MONEY_LINE",
+            "marketStatus": "OPEN",
+            "inPlay": False,
+            "marketTime": "2026-09-15T00:15:00.000Z",
+            "runners": [
+                runner("AWAY", "Denver Broncos", 0, 116, 11),
+                runner("HOME", "Kansas City Chiefs", 0, -136, 12),
+            ],
+        }
     if include_spread:
         markets["s"] = {
             "marketId": "734.spread",
@@ -66,7 +80,7 @@ def payload(*, include_spread=True, include_total=True):
 
 
 class FanDuelGameLineTests(unittest.TestCase):
-    def test_spread_and_total_normalize_with_provenance(self):
+    def test_primary_game_markets_normalize_with_provenance(self):
         result = fanduel_game_lines.normalize_payload(
             payload(),
             captured_at="2026-09-14T22:57:21-00:00",
@@ -74,10 +88,14 @@ class FanDuelGameLineTests(unittest.TestCase):
             source_artifact="event_35601246_passing-props.json",
             source_url="https://sportsbook.example/event/35601246",
         )
-        self.assertEqual(result["stats"]["normalized"], 2)
+        self.assertEqual(result["stats"]["normalized"], 3)
         by_market = {row["market"]: row for row in result["candidates"]}
         spread = by_market["spread"]
         total = by_market["game_total"]
+        moneyline = by_market["moneyline"]
+        self.assertEqual(moneyline["away_team"], "Denver Broncos")
+        self.assertEqual(moneyline["away_odds"], 116)
+        self.assertEqual(moneyline["home_odds"], -136)
         self.assertEqual(spread["market"], "spread")
         self.assertEqual(spread["away_team"], "Denver Broncos")
         self.assertEqual(spread["away_line"], 2.5)
@@ -91,7 +109,9 @@ class FanDuelGameLineTests(unittest.TestCase):
         self.assertEqual(total["source_payload_sha256"], "a" * 64)
 
     def test_alternate_and_period_markets_are_ignored(self):
-        p = payload(include_spread=False, include_total=False)
+        p = payload(
+            include_moneyline=False, include_spread=False, include_total=False
+        )
         p["attachments"]["markets"] = {
             "a": {
                 "marketName": "Alternate Spread",
@@ -139,6 +159,22 @@ class FanDuelGameLineTests(unittest.TestCase):
         result = fanduel_game_lines.normalize_payload(p)
         self.assertEqual(result["rejections"][0]["reason"], "TEAM_IDENTITY_MISMATCH")
 
+    def test_moneyline_teams_ids_and_odds_fail_closed(self):
+        p = payload(include_spread=False, include_total=False)
+        p["attachments"]["markets"]["m"]["runners"][0]["runnerName"] = "Wrong Team"
+        result = fanduel_game_lines.normalize_payload(p)
+        self.assertEqual(result["rejections"][0]["reason"], "TEAM_IDENTITY_MISMATCH")
+
+        p = payload(include_spread=False, include_total=False)
+        p["attachments"]["markets"]["m"]["runners"][1]["selectionId"] = 11
+        result = fanduel_game_lines.normalize_payload(p)
+        self.assertEqual(result["rejections"][0]["reason"], "INVALID_SELECTION_ID")
+
+        p = payload(include_spread=False, include_total=False)
+        p["attachments"]["markets"]["m"]["runners"][0]["winRunnerOdds"] = {}
+        result = fanduel_game_lines.normalize_payload(p)
+        self.assertEqual(result["rejections"][0]["reason"], "MISSING_ODDS")
+
     def test_spread_handicaps_must_be_opposites(self):
         p = payload(include_total=False)
         p["attachments"]["markets"]["s"]["runners"][1]["handicap"] = -3.0
@@ -146,7 +182,7 @@ class FanDuelGameLineTests(unittest.TestCase):
         self.assertEqual(result["rejections"][0]["reason"], "SPREAD_NOT_OPPOSING")
 
     def test_pickem_spread_is_valid(self):
-        p = payload(include_total=False)
+        p = payload(include_moneyline=False, include_total=False)
         for row in p["attachments"]["markets"]["s"]["runners"]:
             row["handicap"] = 0
         result = fanduel_game_lines.normalize_payload(p)
@@ -210,7 +246,7 @@ class FanDuelGameLineTests(unittest.TestCase):
         self.assertEqual(result["rejections"][0]["reason"], "INVALID_SELECTION_ID")
 
     def test_identical_duplicate_market_id_collapses(self):
-        p = payload(include_total=False)
+        p = payload(include_moneyline=False, include_total=False)
         p["attachments"]["markets"]["copy"] = copy.deepcopy(
             p["attachments"]["markets"]["s"]
         )
@@ -219,7 +255,7 @@ class FanDuelGameLineTests(unittest.TestCase):
         self.assertEqual(result["stats"]["duplicates_collapsed"], 1)
 
     def test_conflicting_duplicate_market_id_rejects_all_versions(self):
-        p = payload(include_total=False)
+        p = payload(include_moneyline=False, include_total=False)
         duplicate = copy.deepcopy(p["attachments"]["markets"]["s"])
         duplicate["runners"][0]["handicap"] = 3.5
         duplicate["runners"][1]["handicap"] = -3.5
@@ -227,6 +263,18 @@ class FanDuelGameLineTests(unittest.TestCase):
         result = fanduel_game_lines.normalize_payload(p)
         self.assertEqual(result["candidates"], [])
         self.assertEqual(result["rejections"][0]["reason"], "DUPLICATE_MARKET_CONFLICT")
+
+    def test_distinct_primary_market_ids_for_same_family_reject_all(self):
+        p = payload(include_moneyline=False, include_total=False)
+        duplicate = copy.deepcopy(p["attachments"]["markets"]["s"])
+        duplicate["marketId"] = "734.other-spread"
+        p["attachments"]["markets"]["copy"] = duplicate
+        result = fanduel_game_lines.normalize_payload(p)
+        self.assertEqual(result["candidates"], [])
+        self.assertEqual(
+            {row["reason"] for row in result["rejections"]},
+            {"DUPLICATE_PRIMARY_MARKET"},
+        )
 
     def test_malformed_digest_and_naive_capture_time_fail(self):
         with self.assertRaisesRegex(ValueError, "SHA-256"):
@@ -249,6 +297,7 @@ class GameLineCoverageClassificationTests(unittest.TestCase):
         )
         classifications = json.loads(path.read_text(encoding="utf-8"))
         for market_type in (
+            fanduel_game_lines.MONEYLINE_TYPE,
             fanduel_game_lines.SPREAD_TYPE,
             fanduel_game_lines.TOTAL_TYPE,
         ):
