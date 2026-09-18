@@ -454,7 +454,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 36.3,
+          "score": 42.1,
           "notable_signals": 1,
           "matchup": "Kansas City Royals @ Pittsburgh Pirates",
           "game_pk": 823331,
@@ -469,9 +469,9 @@
             "tto_penalty": 8.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.4018,
-          "raw_hit_probability": 0.4018,
-          "lift": 0.0396,
+          "hit_probability": 0.4027,
+          "raw_hit_probability": 0.4027,
+          "lift": 0.0387,
           "reliability": "A",
           "sample_n": 30,
           "projection": {
@@ -481,9 +481,9 @@
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 45.0,
+          "score": 30.8,
           "notable_signals": 0,
           "matchup": "Kansas City Royals @ Pittsburgh Pirates",
           "game_pk": 823331,
@@ -492,18 +492,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.535,
+            "outs_rate": 0.4033,
             "avg_outs_per_start": 16.2
           },
-          "hit_probability": 0.5443,
-          "raw_hit_probability": 0.535,
-          "lift": 0.0012,
+          "hit_probability": 0.4033,
+          "raw_hit_probability": 0.4033,
+          "lift": -0.0165,
           "reliability": "A",
           "sample_n": 30,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

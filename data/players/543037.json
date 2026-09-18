@@ -506,9 +506,9 @@
             "tto_penalty": 8.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.593,
-          "raw_hit_probability": 0.5956,
-          "lift": 0.0769,
+          "hit_probability": 0.5932,
+          "raw_hit_probability": 0.5965,
+          "lift": 0.0753,
           "reliability": "A",
           "sample_n": 20,
           "projection": {
@@ -518,9 +518,9 @@
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 73.4,
+          "score": 92.7,
           "notable_signals": 1,
           "matchup": "New York Yankees @ Arizona Diamondbacks",
           "game_pk": 825032,
@@ -529,18 +529,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6094,
+            "outs_rate": 0.7417,
             "avg_outs_per_start": 17.3
           },
-          "hit_probability": 0.6072,
-          "raw_hit_probability": 0.6094,
-          "lift": 0.1331,
+          "hit_probability": 0.7098,
+          "raw_hit_probability": 0.7417,
+          "lift": 0.1625,
           "reliability": "A",
           "sample_n": 20,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]

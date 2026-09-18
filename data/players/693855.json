@@ -465,9 +465,9 @@
       "date": "2026-09-18",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.0,
+          "score": 37.6,
           "notable_signals": 0,
           "matchup": "Boston Red Sox @ Tampa Bay Rays",
           "game_pk": 822923,
@@ -476,26 +476,26 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "opp_team_k_pct": 45.0,
-            "same_hand_ratio": 57.1429,
+            "opp_team_k_pct": 44.0,
+            "same_hand_ratio": 21.4286,
             "l14_k_pct": 92.9412,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6161,
-          "raw_hit_probability": 0.7105,
-          "lift": 0.1,
+          "hit_probability": 0.5897,
+          "raw_hit_probability": 0.5797,
+          "lift": 0.2257,
           "reliability": "B",
           "sample_n": 14,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
-          "prop": "Over 13.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 46.2,
+          "score": 40.3,
           "notable_signals": 0,
           "matchup": "Boston Red Sox @ Tampa Bay Rays",
           "game_pk": 822923,
@@ -504,18 +504,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6899,
+            "outs_rate": 0.5142,
             "avg_outs_per_start": 14.36
           },
-          "hit_probability": 0.6715,
-          "raw_hit_probability": 0.6899,
-          "lift": -0.1281,
+          "hit_probability": 0.5263,
+          "raw_hit_probability": 0.5142,
+          "lift": -0.021,
           "reliability": "B",
           "sample_n": 14,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 13.5,
-            "needs": 14
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]
