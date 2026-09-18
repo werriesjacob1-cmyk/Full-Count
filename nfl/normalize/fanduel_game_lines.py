@@ -23,6 +23,15 @@ PRIMARY_NAMES = {
     SPREAD_TYPE: "Spread",
     TOTAL_TYPE: "Total Points",
 }
+CANONICAL_BY_TYPE = {
+    MONEYLINE_TYPE: "moneyline",
+    SPREAD_TYPE: "spread",
+    TOTAL_TYPE: "game_total",
+}
+CANONICAL_BY_NAME = {
+    name: CANONICAL_BY_TYPE[market_type]
+    for market_type, name in PRIMARY_NAMES.items()
+}
 
 
 def _as_dict(value: Any) -> dict:
@@ -130,6 +139,8 @@ def _reject(
     reason: str,
     detail: str | None = None,
 ) -> None:
+    market_type = str(market.get("marketType") or "")
+    market_name = str(market.get("marketName") or "")
     rejections.append({
         "market_id": (
             str(market.get("marketId"))
@@ -141,8 +152,12 @@ def _reject(
             if market.get("eventId") not in (None, "")
             else None
         ),
-        "market_name": str(market.get("marketName") or ""),
-        "market_type": str(market.get("marketType") or ""),
+        "market_name": market_name,
+        "market_type": market_type,
+        "market": (
+            CANONICAL_BY_TYPE.get(market_type)
+            or CANONICAL_BY_NAME.get(market_name)
+        ),
         "reason": reason,
         "detail": detail,
     })
@@ -439,6 +454,7 @@ def normalize_payload(
                 "event_id": event_id,
                 "market_name": row["market_name"],
                 "market_type": row["market_type"],
+                "market": market_name,
                 "reason": "DUPLICATE_PRIMARY_MARKET",
                 "detail": market_name,
             })
