@@ -2463,3 +2463,64 @@ Alligator
 - No model/selector promotion, no production change, no public-pick change.
 
 Alligator
+
+## 2026-09-18 — NFL C3: margin + QB-continuity/availability challenger, REJECTED (exploratory, not confirmatory)
+
+- Workstream `NFL-C3-MARGIN-AVAILABILITY-20260918`, branch
+  `claude/nfl-c3-margin-availability-20260918`, rebased and pushed as
+  `claude/nfl-c3-push-20260918`. Named hypothesis only: QB regime/
+  availability explains the margin error C2 could not clear.
+- **Post-selection framing (Jacob's explicit correction, applied before this
+  entry was written)**: C3 was proposed specifically because C2's margin
+  was observed to fail on this same 2020-2025 population. Re-evaluating C3
+  on that population is therefore exploratory/diagnostic characterization,
+  not a fresh, independent confirmation. The module's own gate result
+  status string records this directly:
+  `RESEARCH_CHALLENGER_GATE_PASSED_EXPLORATORY_ONLY_NOT_A_PROSPECTIVE_CONFIRMATION`
+  is the passing label the gate would use, with a `post_selection_evidence_
+  caveat` field always populated -- the C3 subagent had independently
+  converged on the same concern before the correction arrived. Genuine
+  prospective confirmation still requires new, not-yet-inspected data
+  (future games via PREDICT -> FREEZE -> GRADE), which this workstream does
+  not attempt.
+- Joins C2's 8 features with 3 new ones by `(season, week, team)`, reading
+  only `features.*`, never `target.*` (leakage-tested):
+  `qb_diff_tenure_starts`, `qb_diff_games_since_change` (numerically
+  identical per the upstream source's own design -- disclosed and kept
+  rather than silently dropped), `availability_diff_starter_out`. Margin
+  only; no totals variant built.
+- Found and fixed by exclusion, not imputation: a blank-identity 1999 row;
+  a team-abbreviation historical-normalization bug in nflverse
+  `stats_player_week` (recovered ~620 team-weeks by re-deriving the true
+  historical team from `game_id`); pre-2016 "Probable" injury status plus
+  duplicate injury rows filtered to the latest status update.
+- Real eligible population, smaller than C2's own: C3 = 4,404 of C2's 6,897
+  games (63.9%); development partition hit hardest at 2,801/5,089 (55.0%,
+  effectively seasons 2009-2019 only, since the QB-continuity source has
+  earlier coverage gaps); held 2023-2025 population unchanged at 816.
+- 7-condition predeclared gate (superset of C2's 5, adding the leave-one-out
+  check and the post-selection caveat requirement).
+- **Real, independently re-verified results**: held MAE -- B0 10.473, C2
+  10.434, C3 10.371. Point estimates favor C3, but neither held bootstrap
+  clears zero: C3-vs-B0 held [-0.306, +0.099], C3-vs-C2 held [-0.167,
+  +0.037]. Leave-one-out confirms the instability -- excluding 2024 flips
+  the delta to worse. **Gate verdict: REJECTED.**
+- Season-by-season (C3 vs C2): 2020 worse (+0.027), 2021 better (-0.146),
+  2022 better but modestly (-0.059, explicitly not specifically responsive
+  to availability information per the subagent's own diagnostic read),
+  2023 (-0.030), 2024 (-0.220, the dominant driver of the whole-sample point
+  estimate), 2025 worse (+0.062). Honest conclusion: the margin instability
+  C2 exhibited relocated to a new year under C3, it was not fixed.
+- 38 new tests (`nfl/tests/test_game_market_c3_features.py`,
+  `nfl/tests/test_game_market_c3_model.py`) pass; full existing 412+23-test
+  `nfl/tests` suite and full root suite (excluding `test_browser_e2e.py`)
+  pass unchanged on the rebased tree -- verified independently, not only
+  taken on the delegated subagent's own report.
+- No model/selector promotion, no production change, no public-pick change.
+  This closes out the `NFL-C3-MARGIN-AVAILABILITY-20260918` workstream per
+  Jacob's authorization (Issue #91 comments `5736360831`/`5736383892`):
+  margin remains unresolved by either C2 or C3 and needs a genuinely new,
+  not-yet-inspected data source or a different hypothesis, not a re-test of
+  this one on the same population.
+
+Alligator
