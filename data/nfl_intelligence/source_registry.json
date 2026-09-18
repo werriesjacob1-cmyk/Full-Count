@@ -82,15 +82,16 @@
         "participation",
         "role_history"
       ],
-      "historical_coverage_claim": "OL module documents 2012 as empty and real useful coverage beginning 2013; full source audit still required",
-      "current_season_policy": "verify publication timing before prospective use",
-      "point_in_time_class": "RETROSPECTIVE_COMPLETED_GAME_FACTS_FOR_PRIOR_HISTORY",
+      "historical_coverage_claim": "Game-level PFR snap counts available from 2012 onward; nflreadr current-season feed updates multiple times daily. Repo still needs full-season digest/coverage audit before broad model use.",
+      "current_season_policy": "usable after completed games as strictly-prior history; snapshot/digest source asset and verify publication completeness",
+      "point_in_time_class": "RETROSPECTIVE_COMPLETED_GAME_FACTS_FOR_STRICTLY_PRIOR_FEATURES",
       "repo_evidence": [
         "nfl/research/ol_continuity_prior.py"
       ],
       "restrictions": [
         "not a timestamped historical vintage archive",
-        "do not infer upcoming starters from prior snap files"
+        "do not infer upcoming starters from current-game snap counts",
+        "2012 coverage quality must be audited before assuming full-season completeness"
       ]
     },
     {
@@ -100,15 +101,16 @@
         "historical_weekly_injury_status",
         "practice_status"
       ],
-      "historical_coverage_claim": "existing feature module asserts 2009+ source coverage, but current source availability/provenance must be independently reverified before broader 2026 use",
-      "current_season_policy": "do not assume current-season feed exists or is complete",
-      "point_in_time_class": "UNKNOWN_UNTIL_REAUDIT",
+      "historical_coverage_claim": "nflreadr loader documents data since 2009, but nflverse status documentation states the source died after 2024 and there is no 2025 data/ETA. Historical 2009-2024 can be audited; current live use requires another source.",
+      "current_season_policy": "DO NOT use as 2026 live injury source unless nflverse explicitly restores current-season data and a new audit verifies it",
+      "point_in_time_class": "HISTORICAL_WEEKLY_REPORTS_ONLY_UNTIL_LIVE_SOURCE_RESTORED",
       "repo_evidence": [
         "nfl/research/injury_availability_features.py"
       ],
       "restrictions": [
         "weekly filed status is not equivalent to official inactive list",
-        "must preserve publication/effective timing"
+        "must preserve publication/effective timing",
+        "current nflverse injury pipeline is not a reliable 2026 live feed"
       ]
     },
     {
@@ -172,30 +174,35 @@
         "identity",
         "roster_context"
       ],
-      "historical_coverage_claim": "current repo workflow uses 2026 roster identity; deeper multi-year audit required",
-      "current_season_policy": "snapshot roster vintage and effective date",
-      "point_in_time_class": "PIT_REQUIRES_VINTAGE_CHECK",
+      "historical_coverage_claim": "Season-level rosters are available back to 1920; weekly rosters are available back to 2002. Repo needs exact weekly-vintage/source audit before historical as-of role use.",
+      "current_season_policy": "prefer weekly/timestamped roster state for role/availability; snapshot raw bytes and source update time",
+      "point_in_time_class": "WEEKLY_ROSTER_CAN_SUPPORT_AS_OF_STATE_AFTER_VINTAGE_AUDIT",
       "repo_evidence": [
         "engineering/TOTAL_SPORTS_INTELLIGENCE_ROADMAP_2026-09-12.md"
       ],
       "restrictions": [
-        "present-day roster files cannot prove historical as-of roster without vintage evidence"
+        "season-level roster alone cannot prove exact historical week state",
+        "identity and status fields must be joined with stable player ids"
       ]
     },
     {
       "source_id": "DEPTH_CHARTS",
-      "status": "DISCOVERY",
+      "status": "PARTIAL",
       "intended_use": [
         "role",
         "replacement_graph",
         "starter_projection"
       ],
-      "historical_coverage_claim": "no repository-wide audited depth-chart warehouse yet",
-      "current_season_policy": "must preserve effective/publication timestamp",
-      "point_in_time_class": "UNKNOWN_UNTIL_SOURCE_AUDIT",
-      "repo_evidence": [],
+      "historical_coverage_claim": "nflreadr documents team/week depth charts back to 2001. Source changed after 2024; from 2025 onward each appended record carries ISO8601 dt for point-in-time assignment.",
+      "current_season_policy": "2025+ timestamped depth chart snapshots are promising live role input; archive exact source vintage/digest and map pos_slot/pos_rank to stable player ids",
+      "point_in_time_class": "2001_2024_WEEK_LEVEL__2025_PLUS_TIMESTAMPED_PIT",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_2026-09-18.md"
+      ],
       "restrictions": [
-        "do not infer starter labels from present-day depth chart for past games"
+        "source/schema break after 2024 must be versioned",
+        "depth rank is not actual future snap share",
+        "historical weeks require season-specific source semantics"
       ]
     },
     {
@@ -253,17 +260,20 @@
     },
     {
       "source_id": "OFFICIAL_ASSIGNMENTS_AND_PENALTIES",
-      "status": "DISCOVERY",
+      "status": "PARTIAL",
       "intended_use": [
         "referee_crew",
         "penalty_tendencies"
       ],
-      "historical_coverage_claim": "not audited",
-      "current_season_policy": "bind crew assignment publication time to target game",
-      "point_in_time_class": "PREGAME_ASSIGNMENT_VINTAGE_REQUIRED",
-      "repo_evidence": [],
+      "historical_coverage_claim": "nflreadr officials assignments available from 2015 onward with game_id, official identity, position, season, week. Penalty outcome features can be joined separately from play-by-play.",
+      "current_season_policy": "verify current game crew assignment publication timing before using as pregame feature; completed-game crew history is strictly prior",
+      "point_in_time_class": "HISTORICAL_GAME_ASSIGNMENTS__CURRENT_ASSIGNMENT_PIT_REQUIRES_PUBLICATION_CHECK",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_2026-09-18.md"
+      ],
       "restrictions": [
-        "crew effects require shrinkage and skeptical priors"
+        "crew effects require shrinkage and skeptical priors",
+        "historical assignment availability does not prove when future-game assignments became public"
       ]
     },
     {
@@ -409,6 +419,91 @@
       "restrictions": [
         "never reconstruct missing historical predictions after outcomes",
         "not an external information source"
+      ]
+    },
+    {
+      "source_id": "NFLVERSE_PARTICIPATION",
+      "status": "PARTIAL",
+      "intended_use": [
+        "historical_play_participation",
+        "formation",
+        "box_count",
+        "role_research"
+      ],
+      "historical_coverage_claim": "nflreadr participation available from 2016. Pre-2023 comes from NFL NGS; 2023+ comes from FTN and is released only after all postseason games are complete.",
+      "current_season_policy": "NOT suitable for in-season 2026 role/injury updates under current release policy; use completed historical seasons for research only",
+      "point_in_time_class": "HISTORICAL_ONLY_FOR_2023_PLUS__NOT_CURRENT_SEASON_LIVE",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_2026-09-18.md"
+      ],
+      "restrictions": [
+        "2023+ participation is not available during the season",
+        "license attribution requirements differ by era",
+        "do not treat postseason-released participation as contemporaneous pregame data"
+      ]
+    },
+    {
+      "source_id": "NFLVERSE_NEXTGEN_WEEKLY",
+      "status": "PARTIAL",
+      "intended_use": [
+        "weekly_passing_ngs",
+        "weekly_receiving_ngs",
+        "weekly_rushing_ngs",
+        "expected_rushing_yards",
+        "player_efficiency"
+      ],
+      "historical_coverage_claim": "nflreadr weekly NFL Next Gen Stats begin in 2016 for passing/receiving/rushing; current-season feed updates nightly, subject to NGS minimum-attempt thresholds.",
+      "current_season_policy": "can support strictly-prior weekly features after prior games; snapshot/digest release and preserve missing-below-threshold as missing, not zero",
+      "point_in_time_class": "WEEKLY_COMPLETED_GAME_FACTS_STRICTLY_PRIOR",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_2026-09-18.md"
+      ],
+      "restrictions": [
+        "thresholded population",
+        "not raw player-tracking coordinates",
+        "missing players may mean below NGS minimum rather than true zero"
+      ]
+    },
+    {
+      "source_id": "NFLVERSE_PFR_ADVSTATS",
+      "status": "PARTIAL",
+      "intended_use": [
+        "pressure_history",
+        "blitz_history",
+        "bad_throw_history",
+        "drops",
+        "advanced_rushing_receiving_defense"
+      ],
+      "historical_coverage_claim": "PFR advanced player stats via nflreadr available from 2018 onward for pass/rush/rec/def, with weekly and season summaries where supported.",
+      "current_season_policy": "use completed-game facts only as strictly-prior features; snapshot/digest and audit field-level definition changes",
+      "point_in_time_class": "RETROSPECTIVE_COMPLETED_GAME_FACTS_FOR_STRICTLY_PRIOR_FEATURES",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_2026-09-18.md"
+      ],
+      "restrictions": [
+        "not raw tracking",
+        "PFR definitions/schema may change",
+        "current-game values never enter pregame feature row"
+      ]
+    },
+    {
+      "source_id": "NFLVERSE_WEEKLY_ROSTERS",
+      "status": "PARTIAL",
+      "intended_use": [
+        "historical_week_roster_state",
+        "status",
+        "player_team_identity",
+        "depth_context"
+      ],
+      "historical_coverage_claim": "nflreadr weekly roster data available back to 2002.",
+      "current_season_policy": "snapshot weekly state and preserve source vintage before joining to target games",
+      "point_in_time_class": "WEEK_LEVEL_AS_OF_STATE_AFTER_SOURCE_AUDIT",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_2026-09-18.md"
+      ],
+      "restrictions": [
+        "status field semantics require audit by era",
+        "do not substitute season-level roster for weekly state"
       ]
     }
   ]
