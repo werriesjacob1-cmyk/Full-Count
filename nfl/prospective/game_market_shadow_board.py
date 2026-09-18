@@ -95,7 +95,7 @@ def _prediction_contract(prediction: Mapping[str, Any]) -> dict[str, Any]:
         raise GameMarketShadowBoardError("prediction must not use current-game outcome")
     if _text(row.get("target_final_status"), "target_final_status").upper() != "PREGAME":
         raise GameMarketShadowBoardError("prediction target must be PREGAME")
-    for field in ("game_id", "home_team", "away_team", "eligibility"):
+    for field in ("game_id", "home_team", "away_team", "home_team_full", "away_team_full", "eligibility"):
         _text(row.get(field), field)
     return row
 
@@ -182,9 +182,9 @@ def build_game_market_shadow_board(
 
         market_home = _text(market.get("home_team"), "market.home_team")
         market_away = _text(market.get("away_team"), "market.away_team")
-        if market_home != _text(pred.get("home_team"), "prediction.home_team_full"):
+        if market_home != _text(pred.get("home_team_full"), "prediction.home_team_full"):
             raise GameMarketShadowBoardError("home team identity mismatch")
-        if market_away != _text(pred.get("away_team"), "prediction.away_team_full"):
+        if market_away != _text(pred.get("away_team_full"), "prediction.away_team_full"):
             raise GameMarketShadowBoardError("away team identity mismatch")
 
         decision = (
