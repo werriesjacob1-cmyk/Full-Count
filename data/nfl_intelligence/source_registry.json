@@ -552,6 +552,40 @@
         "older ERA5/reanalysis is outcome-context research, not a pregame forecast",
         "roof status must gate outdoor weather exposure"
       ]
+    },
+    {
+      "source_id": "NFLVERSE_FTN_CHARTING",
+      "status": "PARTIAL",
+      "intended_use": [
+        "motion",
+        "play_action",
+        "rpo",
+        "qb_location",
+        "box_count",
+        "no_huddle",
+        "blitzers",
+        "pass_rushers",
+        "qb_fault_sack",
+        "interception_worthy",
+        "throwaway",
+        "progression_read",
+        "catchable_ball",
+        "contested_ball",
+        "drop"
+      ],
+      "historical_coverage_claim": "nflreadr documents manually charted FTN play-level data from 2022 onward. Current-season charting is published during the season, generally within about 48 hours after games, and nflverse jobs poll multiple times daily.",
+      "current_season_policy": "use completed prior games only; preserve date_pulled/source release and nflverse game/play ids; current target game's charting is never available pregame",
+      "point_in_time_class": "COMPLETED_GAME_MANUAL_CHARTING_STRICTLY_PRIOR",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_3_2026-09-18.md"
+      ],
+      "restrictions": [
+        "CC-BY-SA attribution to FTN Data via nflverse required",
+        "2022 primary-read coding differs from 2023+ (primary reads may be NA in 2022)",
+        "not raw tracking coordinates",
+        "charting arrives after games and is only prior-history for future targets",
+        "coverage/schema must be audited season by season before modeling"
+      ]
     }
   ]
 }
