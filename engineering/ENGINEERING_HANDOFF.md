@@ -1906,6 +1906,129 @@ tested; only post-merge observation of the real workflow run remains. The
 `pitcher_outs` accuracy finding is real and unresolved -- it should stay
 visible to Jacob as ongoing work, not be treated as closed by this PR.
 
+## 2026-09-18 — Top Pick calibration audit: probabilities are significantly overconfident (all-stat finding, not just pitcher_outs)
+
+Agent: Claude
+
+Branch: `claude/top-pick-calibration-audit-20260918`
+
+PR: documentation only, no code/model/production change.
+
+Objective: Follow up on the 2026-09-17 `pitcher_outs` 36.4% hit-rate finding
+(previous entry) while Codex worked the NFL Chain A consolidation in
+parallel. Direct standing instruction from Jacob: "keep increasing the
+accuracy - I am not satisfied with our current ht rate."
+
+What I inspected: every graded row in real `results/grades_*.json`
+(`public_top_picks`, `grade` in {hit, miss}), comparing each row's own
+stated `hit_probability` against its real outcome. A simple binomial test
+(`P(X <= observed_hits | n, p = mean_predicted_probability)`) answers a
+narrow, honest question: if the model's own stated probabilities were
+correct on average, how likely is a result this bad by chance alone.
+
+What I found:
+
+- **All graded Top Picks, n=371:** mean stated `hit_probability` 64.6% vs.
+  realized hit rate 53.6% -- an 11.0-point gap. Expected ~239.6 hits from
+  the stated probabilities; only 199 observed. `P(X<=199 | n=371,
+  p=0.646) = 0.000009`. This is not small-sample noise; it would be an
+  extraordinarily unlucky run if the stated probabilities were accurate.
+- **Persists across time, not a one-off:** last 14 days (n=233) gap
+  +9.4pp, `p=0.00195`; older than 14 days (n=138) gap +13.6pp,
+  `p=0.00071`. Narrowing slightly but still highly significant in the
+  recent window alone -- an ongoing, current problem, not stale history.
+- **Concentrated in two markets, not universal:** `hits_runs_rbis`
+  (n=194) gap +12.5pp, `p=0.00020` -- the single largest and most
+  statistically robust example. `pitcher_outs` (n=33) gap +30.2pp (worst
+  rate, smallest n), `p=0.00036`. `strikeouts` (n=66) gap +9.6pp,
+  `p=0.071` -- suggestive, not significant alone. `hits` (n=78) is
+  essentially perfectly calibrated: realized 62.8% vs. predicted 62.8%,
+  `p=0.543`. The fact that `hits` alone is fine rules out "every market's
+  probability math is just broken" and points at something specific to
+  how `hits_runs_rbis` and `pitcher_outs` candidates are scored or
+  selected.
+- **`pitcher_outs` miss shape supports a fat-tail explanation:** of 21
+  misses, 15 (71%) were "close" (actual within 1.5 outs of the posted
+  threshold -- ordinary variance) but 6 (29%) were severe short outings
+  (3.5-14.5 outs short of the line, e.g. Dustin May recording only 1 out
+  before an early exit). `mlb_sources.empirical_pitcher_outs_rates` computes
+  each pitcher's threshold-specific rate off as few as `min_starts=5` real
+  starts; rare early-exit/implosion outings are the kind of event a
+  5-20-start sample is least likely to have captured, which would bias the
+  per-pitcher "over" rate upward in exactly the observed direction. Its
+  Beta shrinkage constant (`prior_games=6`) is explicitly borrowed from the
+  strikeout-rate model's own fit, per the function's own comment: "no
+  separate fit was done for this market yet... until this market has
+  enough graded history of its own to fit one independently." That graded
+  history (33+ live Top Picks, 594+ backtest candidate rows already used
+  to fit `backtest/calibrators_by_market.json`'s `pitcher_outs` Platt
+  calibrator) now exists.
+- **Aggregate calibration checks would not have caught this, and did not
+  contradict it:** `backtest/calibration_recheck_report.json`
+  (2026-09-14) promoted the `pitcher_outs` Platt calibrator with a real
+  held-out Brier improvement (+0.00254 over raw, on 248 held-out rows) --
+  evaluated across the *full candidate population* most of which is never
+  published as a Top Pick. That is a different, narrower statistical
+  question than "is the *argmax-selected, published* subset calibrated,"
+  and a calibrator can look fine on the former while the latter is
+  significantly overconfident. This is consistent with a textbook
+  selection effect ("winner's curse"): picking the single
+  highest-probability-times-edge candidate from a large daily pool
+  mechanically favors whichever candidates' estimation noise ran hot that
+  day, even when the underlying per-candidate model is calibrated on
+  average across the whole pool.
+
+What I changed: nothing executable. This entry only. Per this project's
+own stated principle ("Do **not** optimize model parameters because of a
+few live days. First make measurement and reproducibility correct"), I did
+not touch `mlb_sources.py`, `generate_picks.py`, or any calibrator/weight
+file based on this finding.
+
+Architectural decisions: none. This is a measurement finding, explicitly
+not a fix.
+
+Tests added: none (no code changed).
+
+Behavior intentionally unchanged: all model/scoring/probability/
+calibration/selection code and all generated artifacts.
+
+Risks / known limitations: the mechanistic explanations above (thin-sample
+fat-tail bias for `pitcher_outs`; selection-effect/winner's-curse for the
+Top-Pick-argmax layer generally) are hypotheses consistent with the
+evidence, not proven causes. The `hits_runs_rbis` finding in particular
+has no mechanism investigated yet beyond "it shows the same signature as
+pitcher_outs" -- score_batter()'s combined-stat scoring path for that
+market has not been read in this pass.
+
+New issues discovered: the Top Pick population as a whole (not just
+`pitcher_outs`) is measurably overconfident by a wide, statistically
+significant margin. This is a more important and more general finding
+than the previous entry's `pitcher_outs`-only framing suggested.
+
+Recommended next work: before changing any weight or shrinkage constant,
+measure calibration specifically within the argmax-selected subset using
+the much larger backtest candidate pool (hundreds of rows per market
+already available via `backtest/`'s own tooling, not just the 33-194 live
+Top Picks per market) to confirm or reject the selection-effect hypothesis
+out of this comparatively small live sample, and to separate it cleanly
+from the `pitcher_outs`-specific shrinkage-constant hypothesis. If the
+selection effect is confirmed, the correct fix is likely not "lower every
+stated probability" but something that addresses the ranking/selection
+step itself -- e.g. ranking by a more heavily shrunk or penalized estimate
+rather than a raw point estimate, or fitting a calibration curve
+specifically on the historically argmax-selected candidates rather than
+the full candidate pool. Read `score_batter()`'s `hits_runs_rbis` scoring
+path before proposing any mechanism there; this entry does not.
+
+Information Claude should know when resuming: this supersedes the
+previous entry's `pitcher_outs`-only framing -- the real finding is a
+Top-Pick-wide, statistically significant overconfidence gap (64.6%
+predicted vs. 53.6% realized, n=371, p=0.000009) that happens to be worst
+in `pitcher_outs` and `hits_runs_rbis` and absent in plain `hits`. Do not
+tune model weights off this finding alone; the recommended next step
+(argmax-selection calibration audit against the larger backtest pool) has
+not been done yet.
+
 ## 2026-09-15 — nflverse game-line source contract audit
 
 - Added a reproducible, dependency-free audit for pinned `games.csv`,
