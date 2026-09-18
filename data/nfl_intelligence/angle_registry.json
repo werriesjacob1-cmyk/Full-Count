@@ -234,6 +234,7 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
+        "OPEN_METEO_FORECAST_ARCHIVE",
         "WEATHER",
         "NFLFASTR_PLAY_BY_PLAY"
       ],
@@ -1427,6 +1428,7 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
+        "NFL_COM_OFFICIAL_INJURY_REPORT",
         "NFLVERSE_INJURY_REPORTS",
         "OFFICIAL_NFL_INACTIVES"
       ],
@@ -1540,6 +1542,7 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
+        "OPEN_METEO_FORECAST_ARCHIVE",
         "WEATHER",
         "STADIUM_SURFACE"
       ],
