@@ -113,5 +113,18 @@ class NFLIntelligenceRegistryTests(unittest.TestCase):
             validate_angle_registry(payload)
 
 
+    def test_every_angle_source_reference_exists(self):
+        payload = load_registry()
+        with Path("data/nfl_intelligence/source_registry.json").open("r", encoding="utf-8") as handle:
+            sources = json.load(handle)
+        known = {row["source_id"] for row in sources["sources"]}
+        referenced = {
+            source_id
+            for angle in payload["angles"]
+            for source_id in angle["source_candidates"]
+        }
+        self.assertEqual(sorted(referenced - known), [])
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
