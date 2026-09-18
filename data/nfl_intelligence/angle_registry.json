@@ -42,9 +42,9 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "weekly_stats",
-        "play_by_play",
-        "coach_regime"
+        "NFLVERSE_WEEKLY_STATS",
+        "NFLFASTR_PLAY_BY_PLAY",
+        "COACH_PLAYCALLER_HISTORY"
       ],
       "multi_year_policy": "career+regime+season+recent",
       "regime_sensitive": true,
@@ -82,8 +82,9 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play",
-        "tracking_or_charting"
+        "NFLFASTR_PLAY_BY_PLAY",
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "career+regime+season+recent",
       "regime_sensitive": true,
@@ -120,7 +121,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "tracking_or_charting"
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "career+regime+season",
       "regime_sensitive": true,
@@ -157,7 +159,7 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play"
+        "NFLFASTR_PLAY_BY_PLAY"
       ],
       "multi_year_policy": "career+regime+season+recent",
       "regime_sensitive": true,
@@ -193,8 +195,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "weekly_stats",
-        "qb_continuity_features"
+        "NFLVERSE_WEEKLY_STATS",
+        "INTERNAL_REPO_FEATURE"
       ],
       "multi_year_policy": "multi-season+current-regime",
       "regime_sensitive": true,
@@ -230,8 +232,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "weather",
-        "play_by_play"
+        "WEATHER",
+        "NFLFASTR_PLAY_BY_PLAY"
       ],
       "multi_year_policy": "multi-season player+environment",
       "regime_sensitive": true,
@@ -267,9 +269,9 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "weekly_stats",
-        "participation",
-        "rosters"
+        "NFLVERSE_WEEKLY_STATS",
+        "NFLVERSE_SNAP_COUNTS",
+        "NFLVERSE_ROSTERS"
       ],
       "multi_year_policy": "multi-season relationship+current-role",
       "regime_sensitive": true,
@@ -304,9 +306,9 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "participation",
-        "snap_counts",
-        "tracking_or_charting"
+        "NFLVERSE_SNAP_COUNTS",
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "career+regime+season+recent",
       "regime_sensitive": true,
@@ -341,7 +343,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "tracking_or_charting"
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "career+current-regime+recent",
       "regime_sensitive": true,
@@ -376,7 +379,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "tracking_or_charting"
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "career+season",
       "regime_sensitive": true,
@@ -411,7 +415,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "tracking_or_charting"
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "career+regime+season",
       "regime_sensitive": true,
@@ -446,7 +451,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "tracking_or_charting"
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "multi-season+current-regime",
       "regime_sensitive": true,
@@ -481,7 +487,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "tracking_or_charting"
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "multi-season+current-QB",
       "regime_sensitive": true,
@@ -517,9 +524,9 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "weekly_stats",
-        "participation",
-        "play_by_play"
+        "NFLVERSE_WEEKLY_STATS",
+        "NFLVERSE_SNAP_COUNTS",
+        "NFLFASTR_PLAY_BY_PLAY"
       ],
       "multi_year_policy": "career+season+recent",
       "regime_sensitive": true,
@@ -554,8 +561,9 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "tracking_or_charting",
-        "play_by_play"
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT",
+        "NFLFASTR_PLAY_BY_PLAY"
       ],
       "multi_year_policy": "multi-season+regime+recent",
       "regime_sensitive": true,
@@ -589,7 +597,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "tracking_or_charting"
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "multi-season+season",
       "regime_sensitive": true,
@@ -624,8 +633,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play",
-        "participation"
+        "NFLFASTR_PLAY_BY_PLAY",
+        "NFLVERSE_SNAP_COUNTS"
       ],
       "multi_year_policy": "career+season+recent",
       "regime_sensitive": true,
@@ -662,7 +671,7 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "snap_counts",
+        "NFLVERSE_SNAP_COUNTS",
         "ol_continuity_prior"
       ],
       "multi_year_policy": "multi-season+recent",
@@ -700,9 +709,9 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "injuries",
-        "depth_charts",
-        "inactives"
+        "NFLVERSE_INJURY_REPORTS",
+        "DEPTH_CHARTS",
+        "OFFICIAL_NFL_INACTIVES"
       ],
       "multi_year_policy": "current-regime+recent",
       "regime_sensitive": true,
@@ -739,8 +748,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "advanced_blocking",
-        "tracking_or_charting"
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT",
+        "NEXT_GEN_OR_TRACKING_DERIVED"
       ],
       "multi_year_policy": "multi-season+current-personnel",
       "regime_sensitive": true,
@@ -777,8 +786,9 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play",
-        "tracking_or_charting"
+        "NFLFASTR_PLAY_BY_PLAY",
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "coordinator-regime+season+recent",
       "regime_sensitive": true,
@@ -816,7 +826,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "tracking_or_charting"
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "coordinator-regime+season+recent",
       "regime_sensitive": true,
@@ -852,7 +863,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "tracking_or_charting"
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "coordinator-regime+season",
       "regime_sensitive": true,
@@ -888,7 +900,7 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "coach_history"
+        "COACH_PLAYCALLER_HISTORY"
       ],
       "multi_year_policy": "career+current-regime",
       "regime_sensitive": true,
@@ -926,8 +938,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play",
-        "coach_history"
+        "NFLFASTR_PLAY_BY_PLAY",
+        "COACH_PLAYCALLER_HISTORY"
       ],
       "multi_year_policy": "career+current-regime+recent",
       "regime_sensitive": true,
@@ -964,8 +976,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play",
-        "coach_history"
+        "NFLFASTR_PLAY_BY_PLAY",
+        "COACH_PLAYCALLER_HISTORY"
       ],
       "multi_year_policy": "career+current-regime+recent",
       "regime_sensitive": true,
@@ -1002,8 +1014,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play",
-        "coach_history"
+        "NFLFASTR_PLAY_BY_PLAY",
+        "COACH_PLAYCALLER_HISTORY"
       ],
       "multi_year_policy": "career+regime",
       "regime_sensitive": true,
@@ -1038,8 +1050,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play",
-        "coach_history"
+        "NFLFASTR_PLAY_BY_PLAY",
+        "COACH_PLAYCALLER_HISTORY"
       ],
       "multi_year_policy": "current-regime+recent",
       "regime_sensitive": true,
@@ -1075,8 +1087,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play",
-        "coach_history"
+        "NFLFASTR_PLAY_BY_PLAY",
+        "COACH_PLAYCALLER_HISTORY"
       ],
       "multi_year_policy": "current-regime+multi-season",
       "regime_sensitive": true,
@@ -1112,7 +1124,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "tracking_or_charting"
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "regime+season+recent",
       "regime_sensitive": true,
@@ -1148,7 +1161,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "tracking_or_charting"
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "regime+season",
       "regime_sensitive": true,
@@ -1184,7 +1198,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "tracking_or_charting"
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "regime+season",
       "regime_sensitive": true,
@@ -1221,7 +1236,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "tracking_or_charting"
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "defensive-regime+season",
       "regime_sensitive": true,
@@ -1257,7 +1273,7 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play"
+        "NFLFASTR_PLAY_BY_PLAY"
       ],
       "multi_year_policy": "multi-season+regime+recent",
       "regime_sensitive": true,
@@ -1293,7 +1309,7 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play"
+        "NFLFASTR_PLAY_BY_PLAY"
       ],
       "multi_year_policy": "multi-season+recent",
       "regime_sensitive": true,
@@ -1329,7 +1345,7 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play"
+        "NFLFASTR_PLAY_BY_PLAY"
       ],
       "multi_year_policy": "multi-season+regime",
       "regime_sensitive": true,
@@ -1364,8 +1380,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play",
-        "coach_history"
+        "NFLFASTR_PLAY_BY_PLAY",
+        "COACH_PLAYCALLER_HISTORY"
       ],
       "multi_year_policy": "multi-season+regime",
       "regime_sensitive": true,
@@ -1401,8 +1417,7 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "injuries",
-        "practice_reports"
+        "NFLVERSE_INJURY_REPORTS"
       ],
       "multi_year_policy": "multi-season+current-week",
       "regime_sensitive": true,
@@ -1438,7 +1453,7 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "official_inactives"
+        "OFFICIAL_NFL_INACTIVES"
       ],
       "multi_year_policy": "prospective-current",
       "regime_sensitive": true,
@@ -1474,10 +1489,10 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "depth_charts",
-        "participation",
-        "rosters",
-        "inactives"
+        "DEPTH_CHARTS",
+        "NFLVERSE_SNAP_COUNTS",
+        "NFLVERSE_ROSTERS",
+        "OFFICIAL_NFL_INACTIVES"
       ],
       "multi_year_policy": "multi-season+current-regime",
       "regime_sensitive": true,
@@ -1513,8 +1528,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "weather",
-        "stadium"
+        "WEATHER",
+        "STADIUM_SURFACE"
       ],
       "multi_year_policy": "multi-season",
       "regime_sensitive": true,
@@ -1550,8 +1565,7 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "stadium",
-        "surface"
+        "STADIUM_SURFACE"
       ],
       "multi_year_policy": "multi-season",
       "regime_sensitive": true,
@@ -1586,8 +1600,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "schedule",
-        "stadium"
+        "NFLVERSE_SCHEDULES_AND_PFR_LINES",
+        "STADIUM_SURFACE"
       ],
       "multi_year_policy": "multi-season",
       "regime_sensitive": true,
@@ -1623,8 +1637,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "schedule",
-        "play_by_play"
+        "NFLVERSE_SCHEDULES_AND_PFR_LINES",
+        "NFLFASTR_PLAY_BY_PLAY"
       ],
       "multi_year_policy": "multi-season",
       "regime_sensitive": true,
@@ -1660,8 +1674,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "official_assignments",
-        "penalties"
+        "OFFICIAL_ASSIGNMENTS_AND_PENALTIES",
+        "NFLFASTR_PLAY_BY_PLAY"
       ],
       "multi_year_policy": "multi-season+crew",
       "regime_sensitive": true,
@@ -1696,8 +1710,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play",
-        "penalties"
+        "NFLFASTR_PLAY_BY_PLAY",
+        "OFFICIAL_ASSIGNMENTS_AND_PENALTIES"
       ],
       "multi_year_policy": "multi-season+regime",
       "regime_sensitive": true,
@@ -1732,8 +1746,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play",
-        "kicking_stats"
+        "NFLFASTR_PLAY_BY_PLAY",
+        "NFLVERSE_WEEKLY_STATS"
       ],
       "multi_year_policy": "multi-season+season",
       "regime_sensitive": true,
@@ -1768,8 +1782,9 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play",
-        "tracking_or_charting"
+        "NFLFASTR_PLAY_BY_PLAY",
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "multi-season+regime",
       "regime_sensitive": true,
@@ -1806,8 +1821,9 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play",
-        "tracking_or_charting"
+        "NFLFASTR_PLAY_BY_PLAY",
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "multi-season+regime",
       "regime_sensitive": true,
@@ -1843,7 +1859,7 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play"
+        "NFLFASTR_PLAY_BY_PLAY"
       ],
       "multi_year_policy": "multi-season+season+recent",
       "regime_sensitive": true,
@@ -1879,7 +1895,7 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "prospective_market_snapshots"
+        "FANDUEL_NFL"
       ],
       "multi_year_policy": "prospective-only unless legitimate history",
       "regime_sensitive": true,
@@ -1915,7 +1931,7 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "multi_book_market"
+        "MULTI_BOOK_MARKETS"
       ],
       "multi_year_policy": "prospective",
       "regime_sensitive": true,
@@ -1951,7 +1967,7 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "market_snapshots"
+        "FANDUEL_NFL"
       ],
       "multi_year_policy": "prospective+legitimate-history",
       "regime_sensitive": true,
@@ -1985,8 +2001,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "model_distributions",
-        "prospective_results"
+        "INTERNAL_MODEL_OUTPUT",
+        "ESPN_SCOREBOARD"
       ],
       "multi_year_policy": "multi-year+prospective",
       "regime_sensitive": true,
@@ -2020,9 +2036,7 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "draft",
-        "combine",
-        "college_stats"
+        "NFL_DRAFT_COMBINE_COLLEGE_PRIORS"
       ],
       "multi_year_policy": "multi-year cohorts",
       "regime_sensitive": true,
@@ -2056,8 +2070,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "weekly_stats",
-        "injuries"
+        "NFLVERSE_WEEKLY_STATS",
+        "NFLVERSE_INJURY_REPORTS"
       ],
       "multi_year_policy": "multi-year career",
       "regime_sensitive": true,
@@ -2092,9 +2106,9 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "rosters",
-        "snap_counts",
-        "coach_history"
+        "NFLVERSE_ROSTERS",
+        "NFLVERSE_SNAP_COUNTS",
+        "COACH_PLAYCALLER_HISTORY"
       ],
       "multi_year_policy": "multi-year",
       "regime_sensitive": true,
@@ -2130,8 +2144,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "coach_history",
-        "schedule"
+        "COACH_PLAYCALLER_HISTORY",
+        "NFLVERSE_SCHEDULES_AND_PFR_LINES"
       ],
       "multi_year_policy": "multi-year skeptical",
       "regime_sensitive": true,
@@ -2167,8 +2181,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play",
-        "coach_history"
+        "NFLFASTR_PLAY_BY_PLAY",
+        "COACH_PLAYCALLER_HISTORY"
       ],
       "multi_year_policy": "multi-year regime",
       "regime_sensitive": true,
@@ -2202,8 +2216,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play",
-        "participation"
+        "NFLFASTR_PLAY_BY_PLAY",
+        "NFLVERSE_SNAP_COUNTS"
       ],
       "multi_year_policy": "multi-season",
       "regime_sensitive": true,
@@ -2238,8 +2252,7 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "play_by_play",
-        "special_teams"
+        "NFLFASTR_PLAY_BY_PLAY"
       ],
       "multi_year_policy": "multi-season",
       "regime_sensitive": true,
@@ -2274,7 +2287,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "tracking_or_charting"
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "all available tracking seasons",
       "regime_sensitive": true,
@@ -2311,7 +2325,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "tracking_or_charting"
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "all available tracking seasons",
       "regime_sensitive": true,
@@ -2345,7 +2360,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "tracking_or_charting"
+        "NEXT_GEN_OR_TRACKING_DERIVED",
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "all available tracking seasons",
       "regime_sensitive": true,
@@ -2381,7 +2397,7 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "licensed_charting"
+        "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT"
       ],
       "multi_year_policy": "multi-season if rights permit",
       "regime_sensitive": true,
@@ -2417,7 +2433,7 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "legally_usable_video"
+        "LEGAL_FILM_VIDEO"
       ],
       "multi_year_policy": "future only after structured residual-value proof",
       "regime_sensitive": true,
@@ -2453,9 +2469,8 @@
       "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
       "point_in_time_required": true,
       "source_candidates": [
-        "news",
-        "schedule",
-        "contracts"
+        "NEWS_TRANSACTIONS_CONTRACTS",
+        "NFLVERSE_SCHEDULES_AND_PFR_LINES"
       ],
       "multi_year_policy": "multi-year skeptical",
       "regime_sensitive": true,
