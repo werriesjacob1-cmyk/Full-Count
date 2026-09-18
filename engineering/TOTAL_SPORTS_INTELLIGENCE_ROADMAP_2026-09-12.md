@@ -127,6 +127,8 @@ NFL B0 is a control, not a full distribution model:
 
 It does not model attempts and efficiency separately, conditional game script, correlation, tails by player/regime, drive/possession state, or a coherent joint game world.
 
+A fixed rolling-origin audit on the fully digested 1999–2025 corpus rejected two simple challengers: excluding zero-attempt appearances from the last-five mean and multiplying three-game attempts by eight-game yards per attempt. Both were worse than B0 in 2020–2022 validation and 2023–2025 held data. The held paired MAE penalties were +2.0202 and +1.6421 yards, with player-cluster 95% bootstrap intervals above zero. See `engineering/NFL_PASSING_YARDS_BASELINE_RESEARCH_2026-09-14.md`. This negative result shifts priority toward point-in-time starter, play-volume, opponent, weather, injury, and market features.
+
 MLB has market-specific Bernoulli/count approximations, empirical rates, intervals, calibrators for a subset of markets, price/value math, and alternative lines. It does not yet provide a coherent full-game joint distribution across all markets.
 
 ## N. Current MLB market coverage
