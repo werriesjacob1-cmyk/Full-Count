@@ -364,6 +364,12 @@ def run(*, target_date, output_dir, code_sha):
             })
         event_results.append(result)
 
+    market_decision_counts = {"SHADOW_ONLY": 0, "NO_PLAY": 0}
+    for event_result in event_results:
+        for decision in (event_result.get("decisions") or {}).values():
+            if decision in market_decision_counts:
+                market_decision_counts[decision] += 1
+
     body = {
         "schema_version": 1,
         "sport": "NFL",
@@ -377,6 +383,7 @@ def run(*, target_date, output_dir, code_sha):
         "schedule_source_sha256": schedule_sha,
         "discovered_event_count": len(events),
         "accounted_event_count": len(event_results),
+        "market_decision_counts": market_decision_counts,
         "events": sorted(event_results, key=lambda row: row["event_id"]),
     }
     if body["accounted_event_count"] != body["discovered_event_count"]:
@@ -408,12 +415,13 @@ def main():
         "target_local_date": manifest["target_local_date"],
         "discovered_event_count": manifest["discovered_event_count"],
         "accounted_event_count": manifest["accounted_event_count"],
-        "board_built": sum(
+        "event_board_built": sum(
             row["status"] == "BOARD_BUILT" for row in manifest["events"]
         ),
-        "no_play": sum(
+        "event_no_play": sum(
             row["status"] == "NO_PLAY" for row in manifest["events"]
         ),
+        "market_decision_counts": manifest["market_decision_counts"],
         "manifest_sha256": manifest["manifest_sha256"],
     }, sort_keys=True))
 
