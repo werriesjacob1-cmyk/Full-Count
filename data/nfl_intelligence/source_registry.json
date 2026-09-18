@@ -631,6 +631,124 @@
         "HC/OC titles alone cannot fill missing responsibility",
         "shared or partial playcalling must be representable"
       ]
+    },
+    {
+      "source_id": "NFL_TEAM_OFFICIAL_PRESSERS",
+      "status": "PROSPECTIVE_ONLY",
+      "intended_use": [
+        "coach_press_conferences",
+        "player_press_conferences",
+        "coordinator_press_conferences",
+        "practice_context",
+        "role_comments",
+        "injury_context",
+        "scheme_comments"
+      ],
+      "historical_coverage_claim": "NFL.com maintains a league press-conference video channel and individual team sites maintain dated coach/player press-conference libraries; exhaustive team-by-team historical depth is not yet audited.",
+      "current_season_policy": "capture official team/NFL press conference item as soon as published; preserve event date, publication time, speaker, role, source URL, transcript/caption availability, and raw digest",
+      "point_in_time_class": "OFFICIAL_PUBLIC_STATEMENT_PREGAME_OR_POSTGAME_WITH_PUBLICATION_TIMESTAMP",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_NEWS_BRAIN_2026-09-18.md"
+      ],
+      "restrictions": [
+        "speaker statement is a claim, not automatically a verified fact",
+        "postgame comments may explain past outcomes but cannot enter pregame models for the game already played",
+        "coach strategic language may be deceptive or intentionally vague",
+        "video/caption extraction must retain exact source timestamp and speaker identity"
+      ]
+    },
+    {
+      "source_id": "NFL_TEAM_OFFICIAL_NEWS",
+      "status": "PROSPECTIVE_ONLY",
+      "intended_use": [
+        "practice_reports",
+        "transactions",
+        "depth_role_updates",
+        "team_announcements",
+        "coach_quotes",
+        "player_quotes"
+      ],
+      "historical_coverage_claim": "Official team sites publish dated news/practice material, but historical depth and page structure vary by team.",
+      "current_season_policy": "capture official team articles/posts with published_at and observed_at; classify statement type and whether it is team-authored reporting or quoted speaker claim",
+      "point_in_time_class": "OFFICIAL_TEAM_PUBLICATION",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_NEWS_BRAIN_2026-09-18.md"
+      ],
+      "restrictions": [
+        "team editorial framing may be promotional",
+        "quotation and reporter inference must be separated",
+        "later article edits must not overwrite earlier captured text"
+      ]
+    },
+    {
+      "source_id": "ACCREDITED_BEAT_REPORTERS",
+      "status": "DISCOVERY",
+      "intended_use": [
+        "practice_observation",
+        "first_team_reps",
+        "role_change",
+        "injury_visual_observation",
+        "depth_rotation",
+        "scheme_observation",
+        "coach_quote_context"
+      ],
+      "historical_coverage_claim": "No canonical team-by-team accredited reporter registry exists in FULL COUNT yet.",
+      "current_season_policy": "maintain per-team reporter/source directory; capture only public reporting with publication timestamp; preserve outlet, reporter, direct observation vs sourced report vs opinion, and links",
+      "point_in_time_class": "PREGAME_PUBLIC_REPORTING_TIMESTAMP_REQUIRED",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_NEWS_BRAIN_2026-09-18.md"
+      ],
+      "restrictions": [
+        "do not treat opinion/speculation as fact",
+        "distinguish observed practice fact from unnamed-source claim",
+        "do not infer private information",
+        "social posts may be edited/deleted; preserve observation timestamp and citation/reference where legally permitted",
+        "source reliability must be learned by claim type rather than one global reputation score"
+      ]
+    },
+    {
+      "source_id": "LOCAL_TEAM_MEDIA",
+      "status": "DISCOVERY",
+      "intended_use": [
+        "practice_reports",
+        "locker_room_quotes",
+        "press_conference_context",
+        "role_change",
+        "transactions",
+        "film_observation"
+      ],
+      "historical_coverage_claim": "Local newspapers, radio, TV and team-focused outlets vary by market; team-level source registry not yet built.",
+      "current_season_policy": "register outlet/reporter identity and publication timestamp; classify original reporting vs aggregation",
+      "point_in_time_class": "PREGAME_PUBLIC_REPORTING_TIMESTAMP_REQUIRED",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_NEWS_BRAIN_2026-09-18.md"
+      ],
+      "restrictions": [
+        "aggregation must cite original source",
+        "paywalled content rights must be respected",
+        "headline sentiment is not a model feature"
+      ]
+    },
+    {
+      "source_id": "NFL_POSTGAME_PRESSERS",
+      "status": "PROSPECTIVE_ONLY",
+      "intended_use": [
+        "role_explanation",
+        "injury_explanation",
+        "scheme_explanation",
+        "coach_decision_explanation",
+        "future_role_signal"
+      ],
+      "historical_coverage_claim": "Official team/NFL press conference libraries include postgame media; exhaustive historical capture not yet built.",
+      "current_season_policy": "capture after game with explicit event linkage; may inform future games only after publication timestamp",
+      "point_in_time_class": "POSTGAME_EXPLANATORY_EVIDENCE_FOR_FUTURE_TARGETS_ONLY",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_NEWS_BRAIN_2026-09-18.md"
+      ],
+      "restrictions": [
+        "never leak postgame explanation into prediction for same game",
+        "self-serving explanations require corroboration where material"
+      ]
     }
   ]
 }
