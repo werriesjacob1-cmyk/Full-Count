@@ -2002,3 +2002,23 @@ strictly prior opportunity/context features without using closing lines as
 prediction inputs.
 
 Alligator
+
+## 2026-09-17 — Development-only NFL game-market C1 rejected
+
+- Reused the predeclared additive-bias challenger from draft PR #112 and ran
+  it on the reconciled, digest-pinned B0 population.
+- Fit only 5,095 development games from 2000-2019. The fitted corrections were
+  +2.570805 home-margin points and +0.032159 total points.
+- Kept the fit population independent of closing-line availability by using
+  explicit-final scoring outcomes rather than the market-control subset.
+- Margin MAE improved by only 0.057833 points on validation and 0.038350 on
+  the 816-game holdout. The held paired bootstrap interval crossed zero.
+- Total MAE worsened slightly on both validation and held-out data.
+- C1 is explicitly rejected for promotion. No correction is activated in a
+  selector, probability model, prospective capture, grader, or public path.
+
+Next: use B0 as the unchanged control and reconcile the existing strictly
+prior opportunity/context feature stack (#106-#109 and #113) before defining
+the next challenger.
+
+Alligator
