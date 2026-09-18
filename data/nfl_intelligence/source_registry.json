@@ -1,0 +1,339 @@
+{
+  "schema_version": 1,
+  "sport": "NFL",
+  "purpose": "Source control plane for NFL intelligence. Coverage and point-in-time integrity are separate from angle desirability.",
+  "status_vocabulary": {
+    "AUDITED": "Repository has explicit source audit/provenance evidence for stated use.",
+    "PARTIAL": "Some repository evidence exists; contract incomplete for intended use.",
+    "PROSPECTIVE_ONLY": "Usable only from captured future snapshots unless a legitimate historical archive is established.",
+    "REAUDIT_REQUIRED": "Previously referenced source must be rechecked before new modeling use.",
+    "DISCOVERY": "Candidate source; no modeling authorization.",
+    "RIGHTS_OR_COST_REVIEW": "Potentially useful but access/licensing/cost must be resolved."
+  },
+  "sources": [
+    {
+      "source_id": "NFLVERSE_WEEKLY_STATS",
+      "status": "AUDITED",
+      "intended_use": [
+        "historical_player_stats",
+        "historical_team_stats",
+        "player_role_research"
+      ],
+      "historical_coverage_claim": "1999-2025 assets fully file-audited in repo engineering evidence",
+      "current_season_policy": "must be revalidated for current-season availability before each integration",
+      "point_in_time_class": "COMPLETED_GAME_FACTS_ONLY_FOR_STRICTLY_PRIOR_FEATURES",
+      "repo_evidence": [
+        "engineering/NFLVERSE_WEEKLY_STATS_FULL_AUDIT_2026-09-14.md",
+        "engineering/NFLVERSE_WEEKLY_STATS_SOURCE_AUDIT_2026-09-14.md"
+      ],
+      "restrictions": [
+        "never use current-game outcome fields as pregame features"
+      ]
+    },
+    {
+      "source_id": "NFLVERSE_SCHEDULES_AND_PFR_LINES",
+      "status": "AUDITED",
+      "intended_use": [
+        "schedule_identity",
+        "historical_closing_market_control"
+      ],
+      "historical_coverage_claim": "1999-2026 schedule rows audited; settled PFR closing line subset documented",
+      "current_season_policy": "moving source; snapshot/digest when used",
+      "point_in_time_class": "SCHEDULE_IDENTITY_OK__PFR_LINES_RETROSPECTIVE_EVALUATION_ONLY",
+      "repo_evidence": [
+        "engineering/NFLVERSE_GAME_LINES_SOURCE_AUDIT_2026-09-15.md",
+        "engineering/NFLVERSE_GAME_LINES_NORMALIZATION_2026-09-15.md"
+      ],
+      "restrictions": [
+        "no book identity",
+        "no capture timestamp",
+        "not a pregame feature",
+        "not FanDuel-specific",
+        "not line-movement history"
+      ]
+    },
+    {
+      "source_id": "NFLFASTR_PLAY_BY_PLAY",
+      "status": "PARTIAL",
+      "intended_use": [
+        "team_tendencies",
+        "game_state",
+        "drive_efficiency",
+        "penalties",
+        "turnover_process",
+        "explosives",
+        "pace"
+      ],
+      "historical_coverage_claim": "feature builders exist; exhaustive warehouse/source-vintage audit still required for genius program",
+      "current_season_policy": "snapshot raw source and preserve source vintage",
+      "point_in_time_class": "STRICTLY_PRIOR_COMPLETED_PLAYS",
+      "repo_evidence": [
+        "nfl/research/pbp_prior_tendencies.py"
+      ],
+      "restrictions": [
+        "do not treat postgame-derived fields as pregame facts without field-level availability review"
+      ]
+    },
+    {
+      "source_id": "NFLVERSE_SNAP_COUNTS",
+      "status": "PARTIAL",
+      "intended_use": [
+        "ol_continuity",
+        "participation",
+        "role_history"
+      ],
+      "historical_coverage_claim": "OL module documents 2012 as empty and real useful coverage beginning 2013; full source audit still required",
+      "current_season_policy": "verify publication timing before prospective use",
+      "point_in_time_class": "RETROSPECTIVE_COMPLETED_GAME_FACTS_FOR_PRIOR_HISTORY",
+      "repo_evidence": [
+        "nfl/research/ol_continuity_prior.py"
+      ],
+      "restrictions": [
+        "not a timestamped historical vintage archive",
+        "do not infer upcoming starters from prior snap files"
+      ]
+    },
+    {
+      "source_id": "NFLVERSE_INJURY_REPORTS",
+      "status": "REAUDIT_REQUIRED",
+      "intended_use": [
+        "historical_weekly_injury_status",
+        "practice_status"
+      ],
+      "historical_coverage_claim": "existing feature module asserts 2009+ source coverage, but current source availability/provenance must be independently reverified before broader 2026 use",
+      "current_season_policy": "do not assume current-season feed exists or is complete",
+      "point_in_time_class": "UNKNOWN_UNTIL_REAUDIT",
+      "repo_evidence": [
+        "nfl/research/injury_availability_features.py"
+      ],
+      "restrictions": [
+        "weekly filed status is not equivalent to official inactive list",
+        "must preserve publication/effective timing"
+      ]
+    },
+    {
+      "source_id": "OFFICIAL_NFL_INACTIVES",
+      "status": "PROSPECTIVE_ONLY",
+      "intended_use": [
+        "final_game_day_availability"
+      ],
+      "historical_coverage_claim": "no bulk historical archive established in repo",
+      "current_season_policy": "archive raw page/article with publication and observation timestamps",
+      "point_in_time_class": "PREGAME_PROSPECTIVE",
+      "repo_evidence": [
+        "existing official inactive normalizer/capture path referenced by current NFL workflow"
+      ],
+      "restrictions": [
+        "do not fabricate historical inactive state"
+      ]
+    },
+    {
+      "source_id": "FANDUEL_NFL",
+      "status": "PROSPECTIVE_ONLY",
+      "intended_use": [
+        "live_market_prices",
+        "spread",
+        "total",
+        "player_props",
+        "market_movement"
+      ],
+      "historical_coverage_claim": "no legitimate broad historical point-in-time FanDuel archive established",
+      "current_season_policy": "archive raw payload, event identity, market time, capture time, selection id, price, line, digest",
+      "point_in_time_class": "PREGAME_PROSPECTIVE",
+      "repo_evidence": [
+        "nfl/archive/sources/fanduel_nfl.py",
+        "nfl/prospective/game_market_snapshot.py"
+      ],
+      "restrictions": [
+        "do not fabricate historical prices",
+        "future/closing state cannot enter earlier prediction"
+      ]
+    },
+    {
+      "source_id": "ESPN_SCOREBOARD",
+      "status": "PROSPECTIVE_ONLY",
+      "intended_use": [
+        "explicit_final_game_outcome"
+      ],
+      "historical_coverage_claim": "used as an explicit-final outcome adapter, not a pregame feature source",
+      "current_season_policy": "archive source payload digest and observation time",
+      "point_in_time_class": "POSTGAME_OUTCOME_ONLY",
+      "repo_evidence": [
+        "nfl/prospective/espn_final_outcome.py"
+      ],
+      "restrictions": [
+        "never use final score as pregame feature"
+      ]
+    },
+    {
+      "source_id": "NFLVERSE_ROSTERS",
+      "status": "PARTIAL",
+      "intended_use": [
+        "identity",
+        "roster_context"
+      ],
+      "historical_coverage_claim": "current repo workflow uses 2026 roster identity; deeper multi-year audit required",
+      "current_season_policy": "snapshot roster vintage and effective date",
+      "point_in_time_class": "PIT_REQUIRES_VINTAGE_CHECK",
+      "repo_evidence": [
+        "engineering/TOTAL_SPORTS_INTELLIGENCE_ROADMAP_2026-09-12.md"
+      ],
+      "restrictions": [
+        "present-day roster files cannot prove historical as-of roster without vintage evidence"
+      ]
+    },
+    {
+      "source_id": "DEPTH_CHARTS",
+      "status": "DISCOVERY",
+      "intended_use": [
+        "role",
+        "replacement_graph",
+        "starter_projection"
+      ],
+      "historical_coverage_claim": "no repository-wide audited depth-chart warehouse yet",
+      "current_season_policy": "must preserve effective/publication timestamp",
+      "point_in_time_class": "UNKNOWN_UNTIL_SOURCE_AUDIT",
+      "repo_evidence": [],
+      "restrictions": [
+        "do not infer starter labels from present-day depth chart for past games"
+      ]
+    },
+    {
+      "source_id": "COACH_PLAYCALLER_HISTORY",
+      "status": "DISCOVERY",
+      "intended_use": [
+        "coach_regime",
+        "coordinator_regime",
+        "playcaller_regime"
+      ],
+      "historical_coverage_claim": "none warehoused",
+      "current_season_policy": "create dated responsibility intervals with citations/confidence",
+      "point_in_time_class": "PIT_REQUIRES_DATED_INTERVALS",
+      "repo_evidence": [
+        "engineering/TOTAL_SPORTS_INTELLIGENCE_ROADMAP_2026-09-12.md"
+      ],
+      "restrictions": [
+        "title does not always equal playcalling responsibility"
+      ]
+    },
+    {
+      "source_id": "WEATHER",
+      "status": "DISCOVERY",
+      "intended_use": [
+        "wind",
+        "gust",
+        "precipitation",
+        "temperature",
+        "humidity"
+      ],
+      "historical_coverage_claim": "not audited",
+      "current_season_policy": "preserve forecast observation time and game-location binding",
+      "point_in_time_class": "PREGAME_FORECAST_VINTAGE_REQUIRED",
+      "repo_evidence": [],
+      "restrictions": [
+        "do not substitute observed postgame weather for pregame forecast in historical prediction tests"
+      ]
+    },
+    {
+      "source_id": "STADIUM_SURFACE",
+      "status": "DISCOVERY",
+      "intended_use": [
+        "roof",
+        "surface",
+        "altitude",
+        "stadium_geometry"
+      ],
+      "historical_coverage_claim": "not audited",
+      "current_season_policy": "version stadium/surface changes by effective date",
+      "point_in_time_class": "DATED_STATIC_OR_SLOW_CHANGING",
+      "repo_evidence": [],
+      "restrictions": [
+        "surface/roof changes require effective-date history"
+      ]
+    },
+    {
+      "source_id": "OFFICIAL_ASSIGNMENTS_AND_PENALTIES",
+      "status": "DISCOVERY",
+      "intended_use": [
+        "referee_crew",
+        "penalty_tendencies"
+      ],
+      "historical_coverage_claim": "not audited",
+      "current_season_policy": "bind crew assignment publication time to target game",
+      "point_in_time_class": "PREGAME_ASSIGNMENT_VINTAGE_REQUIRED",
+      "repo_evidence": [],
+      "restrictions": [
+        "crew effects require shrinkage and skeptical priors"
+      ]
+    },
+    {
+      "source_id": "NEXT_GEN_OR_TRACKING_DERIVED",
+      "status": "RIGHTS_OR_COST_REVIEW",
+      "intended_use": [
+        "coverage",
+        "route",
+        "alignment",
+        "expected_rush",
+        "expected_pressure",
+        "player_geometry"
+      ],
+      "historical_coverage_claim": "not warehoused in repo",
+      "current_season_policy": "resolve access, rights, fields, update cadence and PIT semantics before implementation",
+      "point_in_time_class": "UNKNOWN_UNTIL_ACCESS_AUDIT",
+      "repo_evidence": [],
+      "restrictions": [
+        "do not imply raw tracking access merely because public NGS metrics exist"
+      ]
+    },
+    {
+      "source_id": "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT",
+      "status": "RIGHTS_OR_COST_REVIEW",
+      "intended_use": [
+        "route_charting",
+        "coverage",
+        "blocking",
+        "pressure",
+        "film_proxy"
+      ],
+      "historical_coverage_claim": "not authorized/purchased",
+      "current_season_policy": "requires Jacob purchase/access authorization if paid",
+      "point_in_time_class": "UNKNOWN_UNTIL_VENDOR_CONTRACT_AUDIT",
+      "repo_evidence": [],
+      "restrictions": [
+        "no purchase authorization implied",
+        "respect licensing/redistribution"
+      ]
+    },
+    {
+      "source_id": "LEGAL_FILM_VIDEO",
+      "status": "RIGHTS_OR_COST_REVIEW",
+      "intended_use": [
+        "future_visual_film_agent"
+      ],
+      "historical_coverage_claim": "no licensed film ingestion",
+      "current_season_policy": "do not ingest until rights/retrieval/play identity are solved",
+      "point_in_time_class": "NOT_APPROVED",
+      "repo_evidence": [],
+      "restrictions": [
+        "structured data should prove residual gap first"
+      ]
+    },
+    {
+      "source_id": "MULTI_BOOK_MARKETS",
+      "status": "RIGHTS_OR_COST_REVIEW",
+      "intended_use": [
+        "cross_book_disagreement",
+        "consensus",
+        "lead_lag",
+        "stale_price_detection"
+      ],
+      "historical_coverage_claim": "no legitimate historical multi-book archive established",
+      "current_season_policy": "preserve exact book/time/selection/price if added",
+      "point_in_time_class": "PROSPECTIVE_UNLESS_ARCHIVE_PROVEN",
+      "repo_evidence": [],
+      "restrictions": [
+        "no purchase or scraping expansion authorization implied"
+      ]
+    }
+  ]
+}
