@@ -2175,3 +2175,145 @@ Next: require exact-head CI on the integrity-port PR, merge the port if green
 under Jacob's authorized #97 disposition, then close superseded PR #97.
 
 Alligator
+
+## 2026-09-18 — Selector/argmax diagnosis + hits_runs_rbis mechanism trace: converge on one missing artifact
+
+Agent: Claude (lead) + two read-only subagents (mechanism trace, NFL data-gap
+ranking), run in parallel per Jacob's SuperClaude-mission-format instruction.
+
+Branch: `claude/hits-runs-rbis-mechanism-20260918`
+
+PR: documentation only, no code/model change.
+
+Objective: Follow up on this file's own 2026-09-18 "Top Pick calibration
+audit" entry (immediately above), which named two explicit open items: (1)
+test the selection-effect/winner's-curse hypothesis directly against the
+larger backtest candidate pool, and (2) read `score_batter()`'s
+`hits_runs_rbis` path, not yet done in that pass. SuperClaude runtime check
+performed first: no `.claude/agents/`, `.claude/skills/`, or any fc-* named
+agent/skill exists in this environment (`.claude/` contains only
+`worktree-autosave.sh`); proceeded with generic subagents per that mission's
+own explicit fallback instruction, not blocked on SuperClaude's absence.
+
+**MLB Workstream A (selector/argmax) — real attempt, real blocker found:**
+
+- `backtest/rows.jsonl` (the 401-date, 242k-row historical candidate corpus
+  `accuracy_lab.py` needs) does not exist in this environment -- gitignored,
+  and rebuilding it means re-simulating 401 dates against live
+  Statcast/box-score fetches via `backtest/engine.py`. Did not undertake
+  this without explicit authorization: real multi-hour, network-heavy cost.
+- The already-committed `data/accuracy_lab/results/champion.jsonl` (a real
+  prior run, n=96,476 held-out rows, locked holdout cutoff 2025-08-22) shows
+  real but modest raw-model overconfidence growing with probability (roughly
+  +2.3pp at 0.65-0.70, +5.3pp at 0.70-0.75, +5.4pp at 0.75+) -- but this
+  cannot test the Top-Pick-selection-effect hypothesis at all: `--apply-
+  policy` backtest rows have no real historical market odds, so
+  `recommendation_status` structurally never reaches `top_pick` there.
+  Population mismatch, not usable for this question.
+- Attempted a cheaper real-data alternative instead: joined each day's
+  `results/grades_{date}.json` `picks` array (2,821 graded full-board
+  candidates, 44 days) against that same file's `public_top_picks` (the real
+  published ledger, 382 entries) by `(game_pk, player_id, stat, needs)`.
+  **Match rate: 63/382 (16%).** Spot-checked one failure directly: a real
+  published Top Pick (Dylan Crews, `hits_runs_rbis`, 2026-09-16) does not
+  appear anywhere in that date's `picks` array at all. Conclusion: `picks`
+  inside a grades file is NOT a frozen pregame-selection-time snapshot --
+  it is regenerated at grading time against then-current signals, a
+  genuinely different candidate population than what the selector actually
+  saw. Per the mission's own STOP rule, did not force this join further.
+- Real, usable finding that survived: per-stat daily candidate-pool sizes in
+  `picks` are comparable across markets (`hits` 6.2/day, `hits_runs_rbis`
+  4.4/day, `pitcher_outs` 4.5/day -- `hits` if anything has MORE daily
+  candidates, not fewer). This weakens a pure "bigger pool -> more winner's-
+  curse room" explanation for why `hits` alone escapes the overconfidence
+  gap, and points toward differential per-stat ESTIMATOR NOISE (not pool
+  size) as the primary amplification target.
+
+**MLB Workstream B (hits_runs_rbis mechanism) — one hypothesis disproven, one strengthened:**
+
+Subagent traced the exact code path with file:line citations. Findings:
+
+- **DISPROVEN by direct code reading:** the independence/OR-combination
+  hypothesis (`P(hit or run or RBI) = 1-(1-pH)(1-pR)(1-pRBI)`) does not
+  exist anywhere in this codebase. `generate_picks.py`'s family list passes
+  `fn=None` for `hits_runs_rbis` (same as `runs`/`rbis`) so `_blend()` uses
+  the empirical rate, not an invented combination term.
+  `mlb_sources.py`'s `_empirical_batter_one` computes it as a literal
+  per-game sum (`h + runs_ + rbi_`, including the same self-driven-in-run
+  double-count the real book itself settles on), threshold-cleared exactly
+  like `hits`, through the identical `_apply_shrinkage`/`_fit_shrinkage_n0`
+  path. `hits` and `hits_runs_rbis` share the same probability-computation
+  and shrinkage code -- the gap is not a scoring-formula bug.
+- `stable_lift`/`stable_base_rate` are `hits_runs_rbis`-specific but
+  confirmed to gate Lean/Top-Pick *selection* only (`recommendation.py:317`)
+  -- they never touch `hit_probability` itself, so cannot explain the
+  overconfidence in the stated probability.
+- **Strengthens the winner's-curse mechanism already named in the prior
+  entry, from a second, independent angle:** `hits_runs_rbis`'s Platt
+  calibrator (`backtest/calibrators_by_market.json`, n=3,480, fit window
+  2026-07-10..08-08) was measurably miscalibrated pre-fit (ECE 0.017 vs
+  `hits`' 0.008) and the fitted curve was kept because held-out evaluation
+  showed real improvement -- but per `generate_picks.py`'s own
+  documentation, that held-out evaluation ran over the *full backtest
+  candidate pool*, never the argmax-selected/published subset. The
+  2026-09-14 calibration recheck (`backtest/calibration_recheck_report.json`)
+  already tried a fresh refit through 2026-09-12 and found no reliable
+  improvement (`action: skip`, "held-out improvement too small to trust") --
+  under the SAME full-pool evaluation methodology. So staleness alone is
+  not the story either: a fresher fit was already tried and didn't help,
+  because the evaluation was never measuring the population that's actually
+  overconfident.
+
+**Convergent conclusion (the actual result of this pass):** both
+investigative threads -- the selector/argmax reconstruction and the
+`hits_runs_rbis` mechanism trace -- independently arrive at the same
+missing artifact: **no frozen, full-board, all-recommendation-status
+candidate snapshot is captured at generation/selection time.** Every
+existing evaluation (the champion.jsonl backtest, the hits_runs_rbis
+calibrator's original fit, and its 2026-09-14 recheck) scores against
+either a market-data-free backtest population or the full daily candidate
+pool -- never the actual historically-argmax-selected, published subset.
+Nobody has ever measured calibration on the right population, because the
+artifact needed to define that population correctly doesn't exist yet.
+
+What I changed: nothing executable. This entry only.
+
+Tests added: none (no code changed).
+
+Behavior intentionally unchanged: all model/scoring/probability/
+calibration/selection code and all generated artifacts.
+
+Risks / known limitations: the "differential estimator noise by stat" and
+"stable candidate-pool sizes" findings are consistent with, not proof of,
+the winner's-curse mechanism -- they rule out one competing explanation
+(pool size) without directly measuring the selected-subset-vs-pool gap,
+which still requires the missing artifact below.
+
+New issues discovered: none beyond what's stated above -- this pass
+subtracted one hypothesis (independence/OR-combination) rather than adding
+a new one, which is itself the point of running concrete, falsifiable
+tests rather than fitting a story to the data.
+
+Recommended next work: the minimum missing instrumentation, forward-only
+(NOT a historical resim): freeze the full daily board -- every candidate,
+every recommendation_status, with the same stable identity fields
+`public_top_picks` already uses (`game_pk`, `player_id`/`combo_player_ids`,
+`stat`, `market_side`/`needs`) -- at the moment `generate_picks.py` actually
+generates it, not regenerated later at grading time. Once that exists for
+even a few weeks, `hits_runs_rbis` and `pitcher_outs` calibration can be
+directly measured on the real argmax-selected-vs-not populations, closing
+the loop this entry and the prior one both open. This is genuinely cheap
+(a write, not a resim) but touches the live picks-generation pipeline, so
+it should get its own reviewed PR rather than being bundled into a
+documentation-only entry like this one.
+
+Information Claude should know when resuming: the independence/OR-
+combination hypothesis for `hits_runs_rbis` is closed, rejected by direct
+code reading -- do not re-investigate it. The winner's-curse hypothesis is
+now supported from two independent angles but still not directly measured.
+The concrete next step is the forward-only board-freeze instrumentation
+above, not a backtest rebuild and not a calibrator refit (a refit was
+already tried recently under the wrong evaluation population and correctly
+did not help).
+
+Alligator
