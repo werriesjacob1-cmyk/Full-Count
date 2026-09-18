@@ -1,4 +1,27 @@
 {
+  "MATCH_HANDICAP_(2-WAY)": {
+    "blockers": [
+      "GRADER_NOT_ACTIVE",
+      "HISTORICAL_DATA_NOT_VALIDATED",
+      "MODEL_NOT_RESEARCHED",
+      "PROSPECTIVE_CAPTURE_NOT_ACTIVE",
+      "SELECTOR_NOT_VALIDATED"
+    ],
+    "canonical_market": "spread",
+    "capabilities": {
+      "grader": false,
+      "historical_data_available": false,
+      "historical_validated": false,
+      "ingested": true,
+      "model_research": false,
+      "normalized": true,
+      "prospective_capture": false,
+      "public_eligible": false,
+      "selector_research": false
+    },
+    "lifecycle_status": "NORMALIZED",
+    "status_reason": "Primary pregame two-way spread has a fail-closed normalizer; historical, model, capture, selector, and grading validation remain inactive"
+  },
   "PLAYER_X_PASSING_YARDS_HIGH": {
     "blockers": [
       "GRADER_NOT_ACTIVE",
@@ -58,5 +81,28 @@
     },
     "lifecycle_status": "PROSPECTIVE_SHADOW",
     "status_reason": "Frozen B0 passing-yards control is captured prospectively; public selector and grading remain inactive"
+  },
+  "TOTAL_POINTS_(OVER/UNDER)": {
+    "blockers": [
+      "GRADER_NOT_ACTIVE",
+      "HISTORICAL_DATA_NOT_VALIDATED",
+      "MODEL_NOT_RESEARCHED",
+      "PROSPECTIVE_CAPTURE_NOT_ACTIVE",
+      "SELECTOR_NOT_VALIDATED"
+    ],
+    "canonical_market": "game_total",
+    "capabilities": {
+      "grader": false,
+      "historical_data_available": false,
+      "historical_validated": false,
+      "ingested": true,
+      "model_research": false,
+      "normalized": true,
+      "prospective_capture": false,
+      "public_eligible": false,
+      "selector_research": false
+    },
+    "lifecycle_status": "NORMALIZED",
+    "status_reason": "Primary pregame game total has a fail-closed normalizer; historical, model, capture, selector, and grading validation remain inactive"
   }
 }
