@@ -152,7 +152,16 @@ def build_candidate_snapshot(candidate, *, qc_status, rank_lookup, gated_ids,
         "matchup": candidate.get("matchup"),
         "stat": stat,
         "needs": needs,
-        "line": projection.get("line"),
+        # generate_picks.py's score_*() functions universally set
+        # projection["value"], never "line" -- "line" only exists on the
+        # pre-selection option dicts _pick_line()/_batter_options() choose
+        # between, not the final candidate. Reading "line" here left this
+        # field None on every real frozen record; found by the board-freeze
+        # grader's own adapter work (see test_real_projection_schema_never_
+        # carries_a_line_key_so_frozen_line_is_none in test_board_freeze_
+        # grader.py) and fixed here at the source instead of leaving every
+        # consumer to work around it independently.
+        "line": projection.get("value"),
         "market_side": side,
         "prop_label": candidate.get("prop"),
         "prediction": {

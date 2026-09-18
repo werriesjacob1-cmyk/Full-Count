@@ -2372,6 +2372,98 @@ Alligator
 
 Alligator
 
+## 2026-09-18 — board_freeze.py: fix a real `line` field bug found by the grader work
+
+- Small, focused follow-up to `MLB-BOARD-FREEZE-GRADER-20260918` (the
+  board-freeze grader workstream), found while building that grader's
+  adapter: `board_freeze.build_candidate_snapshot()` read
+  `projection.get("line")`, but every `score_*()` function in
+  `generate_picks.py` sets `projection["value"]`, never `"line"` --
+  `"line"` only ever exists on the pre-selection option dicts
+  `_pick_line()`/`_batter_options()` choose between, not the final
+  candidate. This left the frozen record's `line` field `None` for every
+  real candidate `board_freeze.py` has produced since it merged (PR #132).
+  Fixed by reading `projection.get("value")` instead.
+- `test_board_freeze.py`'s own `candidate()` fixture used `"line"` too,
+  which is exactly why this shipped without a test catching it -- the
+  fixture was internally consistent with the bug, not with real
+  `generate_picks.py` candidates. Fixed the fixture to use `"value"` to
+  match reality; no test assertion depended on the old key name, so
+  nothing else needed to change.
+- The grader itself is unaffected by this bug (it reconstructs
+  `projection.value` from `needs` independently, per its own module
+  docstring) -- this fix is about the raw frozen artifact being correct
+  for anyone reading it directly, not a grading correctness issue.
+- Full `test_board_freeze.py` (12/12) and full root suite pass.
+- Merged as PR #139, merge SHA `aec84b8c53699b735794a4dd57653fa3156ade9e`.
+- Known follow-up: `board_freeze_grader.py`'s own test suite
+  (`test_board_freeze_grader.py`, on the separate
+  `MLB-BOARD-FREEZE-GRADER-20260918` PR #138) has one test that documented
+  this bug's presence -- updated on that PR's own branch to expect the
+  corrected non-`None` value once this fix landed on `main`.
+
+Alligator
+
+## 2026-09-18 — NFL receptions: second live player-prop research family (B0 + shadow)
+
+- Workstream `NFL-PLAYER-PROP-RECEPTIONS-20260918` (Issue #91 claim, comment
+  `5733695642`), branch `claude/nfl-receptions-b0-v2-20260918`.
+- `receptions_baseline_research.py`/`receptions_shadow.py` bring `receptions`
+  online as the second live NFL player-prop research family, following the
+  exact proven `passing_yards` pattern (rolling-5, min-3-appearance B0 +
+  residual-based shadow scorer). Zero new ingestion -- same audited
+  1999-2025 nflverse weekly-stats corpus `passing_yards` already uses.
+- Real data-quality finding, preserved rather than silently worked around:
+  nflverse's `targets` column is effectively unpopulated for 2003-2008 (a
+  stray 0-17 rows/season vs 3,500-4,300 every other season). Gating
+  eligibility on raw `targets > 0` would have silently erased six real
+  development-partition seasons. Fixed via `effective_targets =
+  max(targets, receptions) > 0` -- a completed catch is definitional proof
+  of a target -- which recovers the missing seasons without fabricating
+  data. `raw_targets_column_coverage_by_season` is recorded in the output
+  artifact so this stays visible, not just in this note.
+- Real B0 accuracy (byte-verified against the full pinned 1999-2025 corpus,
+  no fabricated numbers): development_2000_2019 MAE 1.4606 (n=70,983),
+  validation_2020_2022 MAE 1.4891 (n=12,063), held_2023_2025 MAE 1.4245
+  (n=12,095). No challenger built yet (there is no C1-equivalent for
+  receptions) -- this is B0 establishing its own honest baseline, exactly
+  as passing_yards' B0 did before either of its own challengers existed.
+  By-position MAE spread (WR highest ~1.55-1.65, TE/RB lower ~1.25-1.35)
+  reported as a transparency artifact, not used to justify separate
+  per-position models.
+- Investigated and explicitly declined a QB-continuity-style team-change
+  quarantine for receivers: empirical check on the pinned corpus showed
+  team-change prior-appearance pairs did NOT show worse B0 error than
+  same-team pairs (if anything the reverse, most plausibly because traded
+  receivers skew toward lower-volume roles) -- a considered omission,
+  documented in the module docstring, not an oversight.
+- Market-math functions (`american_implied_probability`, `devig_two_sided`)
+  are imported directly from `passing_yards_shadow.py` rather than
+  duplicated, since they carry zero receptions-specific logic; the
+  model-side trio (`current_b0_projection`, `empirical_side_probabilities`,
+  `score_shadow_candidate`) is receptions' own, mirroring passing_yards'
+  shape.
+- 23 new tests pass; full existing 412-test `nfl/tests` suite and 134-file
+  root suite (excluding `test_browser_e2e.py`) pass unchanged -- verified
+  independently after rebasing onto current `main`, not only taken on the
+  delegated subagent's own report.
+- Explicitly NOT done here: no prospective/shadow capture goes live (no new
+  GitHub Actions workflow, no wiring into any capture pipeline) -- this is
+  the research/baseline-proving step only, exactly like
+  `passing_yards_baseline_research.py` was before any live capture existed
+  for that market. `shadow_snapshot.py`'s single-market whitelist is
+  untouched.
+- Orthogonal hygiene note surfaced, not fixed here: the committed
+  `nflverse_weekly_stats_full_audit_2026-09-14.json`'s
+  `source_manifest_sha256` field no longer matches the current
+  `nflverse_weekly_stats_source_manifest_2026-09-14.json`'s actual SHA-256
+  (stale cross-reference). Neither baseline script reads that field, so
+  nothing is blocked, but it should be fixed separately.
+- No model/selector promotion, no production change, no public-pick change.
+- Merged as PR #137, merge SHA `89159fadda394d2dfb815f2a1490d20377e7698f`.
+
+Alligator
+
 ## 2026-09-18 — NFL C2-totals-only: total signal clears its own independent gate
 
 - Workstream `NFL-GAME-MARKET-C2-TOTALS-ONLY-20260918` (Issue #91 claim,
