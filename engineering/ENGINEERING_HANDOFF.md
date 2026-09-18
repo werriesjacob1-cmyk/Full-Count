@@ -2175,3 +2175,90 @@ Next: require exact-head CI on the integrity-port PR, merge the port if green
 under Jacob's authorized #97 disposition, then close superseded PR #97.
 
 Alligator
+
+## 2026-09-18 — NFL C2: first feature-based game-market challenger, REJECTED (real negative result)
+
+- Workstream `NFL-GAME-MARKET-C2-FEATURE-CHALLENGER-20260918` (Issue #91
+  claim, comment `5732934991`), PR #134, branch
+  `claude/nfl-game-market-c2-push-20260918`.
+- C1 (`game_market_c1_dev_bias.py`) was a naive additive bias correction on
+  B0 and was correctly rejected. C2 is the first genuine feature-based
+  challenger: closed-form ridge regression (pure Python, no numpy/sklearn --
+  NFL CI only installs `requirements-nfl.txt`) on 8 strictly-prior features
+  reused unchanged from the already-merged feature substrate (prior
+  scoring, `game_matchup_features`'s yards-per-play/play-volume deltas,
+  offense/defense passing EPA, `pbp_prior_tendencies`'s neutral-script
+  dropback rate and scrimmage-plays-per-game). Lambda=8.0 fixed a priori,
+  never tuned on validation/held. `ol_continuity_prior` deliberately
+  excluded -- nflverse's own `snap_counts_2012.csv` release is a real,
+  disclosed zero-row (header-only) file, so 13 of 20 development seasons
+  would have no OL signal; documented as `OL_CONTINUITY_EXCLUSION_REASON`,
+  not imputed.
+- Real, disclosed departure from B0/C1's fully-pinned `games.csv`
+  convention: no pinned real dataset existed yet for the feature-substrate
+  modules (only their own synthetic test fixtures did), so this workstream
+  fetched nflverse's public `pbp` (1999-2025) and `snap_counts` (2012-2025)
+  releases directly, verified every asset's exact byte count and SHA-256
+  (recorded per-season in `game_market_c2_source_digests.py`, matching
+  `passing_yards_baseline_research.py`'s own `sha256_file()` discipline),
+  and derives flat CSVs via `game_market_c2_data_prep.py`, which fails
+  closed on any digest drift on re-fetch. I independently re-verified this
+  is real, not merely claimed, by reading the digests module directly
+  before pushing.
+- Two real bugs found in the (out-of-scope, unmodified) feature-substrate
+  modules, worked around by exclusion rather than patched in place: (1)
+  `team_prior_features`/`defense_prior_features` reject any row with
+  negative passing/rushing yards for the *entire* population rather than
+  just that row -- 5 real 1999-2025 team-games have this (legitimate
+  net-negative rushing from stuffed/scrambled carries); both teams' rows
+  for those 5 games are excluded and reported by `game_id`, never clipped
+  to zero. (2) nflverse's PBP normalizes `posteam`/`defteam` to a
+  franchise's *current* abbreviation even in old seasons (1999 St. Louis
+  Rams show as `LA`) while `game_id`/`games.csv` keep the historical
+  abbreviation -- `data_prep` re-derives identity from `game_id` instead of
+  trusting `posteam`/`defteam` directly.
+- Population: 6,897 of B0's 6,906 eligible games (99.87%) -- 9 games
+  excluded (3 with zero PBP rows in nflverse's own release, 5 hitting the
+  negative-value bug above, 1 short of the min-3-prior-PBP-games
+  threshold), 0 games only-C2-eligible. Paired comparison throughout
+  (never comparing C2's MAE on its own subset against B0's on a different
+  one), matching C1's own `paired_delta` convention.
+- **Predeclared promotion gate** (written before the held evaluation ran):
+  held margin MAE strictly better than B0 AND its paired-bootstrap 97.5th
+  percentile below zero AND held total MAE not worse than B0 AND
+  validation margin MAE not worse than B0.
+- **Results, real digest-verified data**: held 2023-2025 (816 games) --
+  margin B0 10.473 vs C2 10.434 (bootstrap 95% CI [-0.236, +0.151],
+  crosses zero); total B0 10.719 vs C2 10.436 (CI [-0.475, -0.094],
+  entirely below zero). Total-MAE improvement holds in **every** season
+  2020-2025; margin-MAE improvement is not stable across seasons (driven
+  largely by 2022, mixed sign elsewhere). Equal-volume directional accuracy
+  vs. B0 **reverses between partitions** -- validation favors C2 at every
+  volume level, held favors B0 at every volume level -- reported as a
+  genuine contradiction, not resolved either direction.
+- **Verdict: `RESEARCH_CHALLENGER_REJECTED`**, gate fails on the held-margin
+  bootstrap condition (97.5th percentile +0.151, not below zero), reported
+  with the same honesty as C1's rejection. The one finding that survived:
+  pace/EPA/context features meaningfully and consistently improve **total**
+  prediction; margin does not clear significance, and the validation/held
+  directional reversal argues for real caution about this feature set's
+  stability, not promotion.
+- 29 new tests (ridge fit/shrinkage, feature-assembly leakage via same-game
+  and future-game mutation tests, min-prior-games gating, the negative-value
+  exclusion, development-only fitting, gate pass/fail logic including a
+  targeted total-regression case, the equal-volume directional method, and
+  end-to-end digest-drift fail-closed reproducibility) pass; full existing
+  41-file `nfl/tests` suite and 133-file root suite (excluding
+  `test_browser_e2e.py`) pass unchanged -- verified independently by me
+  after rebasing onto current `main`, not only taken on the delegated
+  subagent's own report.
+- No model/selector promotion, no production change, no prospective/shadow
+  predictions. C2 remains research-only, exactly like B0/C1.
+- Next: the NFL data-gap features from the parallel
+  `NFL-DATA-GAP-INJURIES-QB-CONTINUITY-20260918` workstream (PR #133) are
+  not yet wired into C2 or any evaluation -- a natural next step once that
+  merges, since C2's stable total-prediction win plus a QB-continuity/
+  availability signal could plausibly help margin, the axis C2 alone did
+  not clear.
+
+Alligator
