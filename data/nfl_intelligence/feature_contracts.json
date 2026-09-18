@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "sport": "NFL",
+  "purpose": "Canonical prep contracts for high-value NFL intelligence feature families. These schemas define evidence shape and PIT rules, not production model weights.",
+  "contracts": [
+    {
+      "contract_id": "COACH_REGIME_V1",
+      "angle_ids": [
+        "COACH-REGIME",
+        "COACH-PROE",
+        "COACH-PACE",
+        "COACH-SCORE-RESPONSE",
+        "COACH-OPENING-SCRIPT",
+        "COACH-HALFTIME"
+      ],
+      "entity_grain": "team_role_effective_interval",
+      "primary_keys": [
+        "team",
+        "role",
+        "effective_start"
+      ],
+      "required_fields": [
+        "team",
+        "role",
+        "person_id_or_name",
+        "effective_start",
+        "effective_end",
+        "source_id",
+        "source_observed_at",
+        "source_reference",
+        "confidence",
+        "playcalling_responsibility"
+      ],
+      "roles": [
+        "HC",
+        "OC",
+        "DC",
+        "OFFENSIVE_PLAYCALLER",
+        "DEFENSIVE_PLAYCALLER"
+      ],
+      "point_in_time_rule": "target timestamp may use only intervals/source evidence observed no later than target information clock",
+      "special_rules": [
+        "coordinator title does not imply playcalling responsibility",
+        "ambiguous/overlapping role intervals fail closed",
+        "effective_end may be null only for current open interval"
+      ],
+      "multi_year_rule": "retain career history and current-regime identity separately; do not pool regimes as identical"
+    },
+    {
+      "contract_id": "PLAYER_ROLE_STATE_V1",
+      "angle_ids": [
+        "WR-ROUTE-OPPORTUNITY",
+        "RB-ROLE",
+        "REPLACEMENT-GRAPH",
+        "TEAM-CONTINUITY",
+        "OL-AVAILABILITY"
+      ],
+      "entity_grain": "player_team_target_game_information_clock",
+      "primary_keys": [
+        "game_id",
+        "player_id",
+        "information_clock"
+      ],
+      "required_fields": [
+        "game_id",
+        "player_id",
+        "team",
+        "position_group",
+        "information_clock",
+        "depth_rank",
+        "roster_status",
+        "prior_snap_share",
+        "prior_role_games_n",
+        "availability_state",
+        "source_ids",
+        "source_observed_at_max"
+      ],
+      "optional_fields": [
+        "prior_route_share",
+        "prior_target_share",
+        "prior_rush_share",
+        "red_zone_role",
+        "third_down_role",
+        "two_minute_role",
+        "goal_line_role",
+        "alignment_summary",
+        "replacement_for_player_id",
+        "replacement_confidence"
+      ],
+      "point_in_time_rule": "no current-game snap/route/carry/target observation may enter this row",
+      "special_rules": [
+        "depth rank is not snap projection",
+        "postseason-released participation cannot be a current-season live field",
+        "missing historical participation remains missing, not zero",
+        "replacement hierarchy must be explicit or UNKNOWN"
+      ],
+      "multi_year_rule": "long-term role prior + current-season role + recent-role deviation; reset/shrink on team/scheme/position changes"
+    },
+    {
+      "contract_id": "INJURY_PROGRESSION_V1",
+      "angle_ids": [
+        "INJURY-PROGRESSION",
+        "OL-AVAILABILITY",
+        "REPLACEMENT-GRAPH"
+      ],
+      "entity_grain": "player_target_game_report_observation",
+      "primary_keys": [
+        "game_id",
+        "player_id",
+        "source_observed_at"
+      ],
+      "required_fields": [
+        "game_id",
+        "player_id",
+        "team",
+        "position",
+        "injury_text",
+        "practice_status",
+        "game_status",
+        "source_id",
+        "source_observed_at",
+        "source_digest"
+      ],
+      "practice_status_values": [
+        "DNP",
+        "LIMITED",
+        "FULL",
+        "NOT_LISTED",
+        "UNKNOWN"
+      ],
+      "game_status_values": [
+        "OUT",
+        "DOUBTFUL",
+        "QUESTIONABLE",
+        "NO_DESIGNATION",
+        "UNKNOWN"
+      ],
+      "point_in_time_rule": "append every observation; never overwrite earlier state",
+      "special_rules": [
+        "official inactive is a separate later event",
+        "practice status and game status remain separate",
+        "identity unresolved -> quarantine"
+      ],
+      "multi_year_rule": "historical progression effects may use audited historical reports; 2026 live uses official prospective captures"
+    },
+    {
+      "contract_id": "WEATHER_FORECAST_SNAPSHOT_V1",
+      "angle_ids": [
+        "WEATHER",
+        "QB-WEATHER",
+        "SHORT-REST"
+      ],
+      "entity_grain": "game_forecast_run",
+      "primary_keys": [
+        "game_id",
+        "forecast_model",
+        "run_initialized_at",
+        "valid_time"
+      ],
+      "required_fields": [
+        "game_id",
+        "stadium_id",
+        "latitude",
+        "longitude",
+        "roof_type",
+        "forecast_model",
+        "forecast_provider",
+        "run_initialized_at",
+        "valid_time",
+        "lead_hours",
+        "observed_at",
+        "temperature",
+        "wind_speed",
+        "wind_gust",
+        "wind_direction",
+        "precipitation_probability",
+        "precipitation_amount",
+        "source_id",
+        "source_digest"
+      ],
+      "optional_fields": [
+        "humidity",
+        "apparent_temperature",
+        "snowfall",
+        "snow_depth",
+        "visibility",
+        "roof_status"
+      ],
+      "point_in_time_rule": "run_initialized_at and observed_at must be strictly before target prediction freeze",
+      "special_rules": [
+        "roof/indoor status gates outdoor exposure",
+        "historical reanalysis cannot masquerade as forecast",
+        "forecast lead time retained",
+        "model version/provider retained"
+      ],
+      "multi_year_rule": "use archived forecast runs where available; older observed weather may support mechanism research only"
+    },
+    {
+      "contract_id": "PRIOR_SNAP_STATE_V1",
+      "angle_ids": [
+        "OL-CONTINUITY",
+        "WR-ROUTE-OPPORTUNITY",
+        "RB-ROLE",
+        "TEAM-CONTINUITY"
+      ],
+      "entity_grain": "player_team_target_game",
+      "primary_keys": [
+        "game_id",
+        "player_id"
+      ],
+      "required_fields": [
+        "game_id",
+        "player_id",
+        "team",
+        "position",
+        "prior_games_n",
+        "prior_mean_offense_snap_pct",
+        "last_game_offense_snap_pct",
+        "source_id",
+        "history_cutoff"
+      ],
+      "point_in_time_rule": "history_cutoff strictly precedes target kickoff; target-game snaps forbidden",
+      "special_rules": [
+        "snap count source is completed-game history",
+        "2012 coverage must be audited before assuming completeness"
+      ],
+      "multi_year_rule": "test recent, season, trailing-season and career/regime horizons"
+    }
+  ]
+}
