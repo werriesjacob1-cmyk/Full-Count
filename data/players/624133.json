@@ -472,6 +472,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-18",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 46.9,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Tampa Bay Rays",
+          "game_pk": 822923,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 14.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 34.1176,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6174,
+          "raw_hit_probability": 0.7169,
+          "lift": -0.0819,
+          "reliability": "A",
+          "sample_n": 26,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 30.5,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Tampa Bay Rays",
+          "game_pk": 822923,
+          "team": "Boston Red Sox",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.4768,
+            "avg_outs_per_start": 15.88
+          },
+          "hit_probability": 0.4939,
+          "raw_hit_probability": 0.4768,
+          "lift": -0.0492,
+          "reliability": "A",
+          "sample_n": 26,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }

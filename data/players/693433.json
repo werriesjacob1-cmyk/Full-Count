@@ -449,6 +449,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-18",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 41.4,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Colorado Rockies",
+          "game_pk": 824303,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 58.0,
+            "same_hand_ratio": 12.5,
+            "l14_k_pct": 73.5294,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6046,
+          "raw_hit_probability": 0.6528,
+          "lift": 0.0885,
+          "reliability": "A",
+          "sample_n": 28,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 16.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 74.4,
+          "notable_signals": 1,
+          "matchup": "Seattle Mariners @ Colorado Rockies",
+          "game_pk": 824303,
+          "team": "Seattle Mariners",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6131,
+            "avg_outs_per_start": 17.39
+          },
+          "hit_probability": 0.6103,
+          "raw_hit_probability": 0.6131,
+          "lift": 0.1362,
+          "reliability": "A",
+          "sample_n": 28,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 16.5,
+            "needs": 17
+          }
+        }
+      ]
     }
   ]
 }
