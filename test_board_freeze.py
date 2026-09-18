@@ -40,7 +40,10 @@ def candidate(player_id, *, stat="hits", needs=0.5, line=0.5, score=80.0,
         "matchup": "NYY @ BOS",
         "game_pk": GAME_PK,
         "prop": prop,
-        "projection": {"stat": stat, "needs": needs, "line": line},
+        # generate_picks.py's real score_*() functions set projection["value"],
+        # never "line" -- matched here so this fixture doesn't mask the exact
+        # bug board_freeze_grader.py's own adapter work found.
+        "projection": {"stat": stat, "needs": needs, "value": line},
         "score": score,
         "hit_probability": hit_probability,
         "raw_hit_probability": hit_probability,

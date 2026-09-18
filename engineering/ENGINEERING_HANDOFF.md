@@ -2371,3 +2371,36 @@ Alligator
   the margin failure.
 
 Alligator
+
+## 2026-09-18 — board_freeze.py: fix a real `line` field bug found by the grader work
+
+- Small, focused follow-up to `MLB-BOARD-FREEZE-GRADER-20260918` (the
+  board-freeze grader workstream), found while building that grader's
+  adapter: `board_freeze.build_candidate_snapshot()` read
+  `projection.get("line")`, but every `score_*()` function in
+  `generate_picks.py` sets `projection["value"]`, never `"line"` --
+  `"line"` only ever exists on the pre-selection option dicts
+  `_pick_line()`/`_batter_options()` choose between, not the final
+  candidate. This left the frozen record's `line` field `None` for every
+  real candidate `board_freeze.py` has produced since it merged (PR #132).
+  Fixed by reading `projection.get("value")` instead.
+- `test_board_freeze.py`'s own `candidate()` fixture used `"line"` too,
+  which is exactly why this shipped without a test catching it -- the
+  fixture was internally consistent with the bug, not with real
+  `generate_picks.py` candidates. Fixed the fixture to use `"value"` to
+  match reality; no test assertion depended on the old key name, so
+  nothing else needed to change.
+- The grader itself is unaffected by this bug (it reconstructs
+  `projection.value` from `needs` independently, per its own module
+  docstring) -- this fix is about the raw frozen artifact being correct
+  for anyone reading it directly, not a grading correctness issue.
+- Full `test_board_freeze.py` (12/12) and full root suite pass.
+- Known follow-up: `board_freeze_grader.py`'s own test suite
+  (`test_board_freeze_grader.py`, on the separate not-yet-merged
+  `MLB-BOARD-FREEZE-GRADER-20260918` PR) has one test that explicitly
+  documents this bug's presence
+  (`test_real_projection_schema_never_carries_a_line_key_so_frozen_line_is_none`)
+  -- that assertion will need updating to expect the corrected value once
+  both PRs are merged, in whichever order they land.
+
+Alligator
