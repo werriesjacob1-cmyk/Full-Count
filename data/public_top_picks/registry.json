@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-18T22:09:37.224560+00:00",
+  "updated_at": "2026-09-18T22:28:53.841449+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -37320,6 +37320,105 @@
         },
         "qualification_timestamp": "2026-09-18T22:05:15.554357+00:00",
         "board_timestamp": "2026-09-18T22:05:15.527633+00:00",
+        "slate_date": "2026-09-18"
+      }
+    },
+    "fc2:822847:player-669394:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:822847:player-669394:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "822847",
+        [
+          "player",
+          "669394"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-18",
+      "first_published_at": "2026-09-18T22:28:53.841449+00:00",
+      "publication_provenance": {
+        "artifact_id": "8d386f24eaf28c7e12debc3fc0b9185dd6681dca37dafe423596e013f5385fc0",
+        "source_commit": "03246dd47441f9e1acdcba08529d1d7d0bcbefd4",
+        "workflow_run_id": "35401540949",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-18T22:28:38.239602+00:00",
+        "data_hash": "0a3f58421238e20e8ed0483ec570ec77ebc494e01c6236a9ac445299c3d00070",
+        "live_hash": "09b2d77bff7aefdfde0853f446c1262a871fcdcaa4853ed7e161dfd6af3741c2"
+      },
+      "snapshot": {
+        "id": "fc2:822847:player-669394:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 822847,
+        "player_id": 669394,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Jake Burger",
+        "team": "Texas Rangers",
+        "matchup": "Toronto Blue Jays @ Texas Rangers",
+        "game_start": "2026-09-19T00:05:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.661,
+        "market_odds": -165,
+        "market_implied": 0.6226,
+        "market_edge": 0.0384,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 20.0 \u2014 hot recent contact",
+          "Projected 3.89 PA (batting slot 6)",
+          "Hitters batting ahead of him: 0.334 wOBA (league ~.320)",
+          "Season barrel% 12.1",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "L7 avg EV 85.1mph (league ~88.5) \u2014 cold recent contact",
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Opposing SP ERA 2.38 \u2014 elite pitcher, tough matchup",
+          "Hitter batting behind him: 0.282 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.37 runs (league avg 4.245; line 3.5, game total 7.5) \u2014 a weak offensive environment",
+          "Public heavy on Texas Rangers (money% trails tickets% by 19 pts) \u2014 sharp money is fading this side",
+          "Opposing bullpen fatigue: 2/12 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Texas Rangers (money% -19 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.6502,
+          0.6842
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 146,
+        "lineup_assumed": null,
+        "base_rate": 0.6723,
+        "lift": -0.0113,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "fff35d4a1",
+          "prediction_timestamp": "2026-09-18T22:22:15.559637+00:00",
+          "odds_fetched_at": "2026-09-18T22:22:06.660444+00:00",
+          "board_generated_at": "2026-09-18T22:22:15.530171+00:00"
+        },
+        "qualification_timestamp": "2026-09-18T22:22:15.559637+00:00",
+        "board_timestamp": "2026-09-18T22:22:15.530171+00:00",
         "slate_date": "2026-09-18"
       }
     }
