@@ -83,9 +83,9 @@ Passing-yard alternates and every other player family are discovery-only. There 
 | Market | Feed observed | Normalized | Historical dataset | Model | Prospective capture | Grader |
 | --- | --- | --- | --- | --- | --- | --- |
 | Moneyline | Yes | No | No | No | No | No |
-| Full-game spread | Yes | Yes | PFR closing control audited; retrospective only | No | No | No |
+| Full-game spread | Yes | Yes | PFR closing control normalized; retrospective only | No | No | No |
 | Alternate spread | Yes | No | No | No | No | No |
-| Full-game total | Yes | Yes | PFR closing control audited; retrospective only | No | No | No |
+| Full-game total | Yes | Yes | PFR closing control normalized; retrospective only | No | No | No |
 | Alternate total | Yes | No | No | No | No | No |
 | Team totals/alternates | Yes | No | No | No | No | No |
 | First-half winner/spread/total | Yes | No | No | No | No | No |
