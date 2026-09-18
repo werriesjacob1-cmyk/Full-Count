@@ -46,7 +46,7 @@ let LIVE_CACHE = {
   grades_checked_at: null, prices_checked_at: null, props: {},
 };
 
-const ROUTES = ["today", "props", "games", "performance", "watchlist", "history"];
+const ROUTES = ["today", "props", "games", "performance", "watchlist"];
 const LONGSHOT_PROB_CEILING = 0.35; // display-only split of the real "value" status into
                                     // Best Value (>=35% win prob) vs Longshots (<35%) --
                                     // NOT a model field. Direct spec: "Best Value... may
@@ -673,11 +673,6 @@ function onRouteChange() {
 function go(newRoute, query) { location.hash = "#/" + newRoute + (query ? "?" + query : ""); }
 
 function renderRoute() {
-  // History loads its own file (docs/history.json) independently of DATA
-  // (docs/data.json) -- a viewer whose live board fetch is slow or has
-  // failed should still be able to open past days, so this branch is
-  // deliberately outside the `if (!DATA) return` gate below.
-  if (route === "history") { renderHistory(); return; }
   if (!DATA) return;
   if (route === "today") renderToday();
   else if (route === "props") renderProps();
@@ -1723,115 +1718,6 @@ function renderPerformance() {
     </div>
   </div>`;
 
-  el.innerHTML = html;
-}
-
-// ══════════════════════════════════════════════════════════════════════
-//  HISTORY PAGE -- past days' Top Picks, graded. Direct request: "I want
-//  ... to be able to see past days top picks - right now they just
-//  disappear." docs/history.json is a separate, lazy-loaded file (built by
-//  dashboard/build_history.py from the same results/grades_{date}.json
-//  records the Performance page's aggregate numbers already come from) so
-//  opening this page never delays or depends on the main data.json fetch.
-// ══════════════════════════════════════════════════════════════════════
-let HISTORY = null;
-let HISTORY_LOADING = false;
-let HISTORY_ERROR = false;
-
-function historyGradeChip(p) {
-  if (p.grade === "hit") return `<span class="chip chip-grade-hit">Hit ✓</span>`;
-  if (p.grade === "miss") return `<span class="chip chip-grade-miss">Miss</span>`;
-  if (p.settlement_state === "void" || p.grade === "void") return `<span class="chip chip-grade-void">Void</span>`;
-  return `<span class="chip chip-grade-ungraded">Ungraded</span>`;
-}
-
-function historyPickCard(p) {
-  const why = (p.why || [])[0] ? `<div class="pc-why">${esc(capSentence(humanizeReason(p.why[0])))}</div>` : "";
-  const subLine = esc(p.matchup || p.team || "") +
-    (p.game_start ? ` · ${esc(gameTimeLabel(p.game_start))}` : "");
-  const actualLine = p.actual !== null && p.actual !== undefined
-    ? `<div class="m-detail">Actual: ${esc(String(p.actual))}${p.threshold != null ? ` (line ${esc(String(p.threshold))})` : ""}</div>`
-    : "";
-  return `<div class="pick-card history-pick-card">
-    <div class="pc-top">
-      <div>
-        <div class="pc-name">${esc(p.name)}</div>
-        <div class="pc-sub">${subLine}</div>
-      </div>
-    </div>
-    <div class="pc-prop">${esc(p.prop)}</div>
-    <div class="pc-prob-row">
-      <span class="pc-prob">${pctBig(p.hit_probability)}</span>
-      <span class="pc-prob-label">Full Count<br>Probability</span>
-    </div>
-    <div class="pc-market">
-      <div><span class="book-price">${fmtOdds(p.market_odds) ?? "—"}</span> <span class="m-detail">FanDuel</span></div>
-      ${actualLine}
-    </div>
-    <div class="pc-chips">${historyGradeChip(p)}</div>
-    ${why}
-  </div>`;
-}
-
-function historyDayBlock(day, isFirst) {
-  const rate = day.hit_rate == null ? "—" : pct(day.hit_rate, 1);
-  const record = day.hits + day.misses > 0 ? `${day.hits}-${day.misses}` : "ungraded";
-  const cards = day.picks.map(historyPickCard).join("");
-  return `<details class="history-day" ${isFirst ? "open" : ""}>
-    <summary>
-      <span class="history-day-date">${esc(day.date)}</span>
-      <span class="history-day-record">${record}</span>
-      <span class="history-day-rate">${rate}</span>
-    </summary>
-    <div class="history-day-picks">${cards}</div>
-  </details>`;
-}
-
-async function renderHistory() {
-  const el = document.getElementById("page-history");
-  if (HISTORY) { renderHistoryContent(el); return; }
-  if (HISTORY_LOADING) return;
-  el.innerHTML = `<div class="section-head"><h2>History</h2>
-    <span class="section-sub">Every published Top Pick, every past day, graded.</span></div>
-    <div class="empty-state"><div class="es-icon">⏳</div><p>Loading past picks…</p></div>`;
-  HISTORY_LOADING = true;
-  try {
-    HISTORY = await fetchJSON("history.json");
-    HISTORY_ERROR = false;
-  } catch (e) {
-    HISTORY_ERROR = true;
-  } finally {
-    HISTORY_LOADING = false;
-  }
-  if (route === "history") renderHistoryContent(el);
-}
-
-function renderHistoryContent(el) {
-  let html = `<div class="section-head"><h2>History</h2>
-    <span class="section-sub">Every published Top Pick, every past day, graded. Nothing here is re-decided after the fact -- these are the same grades results/grades_{date}.json already recorded.</span></div>`;
-
-  if (HISTORY_ERROR) {
-    html += `<div class="empty-state">
-      <div class="es-icon">⚠️</div>
-      <h3>Couldn't load past picks.</h3>
-      <p>The history archive didn't load. Try again in a moment.</p>
-    </div>`;
-    el.innerHTML = html;
-    return;
-  }
-
-  const days = (HISTORY && HISTORY.days) || [];
-  if (days.length === 0) {
-    html += `<div class="empty-state">
-      <div class="es-icon">📅</div>
-      <h3>No graded days on file yet.</h3>
-      <p>Past picks appear here once a day's board is final and graded.</p>
-    </div>`;
-    el.innerHTML = html;
-    return;
-  }
-
-  html += `<div class="perf-block">${days.map((d, i) => historyDayBlock(d, i === 0)).join("")}</div>`;
   el.innerHTML = html;
 }
 
