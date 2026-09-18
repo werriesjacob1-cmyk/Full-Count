@@ -372,6 +372,44 @@
         "news claims are not facts until verified",
         "speaker reliability must be measured by claim type"
       ]
+    },
+    {
+      "source_id": "INTERNAL_REPO_FEATURE",
+      "status": "AUDITED",
+      "intended_use": [
+        "reuse_existing_point_in_time_safe_feature_modules"
+      ],
+      "historical_coverage_claim": "varies by feature; each caller must preserve the underlying source coverage and provenance",
+      "current_season_policy": "do not elevate a derived feature above the source evidence that created it",
+      "point_in_time_class": "INHERITS_UNDERLYING_SOURCE_CONTRACT",
+      "repo_evidence": [
+        "nfl/research/qb_continuity_features.py",
+        "nfl/research/ol_continuity_prior.py"
+      ],
+      "restrictions": [
+        "not an independent source",
+        "must retain original source/version lineage"
+      ]
+    },
+    {
+      "source_id": "INTERNAL_MODEL_OUTPUT",
+      "status": "AUDITED",
+      "intended_use": [
+        "correlation_research",
+        "cross_market_consistency",
+        "portfolio_research"
+      ],
+      "historical_coverage_claim": "only predictions/evidence actually frozen by FULL COUNT may be used",
+      "current_season_policy": "bind model version, code SHA, feature version, evidence timestamp and candidate universe",
+      "point_in_time_class": "INHERITS_FROZEN_MODEL_EVIDENCE",
+      "repo_evidence": [
+        "nfl/prospective/shadow_snapshot.py",
+        "nfl/prospective/game_market_snapshot.py"
+      ],
+      "restrictions": [
+        "never reconstruct missing historical predictions after outcomes",
+        "not an external information source"
+      ]
     }
   ]
 }
