@@ -1726,6 +1726,35 @@ Alligator
 
 Alligator
 
+## 2026-09-15 — Fail-closed NFL primary spread/total normalization
+
+- Added a research-only FanDuel normalizer for exact full-game two-way spread
+  and total market types. It binds event teams and sides, requires an explicit
+  pregame/open state, active runners, kickoff-clock agreement, coherent lines,
+  distinct selection IDs, two nonzero prices, and rejects conflicting
+  duplicate market IDs.
+- Preserved capture, raw-digest, source, event, market, and selection
+  provenance on every normalized row. Alternate, period, and team markets
+  remain outside the contract.
+- Replayed unmodified raw bytes from DEN-KC capture run `34906529900`:
+  Denver +2.5 (-115) / Kansas City -2.5 (-105), and total 43.5 with Over -102
+  / Under -120. Both primary markets normalized with zero rejection; raw
+  payload SHA-256 is
+  `7e4a3e89ebb6fd9055728a65110d5578e740094da846c8340c9bd3837129196f`.
+- Advanced only those two coverage-registry families to `NORMALIZED`.
+  Historical data, modeling, prospective capture, selection, grading, and
+  public eligibility all remain inactive and explicitly blocked.
+- All 19 focused tests pass. The dependency-free NFL suite passes 92 tests;
+  two source-adapter modules remain locally unimportable because `requests` is
+  unavailable, so exact-head Linux CI is required.
+- No raw sportsbook artifact, workflow, model, selector, grader, public
+  surface, production system, or immutable evidence was changed.
+
+Next: validate historical schedule/score source contracts and point-in-time
+availability for spread/total market-only baselines before any model research.
+
+Alligator
+
 ## 2026-09-17 — MLB dashboard: past-picks History page
 
 Agent: Claude

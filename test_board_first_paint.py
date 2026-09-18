@@ -38,6 +38,7 @@ import os
 import re
 import sys
 import threading
+from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -116,7 +117,15 @@ with open(os.path.join(DOCS_DIR, "live.json"), encoding="utf-8") as fh:
 # the synthetic PR merge ref happening to pair two runtime artifacts with a
 # disagreement. Exercise the same real boot/merge path, but manufacture the
 # visible delta for this request only.
-probe_row = next((r for r in DATA["props"] if r.get("id") and r.get("market_odds") is not None), None)
+probe_row = next((
+    r for r in DATA["props"]
+    if r.get("id")
+    and r.get("market_odds") is not None
+    and not (
+        (r.get("published_top_pick_at") and r.get("publication_artifact_id"))
+        or r.get("publication_candidate_token")
+    )
+), None)
 
 if probe_row is None:
     check(False, "found a priced prop for deterministic overlay probe",
@@ -127,9 +136,12 @@ else:
     # Any different valid American price works; choose deterministically.
     live_odds = -101 if base_odds != -101 else -102
     synthetic_live = json.loads(json.dumps(LIVE))
+    synthetic_price_at = datetime.now(timezone.utc).isoformat()
+    synthetic_live["prices_updated_at"] = synthetic_price_at
     synthetic_live.setdefault("props", {})
     delta = dict(synthetic_live["props"].get(pid) or {})
     delta["market_odds"] = live_odds
+    delta.setdefault("_field_updated_at", {})["market_odds"] = synthetic_price_at
     synthetic_live["props"][pid] = delta
     synthetic_body = json.dumps(synthetic_live).encode("utf-8")
 
@@ -215,9 +227,13 @@ try:
     # corrupt the page's real DATA for every check after this one.
     forced = page.evaluate(
         "() => { const old = new Date(Date.now() - 11 * 3600 * 1000).toISOString();"
+        "  const freshPrice = new Date(Date.now() - 60 * 1000).toISOString();"
         "  const d = Object.assign({}, DATA, {"
         "    generated_at: old,"
-        "    freshness: Object.assign({}, DATA.freshness, {model_basis_at: old})});"
+        "    prices_updated_at: freshPrice,"
+        "    odds_fetched_at: freshPrice,"
+        "    freshness: Object.assign({}, DATA.freshness, {"
+        "      model_basis_at: old, market_prices_at: freshPrice})});"
         "  return boardFreshnessState(Date.now(), d); }")
     # Precondition, asserted separately and FIRST. A fixture that fails to
     # apply must fail as "the fixture did not age the board", never as "the
