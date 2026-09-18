@@ -67,6 +67,12 @@ jobs:
       - name: Build dashboard
         run: python3 dashboard/build_dashboard.py --out-dir "$RUNNER_TEMP/dashboard-build"
 
+      - name: Build past-picks history archive
+        # Read-only against results/*.json (grade_results.py's own daily
+        # output); no live-state dependency, so unlike data.json this needs
+        # no per-retry regeneration inside the commit loop below.
+        run: python3 dashboard/build_history.py --out "$RUNNER_TEMP/dashboard-build/history.json"
+
       - name: Commit and push
         run: |
           git config user.name "mlb-pipeline-bot"
@@ -84,7 +90,8 @@ jobs:
             cp "$RUNNER_TEMP/dashboard-build/index.html" docs/index.html
             cp "$RUNNER_TEMP/dashboard-build/app.css" docs/app.css
             cp "$RUNNER_TEMP/dashboard-build/app.js" docs/app.js
-            git add docs/index.html docs/app.css docs/app.js docs/data.json
+            cp "$RUNNER_TEMP/dashboard-build/history.json" docs/history.json
+            git add docs/index.html docs/app.css docs/app.js docs/data.json docs/history.json
             if git diff --cached --quiet; then
               echo "No newer complete-board change to publish."
               exit 0
