@@ -2371,3 +2371,291 @@ Alligator
   the margin failure.
 
 Alligator
+
+## 2026-09-18 — board_freeze.py: fix a real `line` field bug found by the grader work
+
+- Small, focused follow-up to `MLB-BOARD-FREEZE-GRADER-20260918` (the
+  board-freeze grader workstream), found while building that grader's
+  adapter: `board_freeze.build_candidate_snapshot()` read
+  `projection.get("line")`, but every `score_*()` function in
+  `generate_picks.py` sets `projection["value"]`, never `"line"` --
+  `"line"` only ever exists on the pre-selection option dicts
+  `_pick_line()`/`_batter_options()` choose between, not the final
+  candidate. This left the frozen record's `line` field `None` for every
+  real candidate `board_freeze.py` has produced since it merged (PR #132).
+  Fixed by reading `projection.get("value")` instead.
+- `test_board_freeze.py`'s own `candidate()` fixture used `"line"` too,
+  which is exactly why this shipped without a test catching it -- the
+  fixture was internally consistent with the bug, not with real
+  `generate_picks.py` candidates. Fixed the fixture to use `"value"` to
+  match reality; no test assertion depended on the old key name, so
+  nothing else needed to change.
+- The grader itself is unaffected by this bug (it reconstructs
+  `projection.value` from `needs` independently, per its own module
+  docstring) -- this fix is about the raw frozen artifact being correct
+  for anyone reading it directly, not a grading correctness issue.
+- Full `test_board_freeze.py` (12/12) and full root suite pass.
+- Merged as PR #139, merge SHA `aec84b8c53699b735794a4dd57653fa3156ade9e`.
+- Known follow-up (resolved below): `board_freeze_grader.py`'s own test
+  suite (`test_board_freeze_grader.py`, on the separate
+  `MLB-BOARD-FREEZE-GRADER-20260918` PR #138) had one test that explicitly
+  documented this bug's presence
+  (`test_real_projection_schema_never_carries_a_line_key_so_frozen_line_is_none`)
+  -- that assertion has been updated to expect the corrected non-`None`
+  value now that this fix is on `main`; see the entry below.
+
+Alligator
+
+## 2026-09-18 — MLB board-freeze grader: the frozen full board can now be graded
+
+- Workstream `MLB-BOARD-FREEZE-GRADER-20260918` (Issue #91 claim, comment
+  `5733695642`), branch `claude/mlb-board-freeze-grader-push-20260918`.
+- `board_freeze_grader.py` grades the COMPLETE `board_freeze.py` candidate
+  universe (kept, QC-rejected, lineup-assumed-holdout alike) against real
+  outcomes, not just the tiny published-Top-Pick subset -- the direct
+  prerequisite for the rank/argmax calibration analysis this project has
+  been building toward since PR #131. Verifies the frozen board's own seal
+  first (`board_freeze.verify_board_seal`) and refuses to grade anything if
+  it doesn't check out; reuses `grade_results.grade_pick`/
+  `fetch_game_statuses` unmodified via an adapter, never a new grading
+  rule; writes a separate, additive `output/board_freeze_graded_{date}.json`
+  artifact, never mutating the frozen input.
+- **Real latent bug found in `board_freeze.py` itself, not fixed here (out
+  of this PR's two-new-files scope)**: `build_candidate_snapshot()` reads
+  `projection.get("line")` into the frozen record's `line` field, but every
+  `score_*()` function in `generate_picks.py` sets `projection["value"]`,
+  never `"line"` -- `"line"` only exists on the pre-selection option dicts
+  `_pick_line()`/`_batter_options()` choose between, not the final
+  candidate. A real frozen board's `line` field will therefore be `None`
+  for every candidate produced so far. The grader adapter doesn't depend on
+  it (reconstructs `projection.value` as `needs - 0.5`, the same "Over
+  X.5" convention every scorer already commits to), so grading is
+  unaffected, but `board_freeze.py` should get a follow-up fix to actually
+  populate `line` correctly for anyone reading the raw frozen artifact
+  directly.
+- Other real adapter findings, each verified against `generate_picks.py`'s
+  actual code rather than assumed: candidate `type` (batter/pitcher/
+  pitcher_combo) isn't stored on a frozen record at all and is derived
+  from `stat`, matching `test_grade_results.py`'s own independent rule;
+  `side` needs no reconstruction because `grade_pick`'s own
+  `first_inning_run` branch already derives it from `team`/`matchup` when
+  absent; `lean` (YRFI/NRFI) is safely recoverable from the frozen
+  record's `market_side` field for exactly the two stats that carry it,
+  and grades `ungraded` with an honest reason on any record where it
+  isn't; `first_inning_run` candidates are filtered out of
+  `generate_picks.py`'s own persisted candidate list before a frozen board
+  ever sees them (only feed `nrfi_combined`, which is fully supported) --
+  the adapter still supports the family for robustness, but it is
+  currently unreachable in production; frozen `game_pk`/`player_id`/
+  `combo_player_ids` are JSON-safe strings and are coerced back to native
+  int identity for `grade_results.py`'s box-score/schedule lookups.
+- 23 new tests pass, covering: adapter reconstruction for `hits` (the
+  negative control), `hits_runs_rbis` + `pitcher_outs` (the two markets
+  the original calibration audit found most overconfident), and
+  `combined_strikeouts`; full end-to-end grading against realistic
+  box-score fixtures; tamper/unsealed-board fail-closed rejection;
+  byte-identical immutability of the frozen input before and after
+  grading; join-back by `board_sha256` and `candidate_id` across all three
+  eligibility buckets in one board; the unrecoverable-lean `ungraded`
+  case. Full existing root `test_*.py` suite (excluding the unrelated
+  browser e2e test) passes unchanged -- verified independently by me after
+  rebasing onto current `main`, not only taken on the delegated
+  subagent's own report. `board_freeze.py`, `test_board_freeze.py`, and
+  `grade_results.py` are all untouched.
+- No model, selector, calibration, or production change anywhere.
+- Next: once a few real slates accumulate frozen + graded boards, run the
+  actual rank/argmax calibration analysis this and PR #132 together were
+  built to enable, plus fix the `projection.line` gap noted above.
+- **Post-merge dependency resolution (2026-09-18, later same day)**: PR #139
+  landed the `projection.line` -> `projection.value` fix on `main` before
+  this PR merged. Rebased this branch onto post-#139 `main` and updated
+  `test_real_projection_schema_never_carries_a_line_key_so_frozen_line_is_none`
+  to assert the corrected non-`None` `line` value instead of documenting the
+  now-fixed bug's presence. No other adapter behavior changed -- the grader
+  never depended on the buggy field (it always reconstructed
+  `projection.value` from `needs` independently). Full grader suite (23
+  tests) and full root suite re-verified green on the rebased tree per
+  Jacob's explicit instruction not to merge a stale test against a fixed
+  schema.
+- Merged as PR #138, merge SHA `e799fbfd129f94092de8660b7d3054bf6b7481b1`.
+
+Alligator
+
+## 2026-09-18 — NFL receptions: second live player-prop research family (B0 + shadow)
+
+- Workstream `NFL-PLAYER-PROP-RECEPTIONS-20260918` (Issue #91 claim, comment
+  `5733695642`), branch `claude/nfl-receptions-b0-v2-20260918`.
+- `receptions_baseline_research.py`/`receptions_shadow.py` bring `receptions`
+  online as the second live NFL player-prop research family, following the
+  exact proven `passing_yards` pattern (rolling-5, min-3-appearance B0 +
+  residual-based shadow scorer). Zero new ingestion -- same audited
+  1999-2025 nflverse weekly-stats corpus `passing_yards` already uses.
+- Real data-quality finding, preserved rather than silently worked around:
+  nflverse's `targets` column is effectively unpopulated for 2003-2008 (a
+  stray 0-17 rows/season vs 3,500-4,300 every other season). Gating
+  eligibility on raw `targets > 0` would have silently erased six real
+  development-partition seasons. Fixed via `effective_targets =
+  max(targets, receptions) > 0` -- a completed catch is definitional proof
+  of a target -- which recovers the missing seasons without fabricating
+  data. `raw_targets_column_coverage_by_season` is recorded in the output
+  artifact so this stays visible, not just in this note.
+- Real B0 accuracy (byte-verified against the full pinned 1999-2025 corpus,
+  no fabricated numbers): development_2000_2019 MAE 1.4606 (n=70,983),
+  validation_2020_2022 MAE 1.4891 (n=12,063), held_2023_2025 MAE 1.4245
+  (n=12,095). No challenger built yet (there is no C1-equivalent for
+  receptions) -- this is B0 establishing its own honest baseline, exactly
+  as passing_yards' B0 did before either of its own challengers existed.
+  By-position MAE spread (WR highest ~1.55-1.65, TE/RB lower ~1.25-1.35)
+  reported as a transparency artifact, not used to justify separate
+  per-position models.
+- Investigated and explicitly declined a QB-continuity-style team-change
+  quarantine for receivers: empirical check on the pinned corpus showed
+  team-change prior-appearance pairs did NOT show worse B0 error than
+  same-team pairs (if anything the reverse, most plausibly because traded
+  receivers skew toward lower-volume roles) -- a considered omission,
+  documented in the module docstring, not an oversight.
+- Market-math functions (`american_implied_probability`, `devig_two_sided`)
+  are imported directly from `passing_yards_shadow.py` rather than
+  duplicated, since they carry zero receptions-specific logic; the
+  model-side trio (`current_b0_projection`, `empirical_side_probabilities`,
+  `score_shadow_candidate`) is receptions' own, mirroring passing_yards'
+  shape.
+- 23 new tests pass; full existing 412-test `nfl/tests` suite and 134-file
+  root suite (excluding `test_browser_e2e.py`) pass unchanged -- verified
+  independently after rebasing onto current `main`, not only taken on the
+  delegated subagent's own report.
+- Explicitly NOT done here: no prospective/shadow capture goes live (no new
+  GitHub Actions workflow, no wiring into any capture pipeline) -- this is
+  the research/baseline-proving step only, exactly like
+  `passing_yards_baseline_research.py` was before any live capture existed
+  for that market. `shadow_snapshot.py`'s single-market whitelist is
+  untouched.
+- Orthogonal hygiene note surfaced, not fixed here: the committed
+  `nflverse_weekly_stats_full_audit_2026-09-14.json`'s
+  `source_manifest_sha256` field no longer matches the current
+  `nflverse_weekly_stats_source_manifest_2026-09-14.json`'s actual SHA-256
+  (stale cross-reference). Neither baseline script reads that field, so
+  nothing is blocked, but it should be fixed separately.
+- No model/selector promotion, no production change, no public-pick change.
+- Merged as PR #137, merge SHA `89159fadda394d2dfb815f2a1490d20377e7698f`.
+
+Alligator
+
+## 2026-09-18 — NFL C2-totals-only: total signal clears its own independent gate
+
+- Workstream `NFL-GAME-MARKET-C2-TOTALS-ONLY-20260918` (Issue #91 claim,
+  comment `5733695642`), branch `claude/nfl-c2-totals-only-push-20260918`.
+- Per direct instruction to stop burying C2's real, stable total-prediction
+  finding inside its combined (margin+total) rejection: gave the total
+  axis its own predeclared promotion gate, evaluated independently of
+  margin. Reused C2's existing feature assembly, ridge fit, and B0-pairing
+  logic verbatim (`fit_c2_model` already fits margin and total as two
+  fully independent models on the same dev partition/lambda) -- no new
+  feature, fit, or join logic; the only new code is the total-only gate,
+  season-stability/leave-one-out diagnostics, and a total-market
+  equal-volume directional method adapted from C2's own margin-specific
+  one.
+- **Predeclared gate** (five conditions, all evaluated purely on total-axis
+  numbers -- never reads C2's margin MAE, bootstrap, or gate outcome):
+  held total MAE(C2) < held total MAE(B0); paired-bootstrap 97.5th
+  percentile of the held delta < 0; validation total MAE(C2) <= B0's; at
+  least 5 of 6 seasons 2020-2025 individually negative; excluding any
+  single held season (2023/2024/2025) individually still leaves the
+  remaining held delta negative. The "5 of 6" and leave-one-out bars were
+  chosen as generically defensible noise thresholds, documented as such
+  before the realized 6-of-6 result was known.
+- **Verdict: `RESEARCH_CHALLENGER_PROMOTION_ELIGIBLE`** on the total axis --
+  all five conditions pass. Independently re-verified end to end against
+  the real pinned nflverse `pbp`/`snap_counts` data (every asset's
+  SHA-256/byte-count matched, none re-fetched from a moving source): held
+  total MAE delta -0.282861 (bootstrap CI [-0.474728, -0.094170]),
+  validation delta -0.226807 (CI [-0.437739, -0.016974]), all 6 seasons
+  2020-2025 negative, all 3 leave-one-out held checks negative. Matches
+  the originally reported combined-C2 numbers to within rounding -- no
+  discrepancy found.
+- **Real finding the combined C2 report never isolated**: C2's total beats
+  B0, but still **loses to the real closing market** on held data (C2 MAE
+  10.436 vs. closing-market MAE 10.121; bootstrap of the (C2-market) delta
+  is entirely *above* zero, [0.107, 0.526]). C2 improves the naive
+  baseline; it does not beat the market. Surfacing this prominently rather
+  than letting the promotion-eligible headline overstate the result.
+  Equal-volume total-directional accuracy vs. B0 showed no dramatic
+  reversal like margin's validation/held flip -- a weak, non-conclusive
+  edge to C2 at full volume in both partitions (held 50.8/49.2, validation
+  53.4/46.6) -- reported as weak, not oversold.
+- "Promotion eligible" here means "cleared its own predeclared research
+  gate," not a production/live authorization -- this stays research-only,
+  exactly like B0/C1/C2. No feature was added beyond C2's existing 8, per
+  explicit instruction not to expand the model merely because it might help.
+- 21 new tests pass (gate-predeclaration structure, margin-independence --
+  including a fixture where C2's margin is made catastrophic but the total
+  gate still passes -- season-stability/leave-one-out pass/fail/outlier
+  cases, the total-directional method, byte-identical reproducibility, and
+  a synthetic end-to-end pinned-digest run). Full existing NFL suite
+  (439 tests) and 134-file root suite pass unchanged -- verified
+  independently by me after rebasing onto current `main`.
+- No model/selector promotion, no production change, no prospective/shadow
+  predictions, no public pick.
+
+Alligator
+
+## 2026-09-18 — NFL C3: margin + QB-continuity/availability challenger, REJECTED (exploratory, not confirmatory)
+
+- Workstream `NFL-C3-MARGIN-AVAILABILITY-20260918`, branch
+  `claude/nfl-c3-margin-availability-20260918`, rebased and pushed as
+  `claude/nfl-c3-push-20260918`. Named hypothesis only: QB regime/
+  availability explains the margin error C2 could not clear.
+- **Post-selection framing (Jacob's explicit correction, applied before this
+  entry was written)**: C3 was proposed specifically because C2's margin
+  was observed to fail on this same 2020-2025 population. Re-evaluating C3
+  on that population is therefore exploratory/diagnostic characterization,
+  not a fresh, independent confirmation. The module's own gate result
+  status string records this directly:
+  `RESEARCH_CHALLENGER_GATE_PASSED_EXPLORATORY_ONLY_NOT_A_PROSPECTIVE_CONFIRMATION`
+  is the passing label the gate would use, with a `post_selection_evidence_
+  caveat` field always populated -- the C3 subagent had independently
+  converged on the same concern before the correction arrived. Genuine
+  prospective confirmation still requires new, not-yet-inspected data
+  (future games via PREDICT -> FREEZE -> GRADE), which this workstream does
+  not attempt.
+- Joins C2's 8 features with 3 new ones by `(season, week, team)`, reading
+  only `features.*`, never `target.*` (leakage-tested):
+  `qb_diff_tenure_starts`, `qb_diff_games_since_change` (numerically
+  identical per the upstream source's own design -- disclosed and kept
+  rather than silently dropped), `availability_diff_starter_out`. Margin
+  only; no totals variant built.
+- Found and fixed by exclusion, not imputation: a blank-identity 1999 row;
+  a team-abbreviation historical-normalization bug in nflverse
+  `stats_player_week` (recovered ~620 team-weeks by re-deriving the true
+  historical team from `game_id`); pre-2016 "Probable" injury status plus
+  duplicate injury rows filtered to the latest status update.
+- Real eligible population, smaller than C2's own: C3 = 4,404 of C2's 6,897
+  games (63.9%); development partition hit hardest at 2,801/5,089 (55.0%,
+  effectively seasons 2009-2019 only, since the QB-continuity source has
+  earlier coverage gaps); held 2023-2025 population unchanged at 816.
+- 7-condition predeclared gate (superset of C2's 5, adding the leave-one-out
+  check and the post-selection caveat requirement).
+- **Real, independently re-verified results**: held MAE -- B0 10.473, C2
+  10.434, C3 10.371. Point estimates favor C3, but neither held bootstrap
+  clears zero: C3-vs-B0 held [-0.306, +0.099], C3-vs-C2 held [-0.167,
+  +0.037]. Leave-one-out confirms the instability -- excluding 2024 flips
+  the delta to worse. **Gate verdict: REJECTED.**
+- Season-by-season (C3 vs C2): 2020 worse (+0.027), 2021 better (-0.146),
+  2022 better but modestly (-0.059, explicitly not specifically responsive
+  to availability information per the subagent's own diagnostic read),
+  2023 (-0.030), 2024 (-0.220, the dominant driver of the whole-sample point
+  estimate), 2025 worse (+0.062). Honest conclusion: the margin instability
+  C2 exhibited relocated to a new year under C3, it was not fixed.
+- 38 new tests (`nfl/tests/test_game_market_c3_features.py`,
+  `nfl/tests/test_game_market_c3_model.py`) pass; full existing 412+23-test
+  `nfl/tests` suite and full root suite (excluding `test_browser_e2e.py`)
+  pass unchanged on the rebased tree -- verified independently, not only
+  taken on the delegated subagent's own report.
+- No model/selector promotion, no production change, no public-pick change.
+  This closes out the `NFL-C3-MARGIN-AVAILABILITY-20260918` workstream per
+  Jacob's authorization (Issue #91 comments `5736360831`/`5736383892`):
+  margin remains unresolved by either C2 or C3 and needs a genuinely new,
+  not-yet-inspected data source or a different hypothesis, not a re-test of
+  this one on the same population.
+
+Alligator

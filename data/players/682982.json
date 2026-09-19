@@ -44,8 +44,8 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 40.3,
-          "notable_signals": 0,
+          "score": 42.8,
+          "notable_signals": 1,
           "matchup": "Athletics @ Cleveland Guardians",
           "game_pk": 824383,
           "team": "Cleveland Guardians",
@@ -56,11 +56,14 @@
             "opp_team_k_pct": 55.0,
             "same_hand_ratio": 100.0,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 75.0742,
+            "ump_k_pct": -0.132,
+            "ump_bb_pct": -0.252
           },
-          "hit_probability": 0.6114,
-          "raw_hit_probability": 0.6868,
-          "lift": 0.0953,
+          "hit_probability": 0.6116,
+          "raw_hit_probability": 0.6877,
+          "lift": 0.0937,
           "reliability": "D",
           "sample_n": 0,
           "projection": {

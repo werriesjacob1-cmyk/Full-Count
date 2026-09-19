@@ -2160,6 +2160,109 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 74.8,
+          "notable_signals": 2,
+          "matchup": "Athletics @ Cleveland Guardians",
+          "game_pk": 824383,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "pitch_exploit": 6.2857,
+            "l7_avg_ev": 87.6042,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.3,
+            "season_barrel_pct": 20.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 27.7778,
+            "platoon_barrel_pct": 0.32,
+            "platoon_xwoba": 3.12,
+            "park_hand_index": -0.96,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 4.0,
+            "woba_ahead": 8.1818,
+            "woba_behind": 14.5455,
+            "pull_park_synergy": -0.4234,
+            "hard_hit_105_rate": 0.3175,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.384,
+            "vs_rp_ops": 1.464,
+            "ump_k_pct": 0.132,
+            "ump_bb_pct": 0.252
+          },
+          "hit_probability": 0.655,
+          "raw_hit_probability": 0.6425,
+          "lift": 0.0945,
+          "reliability": "A",
+          "sample_n": 125,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 7.8,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Cleveland Guardians",
+          "game_pk": 824383,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0593
+          },
+          "hit_probability": 0.0593,
+          "raw_hit_probability": null,
+          "lift": 0.0116,
+          "reliability": "A",
+          "sample_n": 125,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.5,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Cleveland Guardians",
+          "game_pk": 824383,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0425
+          },
+          "hit_probability": 0.0425,
+          "raw_hit_probability": null,
+          "lift": 0.0218,
+          "reliability": "A",
+          "sample_n": 125,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
