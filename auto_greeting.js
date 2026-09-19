@@ -129,8 +129,12 @@
       const list = existing.filter((e) => e.id !== fingerprint);
       list.unshift({ id: fingerprint, ts: Date.now(), outcome });
       await chrome.storage.local.set({ [LEDGER_KEY]: list.slice(0, 500) });
-    } catch { /* log unavailable: do not retry the send */ }
-    console.info('[CarNow AC greeting]', outcome);
+      console.info('[CarNow AC greeting]', outcome);
+      return true;
+    } catch {
+      console.warn('[CarNow AC greeting] unable to save attempt; refusing send');
+      return false;
+    }
   }
 
   async function run(pending) {
@@ -163,7 +167,7 @@
     if (!ownersDetailsPage(name)) return 'left-owner-details';
 
     // Record BEFORE any possible send: an uncertain click must NEVER be retried.
-    await updateLedger(id, 'attempt-started');
+    if (!await updateLedger(id, 'attempt-started')) return 'ledger-unavailable';
 
     if (!setMessage(composer.el, MESSAGE)) {
       await updateLedger(id, 'draft-present-or-input-failed');
