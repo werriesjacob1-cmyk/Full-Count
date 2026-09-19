@@ -1,0 +1,109 @@
+name: NFL Live Game-Market Shadow Board
+
+# Research-only prospective spread/total evidence capture.
+# Discovers the full target-date FanDuel NFL slate, builds strictly-prior B0
+# control predictions, binds them to real FanDuel lines/prices, seals each
+# event, and emits a full-slate manifest with explicit NO_PLAY accounting.
+#
+# No public picks, no model promotion, no commit/push of generated evidence.
+on:
+  schedule:
+    # Sunday kickoff waves in UTC. Multiple pregame vintages are intentional.
+    - cron: '40 15 * * 0'
+    - cron: '50 16 * * 0'
+    - cron: '5 19 * * 0'
+    - cron: '55 19 * * 0'
+    - cron: '15 20 * * 0'
+    - cron: '0 23 * * 0'
+    - cron: '10 0 * * 1'
+  push:
+    branches:
+      - superchad/nfl-live-game-market-shadow-20260918
+    paths:
+      - nfl/prospective/game_market_shadow_board.py
+      - nfl/prospective/live_game_market_shadow.py
+      - nfl/tests/test_game_market_shadow_board.py
+      - .github/workflows/nfl-live-game-market-shadow.yml
+  workflow_dispatch:
+    inputs:
+      target_local_date:
+        description: 'Chicago local slate date (YYYY-MM-DD); blank = upcoming Sunday'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nfl-live-game-market-shadow-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install NFL dependencies only
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r nfl/requirements-nfl.txt
+          python3 -m pip install 'requests~=2.34.2'
+
+      - name: Run bridge unit tests
+        run: |
+          PYTHONPATH=. python3 nfl/tests/test_game_market_snapshot.py
+          PYTHONPATH=. python3 nfl/tests/test_game_market_shadow_board.py
+          PYTHONPATH=. python3 nfl/tests/test_game_market_b0.py
+          PYTHONPATH=. python3 nfl/tests/test_scoring_prior_features.py
+
+      - name: Build live full-slate shadow board
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+          TARGET_LOCAL_DATE: ${{ inputs.target_local_date }}
+          OUTPUT_DIR: /tmp/nfl-game-market-shadow
+        run: |
+          PYTHONPATH=. python3 nfl/prospective/live_game_market_shadow.py
+
+      - name: Assert full-slate accounting
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('/tmp/nfl-game-market-shadow/slate_manifest.json')
+          data = json.loads(p.read_text())
+          discovered = data['discovered_event_count']
+          accounted = data['accounted_event_count']
+          if discovered != accounted:
+              raise SystemExit(f'coverage mismatch: {accounted}/{discovered}')
+          if discovered < 1:
+              raise SystemExit('no events discovered')
+          missing = [
+              e for e in data['events']
+              if e.get('status') not in {'BOARD_BUILT', 'NO_PLAY'}
+          ]
+          if missing:
+              raise SystemExit(f'unaccounted event states: {missing}')
+          print({
+              'target_local_date': data['target_local_date'],
+              'discovered': discovered,
+              'accounted': accounted,
+              'event_board_built': sum(e['status'] == 'BOARD_BUILT' for e in data['events']),
+              'event_no_play': sum(e['status'] == 'NO_PLAY' for e in data['events']),
+              'market_decision_counts': data['market_decision_counts'],
+              'manifest_sha256': data['manifest_sha256'],
+          })
+          PY
+
+      - name: Upload prospective evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nfl-game-market-shadow-${{ github.run_id }}
+          path: /tmp/nfl-game-market-shadow
+          if-no-files-found: error
+          retention-days: 30
