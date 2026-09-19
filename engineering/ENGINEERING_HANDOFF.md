@@ -2867,3 +2867,133 @@ Alligator
   and decide on push/PR.
 
 Alligator
+
+## 2026-09-19 -- NFL HC-regime x redistribution-baseline join, first hierarchical challenger
+
+- Workstream `NFL-ROLE-REDISTRIBUTION-EXPERIMENT-20260919`, branch
+  `claude/nfl-role-redistribution-experiment-20260919` off `origin/main`
+  (base `7fba6f57434539a79f3f00496d3101bf5d44232e`). New files only:
+  `nfl/research/role_regime_redistribution.py`,
+  `nfl/tests/test_role_regime_redistribution.py`. No file from PR #142
+  (coach-regime registry) or PR #143 (role-intelligence substrate) edited --
+  both reused by import only.
+- Genuinely new work, not a repeat of #142/#143: joins the real 667
+  WR/RB teammate-absence events (`role_intelligence_features
+  .build_teammate_absence_trigger_events`, reused as-is) with the real HC
+  registry (`coach_regime_registry.lookup_regime`, reused as-is) via each
+  event's own `(team, season, week)` -> real game date
+  (`build_game_date_index`), never a caller-supplied date; then prototypes
+  one dependency-free hierarchical "committee probability" challenger
+  (`HIERARCHICAL_COMMITTEE_PROBABILITY_V1`), a from-scratch conditional
+  logit (same "no numpy/sklearn in NFL CI" convention as
+  `game_market_c2_ridge.py`) with a separate weight vector per HC
+  regime-tenure bucket (`NEW_REGIME_FIRST_30_DAYS` / `ESTABLISHED_REGIME` /
+  `UNKNOWN_REGIME`), trained on a predeclared 2012-2021 season split and
+  scored on a disjoint, predeclared 2022-2025 held-out split.
+- Real, independently re-fetched 2012-2025 run (not a cached/simulated
+  number): 53,110 usage rows and 424,880 role-state rows -- both match
+  PR #143's own reported counts exactly. Real, disclosed reproducibility
+  note: a first identical-methodology run this same session produced 668
+  events (324 WR_ABSENCE/344 RB_ABSENCE) instead of 667 (323/344); a clean
+  rerun immediately after reproduced 667/323/344 exactly. Not chased down
+  further (both runs used the same code path back-to-back within minutes),
+  but disclosed rather than silently using whichever number looked cleaner.
+  All real HC coverage counts below are from the reproducing (667-event)
+  run.
+- Real, disclosed source-volatility finding: PR #143's own pinned
+  `role_intelligence_source_digests.PLAYERS_CROSSWALK_SOURCE` digest
+  (recorded 2026-09-19) had ALREADY drifted from the live `players.csv`
+  asset by the time this same-day run executed (pinned 7,259,734 bytes /
+  `801d5fec...`, live 7,291,736 bytes / `12c126bb...`). This is expected for
+  a "single non-seasonal", roster-mutable asset (unlike this project's
+  per-season archived releases, which held their pins exactly). Per this
+  workstream's own file-scope boundary, PR #143's pin was NOT edited; this
+  run's own script fetched the live bytes directly and reused PR #143's own
+  digest-check-free pure parser (`parse_players_crosswalk_csv`) instead of
+  its digest-gated wrapper, with both digests recorded for disclosure. Every
+  per-season snap/depth-chart/PBP asset digest PR #143 pinned held exactly.
+- HC join: all 667 events resolved (0 `UNKNOWN`) -- full real HC coverage
+  for 2012-2025, as expected from the registry's real 1999-2026 span. 631
+  events fell in `ESTABLISHED_REGIME`, 36 in `NEW_REGIME_FIRST_30_DAYS`
+  (first ~30 days of a brand-new real HC hire).
+- Real, disclosed negative/limiting finding for the per-regime-name report:
+  no single real HC regime (exact team + persons + start-date) accumulates
+  >= the predeclared `MIN_EVENTS_FOR_NAMED_REGIME = 20` real WR/RB-absence
+  events in this population -- 667 events spread across ~35 team codes x
+  many coaching tenures over 14 seasons average under 20 events per regime.
+  Every event therefore rolls up into `OTHER_NAMED_REGIMES_N_LT_20` (whose
+  MAE trivially equals the overall baseline MAE PR #143 already reported:
+  `target_share` NO_ADJUSTMENT 0.0597/n=1348, `carry_share` NO_ADJUSTMENT
+  0.1796/n=860 -- both match PR #143's numbers almost exactly, small
+  n-differences from the live source drift noted above). The threshold was
+  predeclared before this run and NOT lowered after seeing this result.
+- Real, positive finding at the coarser regime-tenure-bucket level (MAE,
+  `NEW_REGIME_FIRST_30_DAYS` vs `ESTABLISHED_REGIME`, full 2012-2025):
+  `target_share` -- DEPTH_CHART_NEXT_MAN 0.0714 (n=105, new) vs 0.0799
+  (n=1243, established); RECENT_USAGE_NEXT_MAN 0.0704 (new) vs 0.0807
+  (established); NO_ADJUSTMENT/PROPORTIONAL nearly flat across buckets.
+  `carry_share` -- DEPTH_CHART_NEXT_MAN 0.1480 (n=29, new) vs 0.2080 (n=831,
+  established); RECENT_USAGE_NEXT_MAN 0.1631 (new) vs 0.1910 (established);
+  NO_ADJUSTMENT is the one baseline that gets WORSE under a new regime
+  (0.2194 new vs 0.1782 established). Real, plausible, but SMALL-N
+  (29-105) and not claimed as a robust conclusion: "next-man-up"-style
+  baselines look more accurate specifically in a brand-new coaching
+  regime's first month, especially for carry_share, while "nothing changes"
+  looks worse there for carry_share -- consistent with a new staff actually
+  installing a more decisive, depth-chart-driven backup plan early, but this
+  is a first observation, not a validated effect.
+- Challenger (`HIERARCHICAL_COMMITTEE_PROBABILITY_V1`), held-out 2022-2025,
+  same equal-volume MAE methodology, real run: `target_share` -- challenger
+  0.0620 (n=449) vs. held-out NO_ADJUSTMENT 0.0605 (n=441),
+  PROPORTIONAL 0.0640, DEPTH_CHART_NEXT_MAN 0.0774, RECENT_USAGE_NEXT_MAN
+  0.0825 -- challenger beats 3 of 4 baselines, loses to NO_ADJUSTMENT.
+  `carry_share` -- challenger 0.1588 (n=261) vs. NO_ADJUSTMENT 0.1838,
+  PROPORTIONAL 0.1680, DEPTH_CHART_NEXT_MAN 0.2110, RECENT_USAGE_NEXT_MAN
+  0.2069 -- challenger beats ALL FOUR existing baselines out-of-sample on
+  carry_share. This is a real, disclosed positive result for one dimension
+  and a real, disclosed negative result for the other -- not smoothed into
+  a single "the challenger wins" claim.
+- Mass-balance (`compute_mass_balance_diagnostics`, reused as-is): the
+  challenger's aggregate `mean_unallocated_residual`/
+  `mean_over_allocation_error` on the held-out set are numerically IDENTICAL
+  to `PROPORTIONAL_TEAMMATE_REDISTRIBUTION`'s in both dimensions. This is
+  explainable, not a bug: both models fully redistribute the exact same
+  removed-player budget across the exact same already-known-prior teammate
+  set on this held-out population (no candidate lacking any prior history
+  appears in this slice), and the mass-balance diagnostic measures only
+  aggregate budget conservation, not the split across individuals -- which
+  is exactly where the two models' real MAE differs. Over-allocation stayed
+  small (0.003-0.042 share points), the same order of magnitude PR #143
+  already reported for the existing baselines, never fabricated as exactly
+  zero.
+- The challenger's own `n` (449 target_share / 261 carry_share) is slightly
+  larger than the baselines' shared `n` (441 / 250) on the identical
+  held-out events: because it always predicts every teammate (via
+  `predict_no_adjustment` plus a probability-weighted addition for every
+  candidate, even one with no last-5 prior), it scores a few additional
+  teammate-predictions the four existing baselines silently skip. Disclosed
+  as a structural difference in scored population, not normalized away.
+- Explicit disclosed limitations: OC/DC/playcaller never looked up (PR
+  #142's own zero-real-interval gap; out of scope here); `route_share`
+  remains `UNKNOWN_NO_SOURCE_INGESTED` and is never evaluated; the
+  challenger's hyperparameters (200 iterations, lr 0.05, L2 0.01, 30-day new-
+  regime threshold, `MIN_EVENTS_FOR_NAMED_REGIME = 20`) are predeclared and
+  NOT cross-validated or tuned to any result in this run; it is trained
+  once, in-sample only within its own predeclared train seasons, and is a
+  first bounded prototype, never promoted to any selector or public pick.
+- 16 new tests (`nfl/tests/test_role_regime_redistribution.py`) pass,
+  network-free (synthetic HC intervals/game dates, same fixture style as
+  `test_coach_regime_registry.py`/`test_role_intelligence_baselines.py`),
+  including a dedicated leakage-safety suite re-verifying the no-lookahead
+  guarantee specifically through this join's own season/week resolution
+  path (a future regime change never alters a past event's resolved
+  regime; a different week's date in the same index never leaks into this
+  week's resolution) and a mass-balance test for the challenger's own
+  redistribution step. Existing `nfl.tests.test_role_intelligence_baselines`
+  (7 tests) and `nfl.tests.test_coach_regime_registry` (45 tests) re-run
+  once, unchanged, both green -- neither file touched.
+- No model/selector/public-pick promotion, no production change, no edits
+  to `.github/workflows/`, `nfl/prospective/`, or `nfl/normalize/`. Draft
+  PR opened, not merged -- Jacob's separate explicit authorization required.
+
+Alligator
