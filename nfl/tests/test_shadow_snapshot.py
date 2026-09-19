@@ -88,6 +88,28 @@ class ShadowSnapshotTests(unittest.TestCase):
                 sealed_at="2026-09-13T16:50:01Z",
             )
 
+    def test_receptions_is_an_allowed_market(self):
+        row = {**BASE, "market": "receptions", "gsis_id": "00-receptions"}
+        sealed = shadow_snapshot.seal_snapshot(
+            [row],
+            slate_date="2026-09-13",
+            code_sha="abc",
+            source_vintage="pre-lock",
+            sealed_at="2026-09-13T16:50:01Z",
+        )
+        self.assertEqual(sealed["records"][0]["market"], "receptions")
+
+    def test_market_outside_the_explicit_allow_list_fails_closed(self):
+        bad = {**BASE, "market": "rushing_yards"}
+        with self.assertRaisesRegex(ValueError, "shadow v1 supports"):
+            shadow_snapshot.seal_snapshot(
+                [bad],
+                slate_date="2026-09-13",
+                code_sha="abc",
+                source_vintage="pre-lock",
+                sealed_at="2026-09-13T16:50:01Z",
+            )
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
