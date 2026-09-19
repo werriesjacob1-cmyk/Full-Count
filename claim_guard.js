@@ -124,10 +124,19 @@
       // Greeting is opt-in and bounded. No generic Details screen is enough:
       // auto_greeting.js independently verifies "Claimed <my name>".
       if (pending && pending.signature && window.__carnowGreeting) {
+        let timeout;
         try {
-          await window.__carnowGreeting.attempt(pending);
+          // Messaging must never indefinitely strand the lead watcher.
+          await Promise.race([
+            window.__carnowGreeting.attempt(pending),
+            new Promise((resolve) => {
+              timeout = setTimeout(() => resolve('greeting-deadline'), 4100);
+            })
+          ]);
         } catch (err) {
           console.warn('[CarNow AC] greeting skipped', err);
+        } finally {
+          if (timeout) clearTimeout(timeout);
         }
       }
       // Return to watching regardless of the messaging outcome; do not let
