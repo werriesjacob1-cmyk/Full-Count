@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-19T15:43:54.989507+00:00",
+  "updated_at": "2026-09-19T16:39:00.951612+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -37999,6 +37999,106 @@
         },
         "qualification_timestamp": "2026-09-19T15:37:58.163834+00:00",
         "board_timestamp": "2026-09-19T15:37:58.139808+00:00",
+        "slate_date": "2026-09-19"
+      }
+    },
+    "fc2:822921:player-596115:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:822921:player-596115:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "822921",
+        [
+          "player",
+          "596115"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-19",
+      "first_published_at": "2026-09-19T16:39:00.951612+00:00",
+      "publication_provenance": {
+        "artifact_id": "f747a91833443aab51e7c17536f4cbf960cce97cb6deed736e6d390457d4e4b1",
+        "source_commit": "f031e7cd733494de2179b859aec9117d4cb11187",
+        "workflow_run_id": "35455480945",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-19T16:38:48.186248+00:00",
+        "data_hash": "ef5126381239e09877b2e43f88d9242a30b39573dfdae1fab4d20d6fa8d02556",
+        "live_hash": "bc66606a0ec2ed9049e0c9f6e1470e4575ce0ee2de6b225b94eb068bcfb15d63"
+      },
+      "snapshot": {
+        "id": "fc2:822921:player-596115:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 822921,
+        "player_id": 596115,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Trevor Story",
+        "team": "Boston Red Sox",
+        "matchup": "Boston Red Sox @ Tampa Bay Rays",
+        "game_start": "2026-09-19T20:10:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.706,
+        "market_odds": -195,
+        "market_implied": 0.661,
+        "market_edge": 0.045,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 28.6 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+1.3mph 2nd-half vs 1st-half)",
+          "Projected 3.9 PA (batting slot 6)",
+          "Hitters batting ahead of him: 0.333 wOBA (league ~.320)",
+          "Dome \u2014 weather neutral",
+          "Sharp money backing Boston Red Sox (money% +27 pts vs ticket%)"
+        ],
+        "watchouts": [
+          "L7 avg EV 84.7mph (league ~88.5) \u2014 cold recent contact",
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Hitter batting behind him: 0.321 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.42 runs (league avg 4.245; line 3.5, game total 7.5) \u2014 a weak offensive environment",
+          "AVG vs xBA: 0.247 vs 0.220 (+0.027) \u2014 outperforming his contact quality, regression risk",
+          "Activated from the 60-day injured list 20 day(s) ago \u2014 early performance back can be inconsistent",
+          "Season barrel% 5.1 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 1/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6892,
+          0.7479
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 58,
+        "lineup_assumed": null,
+        "base_rate": 0.6752,
+        "lift": 0.0308,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "c40b9ed37",
+          "prediction_timestamp": "2026-09-19T16:33:22.353035+00:00",
+          "odds_fetched_at": "2026-09-19T16:33:16.722427+00:00",
+          "board_generated_at": "2026-09-19T16:33:22.328026+00:00"
+        },
+        "qualification_timestamp": "2026-09-19T16:33:22.353035+00:00",
+        "board_timestamp": "2026-09-19T16:33:22.328026+00:00",
         "slate_date": "2026-09-19"
       }
     }
