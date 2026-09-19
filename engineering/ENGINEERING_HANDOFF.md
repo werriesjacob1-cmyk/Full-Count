@@ -2954,3 +2954,110 @@ Alligator
   `nfl/normalize/`. Draft PR #148 not merged -- awaiting review.
 
 Alligator
+
+## 2026-09-19 -- Scientific-integrity coherence audit of draft PR #148 (receptions outcome distribution / alt-line ladder)
+
+- Workstream `NFL-OUTCOME-DISTRIBUTION-AUDIT-20260919` (Issue #91 claim
+  `5743331870`), branch `claude/nfl-outcome-distribution-audit-20260919`
+  off `origin/main` at `940c4caf3a4e4c94f28d8b6afd2241890c57ca81`. To make
+  PR #148's real code importable for tests, this branch merges (does not
+  edit) PR #148's own commits (`claude/nfl-outcome-distribution-experiment-
+  20260919`, head `eeb8618f27`) -- the merge commit and this entry are the
+  only new content; `receptions_outcome_distribution.py` and
+  `receptions_alt_ladder.py` themselves are byte-identical to PR #148's
+  head. Audit only -- no re-run of the 27-season historical comparison.
+- New file: `nfl/tests/test_receptions_alt_ladder_coherence_audit.py` (14
+  tests, all pass; full `nfl/tests` suite 714 passed, single run).
+- **Coherence finding (real, confirmed): `zero_probability` and
+  `ladder_probabilities(threshold=0.5)["under"]` DO materially disagree**
+  on a pool mixing heterogeneous opportunity levels, exactly as PR #148's
+  own module docstring disclosed -- quantified on a hand-computable 20-
+  value pool (10 low-opportunity residuals near a 0.3 projection + 10
+  high-opportunity "bust game" residuals from a different, high-projection
+  historical population, pooled together as this codebase's existing
+  convention allows): `zero_probability = pool.pmf(0, 0.3) = 8/20 = 0.400`
+  (a narrow +-0.5 window around the exact zero-outcome point) vs.
+  `ladder_probabilities(...)["rungs"][0]["under"] = 19/23 ~= 0.826` (the
+  full left-tail cumulative count below the threshold gap) -- an absolute
+  gap of ~0.426 (>100% relative to the smaller value), from the SAME pool,
+  SAME projection, SAME function call's own output. A control case with a
+  homogeneous pool keeps the two estimators within 0.02 of each other,
+  confirming the gap is a real property of pool heterogeneity, not a
+  universal bug. Root cause: the far-tail "bust game" residuals belong to
+  count_less_than's full-tail sum but fall outside pmf's narrow window,
+  because pmf and the ladder's under/over use two different nonparametric
+  conventions on the same pool.
+- **Recommended fix, described but NOT applied**: inside
+  `ladder_probabilities`, replace `zero_probability = pool.pmf(0,
+  projection)` with `zero_probability = _rung_probabilities(pool,
+  projection=projection, threshold=0.5)["under"]` -- i.e. derive
+  `zero_probability` from the exact same full-tail rung computation every
+  other threshold already uses, rather than a separate narrow-window
+  estimator. This audit's own test
+  (`test_recommended_fix_would_make_them_identical_by_construction`) proves
+  the two quantities become bit-for-bit identical under this change (not
+  merely close), and spot-checks confirm none of PR #148's own 40 existing
+  `test_receptions_alt_ladder.py` assertions would break numerically. Not
+  applied because it silently changes `zero_probability`'s returned value
+  on essentially every call, and PR #148's own docstring explicitly
+  documents the CURRENT two-estimator design as an intentional, disclosed
+  tension -- patching the code without also rewriting that prose would
+  leave the file's own documentation stale/self-contradictory, which is
+  itself a change to "already-documented ladder behavior" this audit was
+  told to avoid absent high confidence. Per the task's own instruction
+  ("if in doubt, describe the fix rather than applying it"), described only.
+- **Independently re-verified (new tests, not just re-running PR #148's
+  own)**: `over` monotonicity on two new pool shapes (skewed/heterogeneous,
+  tiny asymmetric) -- holds. Discrete exact-line push on two new pool/
+  threshold pairs, including a no-exact-match case (`push_observations=0`
+  but `push` probability still non-zero via Laplace smoothing, sum-to-one
+  intact). Full pmf normalization ACROSS ALL OUTCOMES (not just one rung):
+  **real, confirmed defect** -- `EmpiricalResidualPool.pmf` does NOT sum to
+  1 across the outcome range (1.36 summed over k=0..20 on the audit's own
+  pool), because its Laplace floor `1/(n+2)` is applied independently to
+  every queried k; `normal_discrete_pmf`/`negative_binomial_pmf` remain
+  properly normalized (~1.0000001) as a control. This does not corrupt PR
+  #148's own log-likelihood comparison (which only ever queries `pmf()` at
+  the single observed k per row, never sums across k), but `pmf()` is not a
+  valid standalone full distribution -- a real, separate coherence property
+  from the zero_probability/under gap, disclosed here rather than left
+  implicit.
+- **DNP/VOID exclusion re-verified as code-ENFORCED, not just documented**:
+  built a fully synthetic (never real) 27-season CSV corpus solely to
+  exercise `receptions_baseline_research.load_receiver_rows`'s
+  `effective_targets <= 0: continue` gate end to end. Confirmed a true DNP/
+  inactive row (0 targets, 0 receptions) is excluded from the loaded
+  population while a genuine role-positive row and a target-inferred-from-
+  reception fallback row are both correctly kept.
+- **Sparse pool / extreme threshold**: no NaN or exception at n=1 with
+  thresholds of +-500.5, and every rung still sums to 1. Real, disclosed
+  (not a crash) degradation: at n=1 the `+1` Laplace term dominates, so
+  `over` at an impossible threshold (500.5 receptions) is 0.25 rather than
+  converging toward 0 -- quantified, not silently accepted as "graceful."
+- **No fabricated price**: AST-based scan (not a text grep, so docstring
+  prose cannot fake a pass) of both modules' actual code finds zero numeric
+  literals shaped like American odds (`abs(value) >= 100`) in
+  `receptions_alt_ladder.py`, and only unrelated bucket-boundary/season-year
+  literals (200, 2022, 2023, 2025) in `receptions_outcome_distribution.py`
+  -- every price in the ladder flows from caller-supplied `over_odds`/
+  `under_odds`.
+- **Separate, unplanned finding, disclosed rather than reconciled**: PR
+  #148's own PR body, its Issue #91 claim comment, and this file's own
+  prior entry (above) all state "43 new tests" in
+  `test_receptions_outcome_distribution.py` and "40 new tests" in
+  `test_receptions_alt_ladder.py" (83 total). The actual committed files at
+  PR #148's head (`eeb8618f27`) contain exactly 23 and 20 `def test_`
+  methods respectively (43 total) -- confirmed both by source grep and by
+  running `python3 -m unittest` on each file directly. This is a real,
+  reproducible discrepancy between PR #148's claimed test count and its
+  actual file contents; the repository-wide "700 passed" figure it also
+  reported is separately consistent with the real suite (714 after this
+  audit's own +14 tests), so the discrepancy is specific to the per-file
+  breakdown, not the aggregate. Reported here as found, not silently
+  corrected or assumed to be a harmless typo.
+- No model/selector/public-pick promotion, no plus-money profitability
+  claim, no historical/offered price fabricated. Did not repeat the
+  27-season historical comparison. No edits to `receptions_alt_ladder.py`
+  or `receptions_outcome_distribution.py` themselves.
+
+Alligator
