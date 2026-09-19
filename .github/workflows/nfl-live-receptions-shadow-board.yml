@@ -121,8 +121,15 @@ jobs:
               "https://github.com/nflverse/nflverse-data/releases/download/"
               "rosters/roster_2026.csv"
           )
+          # Re-pinned 2026-09-19 after an independent live re-fetch: the
+          # passing-yards workflow's original roster pin
+          # (ffdc6f358df0597365b1889332577692c484a283a758d9956b92b2730d0fcd1c)
+          # has drifted -- rosters update with real transactions during the
+          # season. This is a real, disclosed finding, not a bug in this
+          # workflow; the passing-yards workflow's own pin is very likely
+          # equally stale right now and was not touched here (out of scope).
           ROSTER_SHA = (
-              "ffdc6f358df0597365b1889332577692c484a283a758d9956b92b2730d0fcd1c"
+              "8d6496372133d5a9d683b0f48402bf4a2b8b96eae85c5d6b88093bb9094c3dbe"
           )
           PLAYER_SHA = {
               2023: "f19cb71a5de0dce7fd09376026237c9ee9d5a93fe13815a2ea3ec2d37204cb17",
