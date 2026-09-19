@@ -1,0 +1,111 @@
+{
+  "provenance": {
+    "repository": "https://github.com/nflverse/nfldata",
+    "commit": "8ed09b2fe3ea42332b2249a995737e13dd931ff3",
+    "path": "data/games.csv",
+    "full_file_bytes": 2177838,
+    "full_file_sha256": "26332ae5d8d8d0481f0670cf5e3849497a415351d4026ae5bee15a5aab96d188",
+    "note": "Same commit already pinned in-repo as coach_regime_registry.HC_GAMES_SOURCE / game_market_b0_research.PINNED_SCHEDULE_SOURCE. Independently re-fetched live and digest-matched on 2026-09-19 (full 7548-row file; zero (team-pair,gameday) collisions found across the whole file). This fixture keeps only the rows this audit test suite needs."
+  },
+  "rows": [
+    {
+      "game_id": "2026_02_DET_BUF",
+      "old_game_id": "2026091700",
+      "season": "2026",
+      "week": "2",
+      "game_type": "REG",
+      "gameday": "2026-09-17",
+      "gametime": "20:15",
+      "home_team": "BUF",
+      "away_team": "DET"
+    },
+    {
+      "game_id": "2026_02_CAR_ATL",
+      "old_game_id": "2026092000",
+      "season": "2026",
+      "week": "2",
+      "game_type": "REG",
+      "gameday": "2026-09-20",
+      "gametime": "13:00",
+      "home_team": "ATL",
+      "away_team": "CAR"
+    },
+    {
+      "game_id": "2026_02_NO_BAL",
+      "old_game_id": "2026092001",
+      "season": "2026",
+      "week": "2",
+      "game_type": "REG",
+      "gameday": "2026-09-20",
+      "gametime": "13:00",
+      "home_team": "BAL",
+      "away_team": "NO"
+    },
+    {
+      "game_id": "2026_02_MIN_CHI",
+      "old_game_id": "2026092002",
+      "season": "2026",
+      "week": "2",
+      "game_type": "REG",
+      "gameday": "2026-09-20",
+      "gametime": "13:00",
+      "home_team": "CHI",
+      "away_team": "MIN"
+    },
+    {
+      "game_id": "2026_02_CIN_HOU",
+      "old_game_id": "2026092003",
+      "season": "2026",
+      "week": "2",
+      "game_type": "REG",
+      "gameday": "2026-09-20",
+      "gametime": "13:00",
+      "home_team": "HOU",
+      "away_team": "CIN"
+    },
+    {
+      "game_id": "2026_02_PIT_NE",
+      "old_game_id": "2026092004",
+      "season": "2026",
+      "week": "2",
+      "game_type": "REG",
+      "gameday": "2026-09-20",
+      "gametime": "13:00",
+      "home_team": "NE",
+      "away_team": "PIT"
+    },
+    {
+      "game_id": "2026_01_GB_MIN",
+      "old_game_id": "2026091310",
+      "season": "2026",
+      "week": "1",
+      "game_type": "REG",
+      "gameday": "2026-09-13",
+      "gametime": "16:25",
+      "home_team": "MIN",
+      "away_team": "GB"
+    },
+    {
+      "game_id": "2026_10_MIN_GB",
+      "old_game_id": "2026111503",
+      "season": "2026",
+      "week": "10",
+      "game_type": "REG",
+      "gameday": "2026-11-15",
+      "gametime": "13:00",
+      "home_team": "GB",
+      "away_team": "MIN"
+    },
+    {
+      "game_id": "1999_01_KC_CHI",
+      "old_game_id": "1999091206",
+      "season": "1999",
+      "week": "1",
+      "game_type": "REG",
+      "gameday": "1999-09-12",
+      "gametime": "",
+      "home_team": "CHI",
+      "away_team": "KC"
+    }
+  ]
+}
