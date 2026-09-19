@@ -3186,3 +3186,74 @@ Alligator
   PR #143/#147/#150/#154 file.
 
 Alligator
+
+## 2026-09-19 — News Brain final integration candidate (`NFL-NEWS-BRAIN-FINAL-INTEGRATION-20260919`, supersedes #146/#151/#155)
+
+- NFL GENIUS FINAL CERTIFICATION & INTEGRATION mission (Issue #91, lead
+  claim comment `5745830856`), Agent B workstream. Cherry-picked PR #155's
+  exact 3 commits (`18a5eceda1` cherry-pick of #146, `e2b83986e7` PR #151's
+  audit, `a602d7649e` the identity/temporal repair) cleanly onto current
+  `main` tip `5da68e13a6c6791943fa8d02e7beb24689b55987` -- zero conflicts.
+  Confirmed no drift risk beforehand: none of the 134 commits between
+  PR #155's old merge-base (`940c4caf3a`) and current `main` touch `nfl/`
+  or `engineering/` (all dashboard/data/results artifacts).
+- Independently re-verified, by reading the real code myself (not the PR
+  bodies): `listed_position` is a real positional argument to the actual
+  `make_claim_id(...)` call inside `claims_from_parsed_report`
+  (`nfl/intelligence/news_ingest_official_inactives.py`), not merely
+  described in a docstring; `merge_claims_by_id`, `current_claims`, and
+  `detect_dropped_availability_contradictions` are real, callable,
+  first-class functions defined directly in
+  `nfl/intelligence/news_claim_ledger.py` (not left in an audit-only
+  file -- `news_claim_ledger_lifecycle_audit.py` is a thin re-export shim,
+  confirmed by the existing `test_canonical_and_shim_are_the_same_
+  function_objects` test); `claim_eligible_for_game`'s two independent
+  fail-closed checks (`POSTGAME_CLAIM_CANNOT_INFORM_ITS_OWN_GAME`,
+  `OBSERVED_AT_OR_AFTER_TARGET_KICKOFF`) are present and untouched by the
+  repair commit.
+- Ran my own fresh, independent example (a fictional KC@CIN report, player
+  "Jasper Freeman", not reused from any PR's fixture) directly against
+  `claims_from_parsed_report`: idempotency -- two independent parses of the
+  identical unchanged report both produced `claim_id`
+  `nc_1410a46b4f33431fcfe30aa0`; collision fix -- the same player/source
+  with `listed_position` revised `OT` -> `G` produced a genuinely different
+  `claim_id` `nc_b0dc780338912003940bf49a`. Also independently exercised
+  `merge_claims_by_id` (two identical-content runs -> `total_claim_count=1`,
+  `new_claim_count=0`, `duplicate_claim_count=1`) and
+  `detect_dropped_availability_contradictions` on my own synthetic
+  drop case (`contradiction_count=1`; the original claim's own
+  `contradictions` field stayed `[]` -- confirmed by direct object
+  inspection, not just re-running the existing test -- while the returned
+  `amended_claim` was a distinct dict carrying the populated
+  `contradictions`/`resolution`/`corrected_at` fields). `published_at`
+  (`None`, correctly -- inactive reports carry no separate publish
+  timestamp) and `observed_at` both survived the merge unchanged.
+- Grepped the full tree for `news_claim_ledger`/`news_ingest_official_
+  inactives` imports outside `nfl/intelligence/` and `nfl/tests/`: zero
+  hits -- confirmed no new predictive-state consumer was added by this
+  consolidation; a claim with unresolved identity still cannot reach any
+  model/selector path because no such path reads these claims at all.
+- Confirmed `test_news_brain_team_coverage.py` still asserts the real,
+  non-inflated 2/32-team split (BUF/DET `PARTIAL`, the other 30 teams
+  `UNPOPULATED`, zero official sources, `last_audited=None`) -- unchanged
+  by this consolidation.
+- Ran the full `nfl/tests` suite once as a single combined run
+  (`PYTHONPATH=. python3 -m unittest discover -s nfl/tests -p
+  "test_*.py"`, not per-file): **744 tests, all passing (OK)** -- matches
+  PR #155's own reported count, independently reproduced on the rebased
+  tree rather than merely taken on report.
+- No broad beat-writer/press-conference/new-source-category ingestion
+  added (PR #153's territory, explicitly out of scope). Game-id and
+  player-identity binding (`nfl/intelligence/news_claim_ledger_game_
+  binding_audit.py`, `nfl/intelligence/news_claim_ledger_player_
+  identity_audit.py`) remain deliberately unwired, read-only enrichment
+  steps -- confirmed `bind_claims_to_roster` calls the real, pre-existing
+  `inactive_roster_binding.bind_player` against an actual roster (never
+  inventing a GSIS id from a name alone) and nothing wires its output into
+  a consumer.
+- Branch `claude/nfl-news-brain-final-integration-20260919`, base
+  `5da68e13a6c6791943fa8d02e7beb24689b55987`. No edits to PR #146/#151/#155
+  themselves; they remain open and unmodified. No merge, no model/
+  selector/production change.
+
+Alligator
