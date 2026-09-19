@@ -1,0 +1,96 @@
+{
+  "player_id": 678394,
+  "name": "Brayan Bello",
+  "snapshots": [
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 36.6,
+          "notable_signals": 1,
+          "matchup": "Boston Red Sox @ Tampa Bay Rays",
+          "game_pk": 822921,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 15.0,
+            "same_hand_ratio": 5.5556,
+            "l14_k_pct": 100.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 78.5762,
+            "ump_k_pct": 0.0,
+            "ump_bb_pct": 0.156
+          },
+          "hit_probability": 0.5987,
+          "raw_hit_probability": 0.6237,
+          "lift": 0.087,
+          "reliability": "B",
+          "sample_n": 9,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 13.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 38.0,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Tampa Bay Rays",
+          "game_pk": 822921,
+          "team": "Boston Red Sox",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6545,
+            "avg_outs_per_start": 13.56
+          },
+          "hit_probability": 0.6438,
+          "raw_hit_probability": 0.6545,
+          "lift": -0.159,
+          "reliability": "B",
+          "sample_n": 9,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 13.5,
+            "needs": 14
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.7,
+          "notable_signals": 1,
+          "matchup": "Boston Red Sox @ Tampa Bay Rays",
+          "game_pk": 822921,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            678394,
+            642547
+          ],
+          "signals": {
+            "combined_k_edge": 0.3557
+          },
+          "hit_probability": 0.7288,
+          "raw_hit_probability": null,
+          "lift": 0.3557,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
+          }
+        }
+      ]
+    }
+  ]
+}

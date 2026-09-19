@@ -587,6 +587,86 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 36.7,
+          "notable_signals": 2,
+          "matchup": "Detroit Tigers @ Chicago White Sox",
+          "game_pk": 824545,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 27.7143,
+            "l7_avg_ev": 26.8333,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 13.2,
+            "park_hr_index": 51.3,
+            "season_barrel_pct": 56.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 66.6667,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 5.0,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 61.8182,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.856,
+            "vs_rp_ops": -2.22,
+            "ump_k_pct": -0.288,
+            "ump_bb_pct": 0.564
+          },
+          "hit_probability": 0.5385,
+          "raw_hit_probability": 0.5385,
+          "lift": -0.0233,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 23.1,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Chicago White Sox",
+          "game_pk": 824545,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.12,
+            "sprint_speed": 6.25,
+            "catcher_poptime": 17.1429,
+            "on_base": 14.5873
+          },
+          "hit_probability": 0.2566,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

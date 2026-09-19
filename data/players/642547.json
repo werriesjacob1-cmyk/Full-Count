@@ -535,10 +535,10 @@
       "date": "2026-09-19",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 55.6,
-          "notable_signals": 0,
+          "score": 33.5,
+          "notable_signals": 1,
           "matchup": "Boston Red Sox @ Tampa Bay Rays",
           "game_pk": 822921,
           "team": "Tampa Bay Rays",
@@ -547,25 +547,28 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 45.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 78.5762,
+            "ump_k_pct": 0.0,
+            "ump_bb_pct": 0.156
           },
-          "hit_probability": 0.6106,
-          "raw_hit_probability": 0.6829,
-          "lift": -0.0908,
+          "hit_probability": 0.4826,
+          "raw_hit_probability": 0.4826,
+          "lift": -0.0291,
           "reliability": "A",
           "sample_n": 30,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 43.1,
+          "score": 44.4,
           "notable_signals": 0,
           "matchup": "Boston Red Sox @ Tampa Bay Rays",
           "game_pk": 822921,
@@ -574,12 +577,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5389,
+            "outs_rate": 0.5376,
             "avg_outs_per_start": 15.8
           },
-          "hit_probability": 0.5476,
-          "raw_hit_probability": 0.5389,
-          "lift": -0.0192,
+          "hit_probability": 0.5465,
+          "raw_hit_probability": 0.5376,
+          "lift": -0.0122,
           "reliability": "A",
           "sample_n": 30,
           "projection": {

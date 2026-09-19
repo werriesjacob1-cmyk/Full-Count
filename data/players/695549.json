@@ -392,7 +392,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 41.1,
+          "score": 40.2,
           "notable_signals": 0,
           "matchup": "Detroit Tigers @ Chicago White Sox",
           "game_pk": 824545,
@@ -402,13 +402,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 72.0,
-            "same_hand_ratio": 88.8889,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 58.6046,
+            "ump_k_pct": 0.288,
+            "ump_bb_pct": -0.564
           },
-          "hit_probability": 0.5945,
-          "raw_hit_probability": 0.6029,
-          "lift": 0.0802,
+          "hit_probability": 0.5942,
+          "raw_hit_probability": 0.6016,
+          "lift": 0.0825,
           "reliability": "C",
           "sample_n": 7,
           "projection": {
@@ -420,7 +423,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 49.0,
+          "score": 49.3,
           "notable_signals": 0,
           "matchup": "Detroit Tigers @ Chicago White Sox",
           "game_pk": 824545,
@@ -429,18 +432,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.728,
+            "outs_rate": 0.7248,
             "avg_outs_per_start": 14.86
           },
-          "hit_probability": 0.6999,
-          "raw_hit_probability": 0.728,
-          "lift": -0.0441,
+          "hit_probability": 0.6976,
+          "raw_hit_probability": 0.7248,
+          "lift": -0.0395,
           "reliability": "C",
           "sample_n": 7,
           "projection": {
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Chicago White Sox",
+          "game_pk": 824545,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            695549,
+            680732
+          ],
+          "signals": {
+            "combined_k_edge": 0.0205
+          },
+          "hit_probability": 0.678,
+          "raw_hit_probability": null,
+          "lift": 0.0205,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

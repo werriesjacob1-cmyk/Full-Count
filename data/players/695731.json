@@ -4182,6 +4182,134 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 41.4,
+          "notable_signals": 2,
+          "matchup": "Detroit Tigers @ Chicago White Sox",
+          "game_pk": 824545,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 39.7143,
+            "pitch_exploit": 6.8571,
+            "l7_avg_ev": 85.7143,
+            "l7_barrel_pct": 87.8571,
+            "park_hr_index": 51.3,
+            "season_barrel_pct": 9.3333,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 16.6667,
+            "platoon_barrel_pct": -1.76,
+            "platoon_xwoba": 1.92,
+            "opp_catcher_framing": -0.96,
+            "days_rest": 0.0,
+            "woba_ahead": 37.2727,
+            "woba_behind": 0.0,
+            "hard_hit_105_rate": 0.0375,
+            "getaway_day": 0.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -1.52,
+            "vs_rp_ops": -2.244,
+            "ump_k_pct": -0.288,
+            "ump_bb_pct": 0.564
+          },
+          "hit_probability": 0.6649,
+          "raw_hit_probability": 0.6626,
+          "lift": -0.0097,
+          "reliability": "A",
+          "sample_n": 84,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 34.9,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Chicago White Sox",
+          "game_pk": 824545,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -1.02,
+            "sprint_speed": 34.375,
+            "catcher_poptime": 0.0,
+            "on_base": 26.1036
+          },
+          "hit_probability": 0.0173,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 84,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 4.9,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Chicago White Sox",
+          "game_pk": 824545,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0481
+          },
+          "hit_probability": 0.0481,
+          "raw_hit_probability": null,
+          "lift": 0.0004,
+          "reliability": "A",
+          "sample_n": 84,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Chicago White Sox",
+          "game_pk": 824545,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.004
+          },
+          "hit_probability": 0.004,
+          "raw_hit_probability": null,
+          "lift": -0.0167,
+          "reliability": "A",
+          "sample_n": 84,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

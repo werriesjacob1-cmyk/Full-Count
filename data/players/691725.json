@@ -508,7 +508,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 52.8,
+          "score": 48.5,
           "notable_signals": 0,
           "matchup": "Philadelphia Phillies @ New York Mets",
           "game_pk": 823571,
@@ -522,9 +522,9 @@
             "l14_k_pct": 15.2941,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.5861,
-          "raw_hit_probability": 0.562,
-          "lift": 0.0718,
+          "hit_probability": 0.5859,
+          "raw_hit_probability": 0.5607,
+          "lift": 0.0742,
           "reliability": "A",
           "sample_n": 21,
           "projection": {
@@ -534,9 +534,9 @@
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 53.2,
+          "score": 24.7,
           "notable_signals": 0,
           "matchup": "Philadelphia Phillies @ New York Mets",
           "game_pk": 823571,
@@ -545,18 +545,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6838,
+            "outs_rate": 0.4575,
             "avg_outs_per_start": 15.05
           },
-          "hit_probability": 0.6668,
-          "raw_hit_probability": 0.6838,
-          "lift": -0.0772,
+          "hit_probability": 0.4772,
+          "raw_hit_probability": 0.4575,
+          "lift": -0.0815,
           "reliability": "A",
           "sample_n": 21,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]

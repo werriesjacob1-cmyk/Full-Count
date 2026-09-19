@@ -1813,6 +1813,106 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 71.9,
+          "notable_signals": 4,
+          "matchup": "Boston Red Sox @ Tampa Bay Rays",
+          "game_pk": 822921,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 62.0,
+            "pitch_exploit": 20.0,
+            "l7_avg_ev": 62.5,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 4.5,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 47.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 16.6667,
+            "platoon_barrel_pct": 3.44,
+            "platoon_xwoba": 4.8,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "woba_ahead": 24.5455,
+            "woba_behind": 24.5455,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.712,
+            "vs_rp_ops": 0.972,
+            "ump_k_pct": -0.0,
+            "ump_bb_pct": -0.156
+          },
+          "hit_probability": 0.6175,
+          "raw_hit_probability": 0.614,
+          "lift": 0.0557,
+          "reliability": "B",
+          "sample_n": 60,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 5.0,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Tampa Bay Rays",
+          "game_pk": 822921,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0488
+          },
+          "hit_probability": 0.0488,
+          "raw_hit_probability": null,
+          "lift": 0.0011,
+          "reliability": "B",
+          "sample_n": 60,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ Tampa Bay Rays",
+          "game_pk": 822921,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0051
+          },
+          "hit_probability": 0.0051,
+          "raw_hit_probability": null,
+          "lift": -0.0156,
+          "reliability": "B",
+          "sample_n": 60,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
