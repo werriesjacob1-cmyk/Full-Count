@@ -2660,6 +2660,40 @@ Alligator
 
 Alligator
 
+## 2026-09-19 — NFL Genius Phase 2: PR #135 live game-market shadow bridge reconciled against current main, real-source verified
+
+- PR #135 (`superchad/nfl-live-game-market-shadow-20260918`), authored by
+  SUPERCHAD, had fallen ~35 commits behind `main`. Merged current `main`
+  into the branch cleanly -- zero conflicts, and PR #135's own 4 files
+  (`nfl/prospective/game_market_shadow_board.py`,
+  `nfl/prospective/live_game_market_shadow.py`,
+  `nfl/tests/test_game_market_shadow_board.py`,
+  `.github/workflows/nfl-live-game-market-shadow.yml`) are byte-identical
+  before and after the merge (diffed directly, not assumed). Original
+  scope and design preserved exactly; nothing redesigned, nothing added.
+- Real live-source re-verification performed independently: ran
+  `nfl/prospective/live_game_market_shadow.py` for real against live
+  FanDuel and current `nflverse/nfldata` `games.csv`, target Chicago-local
+  date 2026-09-20 (the upcoming Sunday). Result: 14 discovered events, 14
+  accounted, 14 `BOARD_BUILT`, 0 event-level `NO_PLAY`, 28 `SHADOW_ONLY` /
+  0 `NO_PLAY` market decisions. Manifest SHA-256
+  `c6e2a8e67186df8473d0fb609d5a8210d6999ac180ca598134637fcaab9ef816`.
+- Point-in-time safety and fail-closed accounting confirmed on real data;
+  deterministic canonical-JSON SHA-256 sealing confirmed.
+- 7 new shadow-board unit tests plus the 3 other bridge-gate test files
+  pass; full existing `nfl/tests` suite (507 tests) and full root suite
+  pass unchanged on the reconciled tree.
+- **Merged as PR #135**, merge SHA `0f7cbab7b75b17873b23a1d495c3d49e1628aefe`,
+  per Jacob's explicit authorization; a real production-branch dry run
+  afterward (workflow run `35446920888`) confirmed 14/14
+  discovered/accounted, 28 SHADOW_ONLY, 0 NO_PLAY on the merged main.
+  `NFL Live Game-Market Shadow Board` workflow confirmed `state: active`
+  with 7 Sunday-UTC kickoff-wave cron triggers.
+- No model/selector/public-pick promotion. B0 remains the sole accepted
+  control; C2/C3 not referenced.
+
+Alligator
+
 ## 2026-09-19 — NFL role-intelligence historical substrate (WR/RB, baselines only)
 
 - Workstream `NFL-GENIUS-ROLE-INTELLIGENCE-SUBSTRATE-20260919`, branch
