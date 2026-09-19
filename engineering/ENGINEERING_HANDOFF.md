@@ -4000,4 +4000,28 @@ No model/selector/production-decision change. Draft PR, not merged --
 Jacob's separate explicit authorization required for a `.github/workflows/`
 change per the pre-merge doctrine.
 
+**Update, same day -- real defect found by independent review (Issue #91
+comment `5746165033`), fixed and re-tested**: `grade_date()`'s file-open +
+`json.load` call sat OUTSIDE the function's own `try/except`. The reviewer
+constructed a real truncated/corrupt `board_freeze_{date}.json` and ran the
+actual code against it (not a mock): it raised an uncaught
+`json.decoder.JSONDecodeError`, exiting non-zero. Since the new workflow
+step has no `continue-on-error` (correctly mirroring "Grade yesterday's
+picks," which relies on its own internal handling), a single corrupted
+frozen-board file would have failed the ENTIRE job -- blocking real picks
+generation and commit for that day. The exact opposite of this change's own
+"picks pipeline unaffected" claim. Root cause: `grade_results.py`'s own
+equivalent `json.load` (the pattern this script was modeled on) already
+wraps this in `except (json.JSONDecodeError, OSError)`; the new script
+copied the missing-file check but not that guard.
+
+**Fix**: moved the `open()`/`json.load()` call inside the existing
+`try/except Exception` block -- a two-line change, no new exception
+handling logic invented. Added `test_corrupt_frozen_board_file_never_raises`
+and `test_main_never_raises_on_a_corrupt_file_either` (writing a real
+truncated/invalid JSON file and asserting `grade_date`/`main` return
+cleanly rather than raising) -- reproducing the reviewer's exact adversarial
+case as a permanent regression test. 6/6 tests in
+`test_grade_board_freeze.py`, full root suite re-run.
+
 Alligator

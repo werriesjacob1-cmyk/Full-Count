@@ -90,6 +90,32 @@ class GradeDateTests(unittest.TestCase):
         self.assertIsNone(result)
         self.assertFalse(os.path.exists(bfg.graded_board_path("2026-09-01")))
 
+    def test_corrupt_frozen_board_file_never_raises(self):
+        """Real defect found by independent review (Issue #91 comment
+        5746165033): the file read used to sit OUTSIDE the try/except, so a
+        truncated/corrupt output/board_freeze_{date}.json raised an
+        uncaught json.decoder.JSONDecodeError, exiting the whole job
+        non-zero -- the opposite of the "picks pipeline unaffected" claim.
+        Reproduces that exact scenario directly against the real file the
+        grader reads, not a mock."""
+        path = gbf.frozen_board_path(DATE)
+        with open(path, "w", encoding="utf-8") as f:
+            f.write('{"records": [truncated garbage, not valid json')
+
+        result = gbf.grade_date(DATE)  # must not raise
+
+        self.assertIsNone(result)
+        self.assertFalse(os.path.exists(bfg.graded_board_path(DATE)))
+
+    def test_main_never_raises_on_a_corrupt_file_either(self):
+        path = gbf.frozen_board_path(DATE)
+        with open(path, "w", encoding="utf-8") as f:
+            f.write("not even close to json")
+
+        rc = gbf.main(date_override=DATE)  # must not raise
+
+        self.assertEqual(rc, 0)
+
     def test_grades_a_real_sealed_board_and_writes_graded_artifact(self):
         frozen = _sealed_board(candidates=[_candidate(1, needs=2)])
         self._write_frozen_board(frozen)

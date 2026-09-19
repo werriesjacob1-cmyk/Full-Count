@@ -42,10 +42,9 @@ def grade_date(date: str) -> dict | None:
         print(f"No frozen board for {date} ({path} not found) -- nothing to grade.")
         return None
 
-    with open(path, "r", encoding="utf-8") as f:
-        frozen_board = json.load(f)
-
     try:
+        with open(path, "r", encoding="utf-8") as f:
+            frozen_board = json.load(f)
         bf.verify_board_seal(frozen_board)
         graded = bfg.grade_frozen_board(frozen_board, date=date)
     except Exception as e:
