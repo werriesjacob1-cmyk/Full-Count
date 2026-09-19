@@ -507,7 +507,7 @@
       "date": "2026-09-19",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
           "score": 48.8,
           "notable_signals": 0,
@@ -523,21 +523,21 @@
             "l14_k_pct": 39.4118,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.627,
-          "raw_hit_probability": 0.7653,
-          "lift": -0.0744,
+          "hit_probability": 0.4167,
+          "raw_hit_probability": 0.4167,
+          "lift": 0.0553,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 32.3,
+          "score": 32.5,
           "notable_signals": 0,
           "matchup": "Miami Marlins @ San Diego Padres",
           "game_pk": 823249,
