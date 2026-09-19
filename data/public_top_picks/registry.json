@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-19T04:59:40.015098+00:00",
+  "updated_at": "2026-09-19T15:43:54.989507+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -37901,6 +37901,104 @@
         },
         "qualification_timestamp": "2026-09-19T04:13:00.447932+00:00",
         "board_timestamp": "2026-09-19T04:13:00.429943+00:00",
+        "slate_date": "2026-09-19"
+      }
+    },
+    "fc2:824545:player-690993:hits:1:over": {
+      "canonical_id": "fc2:824545:player-690993:hits:1:over",
+      "settlement_identity": [
+        "824545",
+        [
+          "player",
+          "690993"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-19",
+      "first_published_at": "2026-09-19T15:43:54.989507+00:00",
+      "publication_provenance": {
+        "artifact_id": "ce01028e1016cf5d19e7a993b78eeb1af3659f7e414be6c023efc8ce651409a7",
+        "source_commit": "ee33f4e6dfe0109700e2d7118724d249bbf6c462",
+        "workflow_run_id": "35452598828",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-19T15:43:41.668849+00:00",
+        "data_hash": "11f17189a1ee4e399b2c59c8c8fa11efc82ca89496fe133a64f29fd3c1294120",
+        "live_hash": "e2a847b75c309839b770833c6a0693c7889b093586b5267f95040f5e5b951fda"
+      },
+      "snapshot": {
+        "id": "fc2:824545:player-690993:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 824545,
+        "player_id": 690993,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Colt Keith",
+        "team": "Detroit Tigers",
+        "matchup": "Detroit Tigers @ Chicago White Sox",
+        "game_start": "2026-09-19T18:10:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6282,
+        "market_odds": -145,
+        "market_implied": 0.5918,
+        "market_edge": 0.0364,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.0 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 88.6mph (league ~88.5)",
+          "L7 barrel% 33.3 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+3.3mph 2nd-half vs 1st-half)",
+          "Platoon: L bat vs RHP (favorable)",
+          "Projected 4.29 PA (batting slot 3) \u2014 a favorable lineup slot",
+          "Pitch-type exploit: RV/100 +2.3 vs CU (opposing SP throws it 19.9% of the time)",
+          "Hitter batting behind him: 0.369 wOBA (league ~.320) \u2014 real lineup protection, pitchers can't just pitch around him",
+          "Opposing bullpen fatigue: 4/10 relievers over 60 pitches in L7 (tired pen \u2014 favorable late)"
+        ],
+        "watchouts": [
+          "Opposing SP ERA 3.47 \u2014 elite pitcher, tough matchup",
+          "Team implied for 3.86 runs (league avg 4.245; line 3.5, game total 8) \u2014 a weak offensive environment",
+          "Season barrel% 7.7 \u2014 below-average barrel rate",
+          "Hitters batting ahead of him: 0.327 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in"
+        ],
+        "prob_ci": [
+          0.6195,
+          0.6567
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 139,
+        "lineup_assumed": null,
+        "base_rate": 0.5618,
+        "lift": 0.0664,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "15e4c5767",
+          "prediction_timestamp": "2026-09-19T15:37:58.163834+00:00",
+          "odds_fetched_at": "2026-09-19T15:37:52.219158+00:00",
+          "board_generated_at": "2026-09-19T15:37:58.139808+00:00"
+        },
+        "qualification_timestamp": "2026-09-19T15:37:58.163834+00:00",
+        "board_timestamp": "2026-09-19T15:37:58.139808+00:00",
         "slate_date": "2026-09-19"
       }
     }
