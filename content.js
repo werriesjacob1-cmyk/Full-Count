@@ -572,6 +572,10 @@
     void (async () => {
       await reportVerification(pending, 'on the detail page');
 
+      // The dedicated claim guard owns return-to-list timing. In particular,
+      // never let this legacy timer navigate away while the greeting is being
+      // composed or sent. The guard has its own bounded return/recovery path.
+      if (window.__carnowClaimGuardLoaded) return;
       if (!settings.returnToList || !pending.returnTo || pending.returnTo === to) return;
 
       if (returnTimer) clearTimeout(returnTimer);
@@ -1070,7 +1074,8 @@
         claimInFlight = true;
         void (async () => {
           await reportVerification(pending, 'after reload');
-          if (settings.returnToList && pending.returnTo && pending.returnTo !== location.href) {
+          if (!window.__carnowClaimGuardLoaded &&
+              settings.returnToList && pending.returnTo && pending.returnTo !== location.href) {
             returnTimer = setTimeout(() => {
               claimInFlight = false;
               location.assign(pending.returnTo);
