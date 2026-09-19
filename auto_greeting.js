@@ -41,27 +41,19 @@
   }
 
   function findComposer() {
-    const candidates = document.querySelectorAll(
-      'textarea, input[type="text"], [contenteditable="true"], [role="textbox"]'
-    );
-    const matches = [];
-    for (const el of candidates) {
-      if (!visible(el) || el.disabled || el.readOnly) continue;
-      const hint = norm([
-        el.getAttribute('placeholder'), el.getAttribute('aria-label'),
-        el.getAttribute('data-placeholder'), el.getAttribute('title')
-      ].join(' '));
-      if (/\b(note|search|subject|email|phone|filter)\b/i.test(hint)) continue;
-      // Require an explicit message/reply/chat label or a chat-specific ancestor.
-      const chatHost = el.closest(
-        '[class*="chat" i], [id*="chat" i], [class*="messag" i], [id*="messag" i]'
-      );
-      if (!chatHost && !/\b(chat|message|reply)\b|type here/i.test(hint)) continue;
-      if (el.tagName === 'INPUT' && !/\b(chat|message|reply)\b/i.test(hint)) continue;
-      matches.push({ el, chatHost, hint });
-    }
-    // Ambiguous composers => do nothing, never type in an arbitrary input.
-    return matches.length === 1 ? matches[0] : null;
+    // These selectors come from the live CarNow customer chat inspector:
+    // <textarea id="chat_message_body" ng-model="chatData.message.body"
+    //           class="chat-bottom-bar__input__field" ...>
+    // Do NOT search generic textareas: the Details page also has a Notes editor.
+    const matches = [...document.querySelectorAll(
+      'textarea#chat_message_body.chat-bottom-bar__input__field' +
+      '[ng-model="chatData.message.body"]'
+    )].filter((el) => visible(el) && !el.disabled && !el.readOnly);
+    if (matches.length !== 1) return null;
+    const el = matches[0];
+    const placeholder = norm(el.getAttribute('placeholder'));
+    if (placeholder !== 'Enter a message') return null;
+    return { el };
   }
 
   function openChat() {
@@ -74,25 +66,21 @@
   }
 
   function findSendButton(composer) {
-    // Only controls inside the same chat panel as the verified composer.
-    const { el, chatHost } = composer;
-    const scopes = [];
-    if (chatHost) scopes.push(chatHost);
-    let parent = el.parentElement;
-    for (let i = 0; parent && i < 3; i++, parent = parent.parentElement) {
-      if (!scopes.includes(parent)) scopes.push(parent);
-    }
-    for (const scope of scopes) {
-      const matches = [...scope.querySelectorAll('button, [role="button"]')]
-        .filter((button) => visible(button) &&
-          /^(send|send message|reply)$/i.test(norm(
-            button.getAttribute('aria-label') || button.getAttribute('title') ||
-            button.textContent
-          )));
-      if (matches.length === 1) return matches[0];
-      if (matches.length > 1) return null;
-    }
-    return null;
+    // Verified live CarNow markup:
+    // <button class="chat-bottom-bar__input__send"
+    //         ng-click="postMessage()" data-original-title="Send">
+    //   <i class="icon-v3-send"></i>
+    // </button>
+    // Require exactly one VISIBLE exact match and the known textarea. Generic
+    // paper-airplane buttons elsewhere on the customer page are never eligible.
+    if (!composer || !composer.el || !visible(composer.el) ||
+        document.querySelector('#chat_message_body') !== composer.el) return null;
+    const matches = [...document.querySelectorAll(
+      'button.chat-bottom-bar__input__send[ng-click="postMessage()"]'
+    )].filter((button) => visible(button) &&
+      button.getAttribute('data-original-title') === 'Send' &&
+      button.querySelector('i.icon-v3-send'));
+    return matches.length === 1 ? matches[0] : null;
   }
 
   function setMessage(el, message) {
@@ -176,6 +164,15 @@
     if (!fresh.autoGreeting || !fresh.autoClaim || fresh.dryRun || !ownersDetailsPage(name)) {
       await updateLedger(id, 'turned-off-before-send');
       return 'cancelled';
+    }
+    // Re-read the exact composer and Send button immediately before dispatch;
+    // a route change or chat-panel swap must never redirect this message.
+    const stillComposer = findComposer();
+    if (!stillComposer || stillComposer.el !== composer.el ||
+        findSendButton(stillComposer) !== send ||
+        norm(composer.el.value) !== MESSAGE) {
+      await updateLedger(id, 'chat-changed-before-send');
+      return 'cancelled-chat-changed';
     }
     send.click(); // exactly one dispatch; delivery confirmation requires live CarNow verification
     await updateLedger(id, 'send-clicked-unverified');
