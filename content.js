@@ -131,6 +131,7 @@
   let lastLiveHelpNavAt = 0;
   let scheduleWasActive = null;
   let claimInFlight = false;
+  let lastGreetingHandoff = null;
 
   /* Claiming navigates to the lead detail page, which ends this page's life.
    * The hand-off rides in sessionStorage: it is per-tab, same-origin, and
@@ -491,6 +492,7 @@
       sessionStorage.removeItem(PENDING_KEY);
       const pending = JSON.parse(raw);
       if (!pending || Date.now() - pending.ts > HANDOFF_TTL_MS) return null;
+      lastGreetingHandoff = pending;
       return pending;
     } catch { return null; }
   }
@@ -1097,6 +1099,7 @@
   window.addEventListener('pageshow', (e) => { if (e.persisted) boot(); });
 
   window.__carnowAutoClaimer = {
+    greetingHandoff: () => lastGreetingHandoff,
     status: () => ({
       armed,
       dryRun: settings.dryRun,
