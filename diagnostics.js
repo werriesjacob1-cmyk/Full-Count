@@ -5,7 +5,7 @@
   if (window.__carnowDiagnosticsLoaded) return;
   window.__carnowDiagnosticsLoaded = true;
 
-  const BUILD = '1.6.1';
+  const BUILD = '1.6.2';
   const LOG_KEY = 'carnowDiagnosticLog';
   const MAX_LOG = 500;
   const FAST_SCAN_MS = 250;
