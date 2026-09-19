@@ -2867,3 +2867,96 @@ Alligator
   and decide on push/PR.
 
 Alligator
+
+## 2026-09-19 — NFL Genius News/Practice Brain: first real claim-ledger implementation (Tier A only)
+
+- Workstream `NFL-GENIUS-NEWS-CLAIM-LEDGER-20260919` (Issue #91 claim,
+  comment `5743045211`), branch `claude/nfl-news-practice-pipeline-20260919`
+  off `origin/main` at `7fba6f57434539a79f3f00496d3101bf5d44232e`. First real
+  code for `engineering/NFL_GENIUS_NEWS_BRAIN_2026-09-18.md` (previously a
+  planning document only) -- not a plan, a working, tested, real-data-verified
+  implementation.
+- `nfl/intelligence/news_claim_ledger.py`: the atomic-claim schema the design
+  doc specifies -- source tier A-F, the doc's full evidence-class enum (9
+  values) and claim-type taxonomy (29 values including `OTHER`), reporter
+  identity, team/player/game concerned, `direct_observation`, publication and
+  FULL COUNT observation timestamps, corroboration/contradiction lists
+  (relation-typed per the doc's contradiction graph), `correction_of`, and a
+  `resolution` block. `validate_claim`/`validate_claims` fail closed on any
+  missing field, bad enum, malformed reporter/player/team, naive or
+  unparseable timestamp, or duplicate `claim_id` in a batch -- mirrors
+  `source_registry.py`'s self-checking pattern exactly, reusing
+  `team_intelligence_registry.EXPECTED_TEAMS` for team validation rather than
+  redefining it.
+- **Temporal safety enforced in code, not prose**: `claim_eligible_for_game()`
+  fails a claim closed for a target game if `observed_at` or `published_at`
+  is at-or-after that game's kickoff, AND independently fails it closed if
+  the claim carries `postgame_of_game_id == game_id` -- a second, semantic
+  barrier so a postgame explanation of a game can never attach back to that
+  same game as a pregame feature even if timestamp bookkeeping were wrong.
+  Directly tested (`test_postgame_claim_cannot_attach_back_to_its_own_game_as_pregame_feature`)
+  with a deliberately adversarial fixture: a postgame claim checked against a
+  fabricated *future* "kickoff" for its own game id still fails closed on the
+  tag alone, not the timestamp. A sibling test proves the same claim IS
+  eligible for a later, different game.
+- **Real Tier-A ingestion, real live data, not simulated**:
+  `nfl/intelligence/news_ingest_official_inactives.py` reuses
+  `nfl.archive.sources.official_nfl.capture()` and
+  `nfl.normalize.official_inactives.parse_report()` unmodified (imported, not
+  edited) and turns each parsed inactive-report player row into one
+  `claim_type=AVAILABILITY`, `source_tier=A`, `evidence_class=OFFICIAL_EVENT`,
+  `direct_observation=True` claim. Ran `official_nfl.capture()` for real on
+  2026-09-19: 6/6 pages `CHECKED_AND_FOUND`, 0 failures; the live
+  `/inactives/` index discovered exactly one current report (Week 2 TNF,
+  Buffalo Bills at Detroit Lions), and ingestion produced **13 real,
+  individually schema-validated claims** (7 BUF, 6 DET) with deterministic
+  `claim_id`s (stable across a second capture at a later `observed_at`,
+  tested). Sample real claim: `Blake Miller (OT) listed inactive by LIONS per
+  official NFL.com inactive report`, `published_at
+  2026-09-17T22:51:40.379Z`, `observed_at 2026-09-19T15:30:34Z`. Team/game
+  identity binding to a canonical `game_id` (season/week/home-vs-away) was
+  NOT attempted this pass -- `official_inactives.parse_report` itself already
+  documents `canonical_game_id: None` as downstream, and GSIS player-id
+  binding via `inactive_roster_binding.bind_report` was also not wired in
+  this pass (would need a pinned nflverse roster snapshot); both are
+  disclosed gaps, not silently assumed solved. A parse failure on any
+  discovered report is recorded in `parse_failures`, never silently dropped.
+- **Team-registry coverage, honestly scoped**: added real entries for exactly
+  the two teams this real capture actually verified -- BUF and DET --
+  `coverage_status: PARTIAL`, `OFFICIAL_INJURY_PRACTICE` removed from their
+  `missing_channels`, one `official_sources` row each citing the real
+  artifact/URL and claim counts, `last_audited: 2026-09-19`. The other 30
+  teams are untouched (`UNPOPULATED`, all 14 channels still missing) --
+  `nfl/tests/test_news_brain_team_coverage.py` asserts exactly this 2-team/
+  30-team split so a future edit cannot silently inflate or regress the
+  claim. No restructuring of `team_intelligence_registry.json`'s existing
+  schema; only additive entries.
+- **Reliability framework is a real scoreable function, not a hand-picked
+  ranking**: `reporter_reliability_scoreboard()` implements the doc's
+  hierarchical shrinkage (league baseline -> evidence class -> outlet ->
+  reporter -> reporter x claim type) and excludes any claim without a
+  `resolved: True` resolution -- "never punish a reporter for a claim that
+  was not actually testable." Run against the 13 real captured claims:
+  `testable_claim_count: 0` (none have a resolution yet -- honest, expected,
+  disclosed; there is no historical outcome to score an AVAILABILITY claim
+  against within the same capture run). Unit tests separately prove the
+  math itself works correctly once resolved claims exist (confirmed/refuted
+  claims produce the correct league rate and per-reporter shrinkage; a large
+  batch of untestable claims never dilutes a reporter's real score).
+- **Tier B-F**: explicitly not attempted this pass beyond the stub already
+  present in the design doc -- no code, no simulated beat-writer/press-
+  conference text. Disclosed as future work, not fabricated.
+- 47 new tests across 3 files (`test_news_claim_ledger.py` 26,
+  `test_news_ingest_official_inactives.py` 8, `test_news_brain_team_coverage.py`
+  3, plus the two required regression files) all pass; `nfl.tests.test_official_inactives_source`
+  (5) and `nfl.tests.test_team_intelligence_registry` (4) pass unchanged --
+  no existing file in `nfl/archive/sources/official_nfl.py`,
+  `nfl/normalize/official_inactives.py`,
+  `nfl/intelligence/source_registry.py`, or
+  `nfl/intelligence/team_intelligence_registry.py` was edited.
+- No model/selector/public-pick promotion, no production change, no touching
+  of `.github/workflows/`, `nfl/prospective/`, or receptions/passing-yards
+  normalize files. Draft PR opened against `main`, not merged (no merge
+  authorization exists for this new work).
+
+Alligator
