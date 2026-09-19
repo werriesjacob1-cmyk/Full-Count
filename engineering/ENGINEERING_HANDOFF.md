@@ -3932,4 +3932,78 @@ Alligator
   themselves; they remain open and unmodified. No merge, no model/
   selector/production change.
 
+## 2026-09-19 -- NFL: frozen NEGATIVE_BINOMIAL_POOLED receptions challenger,
+## closing market_registry.json's own disclosed gap (Priority 4,
+## "SUPERCLAUDE — CONTINUE EXECUTION WHILE INDEPENDENT REVIEW RUNS")
+
+Grounded directly in the repo's own self-validating
+`data/nfl_intelligence/market_registry.json`: the `receptions_alt` entry
+already states `"model": null` -- "No per-rung probability model exists...
+see alternate_line_evaluation.py for the research-only break-even/EV
+foundation this needs before any real ladder evaluation." That foundation
+(PR #145) and the actual distribution research (PR #159,
+`receptions_outcome_distribution.py`, found `NEGATIVE_BINOMIAL_POOLED` has
+the best held-out log-likelihood) are both now merged, but nothing had
+ever connected them into a real challenger-vs-B0 comparison.
+
+**Architectural decision, a deliberate departure from the "add one function
+to `receptions_shadow.py`" framing floated in an earlier status update**:
+built a new, standalone module,
+`nfl/research/receptions_frozen_challenger.py`, instead. `receptions_shadow.py`
+is imported directly by the live receptions workflow
+(`.github/workflows/nfl-live-receptions-shadow-board.yml`); adding
+challenger-scoring logic into that same file would create an avoidable
+coupling risk between "the live B0 board" and "unpromoted research," for
+no benefit -- a separate module achieves the same comparison with zero
+chance of accidentally being reached by the live capture path. Nothing in
+this module is imported by, or imports from, any `.github/workflows/`
+file.
+
+**Real, independently reproduced frozen fit** (not fabricated, not
+assumed from PR #159's own report): live re-fetched all 27 pinned
+1999-2025 nflverse season files, verified every one byte-for-byte AND
+SHA-256-identical to `engineering/evidence/
+nflverse_weekly_stats_full_audit_2026-09-14.json`'s pinned digests (27/27
+verified), then ran the already-merged, unmodified
+`receptions_outcome_distribution.fit_negative_binomial_alpha` on the
+pooled `season <= 2022` training rows. Result: **alpha=0.09323867966867905**,
+n=85,670 (of 85,720 total scored training rows) -- matching PR #159's own
+already-reported, already-independently-reviewed training population
+count exactly, not a new or divergent number. Frozen as `FROZEN_NB_FIT` in
+the new module rather than re-fit per call, matching B0's own frozen
+rolling-window discipline.
+
+**What the module provides**: `negative_binomial_side_probabilities`
+(over/under/push for one real projection+line pair, using the frozen NB2
+formula `receptions_outcome_distribution.negative_binomial_pmf` already
+provides -- no new probability math invented) and
+`compare_b0_vs_frozen_challenger` (a side-by-side record given a caller-
+supplied real B0 over/under pair -- never recomputes B0 itself, so the two
+sides can never silently drift out of sync). EV is attached only when a
+caller supplies a real price, via the already-merged
+`alternate_line_evaluation.expected_value_from_probability`, always
+carrying `evidence_status="UNVALIDATED_RESEARCH"`.
+
+**What this does NOT do**: wire into the live receptions board, seal
+anything via `shadow_snapshot.py`, or fetch a real live FanDuel line
+itself. Those are the next steps once this scoring core is reviewed --
+deliberately left out of this pass to keep the implementation the smallest
+reliable unit, per the standing instruction not to assume the eventual
+full architecture up front. No fabricated historical price, alternate-line
+offering, or injury/role information anywhere in this module or its
+tests.
+
+15 new tests (`nfl/tests/test_receptions_frozen_challenger.py`): pmf
+sum-to-one across 5 projection/line pairs, half-integer-line-has-zero-push,
+integer-line-can-push, a hand-computed match against the real frozen
+alpha, monotonicity, alpha-override-doesn't-mutate-the-frozen-constant,
+input validation, and a test proving the comparison function never
+silently re-derives B0 internally. Full `nfl/tests` suite: 872/872,
+run once.
+
+Branch `claude/nfl-receptions-frozen-challenger-20260920`. No production
+change, no `.github/workflows/` edit, no model/selector/public-pick
+promotion. Draft PR, not merged -- independent review + Jacob's separate
+explicit authorization required.
+
 Alligator
