@@ -760,6 +760,9 @@
 
   function evaluate(source) {
     if (torndown || !settings.autoClaim || claimInFlight) return;
+    // On an already-open customer Details page, changes to chat/history are
+    // not NEW incoming lead rows. Never treat these sub-elements as claimable.
+    if (isClaimDetailPage()) return;
 
     const rows = collectRows();
     const liveHelpList = rows.length ? isLiveHelpListPage(rows) : false;
