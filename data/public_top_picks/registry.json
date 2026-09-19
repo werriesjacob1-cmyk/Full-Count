@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-19T19:29:05.526385+00:00",
+  "updated_at": "2026-09-19T20:09:33.323627+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -38671,6 +38671,107 @@
         },
         "qualification_timestamp": "2026-09-19T19:21:05.455608+00:00",
         "board_timestamp": "2026-09-19T19:21:05.423859+00:00",
+        "slate_date": "2026-09-19"
+      }
+    },
+    "fc2:823330:player-663968:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823330:player-663968:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823330",
+        [
+          "player",
+          "663968"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-19",
+      "first_published_at": "2026-09-19T20:09:33.323627+00:00",
+      "publication_provenance": {
+        "artifact_id": "fb87bf6b447872e702e1b52a26cbcbe4fe7c85707e326c1340fc7b9103f09358",
+        "source_commit": "cef0139aebc6fa73cc08439ca4029f785ff5c2ab",
+        "workflow_run_id": "35466382055",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-19T20:09:20.267970+00:00",
+        "data_hash": "8c3894a4281981025318211aff55d2df518df7b335cdb7ec2c4aeec3cd7cf189",
+        "live_hash": "1529f6bdbaadc479ac0fd1e453b71caf732aa7d11199a442d6266f8c86433a0b"
+      },
+      "snapshot": {
+        "id": "fc2:823330:player-663968:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823330,
+        "player_id": 663968,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Jake Mangum",
+        "team": "Pittsburgh Pirates",
+        "matchup": "Kansas City Royals @ Pittsburgh Pirates",
+        "game_start": "2026-09-19T22:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6802,
+        "market_odds": -180,
+        "market_implied": 0.6429,
+        "market_edge": 0.0373,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.5 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 91.5mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 38.5 \u2014 hot recent contact",
+          "Platoon: S bat vs LHP (handedness unknown)",
+          "Hitters batting ahead of him: 0.333 wOBA (league ~.320)",
+          "Team implied for 4.02 runs (league avg 4.245; line 3.5, game total 8)",
+          "Pitch-type exploit: RV/100 +1.7 vs CU (opposing SP throws it 16.5% of the time)"
+        ],
+        "watchouts": [
+          "Projected 3.58 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Hitter batting behind him: 0.317 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "AVG vs xBA: 0.281 vs 0.250 (+0.031) \u2014 outperforming his contact quality, regression risk",
+          "wOBA vs xwOBA: 0.314 vs 0.288 (+0.026) \u2014 outperforming his contact quality, regression risk",
+          "Public heavy on Pittsburgh Pirates (money% trails tickets% by 12 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 2.1 \u2014 below-average barrel rate",
+          "Wind blowing IN (4mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 1/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Pittsburgh Pirates (money% -12 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.6694,
+          0.7033
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 119,
+        "lineup_assumed": null,
+        "base_rate": 0.6724,
+        "lift": 0.0078,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "ad44fc73a",
+          "prediction_timestamp": "2026-09-19T19:56:02.247013+00:00",
+          "odds_fetched_at": "2026-09-19T19:55:52.086064+00:00",
+          "board_generated_at": "2026-09-19T19:56:02.230978+00:00"
+        },
+        "qualification_timestamp": "2026-09-19T19:56:02.247013+00:00",
+        "board_timestamp": "2026-09-19T19:56:02.230978+00:00",
         "slate_date": "2026-09-19"
       }
     }
