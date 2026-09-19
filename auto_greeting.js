@@ -9,7 +9,9 @@
   const MESSAGE = 'hi there';
   const LEDGER_KEY = 'carnowGreetingLedgerV1';
   const MAX_AGE_MS = 20000;
-  const UI_WAIT_MS = 2800;
+  const UI_WAIT_MS = 5000;
+  const SEND_SETTLE_MS = 6500;
+  let cancelled = false;
   const attempts = new Map();
   const norm = (s) => String(s || '').replace(/\s+/g, ' ').trim();
   const esc = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -145,6 +147,7 @@
     const settings = await chrome.storage.sync.get({
       autoGreeting: false, autoClaim: false, dryRun: true, myName: ''
     });
+    if (cancelled) return 'cancelled';
     if (!settings.autoGreeting) return 'disabled';
     if (!settings.autoClaim || settings.dryRun) return 'not-live';
     const name = norm(settings.myName);
@@ -157,6 +160,7 @@
     let opened = false;
     let composer = null;
     while (Date.now() < until) {
+      if (cancelled) return 'cancelled';
       if (!ownersDetailsPage(name)) return 'left-owner-details';
       composer = findComposer();
       if (composer) break;
@@ -164,7 +168,7 @@
       await delay(80);
     }
     if (!composer) { await updateLedger(id, 'no-verified-chat-composer'); return 'no-composer'; }
-    if (!ownersDetailsPage(name)) return 'left-owner-details';
+    if (cancelled || !ownersDetailsPage(name)) return 'left-owner-details';
 
     // Record BEFORE any possible send: an uncertain click must NEVER be retried.
     if (!await updateLedger(id, 'attempt-started')) return 'ledger-unavailable';
@@ -186,7 +190,7 @@
       return 'no-send-control';
     }
     const fresh = await chrome.storage.sync.get({ autoGreeting: false, autoClaim: false, dryRun: true });
-    if (!fresh.autoGreeting || !fresh.autoClaim || fresh.dryRun || !ownersDetailsPage(name)) {
+    if (cancelled || !fresh.autoGreeting || !fresh.autoClaim || fresh.dryRun || !ownersDetailsPage(name)) {
       await updateLedger(id, 'turned-off-before-send');
       return 'cancelled';
     }
@@ -199,12 +203,30 @@
       await updateLedger(id, 'chat-changed-before-send');
       return 'cancelled-chat-changed';
     }
-    send.click(); // exactly one dispatch; delivery confirmation requires live CarNow verification
+    send.click(); // one dispatch, never an automatic retry of an uncertain send
     await updateLedger(id, 'send-clicked-unverified');
-    return 'send-clicked-unverified';
+
+    // CarNow may post asynchronously. Do not navigate away immediately after
+    // clicking Send. Wait for the composer to clear and allow the chat UI time
+    // to update; clearing is only an acknowledgement of UI processing, NOT
+    // evidence of customer delivery. If it never clears, keep the send
+    // unverified and do not click a second time.
+    const settleDeadline = Date.now() + SEND_SETTLE_MS;
+    while (Date.now() < settleDeadline && !cancelled &&
+           ownersDetailsPage(name) && composer.el.isConnected) {
+      if (!norm(composer.el.value)) {
+        await delay(1200);
+        await updateLedger(id, 'composer-cleared-delivery-unverified');
+        return 'composer-cleared-delivery-unverified';
+      }
+      await delay(150);
+    }
+    await updateLedger(id, 'send-clicked-composer-not-confirmed');
+    return 'send-clicked-composer-not-confirmed';
   }
 
   window.__carnowGreeting = {
+    cancel() { cancelled = true; },
     attempt(pending) {
       if (!pending?.signature) return Promise.resolve('no-signature');
       const id = hash(pending.signature);
