@@ -13,7 +13,9 @@ function fixture({ owner = true, draft = '', enabled = true, sendCount = 1 } = {
   let typed = '';
   const ledger = {};
   class Textarea {
-    constructor() { this.value = draft; }
+    constructor() { this._value = draft; }
+    get value() { return this._value; }
+    set value(next) { this._value = next; }
     getAttribute(k) { return k === 'placeholder' ? 'Type your message' : null; }
     getBoundingClientRect() { return { width: 120, height: 30 }; }
     focus() {}
