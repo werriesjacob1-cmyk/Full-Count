@@ -2867,3 +2867,90 @@ Alligator
   and decide on push/PR.
 
 Alligator
+
+## 2026-09-19 -- NFL receptions outcome-distribution experiment (Normal vs negative-binomial vs empirical) + tested alt-line ladder
+
+- Workstream `NFL-OUTCOME-DISTRIBUTION-EXPERIMENT-20260919` (Issue #91 claim
+  `5743136598`), branch `claude/nfl-outcome-distribution-experiment-20260919`
+  off `origin/main` at `7fba6f57434539a79f3f00496d3101bf5d44232e`. Head SHA
+  `33e023d957ee739c1a1c37705efd8127e3d1ed56`. Draft PR #148, not merged.
+- Market chosen: `receptions` over `passing_yards` -- both had a real
+  multi-year baseline module and live/near-live capture workflow, but a
+  real receptions outcome can land on exactly zero for a genuine role
+  player (a real, measured ~9.5% held-out rate, rising to ~15-25% at the
+  lowest opportunity tier), which a starting QB's passing yards essentially
+  never does; this task specifically required testing that zero-mass point
+  on real data.
+- Reused, not rebuilt: `receptions_baseline_research.py`'s B0 projection and
+  its exact pinned 1999-2025 nflverse corpus
+  (`engineering/evidence/nflverse_weekly_stats_full_audit_2026-09-14.json`)
+  -- re-downloaded live and independently verified byte-size + SHA-256 for
+  all 27 seasons against the existing pin (exact match) before use; no new
+  source pinned. Reproduced `receptions_baseline_research.py`'s own pinned
+  `EXPECTED_ACTIVE_B0` numbers exactly (2024 n=3909 MAE=1.4570009380063103,
+  2025 n=3987 MAE=1.408703285678455) as a misreading check.
+  `alternate_line_evaluation.py`'s breakeven/EV/price-bucket functions
+  imported, not reimplemented. No existing file edited.
+- New files: `nfl/research/receptions_outcome_distribution.py` (Normal vs
+  negative-binomial vs pooled-empirical-residual comparison, fit on
+  season<=2022 (85,720 rows), evaluated strictly out-of-sample on
+  2023-2025 (12,095 rows)), `nfl/research/receptions_alt_ladder.py` (a
+  tested alternate-line ladder), `nfl/tests/test_receptions_outcome_distribution.py`
+  (43 tests), `nfl/tests/test_receptions_alt_ladder.py` (40 tests).
+- **Real, out-of-sample finding (negative/neutral where warranted, not
+  manufactured)**: pooled negative-binomial has the best aggregate held-out
+  mean log-likelihood (-1.9186 vs -2.0011 Normal pooled, -2.0287 empirical
+  pooled) -- a real, modest improvement from a discrete count model. No
+  candidate uniformly dominates: Normal systematically overpredicts the
+  exact-zero mass point (18.8% predicted vs 9.5% actual observed);
+  empirical-residual, despite worst aggregate log-likelihood, has the
+  closest zero-mass calibration (10.0%) and the best held-out Brier score
+  on the natural "over 0.5 receptions" line (0.0828 vs 0.0962 NB pooled,
+  0.0982 Normal pooled). Opportunity-bucketing by rolling-projection level
+  (motivated by real, confirmed heteroskedasticity -- pooled residual std
+  rises from ~1.19 at b0<1 to ~2.66 at b0>=5, bias falls from +0.63 to
+  -0.86 over the same range) did NOT uniformly help: bucketed
+  negative-binomial is worse than pooled negative-binomial on every metric
+  checked, most likely from noisier per-bucket dispersion estimates in the
+  smallest/largest strata. All candidates remain materially miscalibrated
+  at the population extremes (every method over-predicts zero-mass for the
+  lowest-opportunity tier and under-predicts it for the highest). This
+  module reports the comparison rather than declaring or promoting a
+  winner.
+- Ladder (`receptions_alt_ladder.py`): caller-supplied real thresholds only
+  (never invented, empty input raises); three-way over/under/push per rung
+  via additive smoothing so every rung sums to exactly 1 by construction
+  and `over` is structurally guaranteed monotonically non-increasing as
+  threshold rises (tested, not just asserted); explicit `zero_probability`
+  field always reported, never silently smoothed away; a true DNP/inactive
+  case explicitly out of scope (settlement-layer VOID, already covered by
+  `alternate_line_evaluation.SETTLEMENT_OUTCOMES`, not a modeled outcome
+  here). Disclosed, tested design tension: `zero_probability` (a
+  narrow-window point estimate) and a rung's `under` at a low threshold (a
+  full-tail count) are different nonparametric estimators of the same real
+  quantity and can materially disagree when the residual pool mixes
+  heterogeneous opportunity levels -- demonstrated directly in a test.
+  `evaluate_ladder_with_prices` wires breakeven/EV/price-bucket through
+  `alternate_line_evaluation.py`'s real functions only, on real
+  caller-supplied odds; a rung without a supplied price gets `None` for
+  that side, never a guessed one; every result carries
+  `evidence_status="UNVALIDATED_RESEARCH"` and
+  `expected_value_is_provisional=True`.
+- Tests: 83 new tests across both new test files pass. Existing
+  `test_receptions_baseline_research.py` (13 tests, the specific existing
+  test file for the reused module) re-run and green. Full existing
+  `nfl/tests` suite (700 tests) passes unchanged (single run).
+- Disclosed limitations: item 5 (historical accuracy vs. price-aware
+  performance) kept strictly separate -- no historical profitability claim
+  is made anywhere, no historical/offered price is fabricated; this
+  experiment does not have real captured prices at scale for a genuine
+  price-aware backtest (PR #144's real live-shadow dry run is the only
+  real live board evidence that exists, and is not cited here as a
+  backtest). Opportunity-bucketing did not clearly outperform pooled fits.
+  All candidates remain miscalibrated at the population extremes; none is
+  proposed for promotion.
+- `RESEARCH_ONLY_NOT_PROMOTED` throughout. No model/selector/public-pick
+  promotion, no touch to `.github/workflows/`, `nfl/prospective/`, or
+  `nfl/normalize/`. Draft PR #148 not merged -- awaiting review.
+
+Alligator
