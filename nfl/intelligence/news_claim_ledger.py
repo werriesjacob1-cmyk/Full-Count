@@ -495,3 +495,221 @@ def reporter_reliability_scoreboard(
             "is expected and disclosed, not smoothed over."
         ),
     }
+
+
+# ---------------------------------------------------------------------------
+# Ledger persistence: merge, correction resolution, and narrow contradiction
+# detection.
+#
+# Promoted here (canonical home) from the read-only audit module
+# `news_claim_ledger_lifecycle_audit.py`, which PR #151 built to prove these
+# were both real, missing gaps in PR #146: no merge/upsert function existed
+# for combining two independent ingestion runs' claims into one deduplicated
+# ledger, and no query excluded a claim once a later claim corrected it.
+# `news_claim_ledger.py` is the schema's owner, so its own lifecycle
+# operations (merge, correction resolution, contradiction detection) belong
+# here as first-class API rather than in a module named "_audit" -- a
+# production ingestion caller should not have to import from a file whose
+# name and docstring describe it as a one-off investigation.
+# `news_claim_ledger_lifecycle_audit.py` now re-exports these two names
+# unchanged for backward compatibility with PR #151's own tests.
+# ---------------------------------------------------------------------------
+
+# Fields expected to legitimately differ between two independent
+# observations of the identical underlying fact (a deterministic claim_id
+# means "same fact", not "byte-identical record").
+_MERGE_VOLATILE_FIELDS = frozenset({"observed_at"})
+
+
+def _content_fingerprint(claim: Mapping[str, Any], *, ignore_fields: frozenset) -> tuple:
+    return tuple(
+        (key, claim[key]) for key in sorted(claim) if key not in ignore_fields
+    )
+
+
+def merge_claims_by_id(
+    existing: Sequence[Mapping[str, Any]],
+    incoming: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Merge one ledger's existing claims with a new ingestion run's claims,
+    keyed by deterministic `claim_id`.
+
+    A `claim_id` seen in both `existing` and `incoming` is treated as a
+    genuine re-observation of the identical fact ONLY if every non-volatile
+    field is identical; the first (existing) observation is kept and the
+    duplicate is dropped. If the same `claim_id` carries DIFFERENT content
+    across the two lists, that is a real integrity violation (the
+    deterministic-id assumption -- same id implies same fact -- has been
+    broken, e.g. by a hash-input change or a genuine data correction that
+    should have used `correction_of` with a NEW id instead) and this
+    function fails closed rather than silently picking one side.
+
+    This invariant is exactly why fix #1 (incorporating `listed_position`
+    into the ingestion `claim_id` hash) matters: before that fix, a genuine
+    position-revision collided to the SAME `claim_id` with DIFFERENT
+    content, which this function would have (correctly) rejected as an
+    integrity violation on every real position correction -- defeating the
+    merge entirely rather than merely being imprecise.
+    """
+    merged: dict[str, dict[str, Any]] = {}
+    order: list[str] = []
+    for claim in existing:
+        validate_claim(claim)
+        cid = claim["claim_id"]
+        merged[cid] = dict(claim)
+        order.append(cid)
+
+    new_claim_count = 0
+    duplicate_claim_count = 0
+    for claim in incoming:
+        validate_claim(claim)
+        cid = claim["claim_id"]
+        if cid not in merged:
+            merged[cid] = dict(claim)
+            order.append(cid)
+            new_claim_count += 1
+            continue
+        # Same claim_id seen again -- must be the same fact.
+        if _content_fingerprint(claim, ignore_fields=_MERGE_VOLATILE_FIELDS) != _content_fingerprint(
+            merged[cid], ignore_fields=_MERGE_VOLATILE_FIELDS
+        ):
+            raise NewsClaimLedgerError(
+                f"claim_id {cid!r} repeated with materially different content -- "
+                "deterministic-id integrity violated; a real correction must "
+                "use a NEW claim_id with correction_of set, not reuse this one"
+            )
+        duplicate_claim_count += 1
+
+    return {
+        "claims": [merged[cid] for cid in order],
+        "total_claim_count": len(order),
+        "new_claim_count": new_claim_count,
+        "duplicate_claim_count": duplicate_claim_count,
+    }
+
+
+def current_claims(claims: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    """Split a claim population into CURRENT (not superseded) and
+    SUPERSEDED (referenced by some other claim's `correction_of`) subsets.
+
+    Fails closed if a `correction_of` points at a `claim_id` that is not
+    present in `claims` -- an orphan correction is a real data problem
+    (missing context), not something to silently ignore. Preserves
+    append-only history: the superseded claim's own record is never deleted
+    or edited by this function, it is only excluded from the CURRENT view.
+    """
+    by_id: dict[str, Mapping[str, Any]] = {}
+    for claim in claims:
+        validate_claim(claim)
+        by_id[claim["claim_id"]] = claim
+
+    superseded_ids: set[str] = set()
+    for claim in claims:
+        target = claim.get("correction_of")
+        if target is None:
+            continue
+        if target not in by_id:
+            raise NewsClaimLedgerError(
+                f"claim {claim['claim_id']!r} has correction_of={target!r}, "
+                "which is not present in this claim population (orphan "
+                "correction reference)"
+            )
+        superseded_ids.add(target)
+
+    current = [c for c in claims if c["claim_id"] not in superseded_ids]
+    superseded = [c for c in claims if c["claim_id"] in superseded_ids]
+    return {
+        "current": current,
+        "superseded": superseded,
+        "current_count": len(current),
+        "superseded_count": len(superseded),
+    }
+
+
+def detect_dropped_availability_contradictions(
+    previous_claims: Sequence[Mapping[str, Any]],
+    current_claims_list: Sequence[Mapping[str, Any]],
+    *,
+    noted_at: str,
+) -> dict[str, Any]:
+    """Narrow contradiction detector for the one concrete unfixed case PR
+    #151 demonstrated: an `AVAILABILITY` claim from an earlier report
+    revision whose player is silently absent from a LATER revision of the
+    same report. Before this function, nothing linked the two observations
+    and the original claim's `contradictions`/`resolution`/`corrected_at`
+    fields stayed silently blank -- no signal that anything had changed.
+
+    Deliberately narrow: only `AVAILABILITY` claims, matched by
+    (`team`, player href-or-name) between exactly two claim populations the
+    caller has already scoped to "the same report, two observations". This
+    is not a general NLP-based contradiction engine and does not attempt
+    cross-source disagreement, position-only changes (those now get a
+    genuinely different `claim_id` per fix #1 and are two independent,
+    unlinked claims by design), or any other claim_type.
+
+    Returns an AMENDED COPY of every dropped claim's record (never mutates
+    the input) with `contradictions` appended (a synthetic linking claim id,
+    relation `CONTRADICT`), `resolution` set to `REFUTED`, and
+    `corrected_at` populated. This function never invents a cause (it does
+    not claim the player is healthy, active, or anything else) -- only that
+    the later revision no longer lists them, which contradicts the original
+    claim's assertion. Callers own persisting the amended copy into their
+    own ledger/store; append-only history is preserved because the original
+    claim_id and its original fields are never lost, only annotated.
+    """
+    if not isinstance(previous_claims, Sequence) or isinstance(previous_claims, (str, bytes)):
+        raise NewsClaimLedgerError("previous_claims must be a sequence of mappings")
+    if not isinstance(current_claims_list, Sequence) or isinstance(current_claims_list, (str, bytes)):
+        raise NewsClaimLedgerError("current_claims_list must be a sequence of mappings")
+    _parse_ts(noted_at, "noted_at")  # fail closed on malformed input
+
+    def _subject_key(claim: Mapping[str, Any]) -> tuple:
+        player = claim.get("player") or {}
+        subject = player.get("source_player_href") or player.get("player_name")
+        return (claim.get("team"), subject)
+
+    still_present: set[tuple] = set()
+    for claim in current_claims_list:
+        validate_claim(claim)
+        if claim["claim_type"] == "AVAILABILITY":
+            still_present.add(_subject_key(claim))
+
+    amended: list[dict[str, Any]] = []
+    for claim in previous_claims:
+        validate_claim(claim)
+        if claim["claim_type"] != "AVAILABILITY":
+            continue
+        if _subject_key(claim) in still_present:
+            continue
+
+        contradiction_claim_id = make_claim_id(
+            claim["claim_id"], "DROPPED_IN_LATER_REVISION", noted_at
+        )
+        updated = dict(claim)
+        updated["contradictions"] = list(claim["contradictions"]) + [{
+            "claim_id": contradiction_claim_id,
+            "relation": "CONTRADICT",
+            "noted_at": noted_at,
+        }]
+        updated["resolution"] = {
+            "resolved": True,
+            "outcome": "REFUTED",
+            "resolved_at": noted_at,
+            "notes": (
+                "Player silently absent from a later same-report revision -- "
+                "treated as a contradiction of the original AVAILABILITY "
+                "claim, not a confirmation."
+            ),
+        }
+        updated["corrected_at"] = noted_at
+        validate_claim(updated)
+        amended.append({
+            "original_claim_id": claim["claim_id"],
+            "contradiction_claim_id": contradiction_claim_id,
+            "amended_claim": updated,
+        })
+
+    return {
+        "contradiction_count": len(amended),
+        "results": amended,
+    }

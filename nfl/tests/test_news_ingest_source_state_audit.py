@@ -36,17 +36,21 @@ class NonCheckedAndFoundOutcomeTests(unittest.TestCase):
         self.assertEqual(result["claim_count"], 0)
         self.assertEqual(result["reports_parsed"], 0)
 
-    def test_source_failed_is_indistinguishable_from_a_genuinely_empty_index(self):
-        # Disclosed gap: ingest_capture's own return shape counts
-        # `reports_seen` (every inactive_report_* artifact regardless of
-        # outcome) and `reports_parsed` (only successfully parsed ones),
-        # and separately lists `parse_failures` for CHECKED_AND_FOUND
-        # records that failed to PARSE. A record that never got bytes at
-        # all (SOURCE_FAILED, NOT_CHECKED, UNAVAILABLE_BY_POLICY, ...)
-        # falls into neither list -- it only shows up as a silent gap
-        # between reports_seen and reports_parsed, with NO reason recorded
-        # anywhere in this function's own output. This test proves that
-        # gap concretely rather than asserting it from reading the code.
+    def test_source_failed_is_now_distinguishable_from_a_genuinely_empty_index(self):
+        # PR #151 originally proved this AS a gap: ingest_capture's return
+        # shape counted `reports_seen` (every inactive_report_* artifact
+        # regardless of outcome) and `reports_parsed` (only successfully
+        # parsed ones), and separately listed `parse_failures` for
+        # CHECKED_AND_FOUND records that failed to PARSE -- but a record
+        # that never got bytes at all (SOURCE_FAILED, NOT_CHECKED,
+        # UNAVAILABLE_BY_POLICY, ...) fell into neither list, showing up
+        # only as a silent gap between reports_seen and reports_parsed with
+        # no reason recorded anywhere.
+        #
+        # FIXED by `NFL-NEWS-BRAIN-IDENTITY-TEMPORAL-REPAIR-20260919`:
+        # ingest_capture now populates a separate `fetch_failures` field for
+        # exactly this case, distinct from `parse_failures` (reserved for
+        # bytes that WERE fetched but failed to parse).
         failed = Fetched(
             source_id="official_nfl",
             artifact="inactive_report_abc123",
@@ -58,10 +62,20 @@ class NonCheckedAndFoundOutcomeTests(unittest.TestCase):
         result = ingest_capture([failed])
         self.assertEqual(result["reports_seen"], 1)
         self.assertEqual(result["reports_parsed"], 0)
-        # The real, disclosed gap: parse_failures is EMPTY even though a
-        # real fetch failure occurred -- ingest_capture has no field that
-        # records *why* reports_seen != reports_parsed for this record.
+        # parse_failures correctly stays empty -- this was never a PARSE
+        # failure, it never had bytes to parse in the first place.
         self.assertEqual(result["parse_failures"], [])
+        # The fix: a real fetch failure is now explicitly recorded, with its
+        # real outcome and failure reason, not silently absent.
+        self.assertEqual(len(result["fetch_failures"]), 1)
+        self.assertEqual(result["fetch_failures"][0]["outcome"], SOURCE_FAILED)
+        self.assertEqual(
+            result["fetch_failures"][0]["reason"], "connection reset by peer"
+        )
+        self.assertEqual(
+            result["fetch_failures"][0]["url"],
+            "https://www.nfl.com/news/some-real-looking-report-url",
+        )
 
     def test_mixed_outcomes_only_the_checked_and_found_record_yields_claims(self):
         good_body = _real_shaped_report_body(["Real Player One"])
@@ -152,24 +166,63 @@ class ContradictorySameDayReportsTests(unittest.TestCase):
         self.assertEqual(len(claims_v1), 1)
         self.assertEqual(len(claims_v2), 0)  # player silently absent, not "cleared"
 
-        # The real, disclosed gap: nothing links v2's silence back to v1's
-        # claim. v1's own contradictions/resolution fields are unchanged
-        # and empty -- no automated contradiction-detection function exists
-        # anywhere in this ingestion path to populate them.
+        # This is still the correct baseline: `claims_from_parsed_report`
+        # alone is a pure per-call function and never reaches back into an
+        # earlier revision's claims -- nothing links v2's silence back to
+        # v1's claim automatically. v1's own contradictions/resolution
+        # fields stay unchanged and empty here.
         original_claim = claims_v1[0]
         self.assertEqual(original_claim["contradictions"], [])
         self.assertIsNone(original_claim["resolution"])
         self.assertIsNone(original_claim["corrected_at"])
 
-    def test_two_reports_disagreeing_on_position_create_two_unlinked_claims(self):
+        # FIXED by `NFL-NEWS-BRAIN-IDENTITY-TEMPORAL-REPAIR-20260919`: a
+        # caller that explicitly compares the two revisions with the new
+        # `detect_dropped_availability_contradictions` gets an explicit
+        # signal instead of silence -- an amended copy of the original claim
+        # with `contradictions`/`resolution`/`corrected_at` populated. This
+        # narrow function requires the caller to opt in and compare two
+        # scoped claim lists; it does not retroactively change the raw
+        # `claims_v1` list computed above.
+        from nfl.intelligence.news_claim_ledger import (
+            detect_dropped_availability_contradictions,
+        )
+        contradiction_result = detect_dropped_availability_contradictions(
+            claims_v1, claims_v2, noted_at="2026-09-17T22:45:00Z",
+        )
+        self.assertEqual(contradiction_result["contradiction_count"], 1)
+        amended = contradiction_result["results"][0]["amended_claim"]
+        self.assertEqual(amended["claim_id"], original_claim["claim_id"])
+        self.assertEqual(len(amended["contradictions"]), 1)
+        self.assertEqual(amended["contradictions"][0]["relation"], "CONTRADICT")
+        self.assertEqual(amended["resolution"]["outcome"], "REFUTED")
+        self.assertEqual(amended["resolution"]["resolved"], True)
+        self.assertEqual(amended["corrected_at"], "2026-09-17T22:45:00Z")
+        # The original, unamended record in claims_v1 is untouched --
+        # append-only history is preserved; only the returned copy carries
+        # the new annotation.
+        self.assertEqual(claims_v1[0]["contradictions"], [])
+
+    def test_two_reports_disagreeing_on_position_create_two_distinct_claims(self):
         # A subtler contradiction: the SAME player, same team, same report
         # URL, but a differently-parsed listed_position across two
         # revisions (e.g. a correction from "questionable" bucket noise --
         # constructed here purely as a position-string difference to keep
-        # the fixture simple). Because claim_id incorporates the player's
-        # href (stable) but NOT listed_position, this actually collides to
-        # the SAME claim_id with different content -- a real, sharper
-        # finding than a simple appear/disappear case.
+        # the fixture simple).
+        #
+        # FIXED by `NFL-NEWS-BRAIN-IDENTITY-TEMPORAL-REPAIR-20260919`: this
+        # test originally proved (PR #151) that claim_id incorporated the
+        # player's href (stable) but NOT listed_position, so this collided
+        # to the SAME claim_id with silently different content -- a sharper
+        # finding than a simple appear/disappear case, and the root enabler
+        # of `merge_claims_by_id` rejecting every real position correction
+        # as a fabricated integrity violation. `claims_from_parsed_report`
+        # now includes `listed_position` in the claim_id hash, so a genuine
+        # position revision produces a genuinely DIFFERENT claim_id instead
+        # of colliding. Re-ingesting an UNCHANGED report still produces the
+        # SAME claim_id -- see
+        # `test_news_ingest_official_inactives.test_deterministic_claim_ids_across_repeated_ingestion`,
+        # which is unmodified and still passes.
         base_player = {
             "player_name": "Same Player",
             "source_player_href": "/players/same-player",
@@ -199,15 +252,21 @@ class ContradictorySameDayReportsTests(unittest.TestCase):
             source_url="https://www.nfl.com/news/audit-fixture-report-2",
             observed_at="2026-09-17T22:45:00Z",
         )[0]
-        # Real, disclosed sharper finding: same claim_id, silently different
-        # content_summary/listed_position -- exactly the integrity
-        # violation this audit's merge_claims_by_id (see
-        # test_news_claim_ledger_lifecycle_audit.py) is built to catch, but
-        # which claims_from_parsed_report/validate_claim themselves do not
-        # detect, because each call validates only its OWN single claim.
-        self.assertEqual(c1["claim_id"], c2["claim_id"])
+        # A genuine position revision now produces a genuinely different
+        # claim_id -- two independent, unlinked claims, exactly as a real
+        # content revision should be represented -- rather than colliding
+        # under one id with silently different content.
+        self.assertNotEqual(c1["claim_id"], c2["claim_id"])
         self.assertNotEqual(c1["content_summary"], c2["content_summary"])
         self.assertNotEqual(c1["player"]["listed_position"], c2["player"]["listed_position"])
+        # merge_claims_by_id (nfl.intelligence.news_claim_ledger) now treats
+        # these as two legitimately distinct, non-conflicting claims when
+        # merged together -- no integrity violation, because they no longer
+        # share an id.
+        from nfl.intelligence.news_claim_ledger import merge_claims_by_id
+        merge_result = merge_claims_by_id([c1], [c2])
+        self.assertEqual(merge_result["total_claim_count"], 2)
+        self.assertEqual(merge_result["new_claim_count"], 1)
 
 
 if __name__ == "__main__":
