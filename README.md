@@ -197,7 +197,7 @@ necessary — a wrong claim you can't hand back is the one failure with no undo.
 - No `tabs` permission needed — the `*.carnow.com` host permission covers
   `tabs.query({url})` and `tabs.sendMessage`.
 
-## 1.6.2 — optional first chat greeting (exact inspected controls)
+## 1.6.3 — prioritize claim + one-time greeting
 
 A new **Send "hi there" in CarNow chat** switch is **OFF by default**. It
 only runs following this extension's fresh claim handoff, after the customer
@@ -210,9 +210,9 @@ The extension now recognizes the **actual inspected** CarNow chat field
 `button.chat-bottom-bar__input__send[ng-click="postMessage()"]`. It records
 an attempt before clicking Send. If the UI is unknown, ambiguous, inaccessible,
 or contains an existing draft, it does **not** send. If its ledger cannot save
-an attempted message, it does **not** send. Its result
-`send-clicked-unverified` means one UI click was dispatched, **not** that
-CarNow confirmed delivery.
+an attempted message, it does **not** send. Its result `composer-cleared-delivery-unverified` means CarNow cleared the
+message field after one Send click, **not** that the customer received the
+message. The extension never resends automatically after an uncertain click.
 
 The expanded customer's textarea and icon Send control have been inspected,
 but the *collapsed* Chat-bar HTML and successful end-to-end message delivery
@@ -221,8 +221,12 @@ panel opens and the message appears exactly once in the intended customer's
 conversation. The local mock-DOM tests (`node test/greeting.test.mjs`)
 cannot establish end-to-end CarNow delivery.
 
-When greeting is ON, the claim guard waits a bounded period (up to 4.1s)
-for the message attempt before returning to the list. A fast back-to-back
-second lead can arrive during this detour, so keep this feature OFF if faster
-lead watching is more important than immediate greeting until supervised
-testing establishes acceptable operation.
+When greeting is ON, the claim guard owns the entire return-to-list
+lifecycle (the legacy content-script return timer is disabled). It waits for
+the chat field to become available (up to 5s), dispatches Send at most once,
+then allows CarNow time to process the send (up to 6.5s) before returning.
+A 16s failsafe cancels a delayed attempt and resumes watching without
+sending again. When the composer clears, this is an **interface signal only**;
+delivery must still be checked in CarNow. Back-to-back leads can arrive
+during this detour, and even a successful claim does not guarantee that
+another lead will be caught while the tab is on the Details page.
