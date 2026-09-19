@@ -41,7 +41,7 @@ function fixture({ owner = true, draft = '', enabled = true, sendCount = 1,
     },
     querySelector(selector) { return selector === 'i.icon-v3-send' ? {} : null; },
     getBoundingClientRect() { return { width: 20, height: 20 }; },
-    click() { sends++; typed = editor.value; }
+    click() { sends++; typed = editor.value; editor.value = ''; }
   };
   const document = {
     body: { innerText: owner
@@ -80,7 +80,7 @@ function fixture({ owner = true, draft = '', enabled = true, sendCount = 1,
 }
 
 const normal = fixture();
-assert.equal(await normal.attempt(), 'send-clicked-unverified');
+assert.equal(await normal.attempt(), 'composer-cleared-delivery-unverified');
 assert.equal(normal.sends(), 1);
 assert.equal(normal.typed(), 'hi there');
 await normal.attempt();
@@ -115,4 +115,4 @@ const ambiguousComposer = fixture({ composerCount: 2 });
 assert.equal(await ambiguousComposer.attempt(), 'no-composer');
 assert.equal(ambiguousComposer.sends(), 0);
 
-console.log('Greeting contract: 8 cases passed (mock DOM only; live CarNow delivery unverified).');
+console.log('Greeting contract: 8 mock-DOM cases passed (chat composer settled; live delivery unverified).');
