@@ -1,0 +1,504 @@
+{
+  "provenance": {
+    "captured_at": "2026-09-19",
+    "source": "nfl.archive.sources.official_nfl.capture() -> nfl.normalize.official_inactives.parse_report() -> nfl.intelligence.news_ingest_official_inactives.claims_from_parsed_report()",
+    "real_report_url": "https://www.nfl.com/news/week-2-thursday-night-inactives-detroit-lions-at-buffalo-bills",
+    "note": "Real, live-captured claims reproduced independently by the NFL-NEWS-CLAIM-LEDGER-AUDIT-20260919 workstream on 2026-09-19, matching PR #146 counts (7 BUF, 6 DET). observed_at values are frozen to this specific run for deterministic tests."
+  },
+  "claims": [
+    {
+      "ledger_schema_version": 1,
+      "claim_id": "nc_81952e62bb6ab6bfbaa61c6f",
+      "source_id": "official_nfl",
+      "source_tier": "A",
+      "evidence_class": "OFFICIAL_EVENT",
+      "claim_type": "AVAILABILITY",
+      "direct_observation": true,
+      "reporter": {
+        "name": "NFL.com",
+        "outlet": "NFL.com",
+        "role": "official_league_publication"
+      },
+      "team": "DET",
+      "player": {
+        "player_name": "Blake Miller",
+        "gsis_id": null,
+        "source_player_href": "/players/blake-miller-3",
+        "source_player_slug": "blake-miller-3",
+        "listed_position": "OT"
+      },
+      "concerns_game_id": null,
+      "concerns_teams": [
+        "BUF",
+        "DET"
+      ],
+      "postgame_of_game_id": null,
+      "published_at": "2026-09-17T22:51:40.379Z",
+      "observed_at": "2026-09-19T16:59:31Z",
+      "effective_from": null,
+      "effective_until": null,
+      "corrected_at": null,
+      "content_summary": "Blake Miller (OT) listed inactive by LIONS per official NFL.com inactive report",
+      "corroborations": [],
+      "contradictions": [],
+      "correction_of": null,
+      "resolution": null
+    },
+    {
+      "ledger_schema_version": 1,
+      "claim_id": "nc_d8cc9e91467cedbcba046078",
+      "source_id": "official_nfl",
+      "source_tier": "A",
+      "evidence_class": "OFFICIAL_EVENT",
+      "claim_type": "AVAILABILITY",
+      "direct_observation": true,
+      "reporter": {
+        "name": "NFL.com",
+        "outlet": "NFL.com",
+        "role": "official_league_publication"
+      },
+      "team": "DET",
+      "player": {
+        "player_name": "Christian Mahogany",
+        "gsis_id": null,
+        "source_player_href": "/players/christian-mahogany",
+        "source_player_slug": "christian-mahogany",
+        "listed_position": "G"
+      },
+      "concerns_game_id": null,
+      "concerns_teams": [
+        "BUF",
+        "DET"
+      ],
+      "postgame_of_game_id": null,
+      "published_at": "2026-09-17T22:51:40.379Z",
+      "observed_at": "2026-09-19T16:59:31Z",
+      "effective_from": null,
+      "effective_until": null,
+      "corrected_at": null,
+      "content_summary": "Christian Mahogany (G) listed inactive by LIONS per official NFL.com inactive report",
+      "corroborations": [],
+      "contradictions": [],
+      "correction_of": null,
+      "resolution": null
+    },
+    {
+      "ledger_schema_version": 1,
+      "claim_id": "nc_7e6692d53437d1ee3a9be37f",
+      "source_id": "official_nfl",
+      "source_tier": "A",
+      "evidence_class": "OFFICIAL_EVENT",
+      "claim_type": "AVAILABILITY",
+      "direct_observation": true,
+      "reporter": {
+        "name": "NFL.com",
+        "outlet": "NFL.com",
+        "role": "official_league_publication"
+      },
+      "team": "DET",
+      "player": {
+        "player_name": "Keith Abney II",
+        "gsis_id": null,
+        "source_player_href": "/players/keith-abney-ii",
+        "source_player_slug": "keith-abney-ii",
+        "listed_position": "CB"
+      },
+      "concerns_game_id": null,
+      "concerns_teams": [
+        "BUF",
+        "DET"
+      ],
+      "postgame_of_game_id": null,
+      "published_at": "2026-09-17T22:51:40.379Z",
+      "observed_at": "2026-09-19T16:59:31Z",
+      "effective_from": null,
+      "effective_until": null,
+      "corrected_at": null,
+      "content_summary": "Keith Abney II (CB) listed inactive by LIONS per official NFL.com inactive report",
+      "corroborations": [],
+      "contradictions": [],
+      "correction_of": null,
+      "resolution": null
+    },
+    {
+      "ledger_schema_version": 1,
+      "claim_id": "nc_5f40e98e7885c735af7bff63",
+      "source_id": "official_nfl",
+      "source_tier": "A",
+      "evidence_class": "OFFICIAL_EVENT",
+      "claim_type": "AVAILABILITY",
+      "direct_observation": true,
+      "reporter": {
+        "name": "NFL.com",
+        "outlet": "NFL.com",
+        "role": "official_league_publication"
+      },
+      "team": "DET",
+      "player": {
+        "player_name": "Ennis Rakestraw Jr.",
+        "gsis_id": null,
+        "source_player_href": "/players/ennis-rakestraw-jr",
+        "source_player_slug": "ennis-rakestraw-jr",
+        "listed_position": "CB"
+      },
+      "concerns_game_id": null,
+      "concerns_teams": [
+        "BUF",
+        "DET"
+      ],
+      "postgame_of_game_id": null,
+      "published_at": "2026-09-17T22:51:40.379Z",
+      "observed_at": "2026-09-19T16:59:31Z",
+      "effective_from": null,
+      "effective_until": null,
+      "corrected_at": null,
+      "content_summary": "Ennis Rakestraw Jr. (CB) listed inactive by LIONS per official NFL.com inactive report",
+      "corroborations": [],
+      "contradictions": [],
+      "correction_of": null,
+      "resolution": null
+    },
+    {
+      "ledger_schema_version": 1,
+      "claim_id": "nc_93bea68d4377bd7de1e6ef98",
+      "source_id": "official_nfl",
+      "source_tier": "A",
+      "evidence_class": "OFFICIAL_EVENT",
+      "claim_type": "AVAILABILITY",
+      "direct_observation": true,
+      "reporter": {
+        "name": "NFL.com",
+        "outlet": "NFL.com",
+        "role": "official_league_publication"
+      },
+      "team": "DET",
+      "player": {
+        "player_name": "Jimmy Rolder",
+        "gsis_id": null,
+        "source_player_href": "/players/jimmy-rolder",
+        "source_player_slug": "jimmy-rolder",
+        "listed_position": "LB"
+      },
+      "concerns_game_id": null,
+      "concerns_teams": [
+        "BUF",
+        "DET"
+      ],
+      "postgame_of_game_id": null,
+      "published_at": "2026-09-17T22:51:40.379Z",
+      "observed_at": "2026-09-19T16:59:31Z",
+      "effective_from": null,
+      "effective_until": null,
+      "corrected_at": null,
+      "content_summary": "Jimmy Rolder (LB) listed inactive by LIONS per official NFL.com inactive report",
+      "corroborations": [],
+      "contradictions": [],
+      "correction_of": null,
+      "resolution": null
+    },
+    {
+      "ledger_schema_version": 1,
+      "claim_id": "nc_b3646bd84e4ef8c2ab7ec086",
+      "source_id": "official_nfl",
+      "source_tier": "A",
+      "evidence_class": "OFFICIAL_EVENT",
+      "claim_type": "AVAILABILITY",
+      "direct_observation": true,
+      "reporter": {
+        "name": "NFL.com",
+        "outlet": "NFL.com",
+        "role": "official_league_publication"
+      },
+      "team": "DET",
+      "player": {
+        "player_name": "Mekhi Wingo",
+        "gsis_id": null,
+        "source_player_href": "/players/mekhi-wingo",
+        "source_player_slug": "mekhi-wingo",
+        "listed_position": "DL"
+      },
+      "concerns_game_id": null,
+      "concerns_teams": [
+        "BUF",
+        "DET"
+      ],
+      "postgame_of_game_id": null,
+      "published_at": "2026-09-17T22:51:40.379Z",
+      "observed_at": "2026-09-19T16:59:31Z",
+      "effective_from": null,
+      "effective_until": null,
+      "corrected_at": null,
+      "content_summary": "Mekhi Wingo (DL) listed inactive by LIONS per official NFL.com inactive report",
+      "corroborations": [],
+      "contradictions": [],
+      "correction_of": null,
+      "resolution": null
+    },
+    {
+      "ledger_schema_version": 1,
+      "claim_id": "nc_ced63d4a4f7f0a6afe98cc64",
+      "source_id": "official_nfl",
+      "source_tier": "A",
+      "evidence_class": "OFFICIAL_EVENT",
+      "claim_type": "AVAILABILITY",
+      "direct_observation": true,
+      "reporter": {
+        "name": "NFL.com",
+        "outlet": "NFL.com",
+        "role": "official_league_publication"
+      },
+      "team": "BUF",
+      "player": {
+        "player_name": "Ed Oliver",
+        "gsis_id": null,
+        "source_player_href": "/players/ed-oliver",
+        "source_player_slug": "ed-oliver",
+        "listed_position": "DT"
+      },
+      "concerns_game_id": null,
+      "concerns_teams": [
+        "BUF",
+        "DET"
+      ],
+      "postgame_of_game_id": null,
+      "published_at": "2026-09-17T22:51:40.379Z",
+      "observed_at": "2026-09-19T16:59:31Z",
+      "effective_from": null,
+      "effective_until": null,
+      "corrected_at": null,
+      "content_summary": "Ed Oliver (DT) listed inactive by BILLS per official NFL.com inactive report",
+      "corroborations": [],
+      "contradictions": [],
+      "correction_of": null,
+      "resolution": null
+    },
+    {
+      "ledger_schema_version": 1,
+      "claim_id": "nc_13ce6d79a4247adec26f694a",
+      "source_id": "official_nfl",
+      "source_tier": "A",
+      "evidence_class": "OFFICIAL_EVENT",
+      "claim_type": "AVAILABILITY",
+      "direct_observation": true,
+      "reporter": {
+        "name": "NFL.com",
+        "outlet": "NFL.com",
+        "role": "official_league_publication"
+      },
+      "team": "BUF",
+      "player": {
+        "player_name": "Skyler Bell",
+        "gsis_id": null,
+        "source_player_href": "/players/skyler-bell",
+        "source_player_slug": "skyler-bell",
+        "listed_position": "WR"
+      },
+      "concerns_game_id": null,
+      "concerns_teams": [
+        "BUF",
+        "DET"
+      ],
+      "postgame_of_game_id": null,
+      "published_at": "2026-09-17T22:51:40.379Z",
+      "observed_at": "2026-09-19T16:59:31Z",
+      "effective_from": null,
+      "effective_until": null,
+      "corrected_at": null,
+      "content_summary": "Skyler Bell (WR) listed inactive by BILLS per official NFL.com inactive report",
+      "corroborations": [],
+      "contradictions": [],
+      "correction_of": null,
+      "resolution": null
+    },
+    {
+      "ledger_schema_version": 1,
+      "claim_id": "nc_bfd92ed965e045affba90a50",
+      "source_id": "official_nfl",
+      "source_tier": "A",
+      "evidence_class": "OFFICIAL_EVENT",
+      "claim_type": "AVAILABILITY",
+      "direct_observation": true,
+      "reporter": {
+        "name": "NFL.com",
+        "outlet": "NFL.com",
+        "role": "official_league_publication"
+      },
+      "team": "BUF",
+      "player": {
+        "player_name": "Ty Johnson",
+        "gsis_id": null,
+        "source_player_href": "/players/ty-johnson-x3152",
+        "source_player_slug": "ty-johnson-x3152",
+        "listed_position": "RB"
+      },
+      "concerns_game_id": null,
+      "concerns_teams": [
+        "BUF",
+        "DET"
+      ],
+      "postgame_of_game_id": null,
+      "published_at": "2026-09-17T22:51:40.379Z",
+      "observed_at": "2026-09-19T16:59:31Z",
+      "effective_from": null,
+      "effective_until": null,
+      "corrected_at": null,
+      "content_summary": "Ty Johnson (RB) listed inactive by BILLS per official NFL.com inactive report",
+      "corroborations": [],
+      "contradictions": [],
+      "correction_of": null,
+      "resolution": null
+    },
+    {
+      "ledger_schema_version": 1,
+      "claim_id": "nc_86ced8b968cc96baa5eec0ba",
+      "source_id": "official_nfl",
+      "source_tier": "A",
+      "evidence_class": "OFFICIAL_EVENT",
+      "claim_type": "AVAILABILITY",
+      "direct_observation": true,
+      "reporter": {
+        "name": "NFL.com",
+        "outlet": "NFL.com",
+        "role": "official_league_publication"
+      },
+      "team": "BUF",
+      "player": {
+        "player_name": "Jalon Kilgore",
+        "gsis_id": null,
+        "source_player_href": "/players/jalon-kilgore",
+        "source_player_slug": "jalon-kilgore",
+        "listed_position": "S"
+      },
+      "concerns_game_id": null,
+      "concerns_teams": [
+        "BUF",
+        "DET"
+      ],
+      "postgame_of_game_id": null,
+      "published_at": "2026-09-17T22:51:40.379Z",
+      "observed_at": "2026-09-19T16:59:31Z",
+      "effective_from": null,
+      "effective_until": null,
+      "corrected_at": null,
+      "content_summary": "Jalon Kilgore (S) listed inactive by BILLS per official NFL.com inactive report",
+      "corroborations": [],
+      "contradictions": [],
+      "correction_of": null,
+      "resolution": null
+    },
+    {
+      "ledger_schema_version": 1,
+      "claim_id": "nc_d36ed5cff325f2dd941b698e",
+      "source_id": "official_nfl",
+      "source_tier": "A",
+      "evidence_class": "OFFICIAL_EVENT",
+      "claim_type": "AVAILABILITY",
+      "direct_observation": true,
+      "reporter": {
+        "name": "NFL.com",
+        "outlet": "NFL.com",
+        "role": "official_league_publication"
+      },
+      "team": "BUF",
+      "player": {
+        "player_name": "Ar'maj Reed-Adams",
+        "gsis_id": null,
+        "source_player_href": "/players/ar-maj-reed-adams",
+        "source_player_slug": "ar-maj-reed-adams",
+        "listed_position": "G"
+      },
+      "concerns_game_id": null,
+      "concerns_teams": [
+        "BUF",
+        "DET"
+      ],
+      "postgame_of_game_id": null,
+      "published_at": "2026-09-17T22:51:40.379Z",
+      "observed_at": "2026-09-19T16:59:31Z",
+      "effective_from": null,
+      "effective_until": null,
+      "corrected_at": null,
+      "content_summary": "Ar'maj Reed-Adams (G) listed inactive by BILLS per official NFL.com inactive report",
+      "corroborations": [],
+      "contradictions": [],
+      "correction_of": null,
+      "resolution": null
+    },
+    {
+      "ledger_schema_version": 1,
+      "claim_id": "nc_a2623607319fcd161eb5f1be",
+      "source_id": "official_nfl",
+      "source_tier": "A",
+      "evidence_class": "OFFICIAL_EVENT",
+      "claim_type": "AVAILABILITY",
+      "direct_observation": true,
+      "reporter": {
+        "name": "NFL.com",
+        "outlet": "NFL.com",
+        "role": "official_league_publication"
+      },
+      "team": "BUF",
+      "player": {
+        "player_name": "Jude Bowry",
+        "gsis_id": null,
+        "source_player_href": "/players/jude-bowry",
+        "source_player_slug": "jude-bowry",
+        "listed_position": "OT"
+      },
+      "concerns_game_id": null,
+      "concerns_teams": [
+        "BUF",
+        "DET"
+      ],
+      "postgame_of_game_id": null,
+      "published_at": "2026-09-17T22:51:40.379Z",
+      "observed_at": "2026-09-19T16:59:31Z",
+      "effective_from": null,
+      "effective_until": null,
+      "corrected_at": null,
+      "content_summary": "Jude Bowry (OT) listed inactive by BILLS per official NFL.com inactive report",
+      "corroborations": [],
+      "contradictions": [],
+      "correction_of": null,
+      "resolution": null
+    },
+    {
+      "ledger_schema_version": 1,
+      "claim_id": "nc_0d4595c3cd876d1459a5a3cc",
+      "source_id": "official_nfl",
+      "source_tier": "A",
+      "evidence_class": "OFFICIAL_EVENT",
+      "claim_type": "AVAILABILITY",
+      "direct_observation": true,
+      "reporter": {
+        "name": "NFL.com",
+        "outlet": "NFL.com",
+        "role": "official_league_publication"
+      },
+      "team": "BUF",
+      "player": {
+        "player_name": "T.J. Sanders",
+        "gsis_id": null,
+        "source_player_href": "/players/t-j-sanders",
+        "source_player_slug": "t-j-sanders",
+        "listed_position": "DT"
+      },
+      "concerns_game_id": null,
+      "concerns_teams": [
+        "BUF",
+        "DET"
+      ],
+      "postgame_of_game_id": null,
+      "published_at": "2026-09-17T22:51:40.379Z",
+      "observed_at": "2026-09-19T16:59:31Z",
+      "effective_from": null,
+      "effective_until": null,
+      "corrected_at": null,
+      "content_summary": "T.J. Sanders (DT) listed inactive by BILLS per official NFL.com inactive report",
+      "corroborations": [],
+      "contradictions": [],
+      "correction_of": null,
+      "resolution": null
+    }
+  ]
+}
