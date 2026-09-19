@@ -357,5 +357,47 @@ class DeterminismTests(unittest.TestCase):
         self.assertEqual(len(set(values)), 1)
 
 
+class SourceProvenanceReuseTests(unittest.TestCase):
+    """Confirms this module reuses `receptions_baseline_research.py`'s own
+    pinned-corpus audit/digest machinery rather than defining a second,
+    independent pin -- a real integration candidate requirement (final
+    integration candidate mission, Issue #91), not merely a style
+    preference: two independent pins for the same underlying corpus could
+    silently drift apart from each other.
+    """
+
+    def test_outcome_distribution_module_imports_the_shared_pin_helpers(self):
+        import nfl.research.receptions_outcome_distribution as outcome_mod
+        import nfl.research.receptions_baseline_research as baseline_mod
+
+        # `load_receiver_rows` and `sha256_file` are the exact functions that
+        # perform the per-season byte-size + SHA-256 verification against the
+        # audit manifest inside `receptions_baseline_research.py`. Asserting
+        # object identity (not just name equality) proves the outcome-
+        # distribution module calls the SAME pinned-corpus loader rather than
+        # a same-named local re-implementation.
+        self.assertIs(outcome_mod.load_receiver_rows, baseline_mod.load_receiver_rows)
+        self.assertIs(outcome_mod.sha256_file, baseline_mod.sha256_file)
+
+    def test_outcome_distribution_module_defines_no_independent_source_pin(self):
+        import nfl.research.receptions_outcome_distribution as outcome_mod
+        import nfl.research.receptions_baseline_research as baseline_mod
+
+        # A second, independently-maintained digest/URL constant in this
+        # module would be a real re-pinning regression even if it happened
+        # to start out byte-identical to the shared one. Names imported
+        # directly (`is` the same object) from the baseline module are the
+        # expected reuse and are excluded; anything else matching a
+        # provenance-shaped name would be a new, independent pin.
+        suspicious_names = [
+            name
+            for name in dir(outcome_mod)
+            if not name.startswith("_")
+            and ("SHA256" in name.upper() or "SOURCE_URL" in name.upper() or "PINNED" in name.upper())
+            and getattr(outcome_mod, name) is not getattr(baseline_mod, name, object())
+        ]
+        self.assertEqual(suspicious_names, [])
+
+
 if __name__ == "__main__":
     unittest.main()

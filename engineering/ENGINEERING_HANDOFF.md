@@ -3148,3 +3148,89 @@ Alligator
   PR #143/#147/#150/#154's files untouched.
 
 Alligator
+
+## 2026-09-19 — Receptions outcome-distribution FINAL integration candidate (consolidates #148/#149/#156)
+
+- Workstream `NFL-RECEPTIONS-DISTRIBUTION-FINAL-CANDIDATE-20260919` (Agent
+  A), per the lead's "SUPERCLAUDE — NFL GENIUS FINAL CERTIFICATION &
+  INTEGRATION" mission claim (Issue #91 comment `5745830856`). PR #156
+  already IS PR #148 (original research) + PR #149 (audit) consolidated
+  with the real coherence fix applied; this workstream's job was to
+  produce the single reviewable candidate, not redesign anything.
+- Branch `claude/nfl-receptions-distribution-final-candidate-20260919`, a
+  fresh branch off current `origin/main` (`5da68e13a6`, re-fetched, not
+  assumed) with PR #156's exact 4 commits (`10fc308c76`, `fa7a5452ef`,
+  `e6f4801253`, `f3a3a0662e`) cherry-picked on top. `main` had moved 45
+  commits since PR #156's base (`59265d883f`) -- confirmed by diff that
+  every one of those 45 commits is dashboard/odds/picks/lineup generated
+  state churn, none touching `nfl/research/`, `nfl/tests/`, or the
+  `engineering/ENGINEERING_HANDOFF.md` sections this branch also edits.
+  Cherry-pick applied with **zero conflicts** on all 4 commits.
+- **Independent spot-verification of both headline claims, by executing
+  the actual code myself** (not by trusting PR #148/#149/#156's prose):
+  - `EmpiricalResidualPool.pmf` summed over `k=0..MAX_EMPIRICAL_SUPPORT`
+    (40) on 4 distinct pool shapes: PR #149's 20-value adversarial
+    heterogeneous pool at 3 projections (sum `1.0000000000000004` each);
+    a synthetic n=5000 Gaussian-residual pool at 2 projections (sum
+    `0.9999999999999994` each); an n=1 sparse pool (sum
+    `1.0000000000000007`); an n=2 sparse pool (sum `1.0000000000000007`).
+    All within float tolerance of exactly 1 -- genuinely normalized, not
+    merely close.
+  - `ladder_probabilities(...)["zero_probability"]` vs.
+    `_rung_probabilities(pool, projection=p, threshold=0.5)["under"]` on
+    both pool shapes above, including the case where 0.5 is not itself in
+    the supplied `thresholds` list: every comparison returned Python
+    `==` `True` (e.g. `0.4782608695652174` vs. `0.4782608695652174` on
+    the adversarial pool at projection 0.3) -- bit-for-bit identical, as
+    designed.
+- **Added coverage**: the 9 mission-required invariants were checked
+  against PR #156's existing 32-test coherence-repair file
+  (`nfl/tests/test_receptions_pmf_ladder_coherence_repair.py`); 8 were
+  already explicitly covered (normalization, nonnegativity, zero/under
+  identity, rung sum-to-one at integer+half-integer lines, monotonicity,
+  sparse-tail n=1/n=2, DNP/VOID out-of-scope, determinism). The 9th
+  (real source/version provenance -- "confirm it's still the same pin,
+  don't re-pin") had no explicit test, so 2 new tests
+  (`SourceProvenanceReuseTests`) were added: one asserts
+  `receptions_outcome_distribution.load_receiver_rows`/`sha256_file` are
+  the identical (`is`) objects imported from
+  `receptions_baseline_research.py` (proving the same pinned-corpus
+  digest machinery is reused, not re-implemented); one asserts no second,
+  independent SHA/URL/pin constant exists in the outcome-distribution
+  module. No re-pin introduced; confirmed by direct code read that this
+  module imports the loader rather than defining its own source pin.
+- **Preserved, not softened: the corrected empirical-distribution
+  calibration finding is a real regression from fixing a bug.**
+  Post-fix `EMPIRICAL_RESIDUAL_POOLED` is WORSE than the original
+  (buggy) PR #148 numbers on both P(zero) calibration (0.1003 -> 0.1776
+  predicted vs. 9.5% actual -- moved further away) and held-out Brier
+  (0.0828 -> 0.0983 -- worse). It is no longer competitive-to-best on
+  either metric; `NORMAL_BUCKETED` is now best on both. The
+  `NEGATIVE_BINOMIAL_POOLED`-best-log-likelihood top-line finding is
+  unchanged. This is reported plainly as a genuine negative research
+  result produced by correcting a bug, not spun positive or buried.
+- **Tests**: full `nfl/tests` suite run once, all 62 files individually
+  (matching `nfl-tests.yml`'s own execution style): **748 tests, 0
+  failures, 0 errors** (746 from PR #156 + 2 new provenance tests). Root
+  MLB suite not re-run: same disclosed AGENTS.md rule-20 exception PR
+  #156 already recorded (this change touches only `nfl/research/` and
+  `nfl/tests/`, not imported by any MLB module, covered by the separate
+  `nfl-tests.yml` job).
+- Opened draft PR (title: "Receptions outcome-distribution final
+  integration candidate: mathematically coherent probability research
+  (supersedes #148/#149/#156)") targeting `main`, with an explicit
+  Scientific status section separating "internally coherent by
+  construction" claims (pmf sums to 1, zero_probability/under identity,
+  rung sum-to-one, monotonicity) from "exploratory, not validated"
+  claims (which outcome-distribution family predicts best). No
+  distribution is described as ready for promotion; no historical
+  sportsbook profitability claimed anywhere; `alternate_line_evaluation`
+  breakeven/EV/pricing functions from already-merged PR #145 reused by
+  import, not reimplemented. PR #148/#149/#156 are NOT closed or edited
+  -- they remain historical record; the new PR states plainly it should
+  be reviewed in their place.
+- No model/selector/public-pick promotion. No production/live-workflow
+  change. Did not touch `.github/workflows/`, `nfl/prospective/`,
+  `nfl/normalize/`.
+
+Alligator
