@@ -1355,6 +1355,85 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 33.2,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Los Angeles Angels",
+          "game_pk": 823977,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 78.2857,
+            "l7_avg_ev": 13.125,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 41.2,
+            "season_barrel_pct": 28.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 62.5,
+            "platoon_barrel_pct": 0.56,
+            "platoon_xwoba": -1.2,
+            "park_hand_index": -1.73,
+            "opp_catcher_framing": 0.24,
+            "days_rest": 2.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 43.6364,
+            "pull_park_synergy": -0.2483,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.48,
+            "vs_rp_ops": -3.6,
+            "ump_k_pct": -0.552,
+            "ump_bb_pct": -0.192
+          },
+          "hit_probability": 0.6435,
+          "raw_hit_probability": 0.6262,
+          "lift": -0.0288,
+          "reliability": "C",
+          "sample_n": 29,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 30.9,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Los Angeles Angels",
+          "game_pk": 823977,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 28.125,
+            "catcher_poptime": 17.1429,
+            "on_base": 0.0
+          },
+          "hit_probability": 0.0406,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 29,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

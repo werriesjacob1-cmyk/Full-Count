@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_825029",
+  "name": "New York Yankees @ Arizona Diamondbacks \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 64.5,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825029,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2296,
+            "away_team_scores_p": 0.2613,
+            "fi_n_starts": 18.0
+          },
+          "hit_probability": 0.5691,
+          "raw_hit_probability": null,
+          "lift": 0.0707,
+          "reliability": "A",
+          "sample_n": 18,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 56.9
+          }
+        }
+      ]
+    }
+  ]
+}
