@@ -3933,3 +3933,59 @@ Alligator
   selector/production change.
 
 Alligator
+
+## 2026-09-19 — Independent review of PR #164 (frozen NB receptions challenger)
+
+- Independent-reviewer workstream, per Issue #91 comment `5743926733`'s
+  permanent pre-merge certification doctrine. Reviewed draft PR #164, "NFL:
+  frozen NEGATIVE_BINOMIAL_POOLED receptions challenger vs. B0", head
+  `d0060de6f6190b71c07e6feefdee6e50f495dcf5`, base `main` @
+  `ab2fc28bea37d0fd621d0538cafc150483a058c8`. `git archive`'d the exact head
+  SHA and read the real diff (3 files, 373 lines: `nfl/research/
+  receptions_frozen_challenger.py`, its test file, and this handoff log).
+- **Reproduced the frozen alpha claim from scratch, not from the PR body.**
+  Live re-fetched all 27 pinned `stats_player_week_{season}.csv` files
+  (1999-2025) from `engineering/evidence/nflverse_weekly_stats_full_audit_
+  2026-09-14.json`'s `source.canonical_asset_template` and verified every
+  one byte-for-byte AND SHA-256-identical against the manifest (27/27).
+  Called the real, unmodified `receptions_baseline_research.
+  load_receiver_rows` -> `rolling_predictions` -> `receptions_outcome_
+  distribution.fit_negative_binomial_alpha` myself on the `season <= 2022`
+  rows: **alpha=0.09323867966867905, n=85670** -- an exact match to the
+  PR's `FROZEN_NB_FIT`, to every digit. Traced the population chain
+  independently: 93,896 train-partition scored rows -> 85,720 with a
+  non-null B0 rolling projection (exact match to the PR's/PR #159's claimed
+  `n_train_rows_scored_total`) -> 85,670 with `b0 > 0`, the exact filter
+  `fit_negative_binomial_alpha` applies. No discrepancy found; nothing
+  rounded away.
+- Confirmed by direct import read: `negative_binomial_side_probabilities`
+  imports the real `negative_binomial_pmf` from `receptions_outcome_
+  distribution`; `compare_b0_vs_frozen_challenger` imports the real
+  `expected_value_from_probability` from `alternate_line_evaluation` only
+  when a price is supplied, matching its actual `(probability, odds, *,
+  evidence_status)` signature. Neither is a reimplementation.
+- Adversarial edge cases run myself: projection=15/line=0.5,
+  projection=0.1/line=10.5, projection=1e-9/line=0.5,
+  projection=0.0001/line=0.0 (integer-line push case), projection=60
+  (the module's own `MAX_SUPPORT` boundary)/line=59.5, and unrealistic
+  projections of 80 and 200. Every case: over+under+push sums to 1 within
+  float tolerance (worst deviation ~2e-12), no negative probabilities,
+  nothing raised unexpectedly; invalid-input cases (negative projection,
+  negative line, non-numeric projection, non-positive alpha override) all
+  raised `FrozenChallengerError` as designed.
+- Grepped the exact head tree: zero hits for `receptions_frozen_challenger`
+  under `.github/workflows/`; the module's and test file's only imports are
+  `receptions_outcome_distribution.negative_binomial_pmf` and (lazily)
+  `alternate_line_evaluation.expected_value_from_probability` -- zero
+  live-workflow coupling in either direction, confirming the PR's stated
+  reason for keeping this out of `receptions_shadow.py`.
+- Ran `PYTHONPATH=. python3 -m unittest discover -s nfl/tests -p
+  "test_*.py"` myself on this exact head: **872 tests, OK** -- matches the
+  PR's claim exactly.
+- **Verdict: GO.** Posted as Issue #91 comment `5746182674`. Every
+  reproducibility, isolation, and reuse claim in PR #164 held up under
+  independent re-derivation from raw source data. No merge, undraft, or
+  promotion performed by this review; PR #164 remains draft pending Jacob's
+  separate explicit authorization.
+
+Alligator
