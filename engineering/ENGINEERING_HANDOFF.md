@@ -2866,4 +2866,313 @@ Alligator
   explicit instruction; Jacob/orchestrating session to independently verify
   and decide on push/PR.
 
+## 2026-09-19 -- NFL role-builder tie-break determinism repair (fix, not just audit)
+
+Workstream `NFL-ROLE-BUILDER-DETERMINISM-REPAIR-20260919`, authorized by
+Jacob via Issue #91 comment `5743845631` ("P0 RESEARCH-INTEGRITY BLOCKER").
+Branch `claude/nfl-role-builder-determinism-repair-20260919` off `origin/main`
+@ `e56cdc6f3adad4a3d1eb17d63b4f5be5c5cec5f7` (dashboard-refresh commit).
+Builds directly on draft PR #150's audit (branch
+`claude/nfl-role-redistribution-audit-20260919`, head
+`cb02d246994c5dcef1d6947841453ee2b2e5cb96`) -- reuses its root-cause finding
+and its `compute_paired_evaluation`/event-clustered-bootstrap methodology
+(reimplemented verbatim in a scratch verification harness, not committed to
+this package -- see below) rather than re-deriving either.
+
+**BLOCKED_UPSTREAM_DETERMINISM: CLEARED.** Evidence for each acceptance item
+Issue #91 comment `5743845631` required:
+
+1. **Canonical file/fixed SHA**: `nfl/research/role_intelligence_features.py`,
+   function `_top_usage_player_per_team_week`. Grepped all of `nfl/` for other
+   `max(..., key=lambda ...)` tie-break patterns and for
+   `roster_by_team`/`top_usage`/`_top_usage` references: this is the ONLY
+   copy of this logic in the codebase. `role_intelligence_data_prep.py` and
+   `role_intelligence_baselines.py` have no similar ranking/tie-break code.
+   `role_regime_redistribution.py` (draft PR #147) is unmerged and not
+   present on `main`/this branch, so nothing there could be touched.
+2. **Fix**: replaced `max(candidates, key=lambda pid: running_mean[pid])`
+   (candidates drawn from a plain `set`, hash-order-dependent on an exact
+   tie) with `min(candidates, key=lambda pid: (-running_mean[pid], pid))` --
+   `running_mean` descending (unchanged ranking), `player_id` (gsis_id)
+   ascending as an explicit, stable, documented tie-break. A candidate with
+   a missing/empty `player_id` is excluded from ranking (quarantined),
+   never guessed. Commented in place explaining why (a real 668-vs-667 event
+   count discrepancy across otherwise-identical runs).
+3. **Regression fixtures**: `nfl/tests/test_role_intelligence_features_determinism.py`
+   (new, 11 tests) -- exact-tie determinism, reversed/shuffled input order,
+   no-tie-unaffected, all-identity-missing quarantine (fails closed), and a
+   cross-`PYTHONHASHSEED` subprocess test (seeds 0 vs 1, plus a 2/3/4 sweep)
+   asserting an identical chosen identity, event membership, row ordering,
+   and SHA-256 digest of the serialized output. Network-free, small synthetic
+   fixture -- doubles as the permanent CI regression gate (item 5 below),
+   runs as an ordinary part of `nfl/tests`.
+4. **Downstream consumer audit**: grepped `nfl/`, `engineering/` for `667`/
+   `668`. Only hit outside this workstream's own new files: this handoff's
+   own 2026-09-19 PR #143 entry (prose, "1 total event before the fix, 667
+   after") -- historical narrative, not a runtime assertion; left as-is
+   (original evidence preserved) and superseded by this entry instead. No
+   test in `nfl/tests` (checked `test_role_intelligence_baselines.py`, and
+   PR #147's/#150's own test files fetched read-only from their branches:
+   `test_role_regime_redistribution.py`, `test_role_regime_redistribution_audit.py`)
+   hard-codes 667/668 as a runtime assertion -- all use small synthetic
+   fixtures. No committed JSON/data artifact caches an event population
+   anywhere in `nfl/research/` (data is fetched at runtime, never checked
+   in). PR #143's and PR #147's own PR-body numbers (667 events; baseline
+   MAEs table; "challenger beats all 4 baselines on carry_share") are
+   **SUPERSEDED** by this entry's corrected reproduction below -- their PR
+   bodies are left untouched (preserving original evidence) per instruction.
+5. **Corrected, independently reproduced population**: re-downloaded the
+   frozen 2012-2025 nflverse bytes PR #143/#147/#150 already used --
+   `stats_player_week_<season>.csv` and `injuries_<season>.csv` (2012-2025,
+   14 seasons each) and `depth_charts_<season>.csv` (2012-2024, 13 seasons;
+   all 13 verified BYTE-IDENTICAL to the digests already pinned in
+   `role_intelligence_source_digests.DEPTH_CHART_SOURCE_ASSET_DIGESTS`) plus
+   `nflverse/nfldata data/games.csv` at the exact commit
+   `coach_regime_registry.HC_GAMES_SOURCE` pins (2,177,838 bytes,
+   `26332ae5...`, re-verified byte-for-byte identical). `snap_counts`/PBP
+   intentionally excluded (same disclosed scoping PR #150 used): event
+   construction and `target_share`/`carry_share` depend only on
+   `stats_player_week`+`injuries`; those two sources have no digest pin
+   anywhere in this repo today (a real, separate, disclosed gap -- not
+   fixed here, out of this workstream's scope) so this run's own fetched
+   digests are the evidence of record, not a pin-check. Ran the FIXED
+   builder from these frozen bytes 3 times under `PYTHONHASHSEED` 0, 1, and
+   42: **identical every time** -- `n_usage_rows=53,110` (matches PR #143's/
+   #147's reported count exactly), **668 events (324 WR_ABSENCE, 344
+   RB_ABSENCE)**, identical event-set digest
+   `a7e322decbdafbf009bb35785f6b3d53fca58e407b31f0c663d2922f6c1b0a6f` every
+   run. As a negative control, re-ran the SAME frozen bytes through the
+   PRE-FIX code across 9 process invocations (default hashseed + seeds
+   0-7): 6 of 9 gave 667, 3 of 9 gave 668 -- confirming the real
+   nondeterminism reproduces on this exact real dataset, not only in
+   synthetic fixtures, and that the fix eliminates it. The flipping event is
+   exactly `WR_ABSENCE, 2012, week 2, GB, removed_player_id 00-0024267`
+   (Greg Jennings): his week-1 `target_share` (9/42 = 0.214286) is an EXACT
+   tie with Randall Cobb's (`00-0028002`, 9/42 = 0.214286); under the new
+   ascending-`player_id` tie-break, `00-0024267 < 00-0028002`, so Jennings
+   deterministically wins and the event fires. The corrected, reproducible
+   total is **668, not 667** -- PR #143's/#147's/#150's "667" figure is
+   revealed as one of two possible nondeterministic outcomes, not the
+   correct one; the corrected 668 is what a deterministic re-run of the
+   published methodology actually produces from the same real, pinned
+   source bytes.
+6. **Paired baseline/challenger re-evaluation on the corrected population**:
+   reused PR #147's `role_regime_redistribution.py` (HC-regime join,
+   `train_committee_model`/`predict_committee_model`) and PR #150's
+   `compute_paired_evaluation`/`bootstrap_mae_ci_by_event`/
+   `paired_named_regime_coverage` (fetched read-only from their draft
+   branches via the GitHub API, reimplemented verbatim in a local scratch
+   harness for this run only -- neither branch/file was edited), trained
+   and evaluated on the corrected 668-event population, held-out 2022-2025:
+
+   | dimension | paired n | NO_ADJUSTMENT | PROPORTIONAL | DEPTH_CHART_NEXT_MAN | RECENT_USAGE_NEXT_MAN | challenger |
+   |---|---:|---:|---:|---:|---:|---:|
+   | target_share | 441 | 0.06050 | 0.06396 | 0.07740 | 0.08254 | **0.06242** |
+   | carry_share | 250 | 0.18382 | 0.16797 | 0.21101 | 0.20693 | **0.16124** |
+
+   These are numerically **IDENTICAL to PR #150's own reported table**
+   (same paired n, same MAEs to 5 decimal places, same bootstrap CIs:
+   e.g. carry_share challenger CI `[0.1458, 0.1763]`, target_share
+   challenger CI `[0.0573, 0.0675]`) -- because the flipping 2012 event
+   falls outside the 2022-2025 held-out window entirely, the
+   668-vs-667 discrepancy has ZERO effect on the held-out paired
+   comparison. Confirmed, not assumed, by actually re-running it on the
+   corrected population rather than reasoning about it. Conclusions
+   **CONFIRMED UNCHANGED** on the corrected, now-reproducible population:
+   - `target_share`: challenger beats 3 of 4 baselines, still loses to
+     NO_ADJUSTMENT; CIs heavily overlap (not statistically distinguishable).
+   - `carry_share`: challenger still beats all 4 baselines numerically
+     (0.16124 vs closest competitor PROPORTIONAL 0.16797); CIs heavily
+     overlap (not statistically distinguishable) -- exploratory, not
+     validated, exactly as PR #150 already concluded.
+   - `MIN_EVENTS_FOR_NAMED_REGIME=20` still not reached by any single named
+     HC regime on the corrected population: max paired-event count for any
+     regime is 9 (both dimensions) -- same conclusion, re-verified.
+7. **Tests run**: new determinism suite (11/11 pass); existing
+   `test_role_intelligence_features` (unchanged pass count), 
+   `test_role_intelligence_data_prep`, `test_role_intelligence_baselines`,
+   `test_coach_regime_registry` (86 tests combined across the four existing
+   suites, all pass unchanged -- none of them exercised or depended on the
+   old nondeterministic tie-break). Full `nfl/tests` suite run once at the
+   end (see PR body for the exact count/result).
+
+Not done / explicitly out of scope: did not re-pin `stats_player_week`/
+`injuries` digests (no pin exists for either today, a separate real gap);
+did not edit `role_intelligence_source_digests.py`, PR #143's or PR #147's
+own files/branches; no model/selector/public-pick promotion; no production
+change; PRs #143 and #147 remain exactly as originally published (their own
+PR-body numbers are superseded here, not edited there).
+
+Alligator
+
+## 2026-09-19 — Downstream training-sensitivity certification: does the
+## 667->668 correction change the challenger's FITTED parameters, not just
+## its held-out row membership?
+
+- Workstream `NFL-ROLE-BUILDER-DOWNSTREAM-TRAINING-CERT-20260919` (Agent A),
+  branch `claude/nfl-role-builder-downstream-training-certification-20260919`,
+  base `origin/main` @ `59265d883fa7323e271964a6e8182bbec487c418`. Closes the
+  one sub-claim Issue #91 comment `5744022823` flagged as independently
+  audited-but-not-personally-re-verified in draft PR #154: PR #154 reported
+  the paired baseline/challenger MAE table for
+  `HIERARCHICAL_COMMITTEE_PROBABILITY_V1` (draft PR #147
+  `role_regime_redistribution.py`) as numerically identical between the
+  667-event (pre-fix) and 668-event (PR #154-fixed) populations, reasoning
+  that the flip event (`WR_ABSENCE`/2012/wk2/`GB`/`00-0024267`, Greg
+  Jennings) falls inside the 2012-2021 TRAINING window, so the 2022-2025
+  HELD-OUT row set is unaffected. True about row membership; not itself
+  proof the challenger's FITTED PARAMETERS are unaffected. This workstream
+  actually ran the training pipeline end-to-end on both populations to
+  check.
+
+- Method (disclosed): PR #147's `role_regime_redistribution.py` and PR
+  #150's `role_regime_redistribution_audit.py` (which owns
+  `compute_paired_evaluation`) remain draft/unmerged and were fetched
+  READ-ONLY from their branches into an isolated scratch harness (not
+  committed) -- neither file nor branch was edited. The pre-fix event
+  builder was obtained by using THIS WORKTREE'S OWN CURRENT
+  `nfl/research/role_intelligence_features.py`, confirmed byte-identical to
+  `main` and still pre-fix (hash-order-dependent `_top_usage_player_per_team_week`)
+  as of this workstream's base commit -- i.e. option 1 of the task's two
+  allowed methods ("checking out the pre-fix commit from main's history"),
+  not a monkeypatch. The fixed builder was PR #154's branch file
+  (`claude/nfl-role-builder-determinism-repair-20260919`, head
+  `dba5a119563c83ce89aa217208b0df1d93df68b3`), loaded read-only, never
+  copied into this repository. Both files are self-contained (stdlib-only
+  imports), so both were loaded in ONE Python process via
+  `importlib.util.spec_from_file_location` under distinct module names --
+  no monkeypatching of any on-disk file.
+- Real, fresh data: fetched `stats_player_week_<season>.csv`/
+  `injuries_<season>.csv` 2012-2025 and `depth_charts_<season>.csv`
+  2012-2024 via this repo's own already-merged, unmodified
+  `role_intelligence_data_prep.py` (fail-closed digest verification
+  built-in) -- 53,110 WR/RB usage rows, matching PR #143/#147/#150/#154's
+  own reported count exactly. `nflverse/nfldata` `data/games.csv` was
+  independently re-fetched and confirmed byte-for-byte identical to
+  `coach_regime_registry.HC_GAMES_SOURCE`'s pin (2,177,838 bytes,
+  `26332ae5...b96d188`) before use.
+- Cross-hashseed reproduction, done independently of PR #150/#154's own
+  runs: the fixed builder gave 668 events (324 `WR_ABSENCE`/344
+  `RB_ABSENCE`), digest `a7e322decbdafbf009bb35785f6b3d53fca58e407b31f0c663d2922f6c1b0a6f`,
+  identically across `PYTHONHASHSEED` 0/1/2/3/4/5 -- MATCHING PR #154's own
+  independently reported digest exactly, an independent reproduction from
+  freshly downloaded bytes, not a re-use of anyone else's cached output.
+  The pre-fix builder alternated 667/668 across `PYTHONHASHSEED` 0-9 (0:
+  667, 1-3: 668, 4: 667, 5-7: 667, 8-9: 668) and was confirmed to
+  deterministically and repeatably give 667 under `PYTHONHASHSEED=0`
+  specifically (4 repeated runs, identical digest
+  `5df6fab308b54800943bacb849cbdaa5224d4e36825f3b8b3b6bd684807e4999` every
+  time). Diffing the two event-key sets: EXACTLY one event differs --
+  `("WR_ABSENCE", 2012, 2, "GB", "00-0024267")` present in the 668 set,
+  absent from the 667 set -- confirming PR #150's root-cause finding by
+  independent re-derivation, not by trusting the prior report.
+- The 2022-2025 held-out event population is BYTE-IDENTICAL between the two
+  builder runs (explicit digest comparison:
+  `d0b3b180a58168ff7699f6be51634aa51453d5c9537a934b003ff2fb6e70ffe4` both
+  runs) -- confirms the row-membership half of PR #154's reasoning.
+- **Real result, run once under `PYTHONHASHSEED=0`, both populations fit and
+  scored end to end (`train_committee_model` -> `paired_challenger_vs_baselines`
+  / `compute_paired_evaluation`, PR #147/#150's own unmodified functions):**
+
+  **`carry_share`** (relevant only to `RB_ABSENCE` events --
+  `role_intelligence_baselines.DIMENSION_RELEVANT_EVENT_TYPES["carry_share"]
+  == {"RB_ABSENCE"}`; the flip event is `WR_ABSENCE`, so it never enters
+  this dimension's training at all): training example counts IDENTICAL (232
+  total both runs: 223 `ESTABLISHED_REGIME` / 9 `NEW_REGIME_FIRST_30_DAYS`
+  both runs). Fitted weight vectors bit-for-bit IDENTICAL. Held-out
+  (`paired_n=250` both runs) MAE bit-for-bit IDENTICAL for the challenger
+  AND all four baselines: `HIERARCHICAL_COMMITTEE_PROBABILITY_V1`
+  `0.16124054411889008` both runs; `NO_ADJUSTMENT` `0.1838231377727314`;
+  `PROPORTIONAL_TEAMMATE_REDISTRIBUTION` `0.16796555719340836`;
+  `DEPTH_CHART_NEXT_MAN` `0.21100516923488477`; `RECENT_USAGE_NEXT_MAN`
+  `0.20692673851466514` -- all identical to every reported digit in both
+  runs. **PR #154's "identical" claim is exactly correct here.**
+
+  **`target_share`** (relevant to `WR_ABSENCE` -- the flip event's own
+  type): training example counts differ by EXACTLY one, in the
+  `ESTABLISHED_REGIME` bucket only -- pre-fix (667) 216 total (198
+  `ESTABLISHED_REGIME` + 18 `NEW_REGIME_FIRST_30_DAYS`); fixed (668) 217
+  total (199 `ESTABLISHED_REGIME` + 18 `NEW_REGIME_FIRST_30_DAYS`, unchanged).
+  `NEW_REGIME_FIRST_30_DAYS`'s fitted weight vector is bit-for-bit IDENTICAL
+  between runs (`[2.10292539029361e-17, 0.13424636023195094,
+  -0.4074911795367009, 0.541281225201379, 0.38738773891021194,
+  -0.4350491190923772]` both) -- the added example was never in that
+  bucket. `ESTABLISHED_REGIME`'s fitted weight vector (feature order: bias,
+  prior_last5, has_prior, depth_inv, has_depth, games_n_norm) GENUINELY
+  CHANGES:
+  - pre-fix (667): `[1.6366394649381305e-18, 0.07953658428503806,
+    -0.08290949162215137, 0.2332432993957501, 0.20378339884425223,
+    0.017602266673759526]`
+  - fixed (668): `[-3.0316321514928766e-18, 0.08100139679398129,
+    -0.07132764729673349, 0.22785189738658024, 0.20329452991045843,
+    0.018117697234998568]`
+  - largest relative move: `has_prior` -0.082909 -> -0.071328 (~14%
+    relative); `depth_inv` 0.233243 -> 0.227852 (~2.3%); `prior_last5`
+    0.079537 -> 0.081001 (~1.8%); `games_n_norm` 0.017602 -> 0.018118
+    (~2.9%); bias and `has_depth` effectively unchanged (both ~1e-18 /
+    ~0.2035-0.2038).
+  - Held-out (`paired_n=441` both runs, identical row set, confirmed):
+    all four baselines bit-for-bit IDENTICAL both runs (`NO_ADJUSTMENT`
+    `0.06050387800295093`; `PROPORTIONAL_TEAMMATE_REDISTRIBUTION`
+    `0.06396060775856668`; `DEPTH_CHART_NEXT_MAN` `0.07739678825309278`;
+    `RECENT_USAGE_NEXT_MAN` `0.08254290234546448`). But
+    `HIERARCHICAL_COMMITTEE_PROBABILITY_V1`'s MAE genuinely DIFFERS:
+    **pre-fix (667-trained) = `0.06241770851649521`; fixed (668-trained) =
+    `0.0624156172516236`** -- absolute difference `2.0913e-6` (~0.0034%
+    relative). Both values round to `0.06242` at 5 decimal places, so PR
+    #154's literal "same 5 decimal places" phrasing holds at that
+    precision, but the two runs are NOT bit-identical and diverge starting
+    at the 6th decimal. Event-clustered bootstrap 95% CI (2000 resamples,
+    same methodology as PR #150's `bootstrap_mae_ci_by_event`, seed
+    `20260919`): pre-fix `[0.05731993, 0.06753840]`; fixed
+    `[0.05731659, 0.06753266]` -- a ~0.0102 half-width, roughly 4 orders of
+    magnitude larger than the ~2.09e-6 point-estimate shift.
+
+- **Verdict, stated without softening (per Issue #91 comment
+  `5743926733`'s doctrine)**: PR #154's "numerically identical" claim is
+  TRUE, bit-for-bit, for `carry_share`. It is an OVERCLAIM, strictly, for
+  `target_share`: the 667->668 training correction DOES change the
+  challenger's fitted `ESTABLISHED_REGIME` parameters (up to ~14% relative
+  on one coefficient) and DOES change its held-out predictions (a real,
+  non-zero, independently-reproduced ~2.09e-6 absolute MAE shift) -- it
+  only *looks* identical because PR #154 reported 5 decimal places and the
+  shift happens to round away at that precision, and because the shift is
+  roughly 4 orders of magnitude smaller than this population's own
+  bootstrap sampling noise. Mechanistically: the shift is real but
+  practically negligible for this bounded, non-cross-validated,
+  never-promoted prototype -- not zero, not material to any current
+  decision. No model/selector/public-pick promotion implied either way.
+
+- Deliverables (new files only; `role_intelligence_features.py`,
+  `role_regime_redistribution.py`, `role_regime_redistribution_audit.py`,
+  and PR #143/#147/#150/#154's own files/branches were NOT edited):
+  `nfl/research/role_regime_redistribution_training_sensitivity_audit.py`
+  (`TrainingSensitivityInputs`/`TrainingSensitivityResult` dataclasses,
+  `compute_training_sensitivity` -- dependency-injected on
+  `train_committee_model_fn`/`build_challenger_predictor_fn`/
+  `compute_paired_evaluation_fn` rather than importing PR #147/#150
+  directly, since both remain draft/unmerged and importing them eagerly
+  would break this file's own importability on `main`; `load_production_adapters()`
+  does the real, unmodified lazy import once those PRs are reachable, or
+  raises a clear `ModuleNotFoundError` otherwise -- verified it does) and
+  `nfl/tests/test_role_regime_redistribution_training_sensitivity_audit.py`
+  (11 tests: a hand-computable synthetic fixture -- two training
+  populations differing by exactly one event, expected fitted weight
+  `130/3` vs `15.0`, expected MAE delta algebraically equal to the weight
+  delta because the toy predictor is linear with one held-out row --
+  proving the comparison function correctly detects a known parameter
+  difference, plus a zero-delta negative control and a held-out-population-
+  mismatch detection test). All 11 pass; the real 668-event/667-event
+  numbers above came from a separate, uncommitted scratch harness run
+  against the real PR #147/#150 functions (per the task's own instruction
+  not to commit scratch scripts), not from the synthetic test.
+- Full existing `nfl/tests` suite run once after adding the new file: 668
+  tests, all pass (`python3 -m unittest discover -s nfl/tests -p
+  "test_*.py"`), including the 11 new tests.
+- No edits to `.github/workflows/`, `nfl/prospective/`, or
+  `nfl/normalize/`. No merge, no model/selector/public-pick promotion.
+  Draft PR opened per the workstream's own instruction; Jacob/orchestrating
+  session to independently review the diff before treating this finding as
+  certified.
+
 Alligator

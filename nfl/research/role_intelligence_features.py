@@ -281,6 +281,16 @@ def _top_usage_player_per_team_week(
     target week itself -- otherwise an injured top player could never be
     detected as "the top player, now missing," which is exactly the event
     this function exists to find.
+
+    Tie-break: on an exact tie in a dimension's running mean between two or
+    more candidates, the candidate with the lexicographically SMALLEST
+    `player_id` (gsis_id) is chosen -- an explicit, deterministic, stable
+    total ordering. This has no statistical meaning; it exists ONLY so that
+    the same input always produces the same output regardless of process,
+    set/dict iteration order, or `PYTHONHASHSEED`. See the tie-break site
+    below for why this matters (a real event-count discrepancy this fixes).
+    A candidate with a missing/empty `player_id` is excluded from ranking
+    rather than risking an ambiguous tie-break comparison.
     """
     position_rows = [r for r in usage_rows if r["position"] == position]
     team_week_keys = sorted({(r["season"], r["week"], r["team"]) for r in position_rows})
@@ -303,13 +313,51 @@ def _top_usage_player_per_team_week(
         current_index = team_game_counter[team]
 
         # Rank using ONLY information known before this week's games.
+        #
+        # `roster_by_team[team]` is a plain `set`, so its iteration order is
+        # hash-randomized per Python process (no `PYTHONHASHSEED` is pinned
+        # anywhere in this repo). On an EXACT tie in `running_mean` -- which
+        # genuinely occurs, e.g. week 2 of a season where two candidates each
+        # have exactly one prior game with the same share -- naively calling
+        # `max(candidates, key=lambda pid: running_mean[pid])` over that set
+        # silently picks whichever tied candidate happens to come first in
+        # that process's set iteration order. This is not hypothetical: the
+        # real, unmodified production build was run 12 times from
+        # byte-identical frozen 2012-2025 nflverse source bytes and produced
+        # 668 events in 5 runs and 667 in 7, with the flipping event isolated
+        # to WR_ABSENCE / season 2012 / week 2 / team GB / removed_player_id
+        # 00-0024267 -- an exact `running_mean` tie broken only by set
+        # iteration order (see PR #150's audit and Issue #91 comment
+        # 5743845631). To make ranking deterministic we sort candidates by
+        # an EXPLICIT, STABLE, sortable total order instead of relying on
+        # `max()`'s first-seen tie-break over whatever order the caller
+        # happens to hand it: primary key `running_mean[pid]` descending
+        # (unchanged ranking semantics), secondary key the player's own
+        # `gsis_id` string (`player_id` in this module -- every id here
+        # already IS a gsis_id, the same stable identifier
+        # `inactive_roster_binding.py`/`coach_regime_registry.py` rely on)
+        # ascending, as a pure tie-break with no statistical meaning of its
+        # own. We deliberately do NOT use set/dict insertion order as the
+        # tie-break -- insertion order itself depends on how the caller
+        # built `roster_by_team`/`running_mean`, so it is just a different
+        # process-order dependency wearing a disguise, not a fix. A
+        # candidate with a missing/empty `player_id` cannot be given a
+        # trustworthy position in that ordering (a blank identity could
+        # collide with any other blank identity), so it is EXCLUDED from
+        # ranking entirely -- quarantined, per Jacob's instruction, rather
+        # than silently included in a comparison that could still be
+        # ambiguous.
         candidates = [
             player_id for player_id in roster_by_team[team]
             if player_id in running_mean
             and current_index - last_seen_team_game_index[(team, player_id)] <= ROSTER_RECENCY_WINDOW_TEAM_GAMES
+            and player_id  # quarantine missing/empty identity, never guess
         ]
         if candidates:
-            best_player_id = max(candidates, key=lambda pid: running_mean[pid])
+            best_player_id = min(
+                candidates,
+                key=lambda pid: (-running_mean[pid], pid),
+            )
             top_by_team_week[(season, week, team)] = best_player_id
 
         # Update roster/running-mean/last-seen AFTER ranking, using this
