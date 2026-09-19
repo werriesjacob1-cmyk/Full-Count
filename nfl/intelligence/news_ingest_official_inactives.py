@@ -29,6 +29,19 @@ concern, and this pass does not add a schedule join. `concerns_teams`
 records the two team abbreviations found in the report when both resolve;
 `concerns_game_id` stays `None`. This is a disclosed gap, not a fabricated
 identity.
+
+`claim_id` collision fix (`NFL-NEWS-BRAIN-IDENTITY-TEMPORAL-REPAIR-20260919`,
+repairing a real gap PR #151 proved): the id hash below now incorporates the
+player's `listed_position` in addition to `source_player_href`. Before this
+fix, two differently-parsed revisions of the identical report/player (e.g. a
+position correction from "OT" to "G") collided to the SAME `claim_id` with
+silently different `content_summary`/`listed_position` -- proven directly by
+`test_two_reports_disagreeing_on_position_create_two_unlinked_claims` in
+`nfl/tests/test_news_ingest_source_state_audit.py`, now updated to prove the
+fix instead. Re-ingesting the SAME unchanged report (identical position)
+still produces the SAME `claim_id` -- PR #146's own idempotency test
+(`test_deterministic_claim_ids_across_repeated_ingestion`) is unmodified and
+still passes.
 """
 from __future__ import annotations
 
@@ -40,7 +53,10 @@ from nfl.normalize import official_inactives
 from nfl.normalize.inactive_roster_binding import team_abbr
 from nfl.intelligence.news_claim_ledger import (
     LEDGER_SCHEMA_VERSION,
+    current_claims,
+    detect_dropped_availability_contradictions,
     make_claim_id,
+    merge_claims_by_id,
     validate_claim,
 )
 
@@ -84,7 +100,11 @@ def claims_from_parsed_report(
         for player in block.get("players") or []:
             href = str(player.get("source_player_href") or "")
             claim_id = make_claim_id(
-                source_id, source_url, "AVAILABILITY", href or player.get("player_name")
+                source_id,
+                source_url,
+                "AVAILABILITY",
+                href or player.get("player_name"),
+                player.get("listed_position"),
             )
             note = player.get("note")
             summary = (
@@ -140,10 +160,22 @@ def ingest_capture(records: Sequence[Fetched]) -> dict[str, Any]:
     are eligible. A report whose bytes could not be parsed as an inactive
     article is recorded as a disclosed parse failure, never silently
     dropped and never treated as "nobody inactive."
+
+    Fetch-failure signaling fix (`NFL-NEWS-BRAIN-IDENTITY-TEMPORAL-REPAIR-
+    20260919`, repairing a real gap PR #151 proved): a record whose outcome
+    is anything other than `CHECKED_AND_FOUND` (e.g. `SOURCE_FAILED`,
+    `NOT_CHECKED`, `UNAVAILABLE_BY_POLICY`, ...) is now recorded in
+    `fetch_failures`, distinct from `parse_failures` (which is reserved for
+    bytes that WERE fetched but could not be parsed as an inactive report).
+    Before this fix, a real fetch failure was silently invisible: it only
+    showed up as a gap between `reports_seen` and `reports_parsed`, with no
+    field anywhere recording why -- indistinguishable from "the source had
+    nothing to report."
     """
     claims: list[dict[str, Any]] = []
     reports_parsed = 0
     parse_failures: list[dict[str, str]] = []
+    fetch_failures: list[dict[str, str]] = []
     teams_seen: set[str] = set()
     unresolved_team_players = 0
 
@@ -151,6 +183,13 @@ def ingest_capture(records: Sequence[Fetched]) -> dict[str, Any]:
         if not record.artifact.startswith("inactive_report_"):
             continue
         if record.outcome != CHECKED_AND_FOUND or not record.body:
+            fetch_failures.append({
+                "url": record.url,
+                "artifact": record.artifact,
+                "outcome": record.outcome,
+                "reason": record.failure_reason
+                or f"non-CHECKED_AND_FOUND outcome with no usable body: {record.outcome}",
+            })
             continue
         try:
             parsed = official_inactives.parse_report(record.body)
@@ -179,7 +218,61 @@ def ingest_capture(records: Sequence[Fetched]) -> dict[str, Any]:
         ),
         "reports_parsed": reports_parsed,
         "parse_failures": parse_failures,
+        "fetch_failures": fetch_failures,
         "claim_count": len(claims),
         "teams_with_at_least_one_claim": sorted(teams_seen),
         "unresolved_team_player_count": unresolved_team_players,
+    }
+
+
+def ingest_and_merge(
+    records: Sequence[Fetched],
+    existing_claims: Sequence[Mapping[str, Any]] = (),
+) -> dict[str, Any]:
+    """Real, tested wiring for fix #2 (ledger merge/correction wiring): run
+    Tier-A ingestion, keyed-merge the freshly ingested claims into an
+    existing claim population (a second capture run's claims against the
+    first's persisted set, or an empty ledger on the very first run), and
+    return the resulting current (non-superseded) view.
+
+    This is the actual code path proving two capture runs' claims merge
+    without duplication and that a correction removes its target from the
+    current view -- not merely a claim that `merge_claims_by_id`/
+    `current_claims` exist somewhere unwired. Callers own persisting
+    `result["merge"]["claims"]` as the next run's `existing_claims`.
+    """
+    capture_result = ingest_capture(records)
+    merge_result = merge_claims_by_id(existing_claims, capture_result["claims"])
+    current_result = current_claims(merge_result["claims"])
+    return {
+        "capture": capture_result,
+        "merge": merge_result,
+        "current": current_result,
+    }
+
+
+def detect_revision_contradictions(
+    previous_records: Sequence[Fetched],
+    current_records: Sequence[Fetched],
+    *,
+    noted_at: str,
+) -> dict[str, Any]:
+    """Real wiring for fix #4 (contradiction detection): ingest two
+    successive captures -- e.g. two observations of the same evolving
+    official inactive report -- and detect any `AVAILABILITY` claim whose
+    player silently disappears between them.
+
+    Narrowly scoped to exactly the case PR #151 demonstrated unfixed; see
+    `nfl.intelligence.news_claim_ledger.detect_dropped_availability_contradictions`
+    for the detection logic and its scope limits.
+    """
+    previous_result = ingest_capture(previous_records)
+    current_result = ingest_capture(current_records)
+    contradiction_result = detect_dropped_availability_contradictions(
+        previous_result["claims"], current_result["claims"], noted_at=noted_at,
+    )
+    return {
+        "previous": previous_result,
+        "current": current_result,
+        "contradictions": contradiction_result,
     }
