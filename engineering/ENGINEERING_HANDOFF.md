@@ -2659,3 +2659,106 @@ Alligator
   this one on the same population.
 
 Alligator
+
+## 2026-09-19 — NFL role-intelligence historical substrate (WR/RB, baselines only)
+
+- Workstream `NFL-GENIUS-ROLE-INTELLIGENCE-SUBSTRATE-20260919`, branch
+  `claude/nfl-role-intelligence-substrate-20260919` off `origin/main`
+  (base `f95901a066`), built by a delegated subagent per Jacob's direct
+  instruction; not pushed, no PR opened, not merged -- report-back-only.
+  Implements `engineering/NFL_ROLE_CHANGE_HISTORICAL_DATASET_CONTRACT_2026-09-18.md`
+  (reference-only draft PR #136, not merged/depended on) for WR and RB only,
+  baselines only -- no `HIERARCHICAL_ROLE_MODEL`, no model/selector/pick
+  wiring. Runs alongside a separate, parallel `coach_regime_registry.py`
+  workstream on another branch; that file was not created or edited here,
+  only referenced as a documented future input.
+- New files: `nfl/research/role_intelligence_source_digests.py`,
+  `nfl/research/role_intelligence_data_prep.py`,
+  `nfl/research/role_intelligence_features.py`,
+  `nfl/research/role_intelligence_baselines.py`,
+  `nfl/tests/test_role_intelligence_data_prep.py`,
+  `nfl/tests/test_role_intelligence_features.py`,
+  `nfl/tests/test_role_intelligence_baselines.py`. No existing file touched.
+- Real sources, digest-verified: `stats_player_week_<season>.csv` (reuses
+  `nflverse_history.player_stats_url`), `injuries_<season>.csv` (reuses
+  `injury_availability_features`'s URL/vocabulary), `snap_counts_<season>.csv`
+  and `play_by_play_<season>.csv.gz` (reuse `game_market_c2_source_digests`'
+  existing pins, not re-pinned), plus two newly-pinned sources verified live
+  on 2026-09-19: `players.csv` (id crosswalk, 7,259,734 bytes) and
+  `depth_charts_<season>.csv` 2012-2024 (13 files, ~3MB each, digests in
+  `role_intelligence_source_digests.py`). Real, disclosed finding: nflverse's
+  depth-chart schema breaks completely at 2025 (ESPN daily-snapshot format,
+  52,917,870 bytes, no `season`/`week`/`depth_team` columns) -- 2025 depth
+  chart is excluded, not coerced.
+- Build window 2012-2025 (14 seasons) chosen so every role-state row has one
+  consistent attempted-dimension set; `target_share`/`carry_share` alone
+  could extend to 1999 on `stats_player_week`, documented as a real,
+  not-yet-built extension. `route_share` has no ingested source this task
+  (FTN/participation, out of scope) and is `UNKNOWN_NO_SOURCE_INGESTED` on
+  every row, never fabricated.
+- Primary grain built: 53,110 WR/RB player-game usage records ->
+  424,880 `target_game x team x player x role_dimension` role-state rows
+  (8 dimensions x 53,110 games). Coverage by dimension (of 53,110 possible
+  rows): target_share/carry_share 100%; third_down_snap_share 96.2%;
+  red_zone_opportunity_share 94.2%; two_minute_snap_share 92.8%;
+  offense_snap_share 89.9% (0% in 2012 -- nflverse's own `snap_counts` 2012
+  asset is a real empty release, ~88-98% 2013-2019, ~99-100% 2020+);
+  goal_line_carry_share 60.5%; route_share 0%.
+- Point-in-time safety: `build_role_state_rows` appends each game to a
+  player's history only AFTER emitting that game's rows (same invariant as
+  `nflverse_history.build_prior_only_rows`). Mandatory leakage test
+  (`test_role_intelligence_features.RoleStateRowLeakageTests`) mutates a
+  row's own target-game usage count post-hoc and re-derives the same week's
+  features from the mutated history, asserting the `features` block is
+  byte-identical while the `target` block correctly changed -- a direct
+  functional leakage test, not a schema check. Trigger events are
+  constructed only from the pregame weekly injury report (`OUT`/`DOUBTFUL`),
+  never target-game usage (`target_game_usage_used_to_construct_event`
+  recorded `False` on every event; a dedicated test asserts a real
+  target-game usage drop with no injury designation produces zero events).
+- Two real bugs found and fixed during this build's own end-to-end run
+  against real data (not merely unit-test-clean): (1) the initial top-usage
+  ranking only considered players who had a usage row in the target week
+  itself, so an injured player who missed the game entirely (the exact case
+  the trigger exists to catch) could never be flagged -- 14 seasons of real
+  data produced 1 total event before the fix, 667 after (323 WR, 344 RB);
+  (2) baseline predictors looked up the removed player's "prior share" on a
+  role-state row at the event's own week, which a genuinely absent player
+  never has -- this silently collapsed 3 of 4 baselines to
+  `NO_ADJUSTMENT`'s predictions. Fixed by ranking/looking up against full
+  player history (`build_player_dimension_history`) rather than a single
+  week's row; both fixes have regression tests.
+- Baseline comparison (2012-2025, real data, MAE on share scale 0-1):
+  target_share (n=1348, WR-absence only) -- NO_ADJUSTMENT 0.0597,
+  PROPORTIONAL_TEAMMATE_REDISTRIBUTION 0.0648, DEPTH_CHART_NEXT_MAN 0.0793,
+  RECENT_USAGE_NEXT_MAN 0.0799. carry_share (n=860, RB-absence only) --
+  NO_ADJUSTMENT 0.1796, PROPORTIONAL 0.1689, DEPTH_CHART_NEXT_MAN 0.2060,
+  RECENT_USAGE_NEXT_MAN 0.1901. Real, somewhat counterintuitive finding:
+  `NO_ADJUSTMENT` has the lowest MAE of all four baselines on target_share
+  and is competitive-to-best on every other dimension, even though it
+  structurally leaves most of the removed player's opportunity budget
+  unallocated (mass-balance mean residual 0.21 on target_share, 0.53 on
+  carry_share, vs. ~0.06-0.21 for the other three) -- concentrating the
+  removed share onto one or a few "next man up" candidates measurably
+  overshoots real redistribution more often than it helps. Reported as a
+  real finding, not smoothed over. mae_by_era (2012-2018 vs 2019-2025) and
+  mae_by_season_half are close throughout (no dramatic era collapse found
+  in the baselines-only scope).
+- 41 new tests (17 data-prep, 17 features including the leakage suite, 7
+  baselines) pass; full existing `nfl/tests` suite (541 tests total on this
+  branch) passes unchanged.
+- Acceptance-checklist items NOT yet met, disclosed rather than claimed:
+  no formal change-detection precision/recall/lead-time metric (needs the
+  full trigger/replacement machinery this baselines-only task doesn't build);
+  no prospective-capture schema; `route_share` and cross-position
+  candidates (contract mentions considering candidates outside the removed
+  player's own position) not built; coach-regime/QB-tenure/playcaller
+  features are explicit `UNKNOWN_*` placeholders pending the sibling
+  coach-regime-registry workstream and a `qb_continuity_features.py` join,
+  neither built here.
+- No model/selector/public-pick promotion, no production change, no
+  prospective/shadow capture. Merge requested: NO -- report-back-only per
+  explicit instruction; Jacob/orchestrating session to independently verify
+  and decide on push/PR.
+
+Alligator
