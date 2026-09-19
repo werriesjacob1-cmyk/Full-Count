@@ -2681,16 +2681,87 @@ Alligator
 - Point-in-time safety and fail-closed accounting confirmed on real data;
   deterministic canonical-JSON SHA-256 sealing confirmed.
 - 7 new shadow-board unit tests plus the 3 other bridge-gate test files
-  pass; full existing `nfl/tests` suite (507 tests) and full root suite
-  pass unchanged on the reconciled tree.
-- **Merged as PR #135**, merge SHA `0f7cbab7b75b17873b23a1d495c3d49e1628aefe`,
-  per Jacob's explicit authorization; a real production-branch dry run
-  afterward (workflow run `35446920888`) confirmed 14/14
-  discovered/accounted, 28 SHADOW_ONLY, 0 NO_PLAY on the merged main.
-  `NFL Live Game-Market Shadow Board` workflow confirmed `state: active`
-  with 7 Sunday-UTC kickoff-wave cron triggers.
-- No model/selector/public-pick promotion. B0 remains the sole accepted
-  control; C2/C3 not referenced.
+  the workflow itself runs (`test_game_market_snapshot.py`,
+  `test_game_market_b0.py`, `test_scoring_prior_features.py`) all pass;
+  full existing `nfl/tests` suite (507 tests) and full root suite
+  (excluding `test_browser_e2e.py`) pass unchanged on the reconciled tree.
+- Sunday operational readiness: `.github/workflows/nfl-live-game-market-
+  shadow.yml` schedules 7 unattended kickoff-wave runs across Sunday UTC
+  (15:40, 16:50, 19:05, 19:55, 20:15, 23:00, and 00:10 Monday), gates on
+  the same 4 unit-test files, asserts the full-slate accounting invariant
+  as its own CI step, and uploads a 30-day evidence artifact on every run
+  (`if: always()`) -- no manual supervision required once merged.
+- No model/selector/public-pick promotion. B0
+  (`GAME_MARKET_B0_PRIOR_SCORING_BLEND`) remains the sole accepted control;
+  the module hard-rejects any other `baseline_name` (tested). C2/C3 are not
+  referenced anywhere in this bridge.
+- No repair was needed -- the branch's own design and code were already
+  correct; reconciliation was a clean merge plus independent live-source
+  re-verification, not a redesign.
+- Merge readiness: CI green on the reconciled head, clean against current
+  `main`. **Merged as PR #135**, merge SHA
+  `0f7cbab7b75b17873b23a1d495c3d49e1628aefe`, per Jacob's explicit
+  authorization; a real production-branch dry run afterward (workflow
+  run `35446920888`) confirmed 14/14 discovered/accounted, 28 SHADOW_ONLY,
+  0 NO_PLAY on the merged main.
+
+Alligator
+
+## 2026-09-19 — NFL Genius Phase 1a: coach/coordinator/playcaller regime registry substrate (HC only, real coverage)
+
+- Workstream `NFL-GENIUS-COACH-REGIME-SUBSTRATE-20260919` (Issue #91 claim,
+  comment `5738682619`), branch `claude/nfl-coach-regime-substrate-20260919`.
+  Substrate only -- not wired into any model, selector, or public pick.
+  Built per PR #136's (reference-only draft, not merged) regime-registry
+  spec and atomic-backlog item P2.1.
+- `nfl/research/coach_regime_registry.py`: `RegimeInterval` data model,
+  ingestion from `nflverse/nfldata` `data/games.csv`, a deterministic
+  `lookup_regime(team, role, target_date | season+week)` point-in-time
+  engine, coverage reporting, offline CLI. Fail-closed semantics: zero
+  covering intervals -> `UNKNOWN/NO_COVERAGE`; more than one distinct
+  covering interval (a real source conflict) -> `UNKNOWN/
+  AMBIGUOUS_OVERLAPPING_INTERVALS` (a genuine multi-person shared regime is
+  stored as one interval and resolves normally, not treated as ambiguity);
+  a playcaller lookup with no direct evidence falls back to the concurrent
+  OC/DC with confidence downgraded to `ASSUMED`, never silently presented
+  as `CONFIRMED`. The lookup never reads wall-clock time and never
+  extrapolates the last known regime forward past its evidence.
+- Real source used for HC: `nflverse/nfldata` `data/games.csv` at commit
+  `8ed09b2fe3ea42332b2249a995737e13dd931ff3` -- the exact same commit this
+  repo already pins in `game_market_b0_research.PINNED_SCHEDULE_SOURCE`;
+  independently re-fetched and confirmed byte count (2,177,838) and
+  SHA-256 (`26332ae5...b96d188`) match the existing pin exactly (verified
+  by me, not only taken on the subagent's report). Real coverage: 1999-2026
+  REG season, 32 current franchises (35 team codes counting STL/LA,
+  SD/LAC, OAK/LV relocations), 255 dated intervals, all `CONFIRMED`.
+  Correctly attributes the real 2021 Las Vegas Raiders Jon Gruden -> Rich
+  Bisaccia mid-season change to the exact right week (independently
+  reproduced this specific test).
+- OC/DC/offensive-playcaller/defensive-playcaller: architecture and schema
+  fully support these roles (proven via synthetic regime-change/
+  shared-regime/ambiguity/playcaller-default fixtures), but zero real
+  intervals were ingested -- every real lookup against these roles
+  correctly and honestly returns `UNKNOWN`. Investigated and rejected as
+  unsafe-to-ingest for this pass: nflreadr has no coaches/staff dataset;
+  Pro-Football-Reference's staff pages returned an HTTP 403 Cloudflare bot
+  challenge (the site itself, not a proxy policy); a web.archive.org
+  mirror was blocked by this environment's own egress policy; Wikipedia
+  per-team-season articles carry real OC/DC facts but in materially
+  inconsistent formats across sampled seasons, judged too
+  misattribution-prone to parse safely in this pass. Documented as a real,
+  disclosed coverage gap -- not fabricated into data.
+- 45 new tests (`nfl/tests/test_coach_regime_registry.py`) pass, including
+  a dedicated leakage-safety suite (a future regime change never alters an
+  earlier target-date lookup; lookup never reads wall-clock time; a target
+  date past the last known evidence returns `UNKNOWN`, not an assumed
+  continuation) and a real-ingested-registry suite (every HC target date
+  in the sourced population resolves to exactly one regime; the real 2021
+  Raiders case; OC/playcaller gaps are asserted as disclosed gaps, not
+  silently passing). Full existing `nfl/tests` suite (545 tests) and full
+  root suite pass unchanged -- verified independently by me after
+  cherry-picking onto current `main`, not only taken on the delegated
+  subagent's own report.
+- No model/selector/public-pick promotion, no production change.
 
 Alligator
 
