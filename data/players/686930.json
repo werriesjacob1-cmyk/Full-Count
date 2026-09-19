@@ -145,8 +145,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 20.9,
-          "notable_signals": 0,
+          "score": 21.9,
+          "notable_signals": 1,
           "matchup": "Athletics @ Cleveland Guardians",
           "game_pk": 824383,
           "team": "Athletics",
@@ -156,7 +156,10 @@
           "signals": {
             "opp_team_k_pct": 40.0,
             "same_hand_ratio": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 75.0742,
+            "ump_k_pct": -0.132,
+            "ump_bb_pct": -0.252
           },
           "hit_probability": 0.6028,
           "raw_hit_probability": 0.6442,

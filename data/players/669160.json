@@ -453,7 +453,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 42.7,
+          "score": 43.5,
           "notable_signals": 0,
           "matchup": "Milwaukee Brewers @ Baltimore Orioles",
           "game_pk": 824790,
@@ -463,9 +463,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 79.0,
-            "same_hand_ratio": 61.1111,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 86.4706,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 52.5345,
+            "ump_k_pct": 0.36,
+            "ump_bb_pct": 0.264
           },
           "hit_probability": 0.3674,
           "raw_hit_probability": 0.3674,
@@ -481,7 +484,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 45.2,
+          "score": 46.3,
           "notable_signals": 0,
           "matchup": "Milwaukee Brewers @ Baltimore Orioles",
           "game_pk": 824790,
@@ -490,18 +493,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6641,
+            "outs_rate": 0.6624,
             "avg_outs_per_start": 14.82
           },
-          "hit_probability": 0.6514,
-          "raw_hit_probability": 0.6641,
-          "lift": -0.112,
+          "hit_probability": 0.6501,
+          "raw_hit_probability": 0.6624,
+          "lift": -0.1034,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ Baltimore Orioles",
+          "game_pk": 824790,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            669160,
+            700249
+          ],
+          "signals": {
+            "combined_k_edge": -0.013
+          },
+          "hit_probability": 0.6445,
+          "raw_hit_probability": null,
+          "lift": -0.013,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

@@ -479,8 +479,8 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 44.5,
-          "notable_signals": 0,
+          "score": 39.1,
+          "notable_signals": 1,
           "matchup": "Boston Red Sox @ Tampa Bay Rays",
           "game_pk": 822923,
           "team": "Boston Red Sox",
@@ -489,9 +489,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 14.0,
-            "same_hand_ratio": 12.5,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 34.1176,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 70.6968,
+            "ump_k_pct": -0.192,
+            "ump_bb_pct": -0.096
           },
           "hit_probability": 0.5283,
           "raw_hit_probability": 0.5283,
@@ -507,7 +510,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 20.0,
+          "score": 21.3,
           "notable_signals": 0,
           "matchup": "Boston Red Sox @ Tampa Bay Rays",
           "game_pk": 822923,
@@ -516,18 +519,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.36,
+            "outs_rate": 0.3577,
             "avg_outs_per_start": 15.88
           },
-          "hit_probability": 0.36,
-          "raw_hit_probability": 0.36,
-          "lift": -0.0598,
+          "hit_probability": 0.3577,
+          "raw_hit_probability": 0.3577,
+          "lift": -0.0499,
           "reliability": "A",
           "sample_n": 26,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.8,
+          "notable_signals": 1,
+          "matchup": "Boston Red Sox @ Tampa Bay Rays",
+          "game_pk": 822923,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            624133,
+            693855
+          ],
+          "signals": {
+            "combined_k_edge": 0.2494
+          },
+          "hit_probability": 0.6066,
+          "raw_hit_probability": null,
+          "lift": 0.2494,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
           }
         }
       ]

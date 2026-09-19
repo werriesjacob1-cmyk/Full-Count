@@ -108,8 +108,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 35.3,
-          "notable_signals": 0,
+          "score": 30.8,
+          "notable_signals": 1,
           "matchup": "San Francisco Giants @ Los Angeles Dodgers",
           "game_pk": 823898,
           "team": "San Francisco Giants",
@@ -118,9 +118,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 34.0,
-            "same_hand_ratio": 12.5,
+            "same_hand_ratio": 33.3333,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 75.8479,
+            "ump_k_pct": 0.156,
+            "ump_bb_pct": 0.048
           },
           "hit_probability": 0.5903,
           "raw_hit_probability": 0.5824,
@@ -131,6 +134,34 @@
             "stat": "strikeouts",
             "value": 3.5,
             "needs": 4
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823898,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            702885,
+            607192
+          ],
+          "signals": {
+            "combined_k_edge": 0.067
+          },
+          "hit_probability": 0.6571,
+          "raw_hit_probability": null,
+          "lift": 0.067,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

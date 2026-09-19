@@ -467,8 +467,8 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 37.6,
-          "notable_signals": 0,
+          "score": 39.3,
+          "notable_signals": 1,
           "matchup": "Boston Red Sox @ Tampa Bay Rays",
           "game_pk": 822923,
           "team": "Tampa Bay Rays",
@@ -477,9 +477,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 44.0,
-            "same_hand_ratio": 21.4286,
+            "same_hand_ratio": 12.5,
             "l14_k_pct": 92.9412,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 70.6968,
+            "ump_k_pct": -0.192,
+            "ump_bb_pct": -0.096
           },
           "hit_probability": 0.5897,
           "raw_hit_probability": 0.5797,
@@ -495,7 +498,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 40.3,
+          "score": 41.2,
           "notable_signals": 0,
           "matchup": "Boston Red Sox @ Tampa Bay Rays",
           "game_pk": 822923,
@@ -504,12 +507,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5142,
+            "outs_rate": 0.5104,
             "avg_outs_per_start": 14.36
           },
-          "hit_probability": 0.5263,
-          "raw_hit_probability": 0.5142,
-          "lift": -0.021,
+          "hit_probability": 0.523,
+          "raw_hit_probability": 0.5104,
+          "lift": -0.0118,
           "reliability": "B",
           "sample_n": 14,
           "projection": {
