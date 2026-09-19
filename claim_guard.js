@@ -110,16 +110,30 @@
     if (handling) return;
     handling = true;
 
-    const pending = readJson(PENDING_KEY);
+    // On SPA navigation, content.js may have consumed sessionStorage first.
+    // Take the in-memory handoff instead; NEVER greet a lead without one.
+    const ac = window.__carnowAutoClaimer;
+    const pending = readJson(PENDING_KEY) ||
+      (ac && typeof ac.greetingHandoff === 'function' ? ac.greetingHandoff() : null);
     if (pending && pending.signature) {
       setRetry(pending.signature, 0);
       reportVerified(pending, true);
     }
 
-    // If the main script already consumed the handoff on an SPA URL change,
-    // its own verifier is running. We still return quickly so the Conversations
-    // watcher is blind for only a few hundred milliseconds instead of seconds.
-    setTimeout(() => hardReturn(pending), SUCCESS_RETURN_MS);
+    void (async () => {
+      // Greeting is opt-in and bounded. No generic Details screen is enough:
+      // auto_greeting.js independently verifies "Claimed <my name>".
+      if (pending && pending.signature && window.__carnowGreeting) {
+        try {
+          await window.__carnowGreeting.attempt(pending);
+        } catch (err) {
+          console.warn('[CarNow AC] greeting skipped', err);
+        }
+      }
+      // Return to watching regardless of the messaging outcome; do not let
+      // a missing composer or disabled feature block the next lead.
+      if (handling) setTimeout(() => hardReturn(pending), SUCCESS_RETURN_MS);
+    })();
   }
 
   function handleStuckAttempt() {
