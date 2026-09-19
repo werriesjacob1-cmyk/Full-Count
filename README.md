@@ -197,24 +197,29 @@ necessary — a wrong claim you can't hand back is the one failure with no undo.
 - No `tabs` permission needed — the `*.carnow.com` host permission covers
   `tabs.query({url})` and `tabs.sendMessage`.
 
-## 1.6.1 — optional first chat greeting (staged)
+## 1.6.2 — optional first chat greeting (exact inspected controls)
 
 A new **Send "hi there" in CarNow chat** switch is **OFF by default**. It
 only runs following this extension's fresh claim handoff, after the customer
 Details page shows **Claimed** beside the configured salesperson name. It does
 not run on old, manually opened, dry-run or unconfirmed leads.
 
-The extension looks for one identifiable customer-chat composer and one Send
-control, and records an attempt before clicking Send. If the chat UI is
-unknown, ambiguous, inaccessible, or contains an existing draft, it does
-**not** send. Its result `send-clicked-unverified` means a UI click was
-dispatched, **not** that CarNow confirmed delivery.
+The extension now recognizes the **actual inspected** CarNow chat field
+`textarea#chat_message_body.chat-bottom-bar__input__field` with
+`ng-model="chatData.message.body"`, and the icon-only
+`button.chat-bottom-bar__input__send[ng-click="postMessage()"]`. It records
+an attempt before clicking Send. If the UI is unknown, ambiguous, inaccessible,
+or contains an existing draft, it does **not** send. If its ledger cannot save
+an attempted message, it does **not** send. Its result
+`send-clicked-unverified` means one UI click was dispatched, **not** that
+CarNow confirmed delivery.
 
-**Do not enable unattended greeting until the actual expanded CarNow customer
-chat composer and Send control have been inspected and a supervised test
-confirms the message appears exactly once in the intended customer's chat.**
-The local mock-DOM contract tests (`node test/greeting.test.mjs`) are no
-substitute for live UI verification.
+The expanded customer's textarea and icon Send control have been inspected,
+but the *collapsed* Chat-bar HTML and successful end-to-end message delivery
+have not. Keep this switch OFF until a **supervised new claim** proves the
+panel opens and the message appears exactly once in the intended customer's
+conversation. The local mock-DOM tests (`node test/greeting.test.mjs`)
+cannot establish end-to-end CarNow delivery.
 
 When greeting is ON, the claim guard waits a bounded period (up to 4.1s)
 for the message attempt before returning to the list. A fast back-to-back
