@@ -4213,4 +4213,41 @@ Alligator
   (base `main`), not merged -- Jacob's separate explicit authorization
   required, and this audit does not touch or merge PR #147 itself.
 
+## 2026-09-19 -- #147/#150 disposition resolved: role-redistribution research
+## final candidate (Priority 4, "SUPERCLAUDE — NEXT EXECUTION PRIORITIES")
+
+Per Jacob's explicit instruction to resolve #147/#150's disposition without
+discarding unique scientific evidence: consolidated both into ONE final
+candidate, branch `claude/nfl-role-redistribution-research-final-candidate-
+20260920`, a clean 2-commit cherry-pick of PR #150's own branch (which
+already contains PR #147's commit plus its own audit commit) onto current
+`main` (post-#158) -- **zero conflicts**. New files only:
+`nfl/research/role_regime_redistribution.py`,
+`nfl/research/role_regime_redistribution_audit.py`, and their test files.
+Does not edit `role_intelligence_features.py`, `role_intelligence_
+baselines.py`, or `coach_regime_registry.py` -- all already-merged and
+untouched.
+
+Because this branch is now built ON TOP of #158's already-merged fixed
+builder, the challenger/audit modules here automatically operate on the
+CORRECTED 668-event population -- no stale 667-event assumption survives
+anywhere in this candidate. Full `nfl/tests` suite: **892/892 passing**,
+run once on this exact combined tree.
+
+**Scientific conclusion, restated precisely, not softened:** the
+`HIERARCHICAL_COMMITTEE_PROBABILITY_V1` challenger does **not** demonstrate
+statistically significant predictive superiority over the live B0 control
+on either dimension. `target_share` loses to `NO_ADJUSTMENT`; `carry_share`
+numerically beats all 4 baselines but its bootstrap CI heavily overlaps its
+closest competitor's -- exploratory only. No HC regime reaches the
+predeclared minimum N. This candidate is offered as reviewed RESEARCH
+INFRASTRUCTURE (methodology + negative/inconclusive finding, preserved
+rather than discarded), not as a predictor ready for any further step.
+
+**Status: HOLD pending independent review** (the lead assembled this
+consolidation and cannot self-certify per the pre-merge doctrine). Not
+merged. #147 and #150 themselves left open pending that review's outcome --
+to be closed as superseded once review completes, same pattern as the
+other four families.
+
 Alligator
