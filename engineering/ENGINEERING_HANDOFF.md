@@ -3061,3 +3061,90 @@ Alligator
   or `receptions_outcome_distribution.py` themselves.
 
 Alligator
+
+## 2026-09-19 — PMF normalization and zero_probability/ladder coherence repair
+
+- Workstream `NFL-OUTCOME-DISTRIBUTION-REPAIR-20260919` (Agent B), per
+  Jacob's "SUPERCLAUDE — NFL GENIUS SCIENTIFIC RECOVERY & PRE-MERGE
+  CERTIFICATION" mission (Issue #91 comment `5745180462`) and the permanent
+  pre-merge certification doctrine (comment `5743926733`). Applies the two
+  real, confirmed defects PR #149's audit found but did not fix in draft
+  PR #148's `nfl/research/receptions_outcome_distribution.py` and
+  `nfl/research/receptions_alt_ladder.py`.
+- Branch `claude/nfl-receptions-pmf-ladder-coherence-repair-20260919`, built
+  by cherry-picking PR #148's two commits and PR #149's audit commit
+  cleanly onto current `main` (verified: the two research files are
+  byte-identical to PR #148's branch head before any edit).
+- **PMF fix**: `EmpiricalResidualPool.pmf` previously applied a Laplace
+  floor of `1/(n+2)` independently to every queried k, which did not sum to
+  1 across the outcome range (confirmed ~1.36 over k=0..20 on PR #149's own
+  adversarial pool). Replaced with a genuinely normalized distribution over
+  a documented, finite support `k = 0..MAX_EMPIRICAL_SUPPORT` (40, a wide
+  documented margin over any real single-game receptions total): interior
+  bins keep the original +/-0.5 window; k=0 folds ALL below-0.5 implied
+  mass (the same "fold, don't discard" choice `normal_discrete_pmf` already
+  makes, since receptions cannot be negative); k=max_support folds the
+  symmetric upper tail. Additive (+1) smoothing is then applied ONCE across
+  all `max_support + 1` bins and renormalized by `n + max_support + 1`, so
+  the sum is exactly 1 by construction, not merely usually close.
+- **Ladder coherence fix**: `ladder_probabilities`'s `zero_probability` is
+  now `_rung_probabilities(pool, projection=projection,
+  threshold=0.5)["under"]` instead of `pool.pmf(0, projection)` -- bit-for-
+  bit identical to the threshold-0.5 rung's `under` by construction, per
+  PR #149's recommended (previously undescribed-as-applied) patch. The
+  module docstring's "disclosed design tension" paragraph, which documented
+  the gap as an intentional, accepted limitation, was rewritten to describe
+  the fix instead -- no stale documentation left contradicting the code.
+- **Real, disclosed effect on PR #148's headline numbers** (independently
+  re-ran the exact 27-season held-out comparison against the same
+  digest-verified pinned corpus, before and after the fix, not assumed
+  unaffected): the top-line "NEGATIVE_BINOMIAL_POOLED has the best held-out
+  log-likelihood" finding is UNCHANGED (-1.9186, identical to both digits
+  reported originally). NORMAL/NB candidates' numbers are byte-identical
+  (they never call `EmpiricalResidualPool.pmf`). EMPIRICAL_RESIDUAL_POOLED's
+  own three numbers changed materially: mean held-out log-likelihood
+  improved -2.0287 -> -1.9764; mean predicted P(zero) rose 0.1003 -> 0.1776
+  (no longer the closest of the five candidates to the actual 9.5% held-out
+  zero rate -- NORMAL_BUCKETED's 0.1394 now is); held-out Brier on the
+  "over 0.5" line rose 0.0828 -> 0.0983 (no longer the best -- NORMAL_
+  BUCKETED's 0.0851 now is, followed by NEGATIVE_BINOMIAL_POOLED's 0.0962).
+  PR #148's original claim that the empirical candidate was "competitive to
+  best on the calibration metrics that most directly matter" no longer
+  holds post-fix: the corrected pmf folds previously-silently-discarded
+  below-zero implied mass into k=0, which moves its zero-mass prediction
+  further from, not closer to, the real observed rate. Documented in the
+  module's own docstring (both the original PR #148 numbers and the
+  corrected ones, side by side) rather than silently overwritten.
+- **Tests**: 4 of PR #148's/#149's original 57 `nfl/tests/
+  test_receptions_outcome_distribution.py` /
+  `test_receptions_alt_ladder_coherence_audit.py` assertions specifically
+  encoded the OLD, broken numeric behavior (`test_pmf_is_laplace_floored_
+  never_exactly_zero`; `test_hand_computable_heterogeneous_pool_shows_a_
+  material_gap`; `test_homogeneous_pool_keeps_the_two_estimators_close`;
+  `test_recommended_fix_would_make_them_identical_by_construction`; plus
+  `test_empirical_residual_pool_pmf_does_not_sum_to_one_across_outcomes`)
+  and were updated in place to assert the corrected behavior, with the
+  original hand-computed numbers preserved in comments as historical
+  negative-result evidence. No other original test was touched. Added 2
+  new tests to the existing outcome-distribution file and a new file
+  `nfl/tests/test_receptions_pmf_ladder_coherence_repair.py` (30 tests)
+  covering: normalization across >=3 pool shapes including PR #149's exact
+  20-value adversarial pool; nonnegativity at every k; `zero_probability`/
+  `under` bit-for-bit identity (including on random pools and when 0.5 is
+  not itself a supplied threshold); rung sum-to-one at integer and half-
+  integer lines; monotonicity re-verification; sparse-pool (n=1, n=2)
+  stability; small-sample smoothing-floor behavior; DNP/VOID out-of-scope
+  confirmation (`alternate_line_evaluation.SETTLEMENT_OUTCOMES` unchanged,
+  no DNP/VOID field introduced); and determinism under input reordering and
+  repeated execution. Full `nfl/tests` suite: 746 tests, 0 failures, 0
+  errors (single run, all 62 files, matching `nfl-tests.yml`'s own
+  per-file execution style). Root MLB suite not re-run: this change touches
+  only `nfl/research/` and `nfl/tests/`, is not imported by any MLB module,
+  and is covered by the separate `nfl-tests.yml` CI job by design (see that
+  workflow's own header) -- disclosed as a scoped exception per AGENTS.md
+  rule 20, not silently skipped.
+- No model/selector/public-pick promotion. No production/live-workflow
+  change. `.github/workflows/`, `nfl/prospective/`, `nfl/normalize/`, and
+  PR #143/#147/#150/#154's files untouched.
+
+Alligator

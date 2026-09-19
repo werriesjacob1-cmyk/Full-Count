@@ -27,9 +27,10 @@ targeted -- see `receptions_outcome_distribution.py`'s module docstring for
 the measured real zero rate (~8-10% of the real historical population,
 rising as high as ~15-25% for the lowest-opportunity tier). This module
 therefore always reports `zero_probability` as its own explicit field
-(from the real residual pool, Laplace-smoothed, never silently rounded to
-0), rather than only exposing the over/under probabilities at
-caller-supplied thresholds. A true "player did not play at all"
+(the same additively-smoothed left-tail estimator that produces the
+threshold-0.5 rung's `under` -- see the coherence-fix note below --
+never silently rounded to 0), rather than only exposing the over/under
+probabilities at caller-supplied thresholds. A true "player did not play at all"
 (inactive/DNP) case is explicitly OUT OF SCOPE here: that is a
 settlement-layer VOID, not a modeled outcome, and is already handled by
 this repo's existing settlement/grading infrastructure
@@ -42,31 +43,30 @@ specifically means "played, was a role player historically, recorded zero
 receptions in the target game" -- a genuinely bettable UNDER outcome, not a
 DNP.
 
-Disclosed design note -- `zero_probability` and a rung's `under` at a
-low threshold are DELIBERATELY not the same estimator, and real data shows
-they can disagree by a material amount: `zero_probability` uses a narrow
-window centered on the exact target outcome
-(`EmpiricalResidualPool.pmf`), while a rung's `over`/`under` use the full
-tail of the pool on either side of the threshold gap (the same convention
-`receptions_shadow.empirical_side_probabilities` already uses). Both are
-legitimate nonparametric estimators of the same real quantity, but the
-full-tail convention implicitly assumes the residual distribution's shape
-does not depend on the specific projection level of the historical rows
-that make up the pool -- and `receptions_outcome_distribution.py`
-empirically found real, confirmed heteroskedasticity that violates this
-assumption (pooled residual spread roughly doubles from the lowest to the
-highest opportunity tier). This function does not resolve that tension by
-picking a "best" pool for the caller: it operates on whatever real
-`residual_pool` is supplied, and a caller who wants a better-calibrated
-ladder for a specific player should pass a pool already restricted to that
-player's own opportunity/role bucket (see
+Coherence fix (Issue #91 workstream `NFL-OUTCOME-DISTRIBUTION-AUDIT-20260919`
+/ PR #149, applied here): an earlier version of this module computed
+`zero_probability` from `EmpiricalResidualPool.pmf(0, projection)` -- a
+narrow window centered on the exact target outcome -- while a rung's
+`under` at threshold 0.5 used the full left tail of the pool
+(`count_less_than`, the same convention
+`receptions_shadow.empirical_side_probabilities` already uses). Both
+described the same real-world quantity ("probability of zero receptions")
+but were different nonparametric estimators of it, and PR #149's audit
+found they could disagree by a material amount on a heterogeneous pool
+(confirmed: ~0.43 absolute, >100% relative, on a hand-computable pool --
+see `nfl/tests/test_receptions_alt_ladder_coherence_audit.py`). That is no
+longer possible: `zero_probability` is now defined as literally the same
+`_rung_probabilities(pool, projection=projection, threshold=0.5)["under"]`
+call that produces the threshold-0.5 rung's `under`, so the two are
+bit-for-bit identical by construction, not merely close. A caller who
+wants a better-calibrated ladder for a specific player should still pass a
+pool already restricted to that player's own opportunity/role bucket (see
 `receptions_outcome_distribution.projection_bucket`) rather than the full,
-unstratified historical population. This is a real, disclosed limitation
-inherited from the existing pooled-residual convention this codebase
-already uses, not a defect introduced here -- see
-`nfl/tests/test_receptions_alt_ladder.py` for a direct demonstration on
-real data of how much the pooled vs. bucket-restricted pool answers can
-differ for a low-opportunity projection.
+unstratified historical population -- real, confirmed heteroskedasticity
+in the pooled residual spread (see `receptions_outcome_distribution.py`'s
+module docstring) means a pooled, unstratified pool remains a real,
+disclosed limitation of the underlying convention itself, independent of
+the `zero_probability`/`under` coherence fix above.
 """
 from __future__ import annotations
 
@@ -172,7 +172,11 @@ def ladder_probabilities(
         _rung_probabilities(pool, projection=projection, threshold=threshold)
         for threshold in sorted_thresholds
     ]
-    zero_probability = pool.pmf(0, projection)
+    # Bit-for-bit the same estimator as a threshold-0.5 rung's `under` (see
+    # the module docstring's coherence-fix note) -- computed via its own
+    # direct call rather than searched for inside `rungs`, since the caller
+    # is not guaranteed to have included 0.5 in `thresholds`.
+    zero_probability = _rung_probabilities(pool, projection=projection, threshold=0.5)["under"]
 
     result = {
         "projection": float(projection),

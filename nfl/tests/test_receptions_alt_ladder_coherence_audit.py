@@ -6,7 +6,22 @@ AUDIT of already-merged-into-this-branch research code (`receptions_alt_ladder.p
 and `receptions_outcome_distribution.py`, both authored on draft PR #148's
 branch and pulled in here unmodified so the real code under audit is
 importable) -- it does not repeat PR #148's 27-season historical comparison
-and does not edit either module.
+and did not, at audit time, edit either module.
+
+REPAIR NOTE (Issue #91 workstream `NFL-OUTCOME-DISTRIBUTION-REPAIR-20260919`,
+applied after this audit): the two real defects this file confirmed --
+`EmpiricalResidualPool.pmf` not summing to 1, and `zero_probability`/`under`
+disagreeing on a heterogeneous pool -- have since been fixed directly in
+`receptions_outcome_distribution.py`/`receptions_alt_ladder.py`. The four
+tests below that specifically asserted the OLD, broken numeric behavior
+(`test_hand_computable_heterogeneous_pool_shows_a_material_gap`,
+`test_homogeneous_pool_keeps_the_two_estimators_close`,
+`test_recommended_fix_would_make_them_identical_by_construction`,
+`test_empirical_residual_pool_pmf_does_not_sum_to_one_across_outcomes`)
+were updated in place to assert the corrected behavior instead, with the
+original hand-computed numbers preserved in comments as the historical
+negative-result evidence per repository convention. Every other test in
+this file is unchanged and still independently re-verifies its own item.
 
 Scope, matching the audit's exact five verification items:
 
@@ -52,6 +67,7 @@ from pathlib import Path
 from nfl.research.receptions_alt_ladder import _rung_probabilities, ladder_probabilities
 from nfl.research.receptions_outcome_distribution import (
     EmpiricalResidualPool,
+    MAX_EMPIRICAL_SUPPORT,
     negative_binomial_pmf,
     normal_discrete_pmf,
 )
@@ -67,13 +83,18 @@ class ZeroProbabilityVsLowThresholdUnderCoherenceTests(unittest.TestCase):
     far apart are they on a pool where both sides can be hand-computed?
     """
 
-    def test_hand_computable_heterogeneous_pool_shows_a_material_gap(self):
-        # A pool that mixes two real-shaped subpopulations, exactly as the
-        # module's own docstring warns can happen: 10 "low-opportunity role
-        # player" residuals clustered near a projection of ~0.3-0.5, and 10
-        # "high-opportunity bust game" residuals from players whose OWN
-        # historical projection was much higher (~8), all pooled together
-        # (the codebase's existing pooled-residual convention).
+    def test_hand_computable_heterogeneous_pool_shows_the_prior_gap_is_now_closed(self):
+        # UPDATED (post-repair): this test originally demonstrated that
+        # `zero_probability = pool.pmf(0, projection)` (a narrow-window
+        # estimate, hand-computed as exactly 8/20 = 0.4 under the OLD
+        # per-query-floored pmf) disagreed with `under(0.5)` (a full-tail
+        # count, 19/23 ~= 0.826) by ~0.426 absolute on this same
+        # hand-computable heterogeneous pool. `ladder_probabilities` no
+        # longer computes `zero_probability` from `pool.pmf` at all -- it is
+        # now literally `_rung_probabilities(..., threshold=0.5)["under"]`,
+        # the SAME call that produces the rung's own `under` -- so the two
+        # are bit-for-bit identical by construction on this exact pool that
+        # broke before, not merely close.
         low_opportunity_residuals = [-0.5, -0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3]
         high_opportunity_bust_residuals = [-7.0, -7.0, -6.5, -6.0, -6.0, -5.5, -5.0, -4.5, -4.0, -3.5]
         pool_values = low_opportunity_residuals + high_opportunity_bust_residuals
@@ -81,25 +102,11 @@ class ZeroProbabilityVsLowThresholdUnderCoherenceTests(unittest.TestCase):
         projection = 0.3
         n = len(pool_values)
 
-        # --- Hand computation of zero_probability = pool.pmf(0, projection) ---
-        # gap = 0 - 0.3 = -0.3; window = [gap-0.5, gap+0.5) = [-0.8, 0.2).
-        # Values in [-0.8, 0.2) from the pool: -0.5, -0.5, -0.4, -0.3, -0.2,
-        # -0.1, 0.0, 0.1 (8 values; 0.2 and 0.3 are excluded, high-opportunity
-        # group is entirely <= -3.5 so none qualify). count/n = 8/20 = 0.4,
-        # which exceeds the Laplace floor 1/(n+2) = 1/22, so pmf = 0.4 exactly.
-        expected_zero_probability = 8 / 20
-        zero_probability = pool.pmf(0, projection)
-        self.assertAlmostEqual(zero_probability, expected_zero_probability, places=12)
-        self.assertAlmostEqual(zero_probability, 0.4, places=12)
-
         # --- Hand computation of ladder_probabilities(threshold=0.5)["under"] ---
         # gap = 0.5 - 0.3 = 0.2; under_n = count of ALL pool values < 0.2
-        # (a full left-tail cumulative count, not a narrow window). The 8
-        # low-opportunity values below 0.2 qualify AND all 10 high-opportunity
-        # bust residuals (-7.0 .. -3.5) also qualify, because they are all
-        # far below 0.2 too -- even though they come from an entirely
-        # different, high-projection historical population and do not
-        # actually represent "this low-opportunity player scored near zero".
+        # (a full left-tail cumulative count). The 8 low-opportunity values
+        # below 0.2 qualify AND all 10 high-opportunity bust residuals
+        # (-7.0 .. -3.5) also qualify (all far below 0.2 too).
         # under_n = 8 + 10 = 18. denominator = n + 3 = 23.
         # under = (18 + 1) / 23 = 19/23.
         expected_under = 19 / 23
@@ -108,41 +115,52 @@ class ZeroProbabilityVsLowThresholdUnderCoherenceTests(unittest.TestCase):
         self.assertEqual(rung["under_observations"], 18)
         self.assertAlmostEqual(rung["under"], expected_under, places=12)
 
-        gap = abs(rung["under"] - zero_probability)
-        # The two "same real quantity" estimators disagree by ~0.426 absolute
-        # (zero_probability=0.400 vs. under(0.5)=0.826) -- more than 100%
-        # relative to the smaller value. This is the disclosed coherence
-        # tension, quantified and confirmed real, not merely asserted as
-        # "can differ" (as PR #148's own
-        # `test_pooled_vs_bucket_restricted_pool_can_disagree_...` test
-        # already does across two DIFFERENT pools). Here it is the SAME pool,
-        # SAME projection, SAME function call's own output.
-        self.assertGreater(gap, 0.35)
-        self.assertAlmostEqual(gap, 19 / 23 - 8 / 20, places=12)
+        # The repaired coherence property: no gap at all, exact equality.
+        self.assertEqual(result["zero_probability"], rung["under"])
+        self.assertAlmostEqual(result["zero_probability"], 19 / 23, places=12)
 
-    def test_homogeneous_pool_keeps_the_two_estimators_close(self):
-        # Control case: when the pool is NOT heterogeneous (all residuals
-        # come from comparable-opportunity historical rows, as in PR #148's
-        # own test fixtures), the two estimators stay close -- confirming
-        # the gap above is a real property of pool heterogeneity, not a
-        # universal bug that fires on every input.
+        # Historical negative-result evidence, preserved rather than deleted:
+        # the OLD narrow-window `pool.pmf(0, projection)` estimator (still a
+        # real, independently-useful function post-repair, just no longer
+        # wired into `zero_probability`) is now a properly NORMALIZED
+        # estimate of a different real quantity (0/1 mass on the FULL
+        # declared 0..MAX_EMPIRICAL_SUPPORT outcome support, not a bare
+        # windowed fraction) and, by design, is no longer expected to match
+        # `under(0.5)` -- they answer different statistical questions
+        # (a single-outcome pmf vs. a three-way over/under/push rung) with
+        # different smoothing scales. This is disclosed, not hidden:
+        pmf_zero = pool.pmf(0, projection)
+        self.assertNotEqual(pmf_zero, result["zero_probability"])
+        self.assertGreater(abs(pmf_zero - result["zero_probability"]), 0.1)
+
+    def test_homogeneous_pool_zero_probability_still_matches_under_exactly(self):
+        # UPDATED (post-repair): this was originally a "control" case
+        # showing the OLD `pool.pmf`-based `zero_probability` happened to
+        # stay close to `under(0.5)` when the pool was homogeneous (unlike
+        # the heterogeneous case above). That was a coincidental property of
+        # the old per-query floor, not a designed guarantee -- with the
+        # repaired, properly-normalized `pmf` (different smoothing scale
+        # from the 3-way rung split), the two no longer stay close even on a
+        # homogeneous pool. The property that now actually holds, BY
+        # CONSTRUCTION, for every pool regardless of homogeneity is that
+        # `ladder_probabilities(...)["zero_probability"]` exactly equals
+        # that same call's `rungs[...]["under"]` at threshold 0.5 -- proven
+        # here on this homogeneous pool too, not just the heterogeneous one.
         pool = EmpiricalResidualPool([-1.0] * 30 + [0.0] * 50 + [1.0] * 20)
         projection = 1.0
-        zero_probability = pool.pmf(0, projection)
         result = ladder_probabilities(projection=projection, thresholds=[0.5], residual_pool=pool)
         under = result["rungs"][0]["under"]
-        self.assertLess(abs(under - zero_probability), 0.02)
+        self.assertEqual(result["zero_probability"], under)
 
-    def test_recommended_fix_would_make_them_identical_by_construction(self):
-        """Demonstrates (without editing `receptions_alt_ladder.py`) that
-        redefining `zero_probability` as the ladder's OWN `under` value at
-        threshold=0.5 -- i.e. `_rung_probabilities(pool, projection=p,
-        threshold=0.5)["under"]` instead of `pool.pmf(0, p)` -- makes the two
-        quantities mathematically IDENTICAL (not merely close), because they
-        would then literally be the same function call. This is the
-        recommended patch described in the audit report; it is proven here
-        to work, but deliberately NOT applied to the source file (see report
-        for why).
+    def test_recommended_fix_is_now_applied_and_verified_bit_for_bit_identical(self):
+        """UPDATED (post-repair): PR #149's recommended patch -- redefine
+        `zero_probability` as `_rung_probabilities(pool, projection=p,
+        threshold=0.5)["under"]` instead of `pool.pmf(0, p)` -- has now been
+        applied directly in `receptions_alt_ladder.ladder_probabilities`.
+        This test proves the applied fix behaves exactly as PR #149
+        predicted: bit-for-bit identical to the rung's own `under`, and
+        numerically different from the (still-standalone, still valid,
+        just no longer used for this purpose) `pool.pmf(0, p)` estimator.
         """
         pool = EmpiricalResidualPool(
             [-0.5, -0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3]
@@ -150,17 +168,17 @@ class ZeroProbabilityVsLowThresholdUnderCoherenceTests(unittest.TestCase):
         )
         projection = 0.3
 
-        def proposed_zero_probability(pool, projection):
-            return _rung_probabilities(pool, projection=projection, threshold=0.5)["under"]
-
-        fixed_zero_probability = proposed_zero_probability(pool, projection)
+        expected_zero_probability = _rung_probabilities(pool, projection=projection, threshold=0.5)["under"]
         result = ladder_probabilities(projection=projection, thresholds=[0.5], residual_pool=pool)
         under_at_half = result["rungs"][0]["under"]
-        # Bit-for-bit identical (same function, same arguments), unlike the
-        # current pmf()-based zero_probability computed above.
-        self.assertEqual(fixed_zero_probability, under_at_half)
-        current_zero_probability = pool.pmf(0, projection)
-        self.assertNotEqual(fixed_zero_probability, current_zero_probability)
+        actual_zero_probability = result["zero_probability"]
+
+        # Bit-for-bit identical (same function, same arguments) -- the
+        # applied fix, not merely a demonstration of a proposed one.
+        self.assertEqual(actual_zero_probability, under_at_half)
+        self.assertEqual(actual_zero_probability, expected_zero_probability)
+        standalone_pmf_zero = pool.pmf(0, projection)
+        self.assertNotEqual(actual_zero_probability, standalone_pmf_zero)
 
 
 class FullPmfNormalizationTests(unittest.TestCase):
@@ -168,26 +186,36 @@ class FullPmfNormalizationTests(unittest.TestCase):
     one rung's over+under+push, which PR #148 already verifies)?
     """
 
-    def test_empirical_residual_pool_pmf_does_not_sum_to_one_across_outcomes(self):
-        # Real, confirmed finding: EmpiricalResidualPool.pmf applies a
-        # Laplace floor of 1/(n+2) independently to EVERY queried k. For a
-        # pool with a long stretch of k values with zero real observations
-        # nearby, each of those k's still contributes the floor, so summing
-        # across enough outcomes exceeds 1. This does not corrupt PR #148's
-        # own log-likelihood comparison (which only ever queries pmf() at
-        # the single observed k per row, never sums across k), but it means
-        # pmf() is NOT a valid, normalized full outcome distribution on its
-        # own -- a real coherence property worth disclosing, separate from
-        # the zero_probability/under gap above.
+    def test_empirical_residual_pool_pmf_now_sums_to_one_across_the_full_support(self):
+        # UPDATED (post-repair): this test originally documented the real,
+        # confirmed defect that `EmpiricalResidualPool.pmf` applied a
+        # Laplace floor of `1/(n+2)` independently to EVERY queried k, so
+        # summing over k=0..20 on this exact adversarial 20-value
+        # heterogeneous pool totaled ~1.36 -- not corrupting PR #148's own
+        # log-likelihood comparison (which only ever queries `pmf()` once
+        # per row, never sums across k), but meaning `pmf()` was NOT a
+        # valid, normalized distribution on its own. `pmf` now applies
+        # additive smoothing ONCE across the whole declared
+        # 0..MAX_EMPIRICAL_SUPPORT support instead, so this EXACT pool
+        # (the one PR #149 used to prove the defect was real) now sums to
+        # exactly 1 -- proving the same input that broke before is fixed,
+        # not just a freshly chosen easy case.
         pool = EmpiricalResidualPool(
             [-0.5, -0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3]
             + [-7.0, -7.0, -6.5, -6.0, -6.0, -5.5, -5.0, -4.5, -4.0, -3.5]
         )
         projection = 0.3
-        total = sum(pool.pmf(k, projection) for k in range(0, 21))
-        self.assertGreater(total, 1.3)
-        self.assertLess(total, 1.4)
-        self.assertNotAlmostEqual(total, 1.0, places=2)
+        total = sum(pool.pmf(k, projection) for k in range(0, MAX_EMPIRICAL_SUPPORT + 1))
+        self.assertAlmostEqual(total, 1.0, places=9)
+        # The old (now-fixed) partial sum over just k=0..20 is preserved
+        # here as historical negative-result evidence: it is no longer >1.3
+        # because the per-query floor that caused that inflation is gone,
+        # but a PARTIAL sum over less than the full declared support is not
+        # expected to equal 1 either (some real mass legitimately lives
+        # above k=20 on this pool/projection) -- only the FULL-support sum
+        # above is the actual normalization guarantee.
+        partial_total = sum(pool.pmf(k, projection) for k in range(0, 21))
+        self.assertLess(partial_total, total)
 
     def test_normal_and_negative_binomial_pmfs_remain_properly_normalized(self):
         # Control/contrast: the two parametric candidates PR #148 compares
