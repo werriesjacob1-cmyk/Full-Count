@@ -1,0 +1,414 @@
+{
+  "schema_version": 1,
+  "sport": "NFL",
+  "sportsbook_scope": ["fanduel"],
+  "generated_by": "NFL-GENIUS-MARKET-REGISTRY-ALTLINE-20260919",
+  "notes": "Enumerates markets actually reachable through this repository's code today, not the full set FanDuel offers. status reflects real checked-in evidence only; listing a market is not a claim that it works end to end. Other sportsbooks are out of scope until independently verified sources exist for them.",
+  "markets": [
+    {
+      "market_id": "passing_yards",
+      "family": "player_passing",
+      "shape": "primary",
+      "status": "LIVE_SHADOW",
+      "evidence": {
+        "normalizer": "nfl/normalize/fanduel_passing.py",
+        "binder": "nfl/normalize/market_roster_binding.py",
+        "model": "nfl/research/passing_yards_shadow.py",
+        "grader": "nfl/prospective/player_prop_grader.py",
+        "workflow": ".github/workflows/nfl-live-passing-yards-shadow-board.yml",
+        "tests": "nfl/tests/test_passing_yards_shadow.py"
+      },
+      "notes": "Sole player-prop market with a fully unattended scheduled Sunday capture workflow, real B0 rolling-window projection, and official-inactives fail-closed gate. Dedicated normalizer/binder (not the generic player-prop path) because it has real backtest evidence behind it."
+    },
+    {
+      "market_id": "receptions",
+      "family": "player_receiving",
+      "shape": "primary",
+      "status": "TESTED",
+      "evidence": {
+        "normalizer": "nfl/normalize/player_prop_markets.py",
+        "binder": "nfl/normalize/player_prop_roster_binding.py",
+        "model": "nfl/research/receptions_shadow.py",
+        "grader": "nfl/prospective/player_prop_grader.py",
+        "workflow": null,
+        "tests": "nfl/tests/test_receptions_shadow.py"
+      },
+      "notes": "B0 baseline/shadow model and generic normalize/bind/grade infrastructure are tested and real-data-verified. A scheduled unattended live-capture workflow (adapted from the passing-yards workflow, no role-continuity gate -- multiple primary receivers per team is normal, unlike the one-starting-QB assumption that gate encodes) is implemented and dry-run-verified on branch claude/nfl-receptions-live-shadow-20260919, not yet merged to main. Upgrade to LIVE_SHADOW once merged."
+    },
+    {
+      "market_id": "receiving_yards",
+      "family": "player_receiving",
+      "shape": "primary",
+      "status": "TESTED",
+      "evidence": {
+        "normalizer": "nfl/normalize/player_prop_markets.py",
+        "binder": "nfl/normalize/player_prop_roster_binding.py",
+        "model": null,
+        "grader": "nfl/prospective/player_prop_grader.py",
+        "workflow": null,
+        "tests": "nfl/tests/test_player_prop_markets_normalizer.py"
+      },
+      "notes": "Generic normalize/bind/grade path is tested. No dedicated B0-style projection model and no scheduled live-capture workflow exist yet -- research/model layer is the real gap, not identity or grading."
+    },
+    {
+      "market_id": "rushing_yards",
+      "family": "player_rushing",
+      "shape": "primary",
+      "status": "TESTED",
+      "evidence": {
+        "normalizer": "nfl/normalize/player_prop_markets.py",
+        "binder": "nfl/normalize/player_prop_roster_binding.py",
+        "model": null,
+        "grader": "nfl/prospective/player_prop_grader.py",
+        "workflow": null,
+        "tests": "nfl/tests/test_player_prop_markets_normalizer.py"
+      },
+      "notes": "Same real gap as receiving_yards: identity/grading tested, no projection model, no live capture."
+    },
+    {
+      "market_id": "passing_touchdowns",
+      "family": "player_passing",
+      "shape": "primary",
+      "status": "TESTED",
+      "evidence": {
+        "normalizer": "nfl/normalize/player_prop_markets.py",
+        "binder": "nfl/normalize/player_prop_roster_binding.py",
+        "model": null,
+        "grader": "nfl/prospective/player_prop_grader.py",
+        "workflow": null,
+        "tests": "nfl/tests/test_player_prop_markets_normalizer.py"
+      },
+      "notes": "No projection model or live capture exists yet."
+    },
+    {
+      "market_id": "rush_plus_rec_yards",
+      "family": "player_combined",
+      "shape": "primary",
+      "status": "TESTED",
+      "evidence": {
+        "normalizer": "nfl/normalize/player_prop_markets.py",
+        "binder": "nfl/normalize/player_prop_roster_binding.py",
+        "model": null,
+        "grader": "nfl/prospective/player_prop_grader.py",
+        "workflow": null,
+        "tests": "nfl/tests/test_player_prop_markets_normalizer.py"
+      },
+      "notes": "A combined counting-stat market, not a joint/correlated bet -- single line on one summed number. No projection model or live capture exists yet."
+    },
+    {
+      "market_id": "receptions_alt",
+      "family": "player_receiving",
+      "shape": "alt_ladder",
+      "status": "TESTED",
+      "evidence": {
+        "normalizer": "nfl/normalize/player_prop_markets.py",
+        "binder": "nfl/normalize/player_prop_roster_binding.py",
+        "model": null,
+        "grader": "nfl/prospective/player_prop_grader.py",
+        "workflow": null,
+        "tests": "nfl/tests/test_player_prop_markets_normalizer.py"
+      },
+      "notes": "Alt-ladder identity/grading tested. No per-rung probability model exists -- see alternate_line_evaluation.py for the research-only break-even/EV foundation this needs before any real ladder evaluation."
+    },
+    {
+      "market_id": "receiving_yards_alt",
+      "family": "player_receiving",
+      "shape": "alt_ladder",
+      "status": "TESTED",
+      "evidence": {
+        "normalizer": "nfl/normalize/player_prop_markets.py",
+        "binder": "nfl/normalize/player_prop_roster_binding.py",
+        "model": null,
+        "grader": "nfl/prospective/player_prop_grader.py",
+        "workflow": null,
+        "tests": "nfl/tests/test_player_prop_markets_normalizer.py"
+      },
+      "notes": "Same gap as receptions_alt: no per-rung probability model yet."
+    },
+    {
+      "market_id": "rushing_yards_alt",
+      "family": "player_rushing",
+      "shape": "alt_ladder",
+      "status": "TESTED",
+      "evidence": {
+        "normalizer": "nfl/normalize/player_prop_markets.py",
+        "binder": "nfl/normalize/player_prop_roster_binding.py",
+        "model": null,
+        "grader": "nfl/prospective/player_prop_grader.py",
+        "workflow": null,
+        "tests": "nfl/tests/test_player_prop_markets_normalizer.py"
+      },
+      "notes": "Same gap as receptions_alt: no per-rung probability model yet."
+    },
+    {
+      "market_id": "passing_touchdowns_alt",
+      "family": "player_passing",
+      "shape": "alt_ladder",
+      "status": "TESTED",
+      "evidence": {
+        "normalizer": "nfl/normalize/player_prop_markets.py",
+        "binder": "nfl/normalize/player_prop_roster_binding.py",
+        "model": null,
+        "grader": "nfl/prospective/player_prop_grader.py",
+        "workflow": null,
+        "tests": "nfl/tests/test_player_prop_markets_normalizer.py"
+      },
+      "notes": "Same gap as receptions_alt: no per-rung probability model yet."
+    },
+    {
+      "market_id": "anytime_touchdown",
+      "family": "player_touchdown",
+      "shape": "single_threshold",
+      "status": "TESTED",
+      "evidence": {
+        "normalizer": "nfl/normalize/player_prop_markets.py",
+        "binder": "nfl/normalize/player_prop_roster_binding.py",
+        "model": null,
+        "grader": "nfl/prospective/player_prop_grader.py",
+        "workflow": null,
+        "tests": "nfl/tests/test_player_prop_markets_normalizer.py"
+      },
+      "notes": "Identity/grading tested (includes defensive scorers -- a pick-six or fumble-return TD is a real, if uncommon, candidate). No projection model or live capture exists yet."
+    },
+    {
+      "market_id": "two_plus_touchdowns",
+      "family": "player_touchdown",
+      "shape": "single_threshold",
+      "status": "TESTED",
+      "evidence": {
+        "normalizer": "nfl/normalize/player_prop_markets.py",
+        "binder": "nfl/normalize/player_prop_roster_binding.py",
+        "model": null,
+        "grader": "nfl/prospective/player_prop_grader.py",
+        "workflow": null,
+        "tests": "nfl/tests/test_player_prop_markets_normalizer.py"
+      },
+      "notes": "No projection model or live capture exists yet."
+    },
+    {
+      "market_id": "three_plus_touchdowns",
+      "family": "player_touchdown",
+      "shape": "single_threshold",
+      "status": "TESTED",
+      "evidence": {
+        "normalizer": "nfl/normalize/player_prop_markets.py",
+        "binder": "nfl/normalize/player_prop_roster_binding.py",
+        "model": null,
+        "grader": "nfl/prospective/player_prop_grader.py",
+        "workflow": null,
+        "tests": "nfl/tests/test_player_prop_markets_normalizer.py"
+      },
+      "notes": "No projection model or live capture exists yet."
+    },
+    {
+      "market_id": "four_plus_touchdowns",
+      "family": "player_touchdown",
+      "shape": "single_threshold",
+      "status": "TESTED",
+      "evidence": {
+        "normalizer": "nfl/normalize/player_prop_markets.py",
+        "binder": "nfl/normalize/player_prop_roster_binding.py",
+        "model": null,
+        "grader": "nfl/prospective/player_prop_grader.py",
+        "workflow": null,
+        "tests": "nfl/tests/test_player_prop_markets_normalizer.py"
+      },
+      "notes": "No projection model or live capture exists yet."
+    },
+    {
+      "market_id": "record_a_sack",
+      "family": "player_defense",
+      "shape": "single_threshold",
+      "status": "TESTED",
+      "evidence": {
+        "normalizer": "nfl/normalize/player_prop_markets.py",
+        "binder": "nfl/normalize/player_prop_roster_binding.py",
+        "model": null,
+        "grader": "nfl/prospective/player_prop_grader.py",
+        "workflow": null,
+        "tests": "nfl/tests/test_player_prop_markets_normalizer.py"
+      },
+      "notes": "The only individual defensive-player market with any code in this repo. No projection model or live capture exists yet."
+    },
+    {
+      "market_id": "reception_yardage_threshold",
+      "family": "player_receiving",
+      "shape": "unsupported",
+      "status": "DEFERRED",
+      "evidence": {
+        "normalizer": null,
+        "binder": null,
+        "model": null,
+        "grader": null,
+        "workflow": null,
+        "tests": null
+      },
+      "notes": "Explicitly deferred in player_prop_markets.py's own module docstring: settles against a longest-single-catch threshold that needs per-target play-by-play, not the box-score season total nflverse's weekly stats provide. Not started."
+    },
+    {
+      "market_id": "moneyline",
+      "family": "game_line",
+      "shape": "moneyline",
+      "status": "LIVE_SHADOW",
+      "evidence": {
+        "normalizer": "nfl/normalize/fanduel_game_lines.py",
+        "binder": null,
+        "model": "nfl/prospective/game_market_shadow_board.py",
+        "grader": "nfl/prospective/game_market_grader.py",
+        "workflow": ".github/workflows/nfl-live-game-market-shadow.yml",
+        "tests": "nfl/tests/test_fanduel_game_lines.py"
+      },
+      "notes": "Part of the same three-market (moneyline/spread/game_total) live game-market shadow board and scheduled workflow. B0 (GAME_MARKET_B0_PRIOR_SCORING_BLEND) is the sole accepted live control; no other baseline is promoted."
+    },
+    {
+      "market_id": "spread",
+      "family": "game_line",
+      "shape": "two_way_line",
+      "status": "LIVE_SHADOW",
+      "evidence": {
+        "normalizer": "nfl/normalize/fanduel_game_lines.py",
+        "binder": null,
+        "model": "nfl/prospective/game_market_shadow_board.py",
+        "grader": "nfl/prospective/game_market_grader.py",
+        "workflow": ".github/workflows/nfl-live-game-market-shadow.yml",
+        "tests": "nfl/tests/test_fanduel_game_lines.py"
+      },
+      "notes": "Live B0 control. C3 margin-availability challenger was investigated and REJECTED (not referenced by this workflow)."
+    },
+    {
+      "market_id": "game_total",
+      "family": "game_line",
+      "shape": "two_way_line",
+      "status": "LIVE_SHADOW",
+      "evidence": {
+        "normalizer": "nfl/normalize/fanduel_game_lines.py",
+        "binder": null,
+        "model": "nfl/prospective/game_market_shadow_board.py",
+        "grader": "nfl/prospective/game_market_grader.py",
+        "workflow": ".github/workflows/nfl-live-game-market-shadow.yml",
+        "tests": "nfl/tests/test_fanduel_game_lines.py"
+      },
+      "notes": "Live B0 control. C2 totals-only is a separately labeled RESEARCH_SHADOW_ELIGIBLE challenger (nfl/research/game_market_c2_totals_only.py) -- still loses to the real closing market and is not promoted or referenced by this live workflow."
+    },
+    {
+      "market_id": "alt_spread",
+      "family": "game_line",
+      "shape": "unsupported",
+      "status": "UNSUPPORTED",
+      "evidence": {
+        "normalizer": null,
+        "binder": null,
+        "model": null,
+        "grader": null,
+        "workflow": null,
+        "tests": null
+      },
+      "notes": "No code anywhere in this repo reads or grades alternate spread lines. Not started."
+    },
+    {
+      "market_id": "alt_total",
+      "family": "game_line",
+      "shape": "unsupported",
+      "status": "UNSUPPORTED",
+      "evidence": {
+        "normalizer": null,
+        "binder": null,
+        "model": null,
+        "grader": null,
+        "workflow": null,
+        "tests": null
+      },
+      "notes": "No code anywhere in this repo reads or grades alternate total lines. Not started."
+    },
+    {
+      "market_id": "team_total",
+      "family": "game_line",
+      "shape": "unsupported",
+      "status": "UNSUPPORTED",
+      "evidence": {
+        "normalizer": null,
+        "binder": null,
+        "model": null,
+        "grader": null,
+        "workflow": null,
+        "tests": null
+      },
+      "notes": "No code anywhere in this repo reads or grades per-team totals. Not started."
+    },
+    {
+      "market_id": "period_markets",
+      "family": "game_line",
+      "shape": "unsupported",
+      "status": "UNSUPPORTED",
+      "evidence": {
+        "normalizer": null,
+        "binder": null,
+        "model": null,
+        "grader": null,
+        "workflow": null,
+        "tests": null
+      },
+      "notes": "1st half / 1st quarter / 2nd half spread-total-moneyline markets. game_market_shadow_board.py and fanduel_game_lines.py are full-game only. Not started."
+    },
+    {
+      "market_id": "defensive_tackles",
+      "family": "player_defense",
+      "shape": "unsupported",
+      "status": "UNSUPPORTED",
+      "evidence": {
+        "normalizer": null,
+        "binder": null,
+        "model": null,
+        "grader": null,
+        "workflow": null,
+        "tests": null
+      },
+      "notes": "No tackles market type appears anywhere in player_prop_markets.py's dispatch tables. Not started."
+    },
+    {
+      "market_id": "defensive_interceptions",
+      "family": "player_defense",
+      "shape": "unsupported",
+      "status": "UNSUPPORTED",
+      "evidence": {
+        "normalizer": null,
+        "binder": null,
+        "model": null,
+        "grader": null,
+        "workflow": null,
+        "tests": null
+      },
+      "notes": "No interception-count market type appears anywhere in the normalizer dispatch tables. Not started."
+    },
+    {
+      "market_id": "kicker_special_teams",
+      "family": "player_kicking",
+      "shape": "unsupported",
+      "status": "UNSUPPORTED",
+      "evidence": {
+        "normalizer": null,
+        "binder": null,
+        "model": null,
+        "grader": null,
+        "workflow": null,
+        "tests": null
+      },
+      "notes": "No kicker or special-teams market type (FG made, kicking points, longest FG) appears anywhere in this repo. Not started."
+    },
+    {
+      "market_id": "correlated_combos_sgp",
+      "family": "combo",
+      "shape": "unsupported",
+      "status": "DEFERRED",
+      "evidence": {
+        "normalizer": null,
+        "binder": null,
+        "model": null,
+        "grader": null,
+        "workflow": null,
+        "tests": null
+      },
+      "notes": "Explicitly deferred per Issue #91 comment 5742555668 item 4/7: joint/correlated outcome work requires its own prospective joint-distribution and price validation, and must not naively multiply correlated marginal probabilities. Not started."
+    }
+  ]
+}
