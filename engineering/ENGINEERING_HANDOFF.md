@@ -2477,6 +2477,7 @@ Alligator
   tests) and full root suite re-verified green on the rebased tree per
   Jacob's explicit instruction not to merge a stale test against a fixed
   schema.
+- Merged as PR #138, merge SHA `e799fbfd129f94092de8660b7d3054bf6b7481b1`.
 
 Alligator
 
@@ -2536,6 +2537,65 @@ Alligator
   (stale cross-reference). Neither baseline script reads that field, so
   nothing is blocked, but it should be fixed separately.
 - No model/selector promotion, no production change, no public-pick change.
+- Merged as PR #137, merge SHA `89159fadda394d2dfb815f2a1490d20377e7698f`.
+
+Alligator
+
+## 2026-09-18 — NFL C2-totals-only: total signal clears its own independent gate
+
+- Workstream `NFL-GAME-MARKET-C2-TOTALS-ONLY-20260918` (Issue #91 claim,
+  comment `5733695642`), branch `claude/nfl-c2-totals-only-push-20260918`.
+- Per direct instruction to stop burying C2's real, stable total-prediction
+  finding inside its combined (margin+total) rejection: gave the total
+  axis its own predeclared promotion gate, evaluated independently of
+  margin. Reused C2's existing feature assembly, ridge fit, and B0-pairing
+  logic verbatim (`fit_c2_model` already fits margin and total as two
+  fully independent models on the same dev partition/lambda) -- no new
+  feature, fit, or join logic; the only new code is the total-only gate,
+  season-stability/leave-one-out diagnostics, and a total-market
+  equal-volume directional method adapted from C2's own margin-specific
+  one.
+- **Predeclared gate** (five conditions, all evaluated purely on total-axis
+  numbers -- never reads C2's margin MAE, bootstrap, or gate outcome):
+  held total MAE(C2) < held total MAE(B0); paired-bootstrap 97.5th
+  percentile of the held delta < 0; validation total MAE(C2) <= B0's; at
+  least 5 of 6 seasons 2020-2025 individually negative; excluding any
+  single held season (2023/2024/2025) individually still leaves the
+  remaining held delta negative. The "5 of 6" and leave-one-out bars were
+  chosen as generically defensible noise thresholds, documented as such
+  before the realized 6-of-6 result was known.
+- **Verdict: `RESEARCH_CHALLENGER_PROMOTION_ELIGIBLE`** on the total axis --
+  all five conditions pass. Independently re-verified end to end against
+  the real pinned nflverse `pbp`/`snap_counts` data (every asset's
+  SHA-256/byte-count matched, none re-fetched from a moving source): held
+  total MAE delta -0.282861 (bootstrap CI [-0.474728, -0.094170]),
+  validation delta -0.226807 (CI [-0.437739, -0.016974]), all 6 seasons
+  2020-2025 negative, all 3 leave-one-out held checks negative. Matches
+  the originally reported combined-C2 numbers to within rounding -- no
+  discrepancy found.
+- **Real finding the combined C2 report never isolated**: C2's total beats
+  B0, but still **loses to the real closing market** on held data (C2 MAE
+  10.436 vs. closing-market MAE 10.121; bootstrap of the (C2-market) delta
+  is entirely *above* zero, [0.107, 0.526]). C2 improves the naive
+  baseline; it does not beat the market. Surfacing this prominently rather
+  than letting the promotion-eligible headline overstate the result.
+  Equal-volume total-directional accuracy vs. B0 showed no dramatic
+  reversal like margin's validation/held flip -- a weak, non-conclusive
+  edge to C2 at full volume in both partitions (held 50.8/49.2, validation
+  53.4/46.6) -- reported as weak, not oversold.
+- "Promotion eligible" here means "cleared its own predeclared research
+  gate," not a production/live authorization -- this stays research-only,
+  exactly like B0/C1/C2. No feature was added beyond C2's existing 8, per
+  explicit instruction not to expand the model merely because it might help.
+- 21 new tests pass (gate-predeclaration structure, margin-independence --
+  including a fixture where C2's margin is made catastrophic but the total
+  gate still passes -- season-stability/leave-one-out pass/fail/outlier
+  cases, the total-directional method, byte-identical reproducibility, and
+  a synthetic end-to-end pinned-digest run). Full existing NFL suite
+  (439 tests) and 134-file root suite pass unchanged -- verified
+  independently by me after rebasing onto current `main`.
+- No model/selector promotion, no production change, no prospective/shadow
+  predictions, no public pick.
 
 Alligator
 
