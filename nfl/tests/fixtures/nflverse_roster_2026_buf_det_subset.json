@@ -1,0 +1,128 @@
+{
+  "provenance": {
+    "source_url": "https://github.com/nflverse/nflverse-data/releases/download/rosters/roster_2026.csv",
+    "sha256": "8d6496372133d5a9d683b0f48402bf4a2b8b96eae85c5d6b88093bb9094c3dbe",
+    "byte_length": 944665,
+    "fetched_at": "2026-09-19",
+    "note": "Exact same pinned release asset already used by the receptions/passing-yards live-shadow workflows (.github/workflows/nfl-live-receptions-shadow-board.yml ROSTER_URL/ROSTER_SHA). Independently re-fetched live and digest-matched on 2026-09-19. This fixture keeps only the 13 real rows relevant to the real captured BUF/DET claims below, not the full 2,980-row file."
+  },
+  "roster_rows": [
+    {
+      "season": "2026",
+      "team": "BUF",
+      "position": "DL",
+      "depth_chart_position": "DE",
+      "full_name": "Ed Oliver",
+      "gsis_id": "00-0035230",
+      "esb_id": "OLI290385"
+    },
+    {
+      "season": "2026",
+      "team": "BUF",
+      "position": "RB",
+      "depth_chart_position": "RB",
+      "full_name": "Ty Johnson",
+      "gsis_id": "00-0035537",
+      "esb_id": "JOH000019"
+    },
+    {
+      "season": "2026",
+      "team": "DET",
+      "position": "DL",
+      "depth_chart_position": "DT",
+      "full_name": "Mekhi Wingo",
+      "gsis_id": "00-0039396",
+      "esb_id": "WIN280067"
+    },
+    {
+      "season": "2026",
+      "team": "DET",
+      "position": "OL",
+      "depth_chart_position": "G",
+      "full_name": "Christian Mahogany",
+      "gsis_id": "00-0039408",
+      "esb_id": "MAH399714"
+    },
+    {
+      "season": "2026",
+      "team": "DET",
+      "position": "DB",
+      "depth_chart_position": "CB",
+      "full_name": "Ennis Rakestraw Jr.",
+      "gsis_id": "00-0039862",
+      "esb_id": "RAK373762"
+    },
+    {
+      "season": "2026",
+      "team": "BUF",
+      "position": "DL",
+      "depth_chart_position": "DE",
+      "full_name": "T.J. Sanders",
+      "gsis_id": "00-0040724",
+      "esb_id": "SAN495668"
+    },
+    {
+      "season": "2026",
+      "team": "BUF",
+      "position": "DB",
+      "depth_chart_position": "SS",
+      "full_name": "Jalon Kilgore",
+      "gsis_id": "00-0041086",
+      "esb_id": "KIL250314"
+    },
+    {
+      "season": "2026",
+      "team": "BUF",
+      "position": "OL",
+      "depth_chart_position": "G",
+      "full_name": "Ar'maj Reed-Adams",
+      "gsis_id": "00-0041128",
+      "esb_id": "REE460869"
+    },
+    {
+      "season": "2026",
+      "team": "DET",
+      "position": "OL",
+      "depth_chart_position": "T",
+      "full_name": "Blake Miller",
+      "gsis_id": "00-0041439",
+      "esb_id": "MIL142617"
+    },
+    {
+      "season": "2026",
+      "team": "DET",
+      "position": "LB",
+      "depth_chart_position": "MLB",
+      "full_name": "Jimmy Rolder",
+      "gsis_id": "00-0041442",
+      "esb_id": "ROL284567"
+    },
+    {
+      "season": "2026",
+      "team": "BUF",
+      "position": "WR",
+      "depth_chart_position": "WR",
+      "full_name": "Skyler Bell",
+      "gsis_id": "00-0041443",
+      "esb_id": "BEL597603"
+    },
+    {
+      "season": "2026",
+      "team": "DET",
+      "position": "DB",
+      "depth_chart_position": "CB",
+      "full_name": "Keith Abney II",
+      "gsis_id": "00-0041445",
+      "esb_id": "ABN189231"
+    },
+    {
+      "season": "2026",
+      "team": "BUF",
+      "position": "OL",
+      "depth_chart_position": "T",
+      "full_name": "Jude Bowry",
+      "gsis_id": "00-0041548",
+      "esb_id": "BOW688689"
+    }
+  ]
+}
