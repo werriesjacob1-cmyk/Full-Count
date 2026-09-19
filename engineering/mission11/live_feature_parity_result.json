@@ -1,0 +1,62 @@
+{
+  "cell_resolution": {
+    "joint_cell_present": 267,
+    "joint_key_but_cell_absent": 1,
+    "no_joint_key": 2,
+    "scored": 270
+  },
+  "decoded_groups": {
+    "days_rest": {
+      "0_days_rest": 267,
+      "2-3_days_rest": 1,
+      "None": 2
+    },
+    "getaway": {
+      "getaway_day": 162,
+      "not_getaway_day": 108
+    },
+    "order": {
+      "1": 30,
+      "2": 30,
+      "3": 30,
+      "4": 30,
+      "5": 30,
+      "6": 30,
+      "7": 30,
+      "8": 30,
+      "9": 30
+    }
+  },
+  "feature_present_count": {
+    "days_rest": 268,
+    "getaway_day": 270,
+    "lineup_slot": 270
+  },
+  "feature_present_rate": {
+    "days_rest": 0.9925925925925926,
+    "getaway_day": 1.0,
+    "lineup_slot": 1.0
+  },
+  "hits_candidates": 270,
+  "observed_domains": {
+    "days_rest": {
+      "0.0": 267,
+      "2.0": 1
+    },
+    "getaway_day": {
+      "-2.0": 162,
+      "0.0": 108
+    },
+    "lineup_slot": {
+      "0.0": 30,
+      "12.5": 30,
+      "25.0": 30,
+      "37.5": 30,
+      "50.0": 30,
+      "62.5": 30,
+      "75.0": 30,
+      "87.5": 30,
+      "100.0": 30
+    }
+  }
+}
