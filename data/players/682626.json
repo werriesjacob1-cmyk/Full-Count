@@ -2122,6 +2122,108 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 28.4,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823571,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 86.8571,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 35.3,
+            "season_barrel_pct": 82.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 27.7778,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 0.36,
+            "park_hand_index": 0.44,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 2.0,
+            "woba_ahead": 5.4545,
+            "woba_behind": 0.0,
+            "pull_park_synergy": 0.2156,
+            "hard_hit_105_rate": 0.6125,
+            "getaway_day": 0.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -1.008,
+            "vs_rp_ops": -1.08,
+            "ump_k_pct": -0.36,
+            "ump_bb_pct": -0.216
+          },
+          "hit_probability": 0.6579,
+          "raw_hit_probability": 0.6507,
+          "lift": -0.0158,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 10.7,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823571,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0711
+          },
+          "hit_probability": 0.0711,
+          "raw_hit_probability": null,
+          "lift": 0.0234,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.7,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823571,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0192
+          },
+          "hit_probability": 0.0192,
+          "raw_hit_probability": null,
+          "lift": -0.0015,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

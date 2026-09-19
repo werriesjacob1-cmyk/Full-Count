@@ -537,8 +537,8 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 45.1,
-          "notable_signals": 0,
+          "score": 24.9,
+          "notable_signals": 1,
           "matchup": "Milwaukee Brewers @ Baltimore Orioles",
           "game_pk": 824788,
           "team": "Baltimore Orioles",
@@ -549,7 +549,10 @@
             "opp_team_k_pct": 46.0,
             "same_hand_ratio": 12.5,
             "l14_k_pct": 36.4706,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 74.9577,
+            "ump_k_pct": 0.984,
+            "ump_bb_pct": -0.216
           },
           "hit_probability": 0.4873,
           "raw_hit_probability": 0.4873,
@@ -565,7 +568,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 73.7,
+          "score": 73.4,
           "notable_signals": 1,
           "matchup": "Milwaukee Brewers @ Baltimore Orioles",
           "game_pk": 824788,
@@ -574,12 +577,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5746,
+            "outs_rate": 0.575,
             "avg_outs_per_start": 16.89
           },
-          "hit_probability": 0.5781,
-          "raw_hit_probability": 0.5746,
-          "lift": 0.1556,
+          "hit_probability": 0.5784,
+          "raw_hit_probability": 0.575,
+          "lift": 0.1534,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
