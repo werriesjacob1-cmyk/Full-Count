@@ -3088,6 +3088,111 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 60.3,
+          "notable_signals": 3,
+          "matchup": "Miami Marlins @ San Diego Padres",
+          "game_pk": 823249,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 42.5714,
+            "pitch_exploit": 4.5714,
+            "l7_avg_ev": 92.5,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 8.925,
+            "park_hr_index": 35.3,
+            "season_barrel_pct": 44.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 50.0,
+            "bvp_ops": -2.628,
+            "platoon_barrel_pct": 2.96,
+            "platoon_xwoba": 1.44,
+            "park_hand_index": 0.32,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 20.9091,
+            "woba_behind": 30.9091,
+            "pull_park_synergy": 0.1053,
+            "hard_hit_105_rate": 1.085,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.552,
+            "vs_rp_ops": 2.472,
+            "ump_k_pct": 0.024,
+            "ump_bb_pct": 0.54
+          },
+          "hit_probability": 0.6563,
+          "raw_hit_probability": 0.6435,
+          "lift": 0.0945,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 15.4,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ San Diego Padres",
+          "game_pk": 823249,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.09
+          },
+          "hit_probability": 0.09,
+          "raw_hit_probability": null,
+          "lift": 0.0423,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.5,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ San Diego Padres",
+          "game_pk": 823249,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0306
+          },
+          "hit_probability": 0.0306,
+          "raw_hit_probability": null,
+          "lift": 0.0099,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

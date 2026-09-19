@@ -601,6 +601,52 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 57.2,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ St. Louis Cardinals",
+          "game_pk": 823003,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 24.2857,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 60.4,
+            "season_barrel_pct": 44.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 33.3333,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "woba_ahead": 57.2727,
+            "woba_behind": 19.0909,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.768,
+            "vs_rp_ops": 0.324,
+            "ump_k_pct": -0.012,
+            "ump_bb_pct": -0.3
+          },
+          "hit_probability": 0.6919,
+          "raw_hit_probability": 0.672,
+          "lift": 0.1301,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

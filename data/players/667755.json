@@ -588,7 +588,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 37.4,
+          "score": 34.4,
           "notable_signals": 0,
           "matchup": "Toronto Blue Jays @ Texas Rangers",
           "game_pk": 822843,
@@ -597,18 +597,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.432,
+            "outs_rate": 0.4362,
             "avg_outs_per_start": 16.93
           },
-          "hit_probability": 0.432,
-          "raw_hit_probability": 0.432,
-          "lift": 0.007,
+          "hit_probability": 0.4362,
+          "raw_hit_probability": 0.4362,
+          "lift": -0.0145,
           "reliability": "A",
           "sample_n": 30,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Toronto Blue Jays @ Texas Rangers",
+          "game_pk": 822843,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            667755,
+            615698
+          ],
+          "signals": {
+            "combined_k_edge": 0.0822
+          },
+          "hit_probability": 0.606,
+          "raw_hit_probability": null,
+          "lift": 0.0822,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]
