@@ -117,8 +117,16 @@
     },
     {
       "team": "BUF",
-      "coverage_status": "UNPOPULATED",
-      "official_sources": [],
+      "coverage_status": "PARTIAL",
+      "official_sources": [
+        {
+          "source_id": "official_nfl",
+          "channel": "OFFICIAL_INJURY_PRACTICE",
+          "url": "https://www.nfl.com/news/week-2-thursday-night-inactives-detroit-lions-at-buffalo-bills",
+          "artifact": "inactive_report_f325517d96ff6eec",
+          "evidence": "News Brain claim ledger, 7 real validated AVAILABILITY claims (source_tier A, evidence_class OFFICIAL_EVENT) from a live NFL.com official inactive-report capture, verified via nfl.intelligence.news_ingest_official_inactives.ingest_capture()"
+        }
+      ],
       "beat_reporters": [],
       "local_outlets": [],
       "press_conference_sources": [],
@@ -126,7 +134,6 @@
       "missing_channels": [
         "OFFICIAL_PRESS_CONFERENCES",
         "OFFICIAL_TEAM_NEWS",
-        "OFFICIAL_INJURY_PRACTICE",
         "OFFICIAL_TRANSACTIONS",
         "HEAD_COACH_MEDIA",
         "OC_MEDIA",
@@ -139,8 +146,10 @@
         "TEAM_FOCUSED_ANALYSIS",
         "PRACTICE_OBSERVATIONS"
       ],
-      "last_audited": null,
-      "notes": []
+      "last_audited": "2026-09-19",
+      "notes": [
+        "NFL-GENIUS-NEWS-CLAIM-LEDGER-20260919: real live official_nfl.capture() run on 2026-09-19 discovered exactly one current inactive report (BUF at DET, Week 2 TNF) and produced 7 real, schema-validated AVAILABILITY claims for BUF via nfl.intelligence.news_ingest_official_inactives. Only OFFICIAL_INJURY_PRACTICE is marked covered from this pass; the other 13 required channels remain genuinely unpopulated, not assumed."
+      ]
     },
     {
       "team": "CAR",
@@ -306,8 +315,16 @@
     },
     {
       "team": "DET",
-      "coverage_status": "UNPOPULATED",
-      "official_sources": [],
+      "coverage_status": "PARTIAL",
+      "official_sources": [
+        {
+          "source_id": "official_nfl",
+          "channel": "OFFICIAL_INJURY_PRACTICE",
+          "url": "https://www.nfl.com/news/week-2-thursday-night-inactives-detroit-lions-at-buffalo-bills",
+          "artifact": "inactive_report_f325517d96ff6eec",
+          "evidence": "News Brain claim ledger, 6 real validated AVAILABILITY claims (source_tier A, evidence_class OFFICIAL_EVENT) from a live NFL.com official inactive-report capture, verified via nfl.intelligence.news_ingest_official_inactives.ingest_capture()"
+        }
+      ],
       "beat_reporters": [],
       "local_outlets": [],
       "press_conference_sources": [],
@@ -315,7 +332,6 @@
       "missing_channels": [
         "OFFICIAL_PRESS_CONFERENCES",
         "OFFICIAL_TEAM_NEWS",
-        "OFFICIAL_INJURY_PRACTICE",
         "OFFICIAL_TRANSACTIONS",
         "HEAD_COACH_MEDIA",
         "OC_MEDIA",
@@ -328,8 +344,10 @@
         "TEAM_FOCUSED_ANALYSIS",
         "PRACTICE_OBSERVATIONS"
       ],
-      "last_audited": null,
-      "notes": []
+      "last_audited": "2026-09-19",
+      "notes": [
+        "NFL-GENIUS-NEWS-CLAIM-LEDGER-20260919: real live official_nfl.capture() run on 2026-09-19 discovered exactly one current inactive report (BUF at DET, Week 2 TNF) and produced 6 real, schema-validated AVAILABILITY claims for DET via nfl.intelligence.news_ingest_official_inactives. Only OFFICIAL_INJURY_PRACTICE is marked covered from this pass; the other 13 required channels remain genuinely unpopulated, not assumed."
+      ]
     },
     {
       "team": "GB",
