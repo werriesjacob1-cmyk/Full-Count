@@ -26,7 +26,10 @@
   const BASELINE_KEY = '__carnowACBaseline';
   const RETRY_KEY = '__carnowACGuardRetries';
   const STUCK_MS = 8000;
-  const SUCCESS_RETURN_MS = 300;
+  // Claim first, then give the greeting time to post/settle before returning.
+  // The original 4.1s cutoff could navigate away while CarNow was still sending.
+  const GREETING_DEADLINE_MS = 16000;
+  const SUCCESS_RETURN_MS = 800;
 
   let handling = false;
   let inFlightSince = 0;
@@ -126,22 +129,33 @@
       if (pending && pending.signature && window.__carnowGreeting) {
         let timeout;
         try {
-          // Messaging must never indefinitely strand the lead watcher.
-          await Promise.race([
+          // Respect the messaging priority: do not start the return timer
+          // until the one-time greeting attempt has completed its post-send
+          // settling period, or a generous failsafe deadline has elapsed.
+          const result = await Promise.race([
             window.__carnowGreeting.attempt(pending),
             new Promise((resolve) => {
-              timeout = setTimeout(() => resolve('greeting-deadline'), 4100);
+              timeout = setTimeout(() => resolve('greeting-deadline'), GREETING_DEADLINE_MS);
             })
           ]);
+          if (result === 'greeting-deadline') {
+            // Prevent a delayed attempt from clicking Send after the guard
+            // has decided it must return to watching.
+            window.__carnowGreeting.cancel();
+            console.warn('[CarNow AC] greeting deadline reached; send status unverified');
+          }
         } catch (err) {
           console.warn('[CarNow AC] greeting skipped', err);
         } finally {
           if (timeout) clearTimeout(timeout);
         }
       }
-      // Return to watching regardless of the messaging outcome; do not let
-      // a missing composer or disabled feature block the next lead.
-      if (handling) setTimeout(() => hardReturn(pending), SUCCESS_RETURN_MS);
+      // Claim and greeting are higher priority than a fast list return.
+      // Once the greeting has settled (or safely timed out), resume watching.
+      if (handling) setTimeout(() => {
+        if (window.__carnowGreeting) window.__carnowGreeting.cancel();
+        hardReturn(pending);
+      }, SUCCESS_RETURN_MS);
     })();
   }
 
