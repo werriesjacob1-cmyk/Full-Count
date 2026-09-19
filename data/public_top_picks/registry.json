@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-19T16:59:34.541194+00:00",
+  "updated_at": "2026-09-19T17:04:14.400403+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -38185,6 +38185,94 @@
         "lineup_assumed": null,
         "base_rate": 0.6751,
         "lift": -0.0163,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "850c1f193",
+          "prediction_timestamp": "2026-09-19T16:56:14.707914+00:00",
+          "odds_fetched_at": "2026-09-19T16:56:09.215415+00:00",
+          "board_generated_at": "2026-09-19T16:56:14.675793+00:00"
+        },
+        "qualification_timestamp": "2026-09-19T16:56:14.707914+00:00",
+        "board_timestamp": "2026-09-19T16:56:14.675793+00:00",
+        "slate_date": "2026-09-19"
+      }
+    },
+    "fc2:823976:player-657746:pitcher_outs:16:over": {
+      "canonical_id": "fc2:823976:player-657746:pitcher_outs:16:over",
+      "settlement_identity": [
+        "823976",
+        [
+          "player",
+          "657746"
+        ],
+        "pitcher_outs",
+        "16",
+        "over"
+      ],
+      "slate_date": "2026-09-19",
+      "first_published_at": "2026-09-19T17:04:14.400403+00:00",
+      "publication_provenance": {
+        "artifact_id": "ce355bb2bb387e30c849ad1f7c2fca6d104720eb161459b44cdc6376f51b9b21",
+        "source_commit": "d52102432a4cfb8606ed095771ba71777bfc1eee",
+        "workflow_run_id": "35456771377",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-19T17:04:00.065344+00:00",
+        "data_hash": "6e4eb16b4e88b68a31017496b02884e0eaa49402fc5f5300868f45163dcbd52b",
+        "live_hash": "5fa92f4f47b7f30fc64319b6086b01f022ed6629f172c3d82fb21c3437d8f8e6"
+      },
+      "snapshot": {
+        "id": "fc2:823976:player-657746:pitcher_outs:16:over",
+        "identity_version": 2,
+        "game_pk": 823976,
+        "player_id": 657746,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Joe Ryan",
+        "team": "Minnesota Twins",
+        "matchup": "Minnesota Twins @ Los Angeles Angels",
+        "game_start": "2026-09-20T01:38:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 15.5,
+          "needs": 16
+        },
+        "prop": "Over 15.5 Outs Recorded",
+        "hit_probability": 0.6195,
+        "market_odds": 142,
+        "market_implied": 0.3859,
+        "market_edge": 0.2336,
+        "market_hold": 0.0708,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (1.6x the market's estimate \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 16+ outs (5.1 IP) in 62.4% of his last 25 real starts (league 55.9%, avg 16.04 outs/start)"
+        ],
+        "watchouts": [
+          "No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number"
+        ],
+        "prob_ci": [
+          0.551,
+          0.7244
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 25,
+        "lineup_assumed": null,
+        "base_rate": 0.5587,
+        "lift": 0.0608,
         "lift_reference_rate": null,
         "stable_lift": null,
         "versions": {
