@@ -11,7 +11,7 @@ async function appendHealthDiagnostic(type, detail = {}) {
   try {
     const key = 'carnowDiagnosticLog';
     const stored = await chrome.storage.local.get({ [key]: [] });
-    const log = [...(stored[key] || []), { ts: Date.now(), type, build: '1.6.1', ...detail }].slice(-500);
+    const log = [...(stored[key] || []), { ts: Date.now(), type, build: '1.6.2', ...detail }].slice(-500);
     await chrome.storage.local.set({ [key]: log });
   } catch { /* storage unavailable */ }
 }
