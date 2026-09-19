@@ -13,6 +13,7 @@ const DEFAULTS = Object.freeze({
   debug: false,
   phonePushEnabled: true,
   phoneRemoteEnabled: true,
+  autoGreeting: false,
   maxLeadAgeMin: 5,
   minClaimIntervalSec: 10,
   maxClaimsPerSession: 200,
@@ -21,7 +22,7 @@ const DEFAULTS = Object.freeze({
   myName: ''
 });
 
-const TOGGLES = ['autoClaim', 'scheduleEnabled', 'dryRun', 'soundAlert', 'debug', 'phonePushEnabled', 'phoneRemoteEnabled', 'returnToList'];
+const TOGGLES = ['autoClaim', 'scheduleEnabled', 'dryRun', 'soundAlert', 'debug', 'phonePushEnabled', 'phoneRemoteEnabled', 'autoGreeting', 'returnToList'];
 const NUMBERS = ['maxLeadAgeMin', 'minClaimIntervalSec', 'maxClaimsPerSession', 'returnDelaySec'];
 const TEXTS = ['myName'];
 const $ = (id) => document.getElementById(id);
