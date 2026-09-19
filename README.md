@@ -196,3 +196,28 @@ necessary — a wrong claim you can't hand back is the one failure with no undo.
   `chrome.alarms` and `chrome.notifications`.
 - No `tabs` permission needed — the `*.carnow.com` host permission covers
   `tabs.query({url})` and `tabs.sendMessage`.
+
+## 1.6.1 — optional first chat greeting (staged)
+
+A new **Send "hi there" in CarNow chat** switch is **OFF by default**. It
+only runs following this extension's fresh claim handoff, after the customer
+Details page shows **Claimed** beside the configured salesperson name. It does
+not run on old, manually opened, dry-run or unconfirmed leads.
+
+The extension looks for one identifiable customer-chat composer and one Send
+control, and records an attempt before clicking Send. If the chat UI is
+unknown, ambiguous, inaccessible, or contains an existing draft, it does
+**not** send. Its result `send-clicked-unverified` means a UI click was
+dispatched, **not** that CarNow confirmed delivery.
+
+**Do not enable unattended greeting until the actual expanded CarNow customer
+chat composer and Send control have been inspected and a supervised test
+confirms the message appears exactly once in the intended customer's chat.**
+The local mock-DOM contract tests (`node test/greeting.test.mjs`) are no
+substitute for live UI verification.
+
+When greeting is ON, the claim guard waits a bounded period (up to 4.1s)
+for the message attempt before returning to the list. A fast back-to-back
+second lead can arrive during this detour, so keep this feature OFF if faster
+lead watching is more important than immediate greeting until supervised
+testing establishes acceptable operation.
