@@ -1,4 +1,5 @@
-/* Deterministic contract tests for auto_greeting.js. No customer messages sent.
+/* Mock-DOM greeting contract — no customer messages are sent.
+ * These selectors mirror the actual inspected CarNow chat markup.
  * Run: node test/greeting.test.mjs
  */
 import { readFileSync } from 'node:fs';
@@ -8,7 +9,8 @@ import { runInNewContext } from 'node:vm';
 import assert from 'node:assert/strict';
 
 const src = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'auto_greeting.js'), 'utf8');
-function fixture({ owner = true, draft = '', enabled = true, sendCount = 1 } = {}) {
+function fixture({ owner = true, draft = '', enabled = true, sendCount = 1,
+                   sendTitle = 'Send', correctButton = true, composerCount = 1 } = {}) {
   let sends = 0;
   let typed = '';
   const ledger = {};
@@ -16,29 +18,45 @@ function fixture({ owner = true, draft = '', enabled = true, sendCount = 1 } = {
     constructor() { this._value = draft; }
     get value() { return this._value; }
     set value(next) { this._value = next; }
-    getAttribute(k) { return k === 'placeholder' ? 'Type your message' : null; }
+    getAttribute(k) {
+      if (k === 'placeholder') return 'Enter a message';
+      if (k === 'ng-model') return 'chatData.message.body';
+      return null;
+    }
     getBoundingClientRect() { return { width: 120, height: 30 }; }
     focus() {}
     dispatchEvent() {}
   }
   const editor = Object.assign(new Textarea(), {
+    id: 'chat_message_body', className: 'chat-bottom-bar__input__field',
     isConnected: true, disabled: false, readOnly: false,
     isContentEditable: false, tagName: 'TEXTAREA'
   });
   const send = {
-    isConnected: true, disabled: false, textContent: 'Send',
-    getAttribute(k) { return k === 'aria-label' ? 'Send' : null; },
+    isConnected: true, disabled: false, textContent: '',
+    getAttribute(k) {
+      if (k === 'data-original-title') return sendTitle;
+      if (k === 'ng-click') return correctButton ? 'postMessage()' : 'otherAction()';
+      return null;
+    },
+    querySelector(selector) { return selector === 'i.icon-v3-send' ? {} : null; },
     getBoundingClientRect() { return { width: 20, height: 20 }; },
     click() { sends++; typed = editor.value; }
   };
-  const panel = { querySelectorAll() { return Array(sendCount).fill(send); } };
-  editor.closest = () => panel;
-  editor.parentElement = panel;
   const document = {
     body: { innerText: owner
       ? 'Details Claimed Jacob Werries Customer Information Notes'
       : 'Details Claimed Another Seller Customer Information Notes' },
-    querySelectorAll(query) { return query.includes('textarea') ? [editor] : []; }
+    querySelector(selector) { return selector === '#chat_message_body' ? editor : null; },
+    querySelectorAll(selector) {
+      if (selector.includes('textarea#chat_message_body')) {
+        return Array(composerCount).fill(editor);
+      }
+      if (selector.includes('button.chat-bottom-bar__input__send')) {
+        return correctButton ? Array(sendCount).fill(send) : [];
+      }
+      return [];
+    }
   };
   const window = {}; window.top = window;
   const chrome = { storage: {
@@ -51,40 +69,50 @@ function fixture({ owner = true, draft = '', enabled = true, sendCount = 1 } = {
   runInNewContext(src, {
     window, document, chrome,
     getComputedStyle: () => ({ display: 'block', visibility: 'visible' }),
-    Event: class { },
+    Event: class {},
     HTMLTextAreaElement: Textarea, HTMLInputElement: Textarea,
-    console: { info() { }, warn() { } },
+    console: { info() {}, warn() {} },
     setTimeout
   });
-  return { send: (signature = 'lead-123') => window.__carnowGreeting.attempt({
+  return { attempt: (signature = 'lead-123') => window.__carnowGreeting.attempt({
     signature, ts: Date.now(), dryRun: false
   }), sends: () => sends, typed: () => typed, ledger };
 }
 
 const normal = fixture();
-assert.equal(await normal.send(), 'send-clicked-unverified');
+assert.equal(await normal.attempt(), 'send-clicked-unverified');
 assert.equal(normal.sends(), 1);
 assert.equal(normal.typed(), 'hi there');
-await normal.send();
+await normal.attempt();
 assert.equal(normal.sends(), 1, 'one lead must not be greeted twice');
 assert.equal((normal.ledger.carnowGreetingLedgerV1 || []).length, 1);
 
 const other = fixture({ owner: false });
-assert.equal(await other.send(), 'owner-not-confirmed');
+assert.equal(await other.attempt(), 'owner-not-confirmed');
 assert.equal(other.sends(), 0);
 
 const existingDraft = fixture({ draft: 'My manual message' });
-assert.equal(await existingDraft.send(), 'no-input');
+assert.equal(await existingDraft.attempt(), 'no-input');
 assert.equal(existingDraft.sends(), 0);
 
 const disabled = fixture({ enabled: false });
-assert.equal(await disabled.send(), 'disabled');
+assert.equal(await disabled.attempt(), 'disabled');
 assert.equal(disabled.sends(), 0);
 
-const ambiguous = fixture({ sendCount: 2 });
-assert.equal(await ambiguous.send(), 'no-send-control');
-assert.equal(ambiguous.sends(), 0);
+const ambiguousButton = fixture({ sendCount: 2 });
+assert.equal(await ambiguousButton.attempt(), 'no-send-control');
+assert.equal(ambiguousButton.sends(), 0);
 
-const stale = fixture();
-assert.equal(await stale.send('lead-456'), 'send-clicked-unverified');
-console.log('Greeting contract: 5 cases passed (mock DOM only; CarNow UI still requires live verification).');
+const wrongControl = fixture({ correctButton: false });
+assert.equal(await wrongControl.attempt(), 'no-send-control');
+assert.equal(wrongControl.sends(), 0);
+
+const wrongTitle = fixture({ sendTitle: 'Archive' });
+assert.equal(await wrongTitle.attempt(), 'no-send-control');
+assert.equal(wrongTitle.sends(), 0);
+
+const ambiguousComposer = fixture({ composerCount: 2 });
+assert.equal(await ambiguousComposer.attempt(), 'no-composer');
+assert.equal(ambiguousComposer.sends(), 0);
+
+console.log('Greeting contract: 8 cases passed (mock DOM only; live CarNow delivery unverified).');
