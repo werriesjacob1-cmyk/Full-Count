@@ -57,11 +57,32 @@
   }
 
   function openChat() {
-    const controls = document.querySelectorAll('button, [role="button"], [ng-click]');
-    const matches = [...controls].filter((el) => visible(el) &&
-      norm(el.textContent) === 'Chat' && el.getBoundingClientRect().width < 300);
-    if (matches.length !== 1) return false;
-    matches[0].click();
+    // On the customer Details page the collapsed Chat bar is anchored to the
+    // bottom-right corner. Only tap an unambiguous *visible* Chat bar there.
+    // Its HTML was not supplied, so do not assume an ng-click selector exists.
+    const controls = [...document.querySelectorAll(
+      'button, [role="button"], [ng-click], [class*="chat" i]'
+    )];
+    const matches = controls.filter((el) => {
+      if (!visible(el) || norm(el.textContent) !== 'Chat') return false;
+      const r = el.getBoundingClientRect();
+      return r.width > 0 && r.width < 420 && r.height > 0 && r.height < 130 &&
+        r.right >= window.innerWidth - 250 && r.bottom >= window.innerHeight - 170;
+    });
+    if (!matches.length) return false;
+    // Nested label + clickable parent may both say "Chat"; choose the smallest
+    // matching element so the click bubbles to its parent's handler.
+    matches.sort((a, b) => {
+      const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+      return ra.width * ra.height - rb.width * rb.height;
+    });
+    const chosen = matches[0];
+    if (matches.length > 1 &&
+        chosen.getBoundingClientRect().width * chosen.getBoundingClientRect().height ===
+        matches[1].getBoundingClientRect().width * matches[1].getBoundingClientRect().height) {
+      return false;
+    }
+    chosen.click();
     return true;
   }
 
