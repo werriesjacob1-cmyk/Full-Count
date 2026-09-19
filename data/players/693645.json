@@ -439,8 +439,8 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 38.1,
-          "notable_signals": 0,
+          "score": 40.9,
+          "notable_signals": 1,
           "matchup": "New York Yankees @ Arizona Diamondbacks",
           "game_pk": 825029,
           "team": "New York Yankees",
@@ -449,9 +449,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 25.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 92.8571,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 80.7146,
+            "ump_k_pct": -0.18,
+            "ump_bb_pct": 0.072
           },
           "hit_probability": 0.4653,
           "raw_hit_probability": 0.4653,

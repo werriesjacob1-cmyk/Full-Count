@@ -329,6 +329,52 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 45.3,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Cincinnati Reds",
+          "game_pk": 824461,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 47.4286,
+            "l7_avg_ev": 37.125,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 76.9,
+            "season_barrel_pct": 20.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 41.6667,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 3.78,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 2.0,
+            "woba_ahead": 27.2727,
+            "woba_behind": 31.8182,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": -0.252,
+            "ump_bb_pct": -0.408
+          },
+          "hit_probability": 0.6053,
+          "raw_hit_probability": 0.605,
+          "lift": 0.0435,
+          "reliability": "C",
+          "sample_n": 26,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

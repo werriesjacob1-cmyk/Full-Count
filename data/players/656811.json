@@ -511,6 +511,107 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 29.3,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Pittsburgh Pirates",
+          "game_pk": 823330,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 38.2857,
+            "l7_avg_ev": 21.4286,
+            "l7_barrel_pct": 87.8571,
+            "park_hr_index": 43.1,
+            "season_barrel_pct": 25.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 16.6667,
+            "platoon_barrel_pct": -1.44,
+            "platoon_xwoba": -1.86,
+            "park_hand_index": 1.68,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 45.4545,
+            "woba_behind": 39.0909,
+            "pull_park_synergy": 0.8702,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.312,
+            "vs_rp_ops": 0.48,
+            "ump_k_pct": 0.228,
+            "ump_bb_pct": -0.156
+          },
+          "hit_probability": 0.6061,
+          "raw_hit_probability": 0.6056,
+          "lift": 0.0443,
+          "reliability": "A",
+          "sample_n": 102,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.6,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Pittsburgh Pirates",
+          "game_pk": 823330,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0309
+          },
+          "hit_probability": 0.0309,
+          "raw_hit_probability": null,
+          "lift": -0.0168,
+          "reliability": "A",
+          "sample_n": 102,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Pittsburgh Pirates",
+          "game_pk": 823330,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.011
+          },
+          "hit_probability": 0.011,
+          "raw_hit_probability": null,
+          "lift": -0.0097,
+          "reliability": "A",
+          "sample_n": 102,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
