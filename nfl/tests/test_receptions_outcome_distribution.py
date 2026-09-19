@@ -12,6 +12,7 @@ import unittest
 
 from nfl.research.receptions_outcome_distribution import (
     EmpiricalResidualPool,
+    MAX_EMPIRICAL_SUPPORT,
     PROJECTION_BUCKETS,
     ReceptionsOutcomeDistributionError,
     evaluate_candidate_distributions,
@@ -105,10 +106,30 @@ class EmpiricalResidualPoolTests(unittest.TestCase):
         self.assertEqual(pool.count_in_half_open(-0.5, 0.5), 1)  # just the 0.0
 
     def test_pmf_is_laplace_floored_never_exactly_zero(self):
+        # UPDATED (Issue #91 NFL-OUTCOME-DISTRIBUTION-AUDIT-20260919 / PR #149
+        # repair): `pmf` no longer applies a per-query floor of `1/(n+2)`
+        # independently at every k -- that was the exact defect that made the
+        # pmf sum to ~1.36 instead of 1 across the outcome range (see
+        # `FullPmfNormalizationTests` below). The floor is now the k=0 bin's
+        # share of ONE Laplace pseudo-count spread across the whole declared
+        # support (`1 / (n + MAX_EMPIRICAL_SUPPORT + 1)`), which is smaller
+        # in this exact same case but is what actually makes the pmf a valid
+        # normalized distribution. It is still always > 0.
         pool = EmpiricalResidualPool([5.0, 5.0, 5.0])  # residuals nowhere near k=0 given projection=0
         p = pool.pmf(0, projection=0.0)
         self.assertGreater(p, 0.0)
-        self.assertAlmostEqual(p, 1.0 / (pool.n + 2))
+        self.assertAlmostEqual(p, 1.0 / (pool.n + MAX_EMPIRICAL_SUPPORT + 1))
+
+    def test_pmf_sums_to_one_across_the_full_declared_support(self):
+        # New regression test for the corrected normalization property.
+        pool = EmpiricalResidualPool([5.0, 5.0, 5.0])
+        total = sum(pool.pmf(k, projection=0.0) for k in range(0, MAX_EMPIRICAL_SUPPORT + 1))
+        self.assertAlmostEqual(total, 1.0, places=9)
+
+    def test_pmf_rejects_k_above_declared_support(self):
+        pool = EmpiricalResidualPool([1.0, 2.0, 3.0])
+        with self.assertRaises(ReceptionsOutcomeDistributionError):
+            pool.pmf(MAX_EMPIRICAL_SUPPORT + 1, projection=0.0)
 
 
 class FitNormalTests(unittest.TestCase):

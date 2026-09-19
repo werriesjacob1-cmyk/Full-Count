@@ -39,14 +39,12 @@ Real result actually produced by this module against the full pinned corpus
 test_receptions_baseline_research.py` and this module's own docstring math
 for how to reproduce): NEGATIVE_BINOMIAL (pooled dispersion) has the best
 aggregate held-out mean log-likelihood (-1.919 nats/observation) vs NORMAL
-pooled (-2.001) and EMPIRICAL_RESIDUAL pooled (-2.029) -- a real, if modest,
-improvement from moving to a discrete count model. But no candidate
-uniformly dominates: NORMAL systematically overpredicts the exact-zero mass
-point across the whole held-out population (18.8% predicted vs. 9.5% actual
-observed zero rate); EMPIRICAL_RESIDUAL, despite the worst aggregate
-log-likelihood, has the closest zero-mass calibration (10.0% predicted) and
-the best held-out Brier score on the natural "at least 1 reception" (over
-0.5) line (0.0828 vs. 0.0963 for pooled NB and 0.0982 for pooled Normal).
+pooled (-2.001) and EMPIRICAL_RESIDUAL pooled (-1.976, see PMF-fix note
+below) -- a real, if modest, improvement from moving to a discrete count
+model. This ranking is UNCHANGED by the PMF-normalization fix described
+below. But no candidate uniformly dominates: NORMAL systematically
+overpredicts the exact-zero mass point across the whole held-out
+population (18.8% predicted vs. 9.5% actual observed zero rate).
 Opportunity-bucketed (stratified) fits do NOT uniformly improve on pooled
 fits despite real, confirmed heteroskedasticity in the raw residual spread
 by projection level (pooled residual std rises from ~1.19 at b0<1 to ~2.66
@@ -54,21 +52,58 @@ at b0>=5, and residual bias falls from +0.63 to -0.86 across the same
 range) -- bucketed negative-binomial is worse than pooled negative-binomial
 on every metric checked here, most likely because the lowest- and
 highest-projection buckets have noisier per-bucket dispersion estimates
-than the pooled fit. All three candidates, pooled or bucketed, are
-materially miscalibrated at the population extremes: every method
-overpredicts the zero-mass point for very-low-projection players (actual
-19.5% vs. 25-53% predicted at b0 < 1) and underpredicts it for
-very-high-projection players (actual 1.5% vs. 0.2-0.9% predicted at
-b0 >= 5). Conclusion, stated plainly rather than manufactured into a false
-positive: this is a legitimate negative/neutral result. Negative binomial
-gives a small, real aggregate log-likelihood edge, but the existing pooled
-empirical-residual approach the codebase already uses is competitive to
-best on the calibration metrics that most directly matter for a real
-over/under bet, and neither approach solves the real, disclosed
-miscalibration at the low- and high-usage extremes. Promoting a more
-complex model than the data supports would not be honest; this module
-therefore stops at reporting the comparison, not at declaring a winner to
-wire into production.
+than the pooled fit. All candidates, pooled or bucketed, are materially
+miscalibrated at the population extremes: every method overpredicts the
+zero-mass point for very-low-projection players (actual 19.5% vs. 25-53%
+predicted at b0 < 1) and underpredicts it for very-high-projection players
+(actual 1.5% vs. 0.2-0.9% predicted at b0 >= 5). Conclusion, stated plainly
+rather than manufactured into a false positive: this remains a legitimate
+negative/neutral result. Negative binomial gives a small, real aggregate
+log-likelihood edge, and neither it nor any other candidate solves the
+real, disclosed miscalibration at the low- and high-usage extremes.
+Promoting a more complex model than the data supports would not be honest;
+this module therefore stops at reporting the comparison, not at declaring
+a winner to wire into production.
+
+PMF-normalization fix and its effect on the numbers above (Issue #91
+workstream `NFL-OUTCOME-DISTRIBUTION-REPAIR-20260919`, applied here after
+being found but not fixed by workstream
+`NFL-OUTCOME-DISTRIBUTION-AUDIT-20260919`/PR #149): `EmpiricalResidualPool
+.pmf` previously applied a Laplace-style floor of `1/(n+2)` independently
+to every queried k and, at k=0 specifically, counted only a narrow
++/-0.5 window around the exact zero outcome -- silently leaving out any
+pooled residual whose implied outcome (`projection + residual`) fell below
+that window (a real, if narrow, gap, since receptions cannot actually be
+negative). `pmf` is now a genuinely normalized distribution over the whole
+declared 0..MAX_EMPIRICAL_SUPPORT support, and its k=0 bin correctly folds
+ALL of that below-zero implied mass into k=0 (the same "fold, don't
+discard" choice `normal_discrete_pmf` already makes for the Normal
+candidate) -- see `EmpiricalResidualPool.pmf`'s own docstring for the
+exact construction. This does NOT change the top-line
+NEGATIVE_BINOMIAL-wins-on-log-likelihood finding above (verified by
+directly re-running this exact comparison against the same pinned corpus
+before and after the fix), but it DOES materially change three numbers
+this docstring previously reported for EMPIRICAL_RESIDUAL_POOLED
+specifically, disclosed here rather than silently overwritten:
+mean held-out log-likelihood improved from -2.029 to -1.976 (folding
+previously-discarded mass in);
+mean predicted P(actual=0) rose from 0.100 to 0.178 (no longer the
+closest of the five candidates to the actual 9.5% held-out zero rate --
+NORMAL_BUCKETED's 0.139 is now closest);
+held-out Brier score on the "over 0.5" line rose from 0.0828 to 0.0983
+(no longer the best of the five candidates -- NORMAL_BUCKETED's 0.0851 is
+now best, followed by NEGATIVE_BINOMIAL_POOLED's 0.0962). In short: PR
+#148's original claim that the empirical-residual candidate was
+"competitive to best on the calibration metrics that most directly matter
+for a real over/under bet" no longer holds post-fix -- the corrected,
+properly-normalized pmf assigns more zero-mass than the old (silently
+under-counting) estimator did, which moves it further from, not closer
+to, the real observed zero rate on this held-out population. This is
+reported as a genuine, disclosed change to a prior finding, not smoothed
+over; the original pre-fix numbers are preserved in PR #148's own Issue
+#91 status comment and in this module's git history as the historical
+baseline, per this repository's standing rule against silently rewriting
+prior evidence.
 
 Status: RESEARCH_ONLY_NOT_PROMOTED. Nothing here is wired into any
 selector, capture pipeline, or public artifact.
@@ -111,6 +146,22 @@ PROJECTION_BUCKETS: tuple[tuple[str, float, float], ...] = (
 MIN_BUCKET_N = 200
 
 EPS = 1e-12
+
+# `EmpiricalResidualPool.pmf`'s declared, normalized outcome support is
+# k = 0 .. MAX_EMPIRICAL_SUPPORT. Receptions are a real, physically bounded
+# count (a football game has a finite number of plays), but the pool's own
+# nonparametric math has no intrinsic upper bound, so a finite support has
+# to be chosen deliberately to define "sums to 1" at all -- see the
+# `pmf` docstring and Issue #91 workstream
+# `NFL-OUTCOME-DISTRIBUTION-AUDIT-20260919`/PR #149 for why this was needed.
+# 40 is chosen as a wide, documented safety margin: every real single-game
+# receptions total in the pinned 1999-2025 corpus this module fits against
+# is far below it (the training/held-out rows exercised by this module's own
+# tests and CLI never exceed single digits to low twenties), so the top bin
+# folding described below is an extreme-tail safety net, not a routine
+# occurrence. Raising this constant only widens the declared support; it
+# never changes the pmf's normalization property.
+MAX_EMPIRICAL_SUPPORT = 40
 
 
 class ReceptionsOutcomeDistributionError(ValueError):
@@ -209,24 +260,81 @@ class EmpiricalResidualPool:
         hi_index = bisect.bisect_right(self._sorted, value)
         return hi_index - lo_index
 
-    def pmf(self, k: int, projection: float, *, half_width: float = 0.5, eps: float | None = None) -> float:
-        """Nonparametric pmf estimate for integer outcome k given `projection`.
+    def _raw_bin_count(self, k: int, projection: float, max_support: int) -> int:
+        """Real observation count landing in outcome k's bin, where the
+        k=0 .. max_support bins partition the ENTIRE real line without gap
+        or overlap (each residual is counted in exactly one bin).
 
-        Counts real pooled residuals within `half_width` of the implied gap
-        `k - projection` (a fixed-bandwidth histogram/kernel density
-        estimate on the real residual pool -- the same convention
-        `receptions_shadow.empirical_side_probabilities` already uses for
-        its over/under threshold split, generalized here to a full
-        per-outcome estimate). `eps` defaults to a Laplace-style floor of
-        1/(n+2) so no outcome is ever assigned exactly zero probability from
-        a finite sample.
+        Interior bins (0 < k < max_support) use the same fixed +/-0.5
+        window around the implied gap `k - projection` this pool always
+        used (matching `receptions_shadow.empirical_side_probabilities`'s
+        threshold convention). The two boundary bins fold the tails that
+        interior windowing would otherwise leave out of a finite support,
+        mirroring exactly how `normal_discrete_pmf` folds a Normal's
+        below-zero mass into k=0 rather than discarding it:
+
+        - k=0 absorbs every residual whose implied outcome
+          (`projection + residual`) is below 0.5 -- i.e. everything an
+          interior window centered at k=0 would place there PLUS
+          everything a truly negative, physically impossible outcome
+          would have occupied. Receptions cannot be negative, so this
+          fold is required for the outcome space to be well-defined at
+          all, not merely a stylistic choice.
+        - k=max_support absorbs everything from `max_support - 0.5`
+          upward, the symmetric fold for this pmf's documented support
+          truncation (see `MAX_EMPIRICAL_SUPPORT`).
+        """
+        if k == 0:
+            return self.count_less_than(0.5 - projection)
+        if k == max_support:
+            return self.n - self.count_less_than(max_support - 0.5 - projection)
+        gap = k - projection
+        return self.count_in_half_open(gap - 0.5, gap + 0.5)
+
+    def pmf(self, k: int, projection: float, *, max_support: int = MAX_EMPIRICAL_SUPPORT) -> float:
+        """Genuinely normalized nonparametric pmf estimate for integer k.
+
+        `sum(pool.pmf(k, projection) for k in range(0, max_support + 1))`
+        is exactly 1 (within float tolerance) for ANY pool/projection --
+        this is the corrected replacement for a prior version of this
+        function that applied a Laplace-style floor of `1/(n+2)`
+        independently to every queried k, which meant the pmf did NOT sum
+        to 1 across the outcome range (confirmed: ~1.36 over k=0..20 on a
+        heterogeneous pool -- see
+        `nfl/tests/test_receptions_outcome_distribution.py`'s
+        normalization regression tests and Issue #91 workstream
+        `NFL-OUTCOME-DISTRIBUTION-AUDIT-20260919`/PR #149, which found but
+        did not fix this defect).
+
+        The fix applies additive (Laplace, +1) smoothing ONCE across the
+        WHOLE declared support instead of re-flooring each query in
+        isolation: every one of the `max_support + 1` bins (see
+        `_raw_bin_count`) gets exactly one pseudo-observation added, and
+        the whole vector is renormalized by `n + (max_support + 1)`. Since
+        the raw (unsmoothed) bin counts already partition all `n` real
+        residuals exactly once each, `sum(raw_count) + (max_support + 1)`
+        equals the denominator by construction, so the smoothed
+        distribution sums to exactly 1 -- not merely "usually close to 1".
+
+        Raises if `k` is negative or exceeds `max_support` (an outcome
+        outside this pmf's declared, normalized support is undefined; a
+        caller needing a wider support must pass a larger `max_support`
+        consistently across every call against the same pool/projection,
+        since the normalization constant depends on it).
         """
         if k < 0:
             raise ReceptionsOutcomeDistributionError(f"k must be >= 0: {k!r}")
-        gap = k - float(projection)
-        count = self.count_in_half_open(gap - half_width, gap + half_width)
-        floor = eps if eps is not None else 1.0 / (self.n + 2)
-        return max(count / self.n, floor)
+        if max_support < 1:
+            raise ReceptionsOutcomeDistributionError(f"max_support must be >= 1: {max_support!r}")
+        if k > max_support:
+            raise ReceptionsOutcomeDistributionError(
+                f"k={k!r} exceeds this pmf's declared, normalized support "
+                f"[0, {max_support}] (max_support={max_support!r})"
+            )
+        projection = float(projection)
+        raw_count = self._raw_bin_count(k, projection, max_support)
+        denominator = self.n + (max_support + 1)
+        return (raw_count + 1.0) / denominator
 
 
 def fit_normal(rows: Sequence[Mapping[str, Any]]) -> dict[str, float]:
