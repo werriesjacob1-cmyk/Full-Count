@@ -2660,6 +2660,82 @@ Alligator
 
 Alligator
 
+## 2026-09-19 — NFL Genius Phase 2: PR #135 live game-market shadow bridge reconciled against current main, real-source verified
+
+- PR #135 (`superchad/nfl-live-game-market-shadow-20260918`), authored by
+  SUPERCHAD, had fallen ~35 commits behind `main`. Merged current `main`
+  into the branch cleanly -- zero conflicts, and PR #135's own 4 files
+  (`nfl/prospective/game_market_shadow_board.py`,
+  `nfl/prospective/live_game_market_shadow.py`,
+  `nfl/tests/test_game_market_shadow_board.py`,
+  `.github/workflows/nfl-live-game-market-shadow.yml`) are byte-identical
+  before and after the merge (diffed directly, not assumed). Original
+  scope and design preserved exactly; nothing redesigned, nothing added.
+- **Real live-source re-verification performed independently, not taken on
+  the PR's own (now-stale) cited dry-run**: ran
+  `nfl/prospective/live_game_market_shadow.py` for real against live
+  FanDuel and current `nflverse/nfldata` `games.csv`, target Chicago-local
+  date 2026-09-20 (the upcoming Sunday). Result: 14 discovered events, 14
+  accounted, 14 `BOARD_BUILT`, 0 event-level `NO_PLAY`, 28 `SHADOW_ONLY` /
+  0 `NO_PLAY` market decisions (line movement since the PR's original run
+  means today's 1 tie became 0; both are legitimate outcomes of the same
+  code, not a discrepancy). Manifest SHA-256
+  `c6e2a8e67186df8473d0fb609d5a8210d6999ac180ca598134637fcaab9ef816`.
+  Directly inspected the real captured artifacts (all 14 raw FanDuel event
+  payloads, 14 market snapshots, 14 B0 predictions, 14 sealed boards, the
+  schedule CSV, the FanDuel root payload, the manifest): real NFL Week 2
+  matchups (e.g. Panthers @ Falcons, Saints @ Ravens, Packers @ Jets),
+  real numeric FanDuel selection IDs and market IDs, real spread/total
+  lines and American odds, source/board hashes and timestamps all
+  internally consistent with the actual run time.
+- **Point-in-time safety confirmed on real data**, not just unit tests:
+  every inspected prediction carries `target_final_status: PREGAME`,
+  `uses_current_game_outcome_as_feature: false`,
+  `uses_market_line_as_feature: false`, and
+  `same_week_completed_games_deliberately_excluded: true` -- the design
+  deliberately excludes same-week completed games rather than infer
+  finality from a moving schedule source (documented limitation, not a
+  bug); prior-game features come only from completed 2025 REG games plus
+  strictly-earlier 2026 REG weeks.
+- **Fail-closed accounting confirmed on real data**: `run()` raises
+  `SystemExit("full-slate accounting invariant failed")` if
+  `accounted_event_count != discovered_event_count`; every event lands as
+  `BOARD_BUILT` or `NO_PLAY`, never silently dropped; every market lands as
+  `SHADOW_ONLY` or explicit `NO_PLAY` (`MARKET_NOT_NORMALIZED`,
+  `MODEL_EQUALS_SPREAD`/`MODEL_EQUALS_TOTAL` on an exact tie, or the
+  model's own ineligibility reason) -- verified both by code inspection and
+  by the real run's own manifest.
+- **Deterministic sealing confirmed**: canonical-JSON SHA-256 board/manifest
+  hashing; `verify_game_market_shadow_board` rebuilds and requires exact
+  equality, with a direct tamper-detection test. Board seal time is
+  required to be >= the bound market snapshot's own seal time.
+- 7 new shadow-board unit tests plus the 3 other bridge-gate test files
+  the workflow itself runs (`test_game_market_snapshot.py`,
+  `test_game_market_b0.py`, `test_scoring_prior_features.py`) all pass;
+  full existing `nfl/tests` suite (507 tests) and full root suite
+  (excluding `test_browser_e2e.py`) pass unchanged on the reconciled tree.
+- Sunday operational readiness: `.github/workflows/nfl-live-game-market-
+  shadow.yml` schedules 7 unattended kickoff-wave runs across Sunday UTC
+  (15:40, 16:50, 19:05, 19:55, 20:15, 23:00, and 00:10 Monday), gates on
+  the same 4 unit-test files, asserts the full-slate accounting invariant
+  as its own CI step, and uploads a 30-day evidence artifact on every run
+  (`if: always()`) -- no manual supervision required once merged.
+- No model/selector/public-pick promotion. B0
+  (`GAME_MARKET_B0_PRIOR_SCORING_BLEND`) remains the sole accepted control;
+  the module hard-rejects any other `baseline_name` (tested). C2/C3 are not
+  referenced anywhere in this bridge.
+- No repair was needed -- the branch's own design and code were already
+  correct; reconciliation was a clean merge plus independent live-source
+  re-verification, not a redesign.
+- Merge readiness: CI green on the reconciled head, clean against current
+  `main`. **Merged as PR #135**, merge SHA
+  `0f7cbab7b75b17873b23a1d495c3d49e1628aefe`, per Jacob's explicit
+  authorization; a real production-branch dry run afterward (workflow
+  run `35446920888`) confirmed 14/14 discovered/accounted, 28 SHADOW_ONLY,
+  0 NO_PLAY on the merged main.
+
+Alligator
+
 ## 2026-09-19 — NFL Genius Phase 1a: coach/coordinator/playcaller regime registry substrate (HC only, real coverage)
 
 - Workstream `NFL-GENIUS-COACH-REGIME-SUBSTRATE-20260919` (Issue #91 claim,
