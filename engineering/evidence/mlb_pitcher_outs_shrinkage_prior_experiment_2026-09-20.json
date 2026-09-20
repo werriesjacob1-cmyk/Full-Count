@@ -1,0 +1,133 @@
+{
+  "brier_bootstrap": {
+    "ci_hi": 0.001607049900443941,
+    "ci_lo": 0.0004029454977607372,
+    "fraction_favoring_autofit": 0.9996,
+    "metric": "brier",
+    "n_boot": 5000,
+    "n_pitchers": 167,
+    "point_estimate": 0.0010031966342679
+  },
+  "fit_gate_cleared": true,
+  "fitted_n0_by_threshold": {
+    "outs_12plus": 9.2,
+    "outs_13plus": 10.6,
+    "outs_14plus": 10.4,
+    "outs_15plus": 9.7,
+    "outs_16plus": 7.3,
+    "outs_17plus": 6.8,
+    "outs_18plus": 6.7,
+    "outs_19plus": 11.9,
+    "outs_20plus": 12.9,
+    "outs_21plus": 12.0
+  },
+  "logloss_bootstrap": {
+    "ci_hi": 0.006922563682446148,
+    "ci_lo": 0.002596732606305552,
+    "fraction_favoring_autofit": 1.0,
+    "metric": "logloss",
+    "n_boot": 5000,
+    "n_pitchers": 167,
+    "point_estimate": 0.0047067331909596
+  },
+  "min_players_to_fit_shrinkage": 30,
+  "min_starts": 5,
+  "n_held_out_pitchers": 167,
+  "n_held_out_start_observations": 16050,
+  "n_population": 240,
+  "n_train_population": 187,
+  "overall": {
+    "brier_autofit": 0.17224783958816206,
+    "brier_hardcoded": 0.17325103622242996,
+    "logloss_autofit": 0.5229687660316781,
+    "logloss_hardcoded": 0.5276754992226377,
+    "n": 16050,
+    "n_groups": 167
+  },
+  "per_threshold": {
+    "outs_12plus": {
+      "brier_autofit": 0.1013862847538941,
+      "brier_hardcoded": 0.1019109519501557,
+      "logloss_autofit": 0.3650063049717679,
+      "logloss_hardcoded": 0.37298654921393826,
+      "n": 1605,
+      "n_groups": 1
+    },
+    "outs_13plus": {
+      "brier_autofit": 0.15297576867289717,
+      "brier_hardcoded": 0.15389506902180683,
+      "logloss_autofit": 0.4855714501126643,
+      "logloss_hardcoded": 0.49232527527867237,
+      "n": 1605,
+      "n_groups": 1
+    },
+    "outs_14plus": {
+      "brier_autofit": 0.17505445479127726,
+      "brier_hardcoded": 0.17619766963862923,
+      "logloss_autofit": 0.5362246841834445,
+      "logloss_hardcoded": 0.5427141202579755,
+      "n": 1605,
+      "n_groups": 1
+    },
+    "outs_15plus": {
+      "brier_autofit": 0.1972749792772586,
+      "brier_hardcoded": 0.19906829350155764,
+      "logloss_autofit": 0.5843561586139594,
+      "logloss_hardcoded": 0.5905460421715673,
+      "n": 1605,
+      "n_groups": 1
+    },
+    "outs_16plus": {
+      "brier_autofit": 0.24186514234890957,
+      "brier_hardcoded": 0.24267134644859822,
+      "logloss_autofit": 0.6768326464627179,
+      "logloss_hardcoded": 0.678735053555907,
+      "n": 1605,
+      "n_groups": 1
+    },
+    "outs_17plus": {
+      "brier_autofit": 0.2404252326978195,
+      "brier_hardcoded": 0.24096223442990655,
+      "logloss_autofit": 0.6739365056266756,
+      "logloss_hardcoded": 0.6752097144465743,
+      "n": 1605,
+      "n_groups": 1
+    },
+    "outs_18plus": {
+      "brier_autofit": 0.23420631955763238,
+      "brier_hardcoded": 0.23468702360124608,
+      "logloss_autofit": 0.6619409578563176,
+      "logloss_hardcoded": 0.6632565778657648,
+      "n": 1605,
+      "n_groups": 1
+    },
+    "outs_19plus": {
+      "brier_autofit": 0.1445317232959502,
+      "brier_hardcoded": 0.14592560441744545,
+      "logloss_autofit": 0.4609999832903882,
+      "logloss_hardcoded": 0.46678234626545756,
+      "n": 1605,
+      "n_groups": 1
+    },
+    "outs_20plus": {
+      "brier_autofit": 0.12581961109034273,
+      "brier_hardcoded": 0.12694615786915878,
+      "logloss_autofit": 0.41351333584991967,
+      "logloss_hardcoded": 0.41787294201203706,
+      "n": 1605,
+      "n_groups": 1
+    },
+    "outs_21plus": {
+      "brier_autofit": 0.10893887939563865,
+      "brier_hardcoded": 0.11024601134579441,
+      "logloss_autofit": 0.37130563334892636,
+      "logloss_hardcoded": 0.37632637115848133,
+      "n": 1605,
+      "n_groups": 1
+    }
+  },
+  "season": 2026,
+  "shrinkage_prior_games_fallback_constant": 20,
+  "thresholds_that_fell_back_to_flat_prior": [],
+  "train_cutoff": "2026-07-01"
+}
