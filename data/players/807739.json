@@ -243,7 +243,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 25.2,
+          "score": 26.6,
           "notable_signals": 1,
           "matchup": "Seattle Mariners @ Colorado Rockies",
           "game_pk": 824300,
@@ -253,7 +253,7 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 58.0,
-            "same_hand_ratio": 21.4286,
+            "same_hand_ratio": 57.1429,
             "l14_k_pct": 45.2941,
             "env_neutral": 50.0,
             "ump_accuracy": 80.0337,
@@ -274,7 +274,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 48.0,
+          "score": 48.1,
           "notable_signals": 0,
           "matchup": "Seattle Mariners @ Colorado Rockies",
           "game_pk": 824300,
@@ -283,12 +283,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.687,
+            "outs_rate": 0.6924,
             "avg_outs_per_start": 15.2
           },
-          "hit_probability": 0.6692,
-          "raw_hit_probability": 0.687,
-          "lift": -0.0903,
+          "hit_probability": 0.6734,
+          "raw_hit_probability": 0.6924,
+          "lift": -0.0961,
           "reliability": "C",
           "sample_n": 5,
           "projection": {
@@ -300,7 +300,7 @@
         {
           "prop": "Over 7.5 Combined Strikeouts",
           "type": "pitcher_combo",
-          "score": 44.2,
+          "score": 44.7,
           "notable_signals": 0,
           "matchup": "Seattle Mariners @ Colorado Rockies",
           "game_pk": 824300,
@@ -312,11 +312,11 @@
             608372
           ],
           "signals": {
-            "combined_k_edge": -0.0696
+            "combined_k_edge": -0.0666
           },
           "hit_probability": 0.5458,
           "raw_hit_probability": null,
-          "lift": -0.0696,
+          "lift": -0.0666,
           "reliability": "D",
           "sample_n": 0,
           "projection": {

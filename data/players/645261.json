@@ -683,18 +683,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.8202,
+            "outs_rate": 0.8267,
             "avg_outs_per_start": 19.22
           },
-          "hit_probability": 0.8202,
-          "raw_hit_probability": 0.8202,
-          "lift": 0.2924,
+          "hit_probability": 0.8267,
+          "raw_hit_probability": 0.8267,
+          "lift": 0.2578,
           "reliability": "A",
           "sample_n": 32,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 27.5,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ San Diego Padres",
+          "game_pk": 823247,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            645261,
+            621111
+          ],
+          "signals": {
+            "combined_k_edge": -0.1494
+          },
+          "hit_probability": 0.4985,
+          "raw_hit_probability": null,
+          "lift": -0.1494,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
           }
         }
       ]
