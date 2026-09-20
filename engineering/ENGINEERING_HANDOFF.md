@@ -4474,3 +4474,112 @@ promotion. Draft PR, not merged -- independent review + Jacob's separate
 explicit authorization required.
 
 Alligator
+## 2026-09-20 -- Authorized integration: PRs #161-#164 merged; NFL sealed
+## B0-vs-frozen-challenger receptions connector built with real end-to-end
+## evidence ("SUPERCLAUDE — FULL COUNT: AUTHORIZED INTEGRATION & PREDICTIVE
+## EXECUTION")
+
+**Integration.** Per Jacob's explicit authorization naming PRs #161, #162,
+#163, #164 specifically (all previously independently GO'd), merged in the
+instructed dependency-aware order -- #163 first so MLB's next daily run
+could begin preserving board-freeze evidence sooner, then #161, #162,
+#164:
+
+- #161 (News Brain parallel eligibility research) -> merge SHA
+  `efaabd883040e544493f1a0f67437c0e7c9a554c`
+- #162 (role-regime-redistribution research final candidate, superseding
+  #147/#150) -> merge SHA `0a93c230d497a0911715e37ff046bcc8f57febd9`
+- #163 (MLB board-freeze grading gap + corrupt-file crash fix) -> merge
+  SHA `8f7fde06c92838b7727f573939c4ccbde1e4a9ce`
+- #164 (frozen NEGATIVE_BINOMIAL_POOLED receptions challenger) -> merge
+  SHA `adf9398a132b8c4ca706e2fc202ec6f4813e1787` (required resolving one
+  real merge conflict in this file's own append-only history against
+  #161/#162's entries -- a pure doc-collision, reassembled via a
+  line-slicing script rather than raw conflict markers, reasoned through
+  and stated as not requiring renewed review since it changed no code
+  behavior)
+
+Combined-tree verification after all four merges: `nfl/tests`
+923/923 (916 immediately post-merge, +7 for the new work below);
+root suite (excluding `test_browser_e2e.py`) green. Posted to Issue #91 as
+comment `5746303572`. Authorization was scoped only to these four PRs --
+no model promotion, no selector change, no live-workflow edit was
+authorized or made.
+
+**NFL: first sealed, prospectively gradeable B0-vs-frozen-challenger
+receptions connection.** PR #164 gave the repo a frozen NB challenger that
+could score a (projection, line) pair, but nothing yet connected it to a
+real live candidate, a real B0 score, and a real sealed, gradeable
+record -- the exact gap the mission named as the next required
+deliverable. Built three new files, all on a fresh branch off the
+post-merge `main` (`afba7bbc97`):
+
+- `nfl/prospective/receptions_challenger_snapshot.py` --
+  `build_challenger_snapshot_record` assembles one sealable record pairing
+  a caller-supplied REAL `receptions_shadow.score_shadow_candidate` result
+  with a REAL `receptions_frozen_challenger.compare_b0_vs_frozen_challenger`
+  result for the identical candidate; validates both inputs actually have
+  the real output shape (rejects a fake/stub `b0_score` or
+  `challenger_comparison` outright) rather than trusting the caller.
+  `seal_challenger_snapshot` reuses the live board's own unmodified
+  `shadow_snapshot.seal_snapshot` -- same schema, same
+  `ALLOWED_DECISIONS`/`ALLOWED_MARKETS` validation, same
+  `snapshot_sha256` evidence hash -- with extra distinguishing fields
+  (`prediction_source="B0_VS_NEGATIVE_BINOMIAL_POOLED_CHALLENGER_V1"`,
+  `challenger_model_version`, `source_vintage`, `feature_cutoff`,
+  `evidence_status="RESEARCH_ONLY_NOT_PROMOTED"`) so a record can never be
+  confused with a live B0-only one downstream. Deliberate architectural
+  departure, stated explicitly rather than assumed: a standalone module,
+  not an addition to `receptions_shadow.py`, so it can never be reached by
+  the live workflow's own import graph.
+- `nfl/prospective/receptions_challenger_live_demo.py` -- a real, reusable
+  (not throwaway) manual verification script, explicitly documented as
+  "Not part of any scheduled workflow" and imported by no
+  `.github/workflows/` file. Runs the actual live pipeline end to end:
+  real `fanduel_nfl.capture()` receiving-props candidates -> real
+  `official_nfl.capture()` + `parse_report` + `bind_report` inactive
+  reports -> real `pregame_availability.evaluate_candidate` -> real
+  `current_b0_projection`/`score_shadow_candidate` (2025-season
+  strictly-prior history) -> real `compare_b0_vs_frozen_challenger` ->
+  `build_challenger_snapshot_record` -> `seal_challenger_snapshot`.
+  Self-correction recorded here rather than hidden: the first draft of
+  this script used a placeholder `availability_status=
+  "NOT_YET_EVALUATED_RESEARCH_ONLY"` instead of actually running the real
+  official-inactive-evidence chain -- caught mid-work as a violation of
+  the standing "preserve UNKNOWN_GAME_COVERAGE/NO_PLAY" requirement and
+  redone with the real pipeline before any evidence was produced.
+- `nfl/tests/test_receptions_challenger_snapshot.py` -- 7 new tests, using
+  real `score_shadow_candidate`/`compare_b0_vs_frozen_challenger` calls
+  (not mocks) to build realistic fixtures: valid-record construction,
+  each required-field rejection, fake-B0-score rejection, fake-challenger-
+  comparison rejection, QUARANTINED sealability, invalid-decision-status
+  rejection via the real shared validator, and cross-record deterministic
+  hashing.
+
+**Real end-to-end evidence produced** (not synthetic, not fabricated):
+running the live demo script against real current sources produced
+`engineering/evidence/nfl_receptions_challenger_snapshot_2026-09-20.json`
+-- 10 real candidates (Tetairoa McMillan/CAR, Xavier Legette/CAR, Bijan
+Robinson/ATL, Olamide Zaccheaus/ATL, Drake London/ATL, Chuba Hubbard/CAR,
+Jalen Coker/CAR, Alvin Kamara/NO, Jahan Dotson/ATL, Tommy Tremble/CAR),
+each with a real line, real B0 over-probability, and real frozen-
+challenger over-probability side by side (e.g. McMillan: line 4.5,
+b0_over=0.266, challenger_over=0.302). Every record correctly shows
+`availability_status="UNKNOWN_GAME_COVERAGE"` /
+`decision_status="QUARANTINED"` -- the real, correct state this many hours
+before kickoff, since only Thursday's BUF@DET inactive report exists yet
+and none of today's Sunday games have one. This is the intended proof
+point: the safeguard is demonstrably intact under real conditions, not
+bypassed or faked to produce a cleaner-looking demo. `snapshot_sha256=
+0468cabdbf2c22df4050f0887a6819a9d56abd01dbc913575729632b66d4ec32`.
+
+Full `nfl/tests` suite after adding this work: 923/923. Root suite
+(excluding `test_browser_e2e.py`): green. Branch
+`claude/nfl-receptions-challenger-sealed-snapshot-20260920`. No
+production change, no `.github/workflows/` edit, no model/selector/
+public-pick promotion -- writes only to its own clearly-labeled research
+evidence path. Draft PR, not merged -- independent review + Jacob's
+separate explicit authorization required, same as every other research
+family this session.
+
+Alligator
