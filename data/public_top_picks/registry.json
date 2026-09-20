@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-20T14:59:06.221590+00:00",
+  "updated_at": "2026-09-20T15:04:34.186066+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -40314,6 +40314,99 @@
         },
         "qualification_timestamp": "2026-09-20T14:54:09.133276+00:00",
         "board_timestamp": "2026-09-20T14:54:09.101850+00:00",
+        "slate_date": "2026-09-20"
+      }
+    },
+    "fc2:822922:player-663776:strikeouts:4:over": {
+      "canonical_id": "fc2:822922:player-663776:strikeouts:4:over",
+      "settlement_identity": [
+        "822922",
+        [
+          "player",
+          "663776"
+        ],
+        "strikeouts",
+        "4",
+        "over"
+      ],
+      "slate_date": "2026-09-20",
+      "first_published_at": "2026-09-20T15:04:34.186066+00:00",
+      "publication_provenance": {
+        "artifact_id": "16ae348ce8868641bab2696df58b0f66fb7a741d9f53c035e06ade7dd74f3087",
+        "source_commit": "410594cb45732be80b14992b1f3b9d2171e4ee36",
+        "workflow_run_id": "35518258604",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-20T15:04:17.275244+00:00",
+        "data_hash": "fbaf2a0ba0c2a1c3bf547adc931cc6cd3c0190bdc3e5c8efb0a601cea7254b95",
+        "live_hash": "afba1b2a57fea057c5087cd658032832f36811e2f70f1b804f2a435f3baa6302"
+      },
+      "snapshot": {
+        "id": "fc2:822922:player-663776:strikeouts:4:over",
+        "identity_version": 2,
+        "game_pk": 822922,
+        "player_id": 663776,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Patrick Sandoval",
+        "team": "Boston Red Sox",
+        "matchup": "Boston Red Sox @ Tampa Bay Rays",
+        "game_start": "2026-09-20T17:40:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 3.5,
+          "needs": 4
+        },
+        "prop": "Over 3.5 Strikeouts",
+        "hit_probability": 0.6283,
+        "market_odds": -148,
+        "market_implied": 0.5631,
+        "market_edge": 0.0652,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.6 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Expected workload 23.1 batters faced (league average \u2014 no real start found for him in the L14 window)",
+          "Recency-weighted K rate 24.0% (exp. decay, halflife 30d, 12 real starts / 267 BF) \u2014 drives the strikeout probability model",
+          "HP ump accuracy 94.4% \u2014 tight, accurate zone favors called strikes"
+        ],
+        "watchouts": [
+          "L14 Statcast sample too thin \u2014 recent-form read falls back to season K%",
+          "No L14 start found for this pitcher \u2014 workload defaulted to the league average",
+          "Opposing team K% 18.6 \u2014 contact-oriented lineup, tougher matchup",
+          "Platoon disadvantage: 2 of 8 projected hitters bat left-handed against this LHP (mostly opposite-handed lineup)"
+        ],
+        "prob_ci": [
+          0.6074,
+          0.7274
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 12,
+        "lineup_assumed": null,
+        "base_rate": 0.7028,
+        "lift": -0.0745,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "0e2c1867a",
+          "prediction_timestamp": "2026-09-20T15:00:46.496155+00:00",
+          "odds_fetched_at": "2026-09-20T15:00:39.675332+00:00",
+          "board_generated_at": "2026-09-20T15:00:46.474764+00:00"
+        },
+        "qualification_timestamp": "2026-09-20T15:00:46.496155+00:00",
+        "board_timestamp": "2026-09-20T15:00:46.474764+00:00",
         "slate_date": "2026-09-20"
       }
     }
