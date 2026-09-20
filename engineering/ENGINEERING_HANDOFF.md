@@ -4576,5 +4576,203 @@ change, no `.github/workflows/` edit, no model/selector/public-pick
 promotion. Pushed, not merged -- independent review + Jacob's separate
 explicit authorization required before any promotion of this finding into
 production, exactly as with every other research family this session.
+## 2026-09-20 -- Authorized integration: PRs #161-#164 merged; NFL sealed
+## B0-vs-frozen-challenger receptions connector built with real end-to-end
+## evidence ("SUPERCLAUDE — FULL COUNT: AUTHORIZED INTEGRATION & PREDICTIVE
+## EXECUTION")
+
+**Integration.** Per Jacob's explicit authorization naming PRs #161, #162,
+#163, #164 specifically (all previously independently GO'd), merged in the
+instructed dependency-aware order -- #163 first so MLB's next daily run
+could begin preserving board-freeze evidence sooner, then #161, #162,
+#164:
+
+- #161 (News Brain parallel eligibility research) -> merge SHA
+  `efaabd883040e544493f1a0f67437c0e7c9a554c`
+- #162 (role-regime-redistribution research final candidate, superseding
+  #147/#150) -> merge SHA `0a93c230d497a0911715e37ff046bcc8f57febd9`
+- #163 (MLB board-freeze grading gap + corrupt-file crash fix) -> merge
+  SHA `8f7fde06c92838b7727f573939c4ccbde1e4a9ce`
+- #164 (frozen NEGATIVE_BINOMIAL_POOLED receptions challenger) -> merge
+  SHA `adf9398a132b8c4ca706e2fc202ec6f4813e1787` (required resolving one
+  real merge conflict in this file's own append-only history against
+  #161/#162's entries -- a pure doc-collision, reassembled via a
+  line-slicing script rather than raw conflict markers, reasoned through
+  and stated as not requiring renewed review since it changed no code
+  behavior)
+
+Combined-tree verification after all four merges: `nfl/tests`
+923/923 (916 immediately post-merge, +7 for the new work below);
+root suite (excluding `test_browser_e2e.py`) green. Posted to Issue #91 as
+comment `5746303572`. Authorization was scoped only to these four PRs --
+no model promotion, no selector change, no live-workflow edit was
+authorized or made.
+
+**NFL: first sealed, prospectively gradeable B0-vs-frozen-challenger
+receptions connection.** PR #164 gave the repo a frozen NB challenger that
+could score a (projection, line) pair, but nothing yet connected it to a
+real live candidate, a real B0 score, and a real sealed, gradeable
+record -- the exact gap the mission named as the next required
+deliverable. Built three new files, all on a fresh branch off the
+post-merge `main` (`afba7bbc97`):
+
+- `nfl/prospective/receptions_challenger_snapshot.py` --
+  `build_challenger_snapshot_record` assembles one sealable record pairing
+  a caller-supplied REAL `receptions_shadow.score_shadow_candidate` result
+  with a REAL `receptions_frozen_challenger.compare_b0_vs_frozen_challenger`
+  result for the identical candidate; validates both inputs actually have
+  the real output shape (rejects a fake/stub `b0_score` or
+  `challenger_comparison` outright) rather than trusting the caller.
+  `seal_challenger_snapshot` reuses the live board's own unmodified
+  `shadow_snapshot.seal_snapshot` -- same schema, same
+  `ALLOWED_DECISIONS`/`ALLOWED_MARKETS` validation, same
+  `snapshot_sha256` evidence hash -- with extra distinguishing fields
+  (`prediction_source="B0_VS_NEGATIVE_BINOMIAL_POOLED_CHALLENGER_V1"`,
+  `challenger_model_version`, `source_vintage`, `feature_cutoff`,
+  `evidence_status="RESEARCH_ONLY_NOT_PROMOTED"`) so a record can never be
+  confused with a live B0-only one downstream. Deliberate architectural
+  departure, stated explicitly rather than assumed: a standalone module,
+  not an addition to `receptions_shadow.py`, so it can never be reached by
+  the live workflow's own import graph.
+- `nfl/prospective/receptions_challenger_live_demo.py` -- a real, reusable
+  (not throwaway) manual verification script, explicitly documented as
+  "Not part of any scheduled workflow" and imported by no
+  `.github/workflows/` file. Runs the actual live pipeline end to end:
+  real `fanduel_nfl.capture()` receiving-props candidates -> real
+  `official_nfl.capture()` + `parse_report` + `bind_report` inactive
+  reports -> real `pregame_availability.evaluate_candidate` -> real
+  `current_b0_projection`/`score_shadow_candidate` (2025-season
+  strictly-prior history) -> real `compare_b0_vs_frozen_challenger` ->
+  `build_challenger_snapshot_record` -> `seal_challenger_snapshot`.
+  Self-correction recorded here rather than hidden: the first draft of
+  this script used a placeholder `availability_status=
+  "NOT_YET_EVALUATED_RESEARCH_ONLY"` instead of actually running the real
+  official-inactive-evidence chain -- caught mid-work as a violation of
+  the standing "preserve UNKNOWN_GAME_COVERAGE/NO_PLAY" requirement and
+  redone with the real pipeline before any evidence was produced.
+- `nfl/tests/test_receptions_challenger_snapshot.py` -- 7 new tests, using
+  real `score_shadow_candidate`/`compare_b0_vs_frozen_challenger` calls
+  (not mocks) to build realistic fixtures: valid-record construction,
+  each required-field rejection, fake-B0-score rejection, fake-challenger-
+  comparison rejection, QUARANTINED sealability, invalid-decision-status
+  rejection via the real shared validator, and cross-record deterministic
+  hashing.
+
+**Real end-to-end evidence produced** (not synthetic, not fabricated):
+running the live demo script against real current sources produced
+`engineering/evidence/nfl_receptions_challenger_snapshot_2026-09-20.json`
+-- 10 real candidates (Tetairoa McMillan/CAR, Xavier Legette/CAR, Bijan
+Robinson/ATL, Olamide Zaccheaus/ATL, Drake London/ATL, Chuba Hubbard/CAR,
+Jalen Coker/CAR, Alvin Kamara/NO, Jahan Dotson/ATL, Tommy Tremble/CAR),
+each with a real line, real B0 over-probability, and real frozen-
+challenger over-probability side by side (e.g. McMillan: line 4.5,
+b0_over=0.266, challenger_over=0.302). Every record correctly shows
+`availability_status="UNKNOWN_GAME_COVERAGE"` /
+`decision_status="QUARANTINED"` -- the real, correct state this many hours
+before kickoff, since only Thursday's BUF@DET inactive report exists yet
+and none of today's Sunday games have one. This is the intended proof
+point: the safeguard is demonstrably intact under real conditions, not
+bypassed or faked to produce a cleaner-looking demo. `snapshot_sha256=
+0468cabdbf2c22df4050f0887a6819a9d56abd01dbc913575729632b66d4ec32`.
+
+Full `nfl/tests` suite after adding this work: 923/923. Root suite
+(excluding `test_browser_e2e.py`): green. Branch
+`claude/nfl-receptions-challenger-sealed-snapshot-20260920`. No
+production change, no `.github/workflows/` edit, no model/selector/
+public-pick promotion -- writes only to its own clearly-labeled research
+evidence path. Draft PR, not merged -- independent review + Jacob's
+separate explicit authorization required, same as every other research
+family this session.
+
+Alligator
+## 2026-09-20 -- PR #165 independent review: HOLD, one real validation gap
+## found and fixed (bounded reviewer agent, verdict posted Issue #91
+## comment `5747226701`)
+
+Independent review of PR #165 (the sealed B0-vs-frozen-challenger
+receptions connector above) confirmed everything else claimed: zero
+live-workflow coupling, `shadow_snapshot.py`/`receptions_shadow.py`
+byte-identical to `main`, `seal_challenger_snapshot` a genuine passthrough,
+the committed evidence file's `snapshot_sha256` independently reproduced
+exactly, all 10 real records internally consistent, `nfl/tests` 923/923
+reproduced exactly.
+
+**Real defect found, not hypothetical**: `build_challenger_snapshot_record`
+originally validated only KEY PRESENCE
+(`"model_over_probability" not in b0_score`,
+`"challenger" not in challenger_comparison`), not value shape. The
+reviewer constructed mostly-fake dicts keeping only the checked key --
+`b0_score={"model_over_probability": 1.5}` (out of range, nothing else
+real), `challenger_comparison={"challenger": "GARBAGE_NOT_A_DICT"}`,
+`{"challenger": 12345}`, `{"challenger": {"nonsense_key": "abc"}}` -- and
+all four were silently accepted and sealed by the real code, directly
+contradicting this module's own stated safety property. Not exploited in
+practice (the only real caller always passes genuine scorer output, and
+the committed evidence file is authentic -- independently confirmed by
+the reviewer), but the enforcement was weaker than claimed and the
+original committed tests (which only used dicts missing the key entirely)
+did not catch it.
+
+**Fix applied** (same PR branch, same commit history the review already
+covers structurally): replaced the two one-line checks with
+`_validate_real_b0_score`/`_validate_real_challenger_comparison`, which
+validate the FULL real key set of `score_shadow_candidate`'s and
+`compare_b0_vs_frozen_challenger`'s actual output shapes (including the
+nested `challenger` dict), plus a `0 <= p <= 1` range check on every
+probability field and an over+under+push-sums-to-1.0 check on the
+challenger side. Added the reviewer's exact four adversarial cases as two
+new regression tests
+(`test_rejects_a_b0_score_with_only_the_checked_key_present`,
+`test_rejects_a_challenger_comparison_whose_challenger_value_is_not_a_dict`).
+Re-verified all 10 real records in the already-committed evidence file
+still pass the tightened validation unchanged (proving the fix doesn't
+reject genuine data, only fakes). `nfl/tests`: 925/925. Root suite: green.
+
+This fix has NOT been re-reviewed by an independent party yet -- posting
+this update to Issue #91 now; the tightened validation itself is still
+subject to the same pre-merge doctrine as everything else in this PR.
+Verdict remains **HOLD** until that re-check happens; no merge, undraft,
+or promotion performed.
+
+Alligator
+## 2026-09-20 -- PR #165 follow-up re-review: GO, plus one non-blocking
+## parity gap closed (Issue #91 comment `5747251146`)
+
+The same independent reviewer re-checked the validation fix above on the
+new head. All 4 of the reviewer's original adversarial cases now correctly
+rejected (verified by direct call, not by reading the code); one new
+adversarial attempt (a wrong-typed `challenger.over` value) also correctly
+rejected via the existing `_is_probability` check; both new regression
+tests confirmed to exercise the real code path; all 10 already-committed
+real evidence records confirmed to still validate and the file's
+`snapshot_sha256` confirmed unchanged; `nfl/tests` reproduced at 925/925
+(before this entry's own addition below). **Verdict: GO.**
+
+The reviewer found one more real, non-blocking gap: `_validate_real_b0_score`
+checked each of `model_over_probability`/`model_under_probability`
+individually landed in `[0, 1]` but never checked they summed to `~1`
+together (unlike the challenger side's existing `over+under+push` sum
+check) -- a fabricated pair like `{0.9, 0.9}` or `{0.0, 0.0}` passed. The
+reviewer judged this non-exploitable against the real pipeline (the real
+`empirical_side_probabilities` always produces `under = 1.0 - over`
+exactly; there is no independent third b0-side term the way the
+challenger side has `push`) and explicitly recommended closing the gap
+for parity anyway rather than treating it as a new blocker.
+
+Applied that exact recommendation: added the sum-to-1 check on the b0
+side, plus one regression test
+(`test_rejects_a_b0_score_whose_over_and_under_dont_sum_to_one`,
+both `{0.9, 0.9}` and `{0.0, 0.0}` cases). Re-verified all 10 real evidence
+records still pass unchanged. `nfl/tests`: 926/926. Root suite unaffected
+(no files outside `nfl/` touched).
+
+This last, small change implements the reviewer's own explicit
+recommendation made as part of their GO verdict rather than introducing
+new unreviewed logic, so it is not treated as reopening the HOLD cycle --
+but it has likewise not itself been independently re-verified by a fresh
+pass, and is disclosed as such. **PR #165 status: independently reviewed
+GO, draft, not merged.** Merging still requires Jacob's separate, explicit
+authorization naming this specific PR -- the mission's prior authorization
+covered only #161-#164.
 
 Alligator
