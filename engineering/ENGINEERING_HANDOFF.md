@@ -4474,3 +4474,107 @@ promotion. Draft PR, not merged -- independent review + Jacob's separate
 explicit authorization required.
 
 Alligator
+## 2026-09-20 -- MLB research: pitcher_outs shrinkage-prior hypothesis
+## (prior_games=None auto-fit vs. hardcoded prior_games=6) -- AUTO-FIT WINS,
+## real held-out evidence, research-only, no production change
+
+**Workstream:** the bounded `pitcher_outs` shrinkage-prior research agent
+referenced in comments `5747228325`/`5747260200` (first launch failed on a
+session-wide rate limit before writing any file; this is the relaunch,
+same brief).
+
+**Question.** `mlb_sources.empirical_pitcher_outs_rates` hardcodes
+`prior_games=6` for `_apply_shrinkage`'s Beta-Binomial prior on the
+"Pitcher Outs Recorded" market, with its own comment admitting this was
+borrowed from `empirical_pitcher_k_rates`'s independently-audited constant
+rather than fit for this market. `_apply_shrinkage` already supports
+`prior_games=None`, which auto-fits the concentration n0 per threshold via
+`_fit_shrinkage_n0`'s golden-section MLE, gated by
+`MIN_PLAYERS_TO_FIT_SHRINKAGE` (30). Does the auto-fit calibrate better on
+real held-out pitcher_outs data?
+
+**Method, predeclared before any held-out number existed.** New
+research-only module `research/pitcher_outs_shrinkage_prior_experiment.py`
+(full method/rationale in its own docstring). Real 2026-season MLB Stats
+API starting-pitcher population (playerPool=ALL, gamesStarted>=5): 240
+pitchers. TRAIN_CUTOFF=`2026-07-01` (season's rough midpoint, picked before
+running a single comparison, never adjusted afterward) splits real starts
+into train (on/before cutoff) and held-out (after cutoff, through the day
+this ran) BY DATE. Real per-pitcher (hit, n) pairs for both windows come
+from calling `mlb_sources._empirical_pitcher_outs_one` directly (the exact
+private function `empirical_pitcher_outs_rates` itself calls, and the same
+real game-log source `backtest/engine.py` already uses at its own
+`asof=cutoff` call site) -- no fabricated pair or outcome anywhere; the
+held-out (hit, n) for each pitcher/threshold is full-season minus train-
+window by subtraction on these two real fetches. Both shrinkage variants
+were applied to independent deep copies of the IDENTICAL real train data
+via `mlb_sources._apply_shrinkage` itself (not reimplemented), so only
+`prior_games` differs between them. Scored with two proper scoring rules
+(Brier score, log-loss) plus a pitcher-clustered bootstrap (resamples
+pitchers, not individual threshold rows, since one pitcher's ten
+thresholds are not independent draws).
+
+**Real numbers.** 187 of the 240 pitchers had >=5 real starts before the
+cutoff (train population) -- well above `MIN_PLAYERS_TO_FIT_SHRINKAGE`
+(30), so the auto-fit genuinely ran rather than silently falling back to
+`SHRINKAGE_PRIOR_GAMES` (20); fitted n0 ranged 6.7-12.9 across the ten
+`outs_12plus`..`outs_21plus` thresholds (vs. the hardcoded 6). Scored
+against 16,050 real held-out start-observations (167 distinct pitchers
+with >=1 real start after 2026-07-01, through 2026-09-20): pooled Brier
+score 0.173251 (`prior_games=6`) vs. 0.172248 (`prior_games=None`); pooled
+log-loss 0.527675 vs. 0.522969. The auto-fit was better (lower) on BOTH
+metrics and on EVERY ONE of the ten individual thresholds separately, not
+only in aggregate. Pitcher-clustered bootstrap (5,000 resamples) on the
+Brier-score gap: point estimate 0.001003, 95% CI [0.000403, 0.001607]
+(excludes zero), 99.96% of resamples favored the auto-fit. Full evidence:
+`engineering/evidence/mlb_pitcher_outs_shrinkage_prior_experiment_2026-09-20.json`.
+
+**Honest conclusion.** Auto-fit (`prior_games=None`) wins: consistently
+across every threshold, statistically distinguishable from noise on this
+real held-out population, but the absolute margin is small (~0.6%
+relative Brier-score improvement). Not a large effect, and stated as such
+rather than oversold. DELIBERATE SIMPLIFICATION, disclosed rather than
+hidden: this is a single static train/held-out split (p_hat fit once at
+the cutoff, scored against every real held-out start unchanged), not a
+day-by-day rolling walk-forward the way `backtest/engine.py` replays a
+slate -- a real simplification, but it does not bias the COMPARISON
+between the two priors since both are fit on the identical frozen
+snapshot and scored against identical held-out outcomes.
+
+**What this does NOT do.** No production file touched -- `mlb_sources.py`,
+`generate_picks.py`, and every file the live pipeline imports are
+unmodified (`git diff main --stat` shows only new files: the research
+module, its test file, and the evidence JSON). No selector/scoring change
+implemented, even though the auto-fit measured better; this is measurement
+only, per the task's explicit constraint. Promoting this would be a
+separate, explicitly-authorized task.
+
+**Tests.** New `test_pitcher_outs_shrinkage_prior_experiment.py` (41
+checks): predeclared-constant lock-in, `held_out_outcomes`' subtraction
+arithmetic (including the "pitcher had zero real starts after cutoff" and
+"pitcher absent from train" edge cases), `fit_both_priors`' independent-
+copy/no-mutation property, `per_pitcher_scores`' Brier/log-loss formulas
+against a hand-computed reference, `pooled_summary`, and `bootstrap_ci`
+sanity (identical inputs -> zero-centered CI; a real per-pitcher gap ->
+CI excluding zero) -- all against small, clearly-labeled-synthetic
+fixtures, since these test the arithmetic, not the substantive research
+claim (that claim is the real network-sourced numbers above, produced by
+running the module itself, not the test file). Deliberately does NOT wire
+a live network fetch into the automatic root `test_*.py` suite (see
+`.github/workflows/test.yml`'s push-triggered glob) -- would make the
+whole suite flaky on any MLB Stats API hiccup for a research-only module
+with zero production behavior at stake. Full root suite reproduced
+exactly as CI runs it (`for f in test_*.py; do python3 "$f"; done`,
+excluding `test_browser_e2e.py`): 138/138 passed (137 pre-existing + this
+new one), 0 failures.
+
+Branch `claude/mlb-pitcher-outs-shrinkage-prior-research-20260920`, base
+`main` @ `8aa92f81c9c2b1744198dd8cc563be454abf5b2b` (current `main` head at
+research time -- routine dashboard-bot commits only since the prior
+session's four-PR merge, no NFL/`engineering` overlap). No production
+change, no `.github/workflows/` edit, no model/selector/public-pick
+promotion. Pushed, not merged -- independent review + Jacob's separate
+explicit authorization required before any promotion of this finding into
+production, exactly as with every other research family this session.
+
+Alligator
