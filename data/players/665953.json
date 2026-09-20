@@ -1286,6 +1286,110 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-20",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 76.8,
+          "notable_signals": 3,
+          "matchup": "Washington Nationals @ St. Louis Cardinals",
+          "game_pk": 823001,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 32.0,
+            "pitch_exploit": 12.0,
+            "l7_avg_ev": 49.1667,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 2.55,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 65.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 74.0741,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 2.94,
+            "park_hand_index": -2.72,
+            "opp_catcher_framing": 1.56,
+            "days_rest": 0.0,
+            "woba_ahead": 90.0,
+            "woba_behind": 15.4545,
+            "pull_park_synergy": -2.1134,
+            "hard_hit_105_rate": 0.5725,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 3.216,
+            "vs_rp_ops": 4.74,
+            "ump_k_pct": 0.252,
+            "ump_bb_pct": 0.312
+          },
+          "hit_probability": 0.6234,
+          "raw_hit_probability": 0.6184,
+          "lift": 0.0601,
+          "reliability": "B",
+          "sample_n": 76,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 10.3,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ St. Louis Cardinals",
+          "game_pk": 823001,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0695
+          },
+          "hit_probability": 0.0695,
+          "raw_hit_probability": null,
+          "lift": 0.0219,
+          "reliability": "B",
+          "sample_n": 76,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.9,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ St. Louis Cardinals",
+          "game_pk": 823001,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0441
+          },
+          "hit_probability": 0.0441,
+          "raw_hit_probability": null,
+          "lift": 0.0235,
+          "reliability": "B",
+          "sample_n": 76,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

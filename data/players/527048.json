@@ -541,8 +541,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 29.2,
-          "notable_signals": 0,
+          "score": 30.9,
+          "notable_signals": 1,
           "matchup": "Atlanta Braves @ Houston Astros",
           "game_pk": 824139,
           "team": "Atlanta Braves",
@@ -551,13 +551,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 48.0,
-            "same_hand_ratio": 33.3333,
+            "same_hand_ratio": 0.0,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 79.6281,
+            "ump_k_pct": 0.744,
+            "ump_bb_pct": -0.132
           },
-          "hit_probability": 0.5951,
-          "raw_hit_probability": 0.6062,
-          "lift": -0.1101,
+          "hit_probability": 0.5948,
+          "raw_hit_probability": 0.6046,
+          "lift": -0.1071,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
@@ -567,9 +570,9 @@
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 66.2,
+          "score": 19.7,
           "notable_signals": 0,
           "matchup": "Atlanta Braves @ Houston Astros",
           "game_pk": 824139,
@@ -578,18 +581,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7662,
+            "outs_rate": 0.4247,
             "avg_outs_per_start": 15.4
           },
-          "hit_probability": 0.727,
-          "raw_hit_probability": 0.7662,
-          "lift": -0.0648,
+          "hit_probability": 0.4247,
+          "raw_hit_probability": 0.4247,
+          "lift": -0.1031,
           "reliability": "A",
           "sample_n": 25,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 15.5,
+            "needs": 16
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Houston Astros",
+          "game_pk": 824139,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            527048,
+            686613
+          ],
+          "signals": {
+            "combined_k_edge": 0.0335
+          },
+          "hit_probability": 0.5789,
+          "raw_hit_probability": null,
+          "lift": 0.0335,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

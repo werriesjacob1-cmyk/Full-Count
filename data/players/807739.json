@@ -241,10 +241,10 @@
       "date": "2026-09-20",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 48.3,
-          "notable_signals": 0,
+          "score": 25.2,
+          "notable_signals": 1,
           "matchup": "Seattle Mariners @ Colorado Rockies",
           "game_pk": 824300,
           "team": "Seattle Mariners",
@@ -253,25 +253,28 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 58.0,
-            "same_hand_ratio": 75.0,
+            "same_hand_ratio": 21.4286,
             "l14_k_pct": 45.2941,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 80.0337,
+            "ump_k_pct": 0.0,
+            "ump_bb_pct": 0.156
           },
-          "hit_probability": 0.613,
-          "raw_hit_probability": 0.695,
-          "lift": -0.0922,
+          "hit_probability": 0.4947,
+          "raw_hit_probability": 0.4947,
+          "lift": -0.0175,
           "reliability": "C",
           "sample_n": 5,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 48.4,
+          "score": 48.0,
           "notable_signals": 0,
           "matchup": "Seattle Mariners @ Colorado Rockies",
           "game_pk": 824300,
@@ -280,18 +283,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7046,
+            "outs_rate": 0.687,
             "avg_outs_per_start": 15.2
           },
-          "hit_probability": 0.6826,
-          "raw_hit_probability": 0.7046,
-          "lift": -0.1092,
+          "hit_probability": 0.6692,
+          "raw_hit_probability": 0.687,
+          "lift": -0.0903,
           "reliability": "C",
           "sample_n": 5,
           "projection": {
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 44.2,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Colorado Rockies",
+          "game_pk": 824300,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            807739,
+            608372
+          ],
+          "signals": {
+            "combined_k_edge": -0.0696
+          },
+          "hit_probability": 0.5458,
+          "raw_hit_probability": null,
+          "lift": -0.0696,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
           }
         }
       ]

@@ -534,7 +534,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 50.7,
+          "score": 30.4,
           "notable_signals": 0,
           "matchup": "Washington Nationals @ St. Louis Cardinals",
           "game_pk": 823001,
@@ -544,13 +544,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 38.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 27.0588,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 63.7951,
+            "ump_k_pct": -0.252,
+            "ump_bb_pct": -0.312
           },
-          "hit_probability": 0.6143,
-          "raw_hit_probability": 0.7011,
-          "lift": -0.0909,
+          "hit_probability": 0.6139,
+          "raw_hit_probability": 0.6995,
+          "lift": -0.088,
           "reliability": "A",
           "sample_n": 19,
           "projection": {
@@ -560,9 +563,9 @@
           }
         },
         {
-          "prop": "Over 13.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 49.7,
+          "score": 55.1,
           "notable_signals": 0,
           "matchup": "Washington Nationals @ St. Louis Cardinals",
           "game_pk": 823001,
@@ -571,18 +574,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7175,
+            "outs_rate": 0.7023,
             "avg_outs_per_start": 14.42
           },
-          "hit_probability": 0.6922,
-          "raw_hit_probability": 0.7175,
-          "lift": -0.1308,
+          "hit_probability": 0.6809,
+          "raw_hit_probability": 0.7023,
+          "lift": -0.0786,
           "reliability": "A",
           "sample_n": 19,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 13.5,
-            "needs": 14
+            "value": 14.5,
+            "needs": 15
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Washington Nationals @ St. Louis Cardinals",
+          "game_pk": 823001,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            663623,
+            687273
+          ],
+          "signals": {
+            "combined_k_edge": 0.0799
+          },
+          "hit_probability": 0.7068,
+          "raw_hit_probability": null,
+          "lift": 0.0799,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]
