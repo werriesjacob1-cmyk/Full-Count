@@ -44,6 +44,71 @@ class ChallengerSnapshotError(ValueError):
     """Raised on malformed input. Never silently substitutes a guess."""
 
 
+def _is_probability(value: Any) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and 0.0 <= value <= 1.0
+
+
+def _validate_real_b0_score(b0_score: Any) -> None:
+    """Validate the FULL real shape of `receptions_shadow.score_shadow_candidate`'s
+    output, not just one key's presence -- a dict with a lone plausible-looking
+    `model_over_probability` and nothing else real is still rejected."""
+    if not isinstance(b0_score, Mapping):
+        raise ChallengerSnapshotError("b0_score must be a real score_shadow_candidate result")
+    required_keys = (
+        "model_over_probability",
+        "model_under_probability",
+        "market_fair_over_probability",
+        "market_fair_under_probability",
+        "probability_method",
+        "residual_n",
+    )
+    missing = [k for k in required_keys if k not in b0_score]
+    if missing:
+        raise ChallengerSnapshotError(
+            f"b0_score must be a real score_shadow_candidate result (missing: {missing})"
+        )
+    if not _is_probability(b0_score["model_over_probability"]) or not _is_probability(
+        b0_score["model_under_probability"]
+    ):
+        raise ChallengerSnapshotError(
+            "b0_score.model_over_probability/model_under_probability must each be in [0, 1]"
+        )
+
+
+def _validate_real_challenger_comparison(challenger_comparison: Any) -> None:
+    """Validate the FULL real shape of
+    `receptions_frozen_challenger.compare_b0_vs_frozen_challenger`'s output,
+    including the nested `challenger` dict's own real shape -- rejects a
+    `challenger` key holding a non-dict or a dict missing its real fields."""
+    if not isinstance(challenger_comparison, Mapping) or "challenger" not in challenger_comparison:
+        raise ChallengerSnapshotError(
+            "challenger_comparison must be a real compare_b0_vs_frozen_challenger result"
+        )
+    if "b0" not in challenger_comparison or not isinstance(challenger_comparison["b0"], Mapping):
+        raise ChallengerSnapshotError(
+            "challenger_comparison.b0 must be a real dict with over/under probabilities"
+        )
+    challenger = challenger_comparison["challenger"]
+    if not isinstance(challenger, Mapping):
+        raise ChallengerSnapshotError("challenger_comparison.challenger must be a real dict")
+    required_keys = ("over", "under", "push", "distribution_family", "alpha_used")
+    missing = [k for k in required_keys if k not in challenger]
+    if missing:
+        raise ChallengerSnapshotError(
+            f"challenger_comparison.challenger must be a real negative_binomial_side_"
+            f"probabilities result (missing: {missing})"
+        )
+    if not all(_is_probability(challenger[k]) for k in ("over", "under", "push")):
+        raise ChallengerSnapshotError(
+            "challenger_comparison.challenger.over/under/push must each be in [0, 1]"
+        )
+    mass = challenger["over"] + challenger["under"] + challenger["push"]
+    if abs(mass - 1.0) > 1e-6:
+        raise ChallengerSnapshotError(
+            f"challenger_comparison.challenger.over+under+push must sum to 1.0 (got {mass!r})"
+        )
+
+
 def build_challenger_snapshot_record(
     *,
     event_id: str,
@@ -91,12 +156,8 @@ def build_challenger_snapshot_record(
         if not str(value or "").strip():
             raise ChallengerSnapshotError(f"missing required field: {name}")
 
-    if not isinstance(b0_score, Mapping) or "model_over_probability" not in b0_score:
-        raise ChallengerSnapshotError("b0_score must be a real score_shadow_candidate result")
-    if not isinstance(challenger_comparison, Mapping) or "challenger" not in challenger_comparison:
-        raise ChallengerSnapshotError(
-            "challenger_comparison must be a real compare_b0_vs_frozen_challenger result"
-        )
+    _validate_real_b0_score(b0_score)
+    _validate_real_challenger_comparison(challenger_comparison)
 
     return {
         "event_id": str(event_id),

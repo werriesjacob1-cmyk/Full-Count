@@ -92,6 +92,42 @@ class BuildChallengerSnapshotRecordTests(unittest.TestCase):
                 challenger_model_version="v1", source_vintage="v", feature_cutoff="c",
             )
 
+    def test_rejects_a_b0_score_with_only_the_checked_key_present(self):
+        # Real defect found by independent review of PR #165: the original
+        # validation only checked `"model_over_probability" in b0_score`, so
+        # a mostly-fake dict keeping just that one key -- with an out-of-range
+        # value and none of the other real score_shadow_candidate fields --
+        # was silently accepted. Regression test for the tightened validation.
+        comparison = _real_challenger_comparison(_real_b0_score())
+        with self.assertRaises(ChallengerSnapshotError):
+            build_challenger_snapshot_record(
+                event_id="e1", market_id="m1", gsis_id="00-0039918",
+                player_name="Player", team="CAR", event_open_date="2026-09-20T17:01:00.000Z",
+                line=3.5, over_odds=-115, under_odds=-105, captured_at="2026-09-20T00:30:00Z",
+                availability_status="NOT_LISTED_INACTIVE", decision_status="SHADOW_ONLY",
+                b0_score={"model_over_probability": 1.5}, challenger_comparison=comparison,
+                challenger_model_version="v1", source_vintage="v", feature_cutoff="c",
+            )
+
+    def test_rejects_a_challenger_comparison_whose_challenger_value_is_not_a_dict(self):
+        # Real defect found by independent review of PR #165: a
+        # `challenger_comparison` with `"challenger"` present but holding a
+        # non-dict garbage value was silently accepted by the original
+        # key-presence-only check.
+        b0_score = _real_b0_score()
+        for garbage in ("GARBAGE_NOT_A_DICT", 12345, {"nonsense_key": "abc"}):
+            with self.assertRaises(ChallengerSnapshotError):
+                build_challenger_snapshot_record(
+                    event_id="e1", market_id="m1", gsis_id="00-0039918",
+                    player_name="Player", team="CAR",
+                    event_open_date="2026-09-20T17:01:00.000Z",
+                    line=3.5, over_odds=-115, under_odds=-105,
+                    captured_at="2026-09-20T00:30:00Z",
+                    availability_status="NOT_LISTED_INACTIVE", decision_status="SHADOW_ONLY",
+                    b0_score=b0_score, challenger_comparison={"challenger": garbage, "b0": {}},
+                    challenger_model_version="v1", source_vintage="v", feature_cutoff="c",
+                )
+
     def test_quarantined_decision_status_is_sealable_too(self):
         b0_score = _real_b0_score()
         comparison = _real_challenger_comparison(b0_score)

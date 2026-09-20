@@ -4583,3 +4583,53 @@ separate explicit authorization required, same as every other research
 family this session.
 
 Alligator
+## 2026-09-20 -- PR #165 independent review: HOLD, one real validation gap
+## found and fixed (bounded reviewer agent, verdict posted Issue #91
+## comment `5747226701`)
+
+Independent review of PR #165 (the sealed B0-vs-frozen-challenger
+receptions connector above) confirmed everything else claimed: zero
+live-workflow coupling, `shadow_snapshot.py`/`receptions_shadow.py`
+byte-identical to `main`, `seal_challenger_snapshot` a genuine passthrough,
+the committed evidence file's `snapshot_sha256` independently reproduced
+exactly, all 10 real records internally consistent, `nfl/tests` 923/923
+reproduced exactly.
+
+**Real defect found, not hypothetical**: `build_challenger_snapshot_record`
+originally validated only KEY PRESENCE
+(`"model_over_probability" not in b0_score`,
+`"challenger" not in challenger_comparison`), not value shape. The
+reviewer constructed mostly-fake dicts keeping only the checked key --
+`b0_score={"model_over_probability": 1.5}` (out of range, nothing else
+real), `challenger_comparison={"challenger": "GARBAGE_NOT_A_DICT"}`,
+`{"challenger": 12345}`, `{"challenger": {"nonsense_key": "abc"}}` -- and
+all four were silently accepted and sealed by the real code, directly
+contradicting this module's own stated safety property. Not exploited in
+practice (the only real caller always passes genuine scorer output, and
+the committed evidence file is authentic -- independently confirmed by
+the reviewer), but the enforcement was weaker than claimed and the
+original committed tests (which only used dicts missing the key entirely)
+did not catch it.
+
+**Fix applied** (same PR branch, same commit history the review already
+covers structurally): replaced the two one-line checks with
+`_validate_real_b0_score`/`_validate_real_challenger_comparison`, which
+validate the FULL real key set of `score_shadow_candidate`'s and
+`compare_b0_vs_frozen_challenger`'s actual output shapes (including the
+nested `challenger` dict), plus a `0 <= p <= 1` range check on every
+probability field and an over+under+push-sums-to-1.0 check on the
+challenger side. Added the reviewer's exact four adversarial cases as two
+new regression tests
+(`test_rejects_a_b0_score_with_only_the_checked_key_present`,
+`test_rejects_a_challenger_comparison_whose_challenger_value_is_not_a_dict`).
+Re-verified all 10 real records in the already-committed evidence file
+still pass the tightened validation unchanged (proving the fix doesn't
+reject genuine data, only fakes). `nfl/tests`: 925/925. Root suite: green.
+
+This fix has NOT been re-reviewed by an independent party yet -- posting
+this update to Issue #91 now; the tightened validation itself is still
+subject to the same pre-merge doctrine as everything else in this PR.
+Verdict remains **HOLD** until that re-check happens; no merge, undraft,
+or promotion performed.
+
+Alligator
