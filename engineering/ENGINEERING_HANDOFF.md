@@ -3933,3 +3933,95 @@ Alligator
   selector/production change.
 
 Alligator
+
+## 2026-09-19 -- MLB: close the board-freeze grading gap + fix the silent
+## artifact-discard bug (Priority 5, "SUPERCLAUDE — CONTINUE EXECUTION
+## WHILE INDEPENDENT REVIEW RUNS")
+
+Real, concrete finding, not a manufactured backtest: PR #131's own
+convergent conclusion ("no frozen full-board candidate snapshot exists at
+generation time... recommended next step: forward-only instrumentation to
+freeze the full board") was implemented by PR #132/#138
+(`board_freeze.py`/`board_freeze_grader.py`, both merged 2026-09-18) --
+but **zero `output/board_freeze_*.json` files exist anywhere in this
+repo's git history**, despite the freeze never failing. Confirmed via this
+workflow's own real job logs (run `35472867369`, 2026-09-19): `Sealed
+full-board freeze (670 candidates) to output/board_freeze_2026-09-19.json`
+-- a real success message -- yet the file was never committed.
+
+**Root cause, found by reading `.github/workflows/mlb-daily.yml`'s
+"Commit picks immediately" step directly**: its `git add` glob list
+(`output/top10_picks_*.md output/picks_*.json ... output/board_*.html
+output/full_board_*.html output/parlay_example_*.html ...`) never included
+`output/board_freeze_*.json`. This is the exact same failure mode that
+step's own comment already documents happened once before for
+`board_*.html`/`full_board_*.html`/`parlay_example_*.html` (silently
+discarded for months before being added) -- the developer who added
+`board_freeze.py` never updated this list. This is *why* the winner's-curse
+calibration analysis PR #131/#132/#138 were built to enable has never been
+runnable: its own prerequisite artifact never reached the repo.
+
+**Fix, minimal and reversible:**
+1. Added `output/board_freeze_*.json` to the `git add` glob in
+   `.github/workflows/mlb-daily.yml`'s "Commit picks immediately" step --
+   the one-line root-cause fix. Going forward, every scheduled run's real
+   sealed board will actually persist.
+2. New `grade_board_freeze.py` + `test_grade_board_freeze.py` (4 tests) --
+   closes the other half of the gap (grading was never wired to run at
+   all, separate from the artifact-discard bug). Grades yesterday's
+   `output/board_freeze_{date}.json` via the already-merged, unmodified
+   `board_freeze_grader.grade_frozen_board` (which itself fails closed via
+   `board_freeze.verify_board_seal` on any tamper). No-ops if yesterday's
+   frozen board doesn't exist -- never blocks the pipeline, same
+   convention as `grade_results.py`. New workflow step "Grade yesterday's
+   frozen full board" added immediately after the existing "Grade
+   yesterday's picks" step, and its output glob (`output/board_freeze_
+   graded_*.json`) added to the same commit step.
+3. No model, selector, scoring, or ranking code touched anywhere. No
+   historical backfill attempted (impossible -- no frozen board was ever
+   captured for a past date; the freeze only ever covers runs from when it
+   was wired forward, and now that it will actually persist, real boards
+   start accumulating from tonight).
+
+**What this does NOT do yet**: it does not run the actual winner's-curse
+calibration analysis (compare argmax-selected-subset calibration against
+full-frozen-pool calibration) -- that still requires several real nights
+of frozen + graded boards to accumulate, which starts now that both halves
+of the pipe actually persist. This is the smallest useful prospective
+capture improvement, per Jacob's explicit instruction to prefer this over
+manufacturing a backtest when live evidence is the actual gap.
+
+Branch `claude/mlb-board-freeze-grading-gap-20260920`. New files:
+`grade_board_freeze.py`, `test_grade_board_freeze.py`. Modified:
+`.github/workflows/mlb-daily.yml` (2 changes: new step, glob fix). Tests:
+4 new, root suite re-run in full.
+
+No model/selector/production-decision change. Draft PR, not merged --
+Jacob's separate explicit authorization required for a `.github/workflows/`
+change per the pre-merge doctrine.
+
+**Update, same day -- real defect found by independent review (Issue #91
+comment `5746165033`), fixed and re-tested**: `grade_date()`'s file-open +
+`json.load` call sat OUTSIDE the function's own `try/except`. The reviewer
+constructed a real truncated/corrupt `board_freeze_{date}.json` and ran the
+actual code against it (not a mock): it raised an uncaught
+`json.decoder.JSONDecodeError`, exiting non-zero. Since the new workflow
+step has no `continue-on-error` (correctly mirroring "Grade yesterday's
+picks," which relies on its own internal handling), a single corrupted
+frozen-board file would have failed the ENTIRE job -- blocking real picks
+generation and commit for that day. The exact opposite of this change's own
+"picks pipeline unaffected" claim. Root cause: `grade_results.py`'s own
+equivalent `json.load` (the pattern this script was modeled on) already
+wraps this in `except (json.JSONDecodeError, OSError)`; the new script
+copied the missing-file check but not that guard.
+
+**Fix**: moved the `open()`/`json.load()` call inside the existing
+`try/except Exception` block -- a two-line change, no new exception
+handling logic invented. Added `test_corrupt_frozen_board_file_never_raises`
+and `test_main_never_raises_on_a_corrupt_file_either` (writing a real
+truncated/invalid JSON file and asserting `grade_date`/`main` return
+cleanly rather than raising) -- reproducing the reviewer's exact adversarial
+case as a permanent regression test. 6/6 tests in
+`test_grade_board_freeze.py`, full root suite re-run.
+
+Alligator
