@@ -3932,6 +3932,64 @@ Alligator
   themselves; they remain open and unmodified. No merge, no model/
   selector/production change.
 
+## 2026-09-19 -- Research-only parallel News Brain vs. existing-pipeline
+## eligibility check (Priority 2, "SUPERCLAUDE — NEXT EXECUTION PRIORITIES")
+
+New file `nfl/research/news_brain_parallel_eligibility_check.py` +
+`nfl/tests/test_news_brain_parallel_eligibility_check.py` (9 tests). Does
+NOT touch, call, or get called by `.github/workflows/nfl-live-receptions-
+shadow-board.yml` or any other live workflow -- the existing pipeline
+(`official_inactives.parse_report` -> `inactive_roster_binding.bind_report`
+-> `pregame_availability.evaluate_candidate`) remains the sole authoritative
+gate, untouched.
+
+Runs the SAME real evidence (the committed real 13-claim BUF@DET capture,
+re-expressed into `parse_report`'s own output shape, plus the real pinned
+roster subset for BUF/DET) through both the existing pipeline's identity
+step (`bind_report`) and the merged News Brain pipeline's identity step
+(`claims_from_parsed_report` + `bind_claims_to_roster`, which itself calls
+the same underlying `inactive_roster_binding.bind_player`).
+
+**Identity/binding result**: identical on real evidence -- 13/13 player
+count, identical bound-count, identical (team, player_name, binding_status,
+gsis_id) tuple set between the two pipelines. Two adversarial tests confirm
+this isn't vacuous (a corrupted player name in one pipeline's input is
+correctly detected as a mismatch).
+
+**Temporal-safety comparison result -- two real, disclosed asymmetries
+found, not smoothed over:**
+1. **Postgame guard**: News Brain's `claim_eligible_for_game` has an
+   independent `postgame_of_game_id` barrier the existing pipeline's
+   `_current_report` has no concept of at all -- a postgame-tagged claim is
+   correctly rejected by News Brain even when the existing pipeline's own
+   timing check alone would have passed it.
+2. **Same-day freshness**: the existing pipeline's `_current_report`
+   additionally requires the report to have been PUBLISHED on the same
+   America/Chicago calendar day as kickoff (the real same-day
+   official-report convention). `claim_eligible_for_game` enforces no such
+   freshness window -- it only requires published/observed to precede
+   kickoff, however many days earlier. A stale multi-day-old report (e.g.
+   the real BUF@DET claim's own Thursday `published_at` reused against a
+   later Sunday kickoff) is correctly rejected by the existing pipeline but
+   would be accepted by News Brain's check alone.
+
+**Conclusion**: identity/binding are proven equivalent on real evidence.
+Temporal safety is NOT yet equivalent -- News Brain's check is a strict
+subset of the existing pipeline's real behavior, missing the same-day
+freshness requirement. **This is exactly why the existing pipeline must
+remain the sole live gate** until that gap is closed and independently
+re-certified; this module is comparison-only, never wired to production.
+
+Explicit limitation restated: this module does not compare full
+game-COVERAGE completeness or canonical game-id binding -- News Brain's
+game-id binding remains a separate, unwired, disclosed-limitation
+enrichment step (carried over from PR #151/#155/#160).
+
+Tests: 9/9 new, full `nfl/tests` suite 866/866, run once.
+
+No production change, no `.github/workflows/` edit, no model/selector/
+public-pick promotion.
+
 Alligator
 
 ## 2026-09-19 -- MLB: close the board-freeze grading gap + fix the silent
