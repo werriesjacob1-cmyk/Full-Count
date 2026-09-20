@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-20T14:44:31.536364+00:00",
+  "updated_at": "2026-09-20T14:55:28.315172+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -39928,6 +39928,101 @@
         },
         "qualification_timestamp": "2026-09-20T14:38:55.720256+00:00",
         "board_timestamp": "2026-09-20T14:38:55.689998+00:00",
+        "slate_date": "2026-09-20"
+      }
+    },
+    "fc2:824381:player-680869:hits:1:over": {
+      "canonical_id": "fc2:824381:player-680869:hits:1:over",
+      "settlement_identity": [
+        "824381",
+        [
+          "player",
+          "680869"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-20",
+      "first_published_at": "2026-09-20T14:55:28.315172+00:00",
+      "publication_provenance": {
+        "artifact_id": "d43b76d773d827caf15bbb164c00bba4a2ab9e951f67c3848763d9307d112851",
+        "source_commit": "e77174b646aa8c2d18a0707196dc213db32fb777",
+        "workflow_run_id": "35517751724",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-20T14:55:12.651494+00:00",
+        "data_hash": "291cd3b6f8a74d6cd137a0fc938250ad597ce85e02af7f4f967b68f8a00ce57e",
+        "live_hash": "28b1344f50666d33a3b11ca5fee9f342ce0abf36e88c92346b5c9d696004bb40"
+      },
+      "snapshot": {
+        "id": "fc2:824381:player-680869:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 824381,
+        "player_id": 680869,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Zack Gelof",
+        "team": "Athletics",
+        "matchup": "Athletics @ Cleveland Guardians",
+        "game_start": "2026-09-20T17:40:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6066,
+        "market_odds": -135,
+        "market_implied": 0.5745,
+        "market_edge": 0.0321,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.5 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 94.2mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 44.4 \u2014 hot recent contact",
+          "Projected 4.08 PA (batting slot 4)",
+          "Season barrel% 9.6",
+          "Hitter batting behind him: 0.364 wOBA (league ~.320) \u2014 real lineup protection, pitchers can't just pitch around him"
+        ],
+        "watchouts": [
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Team implied for 2.71 runs (league avg 4.245; line 2.5, game total 7) \u2014 a weak offensive environment",
+          "Hitters batting ahead of him: 0.315 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Opposing bullpen fatigue: 2/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.5978,
+          0.6352
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 100,
+        "lineup_assumed": null,
+        "base_rate": 0.5633,
+        "lift": 0.0433,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "327c1fe20",
+          "prediction_timestamp": "2026-09-20T14:48:28.686324+00:00",
+          "odds_fetched_at": "2026-09-20T14:48:21.840746+00:00",
+          "board_generated_at": "2026-09-20T14:48:28.657330+00:00"
+        },
+        "qualification_timestamp": "2026-09-20T14:48:28.686324+00:00",
+        "board_timestamp": "2026-09-20T14:48:28.657330+00:00",
         "slate_date": "2026-09-20"
       }
     }
