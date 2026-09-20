@@ -107,8 +107,14 @@ jobs:
               "https://github.com/nflverse/nflverse-data/releases/download/"
               "rosters/roster_2026.csv"
           )
+          # Re-pinned 2026-09-20 after a real, expected drift: the original
+          # pin (ffdc6f358df0597365b1889332577692c484a283a758d9956b92b2730d0fcd1c)
+          # blocked today's 15:40 UTC run (fail-closed, not a bug -- real
+          # season transactions moved the roster forward since the pin was
+          # set). Live re-verified independently before repinning: 944,684
+          # bytes, sha256 07a874aa...4d60b9.
           ROSTER_SHA = (
-              "ffdc6f358df0597365b1889332577692c484a283a758d9956b92b2730d0fcd1c"
+              "07a874aa3cf8918db46aa8206968ee2c3a36845d62cd3ea208fa0efc664d60b9"
           )
           PLAYER_SHA = {
               2023: "f19cb71a5de0dce7fd09376026237c9ee9d5a93fe13815a2ea3ec2d37204cb17",
