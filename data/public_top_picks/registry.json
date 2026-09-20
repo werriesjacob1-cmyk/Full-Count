@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-19T22:04:23.746455+00:00",
+  "updated_at": "2026-09-20T04:44:08.053427+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -38968,6 +38968,98 @@
         "qualification_timestamp": "2026-09-19T21:59:53.337618+00:00",
         "board_timestamp": "2026-09-19T21:59:53.324121+00:00",
         "slate_date": "2026-09-19"
+      }
+    },
+    "fc2:823001:player-663623:strikeouts:4:over": {
+      "canonical_id": "fc2:823001:player-663623:strikeouts:4:over",
+      "settlement_identity": [
+        "823001",
+        [
+          "player",
+          "663623"
+        ],
+        "strikeouts",
+        "4",
+        "over"
+      ],
+      "slate_date": "2026-09-20",
+      "first_published_at": "2026-09-20T04:44:08.053427+00:00",
+      "publication_provenance": {
+        "artifact_id": "4b44d934a5d3b196b002e1686822e241faf196045294652bb191d6bf1ab654a6",
+        "source_commit": "d744f42c489b2537bcf278c0c321bd2647dccd3e",
+        "workflow_run_id": "35489764321",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-20T04:43:56.366977+00:00",
+        "data_hash": "4aa166fb20af1d864458924e846b34e56416110089f6e3d094081a5f7cc188a3",
+        "live_hash": "183dbb2b82d6ee29997d206e330cc6f2a45d03ce5371e062b4f17907ca133c65"
+      },
+      "snapshot": {
+        "id": "fc2:823001:player-663623:strikeouts:4:over",
+        "identity_version": 2,
+        "game_pk": 823001,
+        "player_id": 663623,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Jake Irvin",
+        "team": "Washington Nationals",
+        "matchup": "Washington Nationals @ St. Louis Cardinals",
+        "game_start": "2026-09-20T18:15:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 3.5,
+          "needs": 4
+        },
+        "prop": "Over 3.5 Strikeouts",
+        "hit_probability": 0.6143,
+        "market_odds": -106,
+        "market_implied": 0.4854,
+        "market_edge": 0.1289,
+        "market_hold": 0.06,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (13.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Opposing team K% 20.8",
+          "Expected workload 23.9 batters faced (his own 26.0/start over 1 real start, shrunk toward the 23.1 league mean)",
+          "Platoon advantage: 6 of 8 projected hitters bat right-handed against this RHP"
+        ],
+        "watchouts": [
+          "Workload estimate rests on only 1 start in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average",
+          "L14 K% 19.6 (46 PA) \u2014 cold recent form",
+          "Recency-weighted K rate 19.1% (exp. decay, halflife 30d, 19 real starts / 406 BF) \u2014 drives a below-average strikeout-probability read"
+        ],
+        "prob_ci": [
+          0.5934,
+          0.7134
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 19,
+        "lineup_assumed": null,
+        "base_rate": 0.7052,
+        "lift": -0.0909,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "9f54bc44a",
+          "prediction_timestamp": "2026-09-20T04:12:51.552662+00:00",
+          "odds_fetched_at": "2026-09-20T04:12:46.777299+00:00",
+          "board_generated_at": "2026-09-20T04:12:51.543436+00:00"
+        },
+        "qualification_timestamp": "2026-09-20T04:12:51.552662+00:00",
+        "board_timestamp": "2026-09-20T04:12:51.543436+00:00",
+        "slate_date": "2026-09-20"
       }
     }
   }
