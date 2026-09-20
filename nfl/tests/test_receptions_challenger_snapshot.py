@@ -109,6 +109,37 @@ class BuildChallengerSnapshotRecordTests(unittest.TestCase):
                 challenger_model_version="v1", source_vintage="v", feature_cutoff="c",
             )
 
+    def test_rejects_a_b0_score_whose_over_and_under_dont_sum_to_one(self):
+        # Non-blocking gap flagged by the follow-up independent re-review of
+        # PR #165's fix: the challenger side already checked
+        # over+under+push sums to 1.0, but the b0 side only checked each
+        # probability was individually in [0, 1], not that they summed to
+        # 1.0 together -- receptions_shadow.empirical_side_probabilities
+        # always produces under = 1.0 - over exactly, so a mismatched pair
+        # can only be fabricated, never a real score_shadow_candidate result.
+        comparison = _real_challenger_comparison(_real_b0_score())
+        for fake_over, fake_under in ((0.9, 0.9), (0.0, 0.0)):
+            with self.assertRaises(ChallengerSnapshotError):
+                build_challenger_snapshot_record(
+                    event_id="e1", market_id="m1", gsis_id="00-0039918",
+                    player_name="Player", team="CAR",
+                    event_open_date="2026-09-20T17:01:00.000Z",
+                    line=3.5, over_odds=-115, under_odds=-105,
+                    captured_at="2026-09-20T00:30:00Z",
+                    availability_status="NOT_LISTED_INACTIVE",
+                    decision_status="SHADOW_ONLY",
+                    b0_score={
+                        "model_over_probability": fake_over,
+                        "model_under_probability": fake_under,
+                        "market_fair_over_probability": 0.5,
+                        "market_fair_under_probability": 0.5,
+                        "probability_method": "pooled_B0_empirical_residuals_laplace",
+                        "residual_n": 10,
+                    },
+                    challenger_comparison=comparison,
+                    challenger_model_version="v1", source_vintage="v", feature_cutoff="c",
+                )
+
     def test_rejects_a_challenger_comparison_whose_challenger_value_is_not_a_dict(self):
         # Real defect found by independent review of PR #165: a
         # `challenger_comparison` with `"challenger"` present but holding a

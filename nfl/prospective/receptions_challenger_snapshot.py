@@ -73,6 +73,14 @@ def _validate_real_b0_score(b0_score: Any) -> None:
         raise ChallengerSnapshotError(
             "b0_score.model_over_probability/model_under_probability must each be in [0, 1]"
         )
+    b0_mass = b0_score["model_over_probability"] + b0_score["model_under_probability"]
+    if abs(b0_mass - 1.0) > 1e-6:
+        raise ChallengerSnapshotError(
+            f"b0_score.model_over_probability + model_under_probability must sum to "
+            f"1.0 (got {b0_mass!r}) -- receptions_shadow.empirical_side_probabilities "
+            f"always produces under = 1.0 - over exactly, so a mismatch here can only "
+            f"be a fabricated pair, never a real score_shadow_candidate result"
+        )
 
 
 def _validate_real_challenger_comparison(challenger_comparison: Any) -> None:

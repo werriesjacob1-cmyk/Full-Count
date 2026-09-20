@@ -4633,3 +4633,44 @@ Verdict remains **HOLD** until that re-check happens; no merge, undraft,
 or promotion performed.
 
 Alligator
+## 2026-09-20 -- PR #165 follow-up re-review: GO, plus one non-blocking
+## parity gap closed (Issue #91 comment `5747251146`)
+
+The same independent reviewer re-checked the validation fix above on the
+new head. All 4 of the reviewer's original adversarial cases now correctly
+rejected (verified by direct call, not by reading the code); one new
+adversarial attempt (a wrong-typed `challenger.over` value) also correctly
+rejected via the existing `_is_probability` check; both new regression
+tests confirmed to exercise the real code path; all 10 already-committed
+real evidence records confirmed to still validate and the file's
+`snapshot_sha256` confirmed unchanged; `nfl/tests` reproduced at 925/925
+(before this entry's own addition below). **Verdict: GO.**
+
+The reviewer found one more real, non-blocking gap: `_validate_real_b0_score`
+checked each of `model_over_probability`/`model_under_probability`
+individually landed in `[0, 1]` but never checked they summed to `~1`
+together (unlike the challenger side's existing `over+under+push` sum
+check) -- a fabricated pair like `{0.9, 0.9}` or `{0.0, 0.0}` passed. The
+reviewer judged this non-exploitable against the real pipeline (the real
+`empirical_side_probabilities` always produces `under = 1.0 - over`
+exactly; there is no independent third b0-side term the way the
+challenger side has `push`) and explicitly recommended closing the gap
+for parity anyway rather than treating it as a new blocker.
+
+Applied that exact recommendation: added the sum-to-1 check on the b0
+side, plus one regression test
+(`test_rejects_a_b0_score_whose_over_and_under_dont_sum_to_one`,
+both `{0.9, 0.9}` and `{0.0, 0.0}` cases). Re-verified all 10 real evidence
+records still pass unchanged. `nfl/tests`: 926/926. Root suite unaffected
+(no files outside `nfl/` touched).
+
+This last, small change implements the reviewer's own explicit
+recommendation made as part of their GO verdict rather than introducing
+new unreviewed logic, so it is not treated as reopening the HOLD cycle --
+but it has likewise not itself been independently re-verified by a fresh
+pass, and is disclosed as such. **PR #165 status: independently reviewed
+GO, draft, not merged.** Merging still requires Jacob's separate, explicit
+authorization naming this specific PR -- the mission's prior authorization
+covered only #161-#164.
+
+Alligator
