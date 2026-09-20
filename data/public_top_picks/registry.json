@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-20T15:04:34.186066+00:00",
+  "updated_at": "2026-09-20T15:29:08.039133+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -40407,6 +40407,105 @@
         },
         "qualification_timestamp": "2026-09-20T15:00:46.496155+00:00",
         "board_timestamp": "2026-09-20T15:00:46.474764+00:00",
+        "slate_date": "2026-09-20"
+      }
+    },
+    "fc2:823570:player-682626:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823570:player-682626:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823570",
+        [
+          "player",
+          "682626"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-20",
+      "first_published_at": "2026-09-20T15:29:08.039133+00:00",
+      "publication_provenance": {
+        "artifact_id": "0beaba0fd0fd8580483fbcdea76048c301b2c6519ecf69f482fef1b99e34df2f",
+        "source_commit": "46377219f52569d692787e5e8bc029bc491d13c8",
+        "workflow_run_id": "35519565754",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-20T15:28:56.358824+00:00",
+        "data_hash": "1c2bbc340600c1a6be311def544a460fc83239071a67b016cef94dc8a91b1a92",
+        "live_hash": "6d12fabf5ee628a3dc690b5b3512e933d8374c6dc0adde6d5adde12edebf081e"
+      },
+      "snapshot": {
+        "id": "fc2:823570:player-682626:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823570,
+        "player_id": 682626,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Francisco Alvarez",
+        "team": "New York Mets",
+        "matchup": "Philadelphia Phillies @ New York Mets",
+        "game_start": "2026-09-20T17:10:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6592,
+        "market_odds": -155,
+        "market_implied": 0.6078,
+        "market_edge": 0.0514,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.6 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 38.5 \u2014 hot recent contact",
+          "Platoon: R bat vs LHP (favorable)",
+          "Season barrel% 15.5 \u2014 well above-average barrel rate"
+        ],
+        "watchouts": [
+          "L7 avg EV 87.4mph (league ~88.5) \u2014 cold recent contact",
+          "Opposing SP ERA 2.93 \u2014 elite pitcher, tough matchup",
+          "Projected 3.76 PA (batting slot 7) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.281 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.250 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.25 runs (league avg 4.245; line 3.5, game total 7.5) \u2014 a weak offensive environment",
+          "Public heavy on New York Mets (money% trails tickets% by 15 pts) \u2014 sharp money is fading this side",
+          "Opposing bullpen fatigue: 2/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading New York Mets (money% -15 pts vs ticket%) \u2014 smart money moving away from this side",
+          "Rain risk tonight (64% precipitation probability) \u2014 game could be delayed or postponed"
+        ],
+        "prob_ci": [
+          0.6483,
+          0.6824
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 106,
+        "lineup_assumed": null,
+        "base_rate": 0.6748,
+        "lift": -0.0156,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "ff2ce4ebb",
+          "prediction_timestamp": "2026-09-20T15:20:59.458594+00:00",
+          "odds_fetched_at": "2026-09-20T15:20:56.183047+00:00",
+          "board_generated_at": "2026-09-20T15:20:59.425460+00:00"
+        },
+        "qualification_timestamp": "2026-09-20T15:20:59.458594+00:00",
+        "board_timestamp": "2026-09-20T15:20:59.425460+00:00",
         "slate_date": "2026-09-20"
       }
     }
