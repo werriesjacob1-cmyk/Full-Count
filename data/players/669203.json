@@ -99,6 +99,39 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-20",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 38.1,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825028,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 75.0,
+            "same_hand_ratio": 61.1111,
+            "l14_k_pct": 22.3529,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.4158,
+          "raw_hit_probability": 0.4158,
+          "lift": -0.0962,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        }
+      ]
     }
   ]
 }
