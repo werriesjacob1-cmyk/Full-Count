@@ -4083,3 +4083,321 @@ case as a permanent regression test. 6/6 tests in
 `test_grade_board_freeze.py`, full root suite re-run.
 
 Alligator
+
+## 2026-09-19 -- NFL HC-regime x redistribution-baseline join, first hierarchical challenger
+
+- Workstream `NFL-ROLE-REDISTRIBUTION-EXPERIMENT-20260919`, branch
+  `claude/nfl-role-redistribution-experiment-20260919` off `origin/main`
+  (base `7fba6f57434539a79f3f00496d3101bf5d44232e`). New files only:
+  `nfl/research/role_regime_redistribution.py`,
+  `nfl/tests/test_role_regime_redistribution.py`. No file from PR #142
+  (coach-regime registry) or PR #143 (role-intelligence substrate) edited --
+  both reused by import only.
+- Genuinely new work, not a repeat of #142/#143: joins the real 667
+  WR/RB teammate-absence events (`role_intelligence_features
+  .build_teammate_absence_trigger_events`, reused as-is) with the real HC
+  registry (`coach_regime_registry.lookup_regime`, reused as-is) via each
+  event's own `(team, season, week)` -> real game date
+  (`build_game_date_index`), never a caller-supplied date; then prototypes
+  one dependency-free hierarchical "committee probability" challenger
+  (`HIERARCHICAL_COMMITTEE_PROBABILITY_V1`), a from-scratch conditional
+  logit (same "no numpy/sklearn in NFL CI" convention as
+  `game_market_c2_ridge.py`) with a separate weight vector per HC
+  regime-tenure bucket (`NEW_REGIME_FIRST_30_DAYS` / `ESTABLISHED_REGIME` /
+  `UNKNOWN_REGIME`), trained on a predeclared 2012-2021 season split and
+  scored on a disjoint, predeclared 2022-2025 held-out split.
+- Real, independently re-fetched 2012-2025 run (not a cached/simulated
+  number): 53,110 usage rows and 424,880 role-state rows -- both match
+  PR #143's own reported counts exactly. Real, disclosed reproducibility
+  note: a first identical-methodology run this same session produced 668
+  events (324 WR_ABSENCE/344 RB_ABSENCE) instead of 667 (323/344); a clean
+  rerun immediately after reproduced 667/323/344 exactly. Not chased down
+  further (both runs used the same code path back-to-back within minutes),
+  but disclosed rather than silently using whichever number looked cleaner.
+  All real HC coverage counts below are from the reproducing (667-event)
+  run.
+- Real, disclosed source-volatility finding: PR #143's own pinned
+  `role_intelligence_source_digests.PLAYERS_CROSSWALK_SOURCE` digest
+  (recorded 2026-09-19) had ALREADY drifted from the live `players.csv`
+  asset by the time this same-day run executed (pinned 7,259,734 bytes /
+  `801d5fec...`, live 7,291,736 bytes / `12c126bb...`). This is expected for
+  a "single non-seasonal", roster-mutable asset (unlike this project's
+  per-season archived releases, which held their pins exactly). Per this
+  workstream's own file-scope boundary, PR #143's pin was NOT edited; this
+  run's own script fetched the live bytes directly and reused PR #143's own
+  digest-check-free pure parser (`parse_players_crosswalk_csv`) instead of
+  its digest-gated wrapper, with both digests recorded for disclosure. Every
+  per-season snap/depth-chart/PBP asset digest PR #143 pinned held exactly.
+- HC join: all 667 events resolved (0 `UNKNOWN`) -- full real HC coverage
+  for 2012-2025, as expected from the registry's real 1999-2026 span. 631
+  events fell in `ESTABLISHED_REGIME`, 36 in `NEW_REGIME_FIRST_30_DAYS`
+  (first ~30 days of a brand-new real HC hire).
+- Real, disclosed negative/limiting finding for the per-regime-name report:
+  no single real HC regime (exact team + persons + start-date) accumulates
+  >= the predeclared `MIN_EVENTS_FOR_NAMED_REGIME = 20` real WR/RB-absence
+  events in this population -- 667 events spread across ~35 team codes x
+  many coaching tenures over 14 seasons average under 20 events per regime.
+  Every event therefore rolls up into `OTHER_NAMED_REGIMES_N_LT_20` (whose
+  MAE trivially equals the overall baseline MAE PR #143 already reported:
+  `target_share` NO_ADJUSTMENT 0.0597/n=1348, `carry_share` NO_ADJUSTMENT
+  0.1796/n=860 -- both match PR #143's numbers almost exactly, small
+  n-differences from the live source drift noted above). The threshold was
+  predeclared before this run and NOT lowered after seeing this result.
+- Real, positive finding at the coarser regime-tenure-bucket level (MAE,
+  `NEW_REGIME_FIRST_30_DAYS` vs `ESTABLISHED_REGIME`, full 2012-2025):
+  `target_share` -- DEPTH_CHART_NEXT_MAN 0.0714 (n=105, new) vs 0.0799
+  (n=1243, established); RECENT_USAGE_NEXT_MAN 0.0704 (new) vs 0.0807
+  (established); NO_ADJUSTMENT/PROPORTIONAL nearly flat across buckets.
+  `carry_share` -- DEPTH_CHART_NEXT_MAN 0.1480 (n=29, new) vs 0.2080 (n=831,
+  established); RECENT_USAGE_NEXT_MAN 0.1631 (new) vs 0.1910 (established);
+  NO_ADJUSTMENT is the one baseline that gets WORSE under a new regime
+  (0.2194 new vs 0.1782 established). Real, plausible, but SMALL-N
+  (29-105) and not claimed as a robust conclusion: "next-man-up"-style
+  baselines look more accurate specifically in a brand-new coaching
+  regime's first month, especially for carry_share, while "nothing changes"
+  looks worse there for carry_share -- consistent with a new staff actually
+  installing a more decisive, depth-chart-driven backup plan early, but this
+  is a first observation, not a validated effect.
+- Challenger (`HIERARCHICAL_COMMITTEE_PROBABILITY_V1`), held-out 2022-2025,
+  same equal-volume MAE methodology, real run: `target_share` -- challenger
+  0.0620 (n=449) vs. held-out NO_ADJUSTMENT 0.0605 (n=441),
+  PROPORTIONAL 0.0640, DEPTH_CHART_NEXT_MAN 0.0774, RECENT_USAGE_NEXT_MAN
+  0.0825 -- challenger beats 3 of 4 baselines, loses to NO_ADJUSTMENT.
+  `carry_share` -- challenger 0.1588 (n=261) vs. NO_ADJUSTMENT 0.1838,
+  PROPORTIONAL 0.1680, DEPTH_CHART_NEXT_MAN 0.2110, RECENT_USAGE_NEXT_MAN
+  0.2069 -- challenger beats ALL FOUR existing baselines out-of-sample on
+  carry_share. This is a real, disclosed positive result for one dimension
+  and a real, disclosed negative result for the other -- not smoothed into
+  a single "the challenger wins" claim.
+- Mass-balance (`compute_mass_balance_diagnostics`, reused as-is): the
+  challenger's aggregate `mean_unallocated_residual`/
+  `mean_over_allocation_error` on the held-out set are numerically IDENTICAL
+  to `PROPORTIONAL_TEAMMATE_REDISTRIBUTION`'s in both dimensions. This is
+  explainable, not a bug: both models fully redistribute the exact same
+  removed-player budget across the exact same already-known-prior teammate
+  set on this held-out population (no candidate lacking any prior history
+  appears in this slice), and the mass-balance diagnostic measures only
+  aggregate budget conservation, not the split across individuals -- which
+  is exactly where the two models' real MAE differs. Over-allocation stayed
+  small (0.003-0.042 share points), the same order of magnitude PR #143
+  already reported for the existing baselines, never fabricated as exactly
+  zero.
+- The challenger's own `n` (449 target_share / 261 carry_share) is slightly
+  larger than the baselines' shared `n` (441 / 250) on the identical
+  held-out events: because it always predicts every teammate (via
+  `predict_no_adjustment` plus a probability-weighted addition for every
+  candidate, even one with no last-5 prior), it scores a few additional
+  teammate-predictions the four existing baselines silently skip. Disclosed
+  as a structural difference in scored population, not normalized away.
+- Explicit disclosed limitations: OC/DC/playcaller never looked up (PR
+  #142's own zero-real-interval gap; out of scope here); `route_share`
+  remains `UNKNOWN_NO_SOURCE_INGESTED` and is never evaluated; the
+  challenger's hyperparameters (200 iterations, lr 0.05, L2 0.01, 30-day new-
+  regime threshold, `MIN_EVENTS_FOR_NAMED_REGIME = 20`) are predeclared and
+  NOT cross-validated or tuned to any result in this run; it is trained
+  once, in-sample only within its own predeclared train seasons, and is a
+  first bounded prototype, never promoted to any selector or public pick.
+- 16 new tests (`nfl/tests/test_role_regime_redistribution.py`) pass,
+  network-free (synthetic HC intervals/game dates, same fixture style as
+  `test_coach_regime_registry.py`/`test_role_intelligence_baselines.py`),
+  including a dedicated leakage-safety suite re-verifying the no-lookahead
+  guarantee specifically through this join's own season/week resolution
+  path (a future regime change never alters a past event's resolved
+  regime; a different week's date in the same index never leaks into this
+  week's resolution) and a mass-balance test for the challenger's own
+  redistribution step. Existing `nfl.tests.test_role_intelligence_baselines`
+  (7 tests) and `nfl.tests.test_coach_regime_registry` (45 tests) re-run
+  once, unchanged, both green -- neither file touched.
+- No model/selector/public-pick promotion, no production change, no edits
+  to `.github/workflows/`, `nfl/prospective/`, or `nfl/normalize/`. Draft
+  PR opened, not merged -- Jacob's separate explicit authorization required.
+
+Alligator
+
+## 2026-09-19 -- Scientific-integrity audit of draft PR #147 (role-regime redistribution)
+
+- Workstream `NFL-ROLE-REDISTRIBUTION-AUDIT-20260919` (Issue #91 claim,
+  comment `5743334753`), branch `claude/nfl-role-redistribution-audit-20260919`
+  off `origin/main` (base `3f8d16a84e80a85d1c8f30f2aaad818c03549c33`), plus a
+  clean cherry-pick of PR #147's own commit `0c87e4a74a` (`role_regime_
+  redistribution.py`/its test, verified byte-identical to that branch, not
+  edited) so this audit can import/reuse it. New files only:
+  `nfl/research/role_regime_redistribution_audit.py`,
+  `nfl/tests/test_role_regime_redistribution_audit.py`. Does not edit
+  `role_regime_redistribution.py`, `role_intelligence_baselines.py`,
+  `role_intelligence_features.py`, `role_intelligence_source_digests.py`,
+  or `coach_regime_registry.py`.
+- **Root cause of the 668-vs-667 discrepancy, definitively isolated, not
+  merely re-observed**: traced `players.csv`'s only real code path
+  (`pfr_id -> gsis_id` crosswalk for `snap_counts`-derived
+  `offense_snap_share` only) and confirmed by direct read that event
+  construction and `target_share`/`carry_share` never touch it -- so
+  `players.csv` drift is ruled OUT as a cause by code trace alone,
+  independent of digests. Then downloaded and froze to local disk (this
+  worktree's own scratch dir, never shared) EVERY byte `stats_player_week_
+  <season>.csv`/`injuries_<season>.csv` (2012-2025) and `depth_charts_
+  <season>.csv` (2012-2024) needs, and re-ran the real production event
+  build (`role_intelligence_features.build_teammate_absence_trigger_
+  events`, completely unmodified, via a `urllib.request.urlopen`
+  monkeypatch only for `fetch_injury_rows` -- see module docstring's
+  "Scope" section for why `snap_counts`/PBP were intentionally excluded,
+  since neither feeds event construction or `target_share`/`carry_share`).
+  12 repeated runs from these BYTE-IDENTICAL frozen files, default (unset)
+  `PYTHONHASHSEED`, alternated 668 (5 runs) and 667 (7 runs) events with
+  ZERO re-fetch between runs -- reproducing PR #147's exact disclosed
+  discrepancy from frozen bytes alone. Diffing a 668-run against a 667-run
+  isolates the EXACT flipping event: `WR_ABSENCE, 2012, week 2, team GB,
+  removed_player_id 00-0024267`. Root cause: `role_intelligence_features.
+  _top_usage_player_per_team_week` ranks each team-week's top-usage player
+  via `max(candidates, key=lambda pid: running_mean[pid])`, where
+  `candidates` iterates `roster_by_team[team]` -- a plain `set`, not a list
+  or an insertion-ordered dict. On an exact tie in `running_mean` (very
+  plausible in week 2 of a season, one prior game each), `max()`'s
+  first-element tie-break depends on the set's hash-randomized iteration
+  order, which differs per Python process by default. Fixing
+  `PYTHONHASHSEED` (0 and 42 both tested) makes the result perfectly stable
+  across repeated runs, confirming the mechanism. This is a REAL BUG in
+  `role_intelligence_features.py` (order-dependent tie-break over an
+  unordered set) -- NOT source drift, network timing, or a race. Per this
+  audit's file-scope boundary it is documented here precisely, not patched.
+- **`players.csv` digest, independently re-verified today**: fresh live
+  fetch (2026-09-19) is BYTE-IDENTICAL to PR #147's own disclosed live
+  digest (7,291,736 bytes / `12c126bb...`) and NOT PR #143's pin
+  (7,259,734 bytes / `801d5fec...`, in `role_intelligence_source_digests.
+  PLAYERS_CROSSWALK_SOURCE`, unedited). Only two distinct values exist
+  across all three observations (PR #143 pin, PR #147's run, this audit's
+  fresh fetch) -- the asset has not drifted again since PR #147's run
+  earlier the same day, but PR #143's pin remains stale relative to the
+  live asset. NOT re-pinned anywhere; a human decision is needed.
+- **Paired-population defect (PR #147's disclosed n=449 vs n=441 for
+  target_share, n=261 vs n=250 for carry_share), root-caused**:
+  `role_regime_redistribution.evaluate_predictors`/`role_intelligence_
+  baselines.evaluate_baselines` score every predictor independently --
+  a (event, candidate) row's presence in one predictor's population
+  depends only on whether THAT predictor happened to emit a numeric
+  prediction, not a shared rule. `NO_ADJUSTMENT`/`PROPORTIONAL_TEAMMATE_
+  REDISTRIBUTION` omit a candidate entirely if he lacks a numeric last-5
+  prior share; `DEPTH_CHART_NEXT_MAN`/`RECENT_USAGE_NEXT_MAN` unconditionally
+  add one next-man entry even without a prior; the challenger
+  (`predict_committee_model`) goes further and ALWAYS predicts every
+  candidate, defaulting a missing prior to zero rather than omitting it --
+  a structural population superset. `compute_paired_evaluation` (this
+  audit's new function) instead scores every predictor on the
+  INTERSECTION: real numeric predictions from ALL FIVE (4 baselines +
+  challenger) AND a realized target-game share, one shared denominator for
+  every MAE/n reported together.
+- **Exact paired comparison, real 2012-2025 frozen-byte run
+  (`PYTHONHASHSEED=0`, 667 events reproduced: 323 WR/344 RB; this specific
+  seed choice is disclosed, not cherry-picked for a favorable count),
+  held-out 2022-2025**:
+  - `target_share`: paired n=441 for all five predictors (all 8 dropped
+    rows were `missing_prediction:NO_ADJUSTMENT` -- confirming
+    `NO_ADJUSTMENT` was already the limiting/smallest population, so
+    pairing barely moves its own number: paired MAE 0.06050 vs PR #147's
+    originally reported unpaired 0.0605). `PROPORTIONAL` 0.06396 (vs 0.0640
+    unpaired), `DEPTH_CHART_NEXT_MAN` 0.07740 (vs 0.0774), `RECENT_USAGE_
+    NEXT_MAN` 0.08254 (vs 0.0825), challenger `HIERARCHICAL_COMMITTEE_
+    PROBABILITY_V1` 0.06242 (paired, n=441; PR #147's original unpaired
+    figure was 0.0620 at its own inflated n=449). **Conclusion survives
+    pairing largely unchanged**: challenger still beats 3 of 4 baselines
+    (PROPORTIONAL/DEPTH_CHART/RECENT_USAGE), still loses to NO_ADJUSTMENT.
+    Event-clustered bootstrap (105 held-out target_share-relevant events,
+    2,000 resamples, seed 20260919): NO_ADJUSTMENT MAE 0.0605 95% CI
+    [0.0552, 0.0658]; challenger 0.0624 CI [0.0573, 0.0675] -- the two CIs
+    overlap substantially, so the "challenger loses to NO_ADJUSTMENT" gap
+    is NOT statistically distinguishable from noise at this sample size.
+  - `carry_share`: paired n=250 for all five predictors (all 11 dropped
+    rows were `missing_prediction:NO_ADJUSTMENT` again). NO_ADJUSTMENT
+    0.18382 (vs 0.1838 unpaired), PROPORTIONAL 0.16797 (vs 0.1680),
+    DEPTH_CHART_NEXT_MAN 0.21101 (vs 0.2110), RECENT_USAGE_NEXT_MAN
+    0.20693 (vs 0.2069), challenger 0.16124 (paired, n=250; PR #147's
+    original unpaired figure was 0.1588 at its own inflated n=261).
+    **The "challenger beats ALL FOUR baselines on carry_share" claim
+    SURVIVES exact pairing**: 0.16124 is still the lowest of all five,
+    though the margin over its closest competitor (PROPORTIONAL, 0.16797)
+    narrows from ~0.0092 (unpaired) to ~0.0067 (paired). Event-clustered
+    bootstrap (98 held-out carry_share-relevant events): challenger 0.1612
+    CI [0.1458, 0.1763] vs PROPORTIONAL 0.1680 CI [0.1496, 0.1872] --
+    heavily overlapping, so even on the dimension where the point-estimate
+    ranking survives, the margin is NOT statistically robust at this N.
+  - Season-by-season paired counts: target_share n_by_season {2022: 111,
+    2023: 87, 2024: 99, 2025: 144}; carry_share {2022: 39, 2023: 71,
+    2024: 66, 2025: 74} (full breakdown with per-season MAE per predictor
+    in the PR body/artifact, not reproduced in full here).
+  - Uncertainty method used and why: bootstrap resampling whole EVENTS
+    (`season, week, team, removed_player_id`), not individual rows or
+    players -- multiple candidate rows from the same event share one
+    removed player's vacated budget and one game's own shared noise, so
+    per-row resampling would treat them as independent when they are not;
+    per-player resampling was rejected because the mass-balance
+    interdependence is a same-EVENT effect, not a same-player-across-events
+    effect.
+  - Per-named-HC-regime reporting (predeclared `MIN_EVENTS_FOR_
+    NAMED_REGIME=20`, NOT lowered): re-checked on the smaller PAIRED
+    population -- max paired-EVENT count for any single named regime is 9
+    (both dimensions, 36 distinct regimes observed in each), well under 20.
+    **The paired population still cannot support any per-regime report,
+    same conclusion PR #147 already reached on the larger unpaired
+    population** -- not a new negative finding, but explicitly re-verified
+    rather than assumed to carry over.
+- 19 new tests (`nfl/tests/test_role_regime_redistribution_audit.py`):
+  a hand-computed synthetic fixture proving `compute_paired_evaluation`'s
+  paired-N-is-an-intersection-not-a-union behavior and exact MAE math,
+  digest-comparison-logic tests (including a locked-down assertion of the
+  two real disclosed digest constants so a future silent edit to either
+  source is caught), event-set-digest order-independence, event-clustered
+  bootstrap determinism/degenerate-case tests, and named-regime-coverage
+  event-vs-row-counting tests. All network-free. Full existing
+  `nfl.tests.test_role_regime_redistribution` (16), `test_role_intelligence_
+  baselines` (7), `test_role_intelligence_features`, `test_role_
+  intelligence_data_prep`, and `test_coach_regime_registry` (45) suites
+  re-run unchanged, all green; full `nfl/tests` suite (692 tests) re-run,
+  all green. Root (MLB) suite not re-run -- this audit touches only
+  `nfl/research/`/`nfl/tests/`, a disclosed scoping decision, not an
+  oversight.
+- No digest re-pinned anywhere (players.csv's stale PR #143 pin is
+  reported, not fixed, per this audit's explicit scope). No patch to
+  `role_intelligence_features.py`'s real tie-break bug (documented
+  precisely instead, per this audit's file-scope boundary). No model/
+  selector/public-pick promotion, no production change. Draft PR opened
+  (base `main`), not merged -- Jacob's separate explicit authorization
+  required, and this audit does not touch or merge PR #147 itself.
+
+## 2026-09-19 -- #147/#150 disposition resolved: role-redistribution research
+## final candidate (Priority 4, "SUPERCLAUDE — NEXT EXECUTION PRIORITIES")
+
+Per Jacob's explicit instruction to resolve #147/#150's disposition without
+discarding unique scientific evidence: consolidated both into ONE final
+candidate, branch `claude/nfl-role-redistribution-research-final-candidate-
+20260920`, a clean 2-commit cherry-pick of PR #150's own branch (which
+already contains PR #147's commit plus its own audit commit) onto current
+`main` (post-#158) -- **zero conflicts**. New files only:
+`nfl/research/role_regime_redistribution.py`,
+`nfl/research/role_regime_redistribution_audit.py`, and their test files.
+Does not edit `role_intelligence_features.py`, `role_intelligence_
+baselines.py`, or `coach_regime_registry.py` -- all already-merged and
+untouched.
+
+Because this branch is now built ON TOP of #158's already-merged fixed
+builder, the challenger/audit modules here automatically operate on the
+CORRECTED 668-event population -- no stale 667-event assumption survives
+anywhere in this candidate. Full `nfl/tests` suite: **892/892 passing**,
+run once on this exact combined tree.
+
+**Scientific conclusion, restated precisely, not softened:** the
+`HIERARCHICAL_COMMITTEE_PROBABILITY_V1` challenger does **not** demonstrate
+statistically significant predictive superiority over the live B0 control
+on either dimension. `target_share` loses to `NO_ADJUSTMENT`; `carry_share`
+numerically beats all 4 baselines but its bootstrap CI heavily overlaps its
+closest competitor's -- exploratory only. No HC regime reaches the
+predeclared minimum N. This candidate is offered as reviewed RESEARCH
+INFRASTRUCTURE (methodology + negative/inconclusive finding, preserved
+rather than discarded), not as a predictor ready for any further step.
+
+**Status: HOLD pending independent review** (the lead assembled this
+consolidation and cannot self-certify per the pre-merge doctrine). Not
+merged. #147 and #150 themselves left open pending that review's outcome --
+to be closed as superseded once review completes, same pattern as the
+other four families.
+
+Alligator
