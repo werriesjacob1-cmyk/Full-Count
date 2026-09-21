@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-21T01:24:06.037037+00:00",
+  "updated_at": "2026-09-21T10:49:25.288599+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -41773,6 +41773,94 @@
         },
         "qualification_timestamp": "2026-09-21T00:45:29.917734+00:00",
         "board_timestamp": "2026-09-21T00:45:29.914927+00:00",
+        "slate_date": "2026-09-21"
+      }
+    },
+    "fc2:823169:player-805673:pitcher_outs:16:over": {
+      "canonical_id": "fc2:823169:player-805673:pitcher_outs:16:over",
+      "settlement_identity": [
+        "823169",
+        [
+          "player",
+          "805673"
+        ],
+        "pitcher_outs",
+        "16",
+        "over"
+      ],
+      "slate_date": "2026-09-21",
+      "first_published_at": "2026-09-21T10:49:25.288599+00:00",
+      "publication_provenance": {
+        "artifact_id": "2bd6b9676fe417f9ad329775c75297f87984600d3d58411db5f671dfd5599c5d",
+        "source_commit": "b5354edbf2c82b8a9551298dba75f4d82623723b",
+        "workflow_run_id": "35590513235",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-21T10:49:12.074077+00:00",
+        "data_hash": "286db9c39fed9f0f570d28068e16f4b7260bbb74f20870256ce0ab156d416074",
+        "live_hash": "4eed92efe3e17d18a400b46d721aa203a54908937e8f039303fe7992245f871b"
+      },
+      "snapshot": {
+        "id": "fc2:823169:player-805673:pitcher_outs:16:over",
+        "identity_version": 2,
+        "game_pk": 823169,
+        "player_id": 805673,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Zebby Matthews",
+        "team": "Minnesota Twins",
+        "matchup": "Minnesota Twins @ San Francisco Giants",
+        "game_start": "2026-09-22T01:45:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 15.5,
+          "needs": 16
+        },
+        "prop": "Over 15.5 Outs Recorded",
+        "hit_probability": 0.6301,
+        "market_odds": -110,
+        "market_implied": 0.4899,
+        "market_edge": 0.1402,
+        "market_hold": 0.0693,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (14.5 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 16+ outs (5.1 IP) in 63.7% of his last 22 real starts (league 64.1%, avg 17.09 outs/start)"
+        ],
+        "watchouts": [
+          "No positive read here: 0.4 pts BELOW the 64% league base rate for this market"
+        ],
+        "prob_ci": [
+          0.5616,
+          0.735
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 22,
+        "lineup_assumed": null,
+        "base_rate": 0.641,
+        "lift": -0.0109,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "13eca5a8e",
+          "prediction_timestamp": "2026-09-21T10:44:50.014987+00:00",
+          "odds_fetched_at": "2026-09-21T10:44:46.980165+00:00",
+          "board_generated_at": "2026-09-21T10:44:50.008720+00:00"
+        },
+        "qualification_timestamp": "2026-09-21T10:44:50.014987+00:00",
+        "board_timestamp": "2026-09-21T10:44:50.008720+00:00",
         "slate_date": "2026-09-21"
       }
     }
