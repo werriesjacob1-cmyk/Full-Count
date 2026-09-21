@@ -34,10 +34,10 @@
       "ungraded": 56
     },
     "top_pick": {
-      "hits": 9,
+      "hits": 10,
       "misses": 9,
       "voids": 0,
-      "ungraded": 10
+      "ungraded": 9
     },
     "neutral": {
       "hits": 0,
@@ -46,10 +46,10 @@
     }
   },
   "public_top_pick_counts": {
-    "hits": 9,
+    "hits": 10,
     "misses": 9,
     "voids": 0,
-    "ungraded": 10
+    "ungraded": 9
   },
   "public_top_picks": [
     {
@@ -1968,18 +1968,31 @@
       "publication_source_commit": "a99b07b0742e235a422f28194133dcfe98773c68",
       "publication_run_id": "35520663073",
       "publication_deployment_id": null,
-      "grade": "ungraded",
-      "settlement_state": "ungraded",
-      "reason": "game_not_authoritatively_final",
+      "grade": "hit",
+      "actual": 2.0,
+      "actual_stat": "hits_runs_rbis",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 9,
+      "fair_test": true,
+      "opportunity": "full (4 PA)",
       "eligibility": {
-        "eligibility": "ungraded",
-        "reason_code": "game_not_authoritatively_final",
+        "eligibility": "eligible",
+        "reason_code": "batter_started_and_recorded_plate_appearance",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "live"
+        "plate_appearances": 4,
+        "was_starter": true,
+        "scheduled_innings": 9,
+        "innings_played": 9
       },
-      "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-21T00:21:37.074493+00:00",
-      "settlement_source": "durable_morning_status_observation"
+      "settlement_state": "hit",
+      "settlement_authority": "official_final",
+      "settlement_observed_at": "2026-09-21T01:23:20.398467+00:00",
+      "settlement_source": "durable_morning_grader"
     },
     {
       "id": "fc2:824789:player-665750:hits_runs_rbis:1:over",
@@ -2066,7 +2079,7 @@
         "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-21T00:21:37.074493+00:00",
+      "settlement_observed_at": "2026-09-21T01:23:20.398467+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -2157,7 +2170,7 @@
         "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-21T00:21:37.074493+00:00",
+      "settlement_observed_at": "2026-09-21T01:23:20.398467+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -2246,7 +2259,7 @@
         "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-21T00:21:37.074493+00:00",
+      "settlement_observed_at": "2026-09-21T01:23:20.398467+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -2335,7 +2348,7 @@
         "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-21T00:21:37.074493+00:00",
+      "settlement_observed_at": "2026-09-21T01:23:20.398467+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -2423,7 +2436,7 @@
         "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-21T00:21:37.074493+00:00",
+      "settlement_observed_at": "2026-09-21T01:23:20.398467+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -2501,7 +2514,7 @@
         "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-21T00:21:37.074493+00:00",
+      "settlement_observed_at": "2026-09-21T01:23:20.398467+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -2589,7 +2602,7 @@
         "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-21T00:21:37.074493+00:00",
+      "settlement_observed_at": "2026-09-21T01:23:20.398467+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -2677,7 +2690,7 @@
         "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-21T00:21:37.074493+00:00",
+      "settlement_observed_at": "2026-09-21T01:23:20.398467+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -2765,7 +2778,7 @@
         "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-21T00:21:37.074493+00:00",
+      "settlement_observed_at": "2026-09-21T01:23:20.398467+00:00",
       "settlement_source": "durable_morning_status_observation"
     }
   ],
