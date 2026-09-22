@@ -72,6 +72,10 @@ class FilmObservationTests(unittest.TestCase):
         with self.assertRaisesRegex(ObservationValidationError, "cannot claim"):
             manifest(rights_verified=True)
 
+    def test_rights_flag_must_be_json_boolean(self):
+        with self.assertRaisesRegex(ObservationValidationError, "JSON boolean"):
+            manifest(rights_verified="false")
+
     def test_real_source_fails_closed_without_rights(self):
         with self.assertRaisesRegex(ObservationValidationError, "verified analysis rights"):
             manifest(source_type="licensed_footage", rights_verified=False)
@@ -90,6 +94,18 @@ class FilmObservationTests(unittest.TestCase):
         raw = observation()
         raw["labels"]["coverage"]["confidence"] = "UNKNOWN"
         with self.assertRaisesRegex(ObservationValidationError, "unknown value"):
+            validate_observation(raw, manifest())
+
+    def test_label_must_be_object(self):
+        raw = observation()
+        raw["labels"]["coverage"] = "COVER_3"
+        with self.assertRaisesRegex(ObservationValidationError, "must be an object"):
+            validate_observation(raw, manifest())
+
+    def test_timestamps_must_be_utc(self):
+        raw = observation()
+        raw["play"]["snap_timestamp"] = "2026-09-20 17:00"
+        with self.assertRaisesRegex(ObservationValidationError, "ending in Z"):
             validate_observation(raw, manifest())
 
     def test_source_identity_must_match(self):
