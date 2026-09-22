@@ -630,27 +630,45 @@ jobs:
 
           # Separate, independently sealed research artifact -- never merged
           # into `snapshot`/`board` above, never read by any B0 decision.
-          challenger_snapshot = seal_challenger_snapshot(
-              challenger_snapshot_records,
-              slate_date=TARGET_DATE,
-              code_sha=os.environ["FULL_COUNT_CODE_SHA"],
-              source_vintage=source_vintage,
-              sealed_at=sealed_at,
-          )
-          challenger_path = (
-              EVIDENCE_ROOT / "nfl-receptions-challenger-comparison.json"
-          )
-          with challenger_path.open("w", encoding="utf-8") as f:
-              json.dump({
-                  "analysis": "NFL_RECEPTIONS_B0_VS_FROZEN_CHALLENGER_PAIRED_PROSPECTIVE",
-                  "status": "RESEARCH_ONLY_NOT_PROMOTED",
-                  "created_at": sealed_at,
-                  "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
-                  "target_local_date": TARGET_DATE,
-                  "challenger_model_version": CHALLENGER_MODEL_VERSION,
-                  "build_failures": challenger_build_failures,
-                  "snapshot": challenger_snapshot,
-              }, f, indent=2, sort_keys=True)
+          # Wrapped end-to-end (sealing AND the write) so a failure in this
+          # research-only lane can NEVER prevent the primary board below
+          # from being built and written -- per-candidate build failures
+          # were already isolated above, but the aggregate seal/write call
+          # itself was not, which independent review correctly flagged as
+          # a real (if not currently exploitable) gap against that exact
+          # claim.
+          challenger_snapshot = None
+          try:
+              challenger_snapshot = seal_challenger_snapshot(
+                  challenger_snapshot_records,
+                  slate_date=TARGET_DATE,
+                  code_sha=os.environ["FULL_COUNT_CODE_SHA"],
+                  source_vintage=source_vintage,
+                  sealed_at=sealed_at,
+              )
+              challenger_path = (
+                  EVIDENCE_ROOT / "nfl-receptions-challenger-comparison.json"
+              )
+              with challenger_path.open("w", encoding="utf-8") as f:
+                  json.dump({
+                      "analysis": "NFL_RECEPTIONS_B0_VS_FROZEN_CHALLENGER_PAIRED_PROSPECTIVE",
+                      "status": "RESEARCH_ONLY_NOT_PROMOTED",
+                      "created_at": sealed_at,
+                      "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+                      "target_local_date": TARGET_DATE,
+                      "challenger_model_version": CHALLENGER_MODEL_VERSION,
+                      "build_failures": challenger_build_failures,
+                      "snapshot": challenger_snapshot,
+                  }, f, indent=2, sort_keys=True)
+          except Exception as exc:
+              challenger_build_failures.append({
+                  "event_id": None,
+                  "gsis_id": None,
+                  "failure_reason": (
+                      f"aggregate seal/write failed: {type(exc).__name__}: {exc}"
+                  ),
+              })
+              challenger_snapshot = None
 
           board = {
               "analysis": "NFL_LIVE_RECEPTIONS_SHADOW_BOARD_AUDIT",
@@ -707,8 +725,12 @@ jobs:
               )),
               "snapshot_sha256": snapshot["snapshot_sha256"],
               "record_count": snapshot["record_count"],
-              "challenger_snapshot_sha256": challenger_snapshot["snapshot_sha256"],
-              "challenger_record_count": challenger_snapshot["record_count"],
+              "challenger_snapshot_sha256": (
+                  challenger_snapshot["snapshot_sha256"] if challenger_snapshot else None
+              ),
+              "challenger_record_count": (
+                  challenger_snapshot["record_count"] if challenger_snapshot else None
+              ),
               "challenger_build_failure_count": len(challenger_build_failures),
           }, indent=2, sort_keys=True))
           PY
