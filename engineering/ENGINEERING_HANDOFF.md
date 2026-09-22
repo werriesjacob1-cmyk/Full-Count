@@ -4776,3 +4776,34 @@ authorization naming this specific PR -- the mission's prior authorization
 covered only #161-#164.
 
 Alligator
+
+
+## 2026-09-22 — Independent MLB grading catch-up repair
+
+Agent: Codex
+
+Branch: `codex/mlb-grading-catchup-20260921`
+
+Objective: make durable public Top Pick grading and the History page recover independently of the next expensive daily picks-generation run.
+
+What changed:
+
+- Added an independently scheduled overnight grading workflow with five late-game/retry windows and an exact validated manual date override.
+- Reused `grade_results.py`, the publication registry, existing settlement rules, and `dashboard/build_history.py`; no competing grading authority was introduced.
+- Each write attempt starts from current `main`, recomputes authoritative grades, rebuilds the History candidate, compares it without volatile generation time, and retries rejected pushes from fresh state.
+- A durable change dispatches the existing Pages deployment and then polls the public `history.json` until every expected pick identity has the published grade, settlement state, and actual value. Newer compatible public evidence is allowed.
+- Added actionable failure annotations when an immutable public pick remains unresolved after its direct MLB game feed is authoritatively Final. Live, postponed, suspended, cancelled, and unavailable-source states remain retryable without a false overdue alert.
+- Per-date failures no longer disappear behind exit code zero: remaining dates continue, safe partial progress can publish, and the workflow finishes red with an actionable error.
+- Dashboard Refresh now rebuilds History from current `results/` inside every push retry, preventing a pre-retry candidate from overwriting newer grading evidence.
+- Preserved prior terminal public settlements through the existing authority-aware merge and retained established handling for voids, shortened games, direct game identity after UTC rollover, and correction rechecks.
+
+Validation before draft PR:
+
+- 9/9 new alert/date/failure tests passed.
+- 36/36 existing direct grader checks passed.
+- Both modified workflow YAML files parsed successfully; exact-head CI and independent final-diff certification remain required before any merge decision.
+- Independent adversarial review reproduced and drove fixes for swallowed per-date failures, stale History overwrite on concurrent retries, and missing public History convergence proof.
+
+No model, weights, selector, public-pick policy, immutable recommendation snapshot, production deployment, or grading activation changed. The workflow is proposed only; it is not active until a separately authorized merge.
+
+Alligator

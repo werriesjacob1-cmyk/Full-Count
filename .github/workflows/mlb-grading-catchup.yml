@@ -1,0 +1,198 @@
+name: MLB Grading Catch-Up
+
+# Independent durable grading path.  It runs after the late-game window and
+# does not depend on the next expensive picks-generation job succeeding.
+on:
+  schedule:
+    - cron: '17 4,6,8,10,12 * * *'
+  workflow_dispatch:
+    inputs:
+      grade_date:
+        description: "Optional YYYY-MM-DD slate date to regrade"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: mlb-grading-catchup
+  cancel-in-progress: false
+
+jobs:
+  grade-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout newest main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          filter: blob:none
+          sparse-checkout: |
+            dashboard
+            data/public_top_picks
+            docs
+            output
+            results
+          sparse-checkout-cone-mode: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install grading dependencies
+        run: pip install -r requirements.txt
+
+      - name: Grade, rebuild History, and publish safely
+        id: publish
+        env:
+          GRADE_DATE: ${{ github.event_name == 'workflow_dispatch' && inputs.grade_date || '' }}
+        run: |
+          git config user.name "mlb-grading-bot"
+          git config user.email "actions@github.com"
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git checkout --detach origin/main
+
+            set +e
+            python3 grade_results.py
+            grade_status=$?
+            set -e
+            if [ "$grade_status" -ne 0 ] && [ "$grade_status" -ne 1 ] && [ "$grade_status" -ne 2 ]; then
+              echo "::error::Grader failed unexpectedly with exit code $grade_status."
+              exit "$grade_status"
+            fi
+            if [ "$grade_status" -eq 1 ]; then
+              echo "failed=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "failed=false" >> "$GITHUB_OUTPUT"
+            fi
+            if [ "$grade_status" -eq 2 ]; then
+              echo "overdue=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "overdue=false" >> "$GITHUB_OUTPUT"
+            fi
+
+            # Rebuild the public archive even when the durable result was
+            # already corrected by another path. Compare without the volatile
+            # generated_at field so a healthy no-change pass stays byte-stable.
+            python3 dashboard/build_history.py --out "$RUNNER_TEMP/history-candidate.json"
+            python3 - docs/history.json "$RUNNER_TEMP/history-candidate.json" <<'PYEOF'
+            import json
+            import pathlib
+            import shutil
+            import sys
+
+            current_path, candidate_path = map(pathlib.Path, sys.argv[1:])
+            candidate = json.loads(candidate_path.read_text(encoding="utf-8"))
+            try:
+                current = json.loads(current_path.read_text(encoding="utf-8"))
+            except (FileNotFoundError, json.JSONDecodeError, OSError):
+                current = None
+            comparable_candidate = dict(candidate)
+            comparable_candidate.pop("generated_at", None)
+            comparable_current = dict(current) if isinstance(current, dict) else current
+            if isinstance(comparable_current, dict):
+                comparable_current.pop("generated_at", None)
+            if comparable_current != comparable_candidate:
+                current_path.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(candidate_path, current_path)
+                print("docs/history.json updated from durable grade evidence")
+            else:
+                print("docs/history.json already matches durable grade evidence")
+            PYEOF
+
+            # Preserve and publish every safely computed grade even when the
+            # grader deliberately returns 2 for an overdue-ungraded alert.
+            git add results/grades_*.json results/history.json docs/history.json
+            if git diff --cached --quiet; then
+              echo "No durable grading change to publish."
+              echo "published=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            git commit -m "MLB grading catch-up $(date -u +'%F %H:%M') UTC"
+            if git push origin HEAD:main; then
+              echo "published=true" >> "$GITHUB_OUTPUT"
+              echo "published_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/5); recomputing from current main."
+          done
+          echo "::error::Failed to publish grading evidence after 5 current-main retries."
+          exit 1
+
+      - name: Deploy the exact updated History artifact
+        if: steps.publish.outputs.published == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run dashboard-deploy.yml --ref main
+
+      - name: Verify public History contains the published settlements
+        if: steps.publish.outputs.published == 'true'
+        run: |
+          python3 - docs/history.json <<'PYEOF'
+          import json
+          import sys
+          import time
+          import urllib.request
+
+          expected = json.load(open(sys.argv[1], encoding="utf-8"))
+          expected_rows = {
+              (day["date"], row.get("id")): (
+                  row.get("grade"), row.get("settlement_state"), row.get("actual")
+              )
+              for day in expected.get("days", [])
+              for row in day.get("picks", [])
+              if row.get("id")
+          }
+          url = "https://werriesjacob1-cmyk.github.io/Full-Count/history.json"
+          for attempt in range(1, 49):
+              try:
+                  req = urllib.request.Request(
+                      f"{url}?cb={time.time_ns()}-{attempt}",
+                      headers={"Cache-Control": "no-cache", "Pragma": "no-cache"},
+                  )
+                  with urllib.request.urlopen(req, timeout=15) as response:
+                      public = json.loads(response.read())
+                  public_rows = {
+                      (day["date"], row.get("id")): (
+                          row.get("grade"), row.get("settlement_state"), row.get("actual")
+                      )
+                      for day in public.get("days", [])
+                      for row in day.get("picks", [])
+                      if row.get("id")
+                  }
+                  mismatches = [
+                      key for key, value in expected_rows.items()
+                      if public_rows.get(key) != value
+                  ]
+                  if not mismatches:
+                      print(f"Public History converged on attempt {attempt}/48 "
+                            f"with all {len(expected_rows)} expected settlements.")
+                      raise SystemExit(0)
+                  print(f"[{attempt}/48] public History still misses or differs on "
+                        f"{len(mismatches)} expected settlement(s).", flush=True)
+              except Exception as exc:
+                  print(f"[{attempt}/48] public History fetch failed: {exc}", flush=True)
+              time.sleep(10)
+          print("::error::Public History did not converge to the published durable grades "
+                "within eight minutes.")
+          raise SystemExit(1)
+          PYEOF
+
+      - name: Report overdue public grading
+        if: always() && steps.publish.outputs.overdue == 'true'
+        run: |
+          echo "::error::Completed MLB games still have unresolved deployment-proven public Top Picks. See the grading annotations above."
+          exit 1
+
+      - name: Report partial grading failure
+        if: always() && steps.publish.outputs.failed == 'true'
+        run: |
+          echo "::error::At least one grading date failed. Safe results from other dates were still published; inspect the grader log and retry."
+          exit 1
