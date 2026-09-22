@@ -475,6 +475,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 49.4,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ Detroit Tigers",
+          "game_pk": 824222,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 48.0,
+            "same_hand_ratio": 43.75,
+            "l14_k_pct": 26.4706,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6138,
+          "raw_hit_probability": 0.6988,
+          "lift": -0.0944,
+          "reliability": "B",
+          "sample_n": 10,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 13.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 58.0,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ Detroit Tigers",
+          "game_pk": 824222,
+          "team": "Detroit Tigers",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7338,
+            "avg_outs_per_start": 13.7
+          },
+          "hit_probability": 0.6809,
+          "raw_hit_probability": 0.7338,
+          "lift": -0.1092,
+          "reliability": "B",
+          "sample_n": 10,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 13.5,
+            "needs": 14
+          }
+        }
+      ]
     }
   ]
 }

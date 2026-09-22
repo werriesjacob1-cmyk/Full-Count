@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_823166",
+  "name": "Minnesota Twins @ San Francisco Giants \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "A run scores in the 1st (either team)",
+          "type": "game",
+          "score": 41.5,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ San Francisco Giants",
+          "game_pk": 823166,
+          "team": null,
+          "side": "both",
+          "lean": "YRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.353,
+            "away_team_scores_p": 0.2909,
+            "fi_n_starts": 4.0
+          },
+          "hit_probability": 0.5412,
+          "raw_hit_probability": null,
+          "lift": 0.0396,
+          "reliability": "D",
+          "sample_n": 4,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 54.1
+          }
+        }
+      ]
+    }
+  ]
+}

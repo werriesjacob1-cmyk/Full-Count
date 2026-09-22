@@ -576,6 +576,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 41.2,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Boston Red Sox",
+          "game_pk": 824709,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 45.0,
+            "same_hand_ratio": 21.4286,
+            "l14_k_pct": 71.1765,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5189,
+          "raw_hit_probability": 0.5189,
+          "lift": 0.152,
+          "reliability": "A",
+          "sample_n": 30,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 50.4,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Boston Red Sox",
+          "game_pk": 824709,
+          "team": "Cleveland Guardians",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.4849,
+            "avg_outs_per_start": 17.83
+          },
+          "hit_probability": 0.5133,
+          "raw_hit_probability": 0.4849,
+          "lift": 0.1037,
+          "reliability": "A",
+          "sample_n": 30,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }

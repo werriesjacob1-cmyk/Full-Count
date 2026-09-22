@@ -503,6 +503,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 44.0,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Texas Rangers",
+          "game_pk": 822840,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 59.0,
+            "same_hand_ratio": 33.3333,
+            "l14_k_pct": 62.3529,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.4955,
+          "raw_hit_probability": 0.4955,
+          "lift": -0.0257,
+          "reliability": "A",
+          "sample_n": 17,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 16.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 70.6,
+          "notable_signals": 1,
+          "matchup": "New York Mets @ Texas Rangers",
+          "game_pk": 822840,
+          "team": "New York Mets",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.602,
+            "avg_outs_per_start": 16.88
+          },
+          "hit_probability": 0.595,
+          "raw_hit_probability": 0.602,
+          "lift": 0.1206,
+          "reliability": "A",
+          "sample_n": 17,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 16.5,
+            "needs": 17
+          }
+        }
+      ]
     }
   ]
 }
