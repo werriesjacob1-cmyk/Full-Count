@@ -1,5 +1,4 @@
 import json
-import tempfile
 import unittest
 from pathlib import Path
 
@@ -122,18 +121,22 @@ class FilmObservationTests(unittest.TestCase):
         self.assertEqual(len(coverage["disagreements"]), 1)
 
     def test_source_content_digest_mismatch_fails_closed(self):
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "source.json"
+        path = Path("film_source_digest_test.tmp")
+        try:
             path.write_text("different content", encoding="utf-8")
             with self.assertRaisesRegex(ObservationValidationError, "digest mismatch"):
                 verify_source_content(path, manifest())
+        finally:
+            path.unlink(missing_ok=True)
 
     def test_jsonl_error_includes_line_number(self):
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "bad.jsonl"
+        path = Path("film_jsonl_error_test.tmp")
+        try:
             path.write_text(json.dumps(observation()) + "\nnot-json\n", encoding="utf-8")
-            with self.assertRaisesRegex(ObservationValidationError, r"bad.jsonl:2"):
+            with self.assertRaisesRegex(ObservationValidationError, r"film_jsonl_error_test.tmp:2"):
                 load_jsonl(path, manifest())
+        finally:
+            path.unlink(missing_ok=True)
 
 
 if __name__ == "__main__":
