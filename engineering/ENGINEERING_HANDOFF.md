@@ -4807,3 +4807,85 @@ Validation before draft PR:
 No model, weights, selector, public-pick policy, immutable recommendation snapshot, production deployment, or grading activation changed. The workflow is proposed only; it is not active until a separately authorized merge.
 
 Alligator
+
+## 2026-09-22 -- Second real production defect on mlb-grading-catchup.yml:
+## heredoc BODY carried residual indentation after the terminator fix merged
+## (Jacob's authorization, Issue #91 comment `5784769579`, condition 1 --
+## "If the run fails, report the exact defect and produce a new reviewed
+## repair candidate")
+
+PR #171 (merge SHA `d6afc4d25ab29b1b00f99a3c1572377e69c27911`) fixed the
+first real defect (an indented heredoc *terminator* that made bash
+consume the rest of the script as heredoc body). Per Jacob's
+authorization, immediately after merging it I dispatched a real
+production run of the fixed workflow (`workflow_dispatch`, run
+`35790968232`, head `d6afc4d25a`) to verify it end-to-end. **It failed.**
+
+**What broke:** the "Grade, rebuild History, and publish safely" step
+graded all 15 overdue days correctly (logged real hit/miss counts for
+2026-09-08 through 2026-09-22, wrote a real 461-pick history-candidate.json)
+and then crashed in the very next heredoc:
+```
+File "<stdin>", line 1
+    import json
+IndentationError: unexpected indent
+```
+Nothing was committed or pushed -- the crash happened before `git add`,
+so no partial/incorrect state reached `main`. But the 15 days of newly
+computed grading evidence were not durably published either.
+
+**Root cause (the terminator fix's blind spot):** `<<'PYEOF'` (no `-`)
+strips NO leading whitespace from heredoc body lines -- only `<<-'PYEOF'`
+does, and only for leading TABS. The heredoc's body (`import json` etc.)
+was written indented to visually match the Python code's own nesting
+inside the shell `for` loop. After GitHub Actions' own YAML block-scalar
+dedent (verified via the same PyYAML-extraction method used for the
+terminator bug), the body still carried 2 residual leading spaces on
+every line -- so `python3`'s stdin began with an indented top-level
+statement, which Python's parser rejects unconditionally, regardless of
+whether every line shares that same indentation. The prior PR's own
+`bash -n` verification could not have caught this: to bash, a heredoc
+body is just a literal string; `bash -n` has no way to know that string
+will later be parsed as Python and must itself be valid at column 0. The
+prior PR's independent review and my own verification both stopped one
+layer short of this.
+
+**Fix:** dedent every line of the affected heredoc's body (the "publish"
+step's `docs/history.json` sync heredoc) by exactly the 2 residual spaces,
+verified against the ACTUAL post-YAML-dedent text (not raw file columns,
+which are misleading -- the same YAML file can carry different raw
+indentation for two heredocs that resolve to different net indentation,
+as happened here: the "Verify public History" step's heredoc was already
+correct after dedent despite similar-looking raw-file indentation).
+Verified three ways: (1) re-extracted the fixed body via PyYAML and
+confirmed zero residual indentation on every line; (2) `bash -n` on the
+full script, clean; (3) **actually executed** the extracted heredoc body
+via `python3 -c` against real sample `current.json`/`candidate.json`
+files (not just `py_compile`), reproducing the exact update-vs-no-change
+branch logic end-to-end -- exit 0, correct stdout, correct file contents.
+
+**New regression coverage** (closes the exact gap that let this slip
+past PR #171's own verification): extended `test_workflow_shell_syntax.py`
+with a new section that extracts every `python3 ... <<'DELIM' ... DELIM`
+heredoc body from every workflow file (post-YAML-dedent, same method as
+section 1) and `compile()`s it as Python -- 9 real heredocs found
+repo-wide, all now clean -- plus a regression fixture reproducing this
+exact bug class (a heredoc body with uniform residual leading whitespace)
+and proving the new check catches it. Negative-control verified: reverted
+just the workflow fix (kept the new test) and confirmed the new section
+3 check fails with the exact real `IndentationError` the production run
+hit; restored the fix and reconfirmed clean. 88/88 checks in this file
+(was 76/76 before this delta). Full root suite (each `test_*.py` invoked
+individually, matching `test.yml`'s own CI invocation, excluding the
+browser e2e suite) green.
+
+No grading logic, production data, selector, or public-pick policy
+changed -- one file, two lines' worth of whitespace, plus test coverage.
+
+Branch `claude/mlb-grading-catchup-heredoc-body-indent-fix-20260922`.
+Draft PR, not merged -- per Jacob's own authorization language ("this
+approval is not blanket authorization for subsequent PRs"), this new
+repair candidate requires fresh independent review and Jacob's separate
+explicit authorization before merge, same doctrine as every other PR.
+
+Alligator

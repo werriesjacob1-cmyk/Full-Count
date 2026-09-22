@@ -83,28 +83,28 @@ jobs:
             # generated_at field so a healthy no-change pass stays byte-stable.
             python3 dashboard/build_history.py --out "$RUNNER_TEMP/history-candidate.json"
             python3 - docs/history.json "$RUNNER_TEMP/history-candidate.json" <<'PYEOF'
-            import json
-            import pathlib
-            import shutil
-            import sys
+          import json
+          import pathlib
+          import shutil
+          import sys
 
-            current_path, candidate_path = map(pathlib.Path, sys.argv[1:])
-            candidate = json.loads(candidate_path.read_text(encoding="utf-8"))
-            try:
-                current = json.loads(current_path.read_text(encoding="utf-8"))
-            except (FileNotFoundError, json.JSONDecodeError, OSError):
-                current = None
-            comparable_candidate = dict(candidate)
-            comparable_candidate.pop("generated_at", None)
-            comparable_current = dict(current) if isinstance(current, dict) else current
-            if isinstance(comparable_current, dict):
-                comparable_current.pop("generated_at", None)
-            if comparable_current != comparable_candidate:
-                current_path.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copyfile(candidate_path, current_path)
-                print("docs/history.json updated from durable grade evidence")
-            else:
-                print("docs/history.json already matches durable grade evidence")
+          current_path, candidate_path = map(pathlib.Path, sys.argv[1:])
+          candidate = json.loads(candidate_path.read_text(encoding="utf-8"))
+          try:
+              current = json.loads(current_path.read_text(encoding="utf-8"))
+          except (FileNotFoundError, json.JSONDecodeError, OSError):
+              current = None
+          comparable_candidate = dict(candidate)
+          comparable_candidate.pop("generated_at", None)
+          comparable_current = dict(current) if isinstance(current, dict) else current
+          if isinstance(comparable_current, dict):
+              comparable_current.pop("generated_at", None)
+          if comparable_current != comparable_candidate:
+              current_path.parent.mkdir(parents=True, exist_ok=True)
+              shutil.copyfile(candidate_path, current_path)
+              print("docs/history.json updated from durable grade evidence")
+          else:
+              print("docs/history.json already matches durable grade evidence")
           PYEOF
 
             # Preserve and publish every safely computed grade even when the
