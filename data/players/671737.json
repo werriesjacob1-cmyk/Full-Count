@@ -589,9 +589,9 @@
       "date": "2026-09-22",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.5,
+          "score": 39.6,
           "notable_signals": 0,
           "matchup": "Minnesota Twins @ San Francisco Giants",
           "game_pk": 823166,
@@ -600,20 +600,20 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "opp_team_k_pct": 47.0,
+            "opp_team_k_pct": 48.0,
             "same_hand_ratio": 61.1111,
             "l14_k_pct": 91.7647,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6123,
-          "raw_hit_probability": 0.6914,
-          "lift": 0.0911,
+          "hit_probability": 0.3943,
+          "raw_hit_probability": 0.3943,
+          "lift": 0.163,
           "reliability": "A",
           "sample_n": 30,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 6.5,
+            "needs": 7
           }
         },
         {
@@ -628,12 +628,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5513,
+            "outs_rate": 0.5516,
             "avg_outs_per_start": 17.23
           },
-          "hit_probability": 0.56,
-          "raw_hit_probability": 0.5513,
-          "lift": 0.0856,
+          "hit_probability": 0.5602,
+          "raw_hit_probability": 0.5516,
+          "lift": 0.0841,
           "reliability": "A",
           "sample_n": 30,
           "projection": {

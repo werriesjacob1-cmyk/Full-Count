@@ -585,7 +585,7 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 43.1,
+          "score": 43.6,
           "notable_signals": 0,
           "matchup": "Milwaukee Brewers @ Philadelphia Phillies",
           "game_pk": 823412,
@@ -595,13 +595,13 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 48.0,
-            "same_hand_ratio": 61.1111,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 70.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.4097,
-          "raw_hit_probability": 0.4097,
-          "lift": 0.1788,
+          "hit_probability": 0.4099,
+          "raw_hit_probability": 0.4099,
+          "lift": 0.1786,
           "reliability": "A",
           "sample_n": 26,
           "projection": {
@@ -611,9 +611,9 @@
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 82.7,
+          "score": 81.5,
           "notable_signals": 1,
           "matchup": "Milwaukee Brewers @ Philadelphia Phillies",
           "game_pk": 823412,
@@ -622,18 +622,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6515,
+            "outs_rate": 0.6086,
             "avg_outs_per_start": 17.35
           },
-          "hit_probability": 0.6283,
-          "raw_hit_probability": 0.6515,
-          "lift": 0.1539,
+          "hit_probability": 0.5995,
+          "raw_hit_probability": 0.6086,
+          "lift": 0.1871,
           "reliability": "A",
           "sample_n": 26,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]
