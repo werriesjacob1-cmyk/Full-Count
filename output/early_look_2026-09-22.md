@@ -18,7 +18,7 @@ Every player below is projected into last night's/his last game's batting slot f
 - **Freddie Freeman** (Los Angeles Dodgers) — Over 0.5 Hits+Runs+RBIs — 71.1% [San Diego Padres @ Los Angeles Dodgers]
 - **Shea Langeliers** (Athletics) — Over 0.5 Hits+Runs+RBIs — 71.0% [Los Angeles Angels @ Athletics]
 - **Trevor Story** (Boston Red Sox) — Over 0.5 Hits+Runs+RBIs — 70.9% [Cleveland Guardians @ Boston Red Sox]
-- **Jordan Walker** (St. Louis Cardinals) — Over 0.5 Hits+Runs+RBIs — 70.9% [St. Louis Cardinals @ Pittsburgh Pirates]
+- **Jordan Walker** (St. Louis Cardinals) — Over 0.5 Hits+Runs+RBIs — 70.8% [St. Louis Cardinals @ Pittsburgh Pirates]
 - **Chase Meidroth** (Chicago White Sox) — Over 0.5 Hits+Runs+RBIs — 70.7% [Chicago White Sox @ Kansas City Royals]
 - **James Wood** (Washington Nationals) — Over 0.5 Hits+Runs+RBIs — 70.6% [Washington Nationals @ Detroit Tigers]
 - **Brandon Lowe** (Pittsburgh Pirates) — Over 0.5 Hits+Runs+RBIs — 70.3% [St. Louis Cardinals @ Pittsburgh Pirates]
