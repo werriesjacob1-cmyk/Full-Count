@@ -11,8 +11,10 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from collections import Counter
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 
@@ -65,6 +67,10 @@ class SourceManifest:
         if missing:
             raise ObservationValidationError(f"source manifest missing: {', '.join(missing)}")
         source_type = str(raw["source_type"])
+        if type(raw["rights_verified"]) is not bool:
+            raise ObservationValidationError("rights_verified must be a JSON boolean")
+        if type(raw["cost_usd"]) not in {int, float}:
+            raise ObservationValidationError("cost_usd must be a JSON number")
         if source_type not in ALLOWED_SOURCE_TYPES:
             raise ObservationValidationError(f"unsupported source_type: {source_type}")
         manifest = cls(
@@ -86,6 +92,7 @@ class SourceManifest:
     def validate(self) -> None:
         if not self.source_id or not self.analysis_rights or not self.accessed_at:
             raise ObservationValidationError("source identity, rights, and access time are required")
+        _require_utc_timestamp(self.accessed_at, "accessed_at")
         if self.cost_usd < 0:
             raise ObservationValidationError("cost_usd cannot be negative")
         if len(self.content_sha256) != 64 or any(c not in "0123456789abcdef" for c in self.content_sha256):
@@ -99,6 +106,16 @@ class SourceManifest:
             raise ObservationValidationError("synthetic_fixture cannot claim real-source rights")
 
 
+def _require_utc_timestamp(value: str, field: str) -> str:
+    if not value.endswith("Z"):
+        raise ObservationValidationError(f"{field} must be an ISO-8601 UTC timestamp ending in Z")
+    try:
+        datetime.fromisoformat(value[:-1] + "+00:00")
+    except ValueError as exc:
+        raise ObservationValidationError(f"{field} must be an ISO-8601 UTC timestamp") from exc
+    return value
+
+
 def _require_text(raw: Mapping[str, Any], key: str) -> str:
     value = str(raw.get(key, "")).strip()
     if not value:
@@ -107,13 +124,15 @@ def _require_text(raw: Mapping[str, Any], key: str) -> str:
 
 
 def _validate_label(name: str, raw: Mapping[str, Any]) -> dict[str, Any]:
+    if not isinstance(raw, Mapping):
+        raise ObservationValidationError(f"{name} must be an object")
     value = _require_text(raw, "value")
     confidence = _require_text(raw, "confidence").upper()
     if confidence not in ALLOWED_CONFIDENCE:
         raise ObservationValidationError(f"{name}.confidence must be one of {sorted(ALLOWED_CONFIDENCE)}")
     evidence_basis = _require_text(raw, "evidence_basis")
     locator = _require_text(raw, "provenance_locator")
-    observed_at = _require_text(raw, "observed_at")
+    observed_at = _require_utc_timestamp(_require_text(raw, "observed_at"), f"{name}.observed_at")
     if confidence == "UNKNOWN" and value.upper() not in {"UNKNOWN", "NOT_OBSERVABLE"}:
         raise ObservationValidationError(f"{name}: UNKNOWN confidence requires an unknown value")
     return {
@@ -130,23 +149,31 @@ def validate_observation(raw: Mapping[str, Any], manifest: SourceManifest) -> di
 
     if _require_text(raw, "source_id") != manifest.source_id:
         raise ObservationValidationError("observation source_id does not match manifest")
+    game = raw.get("game")
+    play = raw.get("play")
+    if not isinstance(game, Mapping) or not isinstance(play, Mapping):
+        raise ObservationValidationError("game and play must be objects")
     normalized: dict[str, Any] = {
         "schema_version": _require_text(raw, "schema_version"),
         "source_id": manifest.source_id,
         "annotator_id": _require_text(raw, "annotator_id"),
-        "annotation_created_at": _require_text(raw, "annotation_created_at"),
+        "annotation_created_at": _require_utc_timestamp(
+            _require_text(raw, "annotation_created_at"), "annotation_created_at"
+        ),
         "game": {
-            "season": int(raw.get("game", {}).get("season", 0)),
-            "week": int(raw.get("game", {}).get("week", 0)),
-            "game_id": _require_text(raw.get("game", {}), "game_id"),
-            "home_team": _require_text(raw.get("game", {}), "home_team"),
-            "away_team": _require_text(raw.get("game", {}), "away_team"),
+            "season": int(game.get("season", 0)),
+            "week": int(game.get("week", 0)),
+            "game_id": _require_text(game, "game_id"),
+            "home_team": _require_text(game, "home_team"),
+            "away_team": _require_text(game, "away_team"),
         },
         "play": {
-            "play_id": _require_text(raw.get("play", {}), "play_id"),
-            "quarter": int(raw.get("play", {}).get("quarter", 0)),
-            "game_clock": _require_text(raw.get("play", {}), "game_clock"),
-            "snap_timestamp": _require_text(raw.get("play", {}), "snap_timestamp"),
+            "play_id": _require_text(play, "play_id"),
+            "quarter": int(play.get("quarter", 0)),
+            "game_clock": _require_text(play, "game_clock"),
+            "snap_timestamp": _require_utc_timestamp(
+                _require_text(play, "snap_timestamp"), "snap_timestamp"
+            ),
         },
         "labels": {},
     }
@@ -156,6 +183,8 @@ def validate_observation(raw: Mapping[str, Any], manifest: SourceManifest) -> di
         raise ObservationValidationError("invalid season/week binding")
     if not 1 <= normalized["play"]["quarter"] <= 5:
         raise ObservationValidationError("invalid quarter binding")
+    if not re.fullmatch(r"(?:[0-9]|1[0-5]):[0-5][0-9]", normalized["play"]["game_clock"]):
+        raise ObservationValidationError("game_clock must be M:SS within a 15-minute quarter")
     labels = raw.get("labels")
     if not isinstance(labels, Mapping):
         raise ObservationValidationError("labels must be an object")
