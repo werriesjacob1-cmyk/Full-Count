@@ -390,7 +390,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 62.7,
+          "score": 62.9,
           "notable_signals": 1,
           "matchup": "St. Louis Cardinals @ Pittsburgh Pirates",
           "game_pk": 823328,
@@ -417,7 +417,7 @@
           "prop": "Over 9.5 Combined Strikeouts",
           "type": "pitcher_combo",
           "score": 55.0,
-          "notable_signals": 1,
+          "notable_signals": 0,
           "matchup": "St. Louis Cardinals @ Pittsburgh Pirates",
           "game_pk": 823328,
           "team": null,
@@ -428,11 +428,11 @@
             683003
           ],
           "signals": {
-            "combined_k_edge": 0.0551
+            "combined_k_edge": 0.037
           },
           "hit_probability": 0.6203,
           "raw_hit_probability": null,
-          "lift": 0.0551,
+          "lift": 0.037,
           "reliability": "D",
           "sample_n": 0,
           "projection": {

@@ -3152,6 +3152,106 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 66.5,
+          "notable_signals": 2,
+          "matchup": "Cincinnati Reds @ Atlanta Braves",
+          "game_pk": 824867,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 87.7143,
+            "l7_avg_ev": 28.9286,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 52.3,
+            "season_barrel_pct": 6.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 13.8889,
+            "platoon_barrel_pct": -3.04,
+            "platoon_xwoba": -1.98,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 2.0,
+            "woba_ahead": 59.0909,
+            "woba_behind": 50.9091,
+            "team_total_move": -6.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.984,
+            "vs_rp_ops": 0.66,
+            "ump_k_pct": 0.408,
+            "ump_bb_pct": -0.18
+          },
+          "hit_probability": 0.6099,
+          "raw_hit_probability": 0.6084,
+          "lift": 0.0482,
+          "reliability": "A",
+          "sample_n": 156,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Atlanta Braves",
+          "game_pk": 824867,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0162
+          },
+          "hit_probability": 0.0162,
+          "raw_hit_probability": null,
+          "lift": -0.0313,
+          "reliability": "A",
+          "sample_n": 156,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Atlanta Braves",
+          "game_pk": 824867,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0023
+          },
+          "hit_probability": 0.0023,
+          "raw_hit_probability": null,
+          "lift": -0.0184,
+          "reliability": "A",
+          "sample_n": 156,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

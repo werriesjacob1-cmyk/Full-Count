@@ -521,7 +521,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.9,
+          "score": 41.4,
           "notable_signals": 0,
           "matchup": "Cleveland Guardians @ Boston Red Sox",
           "game_pk": 824709,
@@ -531,9 +531,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 40.0,
-            "same_hand_ratio": 50.0,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 83.5294,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 55.1086,
+            "ump_k_pct": 0.048,
+            "ump_bb_pct": -0.36
           },
           "hit_probability": 0.5916,
           "raw_hit_probability": 0.5887,
@@ -549,7 +552,7 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 72.0,
+          "score": 72.2,
           "notable_signals": 1,
           "matchup": "Cleveland Guardians @ Boston Red Sox",
           "game_pk": 824709,
