@@ -88,11 +88,32 @@ jobs:
           from nfl.normalize.player_prop_roster_binding import bind_player_prop_candidate
           from nfl.normalize.official_inactives import parse_report
           from nfl.normalize.pregame_availability import evaluate_candidate
+          from nfl.prospective.receptions_challenger_snapshot import (
+              build_challenger_snapshot_record,
+              seal_challenger_snapshot,
+              write_challenger_evidence_atomically,
+          )
           from nfl.prospective.shadow_snapshot import seal_snapshot, validate_pregame_timing
           from nfl.research import nflverse_history as nh
+          from nfl.research.receptions_frozen_challenger import (
+              FROZEN_NB_FIT,
+              compare_b0_vs_frozen_challenger,
+          )
           from nfl.research.receptions_shadow import (
               current_b0_projection,
               score_shadow_candidate,
+          )
+
+          # Research-only, separately sealed -- never read by the primary
+          # board/decision logic below. PR #164 (frozen challenger) and #165
+          # (sealed pairing connector) are both already merged, unmodified,
+          # research-only infrastructure; this just calls them with the
+          # SAME real inputs (projection, line, odds) the live B0 scoring
+          # loop already computed, using the identical authoritative
+          # availability gate and identity checks. B0's own decision/record
+          # is never read from or written to by this block.
+          CHALLENGER_MODEL_VERSION = (
+              f"NEGATIVE_BINOMIAL_POOLED_V1_alpha_{FROZEN_NB_FIT['alpha']}"
           )
 
           CT = ZoneInfo("America/Chicago")
@@ -488,6 +509,8 @@ jobs:
 
           # ---------- projection, score, availability, quarantine ----------
           snapshot_records = []
+          challenger_snapshot_records = []
+          challenger_build_failures = []
           excluded_unbound = []
           quarantine_counts = Counter()
           history_counts = Counter()
@@ -553,6 +576,39 @@ jobs:
 
               snapshot_records.append(record)
 
+              # ---- research-only paired challenger record (identical inputs, same gate) ----
+              if score is not None:
+                  try:
+                      comparison = compare_b0_vs_frozen_challenger(
+                          projection=projection,
+                          line=row["line"],
+                          b0_over=score["model_over_probability"],
+                          b0_under=score["model_under_probability"],
+                          over_price=row["over_odds"],
+                          under_price=row["under_odds"],
+                      )
+                      challenger_snapshot_records.append(build_challenger_snapshot_record(
+                          event_id=row["event_id"], market_id=row["market_id"],
+                          gsis_id=row["gsis_id"], player_name=row["player_name"],
+                          team=row["team"], event_open_date=row["event_open_date"],
+                          line=row["line"], over_odds=row["over_odds"],
+                          under_odds=row["under_odds"], captured_at=row["captured_at"],
+                          availability_status=availability["availability_status"],
+                          decision_status=decision, b0_score=score,
+                          challenger_comparison=comparison,
+                          challenger_model_version=CHALLENGER_MODEL_VERSION,
+                          source_vintage="nflverse_2023_2024_2025_weekly_stats_verified",
+                          feature_cutoff="2025_REG_final_week",
+                      ))
+                  except Exception as exc:
+                      # Research-only lane. Never let a challenger-side failure
+                      # affect the primary B0 record already appended above.
+                      challenger_build_failures.append({
+                          "event_id": row.get("event_id"),
+                          "gsis_id": row.get("gsis_id"),
+                          "failure_reason": f"{type(exc).__name__}: {exc}",
+                      })
+
           sealed_at = utcnow()
           validate_pregame_timing(snapshot_records, sealed_at)
           source_vintage = (
@@ -572,6 +628,51 @@ jobs:
               source_vintage=source_vintage,
               sealed_at=sealed_at,
           )
+
+          # Separate, independently sealed research artifact -- never merged
+          # into `snapshot`/`board` above, never read by any B0 decision.
+          # Wrapped end-to-end (sealing AND the write) so a failure in this
+          # research-only lane can NEVER prevent the primary board below
+          # from being built and written -- per-candidate build failures
+          # were already isolated above, but the aggregate seal/write call
+          # itself was not, which independent review correctly flagged as
+          # a real (if not currently exploitable) gap against that exact
+          # claim.
+          challenger_snapshot = None
+          try:
+              challenger_snapshot = seal_challenger_snapshot(
+                  challenger_snapshot_records,
+                  slate_date=TARGET_DATE,
+                  code_sha=os.environ["FULL_COUNT_CODE_SHA"],
+                  source_vintage=source_vintage,
+                  sealed_at=sealed_at,
+              )
+              challenger_path = (
+                  EVIDENCE_ROOT / "nfl-receptions-challenger-comparison.json"
+              )
+              # Atomic write (temp file + validated rename): a mid-write
+              # crash or exception here can never leave a truncated/partial
+              # file at `challenger_path` for `actions/upload-artifact`'s
+              # indiscriminate directory glob to mistake for valid evidence.
+              write_challenger_evidence_atomically(challenger_path, {
+                  "analysis": "NFL_RECEPTIONS_B0_VS_FROZEN_CHALLENGER_PAIRED_PROSPECTIVE",
+                  "status": "RESEARCH_ONLY_NOT_PROMOTED",
+                  "created_at": sealed_at,
+                  "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+                  "target_local_date": TARGET_DATE,
+                  "challenger_model_version": CHALLENGER_MODEL_VERSION,
+                  "build_failures": challenger_build_failures,
+                  "snapshot": challenger_snapshot,
+              })
+          except Exception as exc:
+              challenger_build_failures.append({
+                  "event_id": None,
+                  "gsis_id": None,
+                  "failure_reason": (
+                      f"aggregate seal/write failed: {type(exc).__name__}: {exc}"
+                  ),
+              })
+              challenger_snapshot = None
 
           board = {
               "analysis": "NFL_LIVE_RECEPTIONS_SHADOW_BOARD_AUDIT",
@@ -628,6 +729,13 @@ jobs:
               )),
               "snapshot_sha256": snapshot["snapshot_sha256"],
               "record_count": snapshot["record_count"],
+              "challenger_snapshot_sha256": (
+                  challenger_snapshot["snapshot_sha256"] if challenger_snapshot else None
+              ),
+              "challenger_record_count": (
+                  challenger_snapshot["record_count"] if challenger_snapshot else None
+              ),
+              "challenger_build_failure_count": len(challenger_build_failures),
           }, indent=2, sort_keys=True))
           PY
 

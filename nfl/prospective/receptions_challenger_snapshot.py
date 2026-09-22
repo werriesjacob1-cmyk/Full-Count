@@ -32,7 +32,10 @@ evidence file.
 """
 from __future__ import annotations
 
+import json
+import os
 from collections.abc import Mapping, Sequence
+from pathlib import Path
 from typing import Any
 
 from nfl.prospective.shadow_snapshot import seal_snapshot
@@ -209,9 +212,39 @@ def seal_challenger_snapshot(
     )
 
 
+def write_challenger_evidence_atomically(path: Path | str, payload: Mapping[str, Any]) -> None:
+    """Write the sealed challenger-comparison evidence to `path` atomically.
+
+    Serializes to a temporary file in the same directory, validates it by
+    reading the JSON back, then `os.replace()`s it onto `path` -- a single
+    atomic rename on the same filesystem. A crash, disk-full error, or any
+    other exception at any point before that replace leaves `path`
+    completely untouched -- it is never created, truncated, or overwritten
+    with a partial document -- and the temp file is always removed on
+    failure so it never lingers as a stray artifact either. This is what
+    stops a mid-write failure from leaving a corrupted file at the exact
+    path `actions/upload-artifact` later globs indiscriminately, which
+    would otherwise be indistinguishable from valid sealed evidence.
+    """
+    path = Path(path)
+    tmp_path = path.with_name(f".{path.name}.tmp-{os.getpid()}")
+    try:
+        with tmp_path.open("w", encoding="utf-8") as f:
+            json.dump(payload, f, indent=2, sort_keys=True)
+            f.flush()
+            os.fsync(f.fileno())
+        with tmp_path.open("r", encoding="utf-8") as f:
+            json.load(f)  # validate before it can ever become the final path
+        os.replace(tmp_path, path)
+    except BaseException:
+        tmp_path.unlink(missing_ok=True)
+        raise
+
+
 __all__ = [
     "CHALLENGER_PREDICTION_SOURCE",
     "ChallengerSnapshotError",
     "build_challenger_snapshot_record",
     "seal_challenger_snapshot",
+    "write_challenger_evidence_atomically",
 ]
