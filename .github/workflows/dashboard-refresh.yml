@@ -90,7 +90,11 @@ jobs:
             cp "$RUNNER_TEMP/dashboard-build/index.html" docs/index.html
             cp "$RUNNER_TEMP/dashboard-build/app.css" docs/app.css
             cp "$RUNNER_TEMP/dashboard-build/app.js" docs/app.js
-            cp "$RUNNER_TEMP/dashboard-build/history.json" docs/history.json
+            # History is derived from results/ on the checkout we are about
+            # to push. Rebuild inside every retry so a concurrent grading
+            # catch-up cannot be overwritten by the stale candidate created
+            # before this loop began.
+            python3 dashboard/build_history.py --out docs/history.json
             git add docs/index.html docs/app.css docs/app.js docs/data.json docs/history.json
             if git diff --cached --quiet; then
               echo "No newer complete-board change to publish."
