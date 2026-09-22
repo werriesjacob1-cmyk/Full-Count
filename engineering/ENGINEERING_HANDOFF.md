@@ -4807,3 +4807,92 @@ Validation before draft PR:
 No model, weights, selector, public-pick policy, immutable recommendation snapshot, production deployment, or grading activation changed. The workflow is proposed only; it is not active until a separately authorized merge.
 
 Alligator
+## 2026-09-22 -- NFL receptions: connect the scheduled B0 capture to a
+## separately sealed frozen-challenger paired-prospective lane +
+## point-in-time-safe postgame proper-scoring grader
+## (NFL-RECEPTIONS-PAIRED-PROSPECTIVE-20260922, rebuilt after Codex's
+## session limit interrupted the original claim on comment `5781145571`)
+
+**Recovery note**: Codex's receptions subagent claimed this exact
+workstream (branch `codex/nfl-receptions-paired-prospective-20260922`,
+base `b0be50f63b8214f124c9e0e8ae560541609186b1`) but hit a session limit
+before pushing anything -- confirmed via `git ls-remote`, that branch
+does not exist anywhere, local or remote. Rebuilt from the documented
+objective on a fresh Claude-owned branch rather than searching further
+for something that structurally cannot be recovered (Codex runs in
+separate infrastructure this session has no filesystem access to).
+
+**What this closes**: PR #164 (frozen NEGATIVE_BINOMIAL_POOLED
+challenger) and PR #165 (sealed B0-vs-challenger snapshot connector,
+manual demo only) were both already merged, but nothing connected them
+to the SCHEDULED live receptions workflow, and nothing graded either
+model's real probability against a real outcome after the fact.
+
+**Two additive pieces, both reusing 100% existing merged infrastructure,
+neither touching B0's own decision:**
+
+1. `.github/workflows/nfl-live-receptions-shadow-board.yml`: inside the
+   existing per-candidate scoring loop, whenever B0 successfully scores a
+   candidate (`score is not None`, identical real projection/line/odds
+   already computed for B0), also calls the existing, unmodified
+   `receptions_frozen_challenger.compare_b0_vs_frozen_challenger` and
+   `receptions_challenger_snapshot.build_challenger_snapshot_record`, then
+   seals the resulting records via the existing, unmodified
+   `seal_challenger_snapshot` into a SEPARATE file
+   (`nfl-receptions-challenger-comparison.json`, same evidence directory,
+   same `actions/upload-artifact` step -- no new upload step needed). The
+   primary board's `record`/`decision_status`/`snapshot` are built and
+   appended BEFORE this block runs and are never read by it. A challenger-
+   side exception is caught and recorded in `challenger_build_failures`
+   without affecting the primary B0 record already appended -- this
+   research lane can never take down the live board. Verified both the
+   bash (`bash -n`) and the embedded Python (`py_compile`) syntax of the
+   modified script by extracting it exactly the way GitHub Actions
+   receives it (PyYAML's own `|` block-scalar resolution), the same
+   verification method that caught the real heredoc bug in the separate
+   MLB grading-catchup repair today.
+
+2. `nfl/prospective/receptions_paired_grader.py` (new):
+   `grade_paired_receptions_record` grades one sealed pair against one
+   real, final box-score outcome (via the existing, unmodified
+   `box_score_outcomes.outcome_for_candidate` -- never invents a stat
+   value) using proper scoring (Brier, log-loss) for BOTH models against
+   the identical real OVER/UNDER determination. Returns `None` -- not a
+   fabricated result -- for any record that isn't a fair test: still
+   `QUARANTINED` (the real eligibility gate already said this wasn't a
+   clean pregame call), the player didn't appear in the final box score
+   (DNP/scratch), or an exact push (no side won). `summarize_paired_grades`
+   aggregates both models' mean Brier/log-loss and a real Brier-win-count
+   comparison over matched volume -- matched by construction, since both
+   models are always scored against the identical real-outcome population
+   this function itself determines, never a separately-selected subset for
+   either side. This module does NOT determine whether a game has gone
+   final; like `grade_player_prop_board.py`'s own established pattern,
+   that's the caller's responsibility (only pass `player_outcomes` built
+   from a genuinely final box score).
+
+**What this does NOT do**: change B0's own live decision, promote the
+challenger, alter the public board, or grade anything before a game is
+actually final. No model/selector/public-pick change anywhere in this
+diff.
+
+10 new tests for the paired grader (real `score_shadow_candidate`/
+`compare_b0_vs_frozen_challenger` fixtures, not fakes): real OVER/UNDER
+proper scoring, `QUARANTINED` never graded, DNP never fabricated, exact
+push excluded, malformed-input rejection, empty/matched-volume summary
+consistency. Full `nfl/tests`: 936/936.
+
+No live capture has run against this branch yet (games not currently
+live at build time) -- no real paired prospective evidence exists yet
+for this connector specifically, unlike PR #165's own manual demo run.
+The next scheduled receptions capture, once this merges, will be the
+first real end-to-end evidence; until then this is tested-but-unproven-
+in-production, same honest disclosure standard as every other repair
+this session.
+
+Branch `claude/nfl-receptions-paired-prospective-20260922`. Draft PR,
+not merged -- independent review + Jacob's separate explicit
+authorization required, same as every other research/live-adjacent
+family.
+
+Alligator
