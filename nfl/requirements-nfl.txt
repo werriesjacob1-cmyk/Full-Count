@@ -16,3 +16,14 @@
 #
 # When a real NFL dependency arrives, pin it here with ~= and say in a comment
 # what it is for. Do NOT add it to the root file.
+
+# For nfl/tests/test_receptions_shadow_board_atomic_write.py, which extracts
+# the exact runtime script GitHub Actions delivers to a workflow's `run:`
+# step (a YAML `|` block scalar's own dedent, not the raw indented YAML
+# text) to prove a forced mid-write failure never escapes the real
+# try/except -- the same PyYAML-extraction method that caught a real
+# heredoc production defect in mlb-grading-catchup.yml this session. Root
+# requirements.txt already pins the identical version for MLB; NFL CI
+# installs its own isolated environment from this file, so this does not
+# create the shared-resolver risk the header above warns about.
+PyYAML~=6.0.2
