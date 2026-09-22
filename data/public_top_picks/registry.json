@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-22T20:34:13.583450+00:00",
+  "updated_at": "2026-09-22T21:20:21.636968+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -43410,6 +43410,104 @@
         },
         "qualification_timestamp": "2026-09-22T20:23:14.913845+00:00",
         "board_timestamp": "2026-09-22T20:23:14.883621+00:00",
+        "slate_date": "2026-09-22"
+      }
+    },
+    "fc2:824624:player-665052:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824624:player-665052:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824624",
+        [
+          "player",
+          "665052"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-22",
+      "first_published_at": "2026-09-22T21:20:21.636968+00:00",
+      "publication_provenance": {
+        "artifact_id": "f74e70212f43570f029a7b97613d6e51ff3ccd25cac2a8015da30db02e287a7a",
+        "source_commit": "c1434a3a883b5f3b9daa8a3063ff3839c96a616b",
+        "workflow_run_id": "35785604869",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-22T21:20:05.029161+00:00",
+        "data_hash": "80a532149be32e9443150765319e6a0f89f839a211558b6c6d6cc4420f1d6fd2",
+        "live_hash": "cd5396934a84ff48e55ae9c4733742ac0f6702857fabdd669665f2008899621d"
+      },
+      "snapshot": {
+        "id": "fc2:824624:player-665052:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824624,
+        "player_id": 665052,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Griffin Conine",
+        "team": "Miami Marlins",
+        "matchup": "Miami Marlins @ Chicago Cubs",
+        "game_start": "2026-09-22T23:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6507,
+        "market_odds": -125,
+        "market_implied": 0.5556,
+        "market_edge": 0.0951,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (13.6 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 89.8mph (league ~88.5)",
+          "L7 barrel% 45.5 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+2.1mph 2nd-half vs 1st-half)",
+          "Pitch-type exploit: RV/100 +2.5 vs FF (opposing SP throws it 40.5% of the time)",
+          "Season barrel% 15.1 \u2014 well above-average barrel rate"
+        ],
+        "watchouts": [
+          "Platoon: L bat vs LHP (unfavorable)",
+          "Projected 3.7 PA (batting slot 7) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.325 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.208 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 2.65 runs (league avg 4.245; line 2.5, game total 6.5) \u2014 a weak offensive environment",
+          "Wind blowing IN (13mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 0/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6399,
+          0.6738
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 87,
+        "lineup_assumed": null,
+        "base_rate": 0.6719,
+        "lift": -0.0212,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "6e80d7d34",
+          "prediction_timestamp": "2026-09-22T21:12:03.105002+00:00",
+          "odds_fetched_at": "2026-09-22T21:11:54.952372+00:00",
+          "board_generated_at": "2026-09-22T21:12:03.080731+00:00"
+        },
+        "qualification_timestamp": "2026-09-22T21:12:03.105002+00:00",
+        "board_timestamp": "2026-09-22T21:12:03.080731+00:00",
         "slate_date": "2026-09-22"
       }
     }
