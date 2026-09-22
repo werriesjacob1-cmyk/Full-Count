@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-22T07:39:28.544964+00:00",
+  "updated_at": "2026-09-22T08:59:48.076997+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -42230,6 +42230,92 @@
         },
         "qualification_timestamp": "2026-09-22T07:33:30.542105+00:00",
         "board_timestamp": "2026-09-22T07:33:30.513172+00:00",
+        "slate_date": "2026-09-22"
+      }
+    },
+    "fc2:824302:player-647336:pitcher_outs:15:over": {
+      "canonical_id": "fc2:824302:player-647336:pitcher_outs:15:over",
+      "settlement_identity": [
+        "824302",
+        [
+          "player",
+          "647336"
+        ],
+        "pitcher_outs",
+        "15",
+        "over"
+      ],
+      "slate_date": "2026-09-22",
+      "first_published_at": "2026-09-22T08:59:48.076997+00:00",
+      "publication_provenance": {
+        "artifact_id": "b05be483b65fbd8bd8e1a376b7565105a90d54c23b95b7097198fea9f7786792",
+        "source_commit": "1363f12695d6dad56fdf66e5bf6602fdf2f72b6f",
+        "workflow_run_id": "35707550852",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-22T08:59:32.895455+00:00",
+        "data_hash": "9dea364b418b796863cb3fbb57c1c78ae22b5366ed7c3a610930dd505e3b4362",
+        "live_hash": "9c79396823b57d2546669f7342969bbafab4a57c6e4031ed72316218219e73bf"
+      },
+      "snapshot": {
+        "id": "fc2:824302:player-647336:pitcher_outs:15:over",
+        "identity_version": 2,
+        "game_pk": 824302,
+        "player_id": 647336,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Michael Soroka",
+        "team": "Arizona Diamondbacks",
+        "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+        "game_start": "2026-09-23T00:40:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 14.5,
+          "needs": 15
+        },
+        "prop": "Over 14.5 Outs Recorded",
+        "hit_probability": 0.7078,
+        "market_odds": -160,
+        "market_implied": 0.5729,
+        "market_edge": 0.1349,
+        "market_hold": 0.0741,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (13.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 15+ outs (5.0 IP) in 77.9% of his last 19 real starts (league 74.4%, avg 15.84 outs/start)"
+        ],
+        "watchouts": [],
+        "prob_ci": [
+          0.6424,
+          0.8244
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 19,
+        "lineup_assumed": null,
+        "base_rate": 0.744,
+        "lift": -0.0362,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "0617f6670",
+          "prediction_timestamp": "2026-09-22T08:52:51.688580+00:00",
+          "odds_fetched_at": "2026-09-22T08:52:45.997343+00:00",
+          "board_generated_at": "2026-09-22T08:52:51.664729+00:00"
+        },
+        "qualification_timestamp": "2026-09-22T08:52:51.688580+00:00",
+        "board_timestamp": "2026-09-22T08:52:51.664729+00:00",
         "slate_date": "2026-09-22"
       }
     }
