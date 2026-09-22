@@ -248,15 +248,25 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def verify_source_content(path: Path, manifest: SourceManifest) -> None:
+    actual = sha256_file(path)
+    if actual != manifest.content_sha256:
+        raise ObservationValidationError(
+            f"source content digest mismatch: expected {manifest.content_sha256}, got {actual}"
+        )
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Validate film/charting observation fixtures")
     parser.add_argument("--manifest", type=Path, required=True)
+    parser.add_argument("--source-content", type=Path, required=True)
     parser.add_argument("--primary", type=Path, required=True)
     parser.add_argument("--independent", type=Path, required=True)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args(argv)
 
     manifest = SourceManifest.from_dict(json.loads(args.manifest.read_text(encoding="utf-8")))
+    verify_source_content(args.source_content, manifest)
     primary = load_jsonl(args.primary, manifest)
     independent = load_jsonl(args.independent, manifest)
     report = compare_annotations(primary, independent)
