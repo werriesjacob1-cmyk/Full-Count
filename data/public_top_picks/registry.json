@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-22T16:46:29.810670+00:00",
+  "updated_at": "2026-09-22T18:48:23.029759+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -42819,6 +42819,201 @@
         },
         "qualification_timestamp": "2026-09-22T16:38:44.609024+00:00",
         "board_timestamp": "2026-09-22T16:38:44.578253+00:00",
+        "slate_date": "2026-09-22"
+      }
+    },
+    "fc2:823328:player-701675:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823328:player-701675:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823328",
+        [
+          "player",
+          "701675"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-22",
+      "first_published_at": "2026-09-22T18:48:23.029759+00:00",
+      "publication_provenance": {
+        "artifact_id": "4230dc1acc117d3f7f123ca1c26db1ea687b2ccf8210a1fd06acf993bf3db0ab",
+        "source_commit": "0b5e85a45a5d52731cfe345d7b3136f36e3c2652",
+        "workflow_run_id": "35768856365",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-22T18:48:03.921774+00:00",
+        "data_hash": "7b58d0f9e0fa66c6b932d6e15e61c52575d4266ec31ac568d11a5ffd078266a1",
+        "live_hash": "622cd4da2ccea34144466b6d85329c9431461a36b93fefa3aab3525319538129"
+      },
+      "snapshot": {
+        "id": "fc2:823328:player-701675:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823328,
+        "player_id": 701675,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Nathan Church",
+        "team": "St. Louis Cardinals",
+        "matchup": "St. Louis Cardinals @ Pittsburgh Pirates",
+        "game_start": "2026-09-22T22:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6751,
+        "market_odds": -165,
+        "market_implied": 0.6226,
+        "market_edge": 0.0525,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.9 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 18.8 \u2014 hot recent contact",
+          "Platoon: L bat vs RHP (favorable)",
+          "Sharp money backing St. Louis Cardinals (money% +21 pts vs ticket%)"
+        ],
+        "watchouts": [
+          "L7 avg EV 86.2mph (league ~88.5) \u2014 cold recent contact",
+          "Projected 3.65 PA (batting slot 8) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.299 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.284 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.26 runs (league avg 4.245; line 3.5, game total 7.5) \u2014 a weak offensive environment",
+          "Season barrel% 5.5 \u2014 below-average barrel rate",
+          "Wind blowing IN (12mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 4/11 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6643,
+          0.6983
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 126,
+        "lineup_assumed": null,
+        "base_rate": 0.674,
+        "lift": 0.0011,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "cf423956a",
+          "prediction_timestamp": "2026-09-22T18:43:46.808955+00:00",
+          "odds_fetched_at": "2026-09-22T18:43:39.127069+00:00",
+          "board_generated_at": "2026-09-22T18:43:46.780155+00:00"
+        },
+        "qualification_timestamp": "2026-09-22T18:43:46.808955+00:00",
+        "board_timestamp": "2026-09-22T18:43:46.780155+00:00",
+        "slate_date": "2026-09-22"
+      }
+    },
+    "fc2:823328:player-691026:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823328:player-691026:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823328",
+        [
+          "player",
+          "691026"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-22",
+      "first_published_at": "2026-09-22T18:48:23.029759+00:00",
+      "publication_provenance": {
+        "artifact_id": "4230dc1acc117d3f7f123ca1c26db1ea687b2ccf8210a1fd06acf993bf3db0ab",
+        "source_commit": "0b5e85a45a5d52731cfe345d7b3136f36e3c2652",
+        "workflow_run_id": "35768856365",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-22T18:48:03.921774+00:00",
+        "data_hash": "7b58d0f9e0fa66c6b932d6e15e61c52575d4266ec31ac568d11a5ffd078266a1",
+        "live_hash": "622cd4da2ccea34144466b6d85329c9431461a36b93fefa3aab3525319538129"
+      },
+      "snapshot": {
+        "id": "fc2:823328:player-691026:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823328,
+        "player_id": 691026,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Masyn Winn",
+        "team": "St. Louis Cardinals",
+        "matchup": "St. Louis Cardinals @ Pittsburgh Pirates",
+        "game_start": "2026-09-22T22:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6772,
+        "market_odds": -175,
+        "market_implied": 0.6364,
+        "market_edge": 0.0408,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 11.1 \u2014 hot recent contact",
+          "Sharp money backing St. Louis Cardinals (money% +21 pts vs ticket%)"
+        ],
+        "watchouts": [
+          "L7 avg EV 87.6mph (league ~88.5) \u2014 cold recent contact",
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Projected 3.5 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.294 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.320 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.26 runs (league avg 4.245; line 3.5, game total 7.5) \u2014 a weak offensive environment",
+          "Activated from the 10-day injured list 14 day(s) ago \u2014 early performance back can be inconsistent",
+          "Season barrel% 3.4 \u2014 below-average barrel rate",
+          "Wind blowing IN (12mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 4/11 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6663,
+          0.7004
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 128,
+        "lineup_assumed": null,
+        "base_rate": 0.674,
+        "lift": 0.0032,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "cf423956a",
+          "prediction_timestamp": "2026-09-22T18:43:46.808955+00:00",
+          "odds_fetched_at": "2026-09-22T18:43:39.127069+00:00",
+          "board_generated_at": "2026-09-22T18:43:46.780155+00:00"
+        },
+        "qualification_timestamp": "2026-09-22T18:43:46.808955+00:00",
+        "board_timestamp": "2026-09-22T18:43:46.780155+00:00",
         "slate_date": "2026-09-22"
       }
     }
