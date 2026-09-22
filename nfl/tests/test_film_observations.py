@@ -11,6 +11,7 @@ from nfl.research.film_observations import (
     load_jsonl,
     validate_observation,
     validate_unique_bindings,
+    verify_source_content,
 )
 
 
@@ -119,6 +120,13 @@ class FilmObservationTests(unittest.TestCase):
         self.assertEqual(coverage["exact_agreements"], 1)
         self.assertEqual(coverage["exact_agreement_rate"], 0.5)
         self.assertEqual(len(coverage["disagreements"]), 1)
+
+    def test_source_content_digest_mismatch_fails_closed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "source.json"
+            path.write_text("different content", encoding="utf-8")
+            with self.assertRaisesRegex(ObservationValidationError, "digest mismatch"):
+                verify_source_content(path, manifest())
 
     def test_jsonl_error_includes_line_number(self):
         with tempfile.TemporaryDirectory() as directory:
