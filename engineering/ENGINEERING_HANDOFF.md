@@ -4896,3 +4896,76 @@ authorization required, same as every other research/live-adjacent
 family.
 
 Alligator
+
+## 2026-09-22 -- PR #172 hardening: atomic write + failed-artifact
+## exclusion for the challenger-comparison evidence file
+## (Jacob's PR-specific merge authorization, Issue #91 comment
+## `5784769579`, condition 2)
+
+The independent review of PR #172 flagged (non-blocking at the time) that
+the aggregate challenger seal+write block wrote directly to
+`nfl-receptions-challenger-comparison.json` via `path.open("w")` --
+`json.dump` writing incrementally means a mid-write crash (disk full,
+OOM kill, process signal) could leave a truncated/invalid JSON document
+sitting at that exact path, which `actions/upload-artifact` then globs
+indiscriminately (it uploads the whole `EVIDENCE_ROOT` directory) with no
+way to tell a corrupt partial file from valid evidence. Jacob's PR
+authorization message upgraded this from "future hardening idea" to a
+required condition of merge, and specifically required "a forced
+mid-write failure test demonstrating that primary B0 capture still
+succeeds and no corrupted challenger evidence is uploaded as valid."
+
+**Fix**: added `write_challenger_evidence_atomically(path, payload)` to
+`nfl/prospective/receptions_challenger_snapshot.py` -- writes to a
+sibling temp file (`.{name}.tmp-{pid}`, same directory so the final
+`os.replace` is a same-filesystem atomic rename), `fsync`s it, reads it
+back and `json.load`s it to validate before ever touching the real path
+("temporary file + validated rename", exactly as Jacob's message named
+it), then `os.replace()`s it onto the final path. Any exception at any
+point -- including one raised mid-`json.dump`, after real bytes are
+already on disk -- is caught, the temp file is unconditionally removed
+(`unlink(missing_ok=True)`), and the exception is re-raised so the
+existing outer `try/except` in the workflow (already independently
+reviewed and confirmed to isolate a challenger-side failure from the
+primary board in the prior review round) still catches it and records it
+in `challenger_build_failures`. The workflow's aggregate block now calls
+this helper instead of writing directly; no other line in that block
+changed.
+
+**Forced mid-write failure test (the explicit requirement)**: new file
+`nfl/tests/test_receptions_shadow_board_atomic_write.py`, two layers:
+
+1. Direct unit tests on `write_challenger_evidence_atomically`: monkeypatch
+   `json.dump` to write real partial bytes to the temp file handle and
+   then raise (`OSError`), and prove (a) the final path is never created,
+   (b) the temp file is not left behind, and (c) a pre-existing valid file
+   at the final path survives a later failed write completely untouched
+   (never replaced with a partial document, never deleted).
+2. A control-flow test that extracts the REAL try/except block from
+   `.github/workflows/nfl-live-receptions-shadow-board.yml` via PyYAML's
+   own `|` block-scalar resolution (the identical extraction method that
+   caught the heredoc defect in the separate MLB grading-catchup repair
+   this session) -- not a hand-copied reimplementation -- and `exec()`s it
+   with the same forced mid-write crash. Proves: no exception escapes the
+   real try/except, `challenger_build_failures` gets exactly one real
+   failure record, `challenger_snapshot` ends `None`, the evidence
+   directory is left completely empty (nothing for `actions/upload-
+   artifact` to mistake for valid evidence), and execution reaches the
+   real next statement in the script (the unconditional primary board
+   assembly that follows, unchanged by this diff).
+
+6 new tests; full `nfl/tests`: 942/942 (was 936/936). Bash (`bash -n`)
+and embedded Python (`py_compile`) syntax of the modified workflow step
+reverified via the same PyYAML-extraction method, both clean.
+
+**Scope discipline**: this only replaces how the challenger artifact is
+written to disk -- the primary board's own `decision`/`snapshot`/write
+logic is untouched, zero lines in the primary (non-challenger) path
+changed. No model promotion, selector change, or public-pick policy
+change. Research-only status (`RESEARCH_ONLY_NOT_PROMOTED`) unchanged.
+
+Branch `claude/nfl-receptions-paired-prospective-20260922`. Requesting a
+fresh focused independent adversarial review of this delta next, per
+Jacob's explicit condition, before merge.
+
+Alligator

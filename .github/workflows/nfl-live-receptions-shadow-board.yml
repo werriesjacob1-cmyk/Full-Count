@@ -91,6 +91,7 @@ jobs:
           from nfl.prospective.receptions_challenger_snapshot import (
               build_challenger_snapshot_record,
               seal_challenger_snapshot,
+              write_challenger_evidence_atomically,
           )
           from nfl.prospective.shadow_snapshot import seal_snapshot, validate_pregame_timing
           from nfl.research import nflverse_history as nh
@@ -649,17 +650,20 @@ jobs:
               challenger_path = (
                   EVIDENCE_ROOT / "nfl-receptions-challenger-comparison.json"
               )
-              with challenger_path.open("w", encoding="utf-8") as f:
-                  json.dump({
-                      "analysis": "NFL_RECEPTIONS_B0_VS_FROZEN_CHALLENGER_PAIRED_PROSPECTIVE",
-                      "status": "RESEARCH_ONLY_NOT_PROMOTED",
-                      "created_at": sealed_at,
-                      "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
-                      "target_local_date": TARGET_DATE,
-                      "challenger_model_version": CHALLENGER_MODEL_VERSION,
-                      "build_failures": challenger_build_failures,
-                      "snapshot": challenger_snapshot,
-                  }, f, indent=2, sort_keys=True)
+              # Atomic write (temp file + validated rename): a mid-write
+              # crash or exception here can never leave a truncated/partial
+              # file at `challenger_path` for `actions/upload-artifact`'s
+              # indiscriminate directory glob to mistake for valid evidence.
+              write_challenger_evidence_atomically(challenger_path, {
+                  "analysis": "NFL_RECEPTIONS_B0_VS_FROZEN_CHALLENGER_PAIRED_PROSPECTIVE",
+                  "status": "RESEARCH_ONLY_NOT_PROMOTED",
+                  "created_at": sealed_at,
+                  "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+                  "target_local_date": TARGET_DATE,
+                  "challenger_model_version": CHALLENGER_MODEL_VERSION,
+                  "build_failures": challenger_build_failures,
+                  "snapshot": challenger_snapshot,
+              })
           except Exception as exc:
               challenger_build_failures.append({
                   "event_id": None,
