@@ -359,7 +359,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 33.5,
+          "score": 28.5,
           "notable_signals": 0,
           "matchup": "St. Louis Cardinals @ Pittsburgh Pirates",
           "game_pk": 823328,
@@ -369,9 +369,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 70.0,
-            "same_hand_ratio": 57.1429,
+            "same_hand_ratio": 21.4286,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 31.896,
+            "ump_k_pct": 0.072,
+            "ump_bb_pct": -0.312
           },
           "hit_probability": 0.5867,
           "raw_hit_probability": 0.5648,
@@ -408,6 +411,34 @@
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Pittsburgh Pirates",
+          "game_pk": 823328,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            669467,
+            683003
+          ],
+          "signals": {
+            "combined_k_edge": 0.0551
+          },
+          "hit_probability": 0.6203,
+          "raw_hit_probability": null,
+          "lift": 0.0551,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

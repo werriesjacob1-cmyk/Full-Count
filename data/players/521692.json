@@ -2972,6 +2972,111 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 46.4,
+          "notable_signals": 1,
+          "matchup": "Chicago White Sox @ Kansas City Royals",
+          "game_pk": 824061,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 54.5714,
+            "pitch_exploit": 1.7143,
+            "l7_avg_ev": 76.4423,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 33.6,
+            "season_barrel_pct": 46.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 45.4545,
+            "platoon_barrel_pct": 3.84,
+            "platoon_xwoba": 1.2,
+            "park_hand_index": -0.1,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 2.0,
+            "woba_ahead": 29.0909,
+            "woba_behind": 29.0909,
+            "pull_park_synergy": -0.0403,
+            "hard_hit_105_rate": 1.0475,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.16,
+            "vs_rp_ops": -0.756,
+            "ump_k_pct": 0.744,
+            "ump_bb_pct": -0.18
+          },
+          "hit_probability": 0.6639,
+          "raw_hit_probability": 0.6609,
+          "lift": -0.0083,
+          "reliability": "A",
+          "sample_n": 146,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 15.1,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Kansas City Royals",
+          "game_pk": 824061,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0885
+          },
+          "hit_probability": 0.0885,
+          "raw_hit_probability": null,
+          "lift": 0.041,
+          "reliability": "A",
+          "sample_n": 146,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.9,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Kansas City Royals",
+          "game_pk": 824061,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0439
+          },
+          "hit_probability": 0.0439,
+          "raw_hit_probability": null,
+          "lift": 0.0232,
+          "reliability": "A",
+          "sample_n": 146,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -482,8 +482,8 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 49.4,
-          "notable_signals": 0,
+          "score": 28.3,
+          "notable_signals": 1,
           "matchup": "Washington Nationals @ Detroit Tigers",
           "game_pk": 824222,
           "team": "Detroit Tigers",
@@ -492,9 +492,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 48.0,
-            "same_hand_ratio": 43.75,
+            "same_hand_ratio": 57.1429,
             "l14_k_pct": 26.4706,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 74.2956,
+            "ump_k_pct": 0.228,
+            "ump_bb_pct": 0.024
           },
           "hit_probability": 0.5011,
           "raw_hit_probability": 0.5011,
