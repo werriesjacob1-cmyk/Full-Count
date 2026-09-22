@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-22T22:04:09.337258+00:00",
+  "updated_at": "2026-09-22T22:59:45.749078+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -44206,6 +44206,105 @@
         },
         "qualification_timestamp": "2026-09-22T21:58:10.958771+00:00",
         "board_timestamp": "2026-09-22T21:58:10.935107+00:00",
+        "slate_date": "2026-09-22"
+      }
+    },
+    "fc2:823089:player-668227:hits:1:over": {
+      "canonical_id": "fc2:823089:player-668227:hits:1:over",
+      "settlement_identity": [
+        "823089",
+        [
+          "player",
+          "668227"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-22",
+      "first_published_at": "2026-09-22T22:59:45.749078+00:00",
+      "publication_provenance": {
+        "artifact_id": "418d14c36e57dde72837fb6693c15d71731ef27f4b5861d3149bc9cf6fa6498e",
+        "source_commit": "431458c68515622fb57df55c0c3470085118ca8e",
+        "workflow_run_id": "35794964027",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-22T22:59:31.335180+00:00",
+        "data_hash": "270e38139954b51e249ae2a7518c4942c72218b7714922946cc2f72da9c31206",
+        "live_hash": "a03d4c221a53af93762435bb73c881842d927bedec2cbdddd432fec20ba27cc9"
+      },
+      "snapshot": {
+        "id": "fc2:823089:player-668227:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 823089,
+        "player_id": 668227,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Randy Arozarena",
+        "team": "Seattle Mariners",
+        "matchup": "Houston Astros @ Seattle Mariners",
+        "game_start": "2026-09-23T01:40:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6387,
+        "market_odds": -155,
+        "market_implied": 0.6078,
+        "market_edge": 0.0309,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.6 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 94.0mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 42.9 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+3.3mph 2nd-half vs 1st-half)",
+          "Opposing SP ERA 5.31 \u2014 shaky matchup for the pitcher",
+          "Projected 4.41 PA (batting slot 2) \u2014 a favorable lineup slot",
+          "Team implied for 3.99 runs (league avg 4.245; line 3.5, game total 7.5)",
+          "Pitch-type exploit: RV/100 +2.4 vs CH (opposing SP throws it 16.0% of the time)",
+          "Hitter batting behind him: 0.352 wOBA (league ~.320)"
+        ],
+        "watchouts": [
+          "Platoon: R bat vs RHP (unfavorable)",
+          "wOBA vs xwOBA: 0.375 vs 0.348 (+0.027) \u2014 outperforming his contact quality, regression risk",
+          "Season barrel% 7.9 \u2014 below-average barrel rate",
+          "Hitters batting ahead of him: 0.313 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Opposing bullpen fatigue: 1/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.63,
+          0.6673
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 148,
+        "lineup_assumed": null,
+        "base_rate": 0.5617,
+        "lift": 0.077,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "d49593342",
+          "prediction_timestamp": "2026-09-22T22:46:11.766120+00:00",
+          "odds_fetched_at": "2026-09-22T22:46:07.177030+00:00",
+          "board_generated_at": "2026-09-22T22:46:11.750064+00:00"
+        },
+        "qualification_timestamp": "2026-09-22T22:46:11.766120+00:00",
+        "board_timestamp": "2026-09-22T22:46:11.750064+00:00",
         "slate_date": "2026-09-22"
       }
     }
