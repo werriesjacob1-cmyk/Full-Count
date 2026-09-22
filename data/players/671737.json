@@ -591,8 +591,8 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.6,
-          "notable_signals": 0,
+          "score": 42.2,
+          "notable_signals": 1,
           "matchup": "Minnesota Twins @ San Francisco Giants",
           "game_pk": 823166,
           "team": "Minnesota Twins",
@@ -603,7 +603,10 @@
             "opp_team_k_pct": 48.0,
             "same_hand_ratio": 61.1111,
             "l14_k_pct": 91.7647,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 76.1666,
+            "ump_k_pct": 0.408,
+            "ump_bb_pct": 0.096
           },
           "hit_probability": 0.3943,
           "raw_hit_probability": 0.3943,
@@ -619,7 +622,7 @@
         {
           "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 57.9,
+          "score": 60.9,
           "notable_signals": 1,
           "matchup": "Minnesota Twins @ San Francisco Giants",
           "game_pk": 823166,
@@ -628,18 +631,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5516,
+            "outs_rate": 0.547,
             "avg_outs_per_start": 17.23
           },
-          "hit_probability": 0.5602,
-          "raw_hit_probability": 0.5516,
-          "lift": 0.0841,
+          "hit_probability": 0.557,
+          "raw_hit_probability": 0.547,
+          "lift": 0.1084,
           "reliability": "A",
           "sample_n": 30,
           "projection": {
             "stat": "pitcher_outs",
             "value": 16.5,
             "needs": 17
+          }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.7,
+          "notable_signals": 1,
+          "matchup": "Minnesota Twins @ San Francisco Giants",
+          "game_pk": 823166,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            671737,
+            683627
+          ],
+          "signals": {
+            "combined_k_edge": 0.3221
+          },
+          "hit_probability": 0.6897,
+          "raw_hit_probability": null,
+          "lift": 0.3221,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
           }
         }
       ]

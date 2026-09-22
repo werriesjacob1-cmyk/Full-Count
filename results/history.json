@@ -7883,14 +7883,14 @@
       "date": "2026-09-22",
       "hits": 0,
       "misses": 0,
-      "ungraded": 88,
+      "ungraded": 95,
       "fair_hits": 0,
       "fair_misses": 0,
       "by_category": {
         "main": {
           "hits": 0,
           "misses": 0,
-          "ungraded": 7
+          "ungraded": 10
         },
         "moonshot": {
           "hits": 0,
@@ -7905,37 +7905,37 @@
         "best_of_category": {
           "hits": 0,
           "misses": 0,
-          "ungraded": 71
+          "ungraded": 75
         }
       },
       "by_recommendation_status": {
         "lean": {
           "hits": 0,
           "misses": 0,
-          "ungraded": 53
+          "ungraded": 61
         },
         "top_pick": {
           "hits": 2,
           "misses": 3,
           "voids": 0,
-          "ungraded": 8
+          "ungraded": 18
         },
         "neutral": {
           "hits": 0,
           "misses": 0,
-          "ungraded": 29
+          "ungraded": 30
         },
         "value": {
           "hits": 0,
           "misses": 0,
-          "ungraded": 3
+          "ungraded": 1
         }
       },
       "public_top_pick_counts": {
         "hits": 2,
         "misses": 3,
         "voids": 0,
-        "ungraded": 8
+        "ungraded": 18
       },
       "shadow_by_category": {
         "strikeouts@4": {
@@ -8038,7 +8038,32 @@
           "misses": 0,
           "ungraded": 1
         },
+        "combined_strikeouts@10": {
+          "hits": 0,
+          "misses": 0,
+          "ungraded": 1
+        },
         "doubles@1": {
+          "hits": 0,
+          "misses": 0,
+          "ungraded": 1
+        },
+        "combined_strikeouts@14": {
+          "hits": 0,
+          "misses": 0,
+          "ungraded": 1
+        },
+        "combined_strikeouts@8": {
+          "hits": 0,
+          "misses": 0,
+          "ungraded": 1
+        },
+        "combined_strikeouts@9": {
+          "hits": 0,
+          "misses": 0,
+          "ungraded": 1
+        },
+        "combined_strikeouts@7": {
           "hits": 0,
           "misses": 0,
           "ungraded": 1
@@ -8068,11 +8093,6 @@
           "misses": 0,
           "ungraded": 1
         },
-        "combined_strikeouts@10": {
-          "hits": 0,
-          "misses": 0,
-          "ungraded": 1
-        },
         "nrfi_combined@None": {
           "hits": 0,
           "misses": 0,
@@ -8084,7 +8104,7 @@
   "totals": {
     "hits": 1201,
     "misses": 2029,
-    "ungraded": 276
+    "ungraded": 283
   },
   "overall_hit_rate": 0.372,
   "last_14_days_hit_rate": 0.375,
@@ -8097,7 +8117,7 @@
     "main": {
       "hits": 126,
       "misses": 156,
-      "ungraded": 8
+      "ungraded": 11
     },
     "moonshot": {
       "hits": 51,
@@ -8107,7 +8127,7 @@
     "best_of_category": {
       "hits": 995,
       "misses": 1668,
-      "ungraded": 108
+      "ungraded": 112
     },
     "moonshot_420": {
       "hits": 10,
@@ -8200,7 +8220,7 @@
     "combined_strikeouts@14": {
       "hits": 4,
       "misses": 23,
-      "ungraded": 0
+      "ungraded": 1
     },
     "doubles@1": {
       "hits": 4,
@@ -8265,12 +8285,12 @@
     "combined_strikeouts@8": {
       "hits": 6,
       "misses": 11,
-      "ungraded": 1
+      "ungraded": 2
     },
     "combined_strikeouts@9": {
       "hits": 8,
       "misses": 16,
-      "ungraded": 0
+      "ungraded": 1
     },
     "combined_strikeouts@10": {
       "hits": 9,
@@ -8300,7 +8320,7 @@
     "combined_strikeouts@7": {
       "hits": 1,
       "misses": 3,
-      "ungraded": 0
+      "ungraded": 1
     },
     "combined_strikeouts@6": {
       "hits": 0,
@@ -8317,22 +8337,22 @@
     "value": {
       "hits": 0,
       "misses": 31,
-      "ungraded": 4
+      "ungraded": 2
     },
     "lean": {
       "hits": 838,
       "misses": 1214,
-      "ungraded": 194
+      "ungraded": 202
     },
     "neutral": {
       "hits": 175,
       "misses": 481,
-      "ungraded": 52
+      "ungraded": 53
     },
     "top_pick": {
       "hits": 228,
       "misses": 206,
-      "ungraded": 8
+      "ungraded": 18
     }
   },
   "top_pick_hit_rate": 0.525,
@@ -8343,7 +8363,7 @@
     "hits": 228,
     "misses": 206,
     "voids": 9,
-    "ungraded": 8
+    "ungraded": 18
   },
   "last_14_days_modeled_top_pick_hit_rate": 0.516,
   "last_14_days_modeled_top_pick_n": 190
