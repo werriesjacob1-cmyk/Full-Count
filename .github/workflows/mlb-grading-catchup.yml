@@ -105,7 +105,7 @@ jobs:
                 print("docs/history.json updated from durable grade evidence")
             else:
                 print("docs/history.json already matches durable grade evidence")
-            PYEOF
+          PYEOF
 
             # Preserve and publish every safely computed grade even when the
             # grader deliberately returns 2 for an overdue-ungraded alert.
