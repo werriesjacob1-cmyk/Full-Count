@@ -200,6 +200,42 @@ class PredictTeamPassDropbacksAvailabilityGatedTests(unittest.TestCase):
             result["predicted_dropbacks_availability_gated"], result["predicted_dropbacks_qb_aware"],
         )
 
+    def test_pre_2009_season_with_a_real_resolved_incumbent_is_unknown_and_not_gated(self):
+        # A real, disclosed edge case an independent reviewer specifically
+        # flagged: a genuine incumbent CAN resolve for a pre-2009 season
+        # (this repo's QB-continuity substrate has no 2009 floor of its
+        # own), even though the injury source cannot confirm his real
+        # current-week status that far back. qb_aware and naive_control
+        # legitimately differ here (a real coaching-style regime split), but
+        # the module must classify this UNKNOWN and NOT gate it -- per the
+        # module's own documented disclosure, absent real evidence of
+        # unavailability the more conservative default is to trust the
+        # historical-continuity assumption, not to distrust it.
+        starters = (
+            [_starter("KC", 2005, w, "QB_OLD") for w in range(1, 4)]
+            + [_starter("KC", 2005, w, "QB_A") for w in (4, 5)]
+        )
+        rows = (
+            [_box_row("KC", 2005, w, attempts=25.0) for w in range(1, 4)]
+            + [_box_row("KC", 2005, w, attempts=45.0) for w in (4, 5)]
+        )
+        result = predict_team_pass_dropbacks_availability_gated(
+            rows, team="KC", opponent_team="SEA", target_season=2005, target_week=6,
+            starters=starters, injury_rows=[],
+            opponent_defense_allowed=None, opponent_defense_prior_games_n=0,
+        )
+        self.assertEqual(result["incumbent_availability"]["incumbent_availability_bucket"], UNKNOWN)
+        self.assertFalse(result["availability_gate_applied"])
+        self.assertEqual(
+            result["predicted_dropbacks_availability_gated"], result["predicted_dropbacks_qb_aware"],
+        )
+        # Confirms the two really do differ here (a real regime split), so
+        # this is a genuine "gate correctly declined to act" case, not a
+        # trivial one where there was nothing to gate anyway.
+        self.assertNotEqual(
+            result["predicted_dropbacks_qb_aware"], result["predicted_dropbacks_naive_control"],
+        )
+
     def test_never_leaks_a_game_at_or_after_the_target_week(self):
         starters = [_starter("KC", 2025, w, "QB_A") for w in range(1, 8)]
         rows = [_box_row("KC", 2025, w) for w in range(1, 8)]

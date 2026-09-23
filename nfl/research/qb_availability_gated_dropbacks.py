@@ -83,6 +83,28 @@ returns a raw `availability_status`/`report_status_raw` combination this
 module's four-bucket mapping does not recognize -- a real future nflverse
 schema change should be a loud failure here, not a silently misclassified
 bucket.
+
+## Disclosed limitation: `UNKNOWN` never gates
+
+`UNKNOWN` (no real prior-starter identity, or a pre-2009 season the injury
+source does not cover -- see `injury_availability_features.
+EARLIEST_COVERED_SEASON`) is deliberately NOT in `GATE_TRIGGERING_BUCKETS`.
+For the "no real prior identity" case this is provably a no-op: `qb_change_
+team_dropbacks.predict_team_pass_dropbacks_qb_aware` already makes `qb_aware`
+and `naive_control` numerically identical whenever no incumbent resolves, so
+there is nothing to gate. For the real pre-2009-season case, a genuine
+incumbent CAN resolve (this repo's QB-continuity substrate itself has no
+2009 floor) while the injury source cannot confirm his real current-week
+status -- meaning `qb_aware` and `naive_control` COULD legitimately differ
+there with no real availability evidence either way. This module reports
+that combination as `UNKNOWN` rather than fabricating a decision, but does
+NOT gate it: absent real evidence the incumbent is unavailable, defaulting
+to trusting the historical-continuity assumption (the same default `qb_
+change_team_dropbacks.py` itself makes) is the more conservative choice
+than defaulting to distrust it. This repo's real current-week usage is
+always a modern (2009+), covered season, so this combination is a
+theoretical historical-backtest edge case, not a live-usage gap -- disclosed
+explicitly here rather than silently untested.
 """
 from __future__ import annotations
 
