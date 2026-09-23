@@ -523,7 +523,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 39.2,
+          "score": 39.0,
           "notable_signals": 0,
           "matchup": "Minnesota Twins @ San Francisco Giants",
           "game_pk": 823168,
@@ -544,34 +544,6 @@
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
-          }
-        },
-        {
-          "prop": "Over 9.5 Combined Strikeouts",
-          "type": "pitcher_combo",
-          "score": 0.3,
-          "notable_signals": 0,
-          "matchup": "Minnesota Twins @ San Francisco Giants",
-          "game_pk": 823168,
-          "team": null,
-          "side": null,
-          "lean": null,
-          "combo_player_ids": [
-            687570,
-            702885
-          ],
-          "signals": {
-            "combined_k_edge": -0.3705
-          },
-          "hit_probability": 0.2672,
-          "raw_hit_probability": null,
-          "lift": -0.3705,
-          "reliability": "D",
-          "sample_n": 0,
-          "projection": {
-            "stat": "combined_strikeouts",
-            "value": 9.5,
-            "needs": 10
           }
         }
       ]

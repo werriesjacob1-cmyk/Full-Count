@@ -614,7 +614,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 49.2,
+          "score": 49.0,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Athletics",
           "game_pk": 824951,
@@ -635,34 +635,6 @@
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
-          }
-        },
-        {
-          "prop": "Over 8.5 Combined Strikeouts",
-          "type": "pitcher_combo",
-          "score": 54.9,
-          "notable_signals": 1,
-          "matchup": "Los Angeles Angels @ Athletics",
-          "game_pk": 824951,
-          "team": null,
-          "side": null,
-          "lean": null,
-          "combo_player_ids": [
-            700712,
-            605488
-          ],
-          "signals": {
-            "combined_k_edge": 0.1301
-          },
-          "hit_probability": 0.665,
-          "raw_hit_probability": null,
-          "lift": 0.1301,
-          "reliability": "D",
-          "sample_n": 0,
-          "projection": {
-            "stat": "combined_strikeouts",
-            "value": 8.5,
-            "needs": 9
           }
         }
       ]

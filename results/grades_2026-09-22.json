@@ -44,17 +44,17 @@
       "ungraded": 1
     },
     "top_pick": {
-      "hits": 2,
-      "misses": 3,
+      "hits": 7,
+      "misses": 5,
       "voids": 0,
-      "ungraded": 19
+      "ungraded": 12
     }
   },
   "public_top_pick_counts": {
-    "hits": 2,
-    "misses": 3,
+    "hits": 7,
+    "misses": 5,
     "voids": 0,
-    "ungraded": 19
+    "ungraded": 12
   },
   "public_top_picks": [
     {
@@ -148,7 +148,7 @@
         "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-23T00:48:00.802604+00:00",
+      "settlement_observed_at": "2026-09-23T01:40:12.448915+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -236,10 +236,10 @@
         "eligibility": "ungraded",
         "reason_code": "game_not_authoritatively_final",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "pregame"
+        "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-23T00:48:00.802604+00:00",
+      "settlement_observed_at": "2026-09-23T01:40:12.448915+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -307,18 +307,27 @@
       "publication_source_commit": "51b750d89ec3f37c495b71ed41d3771fc730310e",
       "publication_run_id": "35700434372",
       "publication_deployment_id": null,
-      "grade": "ungraded",
-      "settlement_state": "ungraded",
-      "reason": "game_not_authoritatively_final",
+      "grade": "hit",
+      "actual": 18.0,
+      "actual_stat": "pitcher_outs",
+      "threshold": 15.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ip": 6.0,
+      "pitch_count": 89.0,
+      "fair_test": true,
+      "opportunity": "full (6.0 IP)",
       "eligibility": {
-        "eligibility": "ungraded",
-        "reason_code": "game_not_authoritatively_final",
+        "eligibility": "eligible",
+        "reason_code": "listed_pitcher_started",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "live"
+        "scheduled_innings": 9,
+        "innings_played": 9
       },
-      "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-23T00:48:00.802604+00:00",
-      "settlement_source": "durable_morning_status_observation"
+      "settlement_state": "hit",
+      "settlement_authority": "official_final",
+      "settlement_observed_at": "2026-09-23T01:40:12.448915+00:00",
+      "settlement_source": "durable_morning_grader"
     },
     {
       "id": "fc2:823328:player-691026:hits_runs_rbis:1:over",
@@ -397,18 +406,31 @@
       "publication_source_commit": "0b5e85a45a5d52731cfe345d7b3136f36e3c2652",
       "publication_run_id": "35768856365",
       "publication_deployment_id": null,
-      "grade": "ungraded",
-      "settlement_state": "ungraded",
-      "reason": "game_not_authoritatively_final",
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "hits_runs_rbis",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 2,
+      "actual_pa_est": 3,
+      "was_substitute": false,
+      "batting_order": 9,
+      "fair_test": true,
+      "opportunity": "full (3 PA)",
       "eligibility": {
-        "eligibility": "ungraded",
-        "reason_code": "game_not_authoritatively_final",
+        "eligibility": "eligible",
+        "reason_code": "batter_started_and_recorded_plate_appearance",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "live"
+        "plate_appearances": 3,
+        "was_starter": true,
+        "scheduled_innings": 9,
+        "innings_played": 9
       },
-      "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-23T00:48:00.802604+00:00",
-      "settlement_source": "durable_morning_status_observation"
+      "settlement_state": "miss",
+      "settlement_authority": "official_final",
+      "settlement_observed_at": "2026-09-23T01:40:12.448915+00:00",
+      "settlement_source": "durable_morning_grader"
     },
     {
       "id": "fc2:823328:player-701675:hits_runs_rbis:1:over",
@@ -486,18 +508,31 @@
       "publication_source_commit": "0b5e85a45a5d52731cfe345d7b3136f36e3c2652",
       "publication_run_id": "35768856365",
       "publication_deployment_id": null,
-      "grade": "ungraded",
-      "settlement_state": "ungraded",
-      "reason": "game_not_authoritatively_final",
+      "grade": "hit",
+      "actual": 1.0,
+      "actual_stat": "hits_runs_rbis",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 3,
+      "actual_pa_est": 3,
+      "was_substitute": false,
+      "batting_order": 8,
+      "fair_test": true,
+      "opportunity": "full (3 PA)",
       "eligibility": {
-        "eligibility": "ungraded",
-        "reason_code": "game_not_authoritatively_final",
+        "eligibility": "eligible",
+        "reason_code": "batter_started_and_recorded_plate_appearance",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "live"
+        "plate_appearances": 3,
+        "was_starter": true,
+        "scheduled_innings": 9,
+        "innings_played": 9
       },
-      "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-23T00:48:00.802604+00:00",
-      "settlement_source": "durable_morning_status_observation"
+      "settlement_state": "hit",
+      "settlement_authority": "official_final",
+      "settlement_observed_at": "2026-09-23T01:40:12.448915+00:00",
+      "settlement_source": "durable_morning_grader"
     },
     {
       "id": "fc2:823412:player-669016:hits:1:over",
@@ -574,18 +609,31 @@
       "publication_source_commit": "d2ba09db2582c548757c6139cb40350bc731fa28",
       "publication_run_id": "35787637363",
       "publication_deployment_id": null,
-      "grade": "ungraded",
-      "settlement_state": "ungraded",
-      "reason": "game_not_authoritatively_final",
+      "grade": "hit",
+      "actual": 2.0,
+      "actual_stat": "hits",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 7,
+      "fair_test": true,
+      "opportunity": "full (4 PA)",
       "eligibility": {
-        "eligibility": "ungraded",
-        "reason_code": "game_not_authoritatively_final",
+        "eligibility": "eligible",
+        "reason_code": "batter_started_and_recorded_plate_appearance",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "live"
+        "plate_appearances": 4,
+        "was_starter": true,
+        "scheduled_innings": 9,
+        "innings_played": 9
       },
-      "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-23T00:48:00.802604+00:00",
-      "settlement_source": "durable_morning_status_observation"
+      "settlement_state": "hit",
+      "settlement_authority": "official_final",
+      "settlement_observed_at": "2026-09-23T01:40:12.448915+00:00",
+      "settlement_source": "durable_morning_grader"
     },
     {
       "id": "fc2:823412:player-669016:hits_runs_rbis:1:over",
@@ -662,18 +710,31 @@
       "publication_source_commit": "82ac9c688fd33378da173fd9689a90c42ea56703",
       "publication_run_id": "35780313728",
       "publication_deployment_id": null,
-      "grade": "ungraded",
-      "settlement_state": "ungraded",
-      "reason": "game_not_authoritatively_final",
+      "grade": "hit",
+      "actual": 6.0,
+      "actual_stat": "hits_runs_rbis",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 7,
+      "fair_test": true,
+      "opportunity": "full (4 PA)",
       "eligibility": {
-        "eligibility": "ungraded",
-        "reason_code": "game_not_authoritatively_final",
+        "eligibility": "eligible",
+        "reason_code": "batter_started_and_recorded_plate_appearance",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "live"
+        "plate_appearances": 4,
+        "was_starter": true,
+        "scheduled_innings": 9,
+        "innings_played": 9
       },
-      "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-23T00:48:00.802604+00:00",
-      "settlement_source": "durable_morning_status_observation"
+      "settlement_state": "hit",
+      "settlement_authority": "official_final",
+      "settlement_observed_at": "2026-09-23T01:40:12.448915+00:00",
+      "settlement_source": "durable_morning_grader"
     },
     {
       "id": "fc2:823412:player-669160:strikeouts:4:over",
@@ -746,18 +807,27 @@
       "publication_source_commit": "11b7508d6186cc6f96e9d338b46401f9dba6e5f2",
       "publication_run_id": "35671952103",
       "publication_deployment_id": null,
-      "grade": "ungraded",
-      "settlement_state": "ungraded",
-      "reason": "game_not_authoritatively_final",
+      "grade": "miss",
+      "actual": 2.0,
+      "actual_stat": "strikeouts",
+      "threshold": 3.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ip": 2.0,
+      "pitch_count": 36.0,
+      "fair_test": false,
+      "opportunity": "limited \u2014 only 2.0 IP; a strikeout prop can't be judged when the start ended early (injury, blowout, or quick hook)",
       "eligibility": {
-        "eligibility": "ungraded",
-        "reason_code": "game_not_authoritatively_final",
+        "eligibility": "eligible",
+        "reason_code": "listed_pitcher_started",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "live"
+        "scheduled_innings": 9,
+        "innings_played": 9
       },
-      "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-23T00:48:00.802604+00:00",
-      "settlement_source": "durable_morning_status_observation"
+      "settlement_state": "miss",
+      "settlement_authority": "official_final",
+      "settlement_observed_at": "2026-09-23T01:40:12.448915+00:00",
+      "settlement_source": "durable_morning_grader"
     },
     {
       "id": "fc2:823412:player-800325:hits_runs_rbis:1:over",
@@ -835,18 +905,31 @@
       "publication_source_commit": "d2ba09db2582c548757c6139cb40350bc731fa28",
       "publication_run_id": "35787637363",
       "publication_deployment_id": null,
-      "grade": "ungraded",
-      "settlement_state": "ungraded",
-      "reason": "game_not_authoritatively_final",
+      "grade": "hit",
+      "actual": 2.0,
+      "actual_stat": "hits_runs_rbis",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 7,
+      "fair_test": true,
+      "opportunity": "full (4 PA)",
       "eligibility": {
-        "eligibility": "ungraded",
-        "reason_code": "game_not_authoritatively_final",
+        "eligibility": "eligible",
+        "reason_code": "batter_started_and_recorded_plate_appearance",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "live"
+        "plate_appearances": 4,
+        "was_starter": true,
+        "scheduled_innings": 9,
+        "innings_played": 9
       },
-      "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-23T00:48:00.802604+00:00",
-      "settlement_source": "durable_morning_status_observation"
+      "settlement_state": "hit",
+      "settlement_authority": "official_final",
+      "settlement_observed_at": "2026-09-23T01:40:12.448915+00:00",
+      "settlement_source": "durable_morning_grader"
     },
     {
       "id": "fc2:823494:player-641857:hits_runs_rbis:1:over",
@@ -938,7 +1021,7 @@
         "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-23T00:48:00.802604+00:00",
+      "settlement_observed_at": "2026-09-23T01:40:12.448915+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -1031,7 +1114,7 @@
         "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-23T00:48:00.802604+00:00",
+      "settlement_observed_at": "2026-09-23T01:40:12.448915+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -1124,7 +1207,7 @@
         "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-23T00:48:00.802604+00:00",
+      "settlement_observed_at": "2026-09-23T01:40:12.448915+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -1217,7 +1300,7 @@
         "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-23T00:48:00.802604+00:00",
+      "settlement_observed_at": "2026-09-23T01:40:12.448915+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -1310,7 +1393,7 @@
         "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-23T00:48:00.802604+00:00",
+      "settlement_observed_at": "2026-09-23T01:40:12.448915+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -1916,7 +1999,7 @@
         "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-23T00:48:00.802604+00:00",
+      "settlement_observed_at": "2026-09-23T01:40:12.448915+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -2006,7 +2089,7 @@
         "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-23T00:48:00.802604+00:00",
+      "settlement_observed_at": "2026-09-23T01:40:12.448915+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -2098,7 +2181,7 @@
         "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-23T00:48:00.802604+00:00",
+      "settlement_observed_at": "2026-09-23T01:40:12.448915+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -2188,7 +2271,7 @@
         "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-23T00:48:00.802604+00:00",
+      "settlement_observed_at": "2026-09-23T01:40:12.448915+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -2273,7 +2356,7 @@
         "game_state": "pregame"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-23T00:48:00.802604+00:00",
+      "settlement_observed_at": "2026-09-23T01:40:12.448915+00:00",
       "settlement_source": "durable_morning_status_observation"
     }
   ],
@@ -3476,7 +3559,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 9,
@@ -3647,7 +3730,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 10,
@@ -3825,7 +3908,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 11,
@@ -4276,7 +4359,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 15,
@@ -4539,7 +4622,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 18,
@@ -4687,7 +4770,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 20,
@@ -4761,7 +4844,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 21,
@@ -4866,7 +4949,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 22,
@@ -6006,7 +6089,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 32,
@@ -6804,7 +6887,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 39,
@@ -6919,7 +7002,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 40,
@@ -7139,7 +7222,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 42,
@@ -7585,7 +7668,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 46,
@@ -7690,7 +7773,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 47,
@@ -8143,7 +8226,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 51,
@@ -10320,7 +10403,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 71,
@@ -10480,7 +10563,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 73,
@@ -10855,7 +10938,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 77,
@@ -12044,7 +12127,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 87,
@@ -12488,7 +12571,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 91,
@@ -12642,7 +12725,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 93,
@@ -12719,7 +12802,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 94,
@@ -13160,7 +13243,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 4,
@@ -13323,7 +13406,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 6,
@@ -13591,7 +13674,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 9,
@@ -13669,7 +13752,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 10,
@@ -13747,7 +13830,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 11,
@@ -13819,7 +13902,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 12,
@@ -13963,7 +14046,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 14,
@@ -14111,7 +14194,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 16,
@@ -14185,7 +14268,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 17,
@@ -14277,7 +14360,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 18,
@@ -14354,7 +14437,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 19,
@@ -14426,7 +14509,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 20,
@@ -14574,7 +14657,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 22,
@@ -14648,7 +14731,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 23,
@@ -14886,7 +14969,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 26,
@@ -15105,7 +15188,7 @@
       "odds_timestamp": "2026-09-22T23:01:43.939297+00:00",
       "lineup_checked_at": "2026-09-22T23:01:43.939297+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 28,
