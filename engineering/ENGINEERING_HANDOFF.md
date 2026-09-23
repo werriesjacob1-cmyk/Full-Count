@@ -5681,9 +5681,11 @@ appearances produce a different real computed record.
 `receptions_alt_ladder.require_real_thresholds`/`verify_ladder_invariants`
 (fully generic already), `receptions_outcome_distribution.
 EmpiricalResidualPool` (only its bisect count queries, not `pmf`, which
-assumes a small bounded count support that does not fit passing yards) and
-`.fit_normal`/`normal_discrete_pmf`, and `alternate_line_evaluation.py`'s
-price math. New: a three-way empirical rung estimator adapted for a market
+assumes a small bounded count support that does not fit passing yards), and
+`alternate_line_evaluation.py`'s price math. `receptions_outcome_
+distribution.fit_normal` is reused unmodified too, but by this workstream's
+own evaluation script, not by the module itself. New: a three-way empirical
+rung estimator adapted for a market
 with no small bounded outcome space, a parallel discretized-Normal-
 approximation control ladder (`normal_ladder_probabilities`), a direct
 side-by-side comparison (`compare_empirical_vs_normal`), real priced EV
@@ -5730,9 +5732,17 @@ both ladder methods' sum-to-one/monotonicity/push invariants, the Normal
 control's mean-shift and integer-vs-half-point push behavior, the direct
 comparison actually depending on both real inputs (not a stub), real priced
 EV wiring through `alternate_line_evaluation.py` unmodified, and the
-end-to-end record builder's abstention/consumption behavior. Full `nfl/tests`:
-1067/1067 (was 1040). `test_workflow_shell_syntax.py`: 88/88 (no workflow
-YAML touched).
+end-to-end record builder's abstention/consumption behavior. **Correction
+(independent review, 2026-09-23): the originally reported full-suite total
+of 1067/1067 (was 1040) does not reproduce from a clean checkout** and was
+almost certainly contaminated by this Mission's own disclosed shared/racy
+container (the same concurrent `git checkout`/commit race this entry's own
+"disclosed operational incident" section describes). A fresh `git worktree`
+at this PR's base (`c965fcbb92`) gives 1023/1023, and at this PR's exact
+pushed head (`a8eff937`, pre-fix) gives 1050/1050 -- a real, correctly-sized
+delta of +27, matching the 27 new tests above exactly. Full `nfl/tests`:
+**1050/1050 (was 1023)**. `test_workflow_shell_syntax.py`: 88/88 (no
+workflow YAML touched, independently re-run).
 
 **What this does NOT do**: no live workflow wiring in this pass (disclosed,
 deliberate, matching the established two-step precedent already used by

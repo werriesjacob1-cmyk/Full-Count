@@ -51,9 +51,12 @@ Reused, unmodified, imported directly (not reimplemented):
   support) is NOT used here -- passing yards spans a much wider effective
   range and this module needs only threshold comparisons, not a normalized
   pmf over the whole outcome space.
-- `receptions_outcome_distribution.fit_normal` and `normal_discrete_pmf` for
-  the Normal-approximation control fit/pmf math -- also fully generic
-  (`actual`/`b0` field names, not receptions-specific).
+- `receptions_outcome_distribution.fit_normal` -- reused unmodified by this
+  workstream's own evaluation script
+  (`engineering/nfl_passing_yards_alt_ladder_20260923/
+  passing_yards_alt_ladder_evaluation.py`) to fit the Normal control's
+  `mean`/`std` from the real strictly-prior train partition; also fully
+  generic (`actual`/`b0` field names, not receptions-specific).
 - `alternate_line_evaluation.breakeven_probability`,
   `expected_value_from_probability`, `price_bucket` for all price-aware
   output -- no odds math is reimplemented here.
@@ -68,7 +71,21 @@ New in this module:
   (`normal_ladder_probabilities`) as the PREDECLARED simpler control this
   module's own real evaluation compares the empirical-residual ladder
   against (see `engineering/nfl_passing_yards_alt_ladder_20260923/README.md`
-  for the real, honestly-reported result).
+  for the real, honestly-reported result). Its rung math
+  (`_normal_rung_probabilities`) is a genuine reimplementation, not a call
+  into `receptions_outcome_distribution.normal_discrete_pmf`: that function
+  returns a single point mass at one non-negative integer `k` and folds all
+  sub-zero Normal mass into `k=0`, which does not fit a three-way (push
+  included) over/under/push split at a caller-supplied threshold that is
+  usually a non-integer half-point line. `_normal_rung_probabilities`
+  follows the SAME continuity-correction convention `normal_discrete_pmf`
+  established (`[threshold-0.5, threshold+0.5)` at an integer threshold) via
+  its own `_norm_cdf` helper. **Correction (independent review,
+  2026-09-23): an earlier version of this docstring and the module's own
+  import list claimed `normal_discrete_pmf` itself was reused unmodified by
+  this module; it is not -- it was imported but never called anywhere in
+  this file. The import has been removed and this note added instead of
+  silently leaving the inaccurate reuse claim in place.**
 - `compare_empirical_vs_normal` and `build_passing_yards_ladder_record`: the
   real composition layer that actually calls both ladders against the SAME
   real B0 projection (`passing_yards_shadow.current_b0_projection`, reused
@@ -129,10 +146,7 @@ from nfl.research.receptions_alt_ladder import (
     require_real_thresholds,
     verify_ladder_invariants,
 )
-from nfl.research.receptions_outcome_distribution import (
-    EmpiricalResidualPool,
-    normal_discrete_pmf,
-)
+from nfl.research.receptions_outcome_distribution import EmpiricalResidualPool
 
 TOLERANCE = 1e-9
 
