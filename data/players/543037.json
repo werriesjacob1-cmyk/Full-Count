@@ -554,7 +554,7 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 43.0,
+          "score": 44.8,
           "notable_signals": 0,
           "matchup": "Tampa Bay Rays @ New York Yankees",
           "game_pk": 823492,
@@ -564,7 +564,7 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 16.0,
-            "same_hand_ratio": 12.5,
+            "same_hand_ratio": 61.1111,
             "l14_k_pct": 45.2941,
             "env_neutral": 50.0,
             "ump_accuracy": 50.7392,
@@ -583,9 +583,9 @@
           }
         },
         {
-          "prop": "Over 17.5 Outs Recorded",
+          "prop": "Over 16.5 Outs Recorded",
           "type": "pitcher",
-          "score": 67.1,
+          "score": 67.9,
           "notable_signals": 1,
           "matchup": "Tampa Bay Rays @ New York Yankees",
           "game_pk": 823492,
@@ -594,18 +594,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5856,
+            "outs_rate": 0.642,
             "avg_outs_per_start": 17.33
           },
-          "hit_probability": 0.5838,
-          "raw_hit_probability": 0.5856,
-          "lift": 0.1155,
+          "hit_probability": 0.622,
+          "raw_hit_probability": 0.642,
+          "lift": 0.0664,
           "reliability": "A",
           "sample_n": 21,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 17.5,
-            "needs": 18
+            "value": 16.5,
+            "needs": 17
           }
         }
       ]

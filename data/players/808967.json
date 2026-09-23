@@ -466,7 +466,7 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.6,
+          "score": 40.3,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ Los Angeles Dodgers",
           "game_pk": 823894,
@@ -476,9 +476,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 46.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 88.8889,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 60.5798,
+            "ump_k_pct": 0.708,
+            "ump_bb_pct": 0.072
           },
           "hit_probability": 0.3996,
           "raw_hit_probability": 0.3996,
@@ -494,7 +497,7 @@
         {
           "prop": "Over 18.5 Outs Recorded",
           "type": "pitcher",
-          "score": 83.0,
+          "score": 81.0,
           "notable_signals": 1,
           "matchup": "San Diego Padres @ Los Angeles Dodgers",
           "game_pk": 823894,
@@ -503,12 +506,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4894,
+            "outs_rate": 0.4924,
             "avg_outs_per_start": 19.89
           },
-          "hit_probability": 0.5165,
-          "raw_hit_probability": 0.4894,
-          "lift": 0.3246,
+          "hit_probability": 0.5186,
+          "raw_hit_probability": 0.4924,
+          "lift": 0.3103,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
