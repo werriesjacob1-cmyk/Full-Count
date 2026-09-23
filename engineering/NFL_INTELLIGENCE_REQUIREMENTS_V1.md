@@ -1,0 +1,205 @@
+# FULL COUNT — NFL Intelligence: Permanent Requirements and Completeness Register (v1)
+
+**Owner:** Jacob (final authority); SUPERCHAD maintains strategic audit; Claude Code and Codex implement in separately claimed, non-overlapping workstreams.  
+**Captured:** 2026-09-23. **Status:** Permanent REQUIREMENTS BASELINE, **not** evidence that every capability is implemented or scientifically useful.  
+**Applies to:** NFL prediction, research, source acquisition, actual film, market selection, operations, prospective learning, customer product.  
+**Bridge:** https://github.com/werriesjacob1-cmyk/Full-Count/issues/91  
+**Authoritative rule:** Do not remove or silently collapse a requirement when writing a shorter prompt or delivering an incremental PR. Carry it forward until explicit validated implementation, evidence-based rejection, or a documented blocker. Amend versioned history; preserve negative experiments.
+
+## 0. The purpose and non-negotiable epistemic rules
+
+FULL COUNT must explain *why* an NFL event/player may exceed or fall below an offered sportsbook line this week, evaluate the actual line/price, freeze the prediction before the information cutoff, and grade it honestly after the game. Early leans and final eligible picks are distinct. Aim for stronger **realized prediction accuracy at comparable legitimate usable volume** and, separately, **realized return at actual captured prices**. High hit rate alone is not value: plus-money picks can be good with lower hit rates. Do not game apparent accuracy by selecting only expensive favorites.
+
+Every required intelligence family must move through: **legal SOURCE → real CAPTURE → canonical PLAYER/TEAM/GAME/PLAY identity → point-in-time FEATURE → model/opportunity/distribution CONSUMER → genuine observed MARKET/LINED PRICE evaluation → FROZEN prospective B0/challenger evidence → authoritative POSTGAME GRADE → matched incremental-value assessment → human-reviewed promotion**. Explicitly record missing steps. No source registry, design document, synthetic fixture, standalone code module, test passing, historical-only improvement, or code merge equals live predictive usefulness. An absence of evidence is not a zero-valued feature; preserve UNKNOWN and abstain appropriately.
+
+Do not fabricate historical sportsbook odds, source availability, film observations, coach motives, practice repetitions, injury severity, route actions outside camera view, or exact historical production eligibility. Never backdate captures or use information released after the target prediction cutoff. No unauthorized footage acquisition, restricted scraping, paid source purchase, or rights assumption. An observed third-party charting label is NOT film independently watched by us. No production promotion, public-pick policy change, merge or deployment inferred from this requirements document.
+
+NFL must protect MLB's roughly 25% meaningful engineering/research allocation. MLB North Star: more realized winning props at the *same legitimately usable operational pick volume*, separating canonical historical model data, prospective full candidates, and immutable published Top Picks. Keep MLB grading/History and customer reliability sound without mistaking maintenance for accuracy research.
+
+### Status contract — one status per factor/market/season, not one misleading project-wide checkbox
+
+`NOT_STARTED | SOURCE_IDENTIFIED | RIGHTS_VERIFIED | REAL_CAPTURED | IDENTITY_VERIFIED | PIT_FEATURE_BUILT | HISTORICAL_RESEARCH | LIVE_RESEARCH_CONNECTED | PROSPECTIVE_FROZEN | VALUE_EVALUATED | SPECIFIC_MARKET_VALIDATED | PRODUCTION_INTEGRATED | BLOCKED(reason) | REJECTED(evidence)`.
+
+Attach separately: legal source/license URL or entitlement, observation/publication/capture time and available-at vintage, covered seasons/teams/markets, named owner + Issue #91 claim + branch/PR, consumer file/function, feature semantics/units/unknown policy, tests, prospective artifact IDs, grading identity, B0 comparator and experiment, incremental result/uncertainty, next unblocker. Multiple states can be useful as separate *stage fields*, but never promote a factor to a later stage because an earlier stage exists. Every row below is an **accountable candidate requirement**, NOT an instruction to inject every available variable into production. If unusable, explicitly BLOCK or REJECT with evidence, do not delete it.
+
+## 1. Player history, skill and individual outcomes (P)
+
+- P01 multi-year, season, regime, game and recent-form passing attempts/completions/yards/TDs/interceptions; scramble rate, designed QB runs and pressure response.
+- P02 rushing attempts/yards/TDs, designed vs scramble volume, explosive runs, short-yardage/goal-line workload and efficiency.
+- P03 receiving targets/receptions/yards/TDs, air yards, target depth, YAC, drops, catchability, contested catches, broken tackles and role-specific consistency.
+- P04 age/career stage, role changes, rookie/returning-veteran priors, trades/new teams and roster transitions; no ungrounded age penalties.
+- P05 home/away, opponent history, demonstrated role changes, multi-year trend, recency weighting, regression to the mean and sample/strength-of-opponent adjustments.
+- P06 snap expectation, routes/route share, pass-blocking assignments, carries, targets, QB dropbacks/attempts and substitution probability; distinct snaps/routes/targets denominators.
+- P07 route-specific **target probability per route** and **catch probability per target** by route/depth/alignment/coverage; un-targeted routes must be in the denominator.
+- P08 receiver separation vs catch-point performance, open-but-not-targeted cases, target quality and actual QB reads/decision time when observable.
+- P09 QB progression/read preferences, time to throw, pressure susceptibility, checkdown tendency, hot reads, scramble vs pass decisions.
+- P10 QB–receiver chemistry and continuity measured as an interaction against simpler baselines; account for QB change effects on ALL teammates, not storytelling.
+- P11 recent player workload, fatigue proxies, recovery/rest/injury restrictions, prior usage sustainability, practice reps where legitimately observed, medical speculation prohibited.
+- P12 player-specific outcome distribution with opportunity and efficiency uncertainty, count zeros/tails, over/under/alternate/TD count probabilities.
+
+## 2. Team opportunities, roles and redistribution (R)
+
+- R01 offensive plays/drives/possessions, neutral pace, situation-specific pass/run rate, team attempts/carries/route opportunities.
+- R02 expected offensive snap share, route share, target share, carry share, red-zone/goal-line share, short-yardage packages, third-down/two-minute use.
+- R03 personnel groupings (11/12/21 etc.), formations, motion, alignments, starters, rotations, substitution patterns and pass-protection vs route assignments.
+- R04 teammate OUT/limited/DNP, replacements, depth chart, QB changes and team-switch impact; validate **mass balance** across total team targets/carries/routes/snaps.
+- R05 distinguish genuine pregame announced absence, probable game-time limitation, questionable status, in-game injury and hindsight; conditional availability scenarios.
+- R06 prior team workload vs projected game plan; usage after a bye/short week/extra prep; source-confirmed elevated/lowered workload.
+- R07 RB rush/route/block splits, backfield committee, short-yardage and receiving roles; TE route-block split; skill-player subpackages.
+- R08 backup/refill hierarchy by formation, situation and opponent; replacement effectiveness vs vacated opportunity, not mechanically transferring all missed targets.
+- R09 pregame role visibility, role uncertainty and probability of unexpected benching/rotation; distinguish deterministic decisions from tentative leans.
+
+## 3. Coaching, scheme and actual game-plan intelligence (C)
+
+- C01 actual HC, OC, DC, offensive/defensive PLAYCALLER identities and dated intervals, tenure/regime transitions and uncertainty; job title is not proof of calling plays.
+- C02 neutral-situation pass/run rates, pace, down/distance, play-action, RPO, motion, formation, personnel-package and tempo preferences.
+- C03 red-zone/goal-line, third-down/short-yardage, opening-drive/scripted plays, two-minute/late-game and fourth-down tendencies.
+- C04 coach response to specific defensive weaknesses, coverage/pressure looks, similar opponents and personnel changes; opponent-specific plans rather than blanket coach bonuses.
+- C05 halftime/in-game tactical adjustment tendencies, defensive adjustment, score/time/timeout-dependent decisions; avoid postgame leakage.
+- C06 playbook/system continuity after coach/coordinator/QB turnover, new regime sample uncertainty, nonstationarity and carryover from documented earlier roles.
+- C07 game-plan uncertainty with multiple plausible, coherent tactical scenarios and estimated scenario probabilities; uncertain quotes are NOT planned play counts.
+- C08 documented milestone/contract incentives only when verifiable, point-in-time known and empirically tested; no motive-as-fact.
+- C09 coach statements, press conferences, coordinator/player interviews and observed practice cues: corroboration, reliability, corrections and delayed reporting; no automatic fact promotion.
+
+## 4. Defense, fronts and individual matchups (D)
+
+- D01 strictly-prior pass/rush EPA allowed, success, plays/pace allowed, efficiency by opponent strength, personnel and game state.
+- D02 man/zone rates, shells, coverages, match/quarters/brackets/doubles, disguised coverages and post-snap rotations; field confidence/UNKNOWN.
+- D03 alignment-specific WR/CB, slot/outside, TE/LB/S, RB coverage and backfield coverage assignment tendencies, including personnel-specific switches.
+- D04 route/coverage matchup, funnel tendencies, receiver opportunity by alignment, and defensive pressure impact on first/second/late reads; avoid ecological fallacy from team-level stats.
+- D05 blitz/pressure/stunt/rush-lane tendencies, individual pass rush, OL/DL matchups, protection and blocking, sacks, QB hit timing; separate pressure caused vs pressure credited.
+- D06 run fronts, box count, fit, gap assignments, run concepts, OL continuity, tackle/edge injuries and short-yardage matchup.
+- D07 defensive replacement hierarchy, altered coverage assignment/communication/speed, in-game rotation, opponent-specific exploitable weaknesses.
+- D08 formation/motion/personnel-specific defensive reaction, disguised alignments, halftime defensive adjustment and uncertainty.
+
+## 5. Actual film and legally accessible tactical charting (F)
+
+- F01 lawful access and **commercial/automated analysis rights** for each footage source; record actual license/terms, duration, cost, retention, redistribution and permitted derived-feature use.
+- F02 true clip/game/play/time provenance; canonical player/team IDs; game clock, camera type/angle, timestamps, source URL/digest and observation/capture/availability times.
+- F03 observed offensive/defensive personnel, formation, alignment, pre-snap motion, substitutions, route tree/depth/combinations, coverage and post-snap changes.
+- F04 observed QB progression if camera permits, pocket/pressure, separation, blocking assignments/execution, individual WR/CB and OL/DL matchups, run concepts and fits.
+- F05 distinguish **direct video observation**, **licensed third-party charting**, **play-by-play inference**, **model inference**, **synthetic fixture**, and **not visible**; NEVER conflate them.
+- F06 independent real-play annotator agreement, ambiguous-field quarantine, identity/timing confidence, cross-angle limitations, false-positive/false-negative audits.
+- F07 film-derived conditional opportunity/efficiency feature with actual model consumer and paired incremental-value test; third-party labels may not support all-route target probability if only targeted passes are charted.
+- F08 partial-data pathway when full All-22 unavailable: legitimately usable public footage or licensed structured charting, preserving no-footage/unknown and source rights.
+- F09 film-induced opponent-specific game-plan hypotheses must remain uncertain and be tested against pregame-only baselines, not explained retrospectively.
+
+## 6. Injury, practice, roster and human intelligence (N)
+
+- N01 official injury reports, practice participation, specific reps/workload limits where observable, IR/PUP/activation, inactives, transactions and updated depth-chart identity.
+- N02 game-day warmups, weather/roof announcements, credible local reporters for all 32 teams, official team reporting, beat writers, team/local radio-TV, player/coach pressers and authenticated public communications.
+- N03 news provenance: what was OBSERVED, CLAIMED, PUBLISHED, INGESTED, CORRECTED and AVAILABLE at the freeze cutoff; timezones and corrections separately retained.
+- N04 reliability/corroboration, reporter expertise, independent-source overlap, stale rumors, contradictory reports and likelihood of role outcome; no social post automatically becomes truth.
+- N05 probable/minutes-limited/questionable player availability mixtures, scratch/DNP/early exit probability and teammate/opponent conditional scenarios.
+- N06 positional/injury impact on OL/front/secondary coverage communication and replacement effects; not just star skill-player inactives.
+- N07 pregame **early lean** vs final **actionable selection** and candidate update/freeze rules; do not silently rewrite previously exposed picks.
+- N08 social-media/competitor observation only through permitted public/authorized routes; commercial terms, copyright, privacy, provenance, adversarial/inaccurate claims and signal-value audit.
+
+## 7. Game, environment and clock/score mechanisms (G)
+
+- G01 offensive/defensive efficiency, neutral-situation pace, projected total drives/possessions, field position, projected points and margin with uncertainty.
+- G02 lead/trail/tie and time-remaining conditional playcalling, hurry-up, kneel-down, no-huddle, intentional clock burn, comeback/pass volume and opponent response.
+- G03 weather actual forecast vintage/uncertainty, wind/gust direction, temperature, precipitation, roof open/close, stadium altitude, turf/grass and field-condition changes.
+- G04 travel, time-zone shifts, international games, rest, Thursday/Monday short weeks, byes, schedule congestion, travel anomalies, home-field and preparation time.
+- G05 special teams field position, turnovers, penalties/automatic first downs, two-point attempts, fourth-down aggression and their effect on possessions and scoring.
+- G06 officiating crew identification and tendencies only when reliably measured, adequately sampled and not confounded by team/opponent.
+- G07 game delays, postponements, weather interruption, overtime/tie rules, season phase (regular/postseason) and changed motivation/rotation only from documented role evidence.
+
+## 8. Markets, prices, decisions, settlement and correlation (M)
+
+- M01 all genuinely offered QB passing/completions/attempts/yards/TDs/INTs; rushing attempts/yards/TDs; receiving targets/receptions/yards/TDs; defensive/kicking/return props and other supported player/team outcomes.
+- M02 game spreads/totals/moneylines, team totals, period/quarter/half markets, standard/alternate thresholds, plus-money and other legitimately offered price bands; avoid fake coverage.
+- M03 exact book/event/player/team/market/selection IDs, line, side, offer timestamp, quote age, suspended/limited/not-posted/fetch-failed distinctions, usable timing and book/jurisdiction limits.
+- M04 observed cross-book differences and best actually accessible offer, implied and two-sided no-vig market probability, break-even price, real odds and price-sensitive expected value.
+- M05 line/price movement relative to documented arrival of news, market open/close, stale quotes, delayed sportsbook response, quote availability and price-impact half-life.
+- M06 discrete/integer/continuous outcome PMFs and tails, zeros, push/void/DNP/action rules, threshold inclusion, integer-vs-half-integer coherence and distribution support.
+- M07 standard and alternate lines derive from one coherent distribution; cross-market consistency (targets ≥ receptions, target/receptions/yardage/TD and game/team/player opportunities), accounting for statistical exceptions and market definitions.
+- M08 joint player/game distributions with shared game script, team opportunity budget, weather and injury shocks; correlated bets and same-game portfolio limits; never assume independent SGP legs.
+- M09 uncertainty-aware probability/EV and price-specific NO_PLAY; early vs final decisions, public selector gate separate from research board, published snapshot immutable.
+- M10 sportsbook-specific settlement rules, game-shortening, stats corrections, partial appearance, pushes, voids, DNP, injuries and official grading vs book contract.
+- M11 realized hit rate at matched usable operational volume **separately** from actual-price realized ROI/profit, by market, price band, year, season, kickoff wave and eligible population. CLV is a separate descriptive diagnostic, not realized winnings.
+- M12 player/game clustering, multiple-testing/research degrees of freedom, uncertainty, drift by season/coach regime, calibration by predicted confidence and observed reliability.
+- M13 full-candidate and rejected-candidate records: why no pick, counterpart market quotes, candidate availability and cutoff, missed prices, excluded markets, so selectors can be fairly replayed.
+- M14 coherent joint scoring/margin and touchdown-count distributions with goalline/drive/possession model, rather than independent per-market estimates.
+
+## 9. Evidence, reliability, product and research controls (E)
+
+- E01 champion B0 vs frozen challengers with same actual candidate universe, timing, market, eligible slate/date allocation and legitimate usable count; report overlap/added/removed, not just aggregate-N.
+- E02 proper scores/calibration AND realized selected hit rate and price-specific realized return; uncertainty/significance with game/player correlation, coverage, missingness and selection bias.
+- E03 source rights, exact raw bytes/digests, reproducible feature/model/experiment identities, fit/held-out separation, hyperparameter preregistration, model freshness and training-serving parity.
+- E04 point-in-time source vintages and data revisions, knowledge vs publication vs observation clocks, no closing-line/settlement leak, no retrospective rewrite of prospective evidence.
+- E05 market-eligible grade completeness, official final vs provisional states, delayed/cancelled/void outcomes, settlement correction, first public exposure proof and immutable customer History.
+- E06 model fallback, stale/missing feed gate, identity conflicts, atomic artifacts, concurrency-safe updates, retries, incident recovery, controlled real end-to-end workflows vs CI-only success.
+- E07 source coverage by team/season/game/position/market, MNAR missingness/survivorship, prospective shadow capture completeness and cost/supply feasibility.
+- E08 first-class early leans, final eligible picks, customer explanations with explicit source/time/uncertainty, meaningful alerts on changed prices/news, website grading/history reliability.
+- E09 cost/rate limits, request load, no unauthorized terms bypass, privacy and source security, legal/consumer-facing compliance by jurisdiction, model change governance and Jacob-specific approvals.
+- E10 separate historical model research, prospective full-candidate shadow, and immutable public-pick scoreboard; never blend their results or infer historical publication.
+
+## 10. Further angles to investigate — SUPERCHAD NEW CANDIDATES, NOT ESTABLISHED GAPS OR PROVEN ADVANTAGES (X)
+
+Claude must independently verify which already exist or lack usable sources, and propose additional hypotheses *without* copying this list as its own brainstorming.
+
+- X01 **Model causal chain:** team plays → route/attempt opportunities → target/carry share → efficiency → player outcome; explicit uncertainty propagation and team-level budget reconciliation.
+- X02 **Availability-aware predictive mixtures:** probabilities of player active/limited/early exit, alternate depth-chart/player lineup states; separate sportsbook action/void rules.
+- X03 **Game-clock/drive simulator:** penalties, sacks, turnovers, possessions, fourth downs, special teams, two-minute and overtime; calibrate against simpler team-volume baselines.
+- X04 **Coverage/pressure counterfactuals:** offense adaptation to opponent pressure/coverage conditioned on personnel vs observational confounding; guard against over-interpreting small charting cells.
+- X05 **Route tree opportunity:** all eligible routes including no-target routes, blocker/decoy role, motion-created coverage shift, protection-to-route conversion and QB read order as observable.
+- X06 **Offensive-line communication and replacement chemistry:** starter combinations, center/QB continuity, pressure from blitz pickup, run-block cohesion; measure prior to kickoff.
+- X07 **Defensive matchup reallocation:** shadow corner assignment and double/bracket scenarios conditional on formations, receiver alignment and game score.
+- X08 **Data quality as a modeled signal:** observation camera visibility, charting disagreement, source publication lag, news source independence, uncertainty/missingness as an explicit reason to abstain.
+- X09 **Market microstructure:** quote delays, alternative book lines, liquidity/limits, stale-but-displayed quotes, suspension, playable window and transaction feasibility; do not imply guaranteed execution.
+- X10 **Outlier tail mechanisms:** low-volume players, TD rarity, multi-TD and large-yardage games, overdispersed opportunities, shared/team scoring shock, adverse injury tail.
+- X11 **Selection opportunity cost:** one thesis/one best wagerable expression vs duplicate correlated props; exact-N refill, same-day opportunity and legitimate prices.
+- X12 **Continuous validation and drift:** new coach/QB and depth-chart turnover, roster vintage changes, data schema changes, model-training vs live-feature mismatch, calendar/season transitions.
+- X13 **Market-based blind-spot diagnosis:** analyze when our predictions disagree with market and whether discordance follows actual player news, role or scheme; do not treat movement as automatic truth.
+- X14 **Observation-to-decision latency:** news published vs fetched vs scored vs book repriced vs customer surfaced; stale inference/price gate at every step.
+- X15 **Negatives and censoring:** DNP/snap-zero, called-back plays, penalties and stat corrections, suspended games, unobservable film fields, missing historical prices, no-offer censoring.
+- X16 **Special teams/kicker/defense model families:** field-goal attempt distance, kicking weather and holder/long-snapper changes, punt/return chances, defensive sacks/turnovers/TDs with event-specific market rules.
+- X17 **Unpriced risk:** correlated entries, opportunity concentration, book access differences, user eligibility and cumulative exposure; assess as portfolio constraints, not a claim of risk-free EV.
+- X18 **Research governance:** feature ablation/negative-control exposures, no double counting across correlated factors, multiple-testing control, experiment stop criteria and team/season holdouts.
+
+## 11. Twenty previously identified extras — explicitly retained (crosswalk)
+
+These must remain individually auditable even where grouped above:
+
+| Exact requirement | Primary requirement ID(s) |
+|---|---|
+| 1. Route-specific target probability | P07, F07 |
+| 2. QB progression/read preferences | P09, F04 |
+| 3. Receiver separation vs catch-point | P08, F04 |
+| 4. Player substitutions | R03, F03 |
+| 5. QB–receiver chemistry | P10 |
+| 6. Fatigue/workload sustainability | P11, R06 |
+| 7. Defensive replacement effects | D07, N06 |
+| 8. Defensive coverage disguises | D02, F03 |
+| 9. Defensive funnels | D04 |
+| 10. Defensive adjustment tendencies | D08, C05 |
+| 11. Opening-drive/scripted plays | C03 |
+| 12. Coaching exploitation of defensive weaknesses | C04 |
+| 13. Post-bye player usage | R06, C06 |
+| 14. Documented milestones/incentives | C08 |
+| 15. Market movement vs information arrival | M05, X14 |
+| 16. Cross-market probability consistency | M07, M08 |
+| 17. Game-script-conditional performance | G02, C07 |
+| 18. Game-plan uncertainty | C07, X02 |
+| 19. Confidence vs actual historical reliability | M12, E02 |
+| 20. Sportsbook-specific differences | M03–M05 |
+
+## 12. Current verified integration caution (a dated checkpoint, not static truth)
+
+- On 2026-09-23 PR #176 was merged as **research-only** role-adjusted receptions connector. Its documented historical 2022–2025 held-out target-share MAE was 0.06196 (n=449) vs no-adjustment MAE 0.06050 (n=441): not a matched-population win. Do not promote because the connector works.
+- PR #172 merged frozen receptions research-challenger connector. First real forward paired capture/settlement must be verified independently rather than inferred from the merge.
+- PR #175 roster re-pin remained open on this snapshot. Verify current source hash and PR state before any further live work.
+- PR #174 real FTN charting adapter remained draft and research-only; it contains no independent footage watching and no live predictive consumer. PR #170 film prototype is synthetic-only and unmerged.
+- MLB PR #173 and NFL PR #176 merges and the 463-pick MLB public History recovery were reported and independently corroborated at the repository/PR layer; do not rerun a closed incident without new evidence.
+- The currently inspected `nfl/research/receptions_shadow.py` B0 relies on recent player receptions and historical residuals, not the full expected team plays × player routes × target probability × catch probability mechanism. Other football research modules are **not automatically live consumers**.
+
+## 13. Claude's independent adversarial brainstorming obligation
+
+**Claude must brainstorm *before reading Section 10* if possible in its own environment, or explicitly label independent findings vs items reproduced from this spec.** It must not merely produce more attractive headings. Require: (a) at least 15 concrete additional testable angles across player, coach, opponent, film, game/clock, odds, data acquisition, grading, and customer usability; (b) remove duplicates after crosswalk; (c) distinguish observable evidence from speculative storytelling; (d) for each genuine novel factor, provide hypothesis, legal source/coverage, unit/denominator, point-in-time cutoff, intended live consumer, target market, negative control, likely confounder, blockers/cost and falsification experiment; (e) actually implement the most tractable high-value missing *consumer* under separate scoped mission ownership, not just another document; (f) preserve rejected ideas with reason rather than deleting.
+
+Inspect `AGENTS.md`, `CLAUDE.md`, `engineering/PROJECT_STATE.md`, `engineering/ENGINEERING_HANDOFF.md`, Issue #91 and the actual current live NFL workflow before assigning statuses. Account for existing Codex claims and do not edit their files without bridge handoff. This permanent requirements document is a starting obligation, not a claim of comprehensive discovery. When Claude proposes additions, append them in a versioned new section with source/hypothesis and supersession history, and update the existing single authoritative factor-status matrix rather than create another competing inventory.
+
+**Authorization:** Recording requirements, source investigation, branch implementation, tests, independent reviews and draft PRs may proceed within existing authorization. Any merge/deploy/model or public-pick promotion, paid footage source, new paid service or policy change still requires Jacob's explicit applicable approval.
+
+Alligator.
