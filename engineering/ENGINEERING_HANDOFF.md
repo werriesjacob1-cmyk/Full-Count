@@ -5555,3 +5555,71 @@ merged -- independent review + Jacob's separate explicit authorization
 required, same doctrine as every other PR.
 
 Alligator
+
+## 2026-09-23 -- SUPERCLAUDE MISSION 8, Workstream A: QB-change-aware
+## team-dropback consumer + real PR #177 correction pushed
+
+**Workstream A (my ownership)**: `nfl/research/qb_change_team_dropbacks.py`
+connects the real, previously-unconsumed strictly-prior QB-starter-identity
+substrate (`qb_continuity_features.py` -- its own docstring states it is
+never wired into any model) to the existing per-player opportunity-
+projection chain (`receptions_team_opportunity_challenger.py`, reused
+read-only, zero bytes changed). Structurally mirrors the already-merged
+coaching-aware consumer (PR #179/#181) but keyed on real recorded QB
+pass-attempt identity instead of HC identity -- the real P10 factor
+("account for QB change effects on ALL teammates").
+
+**Real, disclosed result on the main matched population** (same real
+2025-week-8+ population precedent as the coaching/snap-share ablations,
+n=3,059): baseline (existing coaching-aware engine) MAE=1.386444868319182
+vs QB-aware MAE=1.38511789320672 -- a negligible, inconclusive difference,
+not a demonstrated win. The feature is far more ACTIVE than the coaching
+feature (1,027/3,059 = 33.6% of real projections changed, vs 0/2,954),
+since real in-season QB changes are more common than real in-season HC
+changes, but higher activation did not translate into measured accuracy
+gain.
+
+**Real named single-player demonstration** (not synthetic, not tomorrow's
+not-yet-available inactive, per Mission 8's own explicit allowance): real
+2025 week 8, Baltimore, DeAndre Hopkins (`00-0030564`), real incumbent
+Cooper Rush (`qb_tenure_starts=2`). Baseline projection 2.561 receptions
+(`model_over_probability=0.596`) vs QB-aware projection 2.408
+(`model_over_probability=0.500`) -- target share/catch rate held
+identical, isolating exactly what the QB feature changed. A real
+DECREASE, not a uniform inflation of every teammate.
+
+**Real largest activation** (non-cherry-picked scan of every real
+(team, season, week) in the 2023-2025 starter substrate, same methodology
+as Mission 6's real 2026 snap-share example): New Orleans week 9 2025,
+real incumbent Tyler Shough (`qb_tenure_starts=1`), a real 21.6-dropback
+difference -- disclosed as a real but `n=1` single-game, high-variance
+sample, not a well-calibrated number.
+
+**Explicit NO_ADJUSTMENT path**: `NO_ADJUSTMENT_INSUFFICIENT_QB_TENURE_
+HISTORY` status when a real incumbent is resolved but no team box score
+yet exists under that identity. Never activates on completed historical
+seasons (by construction every played game already has a box score by
+the time this script scores it) -- proven correct by dedicated unit
+tests instead, with an honest disclosure of why a live-data example of
+this exact branch isn't available from historical data.
+
+**Tests**: 18 new (`nfl/tests/test_qb_change_team_dropbacks.py`). Full
+`nfl/tests`: 1041/1041 in an isolated worktree off current main (1023
+baseline + 18 new).
+
+Branch `claude/nfl-qb-change-opportunity-20260923`. Draft PR #185, not
+merged -- independent review requested (Issue #91 comment `5800930623`)
++ Jacob's separate explicit authorization required.
+
+**Deliverable E (PR #177 correction)**: pushed the actual proposed
+Section 12 refresh (citing every real PR #178-185 outcome) and the
+Section 0 "consumed vs. passed-through" epistemic-rule addition (real
+PR #179/#181 coaching-filter example) directly to PR #177's own branch
+`superchad/nfl-intelligence-completeness-20260923`, head `fcd9094dba` --
+per Mission 8's explicit new instruction to make the real edit rather
+than leave it as a review comment (comment `5800054493`, from Mission 7).
+Also corrected a stale claim: PR #175 (roster re-pin) is CLOSED, not
+open -- superseded by PR #178's schema/sanity-check pattern. No merge
+action taken or requested; remains Jacob's separate decision.
+
+Alligator
