@@ -9,6 +9,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import io
+import json
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 import re
@@ -27,6 +28,16 @@ def _time(value):
     return parsed.astimezone(timezone.utc)
 
 
+def _rows_digest(rows):
+    return hashlib.sha256(json.dumps(rows, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+
+
+def _value(value):
+    if value is None or str(value).strip().lower() in {"", "na", "nan", "null", "none", "unknown"}:
+        return None
+    return str(value).strip()
+
+
 def capture(raw: bytes, *, kind: str, season: int, captured_at: str):
     """Hash exact bytes and parse a caller-acquired documented public release."""
     if kind not in FIELDS or isinstance(season, bool) or not isinstance(season, int) or season < 2023:
@@ -38,20 +49,25 @@ def capture(raw: bytes, *, kind: str, season: int, captured_at: str):
     if not rows or not required.issubset(rows[0]):
         raise ValueError("source schema missing identity")
     return {"kind": kind, "season": season, "captured_at": captured_at,
-            "sha256": hashlib.sha256(raw).hexdigest(), "rows": rows,
+            "sha256": hashlib.sha256(raw).hexdigest(), "rows_sha256": _rows_digest(rows), "rows": rows,
             "url": f"https://github.com/nflverse/nflverse-data/releases/download/{stem}/{stem}_{season}.csv",
             "license": LICENSE, "attribution": "FTN Data via nflverse",
             "observation_kind": "THIRD_PARTY_CHARTING_NOT_FILM_VIEWED"}
 
 
-def bind_pass_targets(source, pbp_rows, *, pbp_captured_at: str, cutoff: str):
+def bind_pass_targets(source, pbp_rows, *, pbp_sha256: str, pbp_captured_at: str, cutoff: str):
     """Bind only prior, legal targeted forward passes; retain all source unknowns.
 
-    PBP capture itself must be before cutoff; caller must preserve its raw digest.
+    PBP capture itself must be before cutoff. The caller supplies its raw digest
+    at the trusted acquisition boundary; rows must derive from those same bytes.
     Same UTC date games are conservatively excluded without inventing end times.
     No assumptions about availability based on game's historical date/date_pulled.
     """
     stop = _time(cutoff)
+    if not isinstance(pbp_sha256, str) or not re.fullmatch(r"[0-9a-f]{64}", pbp_sha256):
+        raise ValueError("PBP SHA256 required")
+    if source.get("rows_sha256") != _rows_digest(source["rows"]):
+        raise ValueError("source rows modified after capture")
     if max(_time(source["captured_at"]), _time(pbp_captured_at)) > stop:
         raise ValueError("source unavailable at cutoff")
     if source["kind"] not in FIELDS:
@@ -91,9 +107,11 @@ def bind_pass_targets(source, pbp_rows, *, pbp_captured_at: str, cutoff: str):
         result.append({"game_id": key[0], "play_id": key[1], "receiver_gsis_id": receiver,
                        "offense": pbp["posteam"], "defense": pbp["defteam"],
                        "complete_pass": pbp.get("complete_pass"),
-                       "charting": {field: chart.get(field) or None for field in FIELDS[source["kind"]]},
-                       "source_sha256": source["sha256"], "available_at": max(_time(source["captured_at"]), _time(pbp_captured_at)).isoformat()})
+                       "charting": {field: _value(chart.get(field)) for field in FIELDS[source["kind"]]},
+                       "source_sha256": source["sha256"], "pbp_sha256": pbp_sha256,
+                       "available_at": max(_time(source["captured_at"]), _time(pbp_captured_at)).isoformat()})
     return {"rows": result, "excluded": dict(excluded), "source_rows": len(seen),
+            "source_sha256": source["sha256"], "pbp_sha256": pbp_sha256,
             "cutoff": cutoff, "status": "DESCRIPTIVE_RESEARCH_ONLY"}
 
 

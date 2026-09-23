@@ -10,7 +10,7 @@ class TacticalSourceTests(unittest.TestCase):
         self.pbp = {'game_id': '2024_01_TEN_CHI', 'play_id': '41', 'game_date': '2024-09-08', 'pass_attempt': '1', 'play_type': 'pass', 'no_play': '0', 'receiver_player_id': '00-0031234', 'posteam': 'TEN', 'defteam': 'CHI', 'complete_pass': '1'}
 
     def bind(self, rows=None, cutoff='2026-09-23T00:00:00Z'):
-        return bind_pass_targets(self.source, rows or [self.pbp], pbp_captured_at='2026-09-22T22:24:42Z', cutoff=cutoff)
+        return bind_pass_targets(self.source, rows or [self.pbp], pbp_sha256='a'*64, pbp_captured_at='2026-09-22T22:24:42Z', cutoff=cutoff)
 
     def test_partial_fields_are_useful_and_unknown_not_false(self):
         result = summarize(self.bind())
@@ -28,9 +28,29 @@ class TacticalSourceTests(unittest.TestCase):
             self.bind([self.pbp, self.pbp])
 
     def test_duplicate_chart_rejected(self):
-        self.source['rows'] *= 2
+        self.source = capture(self.raw + self.raw.splitlines(keepends=True)[1], kind='participation', season=2024, captured_at='2026-09-22T22:24:42Z')
         with self.assertRaisesRegex(ValueError, 'duplicate chart'):
             self.bind()
+
+    def test_source_mutation_rejected(self):
+        self.source['rows'][0]['route'] = 'GO'
+        with self.assertRaisesRegex(ValueError, 'modified'):
+            self.bind()
+
+    def test_pbp_digest_preserved(self):
+        result = self.bind()
+        self.assertEqual(result['pbp_sha256'], 'a'*64)
+        self.assertEqual(result['rows'][0]['pbp_sha256'], 'a'*64)
+
+    def test_unknown_sentinels(self):
+        for sentinel in ['NA', 'null', '   ', 'UNKNOWN']:
+            raw = self.raw.replace(b'MAN_COVERAGE,,FALSE', ('MAN_COVERAGE,'+sentinel+',FALSE').encode())
+            self.source = capture(raw, kind='participation', season=2024, captured_at='2026-09-22T22:24:42Z')
+            self.assertEqual(summarize(self.bind())['field_coverage']['route']['unknown'], 1)
+
+    def test_missing_pbp_digest_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'SHA256'):
+            bind_pass_targets(self.source, [self.pbp], pbp_sha256='', pbp_captured_at='2026-09-22T22:24:42Z', cutoff='2026-09-23T00:00:00Z')
 
     def test_unknown_target_is_not_bound(self):
         self.pbp['receiver_player_id'] = ''
