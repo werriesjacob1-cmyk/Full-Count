@@ -5555,3 +5555,114 @@ merged -- independent review + Jacob's separate explicit authorization
 required, same doctrine as every other PR.
 
 Alligator
+
+## 2026-09-23 -- MISSION 8 WORKSTREAM B: NFL rushing-yards baseline +
+## feature-informed challenger (NFL-MISSION8-WORKSTREAM-B-RUSHING-YARDS-20260923)
+
+**Why rushing yards.** Delegated as Mission 8 Workstream B (Issue #91
+comment `5800776915`): at least one additional real NFL predictive market
+beyond receptions, connected to an existing already-ingested source, with a
+matched simpler-control-vs-challenger evaluation. Surveyed `nfl/research/`,
+`nfl/tests/`, and `.github/workflows/` first: passing yards
+(`passing_yards_baseline_research.py`) and receptions
+(`receptions_baseline_research.py` and several downstream modules) both had
+baseline research, and game-level markets had extensive `b0`/`c1`/`c2`/`c3`
+work, but **no rushing-yards module of any kind existed anywhere in the
+repository**. That is the real, previously-uncovered gap this workstream
+fills.
+
+**No new ingestion.** `nfl/research/nflverse_full_audit.py`'s own `NUMERIC`
+field list has always included `carries` and `rushing_yards` -- the already-
+ingested, already-audited `stats_player_week_<season>.csv` corpus always
+covered rushing volume and production. `nfl/research/rushing_yards_
+baseline_research.py` reuses that exact corpus and the same pinned audit
+manifest (`engineering/evidence/nflverse_weekly_stats_full_audit_2026-09-
+14.json`) that `passing_yards_baseline_research.py` and `receptions_
+baseline_research.py` already consume, with the same fail-closed byte-size
++ SHA-256 verification contract (raises `RushingYardsDataError` on drift,
+never silently proceeds).
+
+**Two real models compared on the same matched population** (unlike
+`receptions_baseline_research.py`, which established B0 alone with no
+challenger): `b0`, a simpler rolling-mean control (mean rushing yards over
+the last five rushing-role-positive appearances, `carries > 0`, minimum
+three such appearances); and `c1_carries3_times_ypc8`, a feature-informed
+challenger structurally identical to `passing_yards_baseline_research.py`'s
+already-established `c2_attempts3_times_ypa8` pattern (mean carries over
+three prior rushing-role appearances, multiplied by aggregate rushing
+yards-per-carry over up to eight prior rushing-role appearances) -- a
+genuinely different signal (recent workload x standing efficiency) than
+B0's raw yards rolling mean, not a relabeling of it.
+
+**Real, honest result -- a disclosed negative finding.** Using the same
+fixed, predeclared partitions and rejection rule already established for
+passing yards (reject only if validation AND held paired MAE delta are both
+`>= 0`, not retuned against these results): development (2000-2019,
+n=35,869) MAE delta -0.051; validation (2020-2022, n=5,994) MAE delta
++0.0096; held (2023-2025, n=6,149) MAE delta +0.237. **The challenger does
+NOT beat B0** -- `REJECTED_RESEARCH_CHALLENGER` per the predeclared rule. A
+player-clustered bootstrap on the held partition (2,000 resamples, 436
+players, seed 20260923) gives a 95% interval of **[+0.083, +0.391]** for
+the challenger-minus-B0 delta, entirely on the "worse" side of zero -- a
+reliable, not marginal, negative result. This recurrence (the analogous
+`c2_attempts3_times_ypa8` challenger was also rejected for passing yards)
+is itself worth recording: a workload x efficiency recombination does not
+appear to add value beyond a player's own recent rolling yardage mean in
+this codebase's rolling-origin evaluation framework, at least for these two
+markets and this feature construction.
+
+**Real data-quality finding.** Unlike receptions' confirmed 2003-2008
+`targets`-column blackout (documented in `receptions_baseline_research.py`
+itself), a full scan of the pinned 1999-2025 corpus for `carries` and
+`rushing_yards` found **no season-level coverage gap** in either column --
+zero blank/invalid numeric values in every one of the 27 audited seasons. A
+small, disclosed anomaly was found and reported rather than hidden: 12 of
+476,159 total rows (1999-2025) have `carries == 0` with nonzero
+`rushing_yards` (a known nflverse quirk, e.g. a lateral or fumble-recovery
+return credited as rushing yardage without a charted carry). These rows are
+excluded from the rushing-role-positive population by the same `carries >
+0` gate that defines it, and the exclusion count is reported under
+`rushing_stat_invariant_failures.production_with_zero_carries` rather than
+silently dropped.
+
+**Real evaluation artifact.** `engineering/nfl_rushing_yards_baseline_
+20260923/rushing_yards_real_evaluation.py` loads the real, pinned,
+already-audited corpus and writes the real, reproducible
+`rushing_yards_real_evaluation_report.json` (per-partition/per-model
+MAE/RMSE/bias, the paired comparison, the player-clustered bootstrap, and
+the same `REJECTED_RESEARCH_CHALLENGER` decision reported above); README.md
+in the same directory carries the full honest write-up including the
+negative findings above.
+
+**Tests**: 16 new (`nfl/tests/test_rushing_yards_baseline_research.py`)
+covering PIT-safety (the history deque is appended to only after the
+current row's prediction is computed, so no lookahead into the row being
+predicted), fail-closed loader errors (byte-size drift, SHA-256 drift,
+wrong season count, missing-identity population drift, a missing cached
+file), abstention below the minimum-three-appearances gate (`None`, never
+a fabricated value), a zero-carries divide-by-zero guard in
+`rolling_predictions` itself (defense in depth beyond the loader's own
+gate), and the real 12-row zero-carries-nonzero-yards invariant. Full
+`nfl/tests` on this branch (based on `origin/main`, not including PR
+#184's still-unmerged `test_opportunity_ablation_2024_gating.py`):
+1057/1057.
+
+**What this does NOT do**: no live workflow wiring (no `.github/
+workflows/*.yml` files touched or added) -- research module + real
+evaluation only, matching the established two-step precedent in this
+repository. No promotion, no production/selector/public-artifact change.
+Does not touch `price_aware_offers.py`, any workflow YAML, the live B0
+game-market selector, `receptions_team_opportunity_challenger.py`,
+`qb_change_team_dropbacks.py` (Mission 8 Workstream A, active
+concurrently), or `role_regime_redistribution.py`. No investigation yet
+into WHY the workload x efficiency decomposition underperforms B0 for
+rushing yards specifically, matching the same open-question framing
+already established for the analogous passing-yards and receptions-
+opportunity findings in this repository -- a real, disclosed, concrete
+next milestone.
+
+Branch `claude/nfl-rushing-yards-baseline-20260923`. Draft PR, not merged --
+independent review + Jacob's separate explicit authorization required, same
+doctrine as every other PR.
+
+Alligator
