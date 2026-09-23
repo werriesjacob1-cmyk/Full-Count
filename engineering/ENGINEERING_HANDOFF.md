@@ -5645,7 +5645,18 @@ a fabricated value), a zero-carries divide-by-zero guard in
 gate), and the real 12-row zero-carries-nonzero-yards invariant. Full
 `nfl/tests` on this branch (based on `origin/main`, not including PR
 #184's still-unmerged `test_opportunity_ablation_2024_gating.py`):
-1057/1057.
+**1039/1039** (1023 baseline at this branch's own base SHA
+`e8cb5f9e226769cc7017b647c958ed61efa78c48` + 16 new). Correction (posted by
+independent review, Issue #91 workstream
+`NFL-PR185-PR186-INDEPENDENT-REVIEW-20260923`): the originally-reported
+`1057/1057` total was wrong by exactly 18 -- the same size as PR #185's
+concurrently-developed Workstream A test delta -- most likely counted from
+a local working copy that also held PR #185's uncommitted changes at
+report time. Independently re-run on a clean worktree of this branch's
+actual head: `python -m unittest discover -s nfl/tests -p "test_*.py"`
+-> `Ran 1039 tests ... OK`, matching `grep -rn "def test_" nfl/tests/*.py
+| wc -l` exactly. All 1039 genuinely pass; only the reported total was
+inaccurate, not the test results themselves.
 
 **What this does NOT do**: no live workflow wiring (no `.github/
 workflows/*.yml` files touched or added) -- research module + real
