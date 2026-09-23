@@ -5555,3 +5555,92 @@ merged -- independent review + Jacob's separate explicit authorization
 required, same doctrine as every other PR.
 
 Alligator
+
+## 2026-09-23 -- MISSION 7 WORKSTREAM C: component-level opportunity-engine
+## ablation on a genuinely fresh 2024 holdout
+## (NFL-OPPORTUNITY-ABLATION-2024-HOLDOUT-20260923)
+
+**Why a new holdout.** Every prior evaluation of `receptions_team_
+opportunity_challenger.py` (Missions 3, 4, 6) used the 2025 season (weeks
+8+) as its test population -- repeatedly inspected while building and
+re-checking these exact features, so no longer a fair holdout for a new
+hypothesis about the same features (this project's own anti-retuning
+doctrine). Directly follows SUPERCHAD's own suggestion (Issue #91 comment
+`5799901415`, echoed in the `NFL-MISSION7-PARALLEL-20260923` AGENT CLAIM,
+comment `5800036689`): diagnose why the opportunity/snap-share
+transformations worsen matched MAE, and test whether role signals have
+value specifically under evidenced role-change situations rather than
+being forced onto the entire population.
+
+**New script**: `engineering/nfl_opportunity_ablation_2024_holdout_20260923/
+component_ablation_2024.py`. Reuses the existing 2025 evaluation script's
+exact real-data-fetch pattern (`game_market_c2_data_prep.process_pbp_
+season` + `PBP_SOURCE_ASSET_DIGESTS` for real 2022-2024 PBP-derived team
+box scores, real 2022-2024 weekly player stats, real 2023-2024 live-fetched
+snap counts via `role_intelligence_data_prep.fetch_players_crosswalk` +
+`parse_snap_counts_csv` -- not the digest-gated `fetch_snap_count_rows` --
+and the real pinned HC registry), targeting the 2024 season weeks 8+
+instead of 2025. `receptions_team_opportunity_challenger.py` itself is
+**not modified** -- read-only reuse only. Executed against live network
+data on 2026-09-23 in ~24s; full real output committed to
+`component_ablation_2024_report.json`.
+
+**Real, matched-population findings, all on the SAME 2024 fresh holdout**:
+
+- **Core comparison** (n=2,907): B0 MAE=1.3532 vs. team-volume-only-naive-
+  share MAE=1.5044 vs. full opportunity engine (coaching-aware dropbacks x
+  shrinkage-blended share/rate) MAE=1.4555. Both real challengers are
+  WORSE than B0 -- confirming the established 2025 finding (B0 MAE=1.299
+  vs. challenger MAE=1.412) on a second, independent real population. Do
+  not conflate the two MAE figures; different matched cohorts.
+- **Coaching-adjustment isolation** (n=3,026): `coaching_aware_mae` ==
+  `naive_control_mae` == 1.4249 exactly. 0 of 3,175 eligible rows had the
+  coaching feature change the projection -- the same honest null result
+  Mission 4 found on 2025, now independently confirmed on a second season:
+  genuine in-season HC changes are rare and a week-8+ player's own
+  rolling-5 window never crosses a season boundary, so a prior season's
+  coaching change cannot fall inside it.
+- **Snap-share ablation, the gating hypothesis under test** (n=3,026):
+  unadjusted MAE=1.4249, universal (current merged form) MAE=1.6384, gated
+  ratio-outside-[0.7,1.4] MAE=1.6141 (1,010/3,026 rows gated in), gated
+  ratio-outside-[0.5,2.0] MAE=1.5785 (495/3,026 rows gated in). **Every
+  snap-share variant is worse than the unadjusted baseline** on this fresh
+  holdout -- a second, independent negative finding for the snap-share
+  adjustment, extending Mission 6's 2025 result. The one real
+  positive-direction signal: gating reduces the damage relative to
+  universal application, and more so the more selective the gate (the
+  [0.5, 2.0] band recovers 0.0599 MAE vs. universal; the tighter [0.7,
+  1.4] band recovers only 0.0243) -- directionally consistent with
+  SUPERCHAD's suggestion. But **no tested gate closes the gap with simply
+  leaving target share unadjusted** -- the best variant tested is still
+  0.1536 MAE worse than unadjusted. Read honestly: "gating reduces harm
+  relative to universal application" is supported by this evidence;
+  "gating makes the snap-share adjustment worth using" is not.
+
+**New predictive logic, tested**: `gated_snap_informed_target_share`
+(`engineering/nfl_opportunity_ablation_2024_holdout_20260923/gating.py`) --
+the one genuinely new function this workstream introduces. It only decides
+WHETHER to apply the adjustment (from the real, unclamped role-change
+ratio vs. a caller-supplied, pre-declared gate band); it delegates the
+actual rescale arithmetic unchanged to the already-merged `apply_snap_
+informed_target_share`. 7 new tests in `nfl/tests/test_opportunity_
+ablation_2024_gating.py` (loaded by explicit file path via `importlib`
+since the module lives outside the `nfl` package, alongside this
+workstream's other evidence). Full `nfl/tests`: 1030/1030 (was 1023).
+
+**What this does NOT establish**: which real mechanism causes the
+opportunity engine and snap-share adjustment to underperform B0 -- only
+that they do, now on two independent real populations. No gate threshold
+beyond the two specified ([0.7, 1.4], [0.5, 2.0]) was tested -- a more
+selective gate might recover more, but testing that would require a THIRD
+fresh holdout rather than further narrowing against this same 2024
+population, per this project's own anti-retuning doctrine. Does not
+re-test the coaching adjustment's real accuracy impact (still zero
+activating rows in this population too). Historical operational testing on
+real, already-settled games, not prospective evidence.
+
+Branch `claude/nfl-opportunity-ablation-2024-holdout-20260923`. Draft PR
+#184, not merged -- independent review + Jacob's separate explicit
+authorization required, same doctrine as every other PR.
+
+Alligator
