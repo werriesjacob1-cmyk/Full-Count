@@ -5554,4 +5554,203 @@ Branch `claude/nfl-snap-share-role-change-20260923`. Draft PR, not
 merged -- independent review + Jacob's separate explicit authorization
 required, same doctrine as every other PR.
 
+## 2026-09-23 -- MISSION 9 WORKSTREAM E: MLB full-board calibration /
+## winner's-curse investigation (MLB-FULLBOARD-CALIBRATION-20260923)
+
+**Scope correction up front, per this workstream's own brief**: the frozen
+full-board snapshot and grading mechanism (`board_freeze.py` PR
+#132/#138/#139, `board_freeze_grader.py`/`grade_board_freeze.py` PR
+#138/#163) already existed and was already running in production before
+this workstream started (first real capture 2026-09-20); draft PR #187
+added regression tests for that existing wiring only. This workstream built
+no new snapshot/freeze/grading infrastructure -- it is a pure, read-only
+analysis over the real committed `output/board_freeze*.json` files, exactly
+as instructed.
+
+**Real data verified directly (never assumed) at
+`engineering/mlb_fullboard_calibration_20260923/`**: three real dates
+(2026-09-20, 2026-09-21, 2026-09-22) currently have both a sealed board and
+a graded file; 2026-09-23's board is sealed but has no graded file yet
+(games not played). Every paired date's `board_sha256` matches its graded
+file's `source_board_sha256`. Real schema documented directly from the
+files in the module's README (candidate_id, eligibility.qc_status ∈
+{kept, qc_rejected, lineup_assumed_holdout}, selector.recommendation_status
+∈ {top_pick, lean, value, neutral, None}, selector.selected_top_pick (bool,
+per-category -- multiple True per day is real, not a bug),
+prediction.hit_probability, grade ∈ {hit, miss, ungraded}, fair_test).
+
+**PR #131 re-read before relying on it**: its 16%-match-rate caveat applied
+to a different, ad hoc join (`results/grades_*.json` picks vs.
+public_top_picks, `picks` regenerated at grading time); `board_freeze_*`
+is exactly the frozen-pregame artifact PR #131 said was missing, so that
+specific population gap is closed for this analysis -- disclosed as such,
+not silently assumed transferable to every other population question (see
+the qc_rejected blocker below, which is a different, still-open gap).
+
+**Core population used**: real candidates with `grade` in {hit, miss},
+`fair_test == True`, and a non-null `prediction.hit_probability`, from the
+three paired dates only. n=790 across 18 real games as of this run.
+`ungraded` and non-fair-test candidates are excluded, not folded in as
+misses.
+
+**A live population-instability example, disclosed rather than smoothed
+over**: `output/board_freeze_graded_2026-09-22.json` was re-graded by
+production automation mid-session (from 101/985 candidates graded, most
+games in progress, to 684/985 graded, at HEAD `d9c3c731d7`) -- the analysis
+script reads whatever is on disk at run time and its `honest_limitations`
+section is generated dynamically from the real timestamps for exactly this
+reason, never hardcoded.
+
+**Findings (all with game-clustered bootstrap 95% CIs, real n stated at
+every step -- full numbers in `report.json`/README)**:
+- Full-board calibration (5 real buckets, ~158 each): every bucket's
+  realized-hit-rate CI contains its own mean predicted probability; overall
+  gap +0.0095, 95% CI [-0.018, +0.033] -- consistent with reasonable
+  calibration at this n, not proof of general accuracy.
+- Winner's-curse test (selected `top_pick` vs. everything else): Top Pick
+  gap -0.155 (n=10, 4 real games) vs. non-top_pick gap +0.012 (n=780, 18
+  games); gap-difference point estimate -0.167, 95% CI [-0.392, +0.248] --
+  **straddles zero. Honestly inconclusive**, not a demonstrated effect and
+  not a demonstrated absence of one.
+- qc_status: `kept` (n=552) and `lineup_assumed_holdout` (n=238) both
+  reasonably calibrated, CIs overlapping. **Concrete, disclosed blocker**:
+  zero real `qc_rejected` candidates currently satisfy the fair-test+graded
+  bar (all 64 real qc_rejected candidates are from 2026-09-22; only 2 have
+  graded so far and both have `fair_test == False`) -- a QC-rejected-vs-kept
+  comparison is not answerable from real data today, not worked around with
+  new infrastructure.
+- Market breakdown: all 8 real markets with fair-test-graded evidence
+  clear n>=15; most show CIs comfortably containing zero.
+  `nrfi_combined` (n=16, 16 games) is the one market whose CI currently
+  excludes zero (gap +0.227, 95% CI [+0.032, +0.415]) -- flagged as a lead
+  to watch across more real days, explicitly not asserted as a finding at
+  n=16.
+
+**Deliverable**: `calibration_lib.py` (dependency-free quantile-bucketing +
+cluster/block-bootstrap functions, 16 unit tests in
+`test_calibration_lib.py`), `analyze_fullboard_calibration.py` (reads real
+committed JSON only, no network), `report.json` (real output), `README.md`.
+Locked next falsifiable hypothesis recorded in both `report.json` and the
+README: the same winner's-curse gap-difference test, with a predeclared
+minimum of n>=30 real fair-test-graded Top Pick candidates across >=10 real
+games before it can be run with power (current n=10 across 4 games is
+explicitly too small) -- for a **future** workstream once more real graded
+days accumulate.
+
+**What this does NOT do**: no change to `board_freeze.py`,
+`board_freeze_grader.py`, `grade_board_freeze.py`, `generate_picks.py`,
+`mlb_daily.py`, `mlb_sources.py`, any workflow YAML, or PR #187's own test
+file. No new snapshot/freeze/grading infrastructure. No model, calibration,
+or selector change. No general accuracy conclusion asserted from this small
+real sample. No merge, deployment, public pick, or grading activation.
+
+Branch `claude/mlb-fullboard-calibration-analysis-20260923`. Draft PR, not
+merged -- independent review + Jacob's separate explicit authorization
+required, same doctrine as every other PR.
+
+Alligator
+
+Alligator
+
+## 2026-09-23 -- MISSION 9 WORKSTREAM C: passing-yards alternate-line ladder
+## (NFL-PASSING-YARDS-ALT-LADDER-20260923)
+
+**Survey before writing code.** Per Mission 9's outcome-distribution/
+alt-line bullet, checked whether rushing or passing yards has an equivalent
+of the receptions market's `receptions_outcome_distribution.py` (three-way
+NORMAL/NEGATIVE_BINOMIAL/EMPIRICAL family comparison) plus
+`receptions_alt_ladder.py` (reusable coherent multi-line ladder). Rushing
+yards was excluded from scope (PR #186 already built and independently
+reviewed GO this same session; touching it would duplicate claimed work).
+Passing yards -- which already has its OWN live shadow board
+(`nfl-live-passing-yards-shadow-board.yml`), unlike the still-workflow-
+unwired receptions outcome-distribution work -- had neither: only a
+single-threshold `empirical_side_probabilities` call in
+`passing_yards_shadow.py`. This is the real gap this workstream closes.
+
+**Disclosed along the way**: grepping for actual `import` statements (not
+docstring/comment mentions) found `receptions_alt_ladder.py` itself is real,
+tested, and independently reviewed, but genuinely UNCONSUMED outside its own
+three test files -- no production module, live workflow, or challenger
+record-builder calls it. Recorded here rather than silently repeated: the
+new module's own `build_passing_yards_ladder_record` is a real internal
+consumer of its ladder functions, proven by a test that different real prior
+appearances produce a different real computed record.
+
+**New module**: `nfl/research/passing_yards_alt_ladder.py`. Reuses, unmodified:
+`receptions_alt_ladder.require_real_thresholds`/`verify_ladder_invariants`
+(fully generic already), `receptions_outcome_distribution.
+EmpiricalResidualPool` (only its bisect count queries, not `pmf`, which
+assumes a small bounded count support that does not fit passing yards) and
+`.fit_normal`/`normal_discrete_pmf`, and `alternate_line_evaluation.py`'s
+price math. New: a three-way empirical rung estimator adapted for a market
+with no small bounded outcome space, a parallel discretized-Normal-
+approximation control ladder (`normal_ladder_probabilities`), a direct
+side-by-side comparison (`compare_empirical_vs_normal`), real priced EV
+(`evaluate_ladder_with_prices`), and the end-to-end composer
+`build_passing_yards_ladder_record` (real prior appearances -> real B0 via
+`passing_yards_shadow.current_b0_projection`, reused unmodified -> both real
+ladder methods at the same real thresholds -> optional real priced EV).
+Explicit abstention (`ABSTAIN_INSUFFICIENT_B0_HISTORY`) when B0 itself
+cannot compute a projection from real supplied history, never a fabricated
+projection.
+
+**Real evaluation, honest near-null finding.** `engineering/
+nfl_passing_yards_alt_ladder_20260923/passing_yards_alt_ladder_evaluation.py`
+ran against the real pinned 1999-2025 nflverse QB corpus already verified
+byte/SHA-256-identical to `engineering/evidence/
+nflverse_weekly_stats_full_audit_2026-09-14.json` (the same manifest
+`passing_yards_baseline_research.py`/`receptions_outcome_distribution.py`
+already use -- no new source pinned, no network fetch needed). Predeclared
+BEFORE computing any held-out result (see the script's own module
+docstring): train `season <= 2022` (13,609 rows), held `2023 <= season <=
+2025` (1,875 rows, 9,334 real rung observations at five projection-relative
+predeclared offsets per row); promotion rule = empirical-residual ladder
+preferred over a Normal-approximation control iff its held-out Brier score
+for the "over" probability is strictly lower on the identical population.
+**Real result**: empirical technically clears the rule (0.240432 vs.
+0.240469 Brier), but a player-clustered bootstrap of that exact gap (2,000
+resamples, 104 real QBs, matching `passing_yards_baseline_research.
+cluster_bootstrap`'s own convention) gives a 95% interval of [-0.000276,
++0.000195] -- straddling zero. Reported honestly as a **statistical tie**,
+not upgraded into a false win merely because the point estimate cleared the
+predeclared rule -- unlike receptions' own outcome-distribution study, which
+found a real, if modest, log-likelihood edge for NEGATIVE_BINOMIAL over
+NORMAL. Full numbers, the calibration comparison (empirical's mean predicted
+over-probability sits closer to the real observed rate than Normal's,
+0.4877 vs. 0.4949 vs. actual 0.4843), and a plausible disclosed-not-confirmed
+explanation (passing yards for a real passing-role QB population is already
+close to symmetric/homoskedastic around B0, leaving little real
+distributional shape for a nonparametric pool to exploit that a two-
+parameter Normal does not already capture) are in `engineering/
+nfl_passing_yards_alt_ladder_20260923/README.md`.
+
+**Tests**: 27 new (`nfl/tests/test_passing_yards_alt_ladder.py`), covering
+both ladder methods' sum-to-one/monotonicity/push invariants, the Normal
+control's mean-shift and integer-vs-half-point push behavior, the direct
+comparison actually depending on both real inputs (not a stub), real priced
+EV wiring through `alternate_line_evaluation.py` unmodified, and the
+end-to-end record builder's abstention/consumption behavior. Full `nfl/tests`:
+1067/1067 (was 1040). `test_workflow_shell_syntax.py`: 88/88 (no workflow
+YAML touched).
+
+**What this does NOT do**: no live workflow wiring in this pass (disclosed,
+deliberate, matching the established two-step precedent already used by
+`receptions_team_opportunity_challenger.py`: research module + real
+evaluation first, live wiring as a separate later reviewed PR).
+`nfl-live-passing-yards-shadow-board.yml` and every other workflow YAML,
+`qb_change_team_dropbacks.py`, `injury_availability_features.py`, any
+"qb_availability"-named file, and `rushing_yards_baseline_research.py`/PR
+#186 are untouched, per this workstream's explicit exclusions. No historical
+sportsbook price is fabricated anywhere -- the accuracy comparison above uses
+only real realized outcomes; `evaluate_ladder_with_prices` is real and
+tested but only ever scores caller-supplied real captured quotes. A full
+NORMAL/NEGATIVE_BINOMIAL/EMPIRICAL family study (receptions' own three-way
+comparison) was not attempted for passing yards -- disclosed as a concrete,
+deliberately deferred next hypothesis, not attempted and hidden.
+
+Branch `claude/nfl-passing-yards-alt-ladder-20260923`. Draft PR, not merged
+-- independent review + Jacob's separate explicit authorization required,
+same doctrine as every other PR.
+
 Alligator
