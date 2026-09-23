@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-23T22:54:37.800341+00:00",
+  "updated_at": "2026-09-23T23:39:40.297234+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -46838,6 +46838,104 @@
         },
         "qualification_timestamp": "2026-09-23T22:50:16.368424+00:00",
         "board_timestamp": "2026-09-23T22:50:16.355204+00:00",
+        "slate_date": "2026-09-23"
+      }
+    },
+    "fc2:823894:player-663656:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823894:player-663656:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823894",
+        [
+          "player",
+          "663656"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-23",
+      "first_published_at": "2026-09-23T23:39:40.297234+00:00",
+      "publication_provenance": {
+        "artifact_id": "244fab6377c8fd933bf8ce2cca1872120aeefeb7ed95fa6dc44997f78132bc61",
+        "source_commit": "37580e6877da091918ea58670f545c3d90ddad5e",
+        "workflow_run_id": "35934405370",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-23T23:39:25.249836+00:00",
+        "data_hash": "1aa20fc8ee5c8257470c45d12d51bf45a1718861dc4c93c90e7caa6647e13c3f",
+        "live_hash": "1eb53caffc4df6d43229c31f3497179612062c1f68b7c07db6b433ba00489f42"
+      },
+      "snapshot": {
+        "id": "fc2:823894:player-663656:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823894,
+        "player_id": 663656,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Kyle Tucker",
+        "team": "Los Angeles Dodgers",
+        "matchup": "San Diego Padres @ Los Angeles Dodgers",
+        "game_start": "2026-09-24T02:10:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6828,
+        "market_odds": -185,
+        "market_implied": 0.6491,
+        "market_edge": 0.0337,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 88.3mph (league ~88.5)",
+          "L7 barrel% 25.0 \u2014 hot recent contact",
+          "Projected 4.06 PA (batting slot 6)",
+          "Hitters batting ahead of him: 0.331 wOBA (league ~.320)",
+          "Hitter batting behind him: 0.346 wOBA (league ~.320)",
+          "Team implied for 5.05 runs (league avg 4.245; line 4.5, game total 8.5) \u2014 a strong offensive environment"
+        ],
+        "watchouts": [
+          "Platoon: L bat vs LHP (unfavorable)",
+          "Opposing SP ERA 3.60 \u2014 elite pitcher, tough matchup",
+          "Season barrel% 6.6 \u2014 below-average barrel rate",
+          "Wind blowing IN (5mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 2/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "BvP: 6-for-14 vs Robbie Ray (standard error \u00b113 pts on a 14-AB career sample -- weighted lightly on that basis, not just because the count looks small)"
+        ],
+        "prob_ci": [
+          0.672,
+          0.7059
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 148,
+        "lineup_assumed": null,
+        "base_rate": 0.6715,
+        "lift": 0.0113,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "cc34bd7a8",
+          "prediction_timestamp": "2026-09-23T23:35:58.009485+00:00",
+          "odds_fetched_at": "2026-09-23T23:35:53.149837+00:00",
+          "board_generated_at": "2026-09-23T23:35:57.995339+00:00"
+        },
+        "qualification_timestamp": "2026-09-23T23:35:58.009485+00:00",
+        "board_timestamp": "2026-09-23T23:35:57.995339+00:00",
         "slate_date": "2026-09-23"
       }
     }
