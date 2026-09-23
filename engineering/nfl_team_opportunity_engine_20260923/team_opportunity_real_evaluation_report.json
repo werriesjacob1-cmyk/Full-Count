@@ -1,0 +1,91 @@
+{
+  "abstain_reason_counts": {
+    "CATCH_RATE_OUT_OF_RANGE": 24,
+    "MISSING_REQUIRED_INPUT": 159,
+    "TARGET_SHARE_OUT_OF_RANGE": 2
+  },
+  "analysis": "NFL_RECEPTIONS_B0_VS_TEAM_OPPORTUNITY_ENGINE_V1_HISTORICAL_OPERATIONAL_TEST",
+  "b0_mae": 1.2990972692394471,
+  "challenger_mae": 1.412231516436295,
+  "eligible_eval_rows_considered": 3244,
+  "eval_min_week": 8,
+  "eval_season": 2025,
+  "generated_in_seconds": 20.678367376327515,
+  "matched_n": 2954,
+  "sample_records": [
+    {
+      "b0_projection": 1.0,
+      "catch_rate_estimate": 0.5966233766233766,
+      "challenger_projection": 2.742543903742033,
+      "player_id": "00-0030035",
+      "realized_receptions": 0.0,
+      "season": 2025,
+      "target_share_basis": "SHRUNK_CURRENT_TOWARD_PRIOR_SEASON",
+      "target_share_estimate": 0.12323795730072012,
+      "team": "MIN",
+      "team_dropbacks_basis": "BLENDED_OFFENSE_AND_DEFENSE",
+      "team_predicted_dropbacks": 37.3,
+      "week": 8
+    },
+    {
+      "b0_projection": 2.8,
+      "catch_rate_estimate": 0.6800929462694169,
+      "challenger_projection": 3.7364951260655586,
+      "player_id": "00-0030061",
+      "realized_receptions": 4.0,
+      "season": 2025,
+      "target_share_basis": "SHRUNK_CURRENT_TOWARD_PRIOR_SEASON",
+      "target_share_estimate": 0.17609278235525994,
+      "team": "WAS",
+      "team_dropbacks_basis": "BLENDED_OFFENSE_AND_DEFENSE",
+      "team_predicted_dropbacks": 31.2,
+      "week": 8
+    },
+    {
+      "b0_projection": 6.4,
+      "catch_rate_estimate": 0.6533175158175157,
+      "challenger_projection": 6.537917484728565,
+      "player_id": "00-0030279",
+      "realized_receptions": 4.0,
+      "season": 2025,
+      "target_share_basis": "SHRUNK_CURRENT_TOWARD_PRIOR_SEASON",
+      "target_share_estimate": 0.2501814709707987,
+      "team": "LAC",
+      "team_dropbacks_basis": "BLENDED_OFFENSE_AND_DEFENSE",
+      "team_predicted_dropbacks": 40.0,
+      "week": 8
+    },
+    {
+      "b0_projection": 5.0,
+      "catch_rate_estimate": 0.7501100606569355,
+      "challenger_projection": 5.2976935891098655,
+      "player_id": "00-0030506",
+      "realized_receptions": 6.0,
+      "season": 2025,
+      "target_share_basis": "SHRUNK_CURRENT_TOWARD_PRIOR_SEASON",
+      "target_share_estimate": 0.1893446391300293,
+      "team": "KC",
+      "team_dropbacks_basis": "BLENDED_OFFENSE_AND_DEFENSE",
+      "team_predicted_dropbacks": 37.3,
+      "week": 8
+    },
+    {
+      "b0_projection": 1.4,
+      "catch_rate_estimate": 0.6955943362193362,
+      "challenger_projection": 2.5608459889698874,
+      "player_id": "00-0030564",
+      "realized_receptions": 1.0,
+      "season": 2025,
+      "target_share_basis": "SHRUNK_CURRENT_TOWARD_PRIOR_SEASON",
+      "target_share_estimate": 0.10458869878130556,
+      "team": "BAL",
+      "team_dropbacks_basis": "BLENDED_OFFENSE_AND_DEFENSE",
+      "team_predicted_dropbacks": 35.2,
+      "week": 8
+    }
+  ],
+  "status": "HISTORICAL_OPERATIONAL_TESTING_NOT_PROSPECTIVE",
+  "team_dropbacks_basis_counts": {
+    "BLENDED_OFFENSE_AND_DEFENSE": 3244
+  }
+}
