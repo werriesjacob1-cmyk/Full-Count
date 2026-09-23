@@ -5623,3 +5623,61 @@ open -- superseded by PR #178's schema/sanity-check pattern. No merge
 action taken or requested; remains Jacob's separate decision.
 
 Alligator
+
+## 2026-09-23 -- SUPERCLAUDE MISSION 9, Workstream B: current-week-safe
+## QB-availability gate (draft PR #189)
+
+Connects a second real, previously-unconsumed source (`nfl/research/
+injury_availability_features.py` -- its own docstring: never wired into any
+model) to PR #185's QB-continuity-aware team-dropback consumer, via a new
+module `nfl/research/qb_availability_gated_dropbacks.py`. Directly answers
+SUPERCHAD's Mission 8 checkpoint (Issue #91 comment `5800978133`):
+`resolve_incumbent_qb` is a strictly-prior historical-incumbent proxy, never
+a current-week starter confirmation. This module cannot determine a NEW
+starter's identity (no depth-chart source exists in this repo, disclosed
+not solved) but uses the real weekly injury report (filed before that
+week's own games) to classify the OLD incumbent's real current-week
+availability into four states -- `CONFIRMED_AVAILABLE` / `DISPUTED`
+(Questionable) / `EXPECTED_UNAVAILABLE` (Out/Doubtful) / `UNKNOWN` -- and
+falls back to the naive control (never a guessed new starter) whenever he
+isn't confirmed available.
+
+**Real, disclosed findings**: 83 real gate activations in a non-cherry-
+picked 2023-2025 scan (real, verifiable cases: MIN/J.J. McCarthy, WAS/
+Jayden Daniels, NYG/Tyrod Taylor, NYG/Drew Lock, LV/Geno Smith, LV/Jimmy
+Garoppolo, LV/Aidan O'Connell, GB/Malik Willis) -- far more active than the
+coaching-regime feature (0/2,954). Both directions occur (real numbers go
+both up and down), matching Mission 9's explicit requirement not to claim
+uniform teammate-level effects from a team-volume change. Real matched
+2025-week-8+ population (n=328): 309 CONFIRMED_AVAILABLE, 6 DISPUTED, 13
+EXPECTED_UNAVAILABLE (5.8% activation rate).
+
+**Two real data-quality findings, handled at the ingestion boundary without
+touching `injury_availability_features.py`**: (1) nflverse's real injury
+report carries multiple within-week update rows per player (resolved by
+keeping the latest real `date_modified` snapshot per key); (2) 6 of 6,215
+real 2024 rows carry a non-standard `"NOTE"` `report_status` value outside
+the module's documented vocabulary (excluded, counted, not guessed).
+
+**Independent review** (Issue #91 comment `5804049029`): GO. Reproduced
+every real number exactly (83 activations, all 8 named examples, the
+328/309/6/13 matched-population split, both real duplicate-key rows and
+both real "NOTE" rows independently re-fetched and confirmed) via a live
+re-execution against real nflverse data, not the PR's own word. One
+disclosed, non-blocking gap flagged: the `UNKNOWN` bucket never gates, even
+for a genuine (theoretical, pre-2009, no live relevance) case where a real
+incumbent resolves but the injury source has no coverage -- fixed by adding
+an explicit module-docstring disclosure and a dedicated end-to-end
+regression test (`test_pre_2009_season_with_a_real_resolved_incumbent_is_
+unknown_and_not_gated`) proving the module's documented conservative
+default (trust continuity absent real contrary evidence) rather than
+leaving it silently untested.
+
+**Tests**: 15 total in the file (14 -> 15 after the reviewer's flagged gap
+was closed). Full `nfl/tests`: 1056/1056 (1041 PR #185 baseline + 15 new).
+
+Branch `claude/nfl-qb-availability-gate-20260923` (stacked on unmerged
+draft PR #185). Draft PR #189, not merged -- Jacob's separate explicit
+authorization required.
+
+Alligator
