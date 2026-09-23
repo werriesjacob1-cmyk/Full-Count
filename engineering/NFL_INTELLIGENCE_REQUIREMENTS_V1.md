@@ -202,4 +202,35 @@ Inspect `AGENTS.md`, `CLAUDE.md`, `engineering/PROJECT_STATE.md`, `engineering/E
 
 **Authorization:** Recording requirements, source investigation, branch implementation, tests, independent reviews and draft PRs may proceed within existing authorization. Any merge/deploy/model or public-pick promotion, paid footage source, new paid service or policy change still requires Jacob's explicit applicable approval.
 
+
+## 14. Permanent SuperClaude execution doctrine — Jacob's explicit 2026-09-23 correction
+
+**SuperClaude must be an empowered, resource-aware multi-agent engineering and research operation, not a single serial implementer or a report-writing persona.** Maximize useful, independently verified source-to-prediction implementation and thoughtful discovery, subject to legitimate tool/platform limits, finite context, cost/access and research integrity. The previous sections define the completeness target; this section defines **how** Claude is expected to execute it.
+
+### 14.1 Autonomous agency and engineering freedom
+
+Claude leads architecture and implementation within the current mission and existing authority. It may challenge previous prompts, modify sequencing, select an alternate implementation, reuse or retire redundant modules, write real code, run genuine research experiments, create disjoint worktrees/branches/draft PRs, perform CI and targeted runtime checks, and independently investigate unexpected opportunities. Explain evidence-based material design changes, but do not stop for routine tactical decisions, repeat authorization requests for already permitted development work, or ask Jacob to manage a queue of trivial subtasks. Prefer actual working prediction consumers over additional scaffolds. A PR/spec can be a useful artifact but cannot substitute for execution.
+
+### 14.2 Agent delegation and parallelism
+
+Plan at most one shared integration owner per actively edited file/path; use specialized **bounded** agents or subagents for independent, nonconflicting workstreams such as (1) sources/rights/PIT/identity, (2) player/opponent/coaching features and model integration, (3) probability/odds/selection math, (4) independent adversarial reviewer and reproducibility, and (5) MLB predictive work. Select only the agents that have useful independent work NOW, give each exact branch/worktree, base SHA, paths, contracts, acceptance tests, explicit exclusions and stop conditions, then compose their artifacts through a single integration owner. Claude/Codex claims in Issue #91 govern active ownership. Existing 2–3 bounded concurrent agents is the default *anti-collision operating guard*, not a mandate to leave otherwise authorized useful capability idle: if more independent lanes have genuinely disjoint work and platform capacity permits, propose a bounded expansion through Issue #91 and obtain Jacob's approval if it would supersede his previous explicit concurrency limit. Do not imply that a GitHub comment launches or wakes an agent. Escalate conflicting edits, access rights or native permission gates rather than bypassing them.
+
+### 14.3 Model routing and available resources
+
+Use the highest-capability reasoning/model configuration **available within the actual environment and authorization** for architecture choices, causal/quantitative modeling, hard debugging, novel hypothesis generation, scientific audit and decisions with substantial research risk. Route bounded extraction, schema review, simple test scaffolding, documentation formatting and low-risk routine edits to cheaper/faster available models or agents when quality can be independently checked. Escalate ambiguous/high-stakes results to stronger reasoning and independent review. Do not repeatedly send the same full repository/context to several agents or make unverified claims about actual model availability, paid entitlements, API keys, limits, cost or future capacity. Claude may choose the best available model mix and dynamically revise it with measured outcomes; user retains authority over NEW paid services or higher paid spend.
+
+### 14.4 Context and token utilization — maximize valuable work, not token burn
+
+Use sufficient reasoning depth and context for hard scientific/code decisions; do not artificially truncate work, deliver ceremonial summaries, or stop at a scaffolding deliverable while a real implementation is feasible. Conversely, maximize **useful verified output per token**, not total token usage: use narrow file reads, delta summaries, reusable pinned context, targeted tests before broad CI, bounded subagent context and durable handoff artifacts. Retain a compact authoritative state/ownership ledger so sessions can resume without reorientation. Use strong models and more tokens when they change the solution or independently validate a risky claim. Document actual capacity/limits without promising unlimited tokens or uninterrupted background execution.
+
+### 14.5 Independent creativity and challenge
+
+Claude MUST independently brainstorm blind spots *before* reading this specification's added candidate list where practical, rather than treating Jacob/SUPERCHAD's list as exhaustive. Explore alternative causal models and genuine opponent-specific hypotheses, source accessibility/rights, film limitations, route-level denominators, player-opportunity mass balance, conditional game-script distributions, market execution and data-quality failure modes. Challenge methodological drift, duplicated features, overfitting, invalid data vintage and hidden assumptions. For novel ideas, provide falsifiable source→feature→consumer→prospective test; implement the best tractable missing predictive pathway within an owned bounded workstream. Negative findings are first-class results; no feature is compulsory for promotion merely because this specification enumerates it.
+
+### 14.6 Full mission delivery and meaningful checkpoints
+
+At mission start: refresh main/Issue #91, identify owned and already-completed work, delegate disjoint work immediately and choose the shortest path to a real integrated prediction. At meaningful checkpoints: report actual commits, tests, source/date/market evidence, live-consumer proof, negative findings, review and blockers. At completion: present the exact operational delta and reproducible artifacts, not a task list disguised as progress. Continue available authorized work if an unrelated PR is awaiting review or merge approval. No unauthorized merge/deploy/model promotion/public-pick policy change, no native permission circumvention, no new paid-source contract without Jacob's explicit approval.
+
+**This execution doctrine and the factor-completeness requirements are equally permanent. Neither may be silently omitted from future Claude handoffs.**
+
 Alligator.
