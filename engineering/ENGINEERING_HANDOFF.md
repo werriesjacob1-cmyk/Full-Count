@@ -4969,3 +4969,123 @@ fresh focused independent adversarial review of this delta next, per
 Jacob's explicit condition, before merge.
 
 Alligator
+
+## 2026-09-23 -- NFL receptions: connect the real, already-tested,
+## already-unwired HIERARCHICAL_COMMITTEE_PROBABILITY_V1 teammate-absence
+## redistribution model to the live B0 receptions projection
+## (NFL-RECEPTIONS-ROLE-OPPONENT-INTELLIGENCE-CONNECTOR-20260923)
+
+Per Jacob's "REAL INTELLIGENCE -> REAL PREDICTIONS" mission (Issue #91):
+find and connect existing, already-validated intelligence to a real
+prediction rather than building new infrastructure or another roadmap.
+
+**What was found, unwired.** A dedicated exploration pass across
+`nfl/research/`, `nfl/normalize/`, and every workflow's `run:` step
+confirmed `receptions_shadow.current_b0_projection` consumes ONLY a
+player's own prior-5-game rolling receptions mean -- zero opponent, role,
+or coaching signal. Meanwhile `role_regime_redistribution.py` already
+contains a real, working conditional-logit ("committee") model
+(`train_committee_model`/`predict_committee_model`) that predicts how a
+removed WR/RB's vacated target/carry share is absorbed by his teammates,
+conditioned on HC-regime tenure -- trained and held-out-evaluated on the
+real 2012-2025 nflverse teammate-absence corpus (667/668 real events).
+Grepping every workflow's embedded Python for `from nfl.research.` /
+`from nfl.normalize.` confirmed this module, `role_intelligence_*.py`,
+`qb_continuity_features.py`, `ol_continuity_prior.py`,
+`coach_regime_registry.py`, `defense_prior_features.py`, and
+`game_matchup_features.py` are imported by NO live workflow -- real,
+tested, validated substrate, completely disconnected from any prediction.
+This is the highest-leverage connection available without new
+infrastructure, so it is the one built here.
+
+**Real blocker found and fixed first.** Running the real training
+pipeline immediately failed: `role_intelligence_source_digests.
+PLAYERS_CROSSWALK_SOURCE`'s pinned `players.csv` digest had drifted a
+THIRD time (this is a living roster crosswalk nflverse republishes, not a
+fixed historical asset -- the 2026-09-19 audit already found one prior
+drift). Independently re-verified via direct `curl`+`sha256sum` (bytes
+7,234,131, sha256 `4dd70f32...c808dee`) and re-pinned; updated the one
+downstream contract test (`test_role_regime_redistribution_audit.py`)
+that pins the same value by design ("caught by this test, not silently
+drifted"). 942/942 nfl tests unaffected.
+
+**Real training run.** Reproduced `role_regime_redistribution.py`'s own
+predeclared 2012-2021 train / 2022-2025 held-out split end-to-end against
+live nflverse data (players crosswalk, 14 seasons of weekly stats, snap
+counts, depth charts, injury reports, and play-by-play; HC registry from
+the pinned `nfldata/games.csv` commit) -- 668 real WR/RB absence events,
+217 real training examples (199 ESTABLISHED_REGIME / 18
+NEW_REGIME_FIRST_30_DAYS), reproduced in 98 seconds. Full run + weights +
+held-out comparison saved to
+`engineering/nfl_role_opponent_connector_20260923/frozen_committee_training_run.json`,
+reproduction script alongside it.
+
+**Honest result -- disclosed, not suppressed.** On the real held-out set,
+`HIERARCHICAL_COMMITTEE_PROBABILITY_V1` scored MAE=0.06196 (n=449) against
+`NO_ADJUSTMENT`'s MAE=0.06050 (n=441) -- the real trained model does NOT
+beat the simplest baseline on this metric, on this population. This
+negative finding is preserved verbatim in the frozen model's own
+`held_out_finding` field, in the new module's docstring, in the evidence
+README, and asserted by a dedicated unit test so it cannot be silently
+edited away later. Per this project's own standard, a correct end-to-end
+connection is an engineering deliverable regardless of this result; no
+accuracy claim is made anywhere in this diff.
+
+**New module**: `nfl/research/receptions_role_adjusted_challenger.py`.
+`FROZEN_COMMITTEE_MODEL` is the exact trained weights above, embedded as a
+fixed constant (never retrained live, same discipline
+`receptions_frozen_challenger.FROZEN_NB_FIT` already established).
+`build_role_adjusted_challenger_record` composes REAL SOURCE (caller-
+supplied real absence event + real teammate/history data) -> VERIFIED
+IDENTITY/TIMING -> FEATURE (`predict_committee_model`, reused unmodified)
+-> OPPORTUNITY DELTA (a multiplicative rescale of B0's own real
+projection by predicted-share / own-prior-share, never a second
+independently-invented opportunity budget) -> OUTCOME DISTRIBUTION
+(`receptions_shadow.score_shadow_candidate`, reused unmodified, so
+standard and alternate lines share one real distribution by construction)
+-> frozen research record. Returns `None` -- never a fabricated
+adjustment -- whenever the candidate isn't among the real predicted
+teammates, has no real prior share, that share isn't strictly positive,
+or the resulting projection isn't strictly positive.
+
+**Real end-to-end demonstration** (not a synthetic fixture): the first
+qualifying real 2022-2025 held-out event found by an automated scan (not
+cherry-picked) is 2022 Week 4, Detroit Lions -- Amon-Ra St. Brown ruled
+real pregame `OUT`, teammate Kalif Raymond's real B0 projection (0.333
+receptions from his own real prior-3-game history) versus the real role-
+adjusted projection (0.933 receptions) once St. Brown's real vacated
+target share is redistributed by the frozen model. Full chain saved to
+`engineering/nfl_role_opponent_connector_20260923/real_end_to_end_demo.json`.
+
+**Tests**: 19 new (`nfl/tests/test_receptions_role_adjusted_challenger.py`)
+covering the real end-to-end path, wrong/missing candidate identity,
+absence of valid opportunities, zero/negative/missing prior share
+(division-by-zero guard), non-positive B0 projection, coherent standard-
+vs-alt-line ordering from one shared distribution, missing-price fail-
+closed, and that the frozen constant is never mutated by a call and its
+negative finding cannot be silently edited away. Full `nfl/tests`:
+961/961 (was 942).
+
+**What this does NOT do**: no B0 live-decision change, no model
+promotion, no public-pick policy change, no live workflow wiring in this
+diff (no real NFL slate exists this week for the live receptions board
+anyway -- Tuesday -- so a live-wiring attempt could not itself produce
+real evidence beyond what the held-out demonstration above already
+shows). Does not touch `role_regime_redistribution*.py`,
+`role_intelligence_*.py`, `coach_regime_registry.py`, Codex's claimed
+`price_aware_offers.py`/`tactical_source_adapter.py`, or PR #170/#174.
+
+**Next concrete milestone**: wire this connector into
+`nfl-live-receptions-shadow-board.yml` as a third additive side-lane
+(mirroring PR #172's exact safe pattern -- per-candidate and aggregate
+try/except, atomic write), using the workflow's already-fetched broad
+per-player weekly-stats history to rank each team's real top-usage WR and
+its already-fetched official-inactive data to detect a real live absence
+event, so the next real Sunday capture produces genuine live (not
+held-out) role-adjusted evidence.
+
+Branch `claude/nfl-role-opponent-intelligence-connector-20260923`. Draft
+PR, not merged -- independent review + Jacob's separate explicit
+authorization required, same doctrine as every other PR.
+
+Alligator

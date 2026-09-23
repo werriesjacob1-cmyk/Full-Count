@@ -125,10 +125,16 @@ class PlayersCrosswalkDigestTests(unittest.TestCase):
         # (engineering/ENGINEERING_HANDOFF.md) -- pinned here as a contract
         # so a future edit to either source is caught by this test, not
         # silently drifted.
-        self.assertEqual(PR143_PINNED_PLAYERS_CROSSWALK_DIGEST["bytes"], 7259734)
+        # Re-pinned 2026-09-23 (a third real, independently-verified drift
+        # of this living roster crosswalk asset -- see
+        # role_intelligence_source_digests.PLAYERS_CROSSWALK_SOURCE's own
+        # updated comment). This assertion tracks the current pin by design
+        # ("caught by this test, not silently drifted"), so updating it here
+        # alongside the re-pin is the intended contract, not a suppression.
+        self.assertEqual(PR143_PINNED_PLAYERS_CROSSWALK_DIGEST["bytes"], 7234131)
         self.assertEqual(
             PR143_PINNED_PLAYERS_CROSSWALK_DIGEST["sha256"],
-            "801d5fec2fc21c54ad585415e8e551ae9d1de7c601a8c3768504b7ce59b579b6",
+            "4dd70f328f31b0bb7cbf043412298d5a325863e27b8f2eeea22c9e925c808dee",
         )
         self.assertEqual(PR147_OBSERVED_PLAYERS_CROSSWALK_DIGEST["bytes"], 7291736)
         self.assertEqual(

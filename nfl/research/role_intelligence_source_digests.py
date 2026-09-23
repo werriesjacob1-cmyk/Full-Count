@@ -53,8 +53,16 @@ from __future__ import annotations
 
 PLAYERS_CROSSWALK_SOURCE = {
     "upstream": "nflverse/nflverse-data release 'players', asset players.csv",
-    "bytes": 7259734,
-    "sha256": "801d5fec2fc21c54ad585415e8e551ae9d1de7c601a8c3768504b7ce59b579b6",
+    # Re-pinned 2026-09-23 after a real, expected further drift: this is a
+    # living roster crosswalk republished by nflverse, not a fixed historical
+    # asset -- the 2026-09-19 audit (role_regime_redistribution_audit.py)
+    # already found it had moved once (7,291,736 bytes) since this original
+    # pin (7,259,734 bytes); it has since moved again. Independently
+    # re-verified via direct `curl` + `sha256sum` (not just this module's own
+    # digest-mismatch error) before repinning, same doctrine as this
+    # session's roster-source re-pins.
+    "bytes": 7234131,
+    "sha256": "4dd70f328f31b0bb7cbf043412298d5a325863e27b8f2eeea22c9e925c808dee",
 }
 
 # nflverse release tag 'depth_charts', asset depth_charts_<season>.csv.
