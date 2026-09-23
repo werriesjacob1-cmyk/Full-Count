@@ -49,6 +49,15 @@ selector, eligibility gate, or public pick. Full held-out comparison
 against all four `role_intelligence_baselines` predictors is preserved in
 `FROZEN_COMMITTEE_MODEL["held_out_report"]` below, not cherry-picked.
 
+The n=449 vs n=441 population mismatch above was flagged by independent
+review and has since been closed: `FROZEN_COMMITTEE_MODEL[
+"matched_population_confirmation"]` re-runs the identical comparison
+restricted to the (event, player) pairs every one of the five predictors
+actually predicted (n=441 for all five). The negative finding holds under
+this strict matched comparison too (committee MAE=0.062416 vs
+NO_ADJUSTMENT MAE=0.060504) -- see
+`engineering/nfl_role_opponent_connector_20260923/matched_population_report.json`.
+
 ## What this module does NOT do
 
 - Never re-trains the committee model live. `FROZEN_COMMITTEE_MODEL` is a
@@ -129,8 +138,42 @@ FROZEN_COMMITTEE_MODEL: dict[str, Any] = {
         "real, disclosed negative finding, not accuracy evidence for this "
         "challenger. It DOES beat the other three real baselines tested "
         "(PROPORTIONAL_TEAMMATE_REDISTRIBUTION 0.06396, "
-        "DEPTH_CHART_NEXT_MAN 0.07740, RECENT_USAGE_NEXT_MAN 0.08254)."
+        "DEPTH_CHART_NEXT_MAN 0.07740, RECENT_USAGE_NEXT_MAN 0.08254). "
+        "CONFIRMED under a strictly matched (event, player) population "
+        "(n=441 for all five predictors, closing the n=449-vs-n=441 gap "
+        "an independent review flagged): committee MAE=0.062416 vs "
+        "NO_ADJUSTMENT MAE=0.060504 -- the negative finding holds, and is "
+        "not an artifact of the committee model's own predicted population "
+        "being a superset of the baselines' (see "
+        "engineering/nfl_role_opponent_connector_20260923/"
+        "matched_population_report.json and matched_population_eval.py)."
     ),
+    "matched_population_confirmation": {
+        "method": (
+            "Root cause of the raw n=449 vs n=441 mismatch: "
+            "predict_committee_model starts from predict_no_adjustment's "
+            "own dict then ADDS an absorption term for every teammate with "
+            "learned features, including teammates predict_no_adjustment "
+            "itself excludes (no own prior share). This makes the "
+            "committee's predicted population a strict superset of every "
+            "baseline's. Re-run restricting every predictor to exactly the "
+            "(event, player) pairs ALL FIVE predictors produced a "
+            "prediction for on the identical real 2022-2025 held-out set."
+        ),
+        "matched_n": 441,
+        "matched_mae": {
+            "NO_ADJUSTMENT": 0.06050387800295093,
+            "PROPORTIONAL_TEAMMATE_REDISTRIBUTION": 0.06396060775856668,
+            "DEPTH_CHART_NEXT_MAN": 0.07739678825309278,
+            "RECENT_USAGE_NEXT_MAN": 0.08254290234546448,
+            "HIERARCHICAL_COMMITTEE_PROBABILITY_V1": 0.0624156172516236,
+        },
+        "reproduced_at": "2026-09-23",
+        "evidence": (
+            "engineering/nfl_role_opponent_connector_20260923/"
+            "matched_population_report.json"
+        ),
+    },
     "players_crosswalk_digest_bytes": 7234131,
     "games_csv_digest_sha256": "26332ae5d8d8d0481f0670cf5e3849497a415351d4026ae5bee15a5aab96d188",
     "status": "RESEARCH_ONLY_NOT_PROMOTED",

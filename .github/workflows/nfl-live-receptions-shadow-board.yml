@@ -95,6 +95,10 @@ jobs:
           )
           from nfl.prospective.shadow_snapshot import seal_snapshot, validate_pregame_timing
           from nfl.research import nflverse_history as nh
+          from nfl.research.receptions_role_adjusted_challenger import (
+              FROZEN_COMMITTEE_MODEL,
+              build_role_adjusted_challenger_record,
+          )
           from nfl.research.receptions_frozen_challenger import (
               FROZEN_NB_FIT,
               compare_b0_vs_frozen_challenger,
@@ -142,15 +146,11 @@ jobs:
               "https://github.com/nflverse/nflverse-data/releases/download/"
               "rosters/roster_2026.csv"
           )
-          # Re-pinned 2026-09-20 after a real, expected further drift: the
-          # 2026-09-19 pin (8d6496372133d5a9d683b0f48402bf4a2b8b96eae85c5d6b88093bb9094c3dbe)
-          # was itself stale by today -- real season transactions keep
-          # moving the roster forward. Same live SHA the passing-yards
-          # workflow was just re-pinned to, independently re-verified
-          # before repinning: 944,684 bytes, sha256 07a874aa...4d60b9.
-          ROSTER_SHA = (
-              "07a874aa3cf8918db46aa8206968ee2c3a36845d62cd3ea208fa0efc664d60b9"
-          )
+          # No exact byte/sha256 pin for this live, weekly-changing asset --
+          # see the schema/sanity-validation block below for why an exact
+          # pin was replaced (real drift 3 times in ~30 hours: 2026-09-19,
+          # 2026-09-20, 2026-09-22). `roster_sha` is still computed and
+          # recorded into this run's own sealed evidence for provenance.
           PLAYER_SHA = {
               2023: "f19cb71a5de0dce7fd09376026237c9ee9d5a93fe13815a2ea3ec2d37204cb17",
               2024: "3ddc45a84f759aa348ce465ae001752c530575455717657cdfe1f8abfcdb4759",
@@ -195,17 +195,53 @@ jobs:
               "User-Agent": "Full-Count NFL live receptions shadow board audit"
           })
 
-          # ---------- current roster, pinned after explicit repin audit ----------
+          # ---------- current roster: schema/sanity-validated, not byte-pinned ----------
+          # `roster_2026.csv` is a LIVE, frequently-republished asset -- real
+          # season transactions change its bytes continuously (this exact
+          # file drifted 3 times in the ~30 hours before this fix: 2026-09-19,
+          # 2026-09-20, 2026-09-22, each requiring a manual re-pin + PR before
+          # the workflow could run at all). An exact byte/sha256 pin is the
+          # right invariant for a FIXED historical asset (see ROSTER_SHA's
+          # sibling PLAYER_SHA below, and every per-season digest this repo
+          # pins elsewhere) -- it is the WRONG invariant for a living,
+          # intentionally-changing-every-week roster, where "drift" from a
+          # stale prior-day pin is the expected, healthy case, not a
+          # corruption signal. Replacing the exact pin with real schema and
+          # sanity checks preserves fail-closed behavior against genuine
+          # corruption/truncation/schema breaks (the actual risks this gate
+          # exists to catch) without requiring a human to re-verify and
+          # re-pin a hash after every real roster transaction.
+          ROSTER_REQUIRED_COLUMNS = {
+              "gsis_id", "team", "position", "status", "full_name", "esb_id",
+          }
+          MIN_ROSTER_ROWS = 1500
+          MAX_ROSTER_ROWS = 4000
+          MIN_ROSTER_TEAMS = 32
+
           rr = session.get(ROSTER_URL, timeout=60)
           rr.raise_for_status()
           roster_sha = hashlib.sha256(rr.content).hexdigest()
-          if roster_sha != ROSTER_SHA:
-              raise SystemExit(
-                  f"2026 roster drift {roster_sha} != pinned {ROSTER_SHA}"
-              )
           roster = list(csv.DictReader(io.StringIO(rr.text)))
           if not roster:
               raise SystemExit("empty 2026 roster")
+          missing_columns = ROSTER_REQUIRED_COLUMNS - set(roster[0].keys())
+          if missing_columns:
+              raise SystemExit(
+                  f"2026 roster schema break: missing required columns {sorted(missing_columns)} "
+                  f"(real columns: {sorted(roster[0].keys())})"
+              )
+          if not (MIN_ROSTER_ROWS <= len(roster) <= MAX_ROSTER_ROWS):
+              raise SystemExit(
+                  f"2026 roster row count {len(roster)} outside plausible bounds "
+                  f"[{MIN_ROSTER_ROWS}, {MAX_ROSTER_ROWS}] -- possible truncated/corrupt fetch"
+              )
+          roster_teams = {str(r.get("team") or "").strip().upper() for r in roster}
+          roster_teams.discard("")
+          if len(roster_teams) < MIN_ROSTER_TEAMS:
+              raise SystemExit(
+                  f"2026 roster covers only {len(roster_teams)} teams, expected at least "
+                  f"{MIN_ROSTER_TEAMS} -- possible truncated/corrupt fetch"
+              )
           (EVIDENCE_ROOT / "model_sources" / "roster_2026.csv").write_bytes(
               rr.content
           )
@@ -306,6 +342,11 @@ jobs:
           # effective_targets internally from raw targets/receptions, so raw
           # fields are passed through unmodified here.
           prior_by_player = defaultdict(list)
+          # Real team-week total target volume, accumulated across EVERY
+          # player in the same real 2025 weekly-stats source (not just
+          # betting candidates) -- the denominator the role-adjusted
+          # challenger needs for a real target_share, never a fabricated one.
+          team_week_targets = defaultdict(float)
           for row in player_rows_by_season[2025]:
               player_id = str(row.get("player_id") or "").strip()
               if not player_id:
@@ -315,14 +356,18 @@ jobs:
               week = finite(row.get("week"))
               if targets is None or receptions is None or week is None:
                   continue
+              team = str(row.get("team") or "").strip().upper()
+              season_type = str(row.get("season_type") or "")
               prior_by_player[player_id].append({
                   "season": 2025,
                   "week": int(week),
-                  "season_type": str(row.get("season_type") or ""),
+                  "season_type": season_type,
                   "targets": targets,
                   "receptions": receptions,
-                  "team": str(row.get("team") or "").strip().upper(),
+                  "team": team,
               })
+              if season_type == "REG" and team:
+                  team_week_targets[(2025, int(week), team)] += targets
           for rows in prior_by_player.values():
               rows.sort(
                   key=lambda x: (
@@ -507,9 +552,79 @@ jobs:
                       "failure_reason": f"{type(exc).__name__}: {exc}",
                   })
 
+          # ---------- real WR-absence event detection for the role-adjusted
+          # research lane (research-only; never gates or adjusts B0 itself) ----------
+          # A player is "inactive this week" only if the REAL official
+          # inactive report (already fetched/bound above) says so -- never
+          # inferred from a missing betting market or any other proxy.
+          inactive_gsis_ids = {
+              player["gsis_id"]
+              for report in bound_reports
+              for team_block in (report.get("teams") or [])
+              for player in (team_block.get("players") or [])
+              if player.get("binding_status") == "BOUND" and player.get("gsis_id")
+          }
+
+          def _real_target_share_history(player_id, team):
+              out = []
+              for game in prior_by_player.get(player_id, []):
+                  if game["team"] != team or game["season_type"] != "REG":
+                      continue
+                  denom = team_week_targets.get((game["season"], game["week"], team))
+                  if not denom:
+                      continue
+                  out.append((game["season"], game["week"], game["targets"] / denom))
+              return out
+
+          def _last5_mean_share(history):
+              if not history:
+                  return None
+              return statistics.fmean(share for _, _, share in history[-5:])
+
+          # Real WR roster per team (2026, position exactly "WR" -- matches
+          # this board's own primary market scope), each with a real
+          # strictly-prior (2025) target-share history where one exists.
+          team_wr_roster = defaultdict(list)
+          for r in roster:
+              if str(r.get("position") or "").strip().upper() != "WR":
+                  continue
+              gsis_id = str(r.get("gsis_id") or "").strip()
+              team = str(r.get("team") or "").strip().upper()
+              if not gsis_id or not team:
+                  continue
+              team_wr_roster[team].append(gsis_id)
+
+          # For each real team with at least one bound candidate this week,
+          # the strictly-prior top-usage WR (last-5 mean target_share,
+          # descending; ties broken by ascending gsis_id -- the identical,
+          # explicit, statistically-meaningless-but-deterministic tie-break
+          # role_intelligence_features._top_usage_player_per_team_week
+          # already established, reused here rather than reinvented) is a
+          # real WR_ABSENCE event this week only if the real official report
+          # says he is inactive.
+          candidate_teams = {str(r.get("team") or "").strip().upper() for r in bound if r.get("team")}
+          team_removed_player = {}
+          team_teammates_for_role_adjustment = {}
+          for team in candidate_teams:
+              ranked = []
+              for gsis_id in team_wr_roster.get(team, []):
+                  history = _real_target_share_history(gsis_id, team)
+                  mean_share = _last5_mean_share(history)
+                  if mean_share is not None:
+                      ranked.append((gsis_id, mean_share, history))
+              if not ranked:
+                  continue
+              ranked.sort(key=lambda t: (-t[1], t[0]))
+              top_gsis_id = ranked[0][0]
+              if top_gsis_id in inactive_gsis_ids:
+                  team_removed_player[team] = top_gsis_id
+                  team_teammates_for_role_adjustment[team] = ranked[1:]
+
           # ---------- projection, score, availability, quarantine ----------
           snapshot_records = []
           challenger_snapshot_records = []
+          role_adjusted_records = []
+          role_adjusted_build_failures = []
           challenger_build_failures = []
           excluded_unbound = []
           quarantine_counts = Counter()
@@ -609,6 +724,76 @@ jobs:
                           "failure_reason": f"{type(exc).__name__}: {exc}",
                       })
 
+              # ---- research-only role-adjusted challenger record (real
+              # teammate-absence redistribution model, PR #176; a completely
+              # separate research lane from the frozen NB challenger above --
+              # never touches score/record/decision/challenger_snapshot_records) ----
+              team = str(row.get("team") or "").strip().upper()
+              removed_player_id = team_removed_player.get(team)
+              if (
+                  score is not None
+                  and removed_player_id is not None
+                  and removed_player_id != row.get("gsis_id")
+              ):
+                  try:
+                      candidate_own_history = _real_target_share_history(row["gsis_id"], team)
+                      candidate_own_share = _last5_mean_share(candidate_own_history)
+                      teammates = [
+                          {
+                              "candidate_player_id": gsis_id,
+                              "candidate_prior_target_share_mean_last5": mean_share,
+                              "candidate_depth_team": None,
+                              "candidate_prior_games_n": len(hist),
+                          }
+                          for gsis_id, mean_share, hist in team_teammates_for_role_adjustment.get(team, [])
+                      ]
+                      role_history = {
+                          (gsis_id, "target_share"): [
+                              (season, week, share) for season, week, share in hist
+                          ]
+                          for gsis_id, _mean_share, hist in team_teammates_for_role_adjustment.get(team, [])
+                      }
+                      role_history[(removed_player_id, "target_share")] = _real_target_share_history(
+                          removed_player_id, team
+                      )
+                      role_event = {
+                          "event_type": "WR_ABSENCE",
+                          "season": 2026,
+                          "week": None,
+                          "team": team,
+                          "removed_player_id": removed_player_id,
+                          "hc_regime_tenure_bucket": None,
+                      }
+                      role_record = build_role_adjusted_challenger_record(
+                          b0_projection=projection, line=row["line"],
+                          over_odds=row["over_odds"], under_odds=row["under_odds"],
+                          residuals=residuals, event=role_event, teammates=teammates,
+                          history=role_history, candidate_player_id=row["gsis_id"],
+                          candidate_own_prior_target_share=candidate_own_share,
+                          model=FROZEN_COMMITTEE_MODEL,
+                      )
+                      if role_record is not None:
+                          role_record.update({
+                              "event_id": row["event_id"], "market_id": row["market_id"],
+                              "player_name": row["player_name"],
+                              "event_open_date": row["event_open_date"],
+                              "captured_at": row["captured_at"],
+                              "availability_status": availability["availability_status"],
+                              "decision_status": decision,
+                              "removed_player_availability_source": "NFLVERSE_OFFICIAL_INACTIVE_REPORT",
+                              "feature_cutoff": "2025_REG_final_week",
+                          })
+                          role_adjusted_records.append(role_record)
+                  except Exception as exc:
+                      # Research-only lane. Never let a role-adjustment
+                      # failure affect the primary B0 record or the separate
+                      # frozen NB challenger lane already appended above.
+                      role_adjusted_build_failures.append({
+                          "event_id": row.get("event_id"),
+                          "gsis_id": row.get("gsis_id"),
+                          "failure_reason": f"{type(exc).__name__}: {exc}",
+                      })
+
           sealed_at = utcnow()
           validate_pregame_timing(snapshot_records, sealed_at)
           source_vintage = (
@@ -674,6 +859,41 @@ jobs:
               })
               challenger_snapshot = None
 
+          # Separate, independently sealed research artifact for the
+          # role-adjusted (teammate-absence redistribution) lane -- never
+          # merged into `snapshot`/`board`/`challenger_snapshot` above, never
+          # read by any B0 decision. Wrapped end-to-end (as the aggregate
+          # frozen-NB-challenger block above already is) so a failure here
+          # can never prevent the primary board or the other challenger
+          # lane from being built and written.
+          try:
+              role_adjusted_path = (
+                  EVIDENCE_ROOT / "nfl-receptions-role-adjusted-comparison.json"
+              )
+              write_challenger_evidence_atomically(role_adjusted_path, {
+                  "analysis": "NFL_RECEPTIONS_B0_VS_ROLE_ADJUSTED_HIERARCHICAL_COMMITTEE_V1",
+                  "status": "RESEARCH_ONLY_NOT_PROMOTED",
+                  "created_at": sealed_at,
+                  "code_sha": os.environ["FULL_COUNT_CODE_SHA"],
+                  "target_local_date": TARGET_DATE,
+                  "model_name": FROZEN_COMMITTEE_MODEL["model_name"],
+                  "model_held_out_finding": FROZEN_COMMITTEE_MODEL["held_out_finding"],
+                  "real_absence_events_detected": {
+                      team: gsis_id for team, gsis_id in team_removed_player.items()
+                  },
+                  "build_failures": role_adjusted_build_failures,
+                  "record_count": len(role_adjusted_records),
+                  "records": role_adjusted_records,
+              })
+          except Exception as exc:
+              role_adjusted_build_failures.append({
+                  "event_id": None,
+                  "gsis_id": None,
+                  "failure_reason": (
+                      f"aggregate role-adjusted seal/write failed: {type(exc).__name__}: {exc}"
+                  ),
+              })
+
           board = {
               "analysis": "NFL_LIVE_RECEPTIONS_SHADOW_BOARD_AUDIT",
               "status": "RESEARCH_ONLY_NO_PUBLICATION",
@@ -736,6 +956,9 @@ jobs:
                   challenger_snapshot["record_count"] if challenger_snapshot else None
               ),
               "challenger_build_failure_count": len(challenger_build_failures),
+              "real_absence_events_detected": dict(team_removed_player),
+              "role_adjusted_record_count": len(role_adjusted_records),
+              "role_adjusted_build_failure_count": len(role_adjusted_build_failures),
           }, indent=2, sort_keys=True))
           PY
 

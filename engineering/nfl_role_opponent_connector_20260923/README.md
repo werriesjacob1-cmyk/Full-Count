@@ -36,6 +36,19 @@ conditional-logit teammate-absence redistribution model) to
   synthetic fixture.
 - `reproduce_real_demo.py` -- the exact script that produced
   `real_end_to_end_demo.json`.
+- `matched_population_eval.py` / `matched_population_report.json` --
+  Mission 2 Workstream B: closes the n=449-vs-n=441 population mismatch an
+  independent review flagged (see "Honest disclosure" below) by
+  re-running the identical committee-vs-baselines comparison restricted
+  to the (event, player) pairs ALL FIVE predictors actually predicted for
+  on the real 2022-2025 held-out set (n=441 for every predictor). Root
+  cause: `predict_committee_model` starts from `predict_no_adjustment`'s
+  own dict then adds teammates `predict_no_adjustment` itself excludes,
+  making the committee's predicted population a strict superset of every
+  baseline's. Under the matched population the negative finding holds:
+  committee MAE=0.062416 (n=441) vs `NO_ADJUSTMENT` MAE=0.060504 (n=441).
+  Embedded in `receptions_role_adjusted_challenger.FROZEN_COMMITTEE_MODEL[
+  "matched_population_confirmation"]`.
 
 ## Honest disclosure -- this is NOT a claim of predictive improvement
 
