@@ -4808,6 +4808,167 @@ No model, weights, selector, public-pick policy, immutable recommendation snapsh
 
 Alligator
 
+## 2026-09-22 -- NFL receptions: connect the scheduled B0 capture to a
+## separately sealed frozen-challenger paired-prospective lane +
+## point-in-time-safe postgame proper-scoring grader
+## (NFL-RECEPTIONS-PAIRED-PROSPECTIVE-20260922, rebuilt after Codex's
+## session limit interrupted the original claim on comment `5781145571`)
+
+**Recovery note**: Codex's receptions subagent claimed this exact
+workstream (branch `codex/nfl-receptions-paired-prospective-20260922`,
+base `b0be50f63b8214f124c9e0e8ae560541609186b1`) but hit a session limit
+before pushing anything -- confirmed via `git ls-remote`, that branch
+does not exist anywhere, local or remote. Rebuilt from the documented
+objective on a fresh Claude-owned branch rather than searching further
+for something that structurally cannot be recovered (Codex runs in
+separate infrastructure this session has no filesystem access to).
+
+**What this closes**: PR #164 (frozen NEGATIVE_BINOMIAL_POOLED
+challenger) and PR #165 (sealed B0-vs-challenger snapshot connector,
+manual demo only) were both already merged, but nothing connected them
+to the SCHEDULED live receptions workflow, and nothing graded either
+model's real probability against a real outcome after the fact.
+
+**Two additive pieces, both reusing 100% existing merged infrastructure,
+neither touching B0's own decision:**
+
+1. `.github/workflows/nfl-live-receptions-shadow-board.yml`: inside the
+   existing per-candidate scoring loop, whenever B0 successfully scores a
+   candidate (`score is not None`, identical real projection/line/odds
+   already computed for B0), also calls the existing, unmodified
+   `receptions_frozen_challenger.compare_b0_vs_frozen_challenger` and
+   `receptions_challenger_snapshot.build_challenger_snapshot_record`, then
+   seals the resulting records via the existing, unmodified
+   `seal_challenger_snapshot` into a SEPARATE file
+   (`nfl-receptions-challenger-comparison.json`, same evidence directory,
+   same `actions/upload-artifact` step -- no new upload step needed). The
+   primary board's `record`/`decision_status`/`snapshot` are built and
+   appended BEFORE this block runs and are never read by it. A challenger-
+   side exception is caught and recorded in `challenger_build_failures`
+   without affecting the primary B0 record already appended -- this
+   research lane can never take down the live board. Verified both the
+   bash (`bash -n`) and the embedded Python (`py_compile`) syntax of the
+   modified script by extracting it exactly the way GitHub Actions
+   receives it (PyYAML's own `|` block-scalar resolution), the same
+   verification method that caught the real heredoc bug in the separate
+   MLB grading-catchup repair today.
+
+2. `nfl/prospective/receptions_paired_grader.py` (new):
+   `grade_paired_receptions_record` grades one sealed pair against one
+   real, final box-score outcome (via the existing, unmodified
+   `box_score_outcomes.outcome_for_candidate` -- never invents a stat
+   value) using proper scoring (Brier, log-loss) for BOTH models against
+   the identical real OVER/UNDER determination. Returns `None` -- not a
+   fabricated result -- for any record that isn't a fair test: still
+   `QUARANTINED` (the real eligibility gate already said this wasn't a
+   clean pregame call), the player didn't appear in the final box score
+   (DNP/scratch), or an exact push (no side won). `summarize_paired_grades`
+   aggregates both models' mean Brier/log-loss and a real Brier-win-count
+   comparison over matched volume -- matched by construction, since both
+   models are always scored against the identical real-outcome population
+   this function itself determines, never a separately-selected subset for
+   either side. This module does NOT determine whether a game has gone
+   final; like `grade_player_prop_board.py`'s own established pattern,
+   that's the caller's responsibility (only pass `player_outcomes` built
+   from a genuinely final box score).
+
+**What this does NOT do**: change B0's own live decision, promote the
+challenger, alter the public board, or grade anything before a game is
+actually final. No model/selector/public-pick change anywhere in this
+diff.
+
+10 new tests for the paired grader (real `score_shadow_candidate`/
+`compare_b0_vs_frozen_challenger` fixtures, not fakes): real OVER/UNDER
+proper scoring, `QUARANTINED` never graded, DNP never fabricated, exact
+push excluded, malformed-input rejection, empty/matched-volume summary
+consistency. Full `nfl/tests`: 936/936.
+
+No live capture has run against this branch yet (games not currently
+live at build time) -- no real paired prospective evidence exists yet
+for this connector specifically, unlike PR #165's own manual demo run.
+The next scheduled receptions capture, once this merges, will be the
+first real end-to-end evidence; until then this is tested-but-unproven-
+in-production, same honest disclosure standard as every other repair
+this session.
+
+Branch `claude/nfl-receptions-paired-prospective-20260922`. Draft PR,
+not merged -- independent review + Jacob's separate explicit
+authorization required, same as every other research/live-adjacent
+family.
+
+Alligator
+
+## 2026-09-22 -- PR #172 hardening: atomic write + failed-artifact
+## exclusion for the challenger-comparison evidence file
+## (Jacob's PR-specific merge authorization, Issue #91 comment
+## `5784769579`, condition 2)
+
+The independent review of PR #172 flagged (non-blocking at the time) that
+the aggregate challenger seal+write block wrote directly to
+`nfl-receptions-challenger-comparison.json` via `path.open("w")` --
+`json.dump` writing incrementally means a mid-write crash (disk full,
+OOM kill, process signal) could leave a truncated/invalid JSON document
+sitting at that exact path, which `actions/upload-artifact` then globs
+indiscriminately (it uploads the whole `EVIDENCE_ROOT` directory) with no
+way to tell a corrupt partial file from valid evidence. Jacob's PR
+authorization message upgraded this from "future hardening idea" to a
+required condition of merge, and specifically required "a forced
+mid-write failure test demonstrating that primary B0 capture still
+succeeds and no corrupted challenger evidence is uploaded as valid."
+
+**Fix**: added `write_challenger_evidence_atomically(path, payload)` to
+`nfl/prospective/receptions_challenger_snapshot.py` -- writes to a
+sibling temp file (`.{name}.tmp-{pid}`, same directory so the final
+`os.replace` is a same-filesystem atomic rename), `fsync`s it, reads it
+back and `json.load`s it to validate before ever touching the real path
+("temporary file + validated rename", exactly as Jacob's message named
+it), then `os.replace()`s it onto the final path. Any exception at any
+point -- including one raised mid-`json.dump`, after real bytes are
+already on disk -- is caught, the temp file is unconditionally removed
+(`unlink(missing_ok=True)`), and the exception is re-raised so the
+existing outer `try/except` in the workflow (already independently
+reviewed and confirmed to isolate a challenger-side failure from the
+primary board in the prior review round) still catches it and records it
+in `challenger_build_failures`. The workflow's aggregate block now calls
+this helper instead of writing directly; no other line in that block
+changed.
+
+**Forced mid-write failure test (the explicit requirement)**: new file
+`nfl/tests/test_receptions_shadow_board_atomic_write.py`, two layers:
+
+1. Direct unit tests on `write_challenger_evidence_atomically`: monkeypatch
+   `json.dump` to write real partial bytes to the temp file handle and
+   then raise (`OSError`), and prove (a) the final path is never created,
+   (b) the temp file is not left behind, and (c) a pre-existing valid file
+   at the final path survives a later failed write completely untouched
+   (never replaced with a partial document, never deleted).
+2. A control-flow test that extracts the REAL try/except block from
+   `.github/workflows/nfl-live-receptions-shadow-board.yml` via PyYAML's
+   own `|` block-scalar resolution (the identical extraction method that
+   caught the heredoc defect in the separate MLB grading-catchup repair
+   this session) -- not a hand-copied reimplementation -- and `exec()`s it
+   with the same forced mid-write crash. Proves: no exception escapes the
+   real try/except, `challenger_build_failures` gets exactly one real
+   failure record, `challenger_snapshot` ends `None`, the evidence
+   directory is left completely empty (nothing for `actions/upload-
+   artifact` to mistake for valid evidence), and execution reaches the
+   real next statement in the script (the unconditional primary board
+   assembly that follows, unchanged by this diff).
+
+6 new tests; full `nfl/tests`: 942/942 (was 936/936). Bash (`bash -n`)
+and embedded Python (`py_compile`) syntax of the modified workflow step
+reverified via the same PyYAML-extraction method, both clean.
+
+**Scope discipline**: this only replaces how the challenger artifact is
+written to disk -- the primary board's own `decision`/`snapshot`/write
+logic is untouched, zero lines in the primary (non-challenger) path
+changed. No model promotion, selector change, or public-pick policy
+change. Research-only status (`RESEARCH_ONLY_NOT_PROMOTED`) unchanged.
+
+Branch `claude/nfl-receptions-paired-prospective-20260922`. Requesting a
+fresh focused independent adversarial review of this delta next, per
+Jacob's explicit condition, before merge.
+
 ## 2026-09-22 -- Second real production defect on mlb-grading-catchup.yml:
 ## heredoc BODY carried residual indentation after the terminator fix merged
 ## (Jacob's authorization, Issue #91 comment `5784769579`, condition 1 --

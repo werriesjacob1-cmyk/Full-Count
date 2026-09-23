@@ -4603,6 +4603,140 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 64.9,
+          "notable_signals": 3,
+          "matchup": "Minnesota Twins @ San Francisco Giants",
+          "game_pk": 823166,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 48.0,
+            "pitch_exploit": 13.1429,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 60.7143,
+            "park_hr_index": 27.4,
+            "season_barrel_pct": 54.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 16.6667,
+            "platoon_barrel_pct": 4.16,
+            "platoon_xwoba": 1.68,
+            "park_hand_index": -2.55,
+            "opp_catcher_framing": 1.2,
+            "days_rest": 0.0,
+            "consecutive_games": -1.2,
+            "woba_ahead": 26.3636,
+            "woba_behind": 31.8182,
+            "pull_park_synergy": -1.7404,
+            "hard_hit_105_rate": -0.2475,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -2.672,
+            "vs_rp_ops": -1.932,
+            "ump_k_pct": -0.408,
+            "ump_bb_pct": -0.096
+          },
+          "hit_probability": 0.6023,
+          "raw_hit_probability": 0.6028,
+          "lift": 0.0406,
+          "reliability": "A",
+          "sample_n": 138,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 36.7,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ San Francisco Giants",
+          "game_pk": 823166,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 2.16,
+            "sprint_speed": 21.875,
+            "catcher_poptime": 0.0,
+            "on_base": 62.572
+          },
+          "hit_probability": 0.0665,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 138,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 2.1,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ San Francisco Giants",
+          "game_pk": 823166,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0367
+          },
+          "hit_probability": 0.0367,
+          "raw_hit_probability": null,
+          "lift": -0.0108,
+          "reliability": "A",
+          "sample_n": 138,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ San Francisco Giants",
+          "game_pk": 823166,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0087
+          },
+          "hit_probability": 0.0087,
+          "raw_hit_probability": null,
+          "lift": -0.012,
+          "reliability": "A",
+          "sample_n": 138,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
