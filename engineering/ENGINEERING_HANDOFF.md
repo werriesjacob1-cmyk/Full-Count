@@ -5313,3 +5313,115 @@ merged -- independent review + Jacob's separate explicit authorization
 required, same doctrine as every other PR.
 
 Alligator
+
+## 2026-09-23 -- SUPERCLAUDE MISSION 3: team-plays -> player-participation ->
+## catch-probability -> receptions-distribution opportunity engine
+## (NFL-RECEPTIONS-TEAM-OPPORTUNITY-ENGINE-20260923)
+
+**Reconnaissance before writing code (per the mission's own "reuse, do not
+duplicate" instruction).** The full team-level feature substrate Section 4
+asked for already existed, already merged, already tested, never assembled
+into a player-prop predictor: `team_prior_features.build_prior_team_
+features` (real strictly-prior rolling team box-score means, including
+`dropback_proxy = attempts + sacks_suffered`, nflfastR's own convention and
+the closest real proxy to pass-attempt opportunity) + `defense_prior_
+features.build_prior_defense_features` (the reciprocal opponent-allowed
+version) + `game_matchup_features.build_game_matchup_features` (leakage-
+safe home/away join), already exercised end-to-end by the existing
+`game_market_c2_*` game-level margin/total challenger on real pinned
+2023-2025 nflverse PBP-derived team box scores. On the player side,
+`role_intelligence_features.build_player_dimension_history` already
+provides real historical target-share series. Nothing here was
+reimplemented; this workstream is a thin, disclosed composition layer.
+
+**New module**: `nfl/research/receptions_team_opportunity_challenger.py`.
+Unlike the two already-merged challengers (which both re-scale B0's own
+rolling-mean number), this derives an ABSOLUTE projection from first
+principles: real opponent-adjusted team pass-dropback volume x real
+current-season-aware, shrinkage-blended player target share x real
+current-season-aware, shrinkage-blended catch rate = expected receptions,
+then `receptions_shadow.score_shadow_candidate` (reused unmodified) for
+coherent standard/alt-line probabilities from one shared distribution.
+Shrinkage (`_shrunk_estimate`): a real sample-size-based blend of the
+current season's own mean toward the strictly-prior season's value
+(`weight_current = n_current / (n_current + k)`), never toward an
+arbitrary constant, with pre-declared `k` (3.0 for target share, 5.0 for
+catch rate) -- never fit to any evaluation data. Every estimator returns
+`None` (never a fabricated 0.0) when real history is absent at every
+level, and raises on an impossible (outside [0, 1]) share or rate rather
+than silently clipping it.
+
+**Genuinely consumed opponent feature (Section 6)**: `predict_team_pass_
+dropbacks` blends the team's own real prior dropback tendency with the
+real opponent's prior dropbacks-ALLOWED tendency for every prediction --
+confirmed in the real evaluation below, where 100% of eligible rows used
+real data on BOTH sides (`basis: "BLENDED_OFFENSE_AND_DEFENSE"`).
+
+**Genuinely consumed coaching feature (Section 6)**: `filter_team_rows_by_
+current_regime` uses `coach_regime_registry.lookup_regime` (real 1999-2026
+nfldata `games.csv`-derived HC intervals, already covering scheduled-but-
+unplayed 2026 weeks with nflverse's currently-known coach -- a legitimate
+pregame-knowable fact) to restrict a team's own rolling window to games
+under the SAME head coach as the target game, never blending across a real
+mid-season coaching change. Demonstrated on a real fixture with a real
+mid-window regime boundary (test: `test_real_mid_window_regime_change_
+excludes_pre_change_games`) against the explicit simpler control (the
+unfiltered window) -- an UNKNOWN regime lookup falls back to that control
+rather than guessing a boundary. This directly fills a gap `role_
+intelligence_features.py` itself discloses in its own code
+(`"current_coach_regime": "UNKNOWN_COACH_REGISTRY_NOT_YET_BUILT"`).
+
+**Real end-to-end evaluation, honest negative finding.** `engineering/
+nfl_team_opportunity_engine_20260923/team_opportunity_real_evaluation.py`
+fetched real 2023-2025 PBP-derived team box scores and real 2023-2026
+weekly player stats (network, ~41s), built the full real substrate, and
+compared B0's real rolling-mean projection against this challenger's real
+projection on 2,954 matched real 2025 (weeks 8-18) observations against
+real realized receptions: **B0 MAE=1.299 vs. challenger MAE=1.412 -- the
+new challenger does NOT beat B0** on this metric, on this population. A
+real, disclosed negative finding, preserved verbatim in the module's own
+docstring and asserted by a dedicated test so it cannot be silently
+softened later. 26 of 3,244 eligible rows correctly abstained (2 impossible
+target shares, 24 catch rates the fail-closed validation refused to
+project from -- including real nflverse rows where `receptions > targets`,
+a previously-disclosed edge case in this same codebase's `receptions_
+baseline_research.py`) rather than fabricate a value.
+
+**Tests**: 28 new (`nfl/tests/test_receptions_team_opportunity_challenger.
+py`) covering the real blend/degradation logic for team dropback
+prediction, the real coaching-regime filter (including its fallback),
+shrinkage-blend arithmetic (verified by hand-computed expected values),
+no-lookahead (a share recorded at or after the target week never
+influences the estimate), impossible-allocation rejection (share or rate
+outside [0, 1] raises rather than clips), line-coherence, and the full
+real end-to-end record-building path including missing-input abstention.
+Full `nfl/tests`: 1008/1008 (was 979).
+
+**What this does NOT do**: no live workflow wiring in this pass (deferred,
+matching the established two-step precedent: research module + real
+evaluation first, live wiring as a separate later PR once reviewed, the
+same sequence PR #176 -> PR #178 followed). No live 2026 PBP fetch for the
+team-volume side (disclosed scope decision -- would need the same
+schema/sanity-validation redesign Mission 2 applied to the roster asset).
+Only a partial ablation (combined challenger vs. B0; the mission's full
+five-way team/role/coaching/availability/combined ablation was not
+attempted this pass, disclosed as a scope limitation, not hidden).
+Workstreams C/D from Mission 2 and Section 8's full factor-accountability
+matrix remain deferred. Does not touch `game_market_c2_*`/`game_market_c3_
+*`/`price_aware_offers.py`/`tactical_source_adapter.py`, PR #178's merged
+files, `role_regime_redistribution*.py`, or `role_intelligence_*.py`.
+
+**Next concrete milestone**: investigate WHY the challenger underperforms
+B0 (a real candidate hypothesis, not yet confirmed: B0's own real last-5
+rolling mean already implicitly captures a player's current role and team
+context through his own realized receptions history, so a three-stage
+independently-derived composition adds real uncertainty at each stage
+without a demonstrated net gain) -- via the deferred five-way ablation, to
+find whether any ONE stage (team volume, share, or catch rate) is a real
+net-positive component even if the combined chain currently is not.
+
+Branch `claude/nfl-receptions-team-opportunity-engine-20260923`. Draft PR,
+not merged -- independent review + Jacob's separate explicit authorization
+required, same doctrine as every other PR.
+
+Alligator
