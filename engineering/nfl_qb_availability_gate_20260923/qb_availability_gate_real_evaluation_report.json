@@ -1,0 +1,144 @@
+{
+  "generated_in_seconds": 79.3,
+  "team_seasons": [
+    2023,
+    2024,
+    2025
+  ],
+  "player_seasons": [
+    2023,
+    2024,
+    2025,
+    2026
+  ],
+  "injury_seasons": [
+    2023,
+    2024,
+    2025
+  ],
+  "n_real_injury_rows": 17874,
+  "real_gate_activation_scan_2023_2025": {
+    "n_total_activations": 83,
+    "top_examples_by_magnitude": [
+      {
+        "team": "MIN",
+        "season": 2025,
+        "week": 3,
+        "incumbent_player_id": "00-0039923",
+        "incumbent_name": "J.J. McCarthy",
+        "bucket": "EXPECTED_UNAVAILABLE",
+        "availability_status": "LISTED_OUT",
+        "report_status_raw": "OUT",
+        "predicted_dropbacks_qb_aware": 30.5,
+        "predicted_dropbacks_availability_gated": 38.4,
+        "predicted_dropbacks_naive_control": 38.4,
+        "own_games_used_qb_aware": 2
+      },
+      {
+        "team": "GB",
+        "season": 2025,
+        "week": 18,
+        "incumbent_player_id": "00-0038128",
+        "incumbent_name": "Malik Willis",
+        "bucket": "DISPUTED",
+        "availability_status": "NOT_LISTED_GAME_AFFECTING_STATUS",
+        "report_status_raw": "QUESTIONABLE",
+        "predicted_dropbacks_qb_aware": 25.0,
+        "predicted_dropbacks_availability_gated": 32.0,
+        "predicted_dropbacks_naive_control": 32.0,
+        "own_games_used_qb_aware": 4
+      },
+      {
+        "team": "NYG",
+        "season": 2023,
+        "week": 9,
+        "incumbent_player_id": "00-0028118",
+        "incumbent_name": "Tyrod Taylor",
+        "bucket": "EXPECTED_UNAVAILABLE",
+        "availability_status": "LISTED_OUT",
+        "report_status_raw": "OUT",
+        "predicted_dropbacks_qb_aware": 33.666666666666664,
+        "predicted_dropbacks_availability_gated": 40.6,
+        "predicted_dropbacks_naive_control": 40.6,
+        "own_games_used_qb_aware": 3
+      },
+      {
+        "team": "NYG",
+        "season": 2024,
+        "week": 15,
+        "incumbent_player_id": "00-0035704",
+        "incumbent_name": "Drew Lock",
+        "bucket": "EXPECTED_UNAVAILABLE",
+        "availability_status": "LISTED_DOUBTFUL",
+        "report_status_raw": "DOUBTFUL",
+        "predicted_dropbacks_qb_aware": 49.0,
+        "predicted_dropbacks_availability_gated": 42.2,
+        "predicted_dropbacks_naive_control": 42.2,
+        "own_games_used_qb_aware": 2
+      },
+      {
+        "team": "WAS",
+        "season": 2025,
+        "week": 8,
+        "incumbent_player_id": "00-0039910",
+        "incumbent_name": "Jayden Daniels",
+        "bucket": "EXPECTED_UNAVAILABLE",
+        "availability_status": "LISTED_OUT",
+        "report_status_raw": "OUT",
+        "predicted_dropbacks_qb_aware": 37.4,
+        "predicted_dropbacks_availability_gated": 31.0,
+        "predicted_dropbacks_naive_control": 31.0,
+        "own_games_used_qb_aware": 5
+      },
+      {
+        "team": "LV",
+        "season": 2024,
+        "week": 15,
+        "incumbent_player_id": "00-0038579",
+        "incumbent_name": "Aidan O'Connell",
+        "bucket": "DISPUTED",
+        "availability_status": "NOT_LISTED_GAME_AFFECTING_STATUS",
+        "report_status_raw": "QUESTIONABLE",
+        "predicted_dropbacks_qb_aware": 41.2,
+        "predicted_dropbacks_availability_gated": 47.4,
+        "predicted_dropbacks_naive_control": 47.4,
+        "own_games_used_qb_aware": 5
+      },
+      {
+        "team": "LV",
+        "season": 2025,
+        "week": 18,
+        "incumbent_player_id": "00-0030565",
+        "incumbent_name": "Geno Smith",
+        "bucket": "EXPECTED_UNAVAILABLE",
+        "availability_status": "LISTED_OUT",
+        "report_status_raw": "OUT",
+        "predicted_dropbacks_qb_aware": 40.8,
+        "predicted_dropbacks_availability_gated": 34.6,
+        "predicted_dropbacks_naive_control": 34.6,
+        "own_games_used_qb_aware": 5
+      },
+      {
+        "team": "LV",
+        "season": 2023,
+        "week": 7,
+        "incumbent_player_id": "00-0031345",
+        "incumbent_name": "Jimmy Garoppolo",
+        "bucket": "EXPECTED_UNAVAILABLE",
+        "availability_status": "LISTED_OUT",
+        "report_status_raw": "OUT",
+        "predicted_dropbacks_qb_aware": 34.8,
+        "predicted_dropbacks_availability_gated": 40.2,
+        "predicted_dropbacks_naive_control": 40.2,
+        "own_games_used_qb_aware": 5
+      }
+    ]
+  },
+  "matched_2025_week8plus_bucket_counts": {
+    "CONFIRMED_AVAILABLE": 309,
+    "DISPUTED": 6,
+    "EXPECTED_UNAVAILABLE": 13
+  },
+  "matched_2025_week8plus_n_gate_applied": 19,
+  "matched_2025_week8plus_n_total": 328
+}
