@@ -42,7 +42,7 @@
   "eligible_eval_rows_considered": 3244,
   "eval_min_week": 8,
   "eval_season": 2025,
-  "generated_in_seconds": 21.755126237869263,
+  "generated_in_seconds": 22.75940179824829,
   "matched_n": 2954,
   "real_2023_in_season_hc_change_demo": {
     "note": "Zero of 2954 rows in the main 2025-week-8+ matched evaluation had a real in-season coaching change fall inside their own rolling-5 window (rows_where_coaching_feature_changed_the_projection == 0) -- a real, honest finding, not a bug: genuine in-season HC firings are rare, and by 2025 the three known 2023 in-season changes below were over a year in the past for every evaluated team. The block below targets those three real 2023 events directly, at the real week each one's own rolling-5 window would straddle the change, to demonstrate genuine (non-synthetic) real-world activation of the coaching consumer -- separate from, not a substitute for, the honest null result on the main matched population.",
@@ -111,6 +111,18 @@
         "week": 17
       }
     ]
+  },
+  "real_2026_in_season_snap_role_change_example": {
+    "example": {
+      "player_id": "00-0039364",
+      "real_2025_prior_season_snap_share": 0.0012987012987012987,
+      "real_2026_current_season_mean_snap_share": 0.22747252747252747,
+      "real_2026_games_so_far": 2,
+      "real_unclamped_role_change_ratio": 175.15384615384616,
+      "target_season": 2026,
+      "target_week": 3
+    },
+    "note": "The single most dramatic real 2026 in-season role change found, by scanning every player with real 2026 snap games and a real 2025 prior-season baseline -- not cherry-picked for direction. Predicting one real week ahead of that player's most recent real 2026 game, per estimate_current_week_snap_share's own no-lookahead contract."
   },
   "sample_records": [
     {
@@ -184,6 +196,85 @@
       "week": 8
     }
   ],
+  "snap_share_role_change_ablation": {
+    "matched_n": 3059,
+    "note": "Real current-season (2026) + prior-season (2025) offense-snap-share history, live-fetched (unpinned, see script comment). On the same real 2025-week-8+ matched population used for the coaching ablation above, scales the target-share estimate by each player's real snap-share trend when a real role-change signal exists (>=1 current-season snap game and a real positive prior-season baseline), otherwise falls back to the unadjusted estimate unchanged.",
+    "real_role_change_examples": [
+      {
+        "player_id": "00-0030035",
+        "realized_receptions": 0.0,
+        "season": 2025,
+        "snap_adjusted_projection": 1.6894679004334814,
+        "snap_adjusted_target_share": 0.07591731628816353,
+        "snap_current_season_mean": 0.4365267651564453,
+        "snap_prior_season_value": 0.7086218200966499,
+        "snap_role_change_ratio": 0.6160221895183905,
+        "team": "MIN",
+        "unadjusted_projection": 2.742543903742033,
+        "unadjusted_target_share": 0.12323795730072012,
+        "week": 8
+      },
+      {
+        "player_id": "00-0030061",
+        "realized_receptions": 4.0,
+        "season": 2025,
+        "snap_adjusted_projection": 3.565743510098964,
+        "snap_adjusted_target_share": 0.16804563492625324,
+        "snap_current_season_mean": 0.6385356934832576,
+        "snap_prior_season_value": 0.6691130474645007,
+        "snap_role_change_ratio": 0.9543016623317819,
+        "team": "WAS",
+        "unadjusted_projection": 3.7364951260655586,
+        "unadjusted_target_share": 0.17609278235525994,
+        "week": 8
+      },
+      {
+        "player_id": "00-0030279",
+        "realized_receptions": 4.0,
+        "season": 2025,
+        "snap_adjusted_projection": 4.715048701820756,
+        "snap_adjusted_target_share": 0.18042715018595032,
+        "snap_current_season_mean": 0.6264822451621673,
+        "snap_prior_season_value": 0.8686843940627972,
+        "snap_role_change_ratio": 0.721185104099935,
+        "team": "LAC",
+        "unadjusted_projection": 6.537917484728565,
+        "unadjusted_target_share": 0.2501814709707987,
+        "week": 8
+      },
+      {
+        "player_id": "00-0030506",
+        "realized_receptions": 6.0,
+        "season": 2025,
+        "snap_adjusted_projection": 4.577801468721021,
+        "snap_adjusted_target_share": 0.16361500576131646,
+        "snap_current_season_mean": 0.7305230783915565,
+        "snap_prior_season_value": 0.8454030729674709,
+        "snap_role_change_ratio": 0.8641121634764455,
+        "team": "KC",
+        "unadjusted_projection": 5.2976935891098655,
+        "unadjusted_target_share": 0.1893446391300293,
+        "week": 8
+      },
+      {
+        "player_id": "00-0030564",
+        "realized_receptions": 1.0,
+        "season": 2025,
+        "snap_adjusted_projection": 1.4812302299638707,
+        "snap_adjusted_target_share": 0.06049561083123649,
+        "snap_current_season_mean": 0.2832678767141291,
+        "snap_prior_season_value": 0.48973170491199586,
+        "snap_role_change_ratio": 0.5784144131837083,
+        "team": "BAL",
+        "unadjusted_projection": 2.5608459889698874,
+        "unadjusted_target_share": 0.10458869878130556,
+        "week": 8
+      }
+    ],
+    "rows_with_real_snap_role_change_applied": 3154,
+    "snap_adjusted_mae": 1.4778655658978266,
+    "snap_unadjusted_mae": 1.386444868319182
+  },
   "status": "HISTORICAL_OPERATIONAL_TESTING_NOT_PROSPECTIVE",
   "team_dropbacks_basis_counts": {
     "BLENDED_OFFENSE_AND_DEFENSE": 3244

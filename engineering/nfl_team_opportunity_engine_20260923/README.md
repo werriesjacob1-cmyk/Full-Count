@@ -164,3 +164,51 @@ That comparison requires either a much larger real population spanning
 more in-season coaching changes, or a targeted historical population built
 specifically around known real coaching changes -- a concrete next
 milestone, not yet attempted.
+
+## 2026-09-23 update: current-season snap-share role-change signal (Mission 6)
+
+New factor: `estimate_current_week_snap_share` + `apply_snap_informed_
+target_share`, actually consumed by `build_opportunity_challenger_record`
+when `snap_share_history` is supplied (optional, backward-compatible).
+Real offense snap share is observed every game a player plays, so it is a
+lower-noise, faster-converging real signal of a current-season role
+change than target share (which only updates when the player is
+targeted). Scales the target-share estimate by the player's real
+season-over-season snap-share ratio, clamped to [0.4, 2.5] (a
+pre-declared bound, never fit to evaluation data), and falls back to the
+unadjusted estimate whenever no real current-season snap data or real
+positive prior-season baseline exists.
+
+**Real source**: `snap_counts_<season>.csv` (nflverse, real 2024-2026
+data, live-fetched -- this is an in-season-updated asset, so the fetch is
+unpinned by design rather than exact-byte-pinned, the same doctrine
+already applied to the roster and PBP assets elsewhere in this program).
+
+**Honest result -- a second real, disclosed negative finding**: on the
+same real 2025-week-8+ matched population (n=3,059 after also requiring a
+valid snap-informed estimate), the snap-share adjustment made MAE
+modestly WORSE: unadjusted MAE=1.386444868319182 vs. snap-adjusted
+MAE=1.4778655658978266. `snap_share_role_change_ablation` in the report
+has the full real numbers plus five real, unfiltered example rows. The
+adjustment triggered on nearly all matched rows (not gated behind a
+"large change only" threshold), so this result reads as "broadly
+rescaling every player's target share by his own real season-over-season
+snap trend does not improve accuracy on this population" -- not
+necessarily that the underlying snap-share signal carries no real
+information at all.
+
+**Real, non-cherry-picked 2026 in-season demonstration**
+(`real_2026_in_season_snap_role_change_example`): scanning every real
+player with both 2026 and 2025 snap data for the single largest real
+role-change ratio (in either direction) found player `00-0039364`: real
+2025 prior-season snap share 0.13%, real 2026 current-season mean 22.7%
+through 2 real games, an unclamped ratio of 175x. This demonstrates the
+[0.4, 2.5] clamp bound is doing real, necessary work on real data --
+separate from, and not contradicted by, the accuracy finding above.
+
+**Scope disclosure**: the negative accuracy result was not retuned
+against by adjusting the trigger threshold or clamp bounds -- per this
+project's own standard against retuning against an already-inspected
+holdout, the finding is reported as-is. A bounded trigger requiring a
+larger minimum role-change magnitude before applying the adjustment is a
+concrete next hypothesis, to be tested on a separate population.
