@@ -5554,4 +5554,100 @@ Branch `claude/nfl-snap-share-role-change-20260923`. Draft PR, not
 merged -- independent review + Jacob's separate explicit authorization
 required, same doctrine as every other PR.
 
+## 2026-09-23 -- MISSION 9 WORKSTREAM E: MLB full-board calibration /
+## winner's-curse investigation (MLB-FULLBOARD-CALIBRATION-20260923)
+
+**Scope correction up front, per this workstream's own brief**: the frozen
+full-board snapshot and grading mechanism (`board_freeze.py` PR
+#132/#138/#139, `board_freeze_grader.py`/`grade_board_freeze.py` PR
+#138/#163) already existed and was already running in production before
+this workstream started (first real capture 2026-09-20); draft PR #187
+added regression tests for that existing wiring only. This workstream built
+no new snapshot/freeze/grading infrastructure -- it is a pure, read-only
+analysis over the real committed `output/board_freeze*.json` files, exactly
+as instructed.
+
+**Real data verified directly (never assumed) at
+`engineering/mlb_fullboard_calibration_20260923/`**: three real dates
+(2026-09-20, 2026-09-21, 2026-09-22) currently have both a sealed board and
+a graded file; 2026-09-23's board is sealed but has no graded file yet
+(games not played). Every paired date's `board_sha256` matches its graded
+file's `source_board_sha256`. Real schema documented directly from the
+files in the module's README (candidate_id, eligibility.qc_status ∈
+{kept, qc_rejected, lineup_assumed_holdout}, selector.recommendation_status
+∈ {top_pick, lean, value, neutral, None}, selector.selected_top_pick (bool,
+per-category -- multiple True per day is real, not a bug),
+prediction.hit_probability, grade ∈ {hit, miss, ungraded}, fair_test).
+
+**PR #131 re-read before relying on it**: its 16%-match-rate caveat applied
+to a different, ad hoc join (`results/grades_*.json` picks vs.
+public_top_picks, `picks` regenerated at grading time); `board_freeze_*`
+is exactly the frozen-pregame artifact PR #131 said was missing, so that
+specific population gap is closed for this analysis -- disclosed as such,
+not silently assumed transferable to every other population question (see
+the qc_rejected blocker below, which is a different, still-open gap).
+
+**Core population used**: real candidates with `grade` in {hit, miss},
+`fair_test == True`, and a non-null `prediction.hit_probability`, from the
+three paired dates only. n=790 across 18 real games as of this run.
+`ungraded` and non-fair-test candidates are excluded, not folded in as
+misses.
+
+**A live population-instability example, disclosed rather than smoothed
+over**: `output/board_freeze_graded_2026-09-22.json` was re-graded by
+production automation mid-session (from 101/985 candidates graded, most
+games in progress, to 684/985 graded, at HEAD `d9c3c731d7`) -- the analysis
+script reads whatever is on disk at run time and its `honest_limitations`
+section is generated dynamically from the real timestamps for exactly this
+reason, never hardcoded.
+
+**Findings (all with game-clustered bootstrap 95% CIs, real n stated at
+every step -- full numbers in `report.json`/README)**:
+- Full-board calibration (5 real buckets, ~158 each): every bucket's
+  realized-hit-rate CI contains its own mean predicted probability; overall
+  gap +0.0095, 95% CI [-0.018, +0.033] -- consistent with reasonable
+  calibration at this n, not proof of general accuracy.
+- Winner's-curse test (selected `top_pick` vs. everything else): Top Pick
+  gap -0.155 (n=10, 4 real games) vs. non-top_pick gap +0.012 (n=780, 18
+  games); gap-difference point estimate -0.167, 95% CI [-0.392, +0.248] --
+  **straddles zero. Honestly inconclusive**, not a demonstrated effect and
+  not a demonstrated absence of one.
+- qc_status: `kept` (n=552) and `lineup_assumed_holdout` (n=238) both
+  reasonably calibrated, CIs overlapping. **Concrete, disclosed blocker**:
+  zero real `qc_rejected` candidates currently satisfy the fair-test+graded
+  bar (all 64 real qc_rejected candidates are from 2026-09-22; only 2 have
+  graded so far and both have `fair_test == False`) -- a QC-rejected-vs-kept
+  comparison is not answerable from real data today, not worked around with
+  new infrastructure.
+- Market breakdown: all 8 real markets with fair-test-graded evidence
+  clear n>=15; most show CIs comfortably containing zero.
+  `nrfi_combined` (n=16, 16 games) is the one market whose CI currently
+  excludes zero (gap +0.227, 95% CI [+0.032, +0.415]) -- flagged as a lead
+  to watch across more real days, explicitly not asserted as a finding at
+  n=16.
+
+**Deliverable**: `calibration_lib.py` (dependency-free quantile-bucketing +
+cluster/block-bootstrap functions, 16 unit tests in
+`test_calibration_lib.py`), `analyze_fullboard_calibration.py` (reads real
+committed JSON only, no network), `report.json` (real output), `README.md`.
+Locked next falsifiable hypothesis recorded in both `report.json` and the
+README: the same winner's-curse gap-difference test, with a predeclared
+minimum of n>=30 real fair-test-graded Top Pick candidates across >=10 real
+games before it can be run with power (current n=10 across 4 games is
+explicitly too small) -- for a **future** workstream once more real graded
+days accumulate.
+
+**What this does NOT do**: no change to `board_freeze.py`,
+`board_freeze_grader.py`, `grade_board_freeze.py`, `generate_picks.py`,
+`mlb_daily.py`, `mlb_sources.py`, any workflow YAML, or PR #187's own test
+file. No new snapshot/freeze/grading infrastructure. No model, calibration,
+or selector change. No general accuracy conclusion asserted from this small
+real sample. No merge, deployment, public pick, or grading activation.
+
+Branch `claude/mlb-fullboard-calibration-analysis-20260923`. Draft PR, not
+merged -- independent review + Jacob's separate explicit authorization
+required, same doctrine as every other PR.
+
+Alligator
+
 Alligator
