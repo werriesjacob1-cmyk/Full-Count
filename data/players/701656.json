@@ -502,9 +502,9 @@
             "l14_k_pct": 100.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.531,
-          "raw_hit_probability": 0.531,
-          "lift": 0.1626,
+          "hit_probability": 0.533,
+          "raw_hit_probability": 0.533,
+          "lift": 0.1606,
           "reliability": "A",
           "sample_n": 17,
           "projection": {
@@ -514,10 +514,10 @@
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 40.3,
-          "notable_signals": 0,
+          "score": 91.8,
+          "notable_signals": 1,
           "matchup": "Milwaukee Brewers @ Philadelphia Phillies",
           "game_pk": 823410,
           "team": "Milwaukee Brewers",
@@ -525,18 +525,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5425,
+            "outs_rate": 0.8944,
             "avg_outs_per_start": 16.47
           },
-          "hit_probability": 0.5539,
-          "raw_hit_probability": 0.5425,
-          "lift": -0.0255,
+          "hit_probability": 0.8944,
+          "raw_hit_probability": 0.8944,
+          "lift": 0.1324,
           "reliability": "A",
           "sample_n": 17,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]

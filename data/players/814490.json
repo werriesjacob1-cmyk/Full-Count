@@ -200,6 +200,39 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-23",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 47.9,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ Seattle Mariners",
+          "game_pk": 823086,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 61.0,
+            "same_hand_ratio": 21.4286,
+            "l14_k_pct": 32.3529,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5855,
+          "raw_hit_probability": 0.5591,
+          "lift": -0.1239,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        }
+      ]
     }
   ]
 }

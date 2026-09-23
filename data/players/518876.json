@@ -584,8 +584,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 41.5,
-          "notable_signals": 0,
+          "score": 44.5,
+          "notable_signals": 1,
           "matchup": "Arizona Diamondbacks @ Colorado Rockies",
           "game_pk": 824301,
           "team": "Arizona Diamondbacks",
@@ -593,14 +593,17 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "opp_team_k_pct": 58.0,
-            "same_hand_ratio": 43.75,
+            "opp_team_k_pct": 59.0,
+            "same_hand_ratio": 57.1429,
             "l14_k_pct": 80.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 74.2111,
+            "ump_k_pct": 0.12,
+            "ump_bb_pct": -0.204
           },
           "hit_probability": 0.6104,
-          "raw_hit_probability": 0.6818,
-          "lift": -0.0987,
+          "raw_hit_probability": 0.682,
+          "lift": -0.099,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
@@ -610,9 +613,9 @@
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 31.8,
+          "score": 48.0,
           "notable_signals": 0,
           "matchup": "Arizona Diamondbacks @ Colorado Rockies",
           "game_pk": 824301,
@@ -621,18 +624,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4742,
+            "outs_rate": 0.5722,
             "avg_outs_per_start": 16.79
           },
-          "hit_probability": 0.5057,
-          "raw_hit_probability": 0.4742,
-          "lift": -0.0146,
+          "hit_probability": 0.5745,
+          "raw_hit_probability": 0.5722,
+          "lift": -0.0011,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 15.5,
+            "needs": 16
           }
         }
       ]
