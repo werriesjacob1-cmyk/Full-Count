@@ -5425,3 +5425,73 @@ not merged -- independent review + Jacob's separate explicit authorization
 required, same doctrine as every other PR.
 
 Alligator
+
+## 2026-09-23 -- SUPERCLAUDE MISSION 4: NFL game readiness (2026-09-24
+## ATL@GB) + mandatory coaching-consumer fix
+
+**PR #179 merged** (SHA `f0a50efa5413a0805e99689813ee3b4cb42eba82`), per
+Jacob's conditional authorization requiring the coaching-consumer gap stay
+open (Issue #91 comment `5797780943`). This section covers the follow-on
+work fixing that gap plus tomorrow's real-game readiness check.
+
+**Real game verified**: `2026_03_ATL_GB`, Atlanta @ Green Bay, Thursday
+2026-09-24 20:15 ET, Week 3 REG (checked directly against real nflverse/
+nfldata `games.csv`, not assumed).
+
+**Critical operational gap found and fixed** (PR #180, branch `claude/
+nfl-non-sunday-target-date-override-20260923`): `nfl-live-receptions-
+shadow-board.yml` and `nfl-live-passing-yards-shadow-board.yml` both
+hardcode "next Sunday" for `TARGET_DATE` resolution unless a
+`TARGET_LOCAL_DATE` env var is set -- but that env var was hardcoded to
+`''` with no `workflow_dispatch` input actually wired to it. A manual
+dispatch for tomorrow's real Thursday game would have silently targeted
+the FOLLOWING Sunday's slate instead of erroring. Fixed by mirroring the
+exact `workflow_dispatch.inputs.target_local_date` pattern already proven
+in production by `nfl-live-game-market-shadow.yml` (Codex). Independently
+reviewed GO (structural byte-match confirmed, no-op-for-blank-dispatch
+confirmed, 88/88 workflow-syntax checks). Draft, awaiting Jacob's
+authorization -- this is the one item on the critical path to any genuine
+capture of tomorrow's game.
+
+**Mandatory coaching-consumer fix** (branch `claude/nfl-coaching-consumer-
+and-ablation-20260923`, same repo as PR #179's module): SUPERCHAD's PR
+#179 acceptance condition correctly found that `filter_team_rows_by_
+current_regime` was tested but never actually consumed by `build_
+opportunity_challenger_record` -- the evaluated projection never depended
+on it. Fixed:
+- New `predict_team_pass_dropbacks_coaching_aware` computes the team's own
+  rolling dropback mean TWICE from the same real rows (regime-filtered vs.
+  unfiltered "naive control"), and `build_opportunity_challenger_record`
+  now ACTUALLY uses the coaching-aware value to compute the projection
+  (previously it only carried unused `regime_note` metadata).
+- Fixed a real latent leakage bug this work surfaced: `filter_team_rows_
+  by_current_regime` filtered by team but never enforced the target-week
+  cutoff, so a full multi-season row set could silently leak a
+  game at or after the target week into the rolling window. New
+  regression test guards this (`test_never_leaks_a_game_at_or_after_the_
+  target_week`).
+- Real evaluation re-run with the fix wired in: on the same 2,954-row
+  2025-week-8+ matched population, the coaching feature changed **zero**
+  projections -- a real, honest null result (genuine in-season HC changes
+  are rare; none fell inside any evaluated player's own rolling-5 window
+  in this population), not a bug.
+- Directly targeted the three real, known 2023 in-season HC changes in the
+  loaded registry (LV/Antonio Pierce, CAR/Chris Tabor, LAC/Giff Smith) at
+  the real week each one's own rolling window straddles the change:
+  confirmed genuine (non-synthetic) activation in all three real cases,
+  e.g. LV week 10 2023: coaching-aware 30.7 dropbacks (1 real game under
+  the new regime) vs. naive-control 35.9 (5 games spanning the change).
+  Full table in `engineering/nfl_team_opportunity_engine_20260923/
+  README.md`.
+- 4 new tests (33 total in the file, was 29). Full `nfl/tests`: 1012/1012
+  (was 1008). `test_workflow_shell_syntax.py`: 88/88.
+
+**What this does NOT establish**: whether the coaching-aware prediction is
+more ACCURATE than the naive control -- zero real activating rows existed
+in the main matched population, so no such accuracy comparison was
+possible there; the 2023 demo shows the mechanism works correctly, not
+that it improves predictions. A held-out population specifically built
+around known real in-season coaching changes is the concrete next
+milestone for that question.
+
+Alligator

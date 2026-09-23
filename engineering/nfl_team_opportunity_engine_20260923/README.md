@@ -101,3 +101,66 @@ module implementation, 28 new tests, real end-to-end evaluation, and the
 concurrent adversarial-review/reporting obligations). This is recorded
 here as an explicit, honest scope limitation and a concrete next
 milestone, not silently omitted.
+
+## 2026-09-23 update: coaching consumer actually wired in, real activation found
+
+SUPERCHAD's PR #179 acceptance condition (Issue #91 comment `5797780943`)
+correctly identified that `filter_team_rows_by_current_regime` existed and
+was unit-tested but was NOT actually consumed by `build_opportunity_
+challenger_record` -- the real matched evaluation's projection never
+depended on it. This is now fixed: `predict_team_pass_dropbacks_coaching_
+aware` computes the team's own rolling dropback mean TWICE from the same
+real box-score rows (once regime-filtered, once not) and the COACHING-
+AWARE version is what actually feeds the projection; the naive-control
+version is preserved in every record for direct comparison, never
+discarded.
+
+Fixing this consumption also surfaced and fixed a real latent leakage bug
+in `filter_team_rows_by_current_regime`: it filtered by team but never by
+target week, so feeding it a full multi-season row set could silently let
+a game at or after the target week leak into the rolling window. Now
+fixed and covered by a dedicated regression test
+(`test_never_leaks_a_game_at_or_after_the_target_week`).
+
+**Real result on the main matched population**: re-running the 2,954-row
+2025-week-8+ evaluation with the coaching-aware consumer now actually
+wired in found the coaching feature changed **zero** of those 2,954
+projections (`coaching_ablation.rows_where_coaching_feature_changed_the_
+projection: 0`). This is a real, honest finding: genuine in-season HC
+firings are rare NFL events, and none happened to fall inside any
+evaluated player's own rolling-5-game window in this specific population.
+`coaching_aware_mae` and `naive_control_mae` are therefore identical
+(1.412231516436295) on this population -- not because the mechanism is
+broken, but because it was never triggered here.
+
+**Real, non-synthetic activation, directly targeted**: the loaded HC
+registry (real 1999-2026 nfldata `games.csv`) contains three real,
+well-known 2023 in-season HC changes -- Las Vegas (Josh McDaniels ->
+Antonio Pierce, 2023-11-05), Carolina (Frank Reich -> Chris Tabor,
+2023-12-03), LA Chargers (Brandon Staley -> Giff Smith, 2023-12-23).
+Evaluating each team at the real week its own rolling-5 window straddles
+the change (`real_2023_in_season_hc_change_demo` in the report) confirms
+genuine activation in all three real cases, e.g.:
+
+| Team | Week | Coaching-aware dropbacks (games used) | Naive control (games used) | Real HC |
+|---|---|---|---|---|
+| LV  | 2023 wk10 | 30.7 (1) | 35.9 (5) | Antonio Pierce |
+| CAR | 2023 wk14 | 35.9 (1) | 37.6 (5) | Chris Tabor |
+| LAC | 2023 wk17 | 43.4 (1) | 44.1 (5) | Giff Smith |
+
+Each case correctly resolves the real interim coach's real identity and
+real regime start date from the registry, correctly restricts the rolling
+window to only the 1 real game played since the change (vs. 5 for the
+unfiltered control), and produces a real, different team-volume
+prediction -- exactly what Section 5 required demonstrated, on real data,
+not just the synthetic unit-test fixtures.
+
+**What remains not established**: whether the coaching-aware prediction is
+MORE ACCURATE than the naive control on a real held-out population still
+containing genuine in-season changes (n=0 real activating rows in the main
+2025 population means no such comparison is possible there; the 2023
+demo above shows the mechanism works, not that it improves accuracy).
+That comparison requires either a much larger real population spanning
+more in-season coaching changes, or a targeted historical population built
+specifically around known real coaching changes -- a concrete next
+milestone, not yet attempted.

@@ -60,6 +60,29 @@ projection. Consistent with this project's own standard, the real,
 tested, end-to-end connection built here is an engineering deliverable in
 its own right, independent of this result.
 
+## Coaching consumer (do not remove or soften this)
+
+`predict_team_pass_dropbacks_coaching_aware` and `filter_team_rows_by_
+current_regime` (both below) are ACTUALLY CONSUMED by `build_opportunity_
+challenger_record` -- the coaching-aware team-dropback prediction, not a
+naive unfiltered one, is what feeds `compute_opportunity_projection`. On
+the main 2,954-row 2025-week-8+ evaluation above, the coaching feature
+changed ZERO projections (`coaching_ablation.rows_where_coaching_feature_
+changed_the_projection == 0` in the evidence report) -- a real, honest
+null result, not a bug: genuine in-season HC firings are rare, and none
+fell inside any evaluated player's own rolling-5 window in that
+population. Directly targeting the three real, known 2023 in-season HC
+changes in the loaded registry (Las Vegas/Antonio Pierce 2023-11-05,
+Carolina/Chris Tabor 2023-12-03, LA Chargers/Giff Smith 2023-12-23) DOES
+produce genuine, non-synthetic activation: e.g. LV week 10 2023,
+coaching-aware predicted dropbacks 30.7 (1 real game under the new
+regime) vs. naive-control 35.9 (5 games spanning the change) -- see
+`real_2023_in_season_hc_change_demo` in the evidence report for all
+three, plus `nfl/tests/test_receptions_team_opportunity_challenger.py`'s
+`PredictTeamPassDropbacksCoachingAwareTests` and the synthetic-but-
+mechanism-verifying `test_coaching_regime_change_actually_changes_the_
+projection`.
+
 ## What this module does NOT do
 
 - Never fabricates a team pass-volume estimate: `predict_team_pass_
@@ -174,7 +197,14 @@ def filter_team_rows_by_current_regime(
     "simpler control") with `regime_filter_applied: False` and the real
     reason disclosed, never a guessed regime boundary.
     """
-    own_rows = [dict(r) for r in team_box_score_rows if r["team"] == team]
+    # Strictly-prior first: no-lookahead is enforced HERE, unconditionally,
+    # not left to the caller or to whether a regime lookup resolves -- a
+    # game at or after the target week must never enter either the
+    # regime-filtered set OR the "no filtering applied" fallback below.
+    own_rows = [
+        dict(r) for r in team_box_score_rows
+        if r["team"] == team and (r["season"], r["week"]) < (target_season, target_week)
+    ]
     lookup = coach_mod.lookup_regime(
         hc_intervals, team=team, role="HC",
         season=target_season, week=target_week, game_date_index=game_date_index,
@@ -198,6 +228,105 @@ def filter_team_rows_by_current_regime(
         "regime_start_date": regime_start.isoformat(),
         "regime_filter_applied": len(kept) != len(own_rows),
         "rows_excluded_by_regime_filter": len(own_rows) - len(kept),
+    }
+
+
+def _dropback_proxy(row: Mapping[str, Any]) -> float:
+    """Same definition `team_prior_features`/`defense_prior_features` use:
+    a sacked dropback is already an `attempt` under nflfastR's own
+    convention, so `attempts + sacks_suffered` recovers the true dropback
+    count. Reused here, not reimplemented differently, so the coaching-aware
+    and naive-control predictions below are comparable to `predict_team_
+    pass_dropbacks`'s own values on the same real box-score rows.
+    """
+    return float(row["attempts"]) + float(row["sacks_suffered"])
+
+
+def _rolling_dropback_mean(
+    rows: Sequence[Mapping[str, Any]], *, rolling_window: int,
+) -> tuple[float | None, int]:
+    ordered = sorted(rows, key=lambda r: (r["season"], r["week"]))
+    window = ordered[-rolling_window:] if rolling_window > 0 else ordered
+    if not window:
+        return None, 0
+    return sum(_dropback_proxy(r) for r in window) / len(window), len(window)
+
+
+def predict_team_pass_dropbacks_coaching_aware(
+    team_box_score_rows: Sequence[Mapping[str, Any]],
+    *,
+    team: str,
+    target_season: int,
+    target_week: int,
+    hc_intervals: Sequence[Any],
+    game_date_index: Mapping[tuple[str, int, int], date],
+    opponent_defense_allowed: float | None,
+    opponent_defense_prior_games_n: int,
+    rolling_window: int = 5,
+) -> dict[str, Any]:
+    """The ACTUAL coaching-consumer this module was missing: computes the
+    team's own strictly-prior dropback rolling mean TWICE from the same raw
+    real box-score rows -- once restricted to games under the current HC
+    regime (`filter_team_rows_by_current_regime`, reused unmodified), once
+    with no coaching restriction at all (the "otherwise-identical model
+    without the coaching feature" control) -- then blends EACH with the
+    SAME real opponent dropbacks-allowed value, producing two real,
+    independently inspectable team-volume predictions rather than a single
+    number with unused metadata attached.
+
+    Unlike `predict_team_pass_dropbacks` (which reads pre-aggregated means
+    off a `game_matchup_features` row and cannot distinguish a coaching
+    change within its rolling window), this recomputes the OWN-side rolling
+    mean directly from raw rows so the regime filter can actually change
+    which games are averaged. The opponent-allowed side is unchanged
+    (Section 6's disclosed simplification: coaching continuity is applied
+    to a team's own offense, not credited to the opponent's defense).
+
+    Never fabricates a coaching effect: when `lookup_regime` cannot resolve
+    a regime (UNKNOWN), `coaching_aware` and `naive_control` are
+    numerically IDENTICAL by construction (the filter returns the same
+    unfiltered row set to both), and `regime_note.regime_filter_applied` is
+    `False` -- the explicit fallback Section 5 requires, not a guess.
+    """
+    filtered_rows, regime_note = filter_team_rows_by_current_regime(
+        team_box_score_rows, team=team, target_season=target_season, target_week=target_week,
+        hc_intervals=hc_intervals, game_date_index=game_date_index,
+    )
+    naive_rows = [
+        dict(r) for r in team_box_score_rows
+        if r["team"] == team and (r["season"], r["week"]) < (target_season, target_week)
+    ]
+
+    coaching_own_mean, coaching_own_n = _rolling_dropback_mean(filtered_rows, rolling_window=rolling_window)
+    naive_own_mean, naive_own_n = _rolling_dropback_mean(naive_rows, rolling_window=rolling_window)
+
+    have_opp = opponent_defense_allowed is not None and opponent_defense_prior_games_n > 0
+
+    def _blend(own_mean: float | None, own_n: int) -> tuple[float | None, str]:
+        have_own = own_mean is not None and own_n > 0
+        if have_own and have_opp:
+            return (own_mean + opponent_defense_allowed) / 2.0, "BLENDED_OFFENSE_AND_DEFENSE"
+        if have_own:
+            return own_mean, "OFFENSE_ONLY_NO_REAL_OPPONENT_PRIOR"
+        if have_opp:
+            return opponent_defense_allowed, "DEFENSE_ONLY_NO_REAL_OWN_PRIOR"
+        return None, "NO_REAL_PRIOR_HISTORY"
+
+    coaching_predicted, coaching_basis = _blend(coaching_own_mean, coaching_own_n)
+    naive_predicted, naive_basis = _blend(naive_own_mean, naive_own_n)
+
+    return {
+        "predicted_dropbacks_coaching_aware": coaching_predicted,
+        "predicted_dropbacks_naive_control": naive_predicted,
+        "coaching_aware_basis": coaching_basis,
+        "naive_control_basis": naive_basis,
+        "own_games_used_coaching_aware": coaching_own_n,
+        "own_games_used_naive_control": naive_own_n,
+        "coaching_feature_changed_the_projection": (
+            coaching_predicted is not None and naive_predicted is not None
+            and coaching_predicted != naive_predicted
+        ),
+        "regime_note": regime_note,
     }
 
 
@@ -408,6 +537,9 @@ def build_opportunity_challenger_record(
     candidate_team: str,
     matchup_row: Mapping[str, Any],
     side: str,
+    team_box_score_rows: Sequence[Mapping[str, Any]],
+    hc_intervals: Sequence[Any],
+    game_date_index: Mapping[tuple[str, int, int], date],
     target_share_history: list[tuple[int, int, float]],
     catch_rate_game_log: Sequence[Mapping[str, Any]],
     target_season: int,
@@ -416,22 +548,41 @@ def build_opportunity_challenger_record(
     over_odds: Any,
     under_odds: Any,
     residuals: Sequence[float],
+    rolling_window: int = 5,
     b0_projection: float | None = None,
-    regime_note: dict[str, Any] | None = None,
 ) -> dict[str, Any] | None:
     """Assemble one real opportunity-engine challenger record for a single
     real receptions candidate at one real offered line, or None if any
     required real input is missing (never a fabricated record).
 
-    REAL SOURCE (matchup row, target-share history, catch-rate game log,
-    all caller-supplied from real nflverse-derived data) -> VERIFIED
-    IDENTITY/TIMING (candidate_player_id/team, target_season/week) ->
-    FEATURE (team dropback volume, current-season-aware share/rate) ->
-    OPPORTUNITY PROJECTION (compute_opportunity_projection's absolute
-    derivation, not a B0 rescale) -> OUTCOME DISTRIBUTION
-    (score_shadow_candidate, reused unmodified) -> this frozen record.
+    REAL SOURCE (matchup row, raw team box scores, target-share history,
+    catch-rate game log, all caller-supplied from real nflverse-derived
+    data) -> VERIFIED IDENTITY/TIMING (candidate_player_id/team,
+    target_season/week) -> FEATURE (coaching-regime-aware team dropback
+    volume, current-season-aware share/rate) -> OPPORTUNITY PROJECTION
+    (compute_opportunity_projection's absolute derivation, not a B0
+    rescale) -> OUTCOME DISTRIBUTION (score_shadow_candidate, reused
+    unmodified) -> this frozen record.
+
+    The team-volume feature is the COACHING-AWARE prediction from
+    `predict_team_pass_dropbacks_coaching_aware` -- this is what Section
+    6/PR #179's follow-on condition (Issue #91 comment `5797780943`)
+    requires: the coaching signal actually changes the projection this
+    function computes, not just metadata attached alongside it. The
+    otherwise-identical `naive_control` prediction (same real data, no
+    regime filtering) is preserved in the record for direct before/after
+    comparison, never discarded.
     """
-    team_dropbacks_info = predict_team_pass_dropbacks(matchup_row, side=side)
+    opponent = "away" if side == "home" else "home"
+    opponent_allowed = matchup_row[f"{opponent}_defense_prior_mean_opp_dropback_proxy_allowed"]
+    opponent_n = matchup_row[f"{opponent}_defense_prior_games_n"]
+
+    team_dropbacks_info = predict_team_pass_dropbacks_coaching_aware(
+        team_box_score_rows, team=candidate_team, target_season=target_season, target_week=target_week,
+        hc_intervals=hc_intervals, game_date_index=game_date_index,
+        opponent_defense_allowed=opponent_allowed, opponent_defense_prior_games_n=opponent_n,
+        rolling_window=rolling_window,
+    )
     target_share_info = estimate_current_week_target_share(
         player_id=candidate_player_id, target_share_history=target_share_history,
         target_season=target_season, target_week=target_week,
@@ -441,13 +592,28 @@ def build_opportunity_challenger_record(
         target_season=target_season, target_week=target_week,
     )
     projection_info = compute_opportunity_projection(
-        predicted_team_dropbacks=team_dropbacks_info["predicted_dropbacks"],
+        predicted_team_dropbacks=team_dropbacks_info["predicted_dropbacks_coaching_aware"],
         target_share=target_share_info["estimate"],
         catch_rate=catch_rate_info["estimate"],
     )
     projection = projection_info["projection"]
     if projection is None:
         return None
+
+    # Real before/after: the SAME target share and catch rate, but the
+    # naive-control (no coaching filter) team-volume number -- isolates
+    # exactly what the coaching feature changed, never fabricated.
+    control_projection_info = compute_opportunity_projection(
+        predicted_team_dropbacks=team_dropbacks_info["predicted_dropbacks_naive_control"],
+        target_share=target_share_info["estimate"],
+        catch_rate=catch_rate_info["estimate"],
+    )
+    control_score = None
+    if control_projection_info["projection"] is not None:
+        control_score = score_shadow_candidate(
+            projection=control_projection_info["projection"], line=line,
+            over_odds=over_odds, under_odds=under_odds, residuals=residuals,
+        )
 
     score = score_shadow_candidate(
         projection=projection, line=line, over_odds=over_odds, under_odds=under_odds, residuals=residuals,
@@ -463,7 +629,9 @@ def build_opportunity_challenger_record(
         "team_dropbacks": team_dropbacks_info,
         "target_share": target_share_info,
         "catch_rate": catch_rate_info,
-        "coaching_regime_note": regime_note,
+        "naive_control_projection": control_projection_info["projection"],
+        "naive_control_probabilities": control_score,
+        "coaching_feature_changed_the_projection": team_dropbacks_info["coaching_feature_changed_the_projection"],
         **score,
         "prediction_source": "B0_VS_TEAM_OPPORTUNITY_ENGINE_V1",
         "status": "RESEARCH_ONLY_NOT_PROMOTED",
@@ -474,6 +642,7 @@ __all__ = [
     "TeamOpportunityChallengerError",
     "predict_team_pass_dropbacks",
     "filter_team_rows_by_current_regime",
+    "predict_team_pass_dropbacks_coaching_aware",
     "estimate_current_week_target_share",
     "estimate_current_week_catch_rate",
     "compute_opportunity_projection",

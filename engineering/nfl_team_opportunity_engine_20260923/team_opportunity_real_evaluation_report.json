@@ -7,11 +7,111 @@
   "analysis": "NFL_RECEPTIONS_B0_VS_TEAM_OPPORTUNITY_ENGINE_V1_HISTORICAL_OPERATIONAL_TEST",
   "b0_mae": 1.2990972692394471,
   "challenger_mae": 1.412231516436295,
+  "coaching_ablation": {
+    "coaching_aware_mae": 1.412231516436295,
+    "coaching_aware_n": 2954,
+    "hc_registry_source": {
+      "bytes": 2177838,
+      "commit": "8ed09b2fe3ea42332b2249a995737e13dd931ff3",
+      "fields_used": [
+        "season",
+        "week",
+        "game_type",
+        "gameday",
+        "away_team",
+        "home_team",
+        "away_coach",
+        "home_coach"
+      ],
+      "path": "data/games.csv",
+      "repository": "https://github.com/nflverse/nfldata",
+      "sha256": "26332ae5d8d8d0481f0670cf5e3849497a415351d4026ae5bee15a5aab96d188",
+      "verification_note": "Re-fetched raw.githubusercontent.com/nflverse/nfldata/8ed09b2fe3ea42332b2249a995737e13dd931ff3/data/games.csv and confirmed both byte count and SHA-256 against this pin before ingesting.",
+      "verified_at": "2026-09-19"
+    },
+    "naive_control_mae": 1.412231516436295,
+    "naive_control_n": 2954,
+    "real_before_after_samples": [],
+    "real_hc_regime_intervals_loaded": 255,
+    "regime_lookup_status_counts": {
+      "RESOLVED": 3244
+    },
+    "rows_where_coaching_feature_changed_the_projection": 0,
+    "rows_where_coaching_feature_changed_the_projection_pct": 0.0
+  },
   "eligible_eval_rows_considered": 3244,
   "eval_min_week": 8,
   "eval_season": 2025,
-  "generated_in_seconds": 20.678367376327515,
+  "generated_in_seconds": 21.755126237869263,
   "matched_n": 2954,
+  "real_2023_in_season_hc_change_demo": {
+    "note": "Zero of 2954 rows in the main 2025-week-8+ matched evaluation had a real in-season coaching change fall inside their own rolling-5 window (rows_where_coaching_feature_changed_the_projection == 0) -- a real, honest finding, not a bug: genuine in-season HC firings are rare, and by 2025 the three known 2023 in-season changes below were over a year in the past for every evaluated team. The block below targets those three real 2023 events directly, at the real week each one's own rolling-5 window would straddle the change, to demonstrate genuine (non-synthetic) real-world activation of the coaching consumer -- separate from, not a substitute for, the honest null result on the main matched population.",
+    "results": [
+      {
+        "coaching_aware_basis": "BLENDED_OFFENSE_AND_DEFENSE",
+        "coaching_feature_changed_the_projection": true,
+        "naive_control_basis": "BLENDED_OFFENSE_AND_DEFENSE",
+        "own_games_used_coaching_aware": 1,
+        "own_games_used_naive_control": 5,
+        "predicted_dropbacks_coaching_aware": 30.7,
+        "predicted_dropbacks_naive_control": 35.9,
+        "regime_note": {
+          "regime_filter_applied": true,
+          "regime_lookup_status": "RESOLVED",
+          "regime_persons": [
+            "Antonio Pierce"
+          ],
+          "regime_start_date": "2023-11-05",
+          "rows_excluded_by_regime_filter": 8
+        },
+        "season": 2023,
+        "team": "LV",
+        "week": 10
+      },
+      {
+        "coaching_aware_basis": "BLENDED_OFFENSE_AND_DEFENSE",
+        "coaching_feature_changed_the_projection": true,
+        "naive_control_basis": "BLENDED_OFFENSE_AND_DEFENSE",
+        "own_games_used_coaching_aware": 1,
+        "own_games_used_naive_control": 5,
+        "predicted_dropbacks_coaching_aware": 35.9,
+        "predicted_dropbacks_naive_control": 37.599999999999994,
+        "regime_note": {
+          "regime_filter_applied": true,
+          "regime_lookup_status": "RESOLVED",
+          "regime_persons": [
+            "Chris Tabor"
+          ],
+          "regime_start_date": "2023-12-03",
+          "rows_excluded_by_regime_filter": 11
+        },
+        "season": 2023,
+        "team": "CAR",
+        "week": 14
+      },
+      {
+        "coaching_aware_basis": "BLENDED_OFFENSE_AND_DEFENSE",
+        "coaching_feature_changed_the_projection": true,
+        "naive_control_basis": "BLENDED_OFFENSE_AND_DEFENSE",
+        "own_games_used_coaching_aware": 1,
+        "own_games_used_naive_control": 5,
+        "predicted_dropbacks_coaching_aware": 43.4,
+        "predicted_dropbacks_naive_control": 44.099999999999994,
+        "regime_note": {
+          "regime_filter_applied": true,
+          "regime_lookup_status": "RESOLVED",
+          "regime_persons": [
+            "Giff Smith"
+          ],
+          "regime_start_date": "2023-12-23",
+          "rows_excluded_by_regime_filter": 14
+        },
+        "season": 2023,
+        "team": "LAC",
+        "week": 17
+      }
+    ]
+  },
   "sample_records": [
     {
       "b0_projection": 1.0,
