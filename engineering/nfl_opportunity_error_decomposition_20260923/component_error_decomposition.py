@@ -576,6 +576,21 @@ three_signal_combination = {
         "combined_vs_qb_alone": _bootstrap(three_rows, "err_combined_snap", "err_qb_snap"),
         "combined_vs_naive_snap": _bootstrap(three_rows, "err_combined_snap", "err_naive_snap"),
     },
+    # Full round-robin over all 6 unordered pairs among the 4 variants. Added
+    # after independent adversarial review found the original PR/handoff
+    # text claimed "every pairwise 95% CI includes zero" while the code only
+    # ever computed the 3 pairs above (each pivoted on "combined"). The 3
+    # pairs NOT involving "combined" are reported here so the claim is either
+    # fully substantiated or corrected, rather than generalized from a
+    # partial comparison.
+    "bootstrap_full_pairwise_round_robin": {
+        "combined_vs_coaching_alone": _bootstrap(three_rows, "err_combined_snap", "err_coaching_snap"),
+        "combined_vs_qb_alone": _bootstrap(three_rows, "err_combined_snap", "err_qb_snap"),
+        "combined_vs_naive_snap": _bootstrap(three_rows, "err_combined_snap", "err_naive_snap"),
+        "coaching_vs_qb_alone": _bootstrap(three_rows, "err_coaching_snap", "err_qb_snap"),
+        "coaching_vs_naive_snap": _bootstrap(three_rows, "err_coaching_snap", "err_naive_snap"),
+        "qb_vs_naive_snap": _bootstrap(three_rows, "err_qb_snap", "err_naive_snap"),
+    },
 }
 
 # --- Experiment 2 aggregation: oracle stage-substitution decomposition ---

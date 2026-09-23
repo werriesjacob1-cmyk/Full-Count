@@ -12,7 +12,7 @@
     "STAGE_ABLATION_MISSING_INPUT": 19,
     "THREE_SIGNAL_MISSING_INPUT": 19
   },
-  "generated_in_seconds": 75.31373763084412,
+  "generated_in_seconds": 87.02551627159119,
   "hc_registry_source": {
     "bytes": 2177838,
     "commit": "8ed09b2fe3ea42332b2249a995737e13dd931ff3",
@@ -560,6 +560,86 @@
         "observed_diff_a_minus_b": -0.0017749710975916155,
         "observed_mae_a": 1.5781195788557443,
         "observed_mae_b": 1.579894549953336
+      }
+    },
+    "bootstrap_full_pairwise_round_robin": {
+      "coaching_vs_naive_snap": {
+        "bootstrap_mean_diff": -0.0013110159298114034,
+        "bootstrap_se_diff": 0.0008054542727812513,
+        "ci95_high": 0.00013009257405880483,
+        "ci95_low": -0.0030263739800839517,
+        "ci_excludes_zero": false,
+        "n_boot": 3000,
+        "n_distinct_players": 433,
+        "n_rows": 2978,
+        "observed_diff_a_minus_b": -0.0013114559210845034,
+        "observed_mae_a": 1.5754014958645597,
+        "observed_mae_b": 1.5767129517856442
+      },
+      "coaching_vs_qb_alone": {
+        "bootstrap_mean_diff": -0.004478846183541986,
+        "bootstrap_se_diff": 0.0019833838279826885,
+        "ci95_high": -0.0007048562554744171,
+        "ci95_low": -0.008488938053952644,
+        "ci_excludes_zero": true,
+        "n_boot": 3000,
+        "n_distinct_players": 433,
+        "n_rows": 2978,
+        "observed_diff_a_minus_b": -0.004493054088776205,
+        "observed_mae_a": 1.5754014958645597,
+        "observed_mae_b": 1.579894549953336
+      },
+      "combined_vs_coaching_alone": {
+        "bootstrap_mean_diff": 0.002708462103608319,
+        "bootstrap_se_diff": 0.0017007957530406953,
+        "ci95_high": 0.006156167779252854,
+        "ci95_low": -0.0005154902595805586,
+        "ci_excludes_zero": false,
+        "n_boot": 3000,
+        "n_distinct_players": 433,
+        "n_rows": 2978,
+        "observed_diff_a_minus_b": 0.0027180829911845894,
+        "observed_mae_a": 1.5781195788557443,
+        "observed_mae_b": 1.5754014958645597
+      },
+      "combined_vs_naive_snap": {
+        "bootstrap_mean_diff": 0.001397446173796916,
+        "bootstrap_se_diff": 0.0018620787337828915,
+        "ci95_high": 0.00520442317721524,
+        "ci95_low": -0.0021733616711048787,
+        "ci_excludes_zero": false,
+        "n_boot": 3000,
+        "n_distinct_players": 433,
+        "n_rows": 2978,
+        "observed_diff_a_minus_b": 0.001406627070100086,
+        "observed_mae_a": 1.5781195788557443,
+        "observed_mae_b": 1.5767129517856442
+      },
+      "combined_vs_qb_alone": {
+        "bootstrap_mean_diff": -0.001770384079933667,
+        "bootstrap_se_diff": 0.001161722447182744,
+        "ci95_high": 0.0003152230806962702,
+        "ci95_low": -0.004214528381238913,
+        "ci_excludes_zero": false,
+        "n_boot": 3000,
+        "n_distinct_players": 433,
+        "n_rows": 2978,
+        "observed_diff_a_minus_b": -0.0017749710975916155,
+        "observed_mae_a": 1.5781195788557443,
+        "observed_mae_b": 1.579894549953336
+      },
+      "qb_vs_naive_snap": {
+        "bootstrap_mean_diff": 0.003167830253730583,
+        "bootstrap_se_diff": 0.0016860123561452827,
+        "ci95_high": 0.0065488532010090535,
+        "ci95_low": 3.4415224466068164e-06,
+        "ci_excludes_zero": true,
+        "n_boot": 3000,
+        "n_distinct_players": 433,
+        "n_rows": 2978,
+        "observed_diff_a_minus_b": 0.0031815981676917016,
+        "observed_mae_a": 1.579894549953336,
+        "observed_mae_b": 1.5767129517856442
       }
     },
     "bootstrap_vs_b0": {

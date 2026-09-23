@@ -164,6 +164,28 @@ single signal alone**: combined-vs-coaching-alone Δ=+0.0027 (CI
 not produce a different result than each alone -- it is still a null
 result, with no synergy and no additional damage either.**
 
+**Correction from independent adversarial review**: an earlier version of
+this report's PR description and `ENGINEERING_HANDOFF.md` entry
+generalized this to "every pairwise 95% CI [among the four variants]
+includes zero." That is not accurate: only the 3 pairs above (each pivoted
+on `combined`) were originally computed. The reviewer added the missing 3
+pairs (`bootstrap_full_pairwise_round_robin` in the JSON report, all 6
+unordered pairs) and reran the real evaluation. Result: 4 of 6 pairs
+include zero (the 3 above, plus coaching-vs-naive+snap, Δ=-0.0013, CI
+[-0.0030, 0.0001]), but **2 of 6 do NOT**: coaching-vs-QB-alone (Δ=-0.0045,
+CI [-0.0085, -0.0007], excludes 0) and QB-vs-naive+snap (Δ=+0.0032, CI
+[0.0000, 0.0066], excludes 0). Both are small in absolute/relative
+magnitude (<0.3% of the ~1.58 MAE level) and consistent in size with the
+already-disclosed Experiment 1 finding that QB-aware team volume differs
+from naive by a similarly small, statistically real amount (+0.0035, CI
+[0.0004, 0.0069]). **This does not change the headline conclusion** --
+all four variants remain solidly worse than B0 and clustered tightly
+together relative to that gap -- but the precise claim should read: most,
+not all, pairwise differences among the four variants are statistically
+indistinguishable from zero; two of six show a small but real difference
+in the same direction and magnitude already documented for the team-volume
+stage alone in Experiment 1.
+
 Comparing this table to Experiment 1 (no snap: ~1.446-1.450) shows the
 snap-informed adjustment itself adds roughly **+0.13 MAE on top of any
 team-volume variant** -- reproducing Mission 6's original negative finding
@@ -228,7 +250,7 @@ signals.
 | Catch-rate estimates are unstable | **Not supported on this population** | Oracle catch-rate substitution's effect is not statistically distinguishable from zero (Exp. 2) |
 | B0 already captures role information the chain's explicit estimators re-derive worse | **Supported, indirectly** | Even the base (non-snap) share/rate estimate is ~0.12 MAE worse than B0 before any of the three new signals are added (Exp. 1); an oracle share fixes nearly the entire gap and would even beat B0 (Exp. 2) |
 | Broad population-wide adjustments overreact vs. genuine role-transition value | **Cannot be tested as pre-registered (degenerate flag); exploratory cut finds no support** | Primary OR-of-three flag fires on 99.5% of rows (Exp. 4); the more selective identity-only cut still shows the chain losing to B0 inside real transitions |
-| Do the three signals combine to a different (better/worse/still-null) result than each alone | **Still null -- no synergy, no additional damage** | All four snap-informed variants (naive/coaching/QB/combined) are statistically indistinguishable from each other, all clearly worse than B0 (Exp. 3) |
+| Do the three signals combine to a different (better/worse/still-null) result than each alone | **Still null -- no synergy, no additional damage** | All four snap-informed variants (naive/coaching/QB/combined) are clearly worse than B0 and cluster tightly together (Exp. 3); full round-robin pairwise testing shows 4 of 6 pairs statistically indistinguishable and 2 of 6 with a small but real difference of the same size already seen in Exp. 1's team-volume-only comparison -- no evidence of synergy or amplified damage from combining signals either way |
 
 ## What remains genuinely unresolved
 
