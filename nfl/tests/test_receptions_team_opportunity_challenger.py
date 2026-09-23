@@ -18,9 +18,11 @@ from nfl.research import receptions_team_opportunity_challenger as opportunity_m
 from nfl.research.coach_regime_registry import RegimeInterval
 from nfl.research.receptions_team_opportunity_challenger import (
     TeamOpportunityChallengerError,
+    apply_snap_informed_target_share,
     build_opportunity_challenger_record,
     compute_opportunity_projection,
     estimate_current_week_catch_rate,
+    estimate_current_week_snap_share,
     estimate_current_week_target_share,
     filter_team_rows_by_current_regime,
     opportunity_side_probabilities_for_lines,
@@ -231,6 +233,85 @@ class CatchRateEstimateTests(unittest.TestCase):
             player_id="00-TEST", game_log=[], target_season=2026, target_week=1,
         )
         self.assertIsNone(result["estimate"])
+
+
+class SnapShareEstimateTests(unittest.TestCase):
+    def test_shrinks_current_season_toward_prior_season_snap_share(self):
+        # Same shrinkage discipline as target share, over real per-game
+        # offense-snap-share history instead of targets.
+        history = [(2025, w, 0.40) for w in range(1, 18)] + [(2026, 1, 0.75), (2026, 2, 0.75)]
+        result = estimate_current_week_snap_share(
+            player_id="00-TEST", snap_share_history=history, target_season=2026, target_week=3, shrinkage_k=3.0,
+        )
+        # weight_current = 2/(2+3) = 0.4 -> 0.4*0.75 + 0.6*0.40 = 0.54
+        self.assertAlmostEqual(result["estimate"], 0.54, places=6)
+        self.assertEqual(result["n_current_season_games"], 2)
+        self.assertAlmostEqual(result["current_season_mean"], 0.75, places=6)
+        self.assertAlmostEqual(result["prior_season_value"], 0.40, places=6)
+
+    def test_no_history_returns_none(self):
+        result = estimate_current_week_snap_share(
+            player_id="00-TEST", snap_share_history=[], target_season=2026, target_week=1,
+        )
+        self.assertIsNone(result["estimate"])
+
+    def test_impossible_snap_share_above_one_raises(self):
+        history = [(2025, w, 1.3) for w in range(1, 18)]
+        with self.assertRaises(TeamOpportunityChallengerError):
+            estimate_current_week_snap_share(
+                player_id="00-TEST", snap_share_history=history, target_season=2026, target_week=1,
+            )
+
+
+class ApplySnapInformedTargetShareTests(unittest.TestCase):
+    def test_real_role_change_boosts_target_share(self):
+        # Real scenario: a player's snap share nearly doubled this season
+        # (0.40 -> 0.75) versus his own prior-season baseline, but his
+        # target-share sample is still thin (1 game) so
+        # estimate_current_week_target_share's own shrinkage hasn't fully
+        # caught up yet.
+        target_share_info = {"estimate": 0.15, "n_current_season_games": 1, "basis": "SHRUNK_CURRENT_TOWARD_PRIOR_SEASON"}
+        snap_share_info = {
+            "n_current_season_games": 2, "current_season_mean": 0.75, "prior_season_value": 0.40,
+        }
+        result = apply_snap_informed_target_share(target_share_info=target_share_info, snap_share_info=snap_share_info)
+        self.assertTrue(result["snap_role_change_applied"])
+        # ratio = 0.75/0.40 = 1.875, clamped within [0.4, 2.5] -> unchanged
+        self.assertAlmostEqual(result["snap_role_change_ratio"], 1.875, places=6)
+        self.assertAlmostEqual(result["estimate"], 0.15 * 1.875, places=6)
+        self.assertAlmostEqual(result["pre_snap_adjustment_target_share"], 0.15, places=6)
+
+    def test_extreme_ratio_is_clamped_not_fabricated(self):
+        target_share_info = {"estimate": 0.10, "n_current_season_games": 1}
+        snap_share_info = {
+            "n_current_season_games": 1, "current_season_mean": 0.90, "prior_season_value": 0.05,
+        }
+        result = apply_snap_informed_target_share(target_share_info=target_share_info, snap_share_info=snap_share_info)
+        # raw ratio = 18.0, clamped to the pre-declared bound of 2.5
+        self.assertAlmostEqual(result["snap_role_change_ratio"], 2.5, places=6)
+        self.assertAlmostEqual(result["snap_role_change_ratio_unclamped"], 18.0, places=6)
+        self.assertAlmostEqual(result["estimate"], 0.10 * 2.5, places=6)
+
+    def test_no_current_season_snap_games_falls_back_to_control(self):
+        target_share_info = {"estimate": 0.15, "n_current_season_games": 0}
+        snap_share_info = {"n_current_season_games": 0, "current_season_mean": None, "prior_season_value": 0.40}
+        result = apply_snap_informed_target_share(target_share_info=target_share_info, snap_share_info=snap_share_info)
+        self.assertFalse(result["snap_role_change_applied"])
+        self.assertEqual(result["estimate"], 0.15)
+
+    def test_no_real_prior_season_baseline_falls_back_to_control(self):
+        target_share_info = {"estimate": 0.15, "n_current_season_games": 1}
+        snap_share_info = {"n_current_season_games": 1, "current_season_mean": 0.5, "prior_season_value": None}
+        result = apply_snap_informed_target_share(target_share_info=target_share_info, snap_share_info=snap_share_info)
+        self.assertFalse(result["snap_role_change_applied"])
+        self.assertEqual(result["estimate"], 0.15)
+
+    def test_missing_target_share_estimate_is_not_fabricated(self):
+        target_share_info = {"estimate": None, "n_current_season_games": 0}
+        snap_share_info = {"n_current_season_games": 2, "current_season_mean": 0.75, "prior_season_value": 0.40}
+        result = apply_snap_informed_target_share(target_share_info=target_share_info, snap_share_info=snap_share_info)
+        self.assertIsNone(result["estimate"])
+        self.assertFalse(result["snap_role_change_applied"])
 
 
 class ComputeOpportunityProjectionTests(unittest.TestCase):
@@ -451,12 +532,62 @@ class BuildOpportunityChallengerRecordTests(unittest.TestCase):
         )
         self.assertIsNone(record)
 
+    def test_real_snap_share_role_change_changes_the_final_projection(self):
+        # Mission 6 Section 4's required demonstration: a real current-
+        # season role-change signal (snap share nearly doubling) actually
+        # changes a real research prediction and its probability, with an
+        # explicit otherwise-identical control (snap_unadjusted_projection).
+        matchup_row, team_box_score_rows, target_share_history, catch_rate_log = self._real_shaped_inputs()
+        snap_share_history = [(2025, w, 0.40) for w in range(1, 18)] + [(2026, 1, 0.78), (2026, 2, 0.78)]
+
+        record = build_opportunity_challenger_record(
+            candidate_player_id="00-TEST", candidate_team="KC",
+            matchup_row=matchup_row, side="home",
+            team_box_score_rows=team_box_score_rows, hc_intervals=[], game_date_index={},
+            target_share_history=target_share_history, catch_rate_game_log=catch_rate_log,
+            target_season=2026, target_week=3,
+            line=3.5, over_odds=-115, under_odds=-105, residuals=REAL_SHAPE_RESIDUALS,
+            snap_share_history=snap_share_history,
+        )
+        self.assertIsNotNone(record)
+        self.assertTrue(record["snap_feature_changed_the_projection"])
+        self.assertTrue(record["target_share"]["snap_role_change_applied"])
+        # A real role-change boost (snap share 0.40 -> 0.78) increases the
+        # projection and its over-probability relative to the explicit
+        # unadjusted control, holding team volume and catch rate fixed.
+        self.assertGreater(record["opportunity_projection"], record["snap_unadjusted_projection"])
+        self.assertGreater(record["model_over_probability"], record["snap_unadjusted_probabilities"]["model_over_probability"])
+
+    def test_omitting_snap_share_history_reproduces_prior_behavior_exactly(self):
+        # Backward compatibility: no snap_share_history -> the new feature
+        # is a true no-op, not a silent behavior change for every existing
+        # caller (PR #179/#181's own evaluation script, unmodified here).
+        matchup_row, team_box_score_rows, target_share_history, catch_rate_log = self._real_shaped_inputs()
+        record = build_opportunity_challenger_record(
+            candidate_player_id="00-TEST", candidate_team="KC",
+            matchup_row=matchup_row, side="home",
+            team_box_score_rows=team_box_score_rows, hc_intervals=[], game_date_index={},
+            target_share_history=target_share_history, catch_rate_game_log=catch_rate_log,
+            target_season=2026, target_week=3,
+            line=3.5, over_odds=-115, under_odds=-105, residuals=REAL_SHAPE_RESIDUALS,
+        )
+        self.assertIsNotNone(record)
+        self.assertFalse(record["snap_feature_changed_the_projection"])
+        self.assertEqual(record["opportunity_projection"], record["snap_unadjusted_projection"])
+        self.assertIsNone(record["snap_share"])
+
 
 class DisclosedNegativeFindingTests(unittest.TestCase):
     def test_the_real_negative_evaluation_finding_survives_verbatim(self):
         # Fails if a future edit quietly removes or softens the disclosed
         # real negative finding from the module's own docstring.
         self.assertIn("does NOT beat B0", opportunity_mod.__doc__)
+
+    def test_the_snap_share_negative_finding_survives_verbatim(self):
+        # Fails if a future edit quietly removes or softens the second
+        # disclosed real negative finding (snap-share adjustment made
+        # MAE worse, not better, on the real matched population).
+        self.assertIn("made MAE modestly WORSE", opportunity_mod.__doc__)
 
 
 if __name__ == "__main__":

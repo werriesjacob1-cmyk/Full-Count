@@ -5495,3 +5495,63 @@ around known real in-season coaching changes is the concrete next
 milestone for that question.
 
 Alligator
+
+## 2026-09-23 -- SUPERCLAUDE MISSION 6: current-season snap-share role
+## change (new factor) + real ATL@GB early-lean check-ins reconfirmed
+
+**Priority One (ATL@GB capture)**: reconfirmed all three scheduled
+session check-ins from Mission 5 still exist with correct times
+(22:50/23:50 UTC 2026-09-24, 04:00 UTC 2026-09-25) -- not duplicated. No
+new dispatch executed this mission (too early; the check-ins own that
+work). PR #182 confirmed merged (`55ea2b554b8cbb1e6a03b95eb8722bd0f18f4854`).
+
+**Priority Two: new current-season factor**. `nfl/research/receptions_
+team_opportunity_challenger.py` gains `estimate_current_week_snap_share`
++ `apply_snap_informed_target_share`, ACTUALLY CONSUMED by `build_
+opportunity_challenger_record` (optional `snap_share_history` param,
+backward-compatible -- omitting it is a verified no-op). Real offense
+snap share is observed every game a player plays (unlike target share,
+which only updates on a real target), so it is a lower-noise,
+faster-converging real signal of a current-season role change. Scales
+the target-share estimate by the player's real season-over-season
+snap-share ratio, clamped to [0.4, 2.5] (pre-declared, not fit to
+evaluation data).
+
+**Real source**: `snap_counts_<season>.csv` (nflverse), live-fetched for
+2024-2026 (unpinned by design -- an in-season-updated asset, same
+doctrine as the roster/PBP fixes). Real crosswalk via `role_intelligence_
+data_prep.fetch_players_crosswalk()`.
+
+**Honest result -- a second real, disclosed negative finding**: on the
+same real 2025-week-8+ matched population (n=3,059), the snap-share
+adjustment made MAE WORSE: unadjusted 1.386444868319182 vs. snap-adjusted
+1.4778655658978266. Not retuned against after seeing this result, per
+this project's own anti-retuning standard -- reported as-is. Preserved
+verbatim in the module docstring and asserted by a dedicated guard test.
+
+**Real, non-cherry-picked 2026 demonstration**: scanning every real
+player with both 2025 and 2026 snap data for the single largest real
+ratio found player `00-0039364` -- real 2025 snap share 0.13%, real 2026
+mean 22.7% through 2 real games, unclamped ratio 175x -- demonstrating
+the clamp bound does real, necessary work on real current-season data,
+independent of the accuracy finding above.
+
+**Tests**: 11 new (33 -> 44 -- independently reproduced by the reviewer)
+covering snap-share estimation, the role-change adjustment's
+clamping/fallback behavior, and two full end-to-end record tests -- one
+showing the feature changing a real projection, one proving omitting it
+exactly reproduces prior behavior.
+Full `nfl/tests`: 1023/1023 (was 1012). `test_workflow_shell_syntax.py`:
+88/88 (no workflow files touched).
+
+**What this does NOT establish**: whether a bounded/gated version of this
+adjustment (e.g. requiring a larger minimum role-change magnitude before
+applying it) would perform differently -- that requires a separate
+evaluation population, not retuning against this one, and is the concrete
+next milestone.
+
+Branch `claude/nfl-snap-share-role-change-20260923`. Draft PR, not
+merged -- independent review + Jacob's separate explicit authorization
+required, same doctrine as every other PR.
+
+Alligator

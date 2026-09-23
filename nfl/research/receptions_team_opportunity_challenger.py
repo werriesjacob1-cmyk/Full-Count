@@ -83,6 +83,39 @@ three, plus `nfl/tests/test_receptions_team_opportunity_challenger.py`'s
 mechanism-verifying `test_coaching_regime_change_actually_changes_the_
 projection`.
 
+## Current-season snap-share role change (Mission 6, do not remove or soften)
+
+`estimate_current_week_snap_share` and `apply_snap_informed_target_share`
+are a genuinely new current-season factor, ACTUALLY CONSUMED by
+`build_opportunity_challenger_record` when `snap_share_history` is
+supplied (optional, backward-compatible -- omitting it exactly reproduces
+prior behavior, verified by a dedicated test). A player's real offense
+snap share is observed every game he plays, unlike target share (only
+updates when targeted), so it is a lower-noise, faster-converging signal
+of a real current-season role change -- this scales the target-share
+estimate by the player's real season-over-season snap-share ratio
+(clamped to [0.4, 2.5], a pre-declared bound, never fit to any evaluation
+data), falling back to the unadjusted estimate whenever no real
+current-season snap game or real positive prior-season baseline exists.
+
+**Honest result, a second real negative finding, do not remove or
+soften**: on the same real 2,954-observation 2025-week-8+ matched
+population (now n=3,059 after also requiring a valid snap-informed
+estimate), applying the snap-share adjustment made MAE modestly WORSE,
+not better: unadjusted MAE=1.386 vs. snap-adjusted MAE=1.478. See
+`snap_share_role_change_ablation` in the evidence report for the full
+real numbers, including five real, unfiltered example rows. The
+adjustment triggered on nearly all matched rows (it is not gated behind
+a "large change only" threshold), so this negative result should be
+read as "broadly rescaling every player's target share by his own real
+season-over-season snap trend does not improve accuracy on this
+population" -- not as "the underlying real signal is worthless." A real,
+genuine 2026 in-season role-emergence example (`real_2026_in_season_
+snap_role_change_example`) -- a real 2026 player at 0.13% prior-season
+snap share now real-averaging 22.7% through 2 real 2026 games, an
+unclamped ratio of 175x -- demonstrates the clamp bound is doing real,
+necessary work, separate from the accuracy question above.
+
 ## What this module does NOT do
 
 - Never fabricates a team pass-volume estimate: `predict_team_pass_
@@ -472,6 +505,130 @@ def estimate_current_week_catch_rate(
 
 
 # ---------------------------------------------------------------------------
+# Current-season role-change detection via snap-share trend (Mission 6,
+# Section 4: "current-season offensive snaps... current-season role
+# changes... replacement-player opportunities"). This is a genuinely new,
+# previously disconnected current-season factor -- not a rename of the
+# existing target-share shrinkage above.
+#
+# WHY THIS IS A DIFFERENT SIGNAL FROM TARGET SHARE, NOT A DUPLICATE: a
+# player's target share only updates when he is actually targeted, so a
+# real mid-season role change (e.g. a teammate injury moving him into a
+# starting role) takes several games of accumulated targets before
+# estimate_current_week_target_share's own shrinkage (k=3.0) meaningfully
+# reflects it. His offense SNAP share updates every single game he plays,
+# regardless of whether he was targeted that game -- a lower-noise,
+# faster-converging real signal of an actual role change. This section
+# uses that snap-share trend to scale the target-share estimate, so a
+# real role change becomes visible sooner than target-share alone would
+# show it.
+# ---------------------------------------------------------------------------
+
+def estimate_current_week_snap_share(
+    *,
+    player_id: str,
+    snap_share_history: list[tuple[int, int, float]],
+    target_season: int,
+    target_week: int,
+    shrinkage_k: float = 3.0,
+) -> dict[str, Any]:
+    """Real current-season-aware offense-snap-share estimate, structurally
+    identical to `estimate_current_week_target_share` (same shrinkage
+    discipline, same no-lookahead slicing) but over a DIFFERENT real
+    history: `player_offense_snaps / team_offense_snaps` per game, not
+    targets. `snap_share_history` is caller-supplied from real nflverse
+    `snap_counts_<season>.csv` rows (a real, live, in-season-updated
+    release -- verified to exist and be populated for the current season
+    before this function is ever called; see the evidence script for the
+    real fetch).
+    """
+    if shrinkage_k <= 0:
+        raise TeamOpportunityChallengerError("shrinkage_k must be positive")
+    prior_games = [
+        share for (season, week, share) in snap_share_history
+        if (season, week) < (target_season, target_week)
+    ]
+    current_season_values = [
+        share for (season, week, share) in snap_share_history
+        if season == target_season and week < target_week
+    ]
+    prior_season_values = [
+        share for (season, week, share) in snap_share_history if season == target_season - 1
+    ]
+    prior_value = (sum(prior_season_values) / len(prior_season_values)) if prior_season_values else (
+        (sum(prior_games[-5:]) / len(prior_games[-5:])) if prior_games else None
+    )
+    result = _shrunk_estimate(
+        current_values=current_season_values, prior_value=prior_value, shrinkage_k=shrinkage_k,
+    )
+    share = result["estimate"]
+    if share is not None and not (0.0 <= share <= 1.0):
+        raise TeamOpportunityChallengerError(
+            f"impossible snap share {share!r} for player {player_id!r} -- "
+            "must be within [0, 1]; this indicates an upstream data-integrity bug, "
+            "not a value to silently clip"
+        )
+    result["player_id"] = player_id
+    result["target_season"] = target_season
+    result["target_week"] = target_week
+    return result
+
+
+# A snap-share role-change ratio outside this range is treated as an
+# unreliable small-sample artifact rather than a real signal -- a
+# pre-declared bound, not fit to any evaluation data. A real role change
+# (bench-to-starter or starter-to-bench) rarely more than doubles or
+# halves a player's snap share within a season.
+SNAP_ROLE_CHANGE_RATIO_BOUNDS = (0.4, 2.5)
+MIN_CURRENT_SEASON_SNAP_GAMES_FOR_ROLE_CHANGE_SIGNAL = 1
+
+
+def apply_snap_informed_target_share(
+    *, target_share_info: dict[str, Any], snap_share_info: dict[str, Any],
+) -> dict[str, Any]:
+    """Scale a target-share estimate by how much a player's REAL snap
+    share has actually moved this season relative to his own prior-season
+    baseline -- the low-noise, every-game-observed signal described above.
+
+    Returns the UNCHANGED `target_share_info` (the "otherwise-identical
+    simpler control") whenever the snap-based adjustment cannot be
+    computed from real data: no current-season snap games yet, no real
+    prior-season snap baseline to compare against, or the target-share
+    estimate itself is unavailable. Never fabricates a role-change signal
+    from a thin or missing snap-share sample.
+    """
+    target_share = target_share_info.get("estimate")
+    if target_share is None:
+        return dict(target_share_info, snap_role_change_applied=False, snap_role_change_ratio=None)
+
+    snap_current_n = snap_share_info.get("n_current_season_games", 0)
+    snap_prior_value = snap_share_info.get("prior_season_value")
+    snap_current_mean = snap_share_info.get("current_season_mean")
+    if (
+        snap_current_n < MIN_CURRENT_SEASON_SNAP_GAMES_FOR_ROLE_CHANGE_SIGNAL
+        or snap_prior_value is None or not (snap_prior_value > 0)
+        or snap_current_mean is None
+    ):
+        return dict(target_share_info, snap_role_change_applied=False, snap_role_change_ratio=None)
+
+    raw_ratio = snap_current_mean / snap_prior_value
+    low, high = SNAP_ROLE_CHANGE_RATIO_BOUNDS
+    ratio = max(low, min(high, raw_ratio))
+
+    adjusted_share = target_share * ratio
+    adjusted_share = max(0.0, min(1.0, adjusted_share))
+
+    result = dict(target_share_info)
+    result["estimate"] = adjusted_share
+    result["snap_role_change_applied"] = True
+    result["snap_role_change_ratio"] = ratio
+    result["snap_role_change_ratio_unclamped"] = raw_ratio
+    result["pre_snap_adjustment_target_share"] = target_share
+    result["snap_current_season_games"] = snap_current_n
+    return result
+
+
+# ---------------------------------------------------------------------------
 # Compose: team volume x player share x catch rate -> projection -> record
 # (Sections 4-7)
 # ---------------------------------------------------------------------------
@@ -550,6 +707,7 @@ def build_opportunity_challenger_record(
     residuals: Sequence[float],
     rolling_window: int = 5,
     b0_projection: float | None = None,
+    snap_share_history: list[tuple[int, int, float]] | None = None,
 ) -> dict[str, Any] | None:
     """Assemble one real opportunity-engine challenger record for a single
     real receptions candidate at one real offered line, or None if any
@@ -572,6 +730,16 @@ def build_opportunity_challenger_record(
     otherwise-identical `naive_control` prediction (same real data, no
     regime filtering) is preserved in the record for direct before/after
     comparison, never discarded.
+
+    `snap_share_history` (optional, backward-compatible -- omitting it
+    reproduces the exact prior behavior) is real per-game offense-snap-
+    share history; when supplied, `apply_snap_informed_target_share`
+    scales the target-share estimate by the player's real current-season
+    snap-share trend (Mission 6 Section 4's current-season role-change
+    factor). The record also carries `snap_unadjusted_projection` --
+    the SAME coaching-aware team volume and catch rate, but the
+    pre-adjustment target share -- isolating exactly what the snap
+    signal changed, independent of the coaching ablation above.
     """
     opponent = "away" if side == "home" else "home"
     opponent_allowed = matchup_row[f"{opponent}_defense_prior_mean_opp_dropback_proxy_allowed"]
@@ -587,6 +755,17 @@ def build_opportunity_challenger_record(
         player_id=candidate_player_id, target_share_history=target_share_history,
         target_season=target_season, target_week=target_week,
     )
+    if snap_share_history is not None:
+        snap_share_info = estimate_current_week_snap_share(
+            player_id=candidate_player_id, snap_share_history=snap_share_history,
+            target_season=target_season, target_week=target_week,
+        )
+        target_share_info = apply_snap_informed_target_share(
+            target_share_info=target_share_info, snap_share_info=snap_share_info,
+        )
+    else:
+        snap_share_info = None
+        target_share_info = dict(target_share_info, snap_role_change_applied=False, snap_role_change_ratio=None)
     catch_rate_info = estimate_current_week_catch_rate(
         player_id=candidate_player_id, game_log=catch_rate_game_log,
         target_season=target_season, target_week=target_week,
@@ -615,6 +794,23 @@ def build_opportunity_challenger_record(
             over_odds=over_odds, under_odds=under_odds, residuals=residuals,
         )
 
+    # Real before/after for the NEW snap-informed role-change feature:
+    # SAME coaching-aware team volume and catch rate, but the target
+    # share BEFORE the snap-trend adjustment -- isolates exactly what
+    # the new current-season factor changed.
+    pre_snap_target_share = target_share_info.get("pre_snap_adjustment_target_share", target_share_info["estimate"])
+    snap_unadjusted_projection_info = compute_opportunity_projection(
+        predicted_team_dropbacks=team_dropbacks_info["predicted_dropbacks_coaching_aware"],
+        target_share=pre_snap_target_share,
+        catch_rate=catch_rate_info["estimate"],
+    )
+    snap_unadjusted_score = None
+    if snap_unadjusted_projection_info["projection"] is not None:
+        snap_unadjusted_score = score_shadow_candidate(
+            projection=snap_unadjusted_projection_info["projection"], line=line,
+            over_odds=over_odds, under_odds=under_odds, residuals=residuals,
+        )
+
     score = score_shadow_candidate(
         projection=projection, line=line, over_odds=over_odds, under_odds=under_odds, residuals=residuals,
     )
@@ -629,9 +825,16 @@ def build_opportunity_challenger_record(
         "team_dropbacks": team_dropbacks_info,
         "target_share": target_share_info,
         "catch_rate": catch_rate_info,
+        "snap_share": snap_share_info,
         "naive_control_projection": control_projection_info["projection"],
         "naive_control_probabilities": control_score,
         "coaching_feature_changed_the_projection": team_dropbacks_info["coaching_feature_changed_the_projection"],
+        "snap_unadjusted_projection": snap_unadjusted_projection_info["projection"],
+        "snap_unadjusted_probabilities": snap_unadjusted_score,
+        "snap_feature_changed_the_projection": (
+            target_share_info.get("snap_role_change_applied", False)
+            and projection != snap_unadjusted_projection_info["projection"]
+        ),
         **score,
         "prediction_source": "B0_VS_TEAM_OPPORTUNITY_ENGINE_V1",
         "status": "RESEARCH_ONLY_NOT_PROMOTED",
@@ -645,6 +848,8 @@ __all__ = [
     "predict_team_pass_dropbacks_coaching_aware",
     "estimate_current_week_target_share",
     "estimate_current_week_catch_rate",
+    "estimate_current_week_snap_share",
+    "apply_snap_informed_target_share",
     "compute_opportunity_projection",
     "opportunity_side_probabilities_for_lines",
     "build_opportunity_challenger_record",

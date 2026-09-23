@@ -45,12 +45,15 @@ from nfl.research.nflverse_history import player_stats_url
 from nfl.research.receptions_shadow import current_b0_projection
 from nfl.research.coach_regime_registry import HC_GAMES_SOURCE
 from nfl.research.role_regime_redistribution import build_hc_registry
+from nfl.research.role_intelligence_data_prep import fetch_players_crosswalk, parse_snap_counts_csv
 from nfl.research.receptions_team_opportunity_challenger import (
     predict_team_pass_dropbacks,
     predict_team_pass_dropbacks_coaching_aware,
     compute_opportunity_projection,
     estimate_current_week_target_share,
     estimate_current_week_catch_rate,
+    estimate_current_week_snap_share,
+    apply_snap_informed_target_share,
 )
 
 TEAM_SEASONS = (2023, 2024, 2025)
@@ -381,6 +384,190 @@ report["real_2023_in_season_hc_change_demo"] = {
     "note": report_addendum_note,
     "results": real_hc_change_demo,
 }
+
+print("Fetching real snap-count data (2025-2026, live, unpinned -- current-season asset)...", flush=True)
+# Mission 6 Section 4: current-season snap-share role-change signal.
+# `fetch_snap_count_rows` requires an exact-pinned digest per season (the
+# same living-asset problem the roster/PBP fixes already addressed) --
+# 2026 has no such pin since it is a live, in-season-updated release. This
+# fetches the raw bytes directly and reuses `parse_snap_counts_csv`
+# (which itself performs no digest check) rather than adding a new exact
+# pin for an asset that changes every week by design.
+crosswalk = fetch_players_crosswalk()
+snap_rows: list[dict] = []
+# 2024 is fetched too: the main matched evaluation below tests on
+# EVAL_SEASON=2025 (the most recent season with a full real settled
+# schedule), so estimate_current_week_snap_share's real PRIOR-season
+# baseline for that population is season 2024, not 2025. Without it,
+# the "current season" and "prior season" values would both be drawn
+# from the same within-2025 pool, collapsing the season-over-season
+# role-change signal this feature is meant to measure. 2026 is also
+# fetched for the separate real in-season demonstration below.
+for season in (2024, 2025, 2026):
+    url = f"https://github.com/nflverse/nflverse-data/releases/download/snap_counts/snap_counts_{season}.csv"
+    req = urllib.request.Request(url, headers={"User-Agent": "full-count-team-opportunity-eval/1.0"})
+    with urllib.request.urlopen(req, timeout=60) as response:
+        text = response.read().decode("utf-8")
+    rows = parse_snap_counts_csv(text, season, crosswalk)
+    snap_rows.extend(rows)
+    print(f"  snap_counts {season}: {len(rows)} real rows, {time.time()-t0:.1f}s", flush=True)
+
+team_week_max_offense_snaps: dict[tuple[int, int, str], float] = defaultdict(float)
+for row in snap_rows:
+    key = (row["season"], row["week"], row["team"])
+    team_week_max_offense_snaps[key] = max(team_week_max_offense_snaps[key], row["offense_snaps"])
+
+snap_share_history: dict[str, list[tuple[int, int, float]]] = defaultdict(list)
+for row in snap_rows:
+    if row["player_id"] is None:
+        continue  # real, disclosed quarantine: on the sheet but no gsis_id join
+    team_max = team_week_max_offense_snaps[(row["season"], row["week"], row["team"])]
+    if team_max > 0:
+        snap_share_history[row["player_id"]].append((row["season"], row["week"], row["offense_snaps"] / team_max))
+for pid in snap_share_history:
+    snap_share_history[pid].sort()
+
+print("Running matched B0-vs-snap-informed-opportunity-engine comparison on real held-out games...", flush=True)
+snap_adjusted_errors, snap_unadjusted_errors = [], []
+snap_role_change_applied_n = 0
+snap_role_change_examples = []
+
+for row in eval_rows:
+    player_id, season, week, team = row["player_id"], row["season"], row["week"], row["team"]
+    game_ids = [gid for gid, g in schedule_by_game.items() if g["season"] == season and g["week"] == week and team in (g["home_team"], g["away_team"])]
+    if not game_ids:
+        continue
+    game_id = game_ids[0]
+    matchup_row = matchup_by_key.get((game_id, team))
+    if matchup_row is None:
+        continue
+    side = "home" if matchup_row["home_team"] == team else "away"
+    team_info = predict_team_pass_dropbacks(matchup_row, side=side)
+
+    raw_share_info = estimate_current_week_target_share(
+        player_id=player_id, target_share_history=target_share_history.get(player_id, []),
+        target_season=season, target_week=week,
+    )
+    rate_info = estimate_current_week_catch_rate(
+        player_id=player_id, game_log=catch_rate_log.get(player_id, []),
+        target_season=season, target_week=week,
+    )
+    snap_info = estimate_current_week_snap_share(
+        player_id=player_id, snap_share_history=snap_share_history.get(player_id, []),
+        target_season=season, target_week=week,
+    )
+    adjusted_share_info = apply_snap_informed_target_share(
+        target_share_info=raw_share_info, snap_share_info=snap_info,
+    )
+
+    unadjusted_proj = compute_opportunity_projection(
+        predicted_team_dropbacks=team_info["predicted_dropbacks"],
+        target_share=raw_share_info["estimate"], catch_rate=rate_info["estimate"],
+    )
+    adjusted_proj = compute_opportunity_projection(
+        predicted_team_dropbacks=team_info["predicted_dropbacks"],
+        target_share=adjusted_share_info["estimate"], catch_rate=rate_info["estimate"],
+    )
+    if unadjusted_proj["projection"] is None or adjusted_proj["projection"] is None:
+        continue
+
+    # Counted only for rows actually included in the MAE comparison below
+    # -- counting it before this filter (as an earlier version of this
+    # script did) let the counter exceed matched_n, since some rows with
+    # the adjustment applied still ended up excluded here for an
+    # unrelated reason (e.g. no real team-dropback prediction).
+    if adjusted_share_info.get("snap_role_change_applied"):
+        snap_role_change_applied_n += 1
+
+    realized = row["receptions"]
+    snap_unadjusted_errors.append(abs(unadjusted_proj["projection"] - realized))
+    snap_adjusted_errors.append(abs(adjusted_proj["projection"] - realized))
+
+    if adjusted_share_info.get("snap_role_change_applied") and len(snap_role_change_examples) < 5:
+        snap_role_change_examples.append({
+            "player_id": player_id, "team": team, "season": season, "week": week,
+            "realized_receptions": realized,
+            "unadjusted_target_share": raw_share_info["estimate"],
+            "snap_adjusted_target_share": adjusted_share_info["estimate"],
+            "snap_role_change_ratio": adjusted_share_info["snap_role_change_ratio"],
+            "snap_current_season_mean": snap_info.get("current_season_mean"),
+            "snap_prior_season_value": snap_info.get("prior_season_value"),
+            "unadjusted_projection": unadjusted_proj["projection"],
+            "snap_adjusted_projection": adjusted_proj["projection"],
+        })
+
+report["snap_share_role_change_ablation"] = {
+    "note": (
+        "Real current-season (2026) + prior-season (2025) offense-snap-share "
+        "history, live-fetched (unpinned, see script comment). On the same "
+        "real 2025-week-8+ matched population used for the coaching "
+        "ablation above, scales the target-share estimate by each "
+        "player's real snap-share trend when a real role-change signal "
+        "exists (>=1 current-season snap game and a real positive prior-"
+        "season baseline), otherwise falls back to the unadjusted "
+        "estimate unchanged."
+    ),
+    "matched_n": len(snap_adjusted_errors),
+    "rows_with_real_snap_role_change_applied": snap_role_change_applied_n,
+    "snap_unadjusted_mae": (sum(snap_unadjusted_errors) / len(snap_unadjusted_errors)) if snap_unadjusted_errors else None,
+    "snap_adjusted_mae": (sum(snap_adjusted_errors) / len(snap_adjusted_errors)) if snap_adjusted_errors else None,
+    "real_role_change_examples": snap_role_change_examples,
+}
+print(json.dumps(report["snap_share_role_change_ablation"], indent=2, sort_keys=True, default=str))
+
+print("Finding the single most dramatic REAL 2026 in-season role change (not a 2025 replay)...", flush=True)
+# The snap-share feature is designed for exactly this case: a real,
+# current, in-progress 2026 role change, not a historical replay. Scans
+# every player with real 2026 snap games AND a real 2025 prior-season
+# baseline, predicting one real week ahead of their most recent real 2026
+# game, and reports the single largest real (unclamped) role-change ratio
+# found -- not cherry-picked for a favorable direction, the most extreme
+# real case either way.
+best_2026_example = None
+best_ratio_distance = 0.0
+for player_id, history in snap_share_history.items():
+    seasons_present = {s for (s, w, sh) in history}
+    if 2026 not in seasons_present or 2025 not in seasons_present:
+        continue
+    weeks_2026 = sorted(w for (s, w, sh) in history if s == 2026)
+    if not weeks_2026:
+        continue
+    next_week = weeks_2026[-1] + 1
+    snap_info = estimate_current_week_snap_share(
+        player_id=player_id, snap_share_history=history, target_season=2026, target_week=next_week,
+    )
+    if snap_info["estimate"] is None or snap_info.get("prior_season_value") is None:
+        continue
+    prior = snap_info["prior_season_value"]
+    current = snap_info.get("current_season_mean")
+    if not prior or current is None:
+        continue
+    ratio = current / prior
+    distance = abs(ratio - 1.0)
+    if distance > best_ratio_distance:
+        best_ratio_distance = distance
+        best_2026_example = {
+            "player_id": player_id,
+            "target_season": 2026,
+            "target_week": next_week,
+            "real_2026_games_so_far": snap_info["n_current_season_games"],
+            "real_2026_current_season_mean_snap_share": current,
+            "real_2025_prior_season_snap_share": prior,
+            "real_unclamped_role_change_ratio": ratio,
+        }
+
+report["real_2026_in_season_snap_role_change_example"] = {
+    "note": (
+        "The single most dramatic real 2026 in-season role change found, "
+        "by scanning every player with real 2026 snap games and a real "
+        "2025 prior-season baseline -- not cherry-picked for direction. "
+        "Predicting one real week ahead of that player's most recent "
+        "real 2026 game, per estimate_current_week_snap_share's own "
+        "no-lookahead contract."
+    ),
+    "example": best_2026_example,
+}
+print(json.dumps(report["real_2026_in_season_snap_role_change_example"], indent=2, sort_keys=True, default=str))
 
 print(json.dumps(report, indent=2, sort_keys=True, default=str))
 out_path = Path(__file__).resolve().parent / "team_opportunity_real_evaluation_report.json"
