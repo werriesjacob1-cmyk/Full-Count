@@ -1,0 +1,68 @@
+{
+  "b0_projection": {
+    "history_n_used": 3,
+    "projection": 0.3333333333333333,
+    "rolling_effective_targets": 1.0
+  },
+  "candidate": {
+    "player_id": "00-0032464",
+    "player_name": "Kalif Raymond",
+    "prior_games_used_for_b0": [
+      {
+        "receptions": 0.0,
+        "season": 2022,
+        "targets": 2.0,
+        "week": 1
+      },
+      {
+        "receptions": 0.0,
+        "season": 2022,
+        "targets": 0.0,
+        "week": 2
+      },
+      {
+        "receptions": 1.0,
+        "season": 2022,
+        "targets": 1.0,
+        "week": 3
+      }
+    ]
+  },
+  "real_event": {
+    "event_type": "WR_ABSENCE",
+    "pregame_injury_status": "OUT",
+    "removed_player_id": "00-0036963",
+    "removed_player_name": "Amon-Ra St. Brown",
+    "season": 2022,
+    "team": "DET",
+    "trigger_source": "NFLVERSE_WEEKLY_INJURY_REPORT_PREGAME",
+    "week": 4
+  },
+  "role_adjusted_record": {
+    "adjusted_projection": 0.9333333333333332,
+    "b0_projection": 0.3333333333333333,
+    "candidate_own_prior_target_share": 0.02702702702702703,
+    "candidate_player_id": "00-0032464",
+    "decision_status": "SHADOW_ONLY",
+    "event_type": "WR_ABSENCE",
+    "hc_regime_tenure_bucket": null,
+    "line": -0.16666666666666669,
+    "line_gap": 1.0999999999999999,
+    "market_fair_over_probability": 0.5108342361863488,
+    "market_fair_under_probability": 0.4891657638136511,
+    "market_hold": 0.04707884288145214,
+    "model_held_out_finding": "HIERARCHICAL_COMMITTEE_PROBABILITY_V1 did NOT beat NO_ADJUSTMENT's MAE on this held-out set (0.06196 vs 0.06050) -- a real, disclosed negative finding, not accuracy evidence for this challenger.",
+    "model_name": "HIERARCHICAL_COMMITTEE_PROBABILITY_V1",
+    "model_over_probability": 0.7884615384615384,
+    "model_under_probability": 0.21153846153846156,
+    "predicted_post_redistribution_target_share": 0.07567567567567568,
+    "prediction_source": "B0_VS_ROLE_ADJUSTED_HIERARCHICAL_COMMITTEE_V1",
+    "probability_method": "pooled_B0_empirical_residuals_laplace",
+    "projection": 0.9333333333333332,
+    "removed_player_id": "00-0036963",
+    "research_direction": "OVER",
+    "research_edge": 0.2776273022751896,
+    "residual_n": 50,
+    "status": "RESEARCH_ONLY_NOT_PROMOTED"
+  }
+}
