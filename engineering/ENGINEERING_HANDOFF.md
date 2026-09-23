@@ -5555,3 +5555,122 @@ merged -- independent review + Jacob's separate explicit authorization
 required, same doctrine as every other PR.
 
 Alligator
+
+## 2026-09-23 -- MISSION 9, WORKSTREAM D: component error decomposition of
+## the receptions team-opportunity engine (why coaching/snap-share/QB-change
+## each underperform B0, and whether combining them changes the result)
+## (NFL-OPPORTUNITY-ERROR-DECOMPOSITION-20260923, delegated subagent of the
+## Mission 9 parallel claim, comment `5803782348`)
+
+Independent diagnostic research, not the author of any module evaluated.
+Directly follows up on three separate negative findings already on record:
+Mission 3's opportunity engine (MAE 1.412 vs. B0 1.299), Mission 6's
+snap-share adjustment (MAE 1.478 vs. 1.386 unadjusted), and draft PR #185's
+QB-continuity signal (MAE 1.38512 vs. 1.38644, negligible) -- each evaluated
+SEPARATELY. This workstream asks WHY, and whether the three signals carry
+independent information when evaluated TOGETHER.
+
+**Fresh population, explicitly not a re-tune.** Every prior evaluation used
+2025 week-8+ (Missions 3/4/6) or 2024 week-8+ (draft PR #184's ablation) --
+both already-inspected populations per this project's anti-retuning
+doctrine. This workstream uses **2023 season weeks 8+** instead, genuinely
+never used as an aggregate MAE evaluation target before this script (the
+one disclosed narrow exception: three specific 2023 team-weeks were
+inspected qualitatively, not as an aggregate number, in Mission 4). Real
+fetch+build+eval run: 75.3s. n=2,978 matched rows (stage ablation/
+three-signal), n=2,313 (oracle decomposition, additionally requires a real
+ex-post catch rate).
+
+**New code**: `engineering/nfl_opportunity_error_decomposition_20260923/
+decomposition_lib.py` -- exactly three genuinely new functions, all
+unit-tested (17 new tests,
+`nfl/tests/test_nfl_opportunity_error_decomposition_lib.py`):
+`predict_team_pass_dropbacks_coaching_and_qb_aware` (a real set
+intersection of the two existing, independently-tested regime/QB-continuity
+filters -- the first time all three team-identity signals have been
+combined), `role_transition_subgroup_flag` (pure OR of three pre-existing
+flags), `player_clustered_bootstrap_mae_diff` (bootstrap by player, not
+row, matching draft PR #184's own methodology). `nfl/research/qb_change_
+team_dropbacks.py` (draft PR #185) was brought into this branch as a
+byte-identical, unmodified copy since it exists only on that unmerged
+branch and this workstream needs to import it -- not edited, will be
+superseded when #185 merges.
+
+**Headline finding: target-share estimation, not team volume or catch
+rate, is the dominant source of the chain's excess error.** An oracle
+stage-substitution experiment (real ex-post team dropbacks / target share
+/ catch rate swapped in one at a time, diagnostic only, never a predictive
+claim) found: oracle team volume improves MAE by only ~0.04 (1.606 ->
+1.568, CI excludes zero but small); oracle catch rate improves it by ~0.01,
+not statistically distinguishable from zero (CI includes zero); oracle
+target share improves it by **~0.56** (1.606 -> **1.045**, comfortably
+*below* B0's own 1.322 MAE on the larger population). Consistent with this:
+holding target share/catch rate FIXED at the model's real shrinkage-blended
+estimate and swapping only the team-volume estimator (naive/coaching-aware/
+QB-aware/combined) moves MAE by at most 0.0035 -- which estimator you use
+for team volume barely matters at all.
+
+**Three-signal combination: still null, no synergy, no additional
+damage.** Never tested together before this script. All four snap-informed
+team-volume variants (naive+snap, coaching+snap [current production form],
+QB+snap, coaching+QB-combined+snap) land in the same ~1.577-1.580 MAE
+neighborhood, all clearly worse than B0's 1.322 (every CI vs. B0 excludes
+zero), and are **statistically indistinguishable from each other** (every
+pairwise CI among the four includes zero). Comparing to the no-snap stage
+ablation (~1.446-1.450) isolates that the snap-informed adjustment itself
+adds ~+0.13 MAE on top of ANY team-volume variant -- reproducing Mission
+6's negative finding fresh on an independent population and showing it is
+not an artifact of which team-volume estimator it is paired with.
+
+**Role-transition subgroup: the pre-registered test is degenerate; the
+exploratory follow-up finds no rescue.** The primary subgroup (OR of
+`coaching_feature_changed_the_projection` / `qb_feature_changed_the_
+projection` / `snap_role_change_applied`) covers 2,963/2,978 rows (99.5%)
+because `snap_role_change_applied` alone fires on 99.3% of rows (matching
+Mission 6's own disclosure that it is not gated) -- the complementary
+"general" group (n=15) is too small for inference. A supplementary cut,
+explicitly disclosed as EXPLORATORY because it was chosen only after
+finding the primary cut degenerate (using only the more selective
+coaching-OR-QB identity flag, 1,022/2,978 rows = 34.3%), still shows the
+chain losing to B0 inside real identity-transition rows (MAE 1.498 vs.
+1.260, CI excludes zero) -- smaller gap than outside the subgroup (1.620
+vs. 1.355) but still clearly negative. **The strong form of "role signals
+only help under genuine evidenced transitions" is not supported for the
+coaching/QB identity signals on this population.**
+
+**Hypothesis verdicts** (full basis and numbers in the README): team-volume
+excess error -- small, real, minor contributor; target-share noise --
+strongly supported, dominant driver; catch-rate instability -- not
+supported here; B0-redundancy -- supported indirectly (the base share
+estimator is already worse than B0 before any of the three new signals are
+added); combined-signal question -- still null, no synergy either
+direction.
+
+**What remains genuinely unresolved** (disclosed, not attempted here): WHY
+the base target-share estimator underperforms B0's implicit approach at a
+mechanism level (shrinkage constant, current/prior-season split lag, or
+per-game target-share volatility itself); whether a genuinely prospective
+(never-retuned-against-a-holdout) gate on the snap-share signal could close
+any of the gap; whether a larger, purpose-built sample of real coaching/QB
+transitions would show a different picture than this workstream's modest
+exploratory n=1,022 cut.
+
+**Tests**: 17 new
+(`nfl/tests/test_nfl_opportunity_error_decomposition_lib.py`), all passing.
+Full `nfl/tests` suite run before this PR (count/result recorded in the PR
+description).
+
+**What this does NOT do**: no edits to `receptions_team_opportunity_
+challenger.py`, `qb_change_team_dropbacks.py`, `injury_availability_
+features.py`, or any workflow YAML. No merge, no promotion, no live wiring.
+No new gate/threshold picked or validated against this report's own 2023
+result. No reuse of the 2024/2025 populations for a new confirmatory claim
+-- the one reference to draft PR #184's 2024 gating result is labeled
+`RE_ANALYSIS_OF_INSPECTED_POPULATION` in the README and used only as
+corroborating exploratory context.
+
+Branch `claude/nfl-opportunity-error-decomposition-20260923`. Draft PR, not
+merged -- independent review + Jacob's separate explicit authorization
+required, same doctrine as every other PR.
+
+Alligator
