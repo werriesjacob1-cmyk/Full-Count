@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-23T04:29:23.111774+00:00",
+  "updated_at": "2026-09-23T08:34:31.549850+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -44489,6 +44489,92 @@
         },
         "qualification_timestamp": "2026-09-23T04:09:24.690888+00:00",
         "board_timestamp": "2026-09-23T04:09:24.675929+00:00",
+        "slate_date": "2026-09-23"
+      }
+    },
+    "fc2:823168:player-687570:pitcher_outs:15:over": {
+      "canonical_id": "fc2:823168:player-687570:pitcher_outs:15:over",
+      "settlement_identity": [
+        "823168",
+        [
+          "player",
+          "687570"
+        ],
+        "pitcher_outs",
+        "15",
+        "over"
+      ],
+      "slate_date": "2026-09-23",
+      "first_published_at": "2026-09-23T08:34:31.549850+00:00",
+      "publication_provenance": {
+        "artifact_id": "934b33c68d4ee3b4ebd678084a32b9f8d9ccbbb16bd66a45a775904c7233269f",
+        "source_commit": "5c8806cbf8a22f19a3ee694ad75307c67de27711",
+        "workflow_run_id": "35837569143",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-23T08:34:18.634211+00:00",
+        "data_hash": "cf0a53610373155337cb4bae135460f618ea98ca795d0b8fea3cf4399008dc14",
+        "live_hash": "53f60d87ef9220b4490ffd4fc35bed66d749b36c28981755b32272a3af39c34f"
+      },
+      "snapshot": {
+        "id": "fc2:823168:player-687570:pitcher_outs:15:over",
+        "identity_version": 2,
+        "game_pk": 823168,
+        "player_id": 687570,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Connor Prielipp",
+        "team": "Minnesota Twins",
+        "matchup": "Minnesota Twins @ San Francisco Giants",
+        "game_start": "2026-09-23T19:45:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 14.5,
+          "needs": 15
+        },
+        "prop": "Over 14.5 Outs Recorded",
+        "hit_probability": 0.7194,
+        "market_odds": -154,
+        "market_implied": 0.5624,
+        "market_edge": 0.157,
+        "market_hold": 0.078,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (15.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 15+ outs (5.0 IP) in 79.9% of his last 21 real starts (league 76.0%, avg 15.9 outs/start)"
+        ],
+        "watchouts": [],
+        "prob_ci": [
+          0.6541,
+          0.836
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 21,
+        "lineup_assumed": null,
+        "base_rate": 0.7604,
+        "lift": -0.041,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "67c322228",
+          "prediction_timestamp": "2026-09-23T08:28:53.902165+00:00",
+          "odds_fetched_at": "2026-09-23T08:28:46.825777+00:00",
+          "board_generated_at": "2026-09-23T08:28:53.876612+00:00"
+        },
+        "qualification_timestamp": "2026-09-23T08:28:53.902165+00:00",
+        "board_timestamp": "2026-09-23T08:28:53.876612+00:00",
         "slate_date": "2026-09-23"
       }
     }
