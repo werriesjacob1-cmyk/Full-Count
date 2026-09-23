@@ -1066,6 +1066,57 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 35.5,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Atlanta Braves",
+          "game_pk": 824868,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 62.8571,
+            "l7_avg_ev": 28.875,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 27.0,
+            "season_barrel_pct": 32.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 13.8889,
+            "platoon_barrel_pct": 3.84,
+            "platoon_xwoba": -4.2,
+            "park_hand_index": -0.93,
+            "opp_catcher_framing": -0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 71.8182,
+            "pull_park_synergy": -0.5273,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 2.472,
+            "vs_rp_ops": 0.048,
+            "ump_k_pct": 0.372,
+            "ump_bb_pct": 0.348
+          },
+          "hit_probability": 0.6543,
+          "raw_hit_probability": 0.6445,
+          "lift": -0.0225,
+          "reliability": "C",
+          "sample_n": 29,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

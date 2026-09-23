@@ -2573,6 +2573,110 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 52.6,
+          "notable_signals": 2,
+          "matchup": "Cleveland Guardians @ Boston Red Sox",
+          "game_pk": 824710,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 9.1429,
+            "l7_avg_ev": 38.9286,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 24.9,
+            "season_barrel_pct": 21.3333,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 20.8333,
+            "platoon_barrel_pct": 0.16,
+            "platoon_xwoba": 3.18,
+            "park_hand_index": -1.56,
+            "opp_catcher_framing": -0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 13.6364,
+            "woba_behind": 13.6364,
+            "pull_park_synergy": -0.6552,
+            "hard_hit_105_rate": 0.2775,
+            "team_total_move": -6.0,
+            "team_total_open": -6.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.104,
+            "vs_rp_ops": 1.368,
+            "ump_k_pct": 0.036,
+            "ump_bb_pct": -0.42
+          },
+          "hit_probability": 0.6485,
+          "raw_hit_probability": 0.6375,
+          "lift": 0.0888,
+          "reliability": "A",
+          "sample_n": 129,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 7.4,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Boston Red Sox",
+          "game_pk": 824710,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0577
+          },
+          "hit_probability": 0.0577,
+          "raw_hit_probability": null,
+          "lift": 0.0103,
+          "reliability": "A",
+          "sample_n": 129,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.3,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Boston Red Sox",
+          "game_pk": 824710,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0414
+          },
+          "hit_probability": 0.0414,
+          "raw_hit_probability": null,
+          "lift": 0.0208,
+          "reliability": "A",
+          "sample_n": 129,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
