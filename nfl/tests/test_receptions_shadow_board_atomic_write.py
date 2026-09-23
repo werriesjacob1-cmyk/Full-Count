@@ -56,7 +56,12 @@ def _load_capture_script() -> str:
 
 def _extract_aggregate_challenger_block(script: str) -> str:
     start = script.index("challenger_snapshot = None")
-    end = script.index("board = {")
+    # Stop before the separate, independently sealed role-adjusted
+    # aggregate block (added later): that block references its own
+    # variables (team_removed_player, role_adjusted_records, ...) this
+    # test's namespace never supplies, and this test is scoped to the
+    # frozen-NB-challenger aggregate block only.
+    end = script.index("lane from being built and written.\ntry:")
     return script[start:end]
 
 

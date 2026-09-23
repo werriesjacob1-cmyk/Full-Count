@@ -5170,3 +5170,146 @@ PR, not merged -- independent review + Jacob's separate explicit
 authorization required, same doctrine as every other PR.
 
 Alligator
+
+## 2026-09-23 -- SUPERCLAUDE MISSION 2, Workstreams A and B: live-wire the
+## role-adjusted challenger into the scheduled workflow; matched-population
+## re-evaluation confirms the negative finding
+## (Jacob's broad Mission 2 engineering authorization -- inspect/branch/
+## implement/test/dispatch non-publication workflows/commit/push/open
+## draft PRs/request review, explicitly excluding merge/deploy/promotion/
+## Top Pick policy/public-evidence changes/purchases/new footage licenses)
+
+**A2 -- roster source-integrity redesign (the actual root requirement,
+not just "re-pin the hash again").** The prior fix
+(`nfl-role-opponent-intelligence-connector-20260923`'s `ROSTER_SHA` exact
+byte/sha256 pin) was the wrong invariant for this asset: the 2026 roster
+CSV is a LIVE, intentionally-and-frequently-changing asset (real drift 3
+times in ~30 hours this week alone: 2026-09-19, 2026-09-20, 2026-09-22),
+unlike the FIXED historical per-season assets (`players.csv` crosswalk,
+`snap_counts`/`depth_charts`/PBP) an exact pin correctly protects because
+they never change after publication. An exact pin on a living asset just
+means the workflow fails closed on every legitimate daily transaction,
+requiring a human to notice and re-pin -- PR #175 was exactly that kind
+of re-pin, now superseded by this fix and left unmerged for that reason
+(see below).
+
+Replaced the exact pin in `nfl-live-receptions-shadow-board.yml` with
+schema + sanity validation: required columns present
+(`gsis_id`/`team`/`position`/`status`/`full_name`/`esb_id`), row count
+within `[1500, 4000]`, at least 32 distinct teams represented -- the
+right invariant for a living asset (catches genuine truncation/corruption/
+schema-break) without needing continuous manual re-pinning for ordinary
+roster transactions. `roster_sha` is still computed and recorded into
+that run's own sealed evidence for provenance, never compared against a
+stale prior-day pin. New test:
+`nfl/tests/test_receptions_shadow_board_roster_validation.py` (7 tests,
+extracting the real block via the same PyYAML method used throughout this
+project) -- covers real-shaped pass, empty/schema-break/truncated/
+bloated/single-team fail-closed, and the exact real-world case that
+motivated this (two real rosters differing only by one legitimate
+transaction both pass despite different hashes). Also independently
+verified against the actual live roster CSV (2981 rows) outside the test
+suite.
+
+**B -- matched-population re-evaluation (closes an independent review
+finding).** PR #176's review flagged that the held-out committee-vs-
+baseline comparison wasn't a matched-volume comparison (committee n=449
+vs baselines n=441). Root-caused: `predict_committee_model` starts from
+`predict_no_adjustment`'s own dict, then ADDS an absorption term for
+every teammate it has learned features for, including teammates
+`predict_no_adjustment` itself excludes (no own prior share) -- making
+the committee's predicted population a strict superset of every
+baseline's, not a different population. Re-ran the identical real
+2012-2021 train / 2022-2025 held-out pipeline restricted to the (event,
+player) pairs ALL FIVE predictors actually predicted for: n=441 for every
+predictor. **The negative finding holds under the strict matched
+comparison**: committee MAE=0.062416 vs `NO_ADJUSTMENT` MAE=0.060504
+(both n=441) -- not an artifact of the population mismatch. Script +
+real output saved to
+`engineering/nfl_role_opponent_connector_20260923/matched_population_eval.py`
+and `matched_population_report.json`; embedded in
+`FROZEN_COMMITTEE_MODEL["matched_population_confirmation"]` and appended
+to `held_out_finding` and the module docstring. No retuning against this
+held-out set was performed -- the model itself is unchanged; only the
+evaluation methodology was corrected.
+
+**A1/A3/A4/A5 -- live wiring into `nfl-live-receptions-shadow-board.yml`**
+(a third additive side-lane, mirroring PR #172's exact safe pattern --
+per-candidate and aggregate try/except, atomic write via
+`write_challenger_evidence_atomically`, a separate evidence file never
+read by any B0 decision). Real live absence-event detection: for each
+team with a bound candidate this week, ranks that team's real 2026-roster
+WRs by last-5-mean real target_share (targets over real team-week total
+targets accumulated across every player in the workflow's already-
+fetched weekly-stats source, not just betting candidates), using the same
+deterministic tie-break (`role_intelligence_features.
+_top_usage_player_per_team_week`: descending share, ascending gsis_id)
+already established elsewhere. An absence event is real only when that
+specific top-ranked player is confirmed inactive via the real official
+inactive report already fetched/bound by this workflow (`bound_reports`)
+-- never inferred from a missing market or any other proxy. Per-candidate
+injection calls `build_role_adjusted_challenger_record` only when a real
+absence event exists for the candidate's team, the candidate isn't the
+removed player himself, and B0 already produced a real score; failures
+are isolated to `role_adjusted_build_failures` and never touch
+`snapshot_records` or the frozen-NB challenger's own lane. Aggregate
+write seals to a new, separately-read evidence file
+(`nfl-receptions-role-adjusted-comparison.json`), wrapped end-to-end so a
+write failure can never block the primary board or the other challenger.
+
+**A5 -- operational acceptance test in lieu of a live Sunday opportunity**
+(none exists this Tuesday): `nfl/tests/test_receptions_shadow_board_role_adjusted_wiring.py`,
+10 tests extracting the REAL detection block, REAL per-candidate loop
+body, and REAL aggregate write block from the workflow YAML (identical
+PyYAML method used throughout this project, not hand-copied
+reimplementations) and executing them with realistic fixtures plus the
+real imported scoring/challenger functions. Covers: real absence event
+detected for the correct team; no event when the wrong player is
+reported inactive, no report exists, or no real prior target-share
+history exists; a real role-adjusted record built end-to-end for a
+qualifying candidate; no record when the removed player is the candidate
+himself; a forced role-adjustment failure never disturbs the primary
+record or the frozen-NB challenger's own record; no qualifying
+opportunity leaves the lane empty (never fabricated); a clean aggregate
+write produces a readable evidence file; a forced aggregate write failure
+is contained and leaves no partial file. Full `nfl/tests`: 979/979 (was
+969); `test_workflow_shell_syntax.py`: 88/88.
+
+One pre-existing test needed a fix as a direct consequence of adding this
+new block: `nfl/tests/test_receptions_shadow_board_atomic_write.py`
+(PR #172) extracted its target block up to the literal string
+`"board = {"`, which after this change also swept in the new role-
+adjusted aggregate block and failed with `NameError` on that block's own
+undefined-in-this-test variables. Fixed by moving that test's extraction
+end marker to stop before the new block begins; no behavior of the
+tested frozen-NB-challenger block changed.
+
+**PR #175 status**: superseded, not merged. It contained only a simple
+re-pin of `ROSTER_SHA` to the then-current hash -- the exact anti-pattern
+A2 above replaces. Will be closed with a comment pointing to this entry
+and the new PR once opened, rather than silently abandoned.
+
+**What this does NOT do**: Workstreams C (an additional football-
+intelligence factor: coaching/defense/tactical) and D (sportsbook
+opportunity-evaluation support) are explicitly deferred, not attempted --
+disclosed as such rather than left unmentioned, given effort/scope
+constraints this session. Section 8's full factor-accountability matrix
+is likewise deferred. No merge, no deploy, no model promotion, no Top
+Pick policy change, no public-evidence change -- all excluded from this
+session's authorization. Does not touch `role_regime_redistribution*.py`,
+`role_intelligence_*.py`, `coach_regime_registry.py`, or any file claimed
+by Codex.
+
+**Next concrete milestone**: open the draft PR for this branch, request
+independent adversarial review (mandatory before any merge request), and
+-- once a real NFL Sunday slate exists -- confirm this lane produces
+genuine live (not just held-out or synthetic-fixture) role-adjusted
+evidence in production, the way PR #172's atomic-write safeguard was
+independently verified end-to-end against a real production dispatch
+this session.
+
+Branch `claude/nfl-role-adjusted-live-wiring-20260923`. Draft PR, not
+merged -- independent review + Jacob's separate explicit authorization
+required, same doctrine as every other PR.
+
+Alligator
