@@ -5536,10 +5536,11 @@ mean 22.7% through 2 real games, unclamped ratio 175x -- demonstrating
 the clamp bound does real, necessary work on real current-season data,
 independent of the accuracy finding above.
 
-**Tests**: 12 new (43 -> now covering snap-share estimation, the
-role-change adjustment's clamping/fallback behavior, and two full
-end-to-end record tests -- one showing the feature changing a real
-projection, one proving omitting it exactly reproduces prior behavior).
+**Tests**: 11 new (33 -> 44 -- independently reproduced by the reviewer)
+covering snap-share estimation, the role-change adjustment's
+clamping/fallback behavior, and two full end-to-end record tests -- one
+showing the feature changing a real projection, one proving omitting it
+exactly reproduces prior behavior.
 Full `nfl/tests`: 1023/1023 (was 1012). `test_workflow_shell_syntax.py`:
 88/88 (no workflow files touched).
 

@@ -459,8 +459,6 @@ for row in eval_rows:
     adjusted_share_info = apply_snap_informed_target_share(
         target_share_info=raw_share_info, snap_share_info=snap_info,
     )
-    if adjusted_share_info.get("snap_role_change_applied"):
-        snap_role_change_applied_n += 1
 
     unadjusted_proj = compute_opportunity_projection(
         predicted_team_dropbacks=team_info["predicted_dropbacks"],
@@ -472,6 +470,14 @@ for row in eval_rows:
     )
     if unadjusted_proj["projection"] is None or adjusted_proj["projection"] is None:
         continue
+
+    # Counted only for rows actually included in the MAE comparison below
+    # -- counting it before this filter (as an earlier version of this
+    # script did) let the counter exceed matched_n, since some rows with
+    # the adjustment applied still ended up excluded here for an
+    # unrelated reason (e.g. no real team-dropback prediction).
+    if adjusted_share_info.get("snap_role_change_applied"):
+        snap_role_change_applied_n += 1
 
     realized = row["receptions"]
     snap_unadjusted_errors.append(abs(unadjusted_proj["projection"] - realized))

@@ -42,7 +42,7 @@
   "eligible_eval_rows_considered": 3244,
   "eval_min_week": 8,
   "eval_season": 2025,
-  "generated_in_seconds": 22.75940179824829,
+  "generated_in_seconds": 21.768720626831055,
   "matched_n": 2954,
   "real_2023_in_season_hc_change_demo": {
     "note": "Zero of 2954 rows in the main 2025-week-8+ matched evaluation had a real in-season coaching change fall inside their own rolling-5 window (rows_where_coaching_feature_changed_the_projection == 0) -- a real, honest finding, not a bug: genuine in-season HC firings are rare, and by 2025 the three known 2023 in-season changes below were over a year in the past for every evaluated team. The block below targets those three real 2023 events directly, at the real week each one's own rolling-5 window would straddle the change, to demonstrate genuine (non-synthetic) real-world activation of the coaching consumer -- separate from, not a substitute for, the honest null result on the main matched population.",
@@ -271,7 +271,7 @@
         "week": 8
       }
     ],
-    "rows_with_real_snap_role_change_applied": 3154,
+    "rows_with_real_snap_role_change_applied": 3025,
     "snap_adjusted_mae": 1.4778655658978266,
     "snap_unadjusted_mae": 1.386444868319182
   },
