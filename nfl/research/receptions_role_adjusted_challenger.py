@@ -28,7 +28,16 @@ On that held-out set, `HIERARCHICAL_COMMITTEE_PROBABILITY_V1` scored
 MAE=0.06196 (n=449) against `NO_ADJUSTMENT`'s MAE=0.06050 (n=441) on
 target-share prediction -- i.e. **this real trained model does NOT show an
 accuracy improvement over doing nothing, on this metric, on this held-out
-set.** This is disclosed here, not suppressed or hidden downstream: this
+set.** (The n=449 vs n=441 samples are not perfectly identical populations
+-- see `evaluate_predictors`'s own per-predictor accumulation in
+`role_regime_redistribution.py`; both are the full real held-out
+population for their own predictor, but this is disclosed here rather
+than presented as a strictly matched-volume comparison.) The committee
+model DOES beat the other three real baselines on this same held-out set
+(PROPORTIONAL_TEAMMATE_REDISTRIBUTION 0.06396, DEPTH_CHART_NEXT_MAN
+0.07740, RECENT_USAGE_NEXT_MAN 0.08254) -- it is the best real
+*adjustment* model tested, just not better than making no adjustment at
+all. Both framings are true; neither is omitted. This is disclosed here, not suppressed or hidden downstream: this
 module still wires the real mechanism end-to-end (source -> verified
 identity/timing -> feature -> opportunity delta -> outcome distribution ->
 frozen prediction) because building and testing that connection is itself
@@ -116,8 +125,11 @@ FROZEN_COMMITTEE_MODEL: dict[str, Any] = {
     },
     "held_out_finding": (
         "HIERARCHICAL_COMMITTEE_PROBABILITY_V1 did NOT beat NO_ADJUSTMENT's "
-        "MAE on this held-out set (0.06196 vs 0.06050) -- a real, disclosed "
-        "negative finding, not accuracy evidence for this challenger."
+        "MAE on this held-out set (0.06196, n=449 vs 0.06050, n=441) -- a "
+        "real, disclosed negative finding, not accuracy evidence for this "
+        "challenger. It DOES beat the other three real baselines tested "
+        "(PROPORTIONAL_TEAMMATE_REDISTRIBUTION 0.06396, "
+        "DEPTH_CHART_NEXT_MAN 0.07740, RECENT_USAGE_NEXT_MAN 0.08254)."
     ),
     "players_crosswalk_digest_bytes": 7234131,
     "games_csv_digest_sha256": "26332ae5d8d8d0481f0670cf5e3849497a415351d4026ae5bee15a5aab96d188",

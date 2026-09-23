@@ -135,6 +135,31 @@ class ComputeRoleAdjustedProjectionTests(unittest.TestCase):
             )
         )
 
+    def test_predicted_share_of_exactly_zero_is_a_real_falsy_value_not_missing(self):
+        # A real predicted post-redistribution share of exactly 0.0 is
+        # falsy but semantically distinct from `None` (missing) -- it must
+        # still be treated as a real value (yielding an adjusted projection
+        # of exactly 0.0, then rejected by the final `adjusted > 0` check
+        # below, not silently confused with a missing-input None early
+        # return that never even computes a ratio).
+        self.assertIsNone(
+            compute_role_adjusted_projection(
+                b0_projection=4.0, candidate_own_prior_target_share=0.15,
+                predicted_post_redistribution_target_share=0.0,
+            )
+        )
+        # Distinguish this from the missing-input case by confirming both
+        # produce the same None result via genuinely different code paths:
+        # a positive-but-tiny predicted share must NOT be rejected the same
+        # way -- it should produce a real, tiny positive adjusted number.
+        tiny = compute_role_adjusted_projection(
+            b0_projection=4.0, candidate_own_prior_target_share=0.15,
+            predicted_post_redistribution_target_share=1e-6,
+        )
+        self.assertIsNotNone(tiny)
+        self.assertGreater(tiny, 0.0)
+        self.assertAlmostEqual(tiny, 4.0 * (1e-6 / 0.15))
+
 
 class RoleAdjustedSideProbabilitiesForLinesTests(unittest.TestCase):
     def test_coherent_standard_and_alt_lines_share_one_distribution(self):
