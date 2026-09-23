@@ -25,6 +25,11 @@ on:
     paths:
       - .github/workflows/nfl-live-passing-yards-shadow-board.yml
   workflow_dispatch:
+    inputs:
+      target_local_date:
+        description: 'Chicago local slate date (YYYY-MM-DD); blank = upcoming Sunday'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -53,7 +58,7 @@ jobs:
         env:
           FULL_COUNT_CODE_SHA: ${{ github.sha }}
           # Optional manual override. Scheduled runs derive the Chicago date.
-          TARGET_LOCAL_DATE: ''
+          TARGET_LOCAL_DATE: ${{ inputs.target_local_date }}
         run: |
           PYTHONPATH=. python3 - <<'PY'
           import csv
