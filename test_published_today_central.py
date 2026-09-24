@@ -118,13 +118,51 @@ class PublishedTodayCentralTests(unittest.TestCase):
                 out = reconcile(rows, registry, date="2026-08-19", now="2026-08-19T20:11:00Z")
                 self.assertEqual(out["props"], [])
 
-    def test_current_slate_withdrawn_pregame_pick_rule_unchanged(self):
-        # Registered on the payload's own slate, still pregame, absent from
-        # the current scoring pass: the pre-existing rule does not carry it.
+    def test_current_slate_withdrawn_pregame_pick_is_carried_as_withdrawn(self):
+        # 2026-09-24 published-downgrade-display (Mission 12 Workstream C):
+        # registered on the payload's own slate, still pregame, absent from
+        # the current scoring pass. Before this change the row vanished
+        # entirely (silently hiding a withdrawn published recommendation --
+        # exactly what Jacob's requirement forbids). It is now carried,
+        # clearly labelled, never actionable, and never re-priced.
         row = late_pick()
         out = reconcile([], published_registry(row), date="2026-08-17", now="2026-08-17T20:00:00Z",
                         schedule={1: {"status": PREVIEW}})
-        self.assertEqual(out["props"], [])
+        self.assertEqual(len(out["props"]), 1)
+        carried = out["props"][0]
+        self.assertEqual(carried["id"], row["id"])
+        # Not an actionable current Top Pick: no valid RECOMMENDATION_STATES
+        # member other than "neutral" honestly describes "no longer
+        # represented in today's scoring pass."
+        self.assertEqual(carried["recommendation_status"], "neutral")
+        self.assertTrue(carried["withdrawn_since_publication"])
+        self.assertIn("not a current recommendation", carried["status_reasons"][0])
+        self.assertTrue(carried["demoted_before_start"]["withdrawn"])
+        # The immutable publication record is untouched: it still proves
+        # this was originally a Top Pick, at its original price/probability.
+        snapshot = carried["publication_snapshot"]
+        self.assertEqual(snapshot["recommendation_status"], "top_pick")
+        self.assertEqual(snapshot["market_odds"], row["market_odds"])
+        self.assertEqual(snapshot["hit_probability"], row["hit_probability"])
+        # Never counted as a current Top Pick, but visible as a distinct,
+        # derivable "published, now downgraded/withdrawn" population.
+        self.assertEqual(out["summary"]["n_top_pick"], 0)
+        self.assertEqual(out["summary"]["n_published_downgraded"], 1)
+
+    def test_withdrawn_pregame_pick_is_never_a_publication_candidate(self):
+        # Guards against a regression that would re-register an already-
+        # published id: build_publication_manifest must not produce a
+        # candidate for it (it is already in the registry, and its
+        # recommendation_status is "neutral" here besides).
+        from dashboard.publication_registry import build_publication_manifest
+        row = late_pick()
+        registry = published_registry(row)
+        out = reconcile([], registry, date="2026-08-17", now="2026-08-17T20:00:00Z",
+                        schedule={1: {"status": PREVIEW}})
+        manifest = build_publication_manifest(
+            out, default_live_state(), registry, "sha", "2026-08-17T20:05:00Z",
+        )
+        self.assertEqual(manifest["candidates"], [])
 
     def test_new_slate_pick_and_prior_central_day_pick_coexist(self):
         prior = late_pick(player_id=101)
@@ -257,6 +295,230 @@ class RefreshPricesSkipsCarriedPicksTests(unittest.TestCase):
         self.assertEqual(live[carried["id"]]["market_fetch_state"], "IN_PLAY")
         self.assertEqual(live[carried["id"]]["game_state"], "live")
 
+    def test_withdrawn_pregame_pick_is_never_repriced_even_on_its_own_slate(self):
+        # The other-build-slate skip above is guarded by a DIFFERENT slate
+        # date; a withdrawn pick is carried on its OWN, same slate date, so
+        # refresh_prices needs its own explicit signal
+        # (withdrawn_since_publication) to still refuse to reprice it.
+        import json
+        import os
+        import tempfile
+        from unittest import mock
+        import grade_results as gr
+        import odds_fanduel as fd
+        import recommendation
+        from dashboard import refresh_prices as rp
+        from dashboard.live_state import atomic_write_json
+        from dashboard.publication_registry import default_registry, write_registry
+        from test_refresh_prices import observed_family
+
+        withdrawn = dict(late_pick(), published_slate_date="2026-08-17",
+                         withdrawn_since_publication=True, recommendation_status="neutral")
+        with tempfile.TemporaryDirectory() as tmp:
+            data, live_path, reg = (os.path.join(tmp, n) for n in ("data.json", "live.json", "reg.json"))
+            atomic_write_json(data, payload([withdrawn], date="2026-08-17"))
+            atomic_write_json(live_path, default_live_state())
+            write_registry(reg, default_registry())
+            fetchers = ("fetch_prop_prices", "fetch_pitcher_strikeouts", "fetch_pitcher_outs",
+                        "fetch_first_inning_totals", "fetch_combined_pitcher_strikeouts")
+            families = ("general_batter", "strikeouts", "pitcher_outs", "first_inning",
+                        "combined_strikeouts")
+            patches = [mock.patch.object(fd, f, return_value=observed_family(fam))
+                       for f, fam in zip(fetchers, families)]
+            patches += [mock.patch.object(gr, "fetch_game_contexts",
+                                          return_value={1: {"status": PREVIEW, "feed": {}}}),
+                        mock.patch.object(recommendation, "attach_recommendations"),
+                        mock.patch.object(rp, "utc_now", return_value="2026-08-17T20:20:00Z")]
+            for p in patches:
+                p.start()
+            try:
+                rp.refresh(data, live_path, reg)
+            finally:
+                for p in patches:
+                    p.stop()
+            with open(live_path, encoding="utf-8") as fh:
+                live = json.load(fh)["props"]
+        self.assertNotIn(withdrawn["id"], live)
+
+
+
+def newer_top_pick_delta(row, at="2026-08-17T19:30:00Z"):
+    """A live.json price/status delta stamped AFTER the board's odds fetch --
+    exactly what the 5-minute price refresh writes."""
+    live = default_live_state()
+    merge_prop_fields(live, row["id"], {
+        "recommendation_status": "top_pick", "status_reasons": [],
+        "market_odds": -150, "market_implied": .6, "market_edge": .1,
+    }, at, channel="prices")
+    return live
+
+
+def lean_row(row):
+    lean = dict(row)
+    lean.update(recommendation_status="lean", status_reasons=["price moved past the value line"],
+                market_odds=-190)
+    return lean
+
+
+class PregameDemotionPersistsTests(unittest.TestCase):
+    """Review of the Workstream C candidate (findings 1-3): a published Top
+    Pick that stopped being one before first pitch must not flip back to an
+    actionable Top Pick on a later reconcile pass, at the UTC rollover, or
+    silently at first pitch."""
+
+    NOW = "2026-08-17T20:00:00Z"
+
+    def test_second_pass_with_newer_live_delta_keeps_withdrawn_pick_withdrawn(self):
+        row = late_pick()
+        registry = published_registry(row)
+        first = reconcile([], registry, date="2026-08-17", now=self.NOW,
+                          schedule={1: {"status": PREVIEW}})
+        second = reconcile([dict(r) for r in first["props"]], registry, date="2026-08-17",
+                           now=self.NOW, live=newer_top_pick_delta(row),
+                           schedule={1: {"status": PREVIEW}})
+        kept = second["props"][0]
+        self.assertEqual(kept["recommendation_status"], "neutral")
+        self.assertTrue(kept["withdrawn_since_publication"])
+        self.assertEqual(kept["market_odds"], row["market_odds"])  # published price, not -150
+        self.assertEqual(second["summary"]["n_top_pick"], 0)
+        self.assertEqual(second["summary"]["n_published_downgraded"], 1)
+
+    def test_downgrade_recorded_while_pregame_and_cleared_if_top_pick_again(self):
+        row = late_pick()
+        registry = published_registry(row)
+        out = reconcile([lean_row(row)], registry, date="2026-08-17", now=self.NOW,
+                        schedule={1: {"status": PREVIEW}})
+        marker = out["props"][0]["demoted_before_start"]
+        self.assertEqual(marker["status"], "lean")
+        self.assertFalse(marker["withdrawn"])
+        self.assertEqual(out["summary"]["n_published_downgraded"], 1)
+        back = reconcile([dict(row)], registry, date="2026-08-17", now=self.NOW,
+                         schedule={1: {"status": PREVIEW}})
+        self.assertNotIn("demoted_before_start", back["props"][0])
+        self.assertEqual(back["summary"]["n_top_pick"], 1)
+        self.assertEqual(back["summary"]["n_published_downgraded"], 0)
+
+    def test_utc_rollover_keeps_the_pregame_demotion(self):
+        row = late_pick()
+        registry = published_registry(row)
+        for label, before in (("downgraded", [lean_row(row)]), ("withdrawn", [])):
+            with self.subTest(label):
+                prior = reconcile(before, registry, date="2026-08-17", now=self.NOW,
+                                  schedule={1: {"status": PREVIEW}})
+                # Full rebuild after the build date rolled: the pick is absent
+                # from the new slate's scoring pass; prior_payload is the
+                # deployed data.json.
+                rolled = bd.reconcile_public_lifecycle(
+                    payload([], date="2026-08-18"), prior_payload=prior,
+                    live=default_live_state(), registry=registry,
+                    schedule={1: {"status": PREVIEW}}, now=ROLLOVER)
+                # ...and the finalize/prepare pass over that built payload.
+                again = reconcile([dict(r) for r in rolled["props"]], registry,
+                                  date="2026-08-18", now=ROLLOVER,
+                                  schedule={1: {"status": PREVIEW}})
+                for out in (rolled, again):
+                    kept = out["props"][0]
+                    self.assertNotEqual(kept["recommendation_status"], "top_pick")
+                    self.assertEqual(kept["market_odds"], row["market_odds"])
+                    self.assertEqual(kept["publication_snapshot"]["recommendation_status"], "top_pick")
+                    self.assertEqual(out["summary"]["n_top_pick"], 0)
+                    self.assertEqual(out["summary"]["n_published_downgraded"], 1)
+                self.assertEqual(again["props"][0].get("withdrawn_since_publication") is True,
+                                 label == "withdrawn")
+
+    def test_after_first_pitch_demoted_pick_stays_demoted_and_published_facts_frozen(self):
+        # Jacob's approved policy (2026-09-24, decision 1): a pick downgraded
+        # or withdrawn before first pitch stays in "Published earlier" after
+        # its game starts; it never regains active Top Pick status because
+        # the game began. Published odds/probability and the immutable
+        # snapshot are untouched (grading reads the registry).
+        row = late_pick()
+        registry = published_registry(row)
+        for label, before in (("withdrawn", []), ("downgraded", [lean_row(row)])):
+            with self.subTest(label):
+                prior = reconcile(before, registry, date="2026-08-17", now=self.NOW,
+                                  schedule={1: {"status": PREVIEW}})
+                started = bd.reconcile_public_lifecycle(
+                    payload([], date="2026-08-18"), prior_payload=prior,
+                    live=default_live_state(), registry=registry,
+                    schedule={1: {"status": LIVE}}, now="2026-08-18T02:30:00Z")
+                again = reconcile([dict(r) for r in started["props"]], registry,
+                                  date="2026-08-18", now="2026-08-18T02:35:00Z",
+                                  schedule={1: {"status": LIVE}})
+                for out in (started, again):
+                    kept = out["props"][0]
+                    self.assertEqual(kept["game_state"], "live")
+                    self.assertNotEqual(kept["recommendation_status"], "top_pick")
+                    self.assertEqual(kept["market_odds"], row["market_odds"])
+                    self.assertEqual(kept["hit_probability"], row["hit_probability"])
+                    self.assertEqual(kept["publication_snapshot"]["recommendation_status"], "top_pick")
+                    self.assertEqual(kept["demoted_before_start"]["withdrawn"], label == "withdrawn")
+                    self.assertEqual(out["summary"]["n_top_pick"], 0)
+                    self.assertEqual(out["summary"]["n_published_downgraded"], 1)
+                self.assertEqual(again["props"][0].get("withdrawn_since_publication") is True,
+                                 label == "withdrawn")
+
+    def test_started_published_pick_that_was_never_demoted_is_still_a_top_pick(self):
+        row = late_pick()
+        registry = published_registry(row)
+        prior = reconcile([dict(row)], registry, date="2026-08-17", now=self.NOW,
+                          schedule={1: {"status": PREVIEW}})
+        started = bd.reconcile_public_lifecycle(
+            payload([], date="2026-08-18"), prior_payload=prior, live=default_live_state(),
+            registry=registry, schedule={1: {"status": LIVE}}, now="2026-08-18T02:30:00Z")
+        self.assertEqual(started["props"][0]["recommendation_status"], "top_pick")
+        self.assertNotIn("demoted_before_start", started["props"][0])
+
+    def test_prior_payload_marker_can_never_touch_an_unregistered_row(self):
+        row = prop(player_id=303)
+        forged = dict(row)
+        forged["demoted_before_start"] = {"status": "neutral", "status_reasons": [], "withdrawn": True}
+        out = bd.reconcile_public_lifecycle(
+            payload([dict(row)]), prior_payload=payload([forged]), live=default_live_state(),
+            registry=published_registry(late_pick()), schedule={1: {"status": PREVIEW}},
+            now="2026-08-17T17:00:00Z")
+        fresh = next(p for p in out["props"] if p["id"] == row["id"])
+        self.assertEqual(fresh["recommendation_status"], "top_pick")
+        self.assertNotIn("demoted_before_start", fresh)
+
+    def test_prior_marker_needs_a_published_prior_row(self):
+        # A marker on a prior_payload row that carries no publication
+        # snapshot (never written by a reconcile pass) is ignored.
+        row = late_pick()
+        registry = published_registry(row)
+        forged = dict(row)
+        forged["demoted_before_start"] = {"status": "neutral", "status_reasons": [], "withdrawn": True}
+        out = bd.reconcile_public_lifecycle(
+            payload([], date="2026-08-18"), prior_payload=payload([forged]),
+            live=default_live_state(), registry=registry,
+            schedule={1: {"status": PREVIEW}}, now=ROLLOVER)
+        self.assertEqual(out["props"][0]["recommendation_status"], "top_pick")
+        self.assertNotIn("demoted_before_start", out["props"][0])
+
+    def test_unpublished_rows_never_carry_a_marker(self):
+        lean = dict(prop(player_id=404, status="lean"))
+        lean["demoted_before_start"] = {"status": "lean", "status_reasons": [], "withdrawn": False}
+        out = reconcile([lean], published_registry(late_pick()), date="2026-08-17",
+                        now="2026-08-17T17:00:00Z", schedule={1: {"status": PREVIEW}})
+        row = next(p for p in out["props"] if p["id"] == lean["id"])
+        self.assertNotIn("demoted_before_start", row)
+
+    def test_prior_slate_row_marked_withdrawn_is_not_rewithdrawn_as_same_slate(self):
+        # A withdrawn marker from the Aug-17 slate, seen again by an Aug-18
+        # build while still pregame: it follows the other-build-slate path
+        # (carried marker), not the same-slate re-withdrawal.
+        row = late_pick()
+        registry = published_registry(row)
+        first = reconcile([], registry, date="2026-08-17", now=self.NOW,
+                          schedule={1: {"status": PREVIEW}})
+        baked = dict(first["props"][0])
+        baked.pop("demoted_before_start")
+        out = reconcile([baked], registry, date="2026-08-18", now=ROLLOVER,
+                        schedule={1: {"status": PREVIEW}})
+        self.assertEqual(out["props"][0]["recommendation_status"], "top_pick")
+        self.assertNotIn("withdrawn_since_publication", out["props"][0])
+
 
 if __name__ == "__main__":
-    unittest.main(verbosity=2)
+    unittest.main()
+
