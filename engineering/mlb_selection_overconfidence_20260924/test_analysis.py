@@ -146,5 +146,48 @@ class TestDecisionRule(unittest.TestCase):
                          "inconclusive (neither mechanism demonstrated)")
 
 
+class TestReviewMutationGaps(unittest.TestCase):
+    """Added after the independent review (post hoc): four mutations of
+    analysis.py survived the original 13 tests. Each test below kills one."""
+
+    def test_min_ref_boundary_is_inclusive_at_15(self):
+        sel = rows_with_rate("hits", 0.62, 5, 2, "s")
+        for n_ref, expected in ((15, "mb"), (14, None)):
+            ref = rows_with_rate("hits", 0.62, n_ref, 8, "r")
+            asg = A.assign_cells(sel, ref, min_ref=15)
+            self.assertEqual({a[0] if a else None for a in asg}, {expected}, n_ref)
+
+    def test_pooled_market_cell_only_pools_p_at_least_0_60(self):
+        # 10 reference rows at p=0.62 (too few for the (market, band) cell),
+        # 30 at p=0.50. Without the p>=0.60 guard the pooled (market,
+        # p>=0.60) cell would reach 40 rows and be chosen.
+        ref = rows_with_rate("hits", 0.62, 10, 6, "h") + rows_with_rate("hits", 0.50, 30, 15, "l")
+        sel = rows_with_rate("hits", 0.62, 4, 2, "s")
+        asg = A.assign_cells(sel, ref, min_ref=15)
+        self.assertTrue(all(a is None or a[0] != "mh" for a in asg))
+
+    def test_demonstrated_absent_flags(self):
+        primary = {"ci95": {"S_sel": [-0.03, 0.02], "W": [-0.08, 0.01]},
+                   "point": {"S_sel": -0.005}}
+        out = A.decide(primary, {"point": {"S_sel": 0.0}, "ci95": {"S_sel": [-0.1, 0.1]}},
+                       300, 40, 0.9)
+        self.assertTrue(out["S_sel_demonstrated_absent_beyond_minus5pp"])
+        self.assertFalse(out["W_demonstrated_absent_beyond_minus5pp"])
+
+    def test_bootstrap_resamples_selected_and_reference_jointly(self):
+        # In every game the selected and reference rows share one outcome and
+        # one p, in equal numbers. Any JOINT cluster resample then has G == W
+        # exactly (S_sel == 0); resampling the two sets independently would not.
+        sel, ref = [], []
+        for i in range(30):
+            y = 1 if i % 2 else 0
+            sel.append(row("hits", 0.62, y, game=f"g{i}"))
+            ref.extend(row("hits", 0.62, y, game=f"g{i}") for _ in range(1))
+        res = A.joint_decompose_bootstrap(sel, ref, A.game_cluster, b=200, seed=7, min_ref=15)
+        lo, hi = res["ci95"]["S_sel"]
+        self.assertAlmostEqual(lo, 0.0, places=12)
+        self.assertAlmostEqual(hi, 0.0, places=12)
+
+
 if __name__ == "__main__":
     unittest.main()
