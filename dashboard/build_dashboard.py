@@ -664,13 +664,18 @@ def run_live_fetch():
     # attaches came from THIS ONE fetch, so one timestamp for the whole run
     # is the real, honest granularity rather than a per-row fabrication.
     odds_fetched_at = datetime.now(timezone.utc).isoformat()
-    prices = fd.fetch_prop_prices()
+    # Every feed is scoped to this slate's own FanDuel events. The flat feeds
+    # also carry any other slate's still-open games, and prices are looked up
+    # by player name or matchup alone -- see odds_fanduel.slate_scoped_values
+    # for the 2026-09-24 incident this closes.
+    slate_games = fd.slate_games_from_meta(game_meta)
+    prices = fd.fetch_slate_prices(fd.fetch_prop_prices, slate_games)
     try:
-        k_prices = fd.fetch_pitcher_strikeouts()
+        k_prices = fd.fetch_slate_prices(fd.fetch_pitcher_strikeouts, slate_games)
     except Exception:
         k_prices = {}
     try:
-        fi_prices = fd.fetch_first_inning_totals()
+        fi_prices = fd.fetch_slate_prices(fd.fetch_first_inning_totals, slate_games)
     except Exception:
         fi_prices = {}
     po_prices = early_po_prices or {}
@@ -867,10 +872,25 @@ def _game_pick_sections(game_picks):
     candidate a recommendation -- so this NEVER manufactures a section: a
     section only ships when a real, distinct candidate exists for it.
 
-    Ranked purely by hit_probability within each bucket -- the same real,
+    Ranked by hit_probability within each bucket -- the same real,
     already-computed number every other surface on this site ranks by, not
-    a new judgment about which market "matters more."."""
-    ranked = sorted(game_picks, key=lambda r: r.get("hit_probability") or 0, reverse=True)
+    a new judgment about which market "matters more." -- AFTER one
+    actionability tier (2026-09-24 Games "not priced" incident): a candidate
+    with FanDuel's own exact-line price that clears the price test, then any
+    exact-line priced candidate, then unpriced research projections. Before
+    this, "Best Overall Read" could be a projection FanDuel was not posting
+    at all, sitting above priced reads in the same game. The tier reads
+    fields attach_market_prices() already set; it never computes a price,
+    and an unpriced candidate still appears when nothing priced fills a
+    section -- labelled by the frontend as a research projection."""
+    def actionability(r):
+        if r.get("market_odds") is None:
+            return 0
+        return 2 if r.get("price_clears") is True else 1
+
+    ranked = sorted(game_picks,
+                    key=lambda r: (actionability(r), r.get("hit_probability") or 0),
+                    reverse=True)
 
     def summarize(r):
         # `id` is what makes this entry RECONCILABLE (2026-08-28 P0

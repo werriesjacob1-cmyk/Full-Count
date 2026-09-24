@@ -58,7 +58,7 @@ import re
 import unicodedata
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import requests
 
@@ -373,9 +373,89 @@ def _relevant_events(observation, row):
         return []
     if len(by_start) == 1:
         return by_start
-    if len(by_matchup) == 1:
+    if len(by_matchup) == 1 and _plausible_same_game(row_start, by_matchup[0]):
         return by_matchup
     return []
+
+
+# How far a sportsbook's listed start may sit from the scheduled start before a
+# matchup-only match stops being "the same game under source time drift" and
+# becomes "the same two teams on another day". Consecutive games of one series
+# are >= ~16h apart; real listing drift is minutes to a couple of hours.
+MATCHUP_FALLBACK_MAX_DRIFT = timedelta(hours=8)
+
+
+def _plausible_same_game(row_start, event):
+    """Whether a matchup-only match can be the row's own game.
+
+    Real incident, 2026-09-24T01:05Z: the board rolled to the next slate date
+    while the prior night's Angels @ Mariners event was still listed pregame.
+    A series repeats the matchup string, so an unconditional matchup fallback
+    can bind the next day's rows to the previous day's event whenever the next
+    day's event is not listed yet. Unknown start on either side keeps the
+    legacy behaviour: there is nothing to compare.
+    """
+    event_start = _utc_instant(event.start)
+    if row_start is None or event_start is None:
+        return True
+    return abs(event_start - row_start) <= MATCHUP_FALLBACK_MAX_DRIFT
+
+
+def slate_scoped_values(observation, slate_games):
+    """The legacy flat ``values`` dict, restricted to this slate's own events.
+
+    A fetcher's flat ``values`` merges every event FanDuel lists, including a
+    game from another slate that is still open, and the board then looks a
+    price up by player name (or matchup) alone. Real incident, 2026-09-24
+    board built 2026-09-24T01:05Z: all ten of Mike Trout's markets for his
+    next-day game carried the exact prices of the game about to start that
+    night, while the event-scoped live refresh correctly reported the same
+    markets NOT_POSTED.
+
+    ``slate_games`` holds mappings with ``game_start`` (UTC ISO) and
+    ``matchup``. An event contributes only when it is the unique event
+    ``_relevant_events`` resolves for a slate game -- the same rule the live
+    refresh already applies per row -- so an unmatched game stays unpriced
+    rather than borrowing another event's quote. Merge semantics mirror each
+    fetcher: the general batter feed merges per-player market dicts, every
+    other family replaces by key.
+    """
+    if not isinstance(observation, MarketFeedObservation):
+        return {}
+    if observation.root_state != EVENTS_DISCOVERED:
+        return {}
+    chosen = []
+    for game in slate_games or ():
+        events = _relevant_events(observation, game)
+        if len(events) == 1 and events[0] not in chosen:
+            chosen.append(events[0])
+    out = {}
+    for event in chosen:
+        if observation.family == "general_batter":
+            for player, markets in (event.values or {}).items():
+                out.setdefault(player, {}).update(markets)
+        else:
+            out.update(event.values or {})
+    return out
+
+
+def slate_games_from_meta(game_meta):
+    """``slate_scoped_values`` keys from generate_picks' own ``game_meta``."""
+    return [{"game_start": gm.get("game_start_utc"), "matchup": gm.get("matchup")}
+            for gm in (game_meta or ())]
+
+
+def fetch_slate_prices(fetcher, slate_games):
+    """Legacy-shaped prices from ``fetcher``, restricted to ``slate_games``.
+
+    Failure behaviour matches the legacy non-strict call it replaces: a root
+    transport failure raises, a malformed or empty root yields ``{}``.
+    """
+    observation = fetcher(with_evidence=True)
+    if getattr(observation, "root_state", None) == ROOT_FETCH_FAILED:
+        detail = "; ".join(observation.errors) or ROOT_FETCH_FAILED
+        raise RuntimeError(f"indeterminate {observation.family} root feed: {detail}")
+    return slate_scoped_values(observation, slate_games)
 
 
 def market_evidence_for_row(observation, row):

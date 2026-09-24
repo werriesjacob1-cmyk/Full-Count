@@ -689,6 +689,33 @@ function renderRoute() {
 // ══════════════════════════════════════════════════════════════════════
 //  CARD / ROW BUILDERS
 // ══════════════════════════════════════════════════════════════════════
+// WHY THERE IS NO PRICE (2026-09-24, Games "not priced" incident). Every
+// surface used to collapse every no-price state into one phrase -- the
+// Games highlight line said "not priced", the compact card "Not yet posted
+// on FanDuel" -- even though refresh_prices.py records WHICH of several
+// different facts is true. A failed check is not the book being silent, and
+// neither is "we never had a price at this line". One mapping, shared by
+// every surface, so Today, Props, Games and the detail sheet cannot drift
+// apart. LINE_MOVED is handled by each caller before this (it carries the
+// book's other line) and never reaches here.
+function unpricedState(p) {
+  const checked = _agoText(p.market_fetch_checked_at);
+  switch (p.market_fetch_state) {
+    case "NOT_POSTED":
+      return { short: "Not yet posted on FanDuel",
+        detail: "FanDuel isn't posting this exact line right now"
+          + (checked ? ` (checked ${checked})` : "") + "." };
+    case "FETCH_FAILED":
+      return { short: "FanDuel check failed",
+        detail: "The latest FanDuel price check didn't complete, so no price is shown. It retries automatically." };
+    case "IN_PLAY":
+      return { short: "No pregame price captured",
+        detail: "No FanDuel price was captured for this line before first pitch." };
+    default:
+      return { short: "No FanDuel price at this line",
+        detail: "No FanDuel price was found for this exact line when the board was built." };
+  }
+}
 function marketBlock(p) {
   const marketOdds = fmtOdds(p.market_odds);
   if (marketOdds === null) {
@@ -713,7 +740,7 @@ function marketBlock(p) {
         <div class="m-detail">Not bettable at our number</div>
       </div>`;
     }
-    return `<div class="pc-market"><span class="m-detail">Not yet posted on FanDuel</span></div>`;
+    return `<div class="pc-market"><span class="m-detail">${esc(unpricedState(p).short)}</span></div>`;
   }
   // Real bug, found 2026-08-26 (Part 2 item 5, richer compact cards): this
   // used p.market_implied (the raw price-implied probability) and
@@ -1472,7 +1499,12 @@ function renderGames() {
 // through PROPS_BY_ID and render the CURRENT prop. Never mutate the copy,
 // never compute a second opinion here.
 function resolveGamePick(p) {
-  if (p.id && PROPS_BY_ID.has(p.id)) return PROPS_BY_ID.get(p.id);
+  // A copy that carries a canonical id resolves by that id or not at all.
+  // Falling back to name+prop for an id the board no longer has could bind
+  // the highlight to the same player's prop in a DIFFERENT game (a series
+  // repeats every name and prop) -- a probability paired with an unrelated
+  // line. The name match only serves legacy copies written before ids.
+  if (p.id) return PROPS_BY_ID.get(p.id) || null;
   const matches = [...PROPS_BY_ID.values()].filter(
     x => x.name === p.name && x.prop === p.prop);
   return matches.length === 1 ? matches[0] : null;
@@ -1511,11 +1543,19 @@ function gamePickLine(p) {
         <span class="gp-note">Line moved · FanDuel now ${esc(posted)}</span>
       </div>`;
   }
-  const priceText = live.market_odds != null ? " · " + fmtOdds(live.market_odds)
-                                             : " · not priced";
-  return `<div class="game-pick-line">
+  // A priced line is this prop's own exact-line FanDuel quote. An unpriced
+  // one is a research projection and says so, with the specific reason
+  // (2026-09-24: "71% · not priced" under "Best Overall Read" read like a
+  // bettable top read while FanDuel was not posting the line at all).
+  if (live.market_odds != null) {
+    return `<div class="game-pick-line game-pick-priced">
       <span>${esc(live.name)} — ${esc(live.prop)}</span>
-      <span>${pctBig(live.hit_probability)}${priceText}</span>
+      <span>${pctBig(live.hit_probability)} · FanDuel ${fmtOdds(live.market_odds)}</span>
+    </div>`;
+  }
+  return `<div class="game-pick-line game-pick-unpriced">
+      <span>${esc(live.name)} — ${esc(live.prop)}</span>
+      <span class="gp-note">${pctBig(live.hit_probability)} research projection · ${esc(unpricedState(live).short)}</span>
     </div>`;
 }
 // Real bug, found 2026-08-26 (games-drill-down honesty audit): the backend
@@ -1737,11 +1777,93 @@ function renderPerformance() {
 let HISTORY = null;
 let HISTORY_LOADING = false;
 let HISTORY_ERROR = false;
+// LIVE HISTORY (2026-09-24). history.json used to be fetched once per page
+// session and cached forever, and every card read only its durable grade --
+// so a pick that had already cashed stayed "Ungraded" until the reader
+// reloaded, and a finished day never turned into its final record on an
+// open page. The fix reuses the machinery the board already trusts:
+//  * history.json is re-fetched on an interval while the page is open, and
+//    a response only replaces the current document when it is strictly
+//    newer (generated_at) AND no later request has already been applied --
+//    a cached, slow or out-of-order response can never move it backwards;
+//  * live settlement state comes from LIVE_CACHE, which pollLive() already
+//    accumulates with acceptSettlement()'s authority/recency guard, joined
+//    on the canonical prop id ONLY (never a name -- a missing or unknown id
+//    simply shows no live state);
+//  * the durable grade always wins, and the official record in each day
+//    header is computed from durable grades only. Live state is shown as
+//    separately labelled pending information, never counted, never written
+//    back into the history document.
+let HISTORY_REQUEST_SEQ = 0;
+let HISTORY_APPLIED_SEQ = 0;
+let HISTORY_FETCHED_AT = 0;
+const HISTORY_REFRESH_MS = 3 * 60000;
+
+function acceptHistoryDocument(current, incoming) {
+  if (!incoming || !Array.isArray(incoming.days)) return false;
+  if (!current) return true;
+  const priorAt = timeMs(current.generated_at);
+  const nextAt = timeMs(incoming.generated_at);
+  if (nextAt == null) return false;
+  return priorAt == null || nextAt > priorAt;
+}
+
+// Returns true only when a newer document was actually applied.
+async function refreshHistory() {
+  const seq = ++HISTORY_REQUEST_SEQ;
+  let doc;
+  try {
+    doc = await fetchJSON("history.json");
+  } catch (e) {
+    // Keep showing what is already on screen; only a page with nothing to
+    // show reports the failure.
+    if (!HISTORY) HISTORY_ERROR = true;
+    return false;
+  }
+  HISTORY_FETCHED_AT = Date.now();
+  if (seq < HISTORY_APPLIED_SEQ) return false;
+  if (!acceptHistoryDocument(HISTORY, doc)) return false;
+  HISTORY = doc;
+  HISTORY_APPLIED_SEQ = seq;
+  HISTORY_ERROR = false;
+  return true;
+}
+
+async function pollHistory({ force = false } = {}) {
+  if (!force && route !== "history") return;
+  if (HISTORY_LOADING) return;
+  if (!HISTORY) { await renderHistory(); return; }
+  const changed = await refreshHistory();
+  if (changed && route === "history") renderHistoryContent(document.getElementById("page-history"));
+}
+
+const DURABLE_HISTORY_GRADES = new Set(["hit", "miss", "void"]);
+function historyDisplayState(p) {
+  if (p.grade === "hit" || p.grade === "miss") return { kind: p.grade, durable: true };
+  if (p.grade === "void" || p.settlement_state === "void") return { kind: "void", durable: true };
+  const live = p.id ? (LIVE_CACHE.props || {})[p.id] : null;
+  if (!live) return { kind: "ungraded", durable: false };
+  const state = live.settlement_state;
+  if (live.settlement_authority === "official_final" && DURABLE_HISTORY_GRADES.has(state)) {
+    return { kind: state, durable: false, finalPendingRecord: true };
+  }
+  if (state === "provisional_hit" || state === "provisional_miss") return { kind: state, durable: false };
+  if (live.game_state === "live") return { kind: "live", durable: false };
+  return { kind: "ungraded", durable: false };
+}
 
 function historyGradeChip(p) {
-  if (p.grade === "hit") return `<span class="chip chip-grade-hit">Hit ✓</span>`;
-  if (p.grade === "miss") return `<span class="chip chip-grade-miss">Miss</span>`;
-  if (p.settlement_state === "void" || p.grade === "void") return `<span class="chip chip-grade-void">Void</span>`;
+  const s = historyDisplayState(p);
+  if (s.finalPendingRecord) {
+    const word = s.kind === "hit" ? "Hit ✓" : s.kind === "miss" ? "Miss" : "Void";
+    return `<span class="chip chip-grade-${s.kind}">${word} · Final, record updating</span>`;
+  }
+  if (s.kind === "hit") return `<span class="chip chip-grade-hit">Hit ✓</span>`;
+  if (s.kind === "miss") return `<span class="chip chip-grade-miss">Miss</span>`;
+  if (s.kind === "void") return `<span class="chip chip-grade-void">Void</span>`;
+  if (s.kind === "provisional_hit") return `<span class="chip chip-grade-hit">Cashed — awaiting official final</span>`;
+  if (s.kind === "provisional_miss") return `<span class="chip chip-grade-miss">Trending miss — awaiting official final</span>`;
+  if (s.kind === "live") return `<span class="chip chip-grade-ungraded">In progress</span>`;
   return `<span class="chip chip-grade-ungraded">Ungraded</span>`;
 }
 
@@ -1752,7 +1874,7 @@ function historyPickCard(p) {
   const actualLine = p.actual !== null && p.actual !== undefined
     ? `<div class="m-detail">Actual: ${esc(String(p.actual))}${p.threshold != null ? ` (line ${esc(String(p.threshold))})` : ""}</div>`
     : "";
-  return `<div class="pick-card history-pick-card">
+  return `<div class="pick-card history-pick-card" data-pick-id="${esc(p.id || "")}">
     <div class="pc-top">
       <div>
         <div class="pc-name">${esc(p.name)}</div>
@@ -1773,14 +1895,34 @@ function historyPickCard(p) {
   </div>`;
 }
 
-function historyDayBlock(day, isFirst) {
+// Live, not-yet-recorded outcomes for a day, reported next to -- never
+// inside -- the official record.
+function historyPendingText(day) {
+  let finals = 0, cashed = 0, trending = 0;
+  for (const p of day.picks || []) {
+    const s = historyDisplayState(p);
+    if (s.durable) continue;
+    if (s.finalPendingRecord) finals++;
+    else if (s.kind === "provisional_hit") cashed++;
+    else if (s.kind === "provisional_miss") trending++;
+  }
+  const bits = [];
+  if (finals) bits.push(`${finals} final, record updating`);
+  if (cashed) bits.push(`${cashed} cashed`);
+  if (trending) bits.push(`${trending} trending miss`);
+  return bits.length ? `+ ${bits.join(" · ")}` : "";
+}
+
+function historyDayBlock(day, isOpen) {
   const rate = day.hit_rate == null ? "—" : pct(day.hit_rate, 1);
   const record = day.hits + day.misses > 0 ? `${day.hits}-${day.misses}` : "ungraded";
+  const pending = historyPendingText(day);
   const cards = day.picks.map(historyPickCard).join("");
-  return `<details class="history-day" ${isFirst ? "open" : ""}>
+  return `<details class="history-day" data-date="${esc(day.date)}" ${isOpen ? "open" : ""}>
     <summary>
       <span class="history-day-date">${esc(day.date)}</span>
       <span class="history-day-record">${record}</span>
+      ${pending ? `<span class="history-day-pending">${esc(pending)}</span>` : ""}
       <span class="history-day-rate">${rate}</span>
     </summary>
     <div class="history-day-picks">${cards}</div>
@@ -1789,26 +1931,37 @@ function historyDayBlock(day, isFirst) {
 
 async function renderHistory() {
   const el = document.getElementById("page-history");
-  if (HISTORY) { renderHistoryContent(el); return; }
+  if (HISTORY) {
+    renderHistoryContent(el);
+    // Entering the page (or any re-render) with an old copy refreshes it in
+    // the background; the interval keeps it current while the page is open.
+    if (Date.now() - HISTORY_FETCHED_AT >= HISTORY_REFRESH_MS / 3) pollHistory();
+    return;
+  }
   if (HISTORY_LOADING) return;
   el.innerHTML = `<div class="section-head"><h2>History</h2>
     <span class="section-sub">Every published Top Pick, every past day, graded.</span></div>
     <div class="empty-state"><div class="es-icon">⏳</div><p>Loading past picks…</p></div>`;
   HISTORY_LOADING = true;
   try {
-    HISTORY = await fetchJSON("history.json");
-    HISTORY_ERROR = false;
-  } catch (e) {
-    HISTORY_ERROR = true;
+    await refreshHistory();
   } finally {
     HISTORY_LOADING = false;
   }
   if (route === "history") renderHistoryContent(el);
 }
 
+// Which day sections the reader has open right now; null before the first
+// render (then the newest day opens by default).
+function historyOpenDates(el) {
+  const nodes = el && el.querySelectorAll ? [...el.querySelectorAll("details.history-day")] : [];
+  if (!nodes.length) return null;
+  return new Set(nodes.filter(d => d.open).map(d => d.dataset.date));
+}
+
 function renderHistoryContent(el) {
   let html = `<div class="section-head"><h2>History</h2>
-    <span class="section-sub">Every published Top Pick, every past day, graded. Nothing here is re-decided after the fact -- these are the same grades results/grades_{date}.json already recorded.</span></div>`;
+    <span class="section-sub">Every published Top Pick, every past day, graded. Each day's record counts official grades only -- the same grades results/grades_{date}.json recorded. Live results still awaiting the official final are labelled as such and never counted.</span></div>`;
 
   if (HISTORY_ERROR) {
     html += `<div class="empty-state">
@@ -1831,8 +1984,12 @@ function renderHistoryContent(el) {
     return;
   }
 
-  html += `<div class="perf-block">${days.map((d, i) => historyDayBlock(d, i === 0)).join("")}</div>`;
+  const open = historyOpenDates(el);
+  html += `<div class="perf-block">${days.map((d, i) =>
+    historyDayBlock(d, open ? open.has(d.date) : i === 0)).join("")}</div>`;
+  const scrollY = window.scrollY;
   el.innerHTML = html;
+  if (window.scrollY !== scrollY) window.scrollTo(0, scrollY);
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -2070,7 +2227,9 @@ function priceFreshnessState(p) {
           + `so this projection can't be bet at the line shown. The projection is left at its own line `
           + `rather than quietly re-pointed at FanDuel's -- a different line is a different bet.` };
     }
-    return { label: "Not posted", tone: "unposted", detail: "FanDuel hasn't posted a price for this line yet." };
+    const unpriced = unpricedState(p);
+    return { label: unpriced.short, tone: p.market_fetch_state === "FETCH_FAILED" ? "stale" : "unposted",
+      detail: unpriced.detail };
   }
   const state = p.market_fetch_state;
   if (state === "FETCH_FAILED") {
@@ -3004,7 +3163,11 @@ async function pollLive({ silent = false } = {}) {
     ingestLiveDocument(fresh);
     const changed = applyCachedLive();
     if (silent) return;
+    // A History page shows past slates, whose props are usually no longer
+    // on the board (PROPS_BY_ID), so `changed` can be 0 while their live
+    // settlement just moved in LIVE_CACHE. Re-render it either way.
     if (changed > 0) { renderRoute(); }
+    else if (route === "history") { renderHistory(); }
     renderFreshness();
   } catch (e) {
     // A missed poll on an ALREADY-OVERLAID board just tries again next
@@ -3109,6 +3272,10 @@ async function boot() {
   // one small JSON GET, not the multi-minute FanGraphs/Statcast/FanDuel
   // pull Dashboard Refresh itself avoids running too often for.
   setInterval(pollFullBoard, 3 * 60000);
+  setInterval(pollHistory, HISTORY_REFRESH_MS);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") pollHistory();
+  });
 
   document.querySelectorAll("[data-close-detail]").forEach(el => el.addEventListener("click", closeDetail));
   document.addEventListener("keydown", e => { if (e.key === "Escape") closeDetail(); });

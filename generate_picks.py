@@ -3780,7 +3780,8 @@ def _build_and_score():
         # this fixes (recommending "Over 11.5 Outs" for a pitcher FanDuel
         # actually lines at 17.5). Reused below at the later attach_market_prices
         # call instead of fetching the same market twice.
-        ("pitcher_outs_prices", lambda: _fd_early.fetch_pitcher_outs()),
+        ("pitcher_outs_prices", lambda: _fd_early.fetch_slate_prices(
+            _fd_early.fetch_pitcher_outs, _fd_early.slate_games_from_meta(game_meta))),
         # SAME bug, SAME fix, for the standard strikeouts market. Found live
         # 2026-08-13: attach_market_prices' "strikeouts" branch only prices a
         # candidate when the model's chosen `needs` happens to equal
@@ -3791,12 +3792,15 @@ def _build_and_score():
         # starters, yet only 1 matched. Fetched here so
         # attach_hit_probabilities can prefer the real line's needs the same
         # way score_pitcher_outs already does for pitcher_outs.
-        ("strikeout_prices", lambda: _fd_early.fetch_pitcher_strikeouts()),
+        ("strikeout_prices", lambda: _fd_early.fetch_slate_prices(
+            _fd_early.fetch_pitcher_strikeouts, _fd_early.slate_games_from_meta(game_meta))),
         # Starting Pitcher Combined Alt Strikeouts -- see score_combined_
         # strikeouts's own docstring. A real, priced ladder market with no
         # scorer until now, found sitting next to Pitcher Outs Recorded on
         # the exact same tab.
-        ("combined_k_prices", lambda: _fd_early.fetch_combined_pitcher_strikeouts()),
+        ("combined_k_prices", lambda: _fd_early.fetch_slate_prices(
+            _fd_early.fetch_combined_pitcher_strikeouts,
+            _fd_early.slate_games_from_meta(game_meta))),
         # Second batch, each verified against its real structure before use.
         ("team_field", lambda: _src.team_fielding_table()),
         # Reuses the same call already made above for team_k_lookup's
@@ -4721,14 +4725,18 @@ def main() -> int:
         # chosen `projection` almost never does (see select_moonshots).
         # Fetching it twice would mean two full FanDuel sweeps of a 15-game
         # slate for the same data.
-        prices = _fd.fetch_prop_prices()
+        # Scoped to this slate's own FanDuel events: the flat feed also
+        # carries any other slate's still-open games, and prices are looked
+        # up by player name (see odds_fanduel.slate_scoped_values).
+        slate_games = _fd.slate_games_from_meta(game_meta)
+        prices = _fd.fetch_slate_prices(_fd.fetch_prop_prices, slate_games)
         # Already fetched earlier (before scoring, so attach_hit_probabilities'
         # strikeouts branch could price against the real line directly) --
         # reused here rather than sweeping FanDuel for the same market twice,
         # same pattern as po_prices/combined_k_prices below.
         k_prices = early_k_prices or {}
         try:
-            fi_prices = _fd.fetch_first_inning_totals()
+            fi_prices = _fd.fetch_slate_prices(_fd.fetch_first_inning_totals, slate_games)
         except Exception:
             fi_prices = {}
         # Already fetched earlier (before scoring, so score_pitcher_outs
