@@ -412,7 +412,19 @@ function freezePublishedSnapshot(p) {
   for (const [field, value] of Object.entries(p.publication_snapshot)) {
     if (FROZEN_PUBLICATION_FIELDS.has(field)) p[field] = value;
   }
+  // Jacob's approved policy (2026-09-24): a pick downgraded/withdrawn before
+  // first pitch keeps that display status after its game starts -- it stays
+  // in "Published earlier — no longer a Top Pick" and is still graded as
+  // published (from the registry). The build carries the last pregame
+  // status as `demoted_before_start`; the frozen odds/probability above stay.
+  const m = p.demoted_before_start;
+  if (m && DEMOTED_STATES.has(m.status)) {
+    p.recommendation_status = m.status;
+    p.status_reasons = Array.isArray(m.status_reasons) ? m.status_reasons.slice() : [];
+    if (m.withdrawn) p.withdrawn_since_publication = true;
+  }
 }
+const DEMOTED_STATES = new Set(["lean", "value", "neutral"]);
 function refreshSummary() {
   const props = publicProps();
   DATA.summary = DATA.summary || {};
@@ -886,33 +898,28 @@ function wasPublishedTopPick(p) {
 function isDowngradedPublished(p) {
   return wasPublishedTopPick(p) && p.recommendation_status !== "top_pick";
 }
-// After first pitch a published pick shows and grades exactly as published
-// (the registry is the grading truth), but if it had stopped being a Top
-// Pick before first pitch the card keeps saying so -- the build carries
-// that last pregame status as `demoted_before_start`.
+// After first pitch a downgraded/withdrawn pick stays in its own group (see
+// freezePublishedSnapshot) and says it was demoted before first pitch; it is
+// graded as originally published (the registry is the grading truth).
 const STATUS_LABEL = { lean: "Lean", value: "Value", neutral: "no current recommendation" };
-function demotedBeforeStartNote(p) {
-  const m = p.demoted_before_start;
-  if (!m || !wasPublishedTopPick(p) || isDowngradedPublished(p)) return "";
-  if (!STARTED_NOTE_STATES.has(p.game_state)) return "";
-  const label = m.withdrawn ? "Withdrawn before first pitch"
-    : `Downgraded to ${STATUS_LABEL[m.status] || "no current recommendation"} before first pitch`;
-  return `<div class="pc-downgraded-note">
-    <span class="chip chip-downgraded">${esc(label)}</span>
-    <div class="pc-downgraded-detail">Graded as originally published.</div>
-  </div>`;
-}
 function publishedDowngradedNote(p) {
-  if (!isDowngradedPublished(p)) return demotedBeforeStartNote(p);
+  if (!isDowngradedPublished(p)) return "";
+  const started = STARTED_NOTE_STATES.has(p.game_state);
+  const withdrawn = !!(p.withdrawn_since_publication
+                       || (p.demoted_before_start && p.demoted_before_start.withdrawn));
   const snap = p.publication_snapshot || {};
   const originalOdds = fmtOdds(snap.market_odds);
   const originalProb = snap.hit_probability != null ? pctBig(snap.hit_probability) : "";
-  const label = p.withdrawn_since_publication ? "Withdrawn" : "Downgraded after publication";
+  const label = started
+    ? (withdrawn ? "Withdrawn before first pitch"
+       : `Downgraded to ${STATUS_LABEL[p.recommendation_status] || "no current recommendation"} before first pitch`)
+    : (withdrawn ? "Withdrawn" : "Downgraded after publication");
   const reason = esc((p.status_reasons || [])[0] || "");
   const detail = [
     "Published as a Top Pick" + (originalOdds ? ` at ${originalOdds}` : "")
       + (originalProb ? ` (${originalProb} probability)` : "") + ".",
-    reason ? `Now: ${capSentence(humanizeReason(reason))}` : "",
+    reason ? `${started ? "Before first pitch" : "Now"}: ${capSentence(humanizeReason(reason))}` : "",
+    started ? "Graded as originally published." : "",
   ].filter(Boolean).join(" ");
   return `<div class="pc-downgraded-note">
     <span class="chip chip-downgraded">${label}</span>

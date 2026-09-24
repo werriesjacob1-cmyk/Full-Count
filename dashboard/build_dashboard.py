@@ -1540,11 +1540,15 @@ def _apply_demotion_markers(payload, frozen_by_id, withdrawn_ids, incoming_marke
     * live-priced same-slate pregame row: its CURRENT status is the truth --
       marker set while it is not a Top Pick, cleared if it is one again.
     * frozen row (another build slate, or started): no current scoring
-      exists, so the last recorded pregame marker is carried. Before first
-      pitch it also sets the display status (the demotion must not flip
-      back to "top_pick" at the UTC rollover -- review finding 2). After
-      first pitch the pick shows and grades as published; the marker stays
-      only so the page can say it was demoted before first pitch (finding 3).
+      exists, so the last recorded pregame marker is carried and sets the
+      display status -- before first pitch (the demotion must not flip back
+      to "top_pick" at the UTC rollover, review finding 2) AND after it
+      (Jacob's approved policy, 2026-09-24: a downgraded/withdrawn pick
+      stays in the "Published earlier" group and never regains active Top
+      Pick status because its game began). Display only: the published
+      odds/probability stay frozen on the row and in publication_snapshot,
+      and grading reads the registry, so the pick is still graded as
+      originally published.
     """
     for row in payload.get("props") or []:
         rid = row.get("id")
@@ -1562,8 +1566,7 @@ def _apply_demotion_markers(payload, frozen_by_id, withdrawn_ids, incoming_marke
         else:
             row.pop("withdrawn_since_publication", None)
             marker = incoming if _valid_marker(incoming) else None
-            pregame = row.get("game_state") == "pregame" and before_betting_cutoff(row, now)
-            if marker and pregame:
+            if marker:
                 row["recommendation_status"] = marker["status"]
                 row["status_reasons"] = list(marker.get("status_reasons") or [])
                 if marker.get("withdrawn"):

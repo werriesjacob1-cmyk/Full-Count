@@ -1,4 +1,8 @@
-# Published-pick downgrade/withdrawal display policy — proposal for Jacob
+# Published-pick downgrade/withdrawal display policy
+
+**APPROVED by Jacob, 2026-09-24** (§1 as amended by his decisions recorded in §5).
+This authorizes this display policy only -- not any change to the public-pick
+selection algorithm or grading rules.
 
 Mission 12, Workstream C. Candidate branch:
 `claude/published-downgrade-display-20260924`. Not merged, not deployed, not
@@ -17,9 +21,11 @@ For Jacob to approve verbatim (or edit):
 > before first pitch, the Today page moves it into its own clearly labelled
 > "Published earlier — no longer a Top Pick" group, showing the original
 > published odds and probability next to its current status and reason, and
-> it is never counted as one of today's Top Picks. Once the game starts,
-> the pick is shown and graded exactly as originally published, with a
-> "Downgraded/Withdrawn before first pitch" label. Every published Top Pick
+> it is never counted as one of today's Top Picks. It stays in that group
+> after its game starts -- it never regains active Top Pick status merely
+> because the game began -- labelled "Downgraded/Withdrawn before first
+> pitch", and it is graded exactly as originally published once the game is
+> settled. Every published Top Pick
 > stays on the Today page until midnight Central (longer only while its game
 > is still in progress) and always remains part of Full Count's permanent
 > published-pick performance record, unchanged by anything that happens
@@ -66,8 +72,8 @@ behaviour explicitly instead of overclaiming.
   can restore `top_pick`. It can only demote a display: it is ignored on any
   row without a registry publication, never read by grading, the registry,
   or the manifest, and cleared if the live scoring pass makes the pick a Top
-  Pick again. After first pitch it only drives the "before first pitch"
-  label; the row shows the published snapshot.
+  Pick again. After first pitch it keeps the demoted display status (§5
+  decision 1) while the row's odds/probability stay the published snapshot.
 - **New optional summary count.** `summary.n_published_downgraded`: how many
   currently-displayed rows were published as a Top Pick and are not one now
   (downgraded + withdrawn combined). Purely additive; `summary.n_top_pick`
@@ -126,22 +132,27 @@ be re-derived after the fact (once the pick leaves the scoring pass or its
 game starts, nothing current says what its last pregame status was), so it
 is carried explicitly -- display-only, demote-only.
 
-## 5. Open questions for Jacob
+## 5. Jacob's decisions (2026-09-24)
 
-1. **At first pitch.** As built, a downgraded/withdrawn pick leaves the
-   "Published earlier" group when its game starts and shows as a published
-   pick (original odds, graded as published) with a "Downgraded to Lean /
-   Withdrawn before first pitch" label. Alternative: keep it in the
-   "Published earlier" group through the game. The built behaviour matches
-   how grading already works; the alternative may read less like a
-   re-endorsement. Which do you want?
-2. **Retention window.** The pick follows PR #195's rule for every published
-   pick: on Today until 11:59 pm Central, and after that only while its game
-   is still in progress; settled picks live in History. Should a
-   withdrawn/downgraded pick instead stay longer, because a customer may not
-   have seen the downgrade? No prior decision on this was found in
-   PROJECT_STATE.md, ENGINEERING_HANDOFF.md or Issue #91.
-3. **All Props status filters.** The "Leans"/"Value" tiles and the filtered
-   All Props pages they link to now both leave out downgraded published
-   picks (they are shown once, in the Today group). Tell me if you'd rather
-   they appear in both places.
+1. **At first pitch:** a downgraded or withdrawn published Top Pick **stays
+   in the separate "Published earlier — no longer a Top Pick" group**. It
+   must not regain active Top Pick status merely because the game begins.
+   Its original publication is preserved, and it is graded normally after
+   settlement. Implemented:
+   - `_apply_demotion_markers` applies the carried marker to frozen rows
+     before and after first pitch;
+   - `freezePublishedSnapshot` in the browser re-applies the marker after
+     freezing the published snapshot.
+
+   The published odds and probability stay frozen, and grading reads the
+   registry.
+2. **Retention unchanged:** the pick stays on Today through 11:59 pm Central,
+   or longer while its game is in progress (PR #195's rule). After that,
+   permanent History preserves the original publication.
+3. **No duplication:** withdrawn or downgraded published picks are excluded
+   from the active Leans, Value, and filtered All Props views. They remain
+   visible in their separate Today group and in permanent History.
+
+The immutable public ledger and the original performance attribution are
+preserved. The separate group never presents a withdrawn recommendation as
+currently actionable.

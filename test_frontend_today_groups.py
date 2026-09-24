@@ -310,23 +310,44 @@ class DowngradeReviewFindingsTests(unittest.TestCase):
         self.assertEqual(r["n"], 0)
         self.assertIn("odds as of publication, not a current quote", r["note"])
 
-    def test_started_pick_keeps_its_before_first_pitch_label(self):
+    def test_started_demoted_pick_stays_in_published_earlier_group(self):
+        # Jacob's approved policy (2026-09-24, decision 1): the browser's
+        # start-of-game snapshot freeze must not restore "top_pick" for a
+        # pick demoted before first pitch.
         r = run_node(SETUP + SNAPSHOT_SETUP + self.PUBLISHED + r"""
-          const started = { game_state: "live", publication_snapshot: publishedSnapshot() };
-          return {
-            withdrawn: pickCard(tp("a", Object.assign({ demoted_before_start:
-              { status: "neutral", status_reasons: [], withdrawn: true } }, started, published))),
-            lean: pickCard(tp("b", Object.assign({ demoted_before_start:
-              { status: "lean", status_reasons: [], withdrawn: false } }, started, published))),
-            pregame: pickCard(tp("c", Object.assign({}, started, published, { game_state: "pregame",
-              game_start: "2099-01-01T00:00:00Z", demoted_before_start:
-              { status: "lean", status_reasons: [], withdrawn: false } }))),
-          };
+          SHOW_UNVERIFIED = true;
+          const started = Object.assign({ game_state: "live", game_start: "2000-01-01T00:00:00Z",
+                                          publication_snapshot: publishedSnapshot() }, published);
+          const rows = [
+            tp("w", Object.assign({ recommendation_status: "neutral", demoted_before_start:
+              { status: "neutral", status_reasons: ["no longer in today's latest update of picks"],
+                withdrawn: true } }, started)),
+            tp("l", Object.assign({ recommendation_status: "top_pick", demoted_before_start:
+              { status: "lean", status_reasons: ["price moved past the value line"],
+                withdrawn: false } }, started)),
+            tp("t", Object.assign({ recommendation_status: "top_pick" }, started)),
+          ];
+          DATA = { date: "2026-09-24", display_date: "2026-09-24", generated_at: "2026-09-24T12:00:00Z",
+                   summary: {}, schedule: [], families: [], props: rows };
+          rows.forEach(freezePublishedSnapshot);
+          indexProps(); refreshSummary(); renderToday();
+          const html = __el("page-today").innerHTML;
+          const group = html.slice(html.indexOf("Published earlier"));
+          return { status: rows.map(p => p.recommendation_status), odds: rows.map(p => p.market_odds),
+                   html, group, n: DATA.summary.n_top_pick,
+                   wCard: pickCard(rows[0]), lCard: pickCard(rows[1]) };
         """)
-        self.assertIn("Withdrawn before first pitch", r["withdrawn"])
-        self.assertIn("Downgraded to Lean before first pitch", r["lean"])
-        self.assertIn("Graded as originally published", r["lean"])
-        self.assertNotIn("before first pitch", r["pregame"])
+        self.assertEqual(r["status"], ["neutral", "lean", "top_pick"])
+        self.assertEqual(r["odds"], [-120, -120, -120])     # published odds, frozen
+        self.assertEqual(r["n"], 1)                         # only the never-demoted pick
+        self.assertIn('data-open="w"', r["group"])
+        self.assertIn('data-open="l"', r["group"])
+        self.assertNotIn('data-open="t"', r["group"])
+        self.assertIn("Withdrawn before first pitch", r["wCard"])
+        self.assertIn("Downgraded to Lean before first pitch", r["lCard"])
+        self.assertIn("Graded as originally published", r["lCard"])
+        for card in (r["wCard"], r["lCard"]):
+            self.assertNotIn("chip-top_pick", card)
 
     def test_lean_and_value_tiles_match_their_filtered_pages(self):
         r = run_node(SETUP + SNAPSHOT_SETUP + r"""

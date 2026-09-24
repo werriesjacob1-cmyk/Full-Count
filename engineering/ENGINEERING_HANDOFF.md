@@ -6178,3 +6178,27 @@ Still NOT authorized or done: no merge and no deploy; the policy text awaits
 Jacob's approval. Grading, the registry, `recommendation.py` and the
 selector are untouched.
 
+
+### Workstream C: Jacob's policy approval implemented (2026-09-24)
+
+Jacob approved `POLICY_PROPOSAL.md` §1 with three decisions, recorded in
+§5 of that file. Only decision 1 changed behaviour:
+
+- **At first pitch,** a downgraded or withdrawn published Top Pick now
+  **stays in "Published earlier — no longer a Top Pick"**. Before this
+  change it showed as a normal published Top Pick with a label.
+  - Backend: `_apply_demotion_markers` applies the carried marker to frozen
+    rows regardless of game state.
+  - Browser: `freezePublishedSnapshot` re-applies the marker after freezing
+    the snapshot, so a started demoted pick never regains `top_pick`.
+  - Published odds and probability stay frozen, the snapshot is untouched,
+    and grading reads the registry.
+- **Tests:** the two old first-pitch tests were rewritten to the approved
+  behaviour, and a started pick that was never demoted still shows as a Top
+  Pick. Mutations that restore the old behaviour are killed on both the
+  backend and the frontend.
+- **Decisions 2 and 3** (retention, and no duplication in Leans, Value or
+  filtered All Props) needed no code change.
+
+This authorizes this display policy only. The selection algorithm and the
+grading rules are unchanged.

@@ -426,20 +426,48 @@ class PregameDemotionPersistsTests(unittest.TestCase):
                 self.assertEqual(again["props"][0].get("withdrawn_since_publication") is True,
                                  label == "withdrawn")
 
-    def test_after_first_pitch_pick_shows_as_published_but_keeps_the_note(self):
+    def test_after_first_pitch_demoted_pick_stays_demoted_and_published_facts_frozen(self):
+        # Jacob's approved policy (2026-09-24, decision 1): a pick downgraded
+        # or withdrawn before first pitch stays in "Published earlier" after
+        # its game starts; it never regains active Top Pick status because
+        # the game began. Published odds/probability and the immutable
+        # snapshot are untouched (grading reads the registry).
         row = late_pick()
         registry = published_registry(row)
-        prior = reconcile([], registry, date="2026-08-17", now=self.NOW,
+        for label, before in (("withdrawn", []), ("downgraded", [lean_row(row)])):
+            with self.subTest(label):
+                prior = reconcile(before, registry, date="2026-08-17", now=self.NOW,
+                                  schedule={1: {"status": PREVIEW}})
+                started = bd.reconcile_public_lifecycle(
+                    payload([], date="2026-08-18"), prior_payload=prior,
+                    live=default_live_state(), registry=registry,
+                    schedule={1: {"status": LIVE}}, now="2026-08-18T02:30:00Z")
+                again = reconcile([dict(r) for r in started["props"]], registry,
+                                  date="2026-08-18", now="2026-08-18T02:35:00Z",
+                                  schedule={1: {"status": LIVE}})
+                for out in (started, again):
+                    kept = out["props"][0]
+                    self.assertEqual(kept["game_state"], "live")
+                    self.assertNotEqual(kept["recommendation_status"], "top_pick")
+                    self.assertEqual(kept["market_odds"], row["market_odds"])
+                    self.assertEqual(kept["hit_probability"], row["hit_probability"])
+                    self.assertEqual(kept["publication_snapshot"]["recommendation_status"], "top_pick")
+                    self.assertEqual(kept["demoted_before_start"]["withdrawn"], label == "withdrawn")
+                    self.assertEqual(out["summary"]["n_top_pick"], 0)
+                    self.assertEqual(out["summary"]["n_published_downgraded"], 1)
+                self.assertEqual(again["props"][0].get("withdrawn_since_publication") is True,
+                                 label == "withdrawn")
+
+    def test_started_published_pick_that_was_never_demoted_is_still_a_top_pick(self):
+        row = late_pick()
+        registry = published_registry(row)
+        prior = reconcile([dict(row)], registry, date="2026-08-17", now=self.NOW,
                           schedule={1: {"status": PREVIEW}})
         started = bd.reconcile_public_lifecycle(
             payload([], date="2026-08-18"), prior_payload=prior, live=default_live_state(),
             registry=registry, schedule={1: {"status": LIVE}}, now="2026-08-18T02:30:00Z")
-        kept = started["props"][0]
-        # Graded and shown as published (the registry is the grading truth)...
-        self.assertEqual(kept["recommendation_status"], "top_pick")
-        self.assertNotIn("withdrawn_since_publication", kept)
-        # ...but the page can still say it was withdrawn before first pitch.
-        self.assertTrue(kept["demoted_before_start"]["withdrawn"])
+        self.assertEqual(started["props"][0]["recommendation_status"], "top_pick")
+        self.assertNotIn("demoted_before_start", started["props"][0])
 
     def test_prior_payload_marker_can_never_touch_an_unregistered_row(self):
         row = prop(player_id=303)
