@@ -150,6 +150,87 @@ def live_weather(games: list[dict], context, now: datetime, cache: Path) -> dict
     return out
 
 
+PARAMS_PATH = Path(__file__).resolve().parents[3] / (
+    "engineering/nfl_tier1_team_context_20260924/team_context_dev_params.json")
+LIVE_CONFIGS = ("VOLUME_BASE", "F10", "ALL_NO_MARKET", "ALL")
+
+
+def live_player_predictions(season: int, week: int, week_games: list[dict], context, tf, dfeat,
+                            team_games: list[dict], params: dict[str, Any]) -> list[dict[str, Any]]:
+    """Research-only team_context_challenger outputs for players on week-`week` teams.
+
+    B0 = mean of the last five role appearances (min three) through the
+    latest completed week -- the harness rule. hist_y = mean team volume in
+    those window games. F1 in the live ctx is the timestamped FanDuel line
+    substituted for the closing line the model was fitted on (flagged).
+    """
+    rows, _prov = harness.load_player_weeks(Path("/tmp/claude-0/nflverse_cache"),
+                                            Path(__file__).resolve().parents[3] / "engineering/evidence/nflverse_weekly_stats_full_audit_2026-09-14.json",
+                                            first_season=season - 1,
+                                            current_season_csv=SHARED / "stats_player_week_2026.csv")
+    if any(r["season"] == season and r["week"] >= week for r in rows):
+        raise SystemExit("weekly stats contain the target week: not a pre-game build")
+    positions = player_positions(rows)
+    team_actual = {(g["game_id"], g["team"]): g for g in team_games}
+    opp_of = {}
+    for g in week_games:
+        opp_of[g["home_team"]] = (g["game_id"], g["away_team"])
+        opp_of[g["away_team"]] = (g["game_id"], g["home_team"])
+    out = []
+    combos = {"+".join(c) or "VOLUME_BASE": c for r in range(5)
+              for c in __import__("itertools").combinations(tcc.TEAM_FACTORS, r)}
+    for market in ("passing_yards", "receptions", "receiving_yards"):
+        actual_fn, role_fn = harness.MARKETS[market]
+        target = tcc.MARKET_TEAM_TARGET[market]
+        hist: dict[str, list] = {}
+        last_team: dict[str, tuple] = {}
+        for r in rows:
+            if role_fn(r) > 0:
+                hist.setdefault(r["player_id"], []).append((actual_fn(r), r["game_id"], norm(r["team"])))
+                last_team[r["player_id"]] = (r["season"], norm(r["team"]), r)
+        vpred = {}
+        for name, coef in params["volume_coefficients"][target].items():
+            vpred[name] = {}
+            for team, (game_id, _opp) in opp_of.items():
+                e, _why = tcc.predict_volume(context[(game_id, team)], tf[(game_id, team)], target,
+                                             combos[name], coef)
+                vpred[name][(game_id, team)] = e
+        k = params["scale_k"][market]
+        for pid, window in hist.items():
+            s_last, team, raw = last_team[pid]
+            window = window[-5:]
+            if s_last != season or team not in opp_of or len(window) < 3:
+                continue
+            game_id, opp = opp_of[team]
+            b0 = sum(a for a, _g, _t in window) / len(window)
+            vals = [team_actual.get((g, t), {}).get(target) for _a, g, t in window]
+            key = (season, week, game_id, pid)
+            fake = [{"season": season, "week": week, "game_id": game_id, "player_id": pid, "team": team,
+                     "opponent_team": opp, "position": raw["position"], "b0": b0, "actual": 0.0}]
+            recs = tcc.player_inputs(fake, {key: [(g, t) for _a, g, t in window]}, market,
+                                     {k2: {target: v[target]} for k2, v in team_actual.items()},
+                                     vpred, dfeat, positions)
+            rec = recs[0]
+            entry = {"market": market, "player_id": pid, "player_name": raw["player_name"],
+                     "position": positions.get(pid, raw["position"]), "team": team, "opponent": opp,
+                     "game_id": game_id, "b0": b0, "scale_k": k,
+                     "hist_team_volume": rec["hist_y"], "configs": {}}
+            for config in LIVE_CONFIGS:
+                p = params["exponents"][market][config]
+                preds, fb = tcc.predict_config([rec], config, p, k)
+                att = tcc.attribution_rows([rec], config, p)[key]
+                entry["configs"][config] = {"prediction": preds[key], "fallback": fb[key],
+                                            "uses_market_input": tcc.uses_market_input(config),
+                                            "log_contrib": {f: round(v, 5) for f, v in att.items()}}
+            out.append(entry)
+    return out
+
+
+def norm(team: str) -> str:
+    from nfl.research.tier1.team_context_data import norm_team
+    return norm_team(team)
+
+
 def build(season: int, week: int, out: Path, *, capture: bool = True) -> dict[str, Any]:
     now = datetime.now(timezone.utc)
     out.mkdir(parents=True, exist_ok=True)
@@ -227,12 +308,28 @@ def build(season: int, week: int, out: Path, *, capture: bool = True) -> dict[st
             validate_feature_row(r, prediction_cutoff=_iso(ko))
         rows += game_rows
 
+    # player-level research outputs with the frozen DEV params (F1 = live line substituted)
+    player_preds, params_sha = [], None
+    if PARAMS_PATH.exists():
+        params = json.loads(PARAMS_PATH.read_text())
+        params_sha = harness.sha256_file(PARAMS_PATH)
+        for (game_id, team), line in f1_live.items():
+            context[(game_id, team)]["f1_implied_team_total_closing"] = line["f1_implied_team_total"]
+            context[(game_id, team)]["f1_team_margin_closing"] = line["f1_team_margin"]
+        emitted = [g for g, m in zip(week_games, manifest) if m["status"] == "EMITTED"]
+        player_preds = live_player_predictions(season, week, emitted, context, tf, dfeat, team_games, params)
+
     body = {"schema_version": 1, "workstream": "C", "research_only": True, "public_eligible": False,
             "target_season": season, "target_week": week, "generated_at": _iso(now),
             "pbp_sources": pbp_sources, "games_csv_sha256": harness.sha256_file(games_path),
             "stadium_coordinates_raw_sha256": coords["raw_sha256"],
             "fanduel": {k: v for k, v in fd.items() if k != "lines"}, "weather": weather,
-            "games": manifest, "rows": rows}
+            "games": manifest, "rows": rows,
+            "player_predictions": {"params_sha256": params_sha,
+                                   "note": ("research-only; F1 uses the live FanDuel line in place of the "
+                                            "closing line the volume model was fitted on; configs with "
+                                            "uses_market_input=True are not independent of FanDuel prices"),
+                                   "rows": player_preds}}
     text = json.dumps(body, indent=1, sort_keys=True, default=str)
     (out / f"team_context_live_{season}_w{week:02d}.json").write_text(text + "\n")
     body["sha256"] = hashlib.sha256(text.encode()).hexdigest()

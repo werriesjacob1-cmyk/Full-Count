@@ -225,6 +225,19 @@ class ConsumerTests(unittest.TestCase):
         self.assertAlmostEqual(p["alpha"], 1.0)
         self.assertLess(p["dev_mae"], 1e-9)
 
+    def test_f6_weather_columns_and_unknown(self):
+        ctx = {"f6_roof_type": "outdoors", "f6_surface": "grass", "f6_fcst_wind_kt": 12.0,
+               "f6_fcst_pop6": 40.0}
+        self.assertEqual(tcc.factor_columns("F6", ctx, {}), [0.0, 0.0, 0.0, 12.0, 0.4])
+        self.assertIsNone(tcc.factor_columns("F6", {**ctx, "f6_fcst_wind_kt": UNKNOWN}, {}))
+        dome = {"f6_roof_type": "dome", "f6_surface": "turf", "f6_fcst_wind_kt": UNKNOWN,
+                "f6_fcst_pop6": UNKNOWN}
+        self.assertEqual(tcc.factor_columns("F6", dome, {}), [1.0, 0.0, 1.0, 0.0, 0.0])
+        self.assertIsNone(tcc.factor_columns("F6", {**dome, "f6_roof_type": UNKNOWN}, {}))
+        x, why = tcc.team_design_row({}, {"base_dropbacks_pg": UNKNOWN}, "dropbacks", ())
+        self.assertIsNone(x)
+        self.assertEqual(why, "TEAM_PRIOR_HISTORY_UNKNOWN")
+
     def test_b0_windows_match_harness(self):
         rows = []
         for w in range(1, 9):
