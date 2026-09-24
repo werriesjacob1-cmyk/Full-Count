@@ -102,6 +102,20 @@ def subset_eval(ds: C.Dataset, market: str, preds: dict, keys: set, k: float, de
             "vs_scale_control": harness.evaluate(shifted, preds, market)}
 
 
+def observed_absence_keys(ds: C.Dataset, market: str) -> set:
+    share_key = "carry_share" if market == "rushing_yards" else "target_share"
+    keys = set()
+    for r in ds.scored[market]:
+        tw = ds.f9_team_weeks.get((r["season"], r["week"], r["team"]))
+        if not tw or not tw["absent"]:
+            continue
+        mine = next((x for x in tw["recipients"] if x["player_id"] == r["player_id"]), None)
+        if mine and any(C._num(a[share_key]) and a[share_key] > 0 and mine["overlap"].get(a["player_id"], 0) > 0
+                        for a in tw["absent"]):
+            keys.add(harness.row_key(r))
+    return keys
+
+
 def mass_balance(ds: C.Dataset, params: dict) -> dict[str, Any]:
     out: dict[str, Any] = {}
     # (a) our own redistribution accounting over every team-week with an OUT teammate.
@@ -183,8 +197,15 @@ def evaluate_all(ds: C.Dataset, params: dict, *, dev_only: bool) -> dict[str, An
                 keys = {k for k, f in ds.features.items()
                         if f["F9_ABSENCE_REDISTRIBUTION"]["features"]["n_teammates_listed_out"] > 0
                         and f["F9_ABSENCE_REDISTRIBUTION"]["features"]["max_overlap_with_absent"] > 0}
-                mrep["subsets"]["F9_within_observed_absence_scenarios"] = subset_eval(
+                # As first run (kept for comparability): ANY player listed OUT whose stats rows
+                # overlap this player's window -- includes defenders/linemen, so it is broad.
+                mrep["subsets"]["F9_within_any_out_teammate_overlap_BROAD"] = subset_eval(
                     ds, market, preds, keys, params["k"][market], dev_only)
+                # Corrected after the first full run (reporting subset only; the consumer and its
+                # frozen parameters are unchanged): an OUT teammate who held the market's
+                # opportunity (prior target/carry share > 0) and overlapped this player's window.
+                mrep["subsets"]["F9_within_observed_absence_scenarios"] = subset_eval(
+                    ds, market, preds, observed_absence_keys(ds, market), params["k"][market], dev_only)
             if ablation == "F8_INJURY_PRACTICE":
                 keys = {k for k, f in ds.features.items()
                         if f["F8_INJURY_PRACTICE"]["features"]["category"] not in (contract.UNKNOWN, F.NOT_LISTED)}
@@ -227,6 +248,50 @@ def headline(report: dict) -> dict:
     return out
 
 
+PRIMARY_MARKETS = ("receptions", "receiving_yards")
+
+
+def market_verdict(ev: dict) -> dict[str, Any]:
+    """Declared rule on the vs-scale-control comparison (not vs raw B0)."""
+    parts = ev["vs_scale_control"]["partitions"]
+    hold, fresh = parts["HOLDOUT_2023_2025"], parts["FRESH_2026"]
+    h_ci = hold.get("paired_delta_ci95") or [0.0, 0.0]
+    f_delta = fresh.get("paired_delta_mean", 0.0)
+    if h_ci[1] < 0 and f_delta <= 0:
+        verdict = "VALIDATED_CRITERION_MET"
+    elif h_ci[1] < 0:
+        verdict = "HOLDOUT_SUPPORTED_FRESH_WORSE"
+    else:
+        verdict = "NO_HOLDOUT_BENEFIT_VS_SCALE"
+    return {"verdict": verdict, "holdout_delta": hold.get("paired_delta_mean"), "holdout_ci95": h_ci,
+            "fresh_delta": f_delta, "fresh_ci95": fresh.get("paired_delta_ci95"),
+            "fresh_n": fresh.get("n_matched"), "dev_delta": parts["DEV_2016_2022"].get("paired_delta_mean")}
+
+
+def status_records(report: dict) -> list[dict]:
+    """Factor milestone = conservative across its primary markets (see README)."""
+    records = []
+    for fid, markets in C.FACTOR_MARKETS.items():
+        per = {m: market_verdict(report["markets"][m]["ablations"][fid]["evaluation"]) for m in markets}
+        activation = {m: report["markets"][m]["ablations"][fid]["evaluation"]["vs_scale_control"]["partitions"]
+                      ["HOLDOUT_2023_2025"].get("activation_share") for m in markets}
+        primary = [per[m]["verdict"] for m in markets if m in PRIMARY_MARKETS]
+        if all(v == "VALIDATED_CRITERION_MET" for v in primary):
+            milestone = "VALIDATED"
+        elif all(v["verdict"] == "NO_HOLDOUT_BENEFIT_VS_SCALE" for v in per.values()):
+            milestone = "REJECTED"
+        else:
+            milestone = "BUILT"
+        evidence = (f"{C.CONSUMER} ablation {fid}; per-market verdicts " +
+                    ", ".join(f"{m}={v['verdict']}" for m, v in per.items()))
+        if milestone == "VALIDATED":
+            evidence += "; historically supported, not prospectively validated (holdout previously inspected)"
+        records.append(contract.status_record(fid, milestone=milestone, consumer=C.CONSUMER,
+                                              evidence=evidence, activation=activation,
+                                              evaluation={"per_market": per}))
+    return records
+
+
 def main(argv: Iterable[str] | None = None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--phase", choices=("dev", "full"), required=True)
@@ -252,6 +317,7 @@ def main(argv: Iterable[str] | None = None) -> int:
         report = evaluate_all(ds, params, dev_only=False)
         report["mass_balance"] = mass_balance(ds, params)
         report["injury_timing"] = injury_timing_diagnostic(ds, paths["games_csv"])
+        report["status_records"] = status_records(report)
         name = "evaluation_report.json"
     report.update({"consumer": C.CONSUMER, "phase": args.phase, "params": params,
                    "provenance": ds.provenance, "source_sha256": source_hashes(paths),
