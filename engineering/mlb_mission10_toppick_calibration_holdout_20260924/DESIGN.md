@@ -4,7 +4,30 @@ Workstream ID: `MLB-MISSION10-ACCURACY`
 Locked: 2026-09-24, before any aggregate outcome (hit/miss vs. predicted
 probability) statistic in the target population was computed. This file is
 committed as the first commit on this branch so git history proves the
-design existed before the result.
+design *text* existed before the aggregate result was computed by
+`run_holdout_replication.py`.
+
+**Honest limit on "pre-registered," disclosed rather than overclaimed**:
+the underlying `results/grades_2026-09-19.json` through
+`results/grades_2026-09-23.json` files were already fully committed to
+`main` (all five, including the last 2026-09-23 grading pass) hours before
+this branch was created or this design was written. Git commit order
+therefore proves the *design's population/metric/rule text* predates the
+*aggregate statistic*, but it does not, and cannot, prove the authoring
+agent was cryptographically or mechanically blind to the individual
+outcome rows sitting in the same already-cloned repository -- there was no
+technical barrier (hash-lock, separate blind agent, redacted extract)
+between the author and the raw files. The one disclosed exclusion
+(the Brandon Valenzuela row, seen during pre-design schema discovery) is
+evidence the author was in fact reading those files' contents before
+locking this design, and its exclusion should be read as a self-reported
+correction, not proof the rest of the population was unseen. This
+replication should be treated as a self-attested, procedural
+pre-registration (order-of-commits plus honest disclosure), not a
+blinded one. For future missions where this distinction matters more, a
+stronger design would derive the design from a schema-only extract (field
+names and types, no values) or from a separate agent instance with no
+read access to the outcome files at all.
 
 ## Background (why this experiment, not another one)
 

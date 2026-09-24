@@ -4,7 +4,13 @@ Workstream ID: `MLB-MISSION10-ACCURACY`. See `DESIGN.md` in this directory
 for the full locked, pre-registered design (population, cutoffs, primary/
 secondary/exploratory comparisons, and the success/falsification rule),
 committed as the first commit on this branch, before any aggregate outcome
-statistic in the target population was computed.
+statistic in the target population was computed. **Read `DESIGN.md`'s own
+"Honest limit on 'pre-registered'" note**: the underlying `results/grades_*`
+files already existed in the repository before this design was written, so
+this is a self-attested, order-of-commits pre-registration, not a
+cryptographically blind one -- the design author could have opened any row
+before writing the population/rule text, and the disclosed exclusion below
+is evidence that some incidental viewing did happen.
 
 ## What this is
 
@@ -45,6 +51,12 @@ process, not a one-time artifact of the 2026-08-18-through-09-17 window PR
 #128 inspected. The magnitude (+12.2pp) is close to PR #128's own +11.0pp,
 and even the naive (non-cluster-adjusted) test alone reaches significance
 at n=69, a much smaller sample than PR #128's 371.
+
+**Supplementary information, not a re-test** (DESIGN.md locked the 90% CI
+as the primary rule; this is reported in addition, not in place of it): the
+same cluster-bootstrap at the stricter 95% level also excludes zero,
+**[+2.5pp, +22.1pp]**, so the confirmatory verdict is not an artifact of
+choosing the looser of the two conventional CI levels.
 
 Reproduction command (from the repository root):
 
