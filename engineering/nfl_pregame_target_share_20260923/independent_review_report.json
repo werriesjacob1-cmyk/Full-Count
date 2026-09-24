@@ -1,0 +1,207 @@
+{
+  "exploratory_constants": {
+    "chain_x_mean_ratio_expl": 0.8277,
+    "chain_mae_opt_scale_expl": 0.73,
+    "chain_mean_match_scale_expl": 0.8223,
+    "b0_mae_opt_scale_expl": 0.862,
+    "b0_mean_match_scale_expl": 0.9901,
+    "c1_mae_opt_scale_expl": 0.88
+  },
+  "exploratory_n": 5877,
+  "holdout_models": {
+    "b0": {
+      "mae": 1.3873,
+      "bias": 0.0299
+    },
+    "c1": {
+      "mae": 1.3539,
+      "bias": -0.0166
+    },
+    "chain_unadjusted": {
+      "mae": 1.4662,
+      "bias": 0.4308
+    },
+    "chain_x_0.828_mean_ratio_expl": {
+      "mae": 1.3499,
+      "bias": -0.0585
+    },
+    "chain_x_mae_opt_scale_expl": {
+      "mae": 1.3387,
+      "bias": -0.3362
+    },
+    "chain_x_mean_match_scale_expl": {
+      "mae": 1.3483,
+      "bias": -0.0741
+    },
+    "b0_x_mae_opt_scale_expl": {
+      "mae": 1.3588,
+      "bias": -0.3068
+    },
+    "b0_x_mean_match_scale_expl": {
+      "mae": 1.3841,
+      "bias": 0.0057
+    },
+    "c1_x_mae_opt_scale_expl": {
+      "mae": 1.3361,
+      "bias": -0.3038
+    }
+  },
+  "holdout_diffs": {
+    "c1_minus_chain_x_0.828": {
+      "point": 0.004,
+      "ci95": [
+        0.0012,
+        0.0067
+      ]
+    },
+    "chain_x_0.828_minus_b0": {
+      "point": -0.0374,
+      "ci95": [
+        -0.0497,
+        -0.0249
+      ]
+    },
+    "c1_minus_chain_x_mae_opt": {
+      "point": 0.0153,
+      "ci95": [
+        0.0071,
+        0.0239
+      ]
+    },
+    "c1_minus_b0_x_mae_opt": {
+      "point": -0.0049,
+      "ci95": [
+        -0.0173,
+        0.0078
+      ]
+    },
+    "b0_x_mae_opt_minus_b0": {
+      "point": -0.0285,
+      "ci95": [
+        -0.035,
+        -0.022
+      ]
+    }
+  },
+  "holdout_ratio_distribution": {
+    "mean": 0.841,
+    "p10": 0.7908,
+    "p90": 0.8936
+  },
+  "prior8_vs_realized_team_ratio_corr": 0.2338,
+  "prior8_vs_realized_team_ratio_n_rows": 10961,
+  "by_season_c1_minus_chain_x_0.828": {
+    "2019": 0.0052,
+    "2020": 0.0047,
+    "2021": 0.0022,
+    "2022": 0.0041
+  },
+  "holdout_proper_scores": {
+    "mse": {
+      "b0": 3.5394,
+      "c1": 3.3394,
+      "chain_x_0.828_mean_ratio_expl": 3.3409
+    },
+    "poisson_brier": {
+      "b0": 0.1239,
+      "c1": 0.1203,
+      "chain_x_0.828_mean_ratio_expl": 0.1202
+    },
+    "mse_c1_minus_b0": {
+      "point": -0.1999,
+      "ci95": [
+        -0.2622,
+        -0.1391
+      ]
+    },
+    "mse_c1_minus_chain_x_0.828": {
+      "point": -0.0015,
+      "ci95": [
+        -0.0168,
+        0.0126
+      ]
+    },
+    "brier_c1_minus_b0": {
+      "point": -0.0036,
+      "ci95": [
+        -0.0048,
+        -0.0024
+      ]
+    },
+    "brier_c1_minus_chain_x_0.828": {
+      "point": 0.0,
+      "ci95": [
+        -0.0003,
+        0.0003
+      ]
+    }
+  },
+  "attack6": {
+    "snap_only_candidates": 1739,
+    "snap_only_scored": 1337,
+    "snap_only_abstain": {
+      "B0_INSUFFICIENT_HISTORY": 368,
+      "EXISTING_ENGINE_CATCH_RATE_OUT_OF_RANGE": 17,
+      "NO_REAL_TEAM_TARGETS_IN_TARGET_GAME": 15,
+      "EXISTING_ENGINE_TARGET_SHARE_OUT_OF_RANGE": 2
+    },
+    "snap_only_mae": {
+      "b0": 1.0904,
+      "c1": 1.144
+    },
+    "expanded_population_c1_minus_b0": {
+      "point": -0.0239,
+      "ci95": [
+        -0.0361,
+        -0.0118
+      ]
+    },
+    "expanded_n": 12298
+  },
+  "attack8_2025_wk8plus": {
+    "n_pbp": 2930,
+    "n_derived": 2930,
+    "n_common": 2930,
+    "ratio_derived_over_pbp": {
+      "c1": {
+        "mean": 1.0002,
+        "p05": 0.9736,
+        "p50": 0.9991,
+        "p95": 1.0275,
+        "mean_abs_pct_change": 1.351
+      },
+      "unadjusted": {
+        "mean": 0.931,
+        "p05": 0.9021,
+        "p50": 0.9319,
+        "p95": 0.9567,
+        "mean_abs_pct_change": 6.899
+      },
+      "predicted_dropbacks": {
+        "mean": 0.931,
+        "p05": 0.9021,
+        "p50": 0.9319,
+        "p95": 0.9567,
+        "mean_abs_pct_change": 6.899
+      },
+      "targets_per_dropback": {
+        "mean": 1.0745,
+        "p05": 1.038,
+        "p50": 1.0742,
+        "p95": 1.1138,
+        "mean_abs_pct_change": 7.455
+      }
+    },
+    "mae_pbp": {
+      "c1": 1.2695,
+      "unadjusted": 1.4166,
+      "b0": 1.3031
+    },
+    "mae_derived": {
+      "c1": 1.2681,
+      "unadjusted": 1.3425,
+      "b0": 1.3031
+    }
+  },
+  "status": "EXPLORATORY_INDEPENDENT_REVIEW_NOT_CONFIRMATORY"
+}

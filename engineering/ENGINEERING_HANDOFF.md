@@ -5681,3 +5681,54 @@ draft PR #185). Draft PR #189, not merged -- Jacob's separate explicit
 authorization required.
 
 Alligator
+
+## 2026-09-24 -- SUPERCLAUDE MISSION 10: unit-consistent pregame target-share stage
+
+The opportunity engine's excess error versus B0 is mainly a unit mismatch,
+not bad share estimates. It multiplied a share of team TARGETS by predicted
+team DROPBACKS, and real teams produce ~0.83 targets per dropback (+21%
+inflation, bias +0.49 receptions). Six share estimators were equivalent
+(exploratory, 2024-2025 wk8+).
+
+`nfl/research/pregame_target_share.py` (C1) applies the share to predicted
+team TARGETS via the team's strictly-prior targets-per-dropback ratio. It
+was locked in `PREREGISTRATION.md` (commit `d1666e06d1`) before the
+untouched 2019-2022 wk8+ holdout was read. Locked primary result: C1 minus
+B0 MAE -0.0334, player-clustered 95% CI [-0.0456, -0.0210], n=10,961 / 712
+players, CONFIRMED_IMPROVEMENT_OVER_B0. It is consistent across every
+season, position and share tier, but modest (~2.4%). There are no real
+historical prices, so there is no hit-rate claim. One disclosed post-run
+fix to a secondary metric (`f43c07dd43`) left the primary result unchanged.
+
+A frozen forward shadow of 2026 week 3 (293 candidates, SHA-256
+`357c27f5...`, frozen 2026-09-24T01:24:56Z, ~23h pre-kickoff) is committed
+at `9744243f63`. Grade it only after FINAL; non-participants are VOID.
+
+Branch `claude/nfl-pregame-target-share-20260923`. Draft PR; not merged,
+not promoted. B0, live selectors and public picks are unchanged.
+
+Alligator
+
+## 2026-09-24 -- Independent adversarial review of PR #193 (Mission 10)
+
+A separate Claude Code reviewer re-fetched every input into a fresh cache
+and re-ran the locked holdout. The report was byte-identical apart from
+runtime. No leak was found: every pregame input is strictly prior, and
+`team_targets` is read only at prior keys or into `realized_*` fields. The
+lock commit precedes the report commit. The only change between them is
+the disclosed `poisson_pmf` fix. The forward shadow reproduces with
+identical candidates and source hashes, and its SHA-256 matches.
+`nfl/tests`: 1073 OK.
+
+Correction (exploratory, `independent_review_checks.py` /
+`independent_review_report.json`): a single constant of 0.828, taken from
+the exploratory rows, applied to the unadjusted chain matches C1 on the
+holdout. On MAE, C1 minus the constant is +0.0040, CI [+0.0012, +0.0067].
+MSE and Brier are tied. The finding is a global scale bias; the per-team
+ratio framing is withdrawn. C1 still beats B0 on MSE and Brier. Adding
+active zero-stat players shrinks C1 minus B0 to -0.0239, CI [-0.0361,
+-0.0118]. The 94 2019 `NO_MATCHUP_ROW` rows are the Raiders: nflverse
+player stats code them `LV`, PBP codes them `OAK`. README updated. No
+change to B0, selectors, locked scripts or the frozen artifact.
+
+Alligator

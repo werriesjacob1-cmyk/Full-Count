@@ -1,0 +1,122 @@
+{
+  "population": "EXPLORATORY_ALREADY_INSPECTED_2024_2025_WK8PLUS",
+  "n": 5877,
+  "b0": {
+    "mae": 1.3241818388066475,
+    "bias": 0.022945380296069427
+  },
+  "existing_engine": {
+    "mae": 1.4322007850698986,
+    "bias": 0.49475113490999745
+  },
+  "team_targets_per_dropback_prior8": {
+    "mean": 0.8277475666749275,
+    "p10": 0.7716262975778547,
+    "p90": 0.8797250859106529
+  },
+  "share_estimators_vs_realized_share": {
+    "existing": {
+      "n": 5877,
+      "mae": 0.05013273401728834,
+      "bias": -0.0011267484961465422
+    },
+    "mean_last6": {
+      "n": 5877,
+      "mae": 0.05023296113121979,
+      "bias": -0.0001233668204478093
+    },
+    "ros_last6": {
+      "n": 5877,
+      "mae": 0.050167044846364375,
+      "bias": -0.00038220967384742756
+    },
+    "ros_last6_same_team": {
+      "n": 5813,
+      "mae": 0.049726888953848025,
+      "bias": -0.0013767158239218413
+    },
+    "ros_last10": {
+      "n": 5877,
+      "mae": 0.050493497966908,
+      "bias": -0.00026168581043997327
+    },
+    "ros_last4": {
+      "n": 5877,
+      "mae": 0.050789110029781204,
+      "bias": -0.0003636280849614917
+    }
+  },
+  "stage_substitution_receptions": {
+    "existing|dropbacks_as_is": {
+      "mae": 1.4322007850698986,
+      "bias": 0.49475113490999745
+    },
+    "existing|unit_consistent_targets": {
+      "mae": 1.2981748284765464,
+      "bias": 0.012084902488584709
+    },
+    "mean_last6|dropbacks_as_is": {
+      "mae": 1.4554139865211606,
+      "bias": 0.522788214298416
+    },
+    "mean_last6|unit_consistent_targets": {
+      "mae": 1.3139476128693388,
+      "bias": 0.03526408078443652
+    },
+    "ros_last6|dropbacks_as_is": {
+      "mae": 1.4542784830463287,
+      "bias": 0.5171654273049687
+    },
+    "ros_last6|unit_consistent_targets": {
+      "mae": 1.3142778936300106,
+      "bias": 0.03047200777530836
+    },
+    "ros_last6_same_team|dropbacks_as_is": {
+      "mae": 1.445477264455606,
+      "bias": 0.5035457553103717
+    },
+    "ros_last6_same_team|unit_consistent_targets": {
+      "mae": 1.3058189688766644,
+      "bias": 0.018655917797267725
+    },
+    "ros_last10|dropbacks_as_is": {
+      "mae": 1.4509030904058733,
+      "bias": 0.5176848438250987
+    },
+    "ros_last10|unit_consistent_targets": {
+      "mae": 1.3105562588455526,
+      "bias": 0.030855580903918885
+    },
+    "ros_last4|dropbacks_as_is": {
+      "mae": 1.4726374699823388,
+      "bias": 0.5189582947152221
+    },
+    "ros_last4|unit_consistent_targets": {
+      "mae": 1.3241077564081358,
+      "bias": 0.031709859753656894
+    }
+  },
+  "existing_share_error_by_group": {
+    "same_team": {
+      "n": 5808,
+      "existing_share_mae": 0.05010518600701453,
+      "existing_share_bias": -0.0015830200678731404
+    },
+    "season_games_ge4": {
+      "n": 5273,
+      "existing_share_mae": 0.051136075419495323,
+      "existing_share_bias": -0.0024198724915053516
+    },
+    "team_changed_since_last_game": {
+      "n": 69,
+      "existing_share_mae": 0.05245155783859677,
+      "existing_share_bias": 0.03727941510657928
+    },
+    "season_games_lt4": {
+      "n": 604,
+      "existing_share_mae": 0.0413734306831204,
+      "existing_share_bias": 0.010162395258037237
+    }
+  },
+  "runtime_s": 1.4
+}
