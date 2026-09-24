@@ -417,7 +417,11 @@ function refreshSummary() {
   const props = publicProps();
   DATA.summary = DATA.summary || {};
   DATA.summary.n_props = props.length;
-  DATA.summary.n_top_pick = props.filter(p => p.recommendation_status === "top_pick").length;
+  // Today's slate-day Top Picks only: early next-slate picks and still-open
+  // picks from an earlier day are shown in their own groups, not counted.
+  const today = topPickGroups(props.filter(p => p.recommendation_status === "top_pick"))
+    .find(g => g.kind === "today");
+  DATA.summary.n_top_pick = today ? today.picks.length : 0;
   DATA.summary.n_lean = props.filter(p => p.recommendation_status === "lean").length;
   DATA.summary.n_value = props.filter(p => p.recommendation_status === "value").length;
 }
@@ -789,11 +793,32 @@ function slateDayLabel(iso) {
   if (Number.isNaN(d.getTime())) return iso;
   return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" });
 }
+// The browser enforces the Central-midnight end of a slate day itself: the
+// payload's display_date is fixed at deploy time, and a deploy can be late
+// (GitHub scheduler gaps) or a tab can stay open past midnight.
+const CARRY_WHILE_STATES = new Set(["live", "suspended", "postponed"]);
+function centralDateNow() {
+  try {
+    return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Chicago",
+      year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+  } catch (e) {
+    return null;
+  }
+}
+function displayToday() {
+  const fromPayload = DATA.display_date || DATA.date;
+  if (DATA.display_timezone !== "America/Chicago") return fromPayload;
+  const browser = centralDateNow();
+  return browser && fromPayload && browser > fromPayload ? browser : fromPayload;
+}
 function topPickGroups(topPicks) {
-  const today = DATA.display_date || DATA.date;
+  const today = displayToday();
   const byDate = new Map();
   for (const p of topPicks) {
     const d = p.published_slate_date || DATA.date || today;
+    // An earlier Central day's pick stays only while its game is still
+    // incomplete -- the same rule the build applies.
+    if (d < today && !CARRY_WHILE_STATES.has(p.game_state)) continue;
     if (!byDate.has(d)) byDate.set(d, []);
     byDate.get(d).push(p);
   }
@@ -805,16 +830,25 @@ function topPickGroups(topPicks) {
       const kind = kindOf(d);
       const heading = kind === "today" ? `Today · ${slateDayLabel(d)}`
         : kind === "early" ? `Early picks for ${slateDayLabel(d)}`
-        : `In progress from ${slateDayLabel(d)}`;
+        : `Still open from ${slateDayLabel(d)}`;
       return { date: d, kind, heading, picks: byDate.get(d) };
     });
 }
-// A published pick whose game has started is a record of what we said, not
-// an offer: its odds are the original pregame price.
+// A published pick is a record of what we said, not an offer, once its game
+// has started -- and also, before first pitch, when it is carried from
+// another build slate (its odds are the publication-time price; the price
+// refresh deliberately never reprices it).
+const STARTED_NOTE_STATES = new Set(["live", "final", "suspended"]);
 function publishedStartedNote(p) {
   const published = (p.published_top_pick_at && p.publication_artifact_id) || p.publication_candidate_token;
-  if (!published || !gameHasStarted(p)) return "";
-  return `<div class="pc-published-note">Published pick · game started — original pregame odds shown, not a current offer</div>`;
+  if (!published) return "";
+  if (STARTED_NOTE_STATES.has(p.game_state)) {
+    return `<div class="pc-published-note">Published pick · game started — original pregame odds shown, not a current offer</div>`;
+  }
+  if (p.published_slate_date && DATA.date && p.published_slate_date !== DATA.date) {
+    return `<div class="pc-published-note">Published pick — odds as of publication, not a current quote</div>`;
+  }
+  return "";
 }
 function pickCard(p) {
   // Evidence quality is deliberately NOT repeated here -- it's one tap away
@@ -1002,7 +1036,7 @@ function renderToday() {
   // gets its own tile linking to its own correctly-filtered destination.
   let html = `
     <div class="stat-row">
-      <a class="stat-tile" href="#/props?status=top_pick"><span class="n">${summary.n_top_pick ?? 0}</span><span class="l">Top Picks tonight</span></a>
+      <a class="stat-tile" href="#/props?status=top_pick"><span class="n">${summary.n_top_pick ?? 0}</span><span class="l">Top Picks today</span></a>
       <a class="stat-tile" href="#/props?status=lean"><span class="n">${summary.n_lean ?? 0}</span><span class="l">Leans on the board</span></a>
       <a class="stat-tile" href="#/props?status=value"><span class="n">${valueAll.length}</span><span class="l">Value bets</span></a>
       <a class="stat-tile" href="#/props?status=longshot"><span class="n">${longshotsAll.length}</span><span class="l">Longshots</span></a>
@@ -1028,7 +1062,7 @@ function renderToday() {
   }
 
   const dayNote = DATA.display_timezone === "America/Chicago"
-    ? " Published picks stay here through 11:59 pm Central, then live on in History." : "";
+    ? " Today's published Top Picks stay here through 11:59 pm Central, then live on in History." : "";
   html += `<section class="section"><div class="section-head"><h2>Best Bets</h2>
     <span class="section-sub">Full Count's official Top Picks — probability, evidence, price, and freshness all cleared.${dayNote}</span></div>`;
   if (topPicks.length) {

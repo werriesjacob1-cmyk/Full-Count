@@ -5874,4 +5874,41 @@ registry at each commit) through `reconcile_public_lifecycle`:
 - Should a *demoted* same-slate pregame published pick also stay visible?
   Today it becomes a lean, per the pre-existing policy.
 
+**Independent review round 1 (head `7410db9590`): HOLD.** Fixed in the
+follow-up commit:
+- **Line moves.** A carried pregame pick could trigger an unresolvable
+  LINE_MOVED reconciliation loop that failed Best Bets closed. Carried
+  picks (whose `published_slate_date` differs from the payload date) are
+  now frozen on both reconcile paths. `refresh_prices` never reprices or
+  reclassifies them, and `reconcile.line_moved_mismatches` ignores them.
+- **Inconsistent freezing.** The deploy path used to reprice these rows
+  while the full build pinned them; both now freeze. Carried pregame
+  cards say "Published pick — odds as of publication, not a current
+  quote".
+- **Midnight in the browser.** The browser now enforces Central midnight
+  itself (`Intl`, America/Chicago), so a late deploy or a tab left open
+  never shows yesterday's settled picks as today's.
+- **Count tile.** It now counts only today's slate-day Top Picks and is
+  labelled "Top Picks today".
+- **Postponed and suspended games.** The heading is now "Still open from
+  <date>". The "game started" note is limited to live, final and
+  suspended, so it no longer appears on postponed games whose start time
+  has passed.
+- **Subtitle.** Softened to "Today's published Top Picks".
+- **Tests.** New ones cover the first-loop freeze with current
+  presentation, refresh skipping carried picks, the line-moved exclusion,
+  browser expiry, the tile count, and the carried note. Each fix fails a
+  test when mutated (the freeze only when both freeze sites are removed,
+  since either one alone pins the fields).
+- **Pre-existing and unchanged:**
+  - The `(live, suspended, postponed)` tuple leaves out the "delayed"
+    game state.
+  - A postponed prior-slate pick stays until its game is resolved.
+  - When full builds stall, the payload's slate date lags, and the
+    Central-day contract is not enforced by the build. The board-age
+    fail-closed check mitigates this.
+
+Replay after the fixes: still 27/27/28/1 (the old code gives 20/13/5/1).
+
 Alligator
+

@@ -21,12 +21,14 @@ function tp(id, extra) {
 class TodayGroupsTests(unittest.TestCase):
     def test_evening_after_utc_rollover_groups_today_early_and_carried(self):
         r = run_node(SETUP + r"""
-          DATA = { date: "2026-09-24", display_date: "2026-09-23", display_timezone: "America/Chicago",
-                   props: [], summary: {} };
+          // No display_timezone: exercises grouping only, independent of the
+          // real clock (the browser-side Central expiry has its own test).
+          DATA = { date: "2026-09-24", display_date: "2026-09-23", props: [], summary: {} };
           const groups = topPickGroups([
             tp("a", { published_slate_date: "2026-09-23" }),
             tp("b"),                                          // new build slate, not yet published
-            tp("c", { published_slate_date: "2026-09-22" }),
+            tp("c", { published_slate_date: "2026-09-22", game_state: "live" }),
+            tp("e", { published_slate_date: "2026-09-22", game_state: "final" }),  // settled: gone
             tp("d", { published_slate_date: "2026-09-23" }),
           ]);
           return groups.map(g => ({ kind: g.kind, heading: g.heading, ids: g.picks.map(p => p.id) }));
@@ -35,7 +37,8 @@ class TodayGroupsTests(unittest.TestCase):
         self.assertEqual(r[0]["ids"], ["a", "d"])
         self.assertEqual(r[0]["heading"], "Today · Wed, Sep 23")
         self.assertEqual(r[1]["heading"], "Early picks for Thu, Sep 24")
-        self.assertEqual(r[2]["heading"], "In progress from Tue, Sep 22")
+        self.assertEqual(r[2]["heading"], "Still open from Tue, Sep 22")
+        self.assertEqual(r[2]["ids"], ["c"])
 
     def test_ordinary_day_is_one_unlabelled_group(self):
         r = run_node(SETUP + r"""
@@ -51,6 +54,52 @@ class TodayGroupsTests(unittest.TestCase):
           return topPickGroups([tp("a")]).map(g => g.kind);
         """)
         self.assertEqual(r, ["today"])
+
+    def test_browser_enforces_central_midnight_when_the_deploy_is_late(self):
+        # A payload deployed on a long-past Central day: the browser's own
+        # Central date is later, so that day's settled picks are gone and
+        # only its still-live pick remains, as "still open".
+        r = run_node(SETUP + r"""
+          DATA = { date: "2020-01-02", display_date: "2020-01-01", display_timezone: "America/Chicago",
+                   props: [], summary: {} };
+          const groups = topPickGroups([
+            tp("settled", { published_slate_date: "2020-01-01", game_state: "final" }),
+            tp("pregame", { published_slate_date: "2020-01-01", game_state: "pregame" }),
+            tp("live", { published_slate_date: "2020-01-01", game_state: "live" }),
+          ]);
+          return { today: displayToday() > "2020-01-01",
+                   groups: groups.map(g => ({ kind: g.kind, ids: g.picks.map(p => p.id) })) };
+        """)
+        self.assertTrue(r["today"])
+        self.assertEqual(r["groups"], [{"kind": "carried", "ids": ["live"]}])
+
+    def test_top_pick_tile_counts_today_only(self):
+        r = run_node(SETUP + r"""
+          DATA = { date: "2026-09-24", display_date: "2026-09-23", summary: {}, props: [
+            tp("a", { published_slate_date: "2026-09-23", game_state: "final",
+                      published_top_pick_at: "x", publication_artifact_id: "y" }),
+            tp("b", { game_state: "pregame", game_start: "2099-01-01T00:00:00Z" }),
+            tp("c", { published_slate_date: "2026-09-22", game_state: "live",
+                      published_top_pick_at: "x", publication_artifact_id: "y" }),
+          ] };
+          refreshSummary();
+          return { n: DATA.summary.n_top_pick };
+        """)
+        self.assertEqual(r["n"], 1)
+
+    def test_carried_pregame_pick_says_odds_are_as_of_publication(self):
+        r = run_node(SETUP + r"""
+          DATA = { date: "2026-09-24", props: [], summary: {} };
+          const published = { published_top_pick_at: "x", publication_artifact_id: "y" };
+          return {
+            carried: publishedStartedNote(tp("a", Object.assign({ published_slate_date: "2026-09-23",
+                      game_state: "pregame" }, published))),
+            postponed: publishedStartedNote(tp("b", Object.assign({ published_slate_date: "2026-09-24",
+                      game_state: "postponed", game_start: "2020-01-01T00:00:00Z" }, published))),
+          };
+        """)
+        self.assertIn("odds as of publication, not a current quote", r["carried"])
+        self.assertEqual(r["postponed"], "")
 
     def test_started_published_pick_says_it_is_not_a_current_offer(self):
         r = run_node(SETUP + r"""

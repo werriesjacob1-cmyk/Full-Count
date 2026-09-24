@@ -1549,7 +1549,14 @@ def reconcile_public_lifecycle(payload, prior_payload=None, live=None, schedule=
         if (state != "pregame" or not before_cutoff) and registered is None:
             continue
 
-        if registered is not None and (state != "pregame" or not before_cutoff):
+        # A registered pick from ANOTHER build slate is shown as published,
+        # never re-offered: freeze it even before first pitch, exactly as the
+        # carry loop below does, so both paths agree (review of PR #195: the
+        # deploy path used to reprice/reclassify it while the full build
+        # pinned it).
+        other_build_slate = (registered is not None
+                             and registered.get("slate_date") != payload.get("date"))
+        if registered is not None and (other_build_slate or state != "pregame" or not before_cutoff):
             # At the wagering boundary the immutable exposure snapshot wins
             # for audit/settlement-critical facts (FROZEN_PUBLICATION_FIELDS)
             # -- later rescoring/repricing cannot mutate the bet users saw.
@@ -1573,7 +1580,7 @@ def reconcile_public_lifecycle(payload, prior_payload=None, live=None, schedule=
 
         source = "mlb_schedule" if status else "mlb_status_unavailable"
         _with_base_lifecycle(row, state, now, source=source)
-        if registered is not None and (state != "pregame" or not before_cutoff):
+        if registered is not None and (other_build_slate or state != "pregame" or not before_cutoff):
             frozen_by_id[stable_prop_id(row)] = dict(registered)
         reconciled.append(row)
         seen_identities.add(identity)

@@ -141,5 +141,95 @@ class PublishedTodayCentralTests(unittest.TestCase):
         self.assertNotIn("published_slate_date", by_id[tomorrow["id"]])  # never published
 
 
+class CarriedPickIsARecordNotAnOfferTests(unittest.TestCase):
+    """Review of PR #195: a carried pregame pick must be frozen on every path."""
+
+    def test_baked_pregame_other_slate_row_is_frozen_but_keeps_current_presentation(self):
+        published = late_pick()
+        published["why"] = ["why at publication"]
+        registry = published_registry(published)
+        baked = dict(published)
+        baked.update({"market_odds": -999, "recommendation_status": "lean",
+                      "why": ["current generator why"]})
+        out = reconcile([baked], registry, date="2026-08-18", now=ROLLOVER,
+                        schedule={1: {"status": PREVIEW}})
+        self.assertEqual(len(out["props"]), 1)
+        row = out["props"][0]
+        self.assertEqual(row["market_odds"], -120)                 # published price, not -999
+        self.assertEqual(row["recommendation_status"], "top_pick")  # not reclassified
+        self.assertEqual(row["why"], ["current generator why"])    # first loop kept the payload row
+        self.assertEqual(row["published_slate_date"], "2026-08-17")
+
+    def test_line_moved_on_a_carried_pick_opens_no_reconciliation(self):
+        from dashboard import reconcile as rc
+        carried = dict(late_pick(), published_slate_date="2026-08-17",
+                       market_fetch_state="LINE_MOVED", market_posted_line=1.5)
+        current = dict(prop(player_id=303, game_pk=2), market_fetch_state="LINE_MOVED",
+                       market_posted_line=1.5)
+        mismatches = rc.line_moved_mismatches({"date": "2026-08-18", "props": [carried, current]})
+        self.assertEqual([m["prop_id"] for m in mismatches], [current["id"]])
+
+
+class RefreshPricesSkipsCarriedPicksTests(unittest.TestCase):
+    def test_carried_pick_is_never_repriced(self):
+        import os
+        import tempfile
+        from unittest import mock
+        import grade_results as gr
+        import odds_fanduel as fd
+        import recommendation
+        from dashboard import refresh_prices as rp
+        from dashboard.live_state import atomic_write_json
+        from dashboard.publication_registry import default_registry, write_registry
+        from test_refresh_prices import observed_family
+
+        carried = dict(late_pick(), published_slate_date="2026-08-17")
+        current = prop(player_id=303, game_pk=2)
+        current["game_start"] = "2026-08-18T23:05:00Z"
+        current["id"] = bd.canonical_prop_id(current)
+        with tempfile.TemporaryDirectory() as tmp:
+            data, live_path, reg = (os.path.join(tmp, n) for n in ("data.json", "live.json", "reg.json"))
+            atomic_write_json(data, payload([carried, current], date="2026-08-18"))
+            atomic_write_json(live_path, default_live_state())
+            write_registry(reg, default_registry())
+            seen = []
+
+            def attach(rows, **_feeds):
+                seen.extend(r["id"] for r in rows)
+                rows[0].update({"market_odds": -300, "market_implied": .75,
+                                "market_edge": -.05, "price_clears": False})
+                return rows, 1
+
+            def classify(rows, **_kwargs):
+                for value in rows:
+                    value["status"] = "lean"
+                    value["status_reasons"] = []
+
+            fetchers = ("fetch_prop_prices", "fetch_pitcher_strikeouts", "fetch_pitcher_outs",
+                        "fetch_first_inning_totals", "fetch_combined_pitcher_strikeouts")
+            families = ("general_batter", "strikeouts", "pitcher_outs", "first_inning",
+                        "combined_strikeouts")
+            contexts = {1: {"status": PREVIEW, "feed": {}}, 2: {"status": PREVIEW, "feed": {}}}
+            patches = [mock.patch.object(fd, f, return_value=observed_family(fam))
+                       for f, fam in zip(fetchers, families)]
+            patches += [mock.patch.object(gr, "fetch_game_contexts", return_value=contexts),
+                        mock.patch.object(fd, "attach_market_prices", side_effect=attach),
+                        mock.patch.object(recommendation, "attach_recommendations", side_effect=classify),
+                        mock.patch.object(rp, "utc_now", return_value="2026-08-18T00:20:00Z")]
+            for p in patches:
+                p.start()
+            try:
+                rp.refresh(data, live_path, reg)
+            finally:
+                for p in patches:
+                    p.stop()
+            import json
+            with open(live_path, encoding="utf-8") as fh:
+                live = json.load(fh)["props"]
+        self.assertNotIn(carried["id"], seen)
+        self.assertNotIn(carried["id"], live)
+        self.assertIn(current["id"], seen)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
