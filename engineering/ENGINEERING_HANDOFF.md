@@ -5910,5 +5910,28 @@ follow-up commit:
 
 Replay after the fixes: still 27/27/28/1 (the old code gives 20/13/5/1).
 
+**Independent review, round 2 (head `7f9b58e65f`): HOLD.** Fixed in the
+follow-up commit.
+- **BLOCKER.** When every Top Pick had expired in the browser (after
+  Central midnight, before the next deploy), `renderToday` read
+  `groups[0].kind` of an empty list. `boot()` then rejected before it
+  registered its polls, so the page stayed on the spinner. It now branches
+  on the group count and falls back to the gap explainer. A test renders
+  that case.
+- **Carried picks mislabelled.** The `refresh_prices` skip ran before the
+  game-state branch, so started carried picks lost IN_PLAY and the detail
+  sheet called their price "Current". The skip now sits just before
+  `pregame.append`, so started carried picks get their game fact and
+  IN_PLAY again. `priceFreshnessState` shows "As published · not a
+  current quote" for carried pregame picks. Both are tested.
+- **Locale-dependent date.** `centralDateNow` is now built from
+  `formatToParts` and validated as `YYYY-MM-DD`; anything else falls back
+  to the payload date.
+- **Tile count.** The tile discloses the other groups ("+N early/still
+  open").
+- **Scope of browser expiry.** It applies to the Today page's Top Picks
+  only. The All Props list still shows whatever the deployed payload
+  carries.
+
 Alligator
 

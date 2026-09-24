@@ -154,13 +154,6 @@ def refresh(data_path, live_path=None, registry_path=DEFAULT_REGISTRY_PATH):
             game_pk = int(row.get("game_pk"))
         except (TypeError, ValueError):
             continue
-        if row.get("published_slate_date") and row.get("published_slate_date") != effective.get("date"):
-            # A published pick carried from another build slate (kept on its
-            # Central day by reconcile_public_lifecycle) is a record, not an
-            # offer: never reprice or reclassify it. Repricing it could open
-            # a LINE_MOVED reconciliation that no rebuild can clear, because
-            # every rebuild carries the same row again.
-            continue
         context = contexts.get(game_pk)
         current = game_state((context or {}).get("status"), row=row, now=initial_at)
         if context is None or current == "unknown":
@@ -173,6 +166,15 @@ def refresh(data_path, live_path=None, registry_path=DEFAULT_REGISTRY_PATH):
                 "market_fetch_state": "IN_PLAY",
                 "market_fetch_checked_at": initial_at,
             }, initial_at)
+            continue
+        if row.get("published_slate_date") and row.get("published_slate_date") != effective.get("date"):
+            # A published pick carried from another build slate (kept on its
+            # Central day by reconcile_public_lifecycle) is a record, not an
+            # offer: never reprice or reclassify it before first pitch.
+            # Repricing it could open a LINE_MOVED reconciliation that no
+            # rebuild can clear, because every rebuild carries the same row
+            # again. Placed after the game-state branch so a STARTED carried
+            # pick still gets its game fact and IN_PLAY like any other.
             continue
         pregame.append(row)
 

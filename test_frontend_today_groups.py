@@ -101,6 +101,48 @@ class TodayGroupsTests(unittest.TestCase):
         self.assertIn("odds as of publication, not a current quote", r["carried"])
         self.assertEqual(r["postponed"], "")
 
+    def test_today_page_renders_when_every_top_pick_has_expired(self):
+        # Round-2 review BLOCKER: after Central midnight and before the next
+        # deploy every Top Pick can expire in the browser; renderToday used to
+        # read groups[0].kind of an empty list and never finish booting.
+        r = run_node(SETUP + r"""
+          SHOW_UNVERIFIED = true;
+          DATA = { date: "2020-01-02", display_date: "2020-01-01", display_timezone: "America/Chicago",
+                   generated_at: "2020-01-01T12:00:00Z", summary: {}, schedule: [], families: [],
+                   props: [tp("old", { published_slate_date: "2020-01-01", game_state: "final",
+                                       game_start: "2020-01-01T18:00:00Z",
+                                       published_top_pick_at: "x", publication_artifact_id: "y" })] };
+          indexProps();
+          refreshSummary();
+          let error = null;
+          try { renderToday(); } catch (e) { error = String(e); }
+          return { error, html: __el("page-today").innerHTML, n: DATA.summary.n_top_pick };
+        """)
+        self.assertIsNone(r["error"])
+        self.assertIn("Best Bets", r["html"])
+        self.assertNotIn('data-open="old"', r["html"])
+        self.assertEqual(r["n"], 0)
+
+    def test_central_date_is_iso_regardless_of_locale_format(self):
+        r = run_node(SETUP + r"""return { d: centralDateNow() };""")
+        self.assertRegex(r["d"], r"^\d{4}-\d{2}-\d{2}$")
+
+    def test_detail_sheet_does_not_call_a_carried_price_current(self):
+        r = run_node(SETUP + r"""
+          DATA = { date: "2026-09-24", props: [], summary: {} };
+          const published = { published_top_pick_at: "x", publication_artifact_id: "y",
+                              published_slate_date: "2026-09-23" };
+          return {
+            pregame: priceFreshnessState(tp("a", Object.assign({ game_state: "pregame" }, published))).label,
+            started: priceFreshnessState(tp("b", Object.assign({ game_state: "live",
+                       market_fetch_state: "IN_PLAY" }, published))).label,
+            current: priceFreshnessState(tp("c", { game_state: "pregame" })).label,
+          };
+        """)
+        self.assertEqual(r["pregame"], "As published · not a current quote")
+        self.assertEqual(r["started"], "Game live · price locked pregame")
+        self.assertTrue(r["current"].startswith("Current"))
+
     def test_started_published_pick_says_it_is_not_a_current_offer(self):
         r = run_node(SETUP + r"""
           const started = { game_state: "live", game_start: "2026-09-24T00:40:00Z" };

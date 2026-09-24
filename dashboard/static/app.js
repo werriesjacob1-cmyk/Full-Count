@@ -422,6 +422,8 @@ function refreshSummary() {
   const today = topPickGroups(props.filter(p => p.recommendation_status === "top_pick"))
     .find(g => g.kind === "today");
   DATA.summary.n_top_pick = today ? today.picks.length : 0;
+  DATA.summary.n_top_pick_other = topPickGroups(props.filter(p => p.recommendation_status === "top_pick"))
+    .filter(g => g.kind !== "today").reduce((n, g) => n + g.picks.length, 0);
   DATA.summary.n_lean = props.filter(p => p.recommendation_status === "lean").length;
   DATA.summary.n_value = props.filter(p => p.recommendation_status === "value").length;
 }
@@ -798,9 +800,15 @@ function slateDayLabel(iso) {
 // (GitHub scheduler gaps) or a tab can stay open past midnight.
 const CARRY_WHILE_STATES = new Set(["live", "suspended", "postponed"]);
 function centralDateNow() {
+  // Built from parts, never from a locale's formatted string, whose shape
+  // differs across ICU versions; anything not YYYY-MM-DD yields null (the
+  // payload's own display_date is then used).
   try {
-    return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Chicago",
-      year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+    const parts = new Intl.DateTimeFormat("en-US", { timeZone: "America/Chicago",
+      year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date());
+    const get = type => (parts.find(x => x.type === type) || {}).value;
+    const iso = `${get("year")}-${get("month")}-${get("day")}`;
+    return /^\d{4}-\d{2}-\d{2}$/.test(iso) ? iso : null;
   } catch (e) {
     return null;
   }
@@ -839,13 +847,18 @@ function topPickGroups(topPicks) {
 // another build slate (its odds are the publication-time price; the price
 // refresh deliberately never reprices it).
 const STARTED_NOTE_STATES = new Set(["live", "final", "suspended"]);
+function isCarriedPublished(p) {
+  const published = (p.published_top_pick_at && p.publication_artifact_id) || p.publication_candidate_token;
+  return !!(published && p.published_slate_date && DATA && DATA.date
+            && p.published_slate_date !== DATA.date);
+}
 function publishedStartedNote(p) {
   const published = (p.published_top_pick_at && p.publication_artifact_id) || p.publication_candidate_token;
   if (!published) return "";
   if (STARTED_NOTE_STATES.has(p.game_state)) {
     return `<div class="pc-published-note">Published pick · game started — original pregame odds shown, not a current offer</div>`;
   }
-  if (p.published_slate_date && DATA.date && p.published_slate_date !== DATA.date) {
+  if (isCarriedPublished(p)) {
     return `<div class="pc-published-note">Published pick — odds as of publication, not a current quote</div>`;
   }
   return "";
@@ -1036,7 +1049,7 @@ function renderToday() {
   // gets its own tile linking to its own correctly-filtered destination.
   let html = `
     <div class="stat-row">
-      <a class="stat-tile" href="#/props?status=top_pick"><span class="n">${summary.n_top_pick ?? 0}</span><span class="l">Top Picks today</span></a>
+      <a class="stat-tile" href="#/props?status=top_pick"><span class="n">${summary.n_top_pick ?? 0}</span><span class="l">Top Picks today${summary.n_top_pick_other ? ` · +${summary.n_top_pick_other} early/still open` : ""}</span></a>
       <a class="stat-tile" href="#/props?status=lean"><span class="n">${summary.n_lean ?? 0}</span><span class="l">Leans on the board</span></a>
       <a class="stat-tile" href="#/props?status=value"><span class="n">${valueAll.length}</span><span class="l">Value bets</span></a>
       <a class="stat-tile" href="#/props?status=longshot"><span class="n">${longshotsAll.length}</span><span class="l">Longshots</span></a>
@@ -1065,8 +1078,10 @@ function renderToday() {
     ? " Today's published Top Picks stay here through 11:59 pm Central, then live on in History." : "";
   html += `<section class="section"><div class="section-head"><h2>Best Bets</h2>
     <span class="section-sub">Full Count's official Top Picks — probability, evidence, price, and freshness all cleared.${dayNote}</span></div>`;
-  if (topPicks.length) {
-    const groups = topPickGroups(topPicks);
+  // Every Top Pick can expire in the browser (after Central midnight, before
+  // the next deploy): no groups then, and the explainer renders instead.
+  const groups = topPickGroups(topPicks);
+  if (groups.length) {
     const labelled = groups.length > 1 || groups[0].kind !== "today";
     html += groups.map(g => `${labelled ? `<h3 class="top-pick-group-head">${esc(g.heading)}</h3>` : ""}
       <div class="card-grid">${g.picks.map(p => pickCard(p)).join("")}</div>`).join("");
@@ -2362,6 +2377,10 @@ function priceFreshnessState(p) {
   if (state === "FETCH_FAILED") {
     return { label: "Last known · price fetch failed", tone: "stale",
       detail: "The last successful FanDuel fetch is shown below; the most recent check didn't succeed." };
+  }
+  if (state !== "IN_PLAY" && isCarriedPublished(p)) {
+    return { label: "As published · not a current quote", tone: "stale",
+      detail: "This is the price when the pick was published. It is kept as the record of what Full Count said and is not refreshed." };
   }
   if (state === "IN_PLAY") {
     // 2026-08-25 release-readiness audit: traced this state to

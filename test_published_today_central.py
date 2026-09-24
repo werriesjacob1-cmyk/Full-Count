@@ -230,6 +230,33 @@ class RefreshPricesSkipsCarriedPicksTests(unittest.TestCase):
         self.assertNotIn(carried["id"], live)
         self.assertIn(current["id"], seen)
 
+    def test_started_carried_pick_still_gets_its_game_fact_and_in_play(self):
+        # Round-2 review: the skip must not hide a started carried pick from
+        # the game-state branch, or the detail sheet loses "price locked".
+        import json
+        import os
+        import tempfile
+        from unittest import mock
+        import grade_results as gr
+        from dashboard import refresh_prices as rp
+        from dashboard.live_state import atomic_write_json
+        from dashboard.publication_registry import default_registry, write_registry
+
+        carried = dict(late_pick(), published_slate_date="2026-08-17")
+        with tempfile.TemporaryDirectory() as tmp:
+            data, live_path, reg = (os.path.join(tmp, n) for n in ("data.json", "live.json", "reg.json"))
+            atomic_write_json(data, payload([carried], date="2026-08-18"))
+            atomic_write_json(live_path, default_live_state())
+            write_registry(reg, default_registry())
+            with mock.patch.object(gr, "fetch_game_contexts",
+                                   return_value={1: {"status": LIVE, "feed": {}}}), \
+                 mock.patch.object(rp, "utc_now", return_value="2026-08-18T02:30:00Z"):
+                rp.refresh(data, live_path, reg)
+            with open(live_path, encoding="utf-8") as fh:
+                live = json.load(fh)["props"]
+        self.assertEqual(live[carried["id"]]["market_fetch_state"], "IN_PLAY")
+        self.assertEqual(live[carried["id"]]["game_state"], "live")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
