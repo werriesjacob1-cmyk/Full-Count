@@ -366,6 +366,21 @@ class DowngradeReviewFindingsTests(unittest.TestCase):
         self.assertEqual(r["nLean"], r["lean"])
         self.assertEqual(r["nValue"], r["value"])
 
+    def test_longshot_filter_excludes_downgraded_published_picks(self):
+        # Jacob's decision 3 (2026-09-24): no duplication in filtered All Props.
+        r = run_node(SETUP + SNAPSHOT_SETUP + r"""
+          const rows = [tp("a", { recommendation_status: "value", hit_probability: 0.2,
+                                  market_odds: 400, publication_snapshot: publishedSnapshot() }),
+                        tp("b", { recommendation_status: "value", hit_probability: 0.2,
+                                  market_odds: 400 })];
+          DATA = { date: "2026-09-24", display_date: "2026-09-24", summary: {}, props: rows };
+          indexProps();
+          return { longshot: rows.map(isLongshot),
+                   filtered: rows.filter(p => matchesStatusFilter(p, new Set(["longshot"]))).map(p => p.id) };
+        """)
+        self.assertEqual(r["longshot"], [True, True])
+        self.assertEqual(r["filtered"], ["b"])
+
     def test_missing_snapshot_probability_is_not_rendered_as_a_dash(self):
         r = run_node(SETUP + SNAPSHOT_SETUP + r"""
           return pickCard(tp("a", { recommendation_status: "lean",

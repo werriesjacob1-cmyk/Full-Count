@@ -1400,7 +1400,7 @@ function familyFilterValue(stat) {
 // is pulled out to a shared helper rather than duplicated per call site.
 function matchesStatusFilter(p, statusSet) {
   for (const s of statusSet) {
-    if (s === "longshot" ? isLongshot(p)
+    if (s === "longshot" ? (isLongshot(p) && !isDowngradedPublished(p))
       : s === "value" ? (p.recommendation_status === "value" && !isLongshot(p) && !isDowngradedPublished(p))
       : s === "lean" ? (p.recommendation_status === "lean" && !isDowngradedPublished(p))
       : p.recommendation_status === s) return true;
