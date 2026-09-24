@@ -515,9 +515,9 @@
       "date": "2026-09-24",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 32.5,
+          "score": 30.5,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Seattle Mariners",
           "game_pk": 823087,
@@ -531,21 +531,21 @@
             "l14_k_pct": 4.1176,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.5281,
-          "raw_hit_probability": 0.5281,
-          "lift": 0.0002,
+          "hit_probability": 0.617,
+          "raw_hit_probability": 0.7149,
+          "lift": -0.0863,
           "reliability": "A",
           "sample_n": 19,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 3.5,
+            "needs": 4
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 8.4,
+          "score": 35.7,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Seattle Mariners",
           "game_pk": 823087,
@@ -554,18 +554,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.3558,
+            "outs_rate": 0.6175,
             "avg_outs_per_start": 14.79
           },
-          "hit_probability": 0.3558,
-          "raw_hit_probability": 0.3558,
-          "lift": -0.1265,
+          "hit_probability": 0.6056,
+          "raw_hit_probability": 0.6175,
+          "lift": -0.1342,
           "reliability": "A",
           "sample_n": 19,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]
