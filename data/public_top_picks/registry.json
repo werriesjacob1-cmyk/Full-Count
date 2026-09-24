@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-23T23:39:40.297234+00:00",
+  "updated_at": "2026-09-24T02:09:34.136573+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -46937,6 +46937,100 @@
         "qualification_timestamp": "2026-09-23T23:35:58.009485+00:00",
         "board_timestamp": "2026-09-23T23:35:57.995339+00:00",
         "slate_date": "2026-09-23"
+      }
+    },
+    "fc2:823326:player-681517:strikeouts:4:over": {
+      "canonical_id": "fc2:823326:player-681517:strikeouts:4:over",
+      "settlement_identity": [
+        "823326",
+        [
+          "player",
+          "681517"
+        ],
+        "strikeouts",
+        "4",
+        "over"
+      ],
+      "slate_date": "2026-09-24",
+      "first_published_at": "2026-09-24T02:09:34.136573+00:00",
+      "publication_provenance": {
+        "artifact_id": "459ba81da5fe4ac43b3b43d56b72be0be9d42c5f1ddbe153b08922252f9906e0",
+        "source_commit": "e43dc690f5cc025ef08bb4350e9593a8233dd2bd",
+        "workflow_run_id": "35945827517",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-24T02:09:20.102815+00:00",
+        "data_hash": "91f428683c32a97ce8c47320ebb3103d35565144c63f222eebfa41a0254e0bfc",
+        "live_hash": "8ca18ec0fa13e896f9097a320614d99cc043affe8925db7d795b33c0169661ba"
+      },
+      "snapshot": {
+        "id": "fc2:823326:player-681517:strikeouts:4:over",
+        "identity_version": 2,
+        "game_pk": 823326,
+        "player_id": 681517,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Kyle Leahy",
+        "team": "St. Louis Cardinals",
+        "matchup": "St. Louis Cardinals @ Pittsburgh Pirates",
+        "game_start": "2026-09-24T16:35:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 3.5,
+          "needs": 4
+        },
+        "prop": "Over 3.5 Strikeouts",
+        "hit_probability": 0.6197,
+        "market_odds": -128,
+        "market_implied": 0.5289,
+        "market_edge": 0.0908,
+        "market_hold": 0.0614,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.0 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Opposing team K% 24.0 \u2014 strikeout-prone lineup",
+          "Expected workload 19.2 batters faced (his own 14.0/start over 2 real starts, shrunk toward the 23.1 league mean)",
+          "Platoon advantage: 4 of 6 projected hitters bat right-handed against this RHP",
+          "Recency-weighted K rate 25.2% (exp. decay, halflife 30d, 29 real starts / 587 BF) \u2014 drives the strikeout probability model"
+        ],
+        "watchouts": [
+          "Significant TTO K% drop-off (TTO1 18.2% -> TTO3 9.1%) \u2014 caution deep into the start",
+          "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average",
+          "Short-outing profile (19.2 expected batters faced) \u2014 caps the realistic strikeout ceiling regardless of K rate",
+          "L14 K% 17.9 (28 PA) \u2014 cold recent form"
+        ],
+        "prob_ci": [
+          0.5988,
+          0.7188
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 29,
+        "lineup_assumed": null,
+        "base_rate": 0.7087,
+        "lift": -0.089,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "917e6976b",
+          "prediction_timestamp": "2026-09-24T01:56:17.308476+00:00",
+          "odds_fetched_at": "2026-09-24T01:56:14.086050+00:00",
+          "board_generated_at": "2026-09-24T01:56:17.294206+00:00"
+        },
+        "qualification_timestamp": "2026-09-24T01:56:17.308476+00:00",
+        "board_timestamp": "2026-09-24T01:56:17.294206+00:00",
+        "slate_date": "2026-09-24"
       }
     }
   }
