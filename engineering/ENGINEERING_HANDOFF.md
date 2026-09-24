@@ -5955,3 +5955,167 @@ fixed in the follow-up commit:
 
 Alligator
 
+## 2026-09-24 -- MISSION 12 WORKSTREAM C: published-pick downgrade/withdrawal
+## display (isolated candidate, branch
+## `claude/published-downgrade-display-20260924`, base `175bf7ce1a`)
+
+Isolated candidate for Jacob's review; not posted to Issue #91, not opened
+as a PR, not merged. MLB customer product only -- no NFL code, workflow,
+model weight, threshold, recommendation/selector policy, registry, grading,
+or generated `output`/`results`/`docs/*.json` state touched.
+
+**Problem** (as given): a Top Pick already recorded in the immutable
+publication registry (`data/public_top_picks/registry.json`) could be
+downgraded (a price/lineup refresh reclassifies it) or effectively
+disappear (the current scoring pass no longer produces it at all) before
+first pitch, and `dashboard/build_dashboard.reconcile_public_lifecycle`
+either kept only the demoted CURRENT status with no distinguishing label,
+or (the carry loop's pre-existing "withdrawn pregame pick" rule,
+`if not crossed and not other_build_slate: continue`) silently dropped the
+row from the Today page entirely -- hiding a previously published
+recommendation instead of labelling it.
+
+**Design chosen.** Both candidate designs from the brief, combined: (1) a
+clearly labelled sub-group, "Published earlier — no longer a Top Pick,"
+inside the Today page's Top Picks ("Best Bets") area, and (2) each card in
+that sub-group carries a distinct "Downgraded after publication" or
+"Withdrawn" chip showing the original published odds/probability alongside
+the current status and reason. Chosen over either alone because the brief's
+"must not look like a current Top Pick" and "must not be hidden" are two
+separate, independently-checkable requirements -- the sub-group placement
+satisfies visibility without needing to scan every card, the chip satisfies
+non-confusability without needing to notice which group a card is in.
+
+**The demotion case (loop 1, same-slate row still present, reclassified)
+needed NO backend change.** `reconcile_public_lifecycle`'s existing
+`row.update(_publication_provenance(registered))` branch already keeps the
+row's CURRENT (possibly demoted) `recommendation_status` as the actionable
+truth while unconditionally attaching `row["publication_snapshot"] =
+_publication_snapshot(registered)` (the immutable original, including its
+own `recommendation_status: "top_pick"`, `market_odds`, `hit_probability`).
+So "published, now downgraded" is fully derivable, client-side, from data
+already on the row -- `dashboard/static/app.js`'s new
+`isDowngradedPublished(p)`:
+`p.publication_snapshot?.recommendation_status === "top_pick" &&
+p.recommendation_status !== "top_pick"`. No second source of truth added.
+
+**The withdrawal case (loop 2, row absent from the current scoring pass
+entirely) needed a small, explicit backend change**, because there IS no
+"current" `recommendation_status` to derive from -- the row was never
+scored this cycle at all. `reconcile_public_lifecycle` now carries it
+(`withdrawn_pregame = not crossed and not other_build_slate`, replacing the
+old unconditional `continue`), but only for DISPLAY: its
+`recommendation_status` is forced to `"neutral"` (the only honest member of
+the deployed contract's 4-value enum -- `dashboard/live_state.
+RECOMMENDATION_STATES` / `verify_pages_artifact.py`'s `_validate_row` --
+for "no current classification exists"), with a synthetic
+`status_reasons` entry, and a new boolean marker,
+`withdrawn_since_publication`. The override is applied in a NEW step added
+after both (a) the existing `frozen_by_id` reapplication pass (which would
+otherwise restore the immutable snapshot's `recommendation_status ==
+"top_pick"`) and (b) `apply_live_overlay` (which could otherwise
+reintroduce a stale live.json `recommendation_status` from before the pick
+fell out of the pass) -- both run before it, so the override always wins
+last and nothing downstream can silently un-withdraw it. `refresh_prices.py`
+now explicitly skips any row carrying `withdrawn_since_publication` (new
+guard, alongside the pre-existing other-build-slate skip) so it is never
+re-priced. Re-registration was already structurally impossible before this
+change and remains so: `publication_registry.build_publication_manifest`
+skips any id already in `registry["entries"]` regardless of status --
+verified by a new regression test, not just asserted.
+
+**`summary.n_published_downgraded`** (build side, `_recount_payload`, and
+frontend, `refreshSummary()`): counts rows where
+`publication_snapshot.recommendation_status == "top_pick"` and the current
+`recommendation_status` differs -- covers both the demotion and withdrawal
+cases with the same derivation, purely additive, never folded into
+`n_top_pick`/"Top Picks today" (which continues to read only the CURRENT
+field, unchanged).
+
+**Files changed.**
+- `dashboard/build_dashboard.py`: `reconcile_public_lifecycle`'s carry loop
+  (withdrawn-pregame carry + `withdrawn_ids` tracking), the frozen-fields
+  reapplication step (override applied last), `_recount_payload`
+  (+`n_published_downgraded`, +`_was_published_top_pick` helper), new
+  `WITHDRAWN_STATUS_REASONS` constant.
+- `dashboard/refresh_prices.py`: new `withdrawn_since_publication` skip
+  guard in the pregame-selection loop.
+- `dashboard/static/app.js` (source of truth; `docs/app.js`/`docs/app.css`
+  synced byte-identical -- verified by the existing
+  `StaticSourceParityTests` in `test_build_dashboard.py`): `STATUS_META`
+  unchanged; new `wasPublishedTopPick`/`isDowngradedPublished`/
+  `publishedDowngradedNote`; `pickCard` renders the new note;
+  `renderToday` adds the "Published earlier — no longer a Top Pick"
+  sub-group inside Best Bets and excludes those rows from
+  `valueAll`/`longshotsAll`/`leansAll` (so a downgraded pick never also
+  duplicates into "More Picks" under its current status alone);
+  `refreshSummary` computes `n_published_downgraded` and excludes
+  downgraded rows from `n_lean`/`n_value`; `topPickGapSummary` excludes them
+  from the generic "why no Top Picks" gap breakdown (already explained by
+  the new sub-group).
+- `dashboard/static/app.css` / `docs/app.css`: `.chip-downgraded`,
+  `.pc-downgraded-note`, `.pc-downgraded-detail`,
+  `.top-pick-group-downgraded` (warn/amber tone -- neither a fresh
+  recommendation nor a settled result).
+- `test_published_today_central.py`: replaced
+  `test_current_slate_withdrawn_pregame_pick_rule_unchanged` (asserted the
+  OLD silent-drop behavior this workstream was explicitly asked to change)
+  with `test_current_slate_withdrawn_pregame_pick_is_carried_as_withdrawn`;
+  added `test_withdrawn_pregame_pick_is_never_a_publication_candidate` and
+  `test_withdrawn_pregame_pick_is_never_repriced_even_on_its_own_slate`.
+- `test_frontend_today_groups.py`: new `PublishedDowngradeDisplayTests`
+  (derivation correctness, no-Top-Pick-chip + chip/label/original-odds
+  content, sub-group rendering + exactly-once card de-duplication against
+  "More Picks", tile-count integrity).
+- `engineering/published_downgrade_policy_20260924/POLICY_PROPOSAL.md`
+  (new).
+
+**Tests.** All touched/relevant suites individually green
+(`test_live_lifecycle.py` 15/15, `test_published_today_central.py` 14/14,
+`test_frontend_today_groups.py` 15/15, `test_pages_preparation.py` 12/12,
+`test_pages_contract_v3.py` 11/11, `test_publication_registry.py` 6/6,
+`test_refresh_grades.py` 12/12, `test_refresh_prices.py` 19/19,
+`test_build_dashboard.py` 153/153, `test_fail_closed_surfaces.py` 24/24,
+`test_browser_e2e.py` 128/128 real Chromium checks). Full suite: every root
+`test_*.py` (146 files) run individually, zero failures.
+
+**Mutation checks** (temporarily broke the guard, confirmed the test that
+should catch it fails, restored, re-verified green):
+- `refresh_prices.py`'s `withdrawn_since_publication` skip removed ->
+  `test_withdrawn_pregame_pick_is_never_repriced_even_on_its_own_slate`
+  fails (the row gets a live.json price delta).
+- `build_dashboard.py`'s post-reapplication override block removed ->
+  `test_current_slate_withdrawn_pregame_pick_is_carried_as_withdrawn` fails
+  (`recommendation_status` reverts to `"top_pick"`).
+- `app.js`'s `isDowngradedPublished` forced to always return `false` -> all
+  3 new `PublishedDowngradeDisplayTests` fail (no chip, no sub-group, wrong
+  tile behavior undetected).
+
+**Grading/History unaffected by construction, not just by test result.**
+`dashboard/refresh_grades.py` and `grade_results.py`/`build_history`
+(`results/history.json`) read the durable population directly from the
+registry (`all_published_snapshots` / `published_snapshots_for_date`),
+independent of `reconcile_public_lifecycle`'s Today-page output this
+candidate changes. `registry.json` itself, `recommendation.py`,
+`generate_picks.py`'s selection logic, and every workflow file are
+untouched. Noted, not required, positive side effect: `refresh_grades.
+_active_public_snapshots`'s `current_ids` bound now includes a carried
+withdrawn row (it's in `payload["props"]` for the first time), which keeps
+it on the tighter five-minute polling cadence instead of falling back to
+the 72h recent-cutoff heuristic -- strictly an improvement, not a behavior
+this workstream needed.
+
+**Open question for Jacob** (see the policy doc's own section 5): should a
+withdrawn/downgraded card's retention window differ from an ordinary
+published pick's (same-slate/Central-midnight, unchanged by this
+candidate), given a customer may not have seen the downgrade happen? No
+prior decision on this specific point was found in PROJECT_STATE.md,
+ENGINEERING_HANDOFF.md, or Issue #91.
+
+**Exact customer-facing policy text proposed for Jacob's verbatim
+approval** is in `engineering/published_downgrade_policy_20260924/
+POLICY_PROPOSAL.md` section 1 -- not duplicated here to avoid the two
+copies drifting.
+
+Alligator
+

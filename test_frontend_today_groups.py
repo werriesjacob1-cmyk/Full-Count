@@ -190,5 +190,98 @@ class TodayGroupsTests(unittest.TestCase):
         self.assertEqual(r["startedUnpublished"], "")
 
 
+# 2026-09-24 published-downgrade-display (Mission 12 Workstream C). Companion
+# to test_current_slate_withdrawn_pregame_pick_is_carried_as_withdrawn and
+# test_current_slate_downgraded_pregame_pick_* in test_published_today_central
+# (the build side, which is what actually sets publication_snapshot /
+# withdrawn_since_publication on a real row). These tests exercise the client
+# purely from the row shape the build side is proven to produce.
+SNAPSHOT_SETUP = r"""
+function publishedSnapshot(extra) {
+  return Object.assign({ recommendation_status: "top_pick", market_odds: -120,
+    hit_probability: 0.65 }, extra || {});
+}
+"""
+
+
+class PublishedDowngradeDisplayTests(unittest.TestCase):
+    def test_downgraded_pick_derivation_and_no_top_pick_chip(self):
+        r = run_node(SETUP + SNAPSHOT_SETUP + r"""
+          const downgraded = tp("a", { recommendation_status: "lean",
+                                       publication_snapshot: publishedSnapshot() });
+          const stillTop = tp("b", { recommendation_status: "top_pick",
+                                     publication_snapshot: publishedSnapshot() });
+          const neverPublished = tp("c", { recommendation_status: "lean" });
+          return {
+            downgraded: isDowngradedPublished(downgraded),
+            stillTop: isDowngradedPublished(stillTop),
+            neverPublished: isDowngradedPublished(neverPublished),
+            card: pickCard(downgraded),
+          };
+        """)
+        self.assertTrue(r["downgraded"])
+        self.assertFalse(r["stillTop"])   # still an actual current Top Pick
+        self.assertFalse(r["neverPublished"])  # no publication_snapshot at all
+        card = r["card"]
+        self.assertNotIn("chip-top_pick", card)
+        self.assertNotIn(">TOP PICK<", card)
+        self.assertIn("chip-downgraded", card)
+        self.assertIn("Downgraded after publication", card)
+        self.assertIn("-120", card)   # original published odds shown
+        self.assertIn("65%", card)    # original published probability shown
+
+    def test_withdrawn_pick_says_withdrawn_not_downgraded(self):
+        r = run_node(SETUP + SNAPSHOT_SETUP + r"""
+          const withdrawn = tp("a", { recommendation_status: "neutral",
+                                      withdrawn_since_publication: true,
+                                      status_reasons: ["published earlier as a Top Pick; " +
+                                        "no longer represented in today's scoring pass -- " +
+                                        "withdrawn, not a current recommendation"],
+                                      publication_snapshot: publishedSnapshot() });
+          return { card: pickCard(withdrawn) };
+        """)
+        card = r["card"]
+        self.assertNotIn("chip-top_pick", card)
+        self.assertIn("chip-downgraded", card)
+        self.assertIn(">Withdrawn<", card)
+        self.assertNotIn("Downgraded after publication", card)
+
+    def test_today_page_groups_downgraded_picks_and_excludes_them_from_more_picks(self):
+        r = run_node(SETUP + SNAPSHOT_SETUP + r"""
+          SHOW_UNVERIFIED = true;
+          DATA = { date: "2026-09-24", display_date: "2026-09-24", generated_at: "2026-09-24T12:00:00Z",
+                   summary: {}, schedule: [], families: [],
+                   props: [
+                     tp("live-top", { recommendation_status: "top_pick" }),
+                     tp("downgraded", { recommendation_status: "lean",
+                                        publication_snapshot: publishedSnapshot() }),
+                     tp("withdrawn", { recommendation_status: "neutral",
+                                       withdrawn_since_publication: true,
+                                       status_reasons: ["withdrawn, not a current recommendation"],
+                                       publication_snapshot: publishedSnapshot() }),
+                     tp("ordinary-lean", { recommendation_status: "lean" }),
+                   ] };
+          indexProps();
+          refreshSummary();
+          renderToday();
+          return { html: __el("page-today").innerHTML, summary: DATA.summary };
+        """)
+        html = r["html"]
+        self.assertIn("Published earlier — no longer a Top Pick", html)
+        # Only the real current Top Pick is counted -- never the downgraded
+        # or withdrawn published picks.
+        self.assertEqual(r["summary"]["n_top_pick"], 1)
+        self.assertEqual(r["summary"]["n_published_downgraded"], 2)
+        for pid in ("downgraded", "withdrawn", "live-top", "ordinary-lean"):
+            self.assertEqual(html.count(f'data-open="{pid}"'), 1,
+                             f"{pid} should render exactly once, found {html.count(chr(34)+pid+chr(34))}")
+        # The downgraded/withdrawn cards appear before "More Picks" (inside
+        # the Top Picks/Best Bets area), and the ordinary lean stays in
+        # "More Picks" as usual.
+        best_bets_end = html.index("More Picks") if "More Picks" in html else len(html)
+        self.assertLess(html.index('data-open="downgraded"'), best_bets_end)
+        self.assertLess(html.index('data-open="withdrawn"'), best_bets_end)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

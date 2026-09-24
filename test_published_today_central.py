@@ -118,13 +118,50 @@ class PublishedTodayCentralTests(unittest.TestCase):
                 out = reconcile(rows, registry, date="2026-08-19", now="2026-08-19T20:11:00Z")
                 self.assertEqual(out["props"], [])
 
-    def test_current_slate_withdrawn_pregame_pick_rule_unchanged(self):
-        # Registered on the payload's own slate, still pregame, absent from
-        # the current scoring pass: the pre-existing rule does not carry it.
+    def test_current_slate_withdrawn_pregame_pick_is_carried_as_withdrawn(self):
+        # 2026-09-24 published-downgrade-display (Mission 12 Workstream C):
+        # registered on the payload's own slate, still pregame, absent from
+        # the current scoring pass. Before this change the row vanished
+        # entirely (silently hiding a withdrawn published recommendation --
+        # exactly what Jacob's requirement forbids). It is now carried,
+        # clearly labelled, never actionable, and never re-priced.
         row = late_pick()
         out = reconcile([], published_registry(row), date="2026-08-17", now="2026-08-17T20:00:00Z",
                         schedule={1: {"status": PREVIEW}})
-        self.assertEqual(out["props"], [])
+        self.assertEqual(len(out["props"]), 1)
+        carried = out["props"][0]
+        self.assertEqual(carried["id"], row["id"])
+        # Not an actionable current Top Pick: no valid RECOMMENDATION_STATES
+        # member other than "neutral" honestly describes "no longer
+        # represented in today's scoring pass."
+        self.assertEqual(carried["recommendation_status"], "neutral")
+        self.assertTrue(carried["withdrawn_since_publication"])
+        self.assertIn("withdrawn", carried["status_reasons"][0])
+        # The immutable publication record is untouched: it still proves
+        # this was originally a Top Pick, at its original price/probability.
+        snapshot = carried["publication_snapshot"]
+        self.assertEqual(snapshot["recommendation_status"], "top_pick")
+        self.assertEqual(snapshot["market_odds"], row["market_odds"])
+        self.assertEqual(snapshot["hit_probability"], row["hit_probability"])
+        # Never counted as a current Top Pick, but visible as a distinct,
+        # derivable "published, now downgraded/withdrawn" population.
+        self.assertEqual(out["summary"]["n_top_pick"], 0)
+        self.assertEqual(out["summary"]["n_published_downgraded"], 1)
+
+    def test_withdrawn_pregame_pick_is_never_a_publication_candidate(self):
+        # Guards against a regression that would re-register an already-
+        # published id: build_publication_manifest must not produce a
+        # candidate for it (it is already in the registry, and its
+        # recommendation_status is "neutral" here besides).
+        from dashboard.publication_registry import build_publication_manifest
+        row = late_pick()
+        registry = published_registry(row)
+        out = reconcile([], registry, date="2026-08-17", now="2026-08-17T20:00:00Z",
+                        schedule={1: {"status": PREVIEW}})
+        manifest = build_publication_manifest(
+            out, default_live_state(), registry, "sha", "2026-08-17T20:05:00Z",
+        )
+        self.assertEqual(manifest["candidates"], [])
 
     def test_new_slate_pick_and_prior_central_day_pick_coexist(self):
         prior = late_pick(player_id=101)
@@ -256,6 +293,51 @@ class RefreshPricesSkipsCarriedPicksTests(unittest.TestCase):
                 live = json.load(fh)["props"]
         self.assertEqual(live[carried["id"]]["market_fetch_state"], "IN_PLAY")
         self.assertEqual(live[carried["id"]]["game_state"], "live")
+
+    def test_withdrawn_pregame_pick_is_never_repriced_even_on_its_own_slate(self):
+        # The other-build-slate skip above is guarded by a DIFFERENT slate
+        # date; a withdrawn pick is carried on its OWN, same slate date, so
+        # refresh_prices needs its own explicit signal
+        # (withdrawn_since_publication) to still refuse to reprice it.
+        import json
+        import os
+        import tempfile
+        from unittest import mock
+        import grade_results as gr
+        import odds_fanduel as fd
+        import recommendation
+        from dashboard import refresh_prices as rp
+        from dashboard.live_state import atomic_write_json
+        from dashboard.publication_registry import default_registry, write_registry
+        from test_refresh_prices import observed_family
+
+        withdrawn = dict(late_pick(), published_slate_date="2026-08-17",
+                         withdrawn_since_publication=True, recommendation_status="neutral")
+        with tempfile.TemporaryDirectory() as tmp:
+            data, live_path, reg = (os.path.join(tmp, n) for n in ("data.json", "live.json", "reg.json"))
+            atomic_write_json(data, payload([withdrawn], date="2026-08-17"))
+            atomic_write_json(live_path, default_live_state())
+            write_registry(reg, default_registry())
+            fetchers = ("fetch_prop_prices", "fetch_pitcher_strikeouts", "fetch_pitcher_outs",
+                        "fetch_first_inning_totals", "fetch_combined_pitcher_strikeouts")
+            families = ("general_batter", "strikeouts", "pitcher_outs", "first_inning",
+                        "combined_strikeouts")
+            patches = [mock.patch.object(fd, f, return_value=observed_family(fam))
+                       for f, fam in zip(fetchers, families)]
+            patches += [mock.patch.object(gr, "fetch_game_contexts",
+                                          return_value={1: {"status": PREVIEW, "feed": {}}}),
+                        mock.patch.object(recommendation, "attach_recommendations"),
+                        mock.patch.object(rp, "utc_now", return_value="2026-08-17T20:20:00Z")]
+            for p in patches:
+                p.start()
+            try:
+                rp.refresh(data, live_path, reg)
+            finally:
+                for p in patches:
+                    p.stop()
+            with open(live_path, encoding="utf-8") as fh:
+                live = json.load(fh)["props"]
+        self.assertNotIn(withdrawn["id"], live)
 
 
 if __name__ == "__main__":

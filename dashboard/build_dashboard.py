@@ -1414,6 +1414,10 @@ def _status_for(schedule, game_pk):
     return entry.get("status") or {}
 
 
+def _was_published_top_pick(row):
+    return (row.get("publication_snapshot") or {}).get("recommendation_status") == "top_pick"
+
+
 def _recount_payload(payload):
     props = payload.get("props") or []
     summary = payload.setdefault("summary", {})
@@ -1421,6 +1425,17 @@ def _recount_payload(payload):
     summary["n_top_pick"] = sum(r.get("recommendation_status") == "top_pick" for r in props)
     summary["n_lean"] = sum(r.get("recommendation_status") == "lean" for r in props)
     summary["n_value"] = sum(r.get("recommendation_status") == "value" for r in props)
+    # Published as a Top Pick, currently something else (downgraded by a
+    # price/lineup refresh, or withdrawn because the current scoring pass no
+    # longer produces it at all). Derived, not a second source of truth: the
+    # comparison is publication_snapshot.recommendation_status (the immutable
+    # publication record) against the row's own CURRENT recommendation_status
+    # -- never counted in n_top_pick above, since that already reads only the
+    # current field.
+    summary["n_published_downgraded"] = sum(
+        1 for r in props
+        if _was_published_top_pick(r) and r.get("recommendation_status") != "top_pick"
+    )
 
 
 def _publication_provenance(row):
@@ -1479,6 +1494,19 @@ def _prior_slate_still_displayed(slate_date, payload_date, display_date, observe
     return observed in ("live", "suspended", "postponed")
 
 
+# 2026-09-24 published-downgrade-display (Mission 12 Workstream C). Shown as
+# the CURRENT status_reasons for a same-slate, still-pregame published Top
+# Pick that the current scoring pass no longer produces at all. The row's
+# recommendation_status must stay a valid RECOMMENDATION_STATES member (the
+# deployed Pages contract validates it -- see verify_pages_artifact.py); the
+# original "top_pick" classification, reasons, price, and probability stay
+# exactly as published inside the row's own publication_snapshot.
+WITHDRAWN_STATUS_REASONS = (
+    "published earlier as a Top Pick; no longer represented in today's "
+    "scoring pass -- withdrawn, not a current recommendation",
+)
+
+
 def reconcile_public_lifecycle(payload, prior_payload=None, live=None, schedule=None,
                                now=None, registry=None):
     """Apply the final publication gate and carry deployment-proven Top Picks.
@@ -1502,6 +1530,10 @@ def reconcile_public_lifecycle(payload, prior_payload=None, live=None, schedule=
     reconciled = []
     seen_identities = set()
     frozen_by_id = {}
+    # Canonical ids of rows carried ONLY because they were withdrawn from the
+    # current scoring pass while still published and pregame -- see the
+    # 2026-09-24 published-downgrade-display comment in the carry loop below.
+    withdrawn_ids = set()
     for source_row in payload.get("props") or []:
         row = dict(source_row)
         stable_prop_id(row)
@@ -1599,22 +1631,35 @@ def reconcile_public_lifecycle(payload, prior_payload=None, live=None, schedule=
             observed = existing.get("game_state") or "unknown"
         crossed = not before_betting_cutoff(registered, now) or observed != "pregame"
         other_build_slate = registered.get("slate_date") != payload.get("date")
-        if not crossed and not other_build_slate:
-            # A demoted/withdrawn pregame recommendation remains in history,
-            # but need not remain on the current wagering board before start.
-            continue
-        # A still-pregame pick from ANOTHER build slate is absent from the
-        # payload only because the build date rolled at UTC midnight (the
-        # 2026-09-23 late games: first pitches 00:40-02:10Z). It stays on its
-        # Central day as published; on any other day it is not carried.
-        # Keyed on game state, not settlement state, for the same reason as
-        # the identical check above: a prior-slate pick's settlement fact in
-        # live.json is legitimately pruned by compact_live_state() once it
-        # drops off the current board, and a settlement-based check would
-        # then default to "open" and readmit it forever.
-        if not _prior_slate_still_displayed(registered.get("slate_date"), payload.get("date"),
-                                            display_date, observed):
-            continue
+        # 2026-09-24 published-downgrade-display (Mission 12 Workstream C):
+        # a same-slate, still-pregame registered pick that the CURRENT
+        # scoring pass no longer produces at all -- dropped lineup, failed
+        # quality control, vanished source data, ... -- used to be silently
+        # skipped here forever, which hid a withdrawn published
+        # recommendation instead of labelling it (Jacob's requirement: never
+        # hide a previously published pick just because it became less
+        # attractive). It is now carried for DISPLAY ONLY: its
+        # recommendation_status/status_reasons are overridden below, after
+        # the frozen-fields reapplication pass, so neither that pass nor a
+        # stale live.json delta can silently restore "top_pick". It is never
+        # re-priced (refresh_prices.py skips any row carrying
+        # withdrawn_since_publication) and never re-registered
+        # (build_publication_manifest only considers unregistered ids).
+        withdrawn_pregame = not crossed and not other_build_slate
+        if not withdrawn_pregame:
+            # A still-pregame pick from ANOTHER build slate is absent from
+            # the payload only because the build date rolled at UTC midnight
+            # (the 2026-09-23 late games: first pitches 00:40-02:10Z). It
+            # stays on its Central day as published; on any other day it is
+            # not carried. Keyed on game state, not settlement state, for
+            # the same reason as the identical check above: a prior-slate
+            # pick's settlement fact in live.json is legitimately pruned by
+            # compact_live_state() once it drops off the current board, and
+            # a settlement-based check would then default to "open" and
+            # readmit it forever.
+            if not _prior_slate_still_displayed(registered.get("slate_date"), payload.get("date"),
+                                                display_date, observed):
+                continue
         carried = dict(registered)
         carried["publication_snapshot"] = _publication_snapshot(registered)
         carried["published_slate_date"] = registered.get("slate_date")
@@ -1623,6 +1668,8 @@ def reconcile_public_lifecycle(payload, prior_payload=None, live=None, schedule=
             source="mlb_schedule" if status else existing.get("game_state_source", "last_known_good"),
         )
         frozen_by_id[stable_prop_id(carried)] = dict(registered)
+        if withdrawn_pregame:
+            withdrawn_ids.add(stable_prop_id(carried))
         reconciled.append(carried)
         seen_identities.add(identity)
 
@@ -1652,12 +1699,29 @@ def reconcile_public_lifecycle(payload, prior_payload=None, live=None, schedule=
             # itself (the pick isn't in today's candidate pool at all), so
             # for those this overlay is a no-op beyond what's already there --
             # an accepted, unavoidable limitation, not a regression.
-            payload["props"][index] = {
+            merged = {
                 **row,
                 **{k: frozen[k] for k in (FROZEN_PUBLICATION_FIELDS | PUBLICATION_FIELDS) if k in frozen},
                 "publication_snapshot": _publication_snapshot(frozen),
                 **lifecycle,
             }
+            if row.get("id") in withdrawn_ids:
+                # Applied AFTER the frozen-fields reapplication above (which
+                # would otherwise restore the immutable snapshot's
+                # recommendation_status == "top_pick") and after
+                # apply_live_overlay (which could otherwise reintroduce a
+                # stale live.json recommendation_status/status_reasons from
+                # before this pick fell out of the scoring pass). This is
+                # the only place withdrawn_pregame's display status is set,
+                # so it always wins last. The immutable audit trail
+                # (publication_snapshot.recommendation_status == "top_pick",
+                # plus the original market_odds/hit_probability/etc. also in
+                # that snapshot) is untouched above; only this row's CURRENT,
+                # non-actionable display status/reason is overridden.
+                merged["recommendation_status"] = "neutral"
+                merged["status_reasons"] = list(WITHDRAWN_STATUS_REASONS)
+                merged["withdrawn_since_publication"] = True
+            payload["props"][index] = merged
     validate_payload_identities(payload)
     _recount_payload(payload)
     return payload
