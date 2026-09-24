@@ -160,7 +160,14 @@ def b0_rolling_mean(rows: list[dict], market: str, *, window: int = 5,
         past = history[row["player_id"]]
         b0 = None
         if len(past) >= min_appearances and statistics.fmean(p[1] for p in past) > 0:
-            b0 = statistics.fmean(p[0] for p in past)
+            if market in BINARY_MARKETS:
+                # Smoothed frequency, never exactly 0 or 1 (review of the
+                # Tier 1 branches, finding 2: a raw 0 on ~36% of anytime_td
+                # rows made ANY nonzero model "beat" B0 and the scale
+                # control by ~0.6 log loss).
+                b0 = (sum(p[0] for p in past) + 0.5) / (len(past) + 1.0)
+            else:
+                b0 = statistics.fmean(p[0] for p in past)
         if row["season_type"] == "REG":
             scored.append({"season": row["season"], "week": row["week"],
                            "game_id": row["game_id"], "player_id": row["player_id"],

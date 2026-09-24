@@ -93,6 +93,13 @@ class HarnessTests(unittest.TestCase):
                    "b0": 10.0, "actual": 8.0} for i in range(20)]
         self.assertAlmostEqual(H.fit_scale_control(scored, "receptions"), 0.8)
 
+    def test_binary_b0_is_smoothed_never_zero(self):
+        rows = [dict(r, rushing_tds=0.0, receiving_tds=0.0, carries=3.0) for r in _player_rows()]
+        scored = H.b0_rolling_mean(rows, "anytime_td")
+        b0s = [r["b0"] for r in scored if r["b0"] is not None]
+        self.assertTrue(b0s and all(0.0 < b < 1.0 for b in b0s))
+        self.assertAlmostEqual(b0s[-1], 0.5 / 6.0)
+
     def test_binary_market_uses_log_loss(self):
         scored = [{"season": 2020, "week": 1, "game_id": f"g{i}", "player_id": "p",
                    "b0": 0.5, "actual": float(i % 2)} for i in range(4)]
