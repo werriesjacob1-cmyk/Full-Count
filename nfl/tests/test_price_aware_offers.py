@@ -132,22 +132,25 @@ class PriceTests(unittest.TestCase):
         c,d=inputs(); r=run(c,d); before=copy.deepcopy(r)
         o=dict(event_id="e",gsis_id="p",authority="OFFICIAL_FINAL",source_sha256=H,
                observed_at="2026-09-24T04:00:00Z",played=True,receptions=1,
-               offensive_snaps=10,participation_source_sha256=H,
+               total_snaps=10,participation_source_sha256=H,
                canonical_game_id=c["canonical_game_id"],stat="receptions")
         self.assertTrue(all(s["status"]=="PUSH" for s in settle_record(r,o)["settlements"]))
-        o["played"]=False; o["receptions"]=0; o["offensive_snaps"]=0
+        o["played"]=False; o["receptions"]=0; o["total_snaps"]=0
         self.assertTrue(all(s["status"]=="VOID_DNP" for s in settle_record(r,o)["settlements"]))
+        o["played"]=True; o["total_snaps"]=1
+        self.assertEqual([s["status"] for s in settle_record(r,o)["settlements"]],
+                         ["MISS","HIT"])
         self.assertEqual(r,before)
 
     def test_bad_outcome_or_tampered_seal(self):
         c,d=inputs(); r=run(c,d)
         o=dict(event_id="e",gsis_id="p",authority="OFFICIAL_FINAL",source_sha256=H,
                observed_at="2026-09-24T04:00:00Z",played=True,receptions=2,
-               offensive_snaps=10,participation_source_sha256=H,
+               total_snaps=10,participation_source_sha256=H,
                canonical_game_id=c["canonical_game_id"],stat="receptions")
         for changes in ({"gsis_id":"wrong"},{"authority":"LIVE"},{"played":None},{"receptions":2.5},{"observed_at":T},
-                        {"played":False}, {"offensive_snaps":None},
-                        {"offensive_snaps":0}, {"canonical_game_id":"wrong"}, {"stat":"passing_yards"}):
+                        {"played":False}, {"total_snaps":None},
+                        {"total_snaps":0}, {"canonical_game_id":"wrong"}, {"stat":"passing_yards"}):
             with self.assertRaises(ValueError): settle_record(r,dict(o,**changes))
         r["candidate"]["over_odds"]=200
         with self.assertRaises(ValueError): settle_record(r,o)

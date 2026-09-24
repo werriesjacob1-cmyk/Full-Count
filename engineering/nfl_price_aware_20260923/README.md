@@ -72,7 +72,8 @@ reference, not proof that NJ rules apply to an unknown user's jurisdiction
 or an individual accepted wager. No applicable rule bytes or snap counts were
 captured for this game. Therefore book action remains uncertified and all
 offers stay quarantined. The `settle_record` interface requires an official
-final count, a certified offensive snap count, timestamps, source digests and
+final count, a certified total game snap count (including special teams),
+timestamps, source digests and
 exact identities. It returns **research unit accounting**, never a claim
 that FanDuel paid an actual ticket. Actual-price returns and realized
 HIT/MISS/VOID require future matched final evidence; none exists yet for

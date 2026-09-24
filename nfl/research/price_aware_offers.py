@@ -240,9 +240,11 @@ def settle_record(record: dict, outcome: dict) -> dict:
     if _time(outcome["observed_at"]) < max(_time(candidate["event_open_date"]),
                                          _time(candidate["canonical_kickoff"])):
         raise ValueError("outcome before kickoff")
-    snaps = outcome.get("offensive_snaps")
+    # FanDuel's NFL prop rule says any game snap; special-teams participation
+    # cannot be misclassified as a DNP just because offensive snaps are zero.
+    snaps = outcome.get("total_snaps")
     if type(snaps) is not int or snaps < 0:
-        raise ValueError("certified offensive snap count required")
+        raise ValueError("certified total snap count required")
     _digest(outcome["participation_source_sha256"])
     if type(outcome.get("played")) is not bool or outcome["played"] != (snaps > 0):
         raise ValueError("participation contradicts snap count")
