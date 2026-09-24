@@ -402,6 +402,54 @@ def _plausible_same_game(row_start, event):
     return abs(event_start - row_start) <= MATCHUP_FALLBACK_MAX_DRIFT
 
 
+def _slate_resolution(observation, slate_games):
+    """Resolve each slate game to at most one event, doubleheader-safe.
+
+    Returns ``[(game, event_or_None, group_events)]``. Games sharing a
+    matchup (a doubleheader) resolve as a group: the group is used only when
+    every one of its games maps to its OWN distinct event. Otherwise the
+    whole group resolves to None. A game-2 event that is not listed yet,
+    and would fall back by matchup to game 1's event, would otherwise hand
+    game 1's prices to game 2's props. ``group_events`` lists the group's
+    events so values can be restricted to what every game agrees on.
+    """
+    games = list(slate_games or ())
+    groups = {}
+    for i, game in enumerate(games):
+        key = _matchup_key(game.get("matchup")) or f"#{i}"
+        groups.setdefault(key, []).append(i)
+    out = [None] * len(games)
+    for idx in groups.values():
+        resolved = [_relevant_events(observation, games[i]) for i in idx]
+        events = [r[0] if len(r) == 1 else None for r in resolved]
+        distinct = len({id(e) for e in events if e is not None})
+        usable = all(e is not None for e in events) and distinct == len(events)
+        group_events = tuple(events) if usable else ()
+        for i, e in zip(idx, events):
+            out[i] = (games[i], e if usable else None, group_events)
+    return out
+
+
+def _agreed_values(family, events):
+    """Values every event in a doubleheader group carries at the SAME price.
+
+    The flat dict has no game dimension, so a price present for only one game
+    or differing between the games would be attached to both games' props.
+    """
+    if len(events) == 1:
+        return events[0].values or {}
+    first, rest = events[0].values or {}, [e.values or {} for e in events[1:]]
+    if family == "general_batter":
+        agreed = {}
+        for player, markets in first.items():
+            kept = {m: p for m, p in markets.items()
+                    if all((other.get(player) or {}).get(m, object()) == p for other in rest)}
+            if kept:
+                agreed[player] = kept
+        return agreed
+    return {k: v for k, v in first.items() if all(k in other and other[k] == v for other in rest)}
+
+
 def slate_scoped_values(observation, slate_games):
     """The legacy flat ``values`` dict, restricted to this slate's own events.
 
@@ -421,24 +469,31 @@ def slate_scoped_values(observation, slate_games):
     refresh already applies per row -- so an unmatched game stays unpriced
     rather than borrowing another event's quote. Merge semantics mirror each
     fetcher: the general batter feed merges per-player market dicts, every
-    other family replaces by key. One exception, because the flat dict has
-    no game dimension: when two chosen events (a doubleheader) carry the
-    same key with DIFFERENT prices, that key is dropped rather than letting
-    one game's price stand in for the other's. Equal prices are kept.
+    other family replaces by key.
+
+    Doubleheaders (the flat dict has no game dimension): a same-matchup
+    group is used only when each game resolved to its own event, and then
+    only for keys every game carries at the same price. Across different
+    matchups, a key priced differently by two events is dropped rather than
+    letting one game's price stand in for the other's.
     """
     if not isinstance(observation, MarketFeedObservation):
         return {}
     if observation.root_state != EVENTS_DISCOVERED:
         return {}
-    chosen = []
-    for game in slate_games or ():
-        events = _relevant_events(observation, game)
-        if len(events) == 1 and events[0] not in chosen:
-            chosen.append(events[0])
+    contributions, seen_groups = [], set()
+    for _game, event, group_events in _slate_resolution(observation, slate_games):
+        if event is None:
+            continue
+        marker = tuple(id(e) for e in group_events)
+        if marker in seen_groups:
+            continue
+        seen_groups.add(marker)
+        contributions.append(_agreed_values(observation.family, group_events))
     out, conflicted = {}, set()
-    for event in chosen:
+    for values in contributions:
         if observation.family == "general_batter":
-            for player, markets in (event.values or {}).items():
+            for player, markets in values.items():
                 mine = out.setdefault(player, {})
                 for market, price in markets.items():
                     key = (player, market)
@@ -450,7 +505,7 @@ def slate_scoped_values(observation, slate_games):
                         continue
                     mine[market] = price
         else:
-            for key, value in (event.values or {}).items():
+            for key, value in values.items():
                 if key in conflicted:
                     continue
                 if key in out and out[key] != value:
@@ -462,11 +517,17 @@ def slate_scoped_values(observation, slate_games):
 
 
 def slate_match_report(observation, slate_games):
-    """(matched, total, unmatched matchups) for one family, for run logs."""
+    """(matched, total, unmatched matchups) for one family, for run logs.
+
+    A doubleheader game whose group could not be resolved to distinct
+    events counts as unmatched, so the log cannot report 2/2 when both
+    games were bound to one event.
+    """
     games = list(slate_games or ())
     if not isinstance(observation, MarketFeedObservation) or observation.root_state != EVENTS_DISCOVERED:
         return 0, len(games), [g.get("matchup") for g in games]
-    unmatched = [g.get("matchup") for g in games if len(_relevant_events(observation, g)) != 1]
+    unmatched = [game.get("matchup") for game, event, _ in _slate_resolution(observation, games)
+                 if event is None]
     return len(games) - len(unmatched), len(games), unmatched
 
 

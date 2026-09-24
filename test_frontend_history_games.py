@@ -443,7 +443,7 @@ class GamesPriceStateTests(unittest.TestCase):
             self.assertIn("No FanDuel listing found yet", r[key])
             self.assertNotIn("check failed", r[key])
         self.assertEqual(r["sheet"], "No FanDuel listing found yet")
-        self.assertEqual(r["header"], "No FanDuel listing found yet")
+        self.assertEqual(r["header"], "no listing yet")
 
     def test_detail_header_agrees_with_line_moved_and_failed_states(self):
         r = run_node(GAMES_SETUP + r"""
@@ -453,7 +453,7 @@ class GamesPriceStateTests(unittest.TestCase):
           return { moved, failed: noPriceText(PROPS_BY_ID.get(TROUT)) };
         """)
         self.assertEqual(r["moved"], "line moved")
-        self.assertEqual(r["failed"], "FanDuel check failed")
+        self.assertEqual(r["failed"], "check failed")
 
     def test_priced_line_shows_its_own_exact_line_price(self):
         r = run_node(GAMES_SETUP + r"""

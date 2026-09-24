@@ -79,6 +79,45 @@ class SlateScopedValuesTests(unittest.TestCase):
         self.assertNotIn(("hits", 1), scoped.get(TROUT, {}))  # conflicting: dropped
         self.assertEqual(scoped[TROUT][("runs", 1)], 150)       # identical: kept
 
+    def test_doubleheader_game_two_missing_a_market_never_borrows_game_one(self):
+        g1, g2 = "2026-09-24T17:05:00Z", "2026-09-24T23:05:00Z"
+        observation = feed(
+            "general_batter",
+            event("g1", g1, {TROUT: {("hits", 1): -200, ("runs", 1): 120}}),
+            event("g2", g2, {TROUT: {("hits", 1): -210}}),
+        )
+        self.assertEqual(fd.slate_scoped_values(observation, slate(start=g1) + slate(start=g2)), {})
+
+    def test_doubleheader_game_two_not_listed_drops_the_group_and_is_reported(self):
+        g1, g2 = "2026-09-24T17:05:00Z", "2026-09-24T23:05:00Z"
+        observation = feed("general_batter", event("g1", g1, {TROUT: {("hits", 1): -200}}))
+        both = slate(start=g1) + slate(start=g2)
+        self.assertEqual(fd.slate_scoped_values(observation, both), {})
+        matched, total, unmatched = fd.slate_match_report(observation, both)
+        self.assertEqual((matched, total), (0, 2))
+        self.assertEqual(unmatched, [MATCHUP, MATCHUP])
+
+    def test_doubleheader_game_level_missing_for_game_two_is_dropped(self):
+        g1, g2 = "2026-09-24T17:05:00Z", "2026-09-24T23:05:00Z"
+        observation = feed(
+            "first_inning",
+            event("g1", g1, {MATCHUP: {"over": -110, "under": -110}}),
+            event("g2", g2, {}),
+        )
+        self.assertEqual(fd.slate_scoped_values(observation, slate(start=g1) + slate(start=g2)), {})
+
+    def test_doubleheader_group_does_not_affect_other_games(self):
+        g1, g2 = "2026-09-24T17:05:00Z", "2026-09-24T23:05:00Z"
+        other = {"game_start": "2026-09-25T00:10:00Z", "matchup": "Texas Rangers @ Houston Astros"}
+        observation = feed(
+            "general_batter",
+            event("g1", g1, {TROUT: {("hits", 1): -200}}),
+            event("tex", "2026-09-25T00:10:00Z", {"x": {("hits", 1): -150}},
+                  name="Texas Rangers (A) @ Houston Astros (B)"),
+        )
+        self.assertEqual(fd.slate_scoped_values(observation, slate(start=g1) + slate(start=g2) + [other]),
+                         {"x": {("hits", 1): -150}})
+
     def test_doubleheader_game_level_conflict_is_dropped(self):
         g1, g2 = "2026-09-24T17:05:00Z", "2026-09-24T23:05:00Z"
         observation = feed(

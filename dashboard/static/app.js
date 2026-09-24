@@ -706,7 +706,7 @@ function unpricedState(p) {
   const checked = _agoText(p.market_fetch_checked_at);
   switch (p.market_fetch_state) {
     case "NOT_POSTED":
-      return { short: "Not yet posted on FanDuel",
+      return { short: "Not yet posted on FanDuel", bare: "not posted yet",
         detail: "FanDuel isn't posting this exact line right now"
           + (checked ? ` (checked ${checked})` : "") + "." };
     case "FETCH_FAILED":
@@ -716,22 +716,23 @@ function unpricedState(p) {
       // rows at 2026-09-24T02:15Z). Calling that a failed check would be a
       // new false alarm, so the reason decides the wording.
       if (String(p.market_failure_reason || "").startsWith("no unique relevant FanDuel event")) {
-        return { short: "No FanDuel listing found yet",
+        return { short: "No FanDuel listing found yet", bare: "no listing yet",
           detail: "FanDuel isn't listing a game we can match to this one yet, so there's no price to show. It's checked again every few minutes." };
       }
-      return { short: "FanDuel check failed",
+      return { short: "FanDuel check failed", bare: "check failed",
         detail: "The latest FanDuel price check didn't complete, so no price is shown. It retries automatically." };
     case "IN_PLAY":
-      return { short: "No pregame price captured",
+      return { short: "No pregame price captured", bare: "no pregame price",
         detail: "No FanDuel price was captured for this line before first pitch." };
     default:
-      return { short: "No FanDuel price at this line",
+      return { short: "No FanDuel price at this line", bare: "no price at this line",
         detail: "No FanDuel price was found for this exact line when the board was built." };
   }
 }
-// The one-line "why no price" used where a price would otherwise print.
+// The few words used right after "FanDuel" where a price would otherwise
+// print ("FanDuel: not posted yet"), so the label never repeats "FanDuel".
 function noPriceText(p) {
-  return p.market_fetch_state === "LINE_MOVED" ? "line moved" : unpricedState(p).short;
+  return p.market_fetch_state === "LINE_MOVED" ? "line moved" : unpricedState(p).bare;
 }
 function marketBlock(p) {
   const marketOdds = fmtOdds(p.market_odds);

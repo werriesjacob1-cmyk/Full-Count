@@ -5774,8 +5774,16 @@ were fixed in the follow-up commit except where noted:
 - FETCH_FAILED with the reason "no unique relevant FanDuel event" (real
   case: 177 White Sox @ Royals rows at 02:15Z) now reads "No FanDuel
   listing found yet", not "FanDuel check failed".
-- Doubleheaders: a key carrying different prices in two chosen events is
-  dropped (fail closed); identical prices are kept.
+- Doubleheaders on the board path (completed in round 2): same-matchup
+  games resolve as a group. The group is used only when every game maps
+  to its own distinct event, and then only for keys every game carries at
+  the same price. A game-2 event that isn't listed yet, or a market only
+  one game has posted, prices neither game. `slate_match_report` counts
+  such games as unmatched. **Residual:** the live refresh
+  (`refresh_prices`, per row) can still bind a game-2 row to game 1's
+  event by matchup when game 2 is unlisted and the starts are within 8h.
+  Closing that needs slate context inside `refresh_prices` and is left
+  for a separate change.
 - `fetch_slate_prices` logs, per family, how many slate games matched and
   which did not.
 - The detail sheet's header and Model-vs-Market lines use the same
@@ -5793,5 +5801,13 @@ were fixed in the follow-up commit except where noted:
   the flat feeds. Neither feeds the customer site; `prop_snapshot` is raw
   archival capture. Also unchanged: the board call-site tests are still
   source-level only.
+
+**Independent review round 2** (head `40216581ed`): **GO** for code
+integration, conditional on the doubleheader note above. That condition is
+met by completing the board-path fix rather than only documenting it.
+Wording nit also fixed: the detail sheet reads "FanDuel: not posted yet",
+not "FanDuel: Not yet posted on FanDuel". The reviewer rechecked all 12
+round-1 findings (10 fixed, 2 disclosed residuals) and found no regressions
+from the fixes.
 
 Alligator
