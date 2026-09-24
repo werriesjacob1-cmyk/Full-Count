@@ -1,0 +1,179 @@
+{
+  "analysis": "NFL_LIVE_PASSING_YARDS_SHADOW_BOARD_AUDIT",
+  "availability": {
+    "bound_inactive_reports": 2,
+    "official_records": 8,
+    "quarantine_reason_counts": {},
+    "report_failures": [
+      {
+        "artifact": "inactive_report_83cd3ace52204cf3",
+        "failure_reason": "ValueError: inactive report contains no parsed player rows",
+        "outcome": "PARSE_OR_BIND_FAILED"
+      }
+    ]
+  },
+  "code_sha": "5f8f6949dc59707b1c270cc71dd17ae9253f735c",
+  "created_at": "2026-09-24T22:56:21Z",
+  "fan_duel": {
+    "events_discovered_total": 32,
+    "market_failures": [],
+    "normalized_primary_candidates": 2,
+    "pregame_target_events": 1,
+    "root_observed_at": "2026-09-24T22:56:20Z",
+    "target_sunday_events": 1
+  },
+  "identity": {
+    "binding_status_counts": {
+      "BOUND": 2
+    },
+    "excluded_unbound": [],
+    "excluded_unbound_count": 0,
+    "roster_sha256": "5baad53ef9bcb56485f71837a5acb3481128e388dc47925781a83613a760b5ab",
+    "team_candidate_counts": {
+      "ATL": 1,
+      "GB": 1
+    }
+  },
+  "model": {
+    "current_history_status_counts": {
+      "ELIGIBLE": 2
+    },
+    "decision_surface": "SHADOW_ONLY_OR_QUARANTINED",
+    "historical_benchmark_check": {
+      "2024": {
+        "mae": 70.83543371522094,
+        "n": 611
+      },
+      "2025": {
+        "mae": 72.41990815775257,
+        "n": 617
+      }
+    },
+    "name": "NFL_B0_ROLLING_PASSING_YARDS_V0",
+    "pooled_residual_n": 1228,
+    "public_selector_validated": false
+  },
+  "snapshot": {
+    "code_sha": "5f8f6949dc59707b1c270cc71dd17ae9253f735c",
+    "evidence_class": "PROSPECTIVE_SHADOW",
+    "record_count": 2,
+    "records": [
+      {
+        "availability_gate_pass": true,
+        "availability_status": "NOT_LISTED_INACTIVE",
+        "binding_contract_version": 1,
+        "binding_method": "exact_name+event_team+qb_position",
+        "binding_status": "BOUND",
+        "candidate_count": 1,
+        "captured_at": "2026-09-24T22:56:20Z",
+        "covered_report_count": 1,
+        "decision_status": "SHADOW_ONLY",
+        "esb_id": "LOV130776",
+        "event_away_team": "ATL",
+        "event_home_team": "GB",
+        "event_id": "36076208",
+        "event_name": "Atlanta Falcons @ Green Bay Packers",
+        "event_open_date": "2026-09-25T00:16:00.000Z",
+        "gsis_id": "00-0036264",
+        "line": 231.5,
+        "line_gap": -2.6999999999999886,
+        "market": "passing_yards",
+        "market_fair_over_probability": 0.5,
+        "market_fair_under_probability": 0.5,
+        "market_hold": 0.06103286384976525,
+        "market_id": "734.187454295",
+        "market_name": "Jordan Love - Passing Yds",
+        "market_time": "2026-09-25T00:16:00.000Z",
+        "market_type": "PLAYER_X_PASSING_YARDS_HIGH",
+        "model_history_n": 5,
+        "model_name": "NFL_B0_ROLLING_PASSING_YARDS_V0",
+        "model_over_probability": 0.47804878048780486,
+        "model_projection": 228.8,
+        "model_scoring_status": "SCORED",
+        "model_under_probability": 0.5219512195121951,
+        "observation_id": "fcnfl-shadow1:737d06745eb257aa64cf6855",
+        "over_odds": -113,
+        "over_selection_id": "40916512",
+        "player_name": "Jordan Love",
+        "prior_team": "GB",
+        "probability_method": "pooled_B0_empirical_residuals_laplace",
+        "projection": 228.8,
+        "quarantine_reasons": [],
+        "research_direction": "UNDER",
+        "research_edge": 0.02195121951219514,
+        "residual_n": 1228,
+        "role_continuity_gate_pass": true,
+        "role_continuity_status": "ROLE_CONTINUITY_CONFIRMED",
+        "roster_status": "ACT",
+        "source": "fanduel_nfl",
+        "source_payload_sha256": "0ee23f9d2d9a60f65e579dd7b83aea98077993a0ec306682658bbabc14dc802c",
+        "source_url": "https://sbapi.nj.sportsbook.fanduel.com/api/event-page?eventId=36076208&tab=passing-props&_ak=FhMFpcPWXMeyZxOx",
+        "team": "GB",
+        "under_odds": -113,
+        "under_selection_id": "40916527"
+      },
+      {
+        "availability_gate_pass": true,
+        "availability_status": "NOT_LISTED_INACTIVE",
+        "binding_contract_version": 1,
+        "binding_method": "exact_name+event_team+qb_position",
+        "binding_status": "BOUND",
+        "candidate_count": 1,
+        "captured_at": "2026-09-24T22:56:20Z",
+        "covered_report_count": 1,
+        "decision_status": "SHADOW_ONLY",
+        "esb_id": "PEN238127",
+        "event_away_team": "ATL",
+        "event_home_team": "GB",
+        "event_id": "36076208",
+        "event_name": "Atlanta Falcons @ Green Bay Packers",
+        "event_open_date": "2026-09-25T00:16:00.000Z",
+        "gsis_id": "00-0039917",
+        "line": 204.5,
+        "line_gap": 8.300000000000011,
+        "market": "passing_yards",
+        "market_fair_over_probability": 0.5,
+        "market_fair_under_probability": 0.5,
+        "market_hold": 0.06103286384976525,
+        "market_id": "734.187454319",
+        "market_name": "Michael Penix Jr. - Passing Yds",
+        "market_time": "2026-09-25T00:16:00.000Z",
+        "market_type": "PLAYER_X_PASSING_YARDS_MEDIUM",
+        "model_history_n": 5,
+        "model_name": "NFL_B0_ROLLING_PASSING_YARDS_V0",
+        "model_over_probability": 0.5284552845528455,
+        "model_projection": 212.8,
+        "model_scoring_status": "SCORED",
+        "model_under_probability": 0.4715447154471545,
+        "observation_id": "fcnfl-shadow1:f24589ad87ac25f06ddc7512",
+        "over_odds": -113,
+        "over_selection_id": "41155937",
+        "player_name": "Michael Penix Jr.",
+        "prior_team": "ATL",
+        "probability_method": "pooled_B0_empirical_residuals_laplace",
+        "projection": 212.8,
+        "quarantine_reasons": [],
+        "research_direction": "OVER",
+        "research_edge": 0.028455284552845517,
+        "residual_n": 1228,
+        "role_continuity_gate_pass": true,
+        "role_continuity_status": "ROLE_CONTINUITY_CONFIRMED",
+        "roster_status": "ACT",
+        "source": "fanduel_nfl",
+        "source_payload_sha256": "0ee23f9d2d9a60f65e579dd7b83aea98077993a0ec306682658bbabc14dc802c",
+        "source_url": "https://sbapi.nj.sportsbook.fanduel.com/api/event-page?eventId=36076208&tab=passing-props&_ak=FhMFpcPWXMeyZxOx",
+        "team": "ATL",
+        "under_odds": -113,
+        "under_selection_id": "41155938"
+      }
+    ],
+    "schema_version": 1,
+    "sealed_at": "2026-09-24T22:56:21Z",
+    "slate_date": "2026-09-24",
+    "snapshot_sha256": "eba692596c66b469a3dd9e4618d7b709f23be8a12cea500979a93a9e4a484e5e",
+    "source_vintage": "2026-09-24T22:56:20Z",
+    "sport": "NFL"
+  },
+  "status": "RESEARCH_ONLY_NO_PUBLICATION",
+  "target_local_date": "2026-09-24"
+}

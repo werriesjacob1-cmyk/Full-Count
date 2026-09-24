@@ -1,0 +1,175 @@
+{
+  "runs": [
+    {
+      "id": 36069701429,
+      "name": "NFL Live Receptions Shadow Board Audit",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "0f609115dbbc078d0da6a278172051087e45d53c",
+      "created_at": "2026-09-24T22:51:08Z",
+      "run_started_at": "2026-09-24T22:51:08Z",
+      "updated_at": "2026-09-24T22:52:13Z",
+      "html_url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36069701429",
+      "artifacts": [
+        {
+          "id": 10837941189,
+          "name": "nfl-live-receptions-shadow-board",
+          "created_at": "2026-09-24T22:52:10Z",
+          "size": 4358856,
+          "github_digest": "sha256:2c048848d1a9ecd0fb66c80647ea074f2a7c6a3f6d7c8e9732e218a5fbecec90",
+          "downloaded_sha256": "2c048848d1a9ecd0fb66c80647ea074f2a7c6a3f6d7c8e9732e218a5fbecec90",
+          "digest_match": true,
+          "boards": [
+            {
+              "file": "nfl-live-receptions-shadow-board.json",
+              "file_sha256": "c46d0fa5a8e9dc5be018c7afb5c38d93c5d694b70f5125bdc47b7def17fbbb09",
+              "status": "RESEARCH_ONLY_NO_PUBLICATION",
+              "code_sha": "0f609115dbbc078d0da6a278172051087e45d53c",
+              "sealed_at": "2026-09-24T22:52:07Z",
+              "source_vintage": "2026-09-24T22:52:07Z",
+              "snapshot_sha256": "2ce11c6767b95064637b6e974ac5ed20aab82511e9828a1c325648a0ea763ec8",
+              "slate_date": "2026-09-24",
+              "record_count": 10,
+              "decisions": {
+                "QUARANTINED": 10
+              },
+              "availability_status": {
+                "UNKNOWN_GAME_COVERAGE": 10
+              },
+              "players": [
+                "Austin Hooper",
+                "Chris Brooks",
+                "Christian Watson",
+                "Drake London",
+                "Jahan Dotson",
+                "Jonnu Smith",
+                "MarShawn Lloyd",
+                "Matthew Golden",
+                "Olamide Zaccheaus",
+                "Skyy Moore"
+              ],
+              "availability_block": {
+                "bound_inactive_reports": 1,
+                "official_records": 7,
+                "quarantine_reason_counts": {
+                  "INSUFFICIENT_HISTORY": 1,
+                  "UNKNOWN_GAME_COVERAGE": 10
+                },
+                "report_failures": [
+                  {
+                    "artifact": "inactive_report_83cd3ace52204cf3",
+                    "failure_reason": "ValueError: inactive report contains no parsed player rows",
+                    "outcome": "PARSE_OR_BIND_FAILED"
+                  }
+                ]
+              },
+              "quarantine_reasons": {
+                "UNKNOWN_GAME_COVERAGE": 10,
+                "INSUFFICIENT_HISTORY": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 36069703817,
+      "name": "NFL Live Passing-Yards Shadow Board Audit",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "0f609115dbbc078d0da6a278172051087e45d53c",
+      "created_at": "2026-09-24T22:51:09Z",
+      "run_started_at": "2026-09-24T22:51:09Z",
+      "updated_at": "2026-09-24T22:52:13Z",
+      "html_url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36069703817",
+      "artifacts": [
+        {
+          "id": 10837876483,
+          "name": "nfl-live-passing-yards-shadow-board",
+          "created_at": "2026-09-24T22:52:09Z",
+          "size": 4338664,
+          "github_digest": "sha256:98a2306e5654f9770263fb7ede8d1bf6123edfa5b6e3e7701127e04ae919f294",
+          "downloaded_sha256": "98a2306e5654f9770263fb7ede8d1bf6123edfa5b6e3e7701127e04ae919f294",
+          "digest_match": true,
+          "boards": [
+            {
+              "file": "nfl-live-passing-yards-shadow-board.json",
+              "file_sha256": "4a576328fed970a92db47ef8f60637cbef0b19c74ead976696abb44519c6d555",
+              "status": "RESEARCH_ONLY_NO_PUBLICATION",
+              "code_sha": "0f609115dbbc078d0da6a278172051087e45d53c",
+              "sealed_at": "2026-09-24T22:52:07Z",
+              "source_vintage": "2026-09-24T22:52:05Z",
+              "snapshot_sha256": "733e0b1bd33546637cc452002ba7f06fbdd17391822252d4a9b13a1281060069",
+              "slate_date": "2026-09-24",
+              "record_count": 2,
+              "decisions": {
+                "QUARANTINED": 2
+              },
+              "availability_status": {
+                "UNKNOWN_GAME_COVERAGE": 2
+              },
+              "players": [
+                "Jordan Love",
+                "Michael Penix Jr."
+              ],
+              "availability_block": {
+                "bound_inactive_reports": 1,
+                "official_records": 7,
+                "quarantine_reason_counts": {
+                  "UNKNOWN_GAME_COVERAGE": 2
+                },
+                "report_failures": [
+                  {
+                    "artifact": "inactive_report_83cd3ace52204cf3",
+                    "failure_reason": "ValueError: inactive report contains no parsed player rows",
+                    "outcome": "PARSE_OR_BIND_FAILED"
+                  }
+                ]
+              },
+              "quarantine_reasons": {
+                "UNKNOWN_GAME_COVERAGE": 2
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "capture": {
+    "returncode": 0,
+    "stdout_tail": "{\"status\": \"QUARANTINED_RESEARCH_CAPTURE\", \"failure\": null, \"counts\": {\"QUARANTINED\": 56}, \"snapshot_sha256\": \"52c5874ed6eb4280a94d5b8d4dd1b92cfaed1b40675b4ad91dbf2c5b68007260\"}\n",
+    "stderr_tail": ""
+  },
+  "integration_run": {
+    "returncode": 0,
+    "stdout_tail": "{\"counts\": {\"QUARANTINED\": 56}, \"seal\": \"4b5c9d877bb2e1e458941deb168bbc66815c2b6d157b7d444d262cbb382c0537\", \"b0_joined\": true}\n",
+    "stderr_tail": ""
+  },
+  "integration": {
+    "sha256": "ff644089a81578819b926a03c0293a369a5c56d4f74f3b42bdbc88487ad6e0c1",
+    "integration_sha256": "4b5c9d877bb2e1e458941deb168bbc66815c2b6d157b7d444d262cbb382c0537",
+    "b0_sealed_at": "2026-09-24T22:52:07Z",
+    "b0_snapshot_sha256": "2ce11c6767b95064637b6e974ac5ed20aab82511e9828a1c325648a0ea763ec8",
+    "capture_started_at": "2026-09-24T22:52:44Z",
+    "capture_snapshot_sha256": "52c5874ed6eb4280a94d5b8d4dd1b92cfaed1b40675b4ad91dbf2c5b68007260",
+    "counts": {
+      "QUARANTINED": 56
+    },
+    "n_records": 56,
+    "n_b0_joined": 0,
+    "n_bettable": 0,
+    "reasons": {
+      "AUTHORITATIVE_B0_NOT_JOINED": 56,
+      "BOOK_ACTION_RULES_NOT_CERTIFIED": 56,
+      "CURRENT_ROLE_NOT_VERIFIED": 56,
+      "NO_EXACT_PRIOR_B0_QUOTE_JOIN": 56,
+      "QUOTE_TIMESTAMP_NOT_PROVIDED": 56,
+      "UNKNOWN_GAME_COVERAGE": 56,
+      "UPSTREAM_ELIGIBILITY_NOT_CLEARED": 56,
+      "B0_PROBABILITY_UNSUPPORTED_FOR_THRESHOLD": 47
+    }
+  },
+  "b0_used": "2ce11c6767b95064637b6e974ac5ed20aab82511e9828a1c325648a0ea763ec8"
+}
