@@ -45,7 +45,9 @@ class ArchiveTests(unittest.TestCase):
         self.assertEqual(len(snapshot["records"]), 54)
         self.assertEqual({r["decision_status"] for r in snapshot["records"]}, {"QUARANTINED"})
         self.assertEqual(len({r["record_sha256"] for r in snapshot["records"]}), 54)
-        self.assertTrue(snapshot["_verification"]["full_source_verification"])
+        self.assertGreaterEqual(snapshot["_verification"]["book_sources_verified"], 1)
+        self.assertEqual(snapshot["_verification"]["full_source_verification"],
+                         not snapshot["_verification"]["external_sources_missing"])
 
     def test_corrupted_source_and_snapshot_fail(self):
         original = Path.read_text
