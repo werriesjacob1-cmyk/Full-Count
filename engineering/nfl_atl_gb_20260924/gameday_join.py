@@ -93,7 +93,7 @@ def main() -> int:
     if args.capture:
         receptions = [b for run in summary["runs"] for a in run["artifacts"] for b in a["boards"]
                       if "receptions" in b["file"]]
-        b0_path = next(args.out.glob("run_*receptions*/nfl-live-receptions-shadow-board.json"))
+        b0_path = next(p for r in args.runs for p in args.out.glob(f"run_{r}_*receptions*/nfl-live-receptions-shadow-board.json"))
         cap = args.out / f"capture_{args.tag}"
         integ = args.out / f"integration_{args.tag}.json"
         if cap.exists() or integ.exists():

@@ -19,3 +19,13 @@ Kickoff was 2026-09-25T00:15Z (7:15 pm CDT). This folder is research evidence on
 - **Passing yards:** its B0 is SHADOW_ONLY. It is priced only by its own workflow shadow scorer; Codex's receptions join does not cover it.
 - **Artifacts:** zip bytes were verified against GitHub's recorded digests (`summary_*.json`). The original artifacts are unmodified. Board JSONs and official inactive HTML are copied here.
 - **Large external CSVs:** the pinned nflverse CSVs are excluded and listed by SHA-256 in `capture_*/EXCLUDED_EXTERNAL_CSVS.sha256`.
+
+## Cycle 03 — final pre-lock (23:50Z trigger)
+- **Receptions:** run 36074758237 at code `11c038aadb`, sealed 23:51:55Z, snapshot `fc53cbeef986ffa0…`. 9 SHADOW_ONLY, 1 QUARANTINED (`INSUFFICIENT_HISTORY`).
+- **Passing yards:** run 36074760211 **failed, fail-closed, with no artifact.** FanDuel returned HTTP 403 in all 4 regions to the Actions runner at 23:51:57Z (`py_fail_36074760211.log`). The cycle-02 seal (22:56:21Z, 2 SHADOW_ONLY) remains the pregame passing-yards evidence.
+- **Capture:** `capture_03` started 23:52:07Z, 23 min before kickoff; snapshot `7eb4df50d1f62e11…`.
+- **Join:**
+  - `integration_03.json` was joined by mistake against the cycle-02 B0 (22:56:15Z). The runner's glob took the first run directory. It is still a valid prior-seal join, but it is not the pre-lock seal. The runner is fixed to select the B0 by run ID.
+  - `integration_03b.json` is the correct join against the pre-lock B0 (23:51:55Z): **9 joined, 0 bettable**, integration seal `b2509c7b16229b62…`.
+- **Quote stability:** none of the 9 primary quotes changed between 22:56Z and 23:52Z.
+- **Gates still blocking eligibility:** rules certification, current role, and quote-origin timestamp.

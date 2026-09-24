@@ -1,0 +1,823 @@
+﻿2026-09-24T23:51:06.9463548Z Current runner version: '2.337.0'
+2026-09-24T23:51:06.9483470Z ##[group]Runner Image Provisioner
+2026-09-24T23:51:06.9484333Z Hosted Compute Agent
+2026-09-24T23:51:06.9484859Z Version: 20260828.587
+2026-09-24T23:51:06.9485415Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-09-24T23:51:06.9486022Z Build Date: 2026-08-28T16:44:25Z
+2026-09-24T23:51:06.9486583Z Worker ID: {618eb979-e20b-46bb-87a6-0d8fe51d096b}
+2026-09-24T23:51:06.9487232Z Azure Region: mexicocentral
+2026-09-24T23:51:06.9487726Z ##[endgroup]
+2026-09-24T23:51:06.9488741Z ##[group]Operating System
+2026-09-24T23:51:06.9489306Z Ubuntu
+2026-09-24T23:51:06.9489730Z 24.04.5
+2026-09-24T23:51:06.9490197Z LTS
+2026-09-24T23:51:06.9490671Z ##[endgroup]
+2026-09-24T23:51:06.9491108Z ##[group]Runner Image
+2026-09-24T23:51:06.9491821Z Image: ubuntu-24.04
+2026-09-24T23:51:06.9492286Z Version: 20260920.314.1
+2026-09-24T23:51:06.9493401Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260920.314/images/ubuntu/Ubuntu2404-Readme.md
+2026-09-24T23:51:06.9494639Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260920.314
+2026-09-24T23:51:06.9495493Z ##[endgroup]
+2026-09-24T23:51:06.9496500Z ##[group]GITHUB_TOKEN Permissions
+2026-09-24T23:51:06.9498551Z Contents: read
+2026-09-24T23:51:06.9499035Z Metadata: read
+2026-09-24T23:51:06.9499534Z ##[endgroup]
+2026-09-24T23:51:06.9501488Z Secret source: Actions
+2026-09-24T23:51:06.9502598Z Cache mode: write
+2026-09-24T23:51:06.9503328Z Prepare workflow directory
+2026-09-24T23:51:06.9756989Z Prepare all required actions
+2026-09-24T23:51:06.9794397Z Getting action download info
+2026-09-24T23:51:07.2717061Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-09-24T23:51:07.3497325Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-09-24T23:51:07.4483755Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-09-24T23:51:07.6721635Z Complete job name: board
+2026-09-24T23:51:07.7293303Z ##[group]Run actions/checkout@v4
+2026-09-24T23:51:07.7293930Z with:
+2026-09-24T23:51:07.7294306Z   repository: werriesjacob1-cmyk/Full-Count
+2026-09-24T23:51:07.7297267Z   token: ***
+2026-09-24T23:51:07.7297605Z   ssh-strict: true
+2026-09-24T23:51:07.7297948Z   ssh-user: git
+2026-09-24T23:51:07.7298299Z   persist-credentials: true
+2026-09-24T23:51:07.7298683Z   clean: true
+2026-09-24T23:51:07.7299031Z   sparse-checkout-cone-mode: true
+2026-09-24T23:51:07.7299433Z   fetch-depth: 1
+2026-09-24T23:51:07.7299767Z   fetch-tags: false
+2026-09-24T23:51:07.7300154Z   show-progress: true
+2026-09-24T23:51:07.7300502Z   lfs: false
+2026-09-24T23:51:07.7300826Z   submodules: false
+2026-09-24T23:51:07.7301179Z   set-safe-directory: true
+2026-09-24T23:51:07.7301703Z   allow-unsafe-pr-checkout: false
+2026-09-24T23:51:07.7302256Z ##[endgroup]
+2026-09-24T23:51:07.8084897Z Syncing repository: werriesjacob1-cmyk/Full-Count
+2026-09-24T23:51:07.8087045Z ##[group]Getting Git version info
+2026-09-24T23:51:07.8088053Z Working directory is '/home/runner/work/Full-Count/Full-Count'
+2026-09-24T23:51:07.8089357Z [command]/usr/bin/git version
+2026-09-24T23:51:07.8196002Z git version 2.55.0
+2026-09-24T23:51:07.8213260Z ##[endgroup]
+2026-09-24T23:51:07.8225592Z Temporarily overriding HOME='/home/runner/work/_temp/30bb5998-dfd4-467c-a85f-d2e20bde5935' before making global git config changes
+2026-09-24T23:51:07.8227622Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-24T23:51:07.8230089Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Full-Count/Full-Count
+2026-09-24T23:51:07.8276057Z Deleting the contents of '/home/runner/work/Full-Count/Full-Count'
+2026-09-24T23:51:07.8280187Z ##[group]Initializing the repository
+2026-09-24T23:51:07.8284366Z [command]/usr/bin/git init /home/runner/work/Full-Count/Full-Count
+2026-09-24T23:51:07.8385204Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-24T23:51:07.8386911Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-24T23:51:07.8388123Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-24T23:51:07.8389051Z hint: call:
+2026-09-24T23:51:07.8389607Z hint:
+2026-09-24T23:51:07.8390242Z hint: 	git config --global init.defaultBranch <name>
+2026-09-24T23:51:07.8391028Z hint:
+2026-09-24T23:51:07.8391954Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-24T23:51:07.8393173Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-24T23:51:07.8394115Z hint:
+2026-09-24T23:51:07.8394646Z hint: 	git branch -m <name>
+2026-09-24T23:51:07.8395254Z hint:
+2026-09-24T23:51:07.8396046Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-24T23:51:07.8397389Z Initialized empty Git repository in /home/runner/work/Full-Count/Full-Count/.git/
+2026-09-24T23:51:07.8399801Z [command]/usr/bin/git remote add origin https://github.com/werriesjacob1-cmyk/Full-Count
+2026-09-24T23:51:07.8443816Z ##[endgroup]
+2026-09-24T23:51:07.8444500Z ##[group]Disabling automatic garbage collection
+2026-09-24T23:51:07.8447589Z [command]/usr/bin/git config --local gc.auto 0
+2026-09-24T23:51:07.8476492Z ##[endgroup]
+2026-09-24T23:51:07.8477130Z ##[group]Setting up auth
+2026-09-24T23:51:07.8482980Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-24T23:51:07.8511782Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-24T23:51:07.8835161Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-24T23:51:07.8867055Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-24T23:51:07.9055390Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-24T23:51:07.9085754Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-24T23:51:07.9281243Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-24T23:51:07.9315717Z ##[endgroup]
+2026-09-24T23:51:07.9316540Z ##[group]Fetching the repository
+2026-09-24T23:51:07.9323257Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +11c038aadb2b05ec47ee98967238660657432079:refs/remotes/origin/main
+2026-09-24T23:51:46.9895100Z From https://github.com/werriesjacob1-cmyk/Full-Count
+2026-09-24T23:51:46.9896967Z  * [new ref]         11c038aadb2b05ec47ee98967238660657432079 -> origin/main
+2026-09-24T23:51:46.9899753Z ##[endgroup]
+2026-09-24T23:51:46.9900390Z ##[group]Determining the checkout info
+2026-09-24T23:51:46.9901126Z ##[endgroup]
+2026-09-24T23:51:46.9906593Z [command]/usr/bin/git sparse-checkout disable
+2026-09-24T23:51:46.9956687Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-24T23:51:46.9984434Z ##[group]Checking out the ref
+2026-09-24T23:51:46.9987936Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-09-24T23:51:48.3515183Z Updating files:  51% (1507/2923)
+2026-09-24T23:51:48.6505764Z Updating files:  52% (1520/2923)
+2026-09-24T23:51:48.6601788Z Updating files:  53% (1550/2923)
+2026-09-24T23:51:48.6622949Z Updating files:  54% (1579/2923)
+2026-09-24T23:51:48.6658389Z Updating files:  55% (1608/2923)
+2026-09-24T23:51:48.6686155Z Updating files:  56% (1637/2923)
+2026-09-24T23:51:48.6706797Z Updating files:  57% (1667/2923)
+2026-09-24T23:51:48.6724986Z Updating files:  58% (1696/2923)
+2026-09-24T23:51:48.6743439Z Updating files:  59% (1725/2923)
+2026-09-24T23:51:48.6758427Z Updating files:  60% (1754/2923)
+2026-09-24T23:51:48.6774621Z Updating files:  61% (1784/2923)
+2026-09-24T23:51:48.6794948Z Updating files:  62% (1813/2923)
+2026-09-24T23:51:48.6815441Z Updating files:  63% (1842/2923)
+2026-09-24T23:51:48.6883617Z Updating files:  64% (1871/2923)
+2026-09-24T23:51:48.6897764Z Updating files:  65% (1900/2923)
+2026-09-24T23:51:48.7034450Z Updating files:  66% (1930/2923)
+2026-09-24T23:51:48.7170107Z Updating files:  67% (1959/2923)
+2026-09-24T23:51:48.8489400Z Updating files:  68% (1988/2923)
+2026-09-24T23:51:48.9538116Z Updating files:  69% (2017/2923)
+2026-09-24T23:51:48.9550140Z Updating files:  70% (2047/2923)
+2026-09-24T23:51:48.9564166Z Updating files:  71% (2076/2923)
+2026-09-24T23:51:48.9575201Z Updating files:  72% (2105/2923)
+2026-09-24T23:51:48.9639381Z Updating files:  73% (2134/2923)
+2026-09-24T23:51:48.9686224Z Updating files:  74% (2164/2923)
+2026-09-24T23:51:48.9742735Z Updating files:  75% (2193/2923)
+2026-09-24T23:51:48.9817891Z Updating files:  76% (2222/2923)
+2026-09-24T23:51:48.9908679Z Updating files:  77% (2251/2923)
+2026-09-24T23:51:49.0000043Z Updating files:  78% (2280/2923)
+2026-09-24T23:51:49.0032689Z Updating files:  79% (2310/2923)
+2026-09-24T23:51:49.0093042Z Updating files:  79% (2322/2923)
+2026-09-24T23:51:49.0187273Z Updating files:  80% (2339/2923)
+2026-09-24T23:51:49.0292954Z Updating files:  81% (2368/2923)
+2026-09-24T23:51:49.0393746Z Updating files:  82% (2397/2923)
+2026-09-24T23:51:49.0480824Z Updating files:  83% (2427/2923)
+2026-09-24T23:51:49.0592650Z Updating files:  84% (2456/2923)
+2026-09-24T23:51:49.0676289Z Updating files:  85% (2485/2923)
+2026-09-24T23:51:49.0690856Z Updating files:  86% (2514/2923)
+2026-09-24T23:51:49.0721959Z Updating files:  87% (2544/2923)
+2026-09-24T23:51:49.0787723Z Updating files:  88% (2573/2923)
+2026-09-24T23:51:49.0818690Z Updating files:  89% (2602/2923)
+2026-09-24T23:51:49.0855893Z Updating files:  90% (2631/2923)
+2026-09-24T23:51:49.1243065Z Updating files:  91% (2660/2923)
+2026-09-24T23:51:49.1397700Z Updating files:  92% (2690/2923)
+2026-09-24T23:51:49.1469959Z Updating files:  93% (2719/2923)
+2026-09-24T23:51:49.1571216Z Updating files:  94% (2748/2923)
+2026-09-24T23:51:49.1596044Z Updating files:  95% (2777/2923)
+2026-09-24T23:51:49.1615390Z Updating files:  96% (2807/2923)
+2026-09-24T23:51:49.1635905Z Updating files:  97% (2836/2923)
+2026-09-24T23:51:49.1656091Z Updating files:  98% (2865/2923)
+2026-09-24T23:51:49.1675458Z Updating files:  99% (2894/2923)
+2026-09-24T23:51:49.1675769Z Updating files: 100% (2923/2923)
+2026-09-24T23:51:49.1676042Z Updating files: 100% (2923/2923), done.
+2026-09-24T23:51:49.2823743Z Switched to a new branch 'main'
+2026-09-24T23:51:49.2829303Z branch 'main' set up to track 'origin/main'.
+2026-09-24T23:51:49.2884956Z ##[endgroup]
+2026-09-24T23:51:49.2926115Z [command]/usr/bin/git log -1 --format=%H
+2026-09-24T23:51:49.2949246Z 11c038aadb2b05ec47ee98967238660657432079
+2026-09-24T23:51:49.3283253Z ##[group]Run actions/setup-python@v5
+2026-09-24T23:51:49.3283485Z with:
+2026-09-24T23:51:49.3283652Z   python-version: 3.11
+2026-09-24T23:51:49.3283852Z   check-latest: false
+2026-09-24T23:51:49.3285644Z   token: ***
+2026-09-24T23:51:49.3285825Z   update-environment: true
+2026-09-24T23:51:49.3286020Z   allow-prereleases: false
+2026-09-24T23:51:49.3286199Z   freethreaded: false
+2026-09-24T23:51:49.3286376Z ##[endgroup]
+2026-09-24T23:51:49.4350174Z ##[group]Installed versions
+2026-09-24T23:51:49.4450331Z (node:2082) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-24T23:51:49.4451087Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-24T23:51:49.4451684Z Successfully set up CPython (3.11.16)
+2026-09-24T23:51:49.4452209Z ##[endgroup]
+2026-09-24T23:51:49.4641692Z ##[group]Run python3 -m pip install --upgrade pip
+2026-09-24T23:51:49.4642068Z [36;1mpython3 -m pip install --upgrade pip[0m
+2026-09-24T23:51:49.4642382Z [36;1mpython3 -m pip install -r nfl/requirements-nfl.txt[0m
+2026-09-24T23:51:49.4642686Z [36;1mpython3 -m pip install 'requests~=2.34.2'[0m
+2026-09-24T23:51:49.4959125Z shell: /usr/bin/bash -e {0}
+2026-09-24T23:51:49.4959350Z env:
+2026-09-24T23:51:49.4959585Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.16/x64
+2026-09-24T23:51:49.4959947Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.16/x64/lib/pkgconfig
+2026-09-24T23:51:49.4960285Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
+2026-09-24T23:51:49.4960584Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
+2026-09-24T23:51:49.4960878Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
+2026-09-24T23:51:49.4961175Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.16/x64/lib
+2026-09-24T23:51:49.4961432Z ##[endgroup]
+2026-09-24T23:51:50.8355608Z Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages (26.2.1)
+2026-09-24T23:51:51.9028560Z Collecting PyYAML~=6.0.2 (from -r nfl/requirements-nfl.txt (line 29))
+2026-09-24T23:51:51.9465184Z   Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+2026-09-24T23:51:52.1162713Z Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (806 kB)
+2026-09-24T23:51:52.4242750Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 806.6/806.6 kB 1.9 MB/s  0:00:00
+2026-09-24T23:51:52.4501717Z Installing collected packages: PyYAML
+2026-09-24T23:51:52.6128964Z Successfully installed PyYAML-6.0.3
+2026-09-24T23:51:52.9756321Z Collecting requests~=2.34.2
+2026-09-24T23:51:53.0127662Z   Downloading requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+2026-09-24T23:51:53.1160084Z Collecting charset_normalizer<4,>=2 (from requests~=2.34.2)
+2026-09-24T23:51:53.1192696Z   Downloading charset_normalizer-3.5.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (45 kB)
+2026-09-24T23:51:53.1352186Z Collecting idna<4,>=2.5 (from requests~=2.34.2)
+2026-09-24T23:51:53.1379814Z   Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+2026-09-24T23:51:53.1519696Z Collecting urllib3<3,>=1.26 (from requests~=2.34.2)
+2026-09-24T23:51:53.1552652Z   Downloading urllib3-2.8.0-py3-none-any.whl.metadata (7.4 kB)
+2026-09-24T23:51:53.1668081Z Collecting certifi>=2023.5.7 (from requests~=2.34.2)
+2026-09-24T23:51:53.1697548Z   Downloading certifi-2026.7.22-py3-none-any.whl.metadata (2.5 kB)
+2026-09-24T23:51:53.1763216Z Downloading requests-2.34.2-py3-none-any.whl (73 kB)
+2026-09-24T23:51:53.1969463Z Downloading charset_normalizer-3.5.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (262 kB)
+2026-09-24T23:51:53.2028768Z Downloading idna-3.20-py3-none-any.whl (69 kB)
+2026-09-24T23:51:53.2071961Z Downloading urllib3-2.8.0-py3-none-any.whl (135 kB)
+2026-09-24T23:51:53.2112726Z Downloading certifi-2026.7.22-py3-none-any.whl (136 kB)
+2026-09-24T23:51:53.2389200Z Installing collected packages: urllib3, idna, charset_normalizer, certifi, requests
+2026-09-24T23:51:53.3919395Z 
+2026-09-24T23:51:53.3928054Z Successfully installed certifi-2026.7.22 charset_normalizer-3.5.1 idna-3.20 requests-2.34.2 urllib3-2.8.0
+2026-09-24T23:51:53.4367252Z ##[group]Run PYTHONPATH=. python3 - <<'PY'
+2026-09-24T23:51:53.4368099Z [36;1mPYTHONPATH=. python3 - <<'PY'[0m
+2026-09-24T23:51:53.4368330Z [36;1mimport csv[0m
+2026-09-24T23:51:53.4368521Z [36;1mimport hashlib[0m
+2026-09-24T23:51:53.4368705Z [36;1mimport io[0m
+2026-09-24T23:51:53.4368878Z [36;1mimport json[0m
+2026-09-24T23:51:53.4369046Z [36;1mimport math[0m
+2026-09-24T23:51:53.4369211Z [36;1mimport os[0m
+2026-09-24T23:51:53.4369386Z [36;1mimport statistics[0m
+2026-09-24T23:51:53.4369613Z [36;1mfrom collections import Counter, defaultdict[0m
+2026-09-24T23:51:53.4369921Z [36;1mfrom datetime import datetime, timedelta, timezone[0m
+2026-09-24T23:51:53.4370198Z [36;1mfrom pathlib import Path[0m
+2026-09-24T23:51:53.4370429Z [36;1mfrom zoneinfo import ZoneInfo[0m
+2026-09-24T23:51:53.4370644Z [36;1m[0m
+2026-09-24T23:51:53.4370807Z [36;1mimport requests[0m
+2026-09-24T23:51:53.4371153Z [36;1m[0m
+2026-09-24T23:51:53.4371418Z [36;1mfrom nfl.archive.provenance import CHECKED_AND_FOUND, utcnow[0m
+2026-09-24T23:51:53.4372000Z [36;1mfrom nfl.archive.sources import fanduel_nfl, official_nfl[0m
+2026-09-24T23:51:53.4372350Z [36;1mfrom nfl.normalize.fanduel_passing import normalize_payload[0m
+2026-09-24T23:51:53.4372703Z [36;1mfrom nfl.normalize.inactive_roster_binding import bind_report[0m
+2026-09-24T23:51:53.4373086Z [36;1mfrom nfl.normalize.market_roster_binding import bind_passing_candidate[0m
+2026-09-24T23:51:53.4373456Z [36;1mfrom nfl.normalize.official_inactives import parse_report[0m
+2026-09-24T23:51:53.4373827Z [36;1mfrom nfl.normalize.pregame_availability import evaluate_candidate[0m
+2026-09-24T23:51:53.4374274Z [36;1mfrom nfl.prospective.shadow_snapshot import seal_snapshot, validate_pregame_timing[0m
+2026-09-24T23:51:53.4374681Z [36;1mfrom nfl.research import nflverse_history as nh[0m
+2026-09-24T23:51:53.4374975Z [36;1mfrom nfl.research.passing_yards_shadow import ([0m
+2026-09-24T23:51:53.4375240Z [36;1m    current_b0_projection,[0m
+2026-09-24T23:51:53.4375455Z [36;1m    role_continuity,[0m
+2026-09-24T23:51:53.4375658Z [36;1m    score_shadow_candidate,[0m
+2026-09-24T23:51:53.4375871Z [36;1m)[0m
+2026-09-24T23:51:53.4376029Z [36;1m[0m
+2026-09-24T23:51:53.4376198Z [36;1mCT = ZoneInfo("America/Chicago")[0m
+2026-09-24T23:51:53.4376436Z [36;1mtarget_override = str([0m
+2026-09-24T23:51:53.4376675Z [36;1m    os.environ.get("TARGET_LOCAL_DATE") or ""[0m
+2026-09-24T23:51:53.4376921Z [36;1m).strip()[0m
+2026-09-24T23:51:53.4377103Z [36;1mif target_override:[0m
+2026-09-24T23:51:53.4377312Z [36;1m    TARGET_DATE = target_override[0m
+2026-09-24T23:51:53.4377528Z [36;1melse:[0m
+2026-09-24T23:51:53.4377714Z [36;1m    local_today = datetime.now(CT).date()[0m
+2026-09-24T23:51:53.4377998Z [36;1m    days_until_sunday = (6 - local_today.weekday()) % 7[0m
+2026-09-24T23:51:53.4378260Z [36;1m    TARGET_DATE = ([0m
+2026-09-24T23:51:53.4378501Z [36;1m        local_today + timedelta(days=days_until_sunday)[0m
+2026-09-24T23:51:53.4378756Z [36;1m    ).isoformat()[0m
+2026-09-24T23:51:53.4378998Z [36;1mEVIDENCE_ROOT = Path("/tmp/nfl-shadow-evidence")[0m
+2026-09-24T23:51:53.4379339Z [36;1m(EVIDENCE_ROOT / "raw" / "fanduel").mkdir(parents=True, exist_ok=True)[0m
+2026-09-24T23:51:53.4379719Z [36;1m(EVIDENCE_ROOT / "raw" / "official_nfl").mkdir(parents=True, exist_ok=True)[0m
+2026-09-24T23:51:53.4380097Z [36;1m(EVIDENCE_ROOT / "model_sources").mkdir(parents=True, exist_ok=True)[0m
+2026-09-24T23:51:53.4380388Z [36;1mMIN_HISTORY = 3[0m
+2026-09-24T23:51:53.4380572Z [36;1m[0m
+2026-09-24T23:51:53.4380731Z [36;1mROSTER_URL = ([0m
+2026-09-24T23:51:53.4381042Z [36;1m    "https://github.com/nflverse/nflverse-data/releases/download/"[0m
+2026-09-24T23:51:53.4381368Z [36;1m    "rosters/roster_2026.csv"[0m
+2026-09-24T23:51:53.4381704Z [36;1m)[0m
+2026-09-24T23:51:53.4381868Z [36;1mPLAYER_SHA = {[0m
+2026-09-24T23:51:53.4382163Z [36;1m    2023: "f19cb71a5de0dce7fd09376026237c9ee9d5a93fe13815a2ea3ec2d37204cb17",[0m
+2026-09-24T23:51:53.4382774Z [36;1m    2024: "3ddc45a84f759aa348ce465ae001752c530575455717657cdfe1f8abfcdb4759",[0m
+2026-09-24T23:51:53.4383197Z [36;1m    2025: "e5e0615b3d96a3eaebfaee91e55afb4a4e7fe0caf057454177bcd7d6ad4bcfc2",[0m
+2026-09-24T23:51:53.4383507Z [36;1m}[0m
+2026-09-24T23:51:53.4383676Z [36;1mEXPECTED_B0 = {[0m
+2026-09-24T23:51:53.4383876Z [36;1m    2024: {"n": 611, "mae": 70.83543371522084},[0m
+2026-09-24T23:51:53.4384120Z [36;1m    2025: {"n": 617, "mae": 72.41990815775256},[0m
+2026-09-24T23:51:53.4384332Z [36;1m}[0m
+2026-09-24T23:51:53.4384480Z [36;1m[0m
+2026-09-24T23:51:53.4384647Z [36;1mdef parse_iso(value):[0m
+2026-09-24T23:51:53.4384892Z [36;1m    text = str(value or "").strip()[0m
+2026-09-24T23:51:53.4385152Z [36;1m    if not text:[0m
+2026-09-24T23:51:53.4385343Z [36;1m        return None[0m
+2026-09-24T23:51:53.4385527Z [36;1m    try:[0m
+2026-09-24T23:51:53.4385767Z [36;1m        return datetime.fromisoformat(text.replace("Z", "+00:00"))[0m
+2026-09-24T23:51:53.4386167Z [36;1m    except ValueError:[0m
+2026-09-24T23:51:53.4386366Z [36;1m        return None[0m
+2026-09-24T23:51:53.4386542Z [36;1m[0m
+2026-09-24T23:51:53.4386705Z [36;1mdef local_slate(value):[0m
+2026-09-24T23:51:53.4386915Z [36;1m    dt = parse_iso(value)[0m
+2026-09-24T23:51:53.4387122Z [36;1m    if dt is None:[0m
+2026-09-24T23:51:53.4387312Z [36;1m        return None[0m
+2026-09-24T23:51:53.4387498Z [36;1m    if dt.tzinfo is None:[0m
+2026-09-24T23:51:53.4387742Z [36;1m        dt = dt.replace(tzinfo=timezone.utc)[0m
+2026-09-24T23:51:53.4388010Z [36;1m    return dt.astimezone(CT).date().isoformat()[0m
+2026-09-24T23:51:53.4388248Z [36;1m[0m
+2026-09-24T23:51:53.4388400Z [36;1mdef finite(value):[0m
+2026-09-24T23:51:53.4388582Z [36;1m    try:[0m
+2026-09-24T23:51:53.4388752Z [36;1m        out = float(value)[0m
+2026-09-24T23:51:53.4388973Z [36;1m    except (TypeError, ValueError):[0m
+2026-09-24T23:51:53.4389201Z [36;1m        return None[0m
+2026-09-24T23:51:53.4389422Z [36;1m    return out if math.isfinite(out) else None[0m
+2026-09-24T23:51:53.4389647Z [36;1m[0m
+2026-09-24T23:51:53.4389809Z [36;1msession = requests.Session()[0m
+2026-09-24T23:51:53.4390031Z [36;1msession.headers.update({[0m
+2026-09-24T23:51:53.4390325Z [36;1m    "User-Agent": "Full-Count NFL live passing-yards shadow board audit"[0m
+2026-09-24T23:51:53.4390613Z [36;1m})[0m
+2026-09-24T23:51:53.4390765Z [36;1m[0m
+2026-09-24T23:51:53.4391045Z [36;1m# ---------- current roster: schema/sanity-validated, not byte-pinned ----------[0m
+2026-09-24T23:51:53.4391456Z [36;1m# `roster_2026.csv` is a LIVE, frequently-republished asset -- real[0m
+2026-09-24T23:51:53.4392022Z [36;1m# season transactions change its bytes continuously (this exact[0m
+2026-09-24T23:51:53.4392369Z [36;1m# workflow's own exact-byte pin drifted a 4th real time on[0m
+2026-09-24T23:51:53.4392706Z [36;1m# 2026-09-23, after already needing a manual re-pin on 2026-09-20).[0m
+2026-09-24T23:51:53.4393056Z [36;1m# An exact byte/sha256 pin is the right invariant for a FIXED[0m
+2026-09-24T23:51:53.4393411Z [36;1m# historical asset (see PLAYER_SHA below) -- it is the wrong[0m
+2026-09-24T23:51:53.4393755Z [36;1m# invariant for a living, intentionally-changing-every-week[0m
+2026-09-24T23:51:53.4394115Z [36;1m# roster, where drift from a stale prior-day pin is the expected,[0m
+2026-09-24T23:51:53.4394463Z [36;1m# healthy case, not a corruption signal. Mirrors the exact same[0m
+2026-09-24T23:51:53.4394804Z [36;1m# fix already proven in nfl-live-receptions-shadow-board.yml[0m
+2026-09-24T23:51:53.4395145Z [36;1m# (PR #178): schema/row-count/team-coverage sanity checks replace[0m
+2026-09-24T23:51:53.4395487Z [36;1m# the exact pin, preserving fail-closed behavior against genuine[0m
+2026-09-24T23:51:53.4395837Z [36;1m# corruption/truncation/schema breaks without requiring a human[0m
+2026-09-24T23:51:53.4396169Z [36;1m# to re-verify and re-pin a hash after every real roster[0m
+2026-09-24T23:51:53.4396442Z [36;1m# transaction.[0m
+2026-09-24T23:51:53.4396766Z [36;1mROSTER_REQUIRED_COLUMNS = {[0m
+2026-09-24T23:51:53.4397046Z [36;1m    "gsis_id", "team", "position", "status", "full_name", "esb_id",[0m
+2026-09-24T23:51:53.4397315Z [36;1m}[0m
+2026-09-24T23:51:53.4397480Z [36;1mMIN_ROSTER_ROWS = 1500[0m
+2026-09-24T23:51:53.4397681Z [36;1mMAX_ROSTER_ROWS = 4000[0m
+2026-09-24T23:51:53.4397884Z [36;1mMIN_ROSTER_TEAMS = 32[0m
+2026-09-24T23:51:53.4398074Z [36;1m[0m
+2026-09-24T23:51:53.4398258Z [36;1mrr = session.get(ROSTER_URL, timeout=60)[0m
+2026-09-24T23:51:53.4398492Z [36;1mrr.raise_for_status()[0m
+2026-09-24T23:51:53.4398737Z [36;1mroster_sha = hashlib.sha256(rr.content).hexdigest()[0m
+2026-09-24T23:51:53.4399038Z [36;1mroster = list(csv.DictReader(io.StringIO(rr.text)))[0m
+2026-09-24T23:51:53.4399294Z [36;1mif not roster:[0m
+2026-09-24T23:51:53.4399500Z [36;1m    raise SystemExit("empty 2026 roster")[0m
+2026-09-24T23:51:53.4399809Z [36;1mmissing_columns = ROSTER_REQUIRED_COLUMNS - set(roster[0].keys())[0m
+2026-09-24T23:51:53.4400206Z [36;1mif missing_columns:[0m
+2026-09-24T23:51:53.4400401Z [36;1m    raise SystemExit([0m
+2026-09-24T23:51:53.4400716Z [36;1m        f"2026 roster schema break: missing required columns {sorted(missing_columns)} "[0m
+2026-09-24T23:51:53.4401082Z [36;1m        f"(real columns: {sorted(roster[0].keys())})"[0m
+2026-09-24T23:51:53.4401319Z [36;1m    )[0m
+2026-09-24T23:51:53.4401652Z [36;1mif not (MIN_ROSTER_ROWS <= len(roster) <= MAX_ROSTER_ROWS):[0m
+2026-09-24T23:51:53.4401927Z [36;1m    raise SystemExit([0m
+2026-09-24T23:51:53.4402192Z [36;1m        f"2026 roster row count {len(roster)} outside plausible bounds "[0m
+2026-09-24T23:51:53.4402579Z [36;1m        f"[{MIN_ROSTER_ROWS}, {MAX_ROSTER_ROWS}] -- possible truncated/corrupt fetch"[0m
+2026-09-24T23:51:53.4402886Z [36;1m    )[0m
+2026-09-24T23:51:53.4403131Z [36;1mroster_teams = {str(r.get("team") or "").strip().upper() for r in roster}[0m
+2026-09-24T23:51:53.4403451Z [36;1mroster_teams.discard("")[0m
+2026-09-24T23:51:53.4403678Z [36;1mif len(roster_teams) < MIN_ROSTER_TEAMS:[0m
+2026-09-24T23:51:53.4403908Z [36;1m    raise SystemExit([0m
+2026-09-24T23:51:53.4404216Z [36;1m        f"2026 roster covers only {len(roster_teams)} teams, expected at least "[0m
+2026-09-24T23:51:53.4404589Z [36;1m        f"{MIN_ROSTER_TEAMS} -- possible truncated/corrupt fetch"[0m
+2026-09-24T23:51:53.4404853Z [36;1m    )[0m
+2026-09-24T23:51:53.4405085Z [36;1m(EVIDENCE_ROOT / "model_sources" / "roster_2026.csv").write_bytes([0m
+2026-09-24T23:51:53.4405362Z [36;1m    rr.content[0m
+2026-09-24T23:51:53.4405537Z [36;1m)[0m
+2026-09-24T23:51:53.4405696Z [36;1m[0m
+2026-09-24T23:51:53.4405909Z [36;1m# ---------- historical B0 calibration substrate ----------[0m
+2026-09-24T23:51:53.4406179Z [36;1mplayer_rows_by_season = {}[0m
+2026-09-24T23:51:53.4406387Z [36;1mall_history_rows = [][0m
+2026-09-24T23:51:53.4406578Z [36;1msource_meta = {}[0m
+2026-09-24T23:51:53.4406777Z [36;1mfor season in (2023, 2024, 2025):[0m
+2026-09-24T23:51:53.4407001Z [36;1m    url = nh.player_stats_url(season)[0m
+2026-09-24T23:51:53.4407254Z [36;1m    response = session.get(url, timeout=60)[0m
+2026-09-24T23:51:53.4407500Z [36;1m    response.raise_for_status()[0m
+2026-09-24T23:51:53.4407776Z [36;1m    digest = hashlib.sha256(response.content).hexdigest()[0m
+2026-09-24T23:51:53.4408053Z [36;1m    if digest != PLAYER_SHA[season]:[0m
+2026-09-24T23:51:53.4408282Z [36;1m        raise SystemExit([0m
+2026-09-24T23:51:53.4408511Z [36;1m            f"{season}: player source drift {digest}"[0m
+2026-09-24T23:51:53.4408747Z [36;1m        )[0m
+2026-09-24T23:51:53.4408971Z [36;1m    rows = list(csv.DictReader(io.StringIO(response.text)))[0m
+2026-09-24T23:51:53.4409235Z [36;1m    if not rows:[0m
+2026-09-24T23:51:53.4409467Z [36;1m        raise SystemExit(f"{season}: empty player source")[0m
+2026-09-24T23:51:53.4409844Z [36;1m    (EVIDENCE_ROOT / "model_sources" / f"stats_player_week_{season}.csv").write_bytes([0m
+2026-09-24T23:51:53.4410176Z [36;1m        response.content[0m
+2026-09-24T23:51:53.4410479Z [36;1m    )[0m
+2026-09-24T23:51:53.4410664Z [36;1m    player_rows_by_season[season] = rows[0m
+2026-09-24T23:51:53.4410912Z [36;1m    all_history_rows.extend(rows)[0m
+2026-09-24T23:51:53.4411136Z [36;1m    source_meta[str(season)] = {[0m
+2026-09-24T23:51:53.4411347Z [36;1m        "url": url,[0m
+2026-09-24T23:51:53.4411630Z [36;1m        "sha256": digest,[0m
+2026-09-24T23:51:53.4411840Z [36;1m        "rows": len(rows),[0m
+2026-09-24T23:51:53.4412036Z [36;1m    }[0m
+2026-09-24T23:51:53.4412196Z [36;1m[0m
+2026-09-24T23:51:53.4412360Z [36;1mbuilt = nh.build_prior_only_rows([0m
+2026-09-24T23:51:53.4412577Z [36;1m    all_history_rows,[0m
+2026-09-24T23:51:53.4412769Z [36;1m    rolling_window=5,[0m
+2026-09-24T23:51:53.4412952Z [36;1m)[0m
+2026-09-24T23:51:53.4413100Z [36;1m[0m
+2026-09-24T23:51:53.4413251Z [36;1mresiduals = [][0m
+2026-09-24T23:51:53.4413437Z [36;1mbenchmark_check = {}[0m
+2026-09-24T23:51:53.4413739Z [36;1mfor season in (2024, 2025):[0m
+2026-09-24T23:51:53.4413948Z [36;1m    scored = [][0m
+2026-09-24T23:51:53.4414144Z [36;1m    for row in built:[0m
+2026-09-24T23:51:53.4414353Z [36;1m        if int(row["season"]) != season:[0m
+2026-09-24T23:51:53.4414575Z [36;1m            continue[0m
+2026-09-24T23:51:53.4414782Z [36;1m        if str(row["season_type"]) != "REG":[0m
+2026-09-24T23:51:53.4415008Z [36;1m            continue[0m
+2026-09-24T23:51:53.4415252Z [36;1m        if str(row.get("position") or "").strip().upper() != "QB":[0m
+2026-09-24T23:51:53.4415520Z [36;1m            continue[0m
+2026-09-24T23:51:53.4415740Z [36;1m        if int(row.get("history_n") or 0) < MIN_HISTORY:[0m
+2026-09-24T23:51:53.4415988Z [36;1m            continue[0m
+2026-09-24T23:51:53.4416201Z [36;1m        features = row.get("features") or {}[0m
+2026-09-24T23:51:53.4416476Z [36;1m        attempts = finite(features.get("rolling_attempts"))[0m
+2026-09-24T23:51:53.4416808Z [36;1m        prediction = finite(features.get("rolling_passing_yards"))[0m
+2026-09-24T23:51:53.4417161Z [36;1m        actual = finite((row.get("target") or {}).get("passing_yards"))[0m
+2026-09-24T23:51:53.4417488Z [36;1m        if attempts is None or attempts <= 0:[0m
+2026-09-24T23:51:53.4417719Z [36;1m            continue[0m
+2026-09-24T23:51:53.4417933Z [36;1m        if prediction is None or actual is None:[0m
+2026-09-24T23:51:53.4418172Z [36;1m            continue[0m
+2026-09-24T23:51:53.4418379Z [36;1m        scored.append((prediction, actual))[0m
+2026-09-24T23:51:53.4418639Z [36;1m        residuals.append(actual - prediction)[0m
+2026-09-24T23:51:53.4418862Z [36;1m[0m
+2026-09-24T23:51:53.4419072Z [36;1m    mae = statistics.fmean(abs(p - a) for p, a in scored)[0m
+2026-09-24T23:51:53.4419353Z [36;1m    expected = EXPECTED_B0[season][0m
+2026-09-24T23:51:53.4419585Z [36;1m    if len(scored) != expected["n"]:[0m
+2026-09-24T23:51:53.4419815Z [36;1m        raise SystemExit([0m
+2026-09-24T23:51:53.4420093Z [36;1m            f"{season}: B0 population drift {len(scored)} != {expected['n']}"[0m
+2026-09-24T23:51:53.4420379Z [36;1m        )[0m
+2026-09-24T23:51:53.4420556Z [36;1m    if not math.isclose([0m
+2026-09-24T23:51:53.4420753Z [36;1m        mae,[0m
+2026-09-24T23:51:53.4420932Z [36;1m        expected["mae"],[0m
+2026-09-24T23:51:53.4421131Z [36;1m        rel_tol=0.0,[0m
+2026-09-24T23:51:53.4421323Z [36;1m        abs_tol=1e-9,[0m
+2026-09-24T23:51:53.4421633Z [36;1m    ):[0m
+2026-09-24T23:51:53.4421804Z [36;1m        raise SystemExit([0m
+2026-09-24T23:51:53.4422059Z [36;1m            f"{season}: B0 MAE drift {mae} != {expected['mae']}"[0m
+2026-09-24T23:51:53.4422316Z [36;1m        )[0m
+2026-09-24T23:51:53.4422506Z [36;1m    benchmark_check[str(season)] = {[0m
+2026-09-24T23:51:53.4422731Z [36;1m        "n": len(scored),[0m
+2026-09-24T23:51:53.4422926Z [36;1m        "mae": mae,[0m
+2026-09-24T23:51:53.4423109Z [36;1m    }[0m
+2026-09-24T23:51:53.4423271Z [36;1m[0m
+2026-09-24T23:51:53.4423436Z [36;1mif len(residuals) != 1228:[0m
+2026-09-24T23:51:53.4423774Z [36;1m    raise SystemExit([0m
+2026-09-24T23:51:53.4424033Z [36;1m        f"pooled B0 residual population drift: {len(residuals)}"[0m
+2026-09-24T23:51:53.4424294Z [36;1m    )[0m
+2026-09-24T23:51:53.4424450Z [36;1m[0m
+2026-09-24T23:51:53.4424701Z [36;1m# Current player history for Sunday projection. 2025 POST appearances[0m
+2026-09-24T23:51:53.4425052Z [36;1m# remain legitimate prior information for 2026 Week 1.[0m
+2026-09-24T23:51:53.4425333Z [36;1mprior_by_player = defaultdict(list)[0m
+2026-09-24T23:51:53.4425580Z [36;1mfor row in player_rows_by_season[2025]:[0m
+2026-09-24T23:51:53.4425866Z [36;1m    player_id = str(row.get("player_id") or "").strip()[0m
+2026-09-24T23:51:53.4426128Z [36;1m    if not player_id:[0m
+2026-09-24T23:51:53.4426321Z [36;1m        continue[0m
+2026-09-24T23:51:53.4426537Z [36;1m    attempts = finite(row.get("attempts"))[0m
+2026-09-24T23:51:53.4426910Z [36;1m    yards = finite(row.get("passing_yards"))[0m
+2026-09-24T23:51:53.4427164Z [36;1m    week = finite(row.get("week"))[0m
+2026-09-24T23:51:53.4427431Z [36;1m    if attempts is None or yards is None or week is None:[0m
+2026-09-24T23:51:53.4427693Z [36;1m        continue[0m
+2026-09-24T23:51:53.4427898Z [36;1m    prior_by_player[player_id].append({[0m
+2026-09-24T23:51:53.4428134Z [36;1m        "season": 2025,[0m
+2026-09-24T23:51:53.4428335Z [36;1m        "week": int(week),[0m
+2026-09-24T23:51:53.4428584Z [36;1m        "season_type": str(row.get("season_type") or ""),[0m
+2026-09-24T23:51:53.4428841Z [36;1m        "attempts": attempts,[0m
+2026-09-24T23:51:53.4429069Z [36;1m        "passing_yards": yards,[0m
+2026-09-24T23:51:53.4429325Z [36;1m        "team": str(row.get("team") or "").strip().upper(),[0m
+2026-09-24T23:51:53.4429572Z [36;1m    })[0m
+2026-09-24T23:51:53.4429759Z [36;1mfor rows in prior_by_player.values():[0m
+2026-09-24T23:51:53.4429986Z [36;1m    rows.sort([0m
+2026-09-24T23:51:53.4430178Z [36;1m        key=lambda x: ([0m
+2026-09-24T23:51:53.4430378Z [36;1m            x["season"],[0m
+2026-09-24T23:51:53.4430576Z [36;1m            x["week"],[0m
+2026-09-24T23:51:53.4430775Z [36;1m            x["season_type"],[0m
+2026-09-24T23:51:53.4430976Z [36;1m        )[0m
+2026-09-24T23:51:53.4431137Z [36;1m    )[0m
+2026-09-24T23:51:53.4431289Z [36;1m[0m
+2026-09-24T23:51:53.4431621Z [36;1m# ---------- live FanDuel primary passing-yards state ----------[0m
+2026-09-24T23:51:53.4431944Z [36;1mroot = fanduel_nfl._fetch_first_healthy_host([0m
+2026-09-24T23:51:53.4432190Z [36;1m    "root_nfl_page",[0m
+2026-09-24T23:51:53.4432510Z [36;1m    f"content-managed-page?page=CUSTOM&customPageId=nfl&_ak={fanduel_nfl.AK}",[0m
+2026-09-24T23:51:53.4432866Z [36;1m    {"feed": "nfl root", "audit": "shadow_board"},[0m
+2026-09-24T23:51:53.4433102Z [36;1m    session,[0m
+2026-09-24T23:51:53.4433275Z [36;1m)[0m
+2026-09-24T23:51:53.4433455Z [36;1mif root.outcome != CHECKED_AND_FOUND:[0m
+2026-09-24T23:51:53.4433690Z [36;1m    raise SystemExit([0m
+2026-09-24T23:51:53.4433968Z [36;1m        f"FanDuel root not conclusive: {root.outcome} {root.failure_reason}"[0m
+2026-09-24T23:51:53.4434261Z [36;1m    )[0m
+2026-09-24T23:51:53.4434416Z [36;1m[0m
+2026-09-24T23:51:53.4434660Z [36;1m(EVIDENCE_ROOT / "raw" / "fanduel" / "root_nfl_page.json").write_bytes([0m
+2026-09-24T23:51:53.4434947Z [36;1m    root.body[0m
+2026-09-24T23:51:53.4435117Z [36;1m)[0m
+2026-09-24T23:51:53.4435328Z [36;1mdiscovered = fanduel_nfl.discover_events(root.body)[0m
+2026-09-24T23:51:53.4435588Z [36;1mslate_events = [[0m
+2026-09-24T23:51:53.4435784Z [36;1m    event for event in discovered[0m
+2026-09-24T23:51:53.4436051Z [36;1m    if local_slate(event.get("open_date")) == TARGET_DATE[0m
+2026-09-24T23:51:53.4436298Z [36;1m][0m
+2026-09-24T23:51:53.4436493Z [36;1mroot_observed_dt = parse_iso(root.observed_at)[0m
+2026-09-24T23:51:53.4436750Z [36;1mif root_observed_dt is None:[0m
+2026-09-24T23:51:53.4436962Z [36;1m    raise SystemExit([0m
+2026-09-24T23:51:53.4437356Z [36;1m        f"unparseable FanDuel observation time: {root.observed_at}"[0m
+2026-09-24T23:51:53.4437641Z [36;1m    )[0m
+2026-09-24T23:51:53.4437809Z [36;1msunday_events = [][0m
+2026-09-24T23:51:53.4438010Z [36;1mfor event in slate_events:[0m
+2026-09-24T23:51:53.4438253Z [36;1m    event_dt = parse_iso(event.get("open_date"))[0m
+2026-09-24T23:51:53.4438498Z [36;1m    if event_dt is None:[0m
+2026-09-24T23:51:53.4438701Z [36;1m        continue[0m
+2026-09-24T23:51:53.4438901Z [36;1m    if event_dt > root_observed_dt:[0m
+2026-09-24T23:51:53.4439133Z [36;1m        sunday_events.append(event)[0m
+2026-09-24T23:51:53.4439351Z [36;1mif not sunday_events:[0m
+2026-09-24T23:51:53.4439548Z [36;1m    raise SystemExit([0m
+2026-09-24T23:51:53.4439809Z [36;1m        f"no pregame FanDuel events remain for CT date {TARGET_DATE}"[0m
+2026-09-24T23:51:53.4440081Z [36;1m    )[0m
+2026-09-24T23:51:53.4440236Z [36;1m[0m
+2026-09-24T23:51:53.4440490Z [36;1mnormalized = [][0m
+2026-09-24T23:51:53.4440680Z [36;1mmarket_failures = [][0m
+2026-09-24T23:51:53.4440890Z [36;1mfor event in sunday_events:[0m
+2026-09-24T23:51:53.4441117Z [36;1m    event_id = event["event_id"][0m
+2026-09-24T23:51:53.4441328Z [36;1m    ctx = {[0m
+2026-09-24T23:51:53.4441597Z [36;1m        "event_id": event_id,[0m
+2026-09-24T23:51:53.4441825Z [36;1m        "event_name": event["name"],[0m
+2026-09-24T23:51:53.4442072Z [36;1m        "open_date": event.get("open_date"),[0m
+2026-09-24T23:51:53.4442304Z [36;1m        "audit": "shadow_board",[0m
+2026-09-24T23:51:53.4442505Z [36;1m    }[0m
+2026-09-24T23:51:53.4442709Z [36;1m    baseline = fanduel_nfl._fetch_first_healthy_host([0m
+2026-09-24T23:51:53.4442975Z [36;1m        f"event_{event_id}_no_tab",[0m
+2026-09-24T23:51:53.4443259Z [36;1m        f"event-page?eventId={event_id}&_ak={fanduel_nfl.AK}",[0m
+2026-09-24T23:51:53.4443536Z [36;1m        {**ctx, "tab": None},[0m
+2026-09-24T23:51:53.4443738Z [36;1m        session,[0m
+2026-09-24T23:51:53.4443918Z [36;1m    )[0m
+2026-09-24T23:51:53.4444137Z [36;1m    baseline_ids = fanduel_nfl._market_ids(baseline.body)[0m
+2026-09-24T23:51:53.4444438Z [36;1m    passing = fanduel_nfl._fetch_first_healthy_host([0m
+2026-09-24T23:51:53.4444718Z [36;1m        f"event_{event_id}_tab_passing-props",[0m
+2026-09-24T23:51:53.4444950Z [36;1m        ([0m
+2026-09-24T23:51:53.4445174Z [36;1m            f"event-page?eventId={event_id}&tab=passing-props"[0m
+2026-09-24T23:51:53.4445460Z [36;1m            f"&_ak={fanduel_nfl.AK}"[0m
+2026-09-24T23:51:53.4445671Z [36;1m        ),[0m
+2026-09-24T23:51:53.4445862Z [36;1m        {**ctx, "tab": "passing-props"},[0m
+2026-09-24T23:51:53.4446089Z [36;1m        session,[0m
+2026-09-24T23:51:53.4446269Z [36;1m    )[0m
+2026-09-24T23:51:53.4446462Z [36;1m    passing = fanduel_nfl._classify_tab_payload([0m
+2026-09-24T23:51:53.4446703Z [36;1m        passing,[0m
+2026-09-24T23:51:53.4446886Z [36;1m        baseline_ids,[0m
+2026-09-24T23:51:53.4447072Z [36;1m    )[0m
+2026-09-24T23:51:53.4447269Z [36;1m    if passing.outcome != CHECKED_AND_FOUND:[0m
+2026-09-24T23:51:53.4447512Z [36;1m        market_failures.append({[0m
+2026-09-24T23:51:53.4447739Z [36;1m            "event_id": str(event_id),[0m
+2026-09-24T23:51:53.4447976Z [36;1m            "event_name": event["name"],[0m
+2026-09-24T23:51:53.4448215Z [36;1m            "outcome": passing.outcome,[0m
+2026-09-24T23:51:53.4448471Z [36;1m            "failure_reason": passing.failure_reason,[0m
+2026-09-24T23:51:53.4448729Z [36;1m            "context": passing.context,[0m
+2026-09-24T23:51:53.4448937Z [36;1m        })[0m
+2026-09-24T23:51:53.4449100Z [36;1m        continue[0m
+2026-09-24T23:51:53.4449290Z [36;1m    payload_path = ([0m
+2026-09-24T23:51:53.4449501Z [36;1m        EVIDENCE_ROOT / "raw" / "fanduel"[0m
+2026-09-24T23:51:53.4449753Z [36;1m        / f"event_{event_id}_passing-props.json"[0m
+2026-09-24T23:51:53.4449981Z [36;1m    )[0m
+2026-09-24T23:51:53.4450168Z [36;1m    payload_path.write_bytes(passing.body)[0m
+2026-09-24T23:51:53.4450573Z [36;1m    payload_sha = hashlib.sha256(passing.body).hexdigest()[0m
+2026-09-24T23:51:53.4450870Z [36;1m    payload = json.loads(passing.body)[0m
+2026-09-24T23:51:53.4451115Z [36;1m    result = normalize_payload([0m
+2026-09-24T23:51:53.4451330Z [36;1m        payload,[0m
+2026-09-24T23:51:53.4451637Z [36;1m        captured_at=passing.observed_at,[0m
+2026-09-24T23:51:53.4451868Z [36;1m    )[0m
+2026-09-24T23:51:53.4452061Z [36;1m    for candidate in result["candidates"]:[0m
+2026-09-24T23:51:53.4452343Z [36;1m        candidate["source_payload_sha256"] = payload_sha[0m
+2026-09-24T23:51:53.4452627Z [36;1m        candidate["source_url"] = passing.url[0m
+2026-09-24T23:51:53.4452893Z [36;1m    normalized.extend(result["candidates"])[0m
+2026-09-24T23:51:53.4453138Z [36;1m    if result["rejections"]:[0m
+2026-09-24T23:51:53.4453359Z [36;1m        market_failures.extend([[0m
+2026-09-24T23:51:53.4453578Z [36;1m            {[0m
+2026-09-24T23:51:53.4453891Z [36;1m                "event_id": str(event_id),[0m
+2026-09-24T23:51:53.4454137Z [36;1m                "event_name": event["name"],[0m
+2026-09-24T23:51:53.4454392Z [36;1m                "outcome": "NORMALIZER_REJECTION",[0m
+2026-09-24T23:51:53.4454628Z [36;1m                **rej,[0m
+2026-09-24T23:51:53.4454821Z [36;1m            }[0m
+2026-09-24T23:51:53.4455014Z [36;1m            for rej in result["rejections"][0m
+2026-09-24T23:51:53.4455230Z [36;1m        ])[0m
+2026-09-24T23:51:53.4455396Z [36;1m[0m
+2026-09-24T23:51:53.4455640Z [36;1m# De-duplicate exact market observations in case upstream discovery[0m
+2026-09-24T23:51:53.4455954Z [36;1m# repeated one event.[0m
+2026-09-24T23:51:53.4456149Z [36;1muniq = {}[0m
+2026-09-24T23:51:53.4456327Z [36;1mfor row in normalized:[0m
+2026-09-24T23:51:53.4456521Z [36;1m    key = ([0m
+2026-09-24T23:51:53.4456699Z [36;1m        row["event_id"],[0m
+2026-09-24T23:51:53.4456902Z [36;1m        row["market_id"],[0m
+2026-09-24T23:51:53.4457114Z [36;1m        row["player_name"],[0m
+2026-09-24T23:51:53.4457319Z [36;1m        row["line"],[0m
+2026-09-24T23:51:53.4457507Z [36;1m    )[0m
+2026-09-24T23:51:53.4457675Z [36;1m    if key in uniq:[0m
+2026-09-24T23:51:53.4457935Z [36;1m        raise SystemExit(f"duplicate normalized market: {key}")[0m
+2026-09-24T23:51:53.4458214Z [36;1m    uniq[key] = row[0m
+2026-09-24T23:51:53.4458419Z [36;1mnormalized = list(uniq.values())[0m
+2026-09-24T23:51:53.4458629Z [36;1m[0m
+2026-09-24T23:51:53.4458812Z [36;1m# ---------- durable identity ----------[0m
+2026-09-24T23:51:53.4459041Z [36;1mbound = [[0m
+2026-09-24T23:51:53.4459250Z [36;1m    bind_passing_candidate(c, roster, season=2026)[0m
+2026-09-24T23:51:53.4459500Z [36;1m    for c in normalized[0m
+2026-09-24T23:51:53.4459693Z [36;1m][0m
+2026-09-24T23:51:53.4459868Z [36;1mbinding_counts = Counter([0m
+2026-09-24T23:51:53.4460107Z [36;1m    row["binding_status"] for row in bound[0m
+2026-09-24T23:51:53.4460331Z [36;1m)[0m
+2026-09-24T23:51:53.4460485Z [36;1m[0m
+2026-09-24T23:51:53.4460730Z [36;1m# Explicit ambiguity guard: multiple primary passing-yards QBs for[0m
+2026-09-24T23:51:53.4461110Z [36;1m# the same team are market-role ambiguity, never silent starter proof.[0m
+2026-09-24T23:51:53.4461418Z [36;1mteam_candidate_counts = Counter([0m
+2026-09-24T23:51:53.4461752Z [36;1m    row["team"][0m
+2026-09-24T23:51:53.4461936Z [36;1m    for row in bound[0m
+2026-09-24T23:51:53.4462200Z [36;1m    if row["binding_status"] == "BOUND" and row.get("team")[0m
+2026-09-24T23:51:53.4462456Z [36;1m)[0m
+2026-09-24T23:51:53.4462605Z [36;1m[0m
+2026-09-24T23:51:53.4462802Z [36;1m# ---------- live official inactive reports ----------[0m
+2026-09-24T23:51:53.4463119Z [36;1mofficial_records = official_nfl.capture(session=session)[0m
+2026-09-24T23:51:53.4463392Z [36;1mbound_reports = [][0m
+2026-09-24T23:51:53.4463594Z [36;1mreport_failures = [][0m
+2026-09-24T23:51:53.4463797Z [36;1mfor record in official_records:[0m
+2026-09-24T23:51:53.4464074Z [36;1m    if not record.artifact.startswith("inactive_report_"):[0m
+2026-09-24T23:51:53.4464486Z [36;1m        continue[0m
+2026-09-24T23:51:53.4464737Z [36;1m    if record.outcome != CHECKED_AND_FOUND or not record.body:[0m
+2026-09-24T23:51:53.4465020Z [36;1m        report_failures.append({[0m
+2026-09-24T23:51:53.4465252Z [36;1m            "artifact": record.artifact,[0m
+2026-09-24T23:51:53.4465490Z [36;1m            "outcome": record.outcome,[0m
+2026-09-24T23:51:53.4465746Z [36;1m            "failure_reason": record.failure_reason,[0m
+2026-09-24T23:51:53.4465984Z [36;1m        })[0m
+2026-09-24T23:51:53.4466155Z [36;1m        continue[0m
+2026-09-24T23:51:53.4466334Z [36;1m    try:[0m
+2026-09-24T23:51:53.4466503Z [36;1m        safe_name = "".join([0m
+2026-09-24T23:51:53.4466757Z [36;1m            ch if ch.isalnum() or ch in "._-" else "_"[0m
+2026-09-24T23:51:53.4467026Z [36;1m            for ch in record.artifact[0m
+2026-09-24T23:51:53.4483962Z [36;1m        )[0m
+2026-09-24T23:51:53.4484496Z [36;1m        (EVIDENCE_ROOT / "raw" / "official_nfl" / f"{safe_name}.html").write_bytes([0m
+2026-09-24T23:51:53.4484842Z [36;1m            record.body[0m
+2026-09-24T23:51:53.4485047Z [36;1m        )[0m
+2026-09-24T23:51:53.4485248Z [36;1m        parsed = parse_report(record.body)[0m
+2026-09-24T23:51:53.4485500Z [36;1m        rebound = bind_report([0m
+2026-09-24T23:51:53.4485711Z [36;1m            parsed,[0m
+2026-09-24T23:51:53.4485907Z [36;1m            roster,[0m
+2026-09-24T23:51:53.4486095Z [36;1m            season=2026,[0m
+2026-09-24T23:51:53.4486292Z [36;1m        )[0m
+2026-09-24T23:51:53.4486510Z [36;1m        rebound["report_observed_at"] = record.observed_at[0m
+2026-09-24T23:51:53.4486790Z [36;1m        bound_reports.append(rebound)[0m
+2026-09-24T23:51:53.4487022Z [36;1m    except Exception as exc:[0m
+2026-09-24T23:51:53.4487241Z [36;1m        report_failures.append({[0m
+2026-09-24T23:51:53.4487474Z [36;1m            "artifact": record.artifact,[0m
+2026-09-24T23:51:53.4487728Z [36;1m            "outcome": "PARSE_OR_BIND_FAILED",[0m
+2026-09-24T23:51:53.4488014Z [36;1m            "failure_reason": f"{type(exc).__name__}: {exc}",[0m
+2026-09-24T23:51:53.4488273Z [36;1m        })[0m
+2026-09-24T23:51:53.4488444Z [36;1m[0m
+2026-09-24T23:51:53.4488681Z [36;1m# ---------- projection, score, availability, quarantine ----------[0m
+2026-09-24T23:51:53.4488978Z [36;1msnapshot_records = [][0m
+2026-09-24T23:51:53.4489177Z [36;1mexcluded_unbound = [][0m
+2026-09-24T23:51:53.4489380Z [36;1mquarantine_counts = Counter()[0m
+2026-09-24T23:51:53.4489595Z [36;1mhistory_counts = Counter()[0m
+2026-09-24T23:51:53.4489789Z [36;1m[0m
+2026-09-24T23:51:53.4489950Z [36;1mfor row in bound:[0m
+2026-09-24T23:51:53.4490163Z [36;1m    if row["binding_status"] != "BOUND":[0m
+2026-09-24T23:51:53.4490409Z [36;1m        excluded_unbound.append(row)[0m
+2026-09-24T23:51:53.4490628Z [36;1m        continue[0m
+2026-09-24T23:51:53.4490803Z [36;1m[0m
+2026-09-24T23:51:53.4490983Z [36;1m    availability = evaluate_candidate([0m
+2026-09-24T23:51:53.4491206Z [36;1m        row,[0m
+2026-09-24T23:51:53.4491384Z [36;1m        bound_reports,[0m
+2026-09-24T23:51:53.4491675Z [36;1m    )[0m
+2026-09-24T23:51:53.4491846Z [36;1m    quarantine_reasons = [][0m
+2026-09-24T23:51:53.4492091Z [36;1m    if not availability["availability_gate_pass"]:[0m
+2026-09-24T23:51:53.4492358Z [36;1m        quarantine_reasons.append([0m
+2026-09-24T23:51:53.4492604Z [36;1m            availability["availability_status"][0m
+2026-09-24T23:51:53.4492832Z [36;1m        )[0m
+2026-09-24T23:51:53.4493027Z [36;1m    if team_candidate_counts[row["team"]] != 1:[0m
+2026-09-24T23:51:53.4493265Z [36;1m        quarantine_reasons.append([0m
+2026-09-24T23:51:53.4493496Z [36;1m            "MULTIPLE_PRIMARY_QBS_SAME_TEAM"[0m
+2026-09-24T23:51:53.4493714Z [36;1m        )[0m
+2026-09-24T23:51:53.4493893Z [36;1m[0m
+2026-09-24T23:51:53.4494049Z [36;1m    projection = None[0m
+2026-09-24T23:51:53.4494250Z [36;1m    score = None[0m
+2026-09-24T23:51:53.4494582Z [36;1m    history = prior_by_player.get(row["gsis_id"], [])[0m
+2026-09-24T23:51:53.4494852Z [36;1m    role_state = role_continuity([0m
+2026-09-24T23:51:53.4495071Z [36;1m        row["team"],[0m
+2026-09-24T23:51:53.4495256Z [36;1m        history,[0m
+2026-09-24T23:51:53.4495429Z [36;1m    )[0m
+2026-09-24T23:51:53.4495631Z [36;1m    if not role_state["role_continuity_gate_pass"]:[0m
+2026-09-24T23:51:53.4495889Z [36;1m        quarantine_reasons.append([0m
+2026-09-24T23:51:53.4496126Z [36;1m            role_state["role_continuity_status"][0m
+2026-09-24T23:51:53.4496359Z [36;1m        )[0m
+2026-09-24T23:51:53.4496520Z [36;1m    try:[0m
+2026-09-24T23:51:53.4496728Z [36;1m        projection_info = current_b0_projection(history)[0m
+2026-09-24T23:51:53.4497029Z [36;1m        projection = float(projection_info["projection"])[0m
+2026-09-24T23:51:53.4497304Z [36;1m        history_counts["ELIGIBLE"] += 1[0m
+2026-09-24T23:51:53.4497636Z [36;1m        score = score_shadow_candidate([0m
+2026-09-24T23:51:53.4497874Z [36;1m            projection=projection,[0m
+2026-09-24T23:51:53.4498099Z [36;1m            line=row["line"],[0m
+2026-09-24T23:51:53.4498315Z [36;1m            over_odds=row["over_odds"],[0m
+2026-09-24T23:51:53.4498555Z [36;1m            under_odds=row["under_odds"],[0m
+2026-09-24T23:51:53.4498782Z [36;1m            residuals=residuals,[0m
+2026-09-24T23:51:53.4498981Z [36;1m        )[0m
+2026-09-24T23:51:53.4499156Z [36;1m    except ValueError:[0m
+2026-09-24T23:51:53.4499391Z [36;1m        history_counts["INSUFFICIENT_HISTORY"] += 1[0m
+2026-09-24T23:51:53.4499682Z [36;1m        quarantine_reasons.append("INSUFFICIENT_HISTORY")[0m
+2026-09-24T23:51:53.4499929Z [36;1m[0m
+2026-09-24T23:51:53.4500081Z [36;1m    decision = ([0m
+2026-09-24T23:51:53.4500261Z [36;1m        "SHADOW_ONLY"[0m
+2026-09-24T23:51:53.4500503Z [36;1m        if not quarantine_reasons and score is not None[0m
+2026-09-24T23:51:53.4500763Z [36;1m        else "QUARANTINED"[0m
+2026-09-24T23:51:53.4500956Z [36;1m    )[0m
+2026-09-24T23:51:53.4501134Z [36;1m    for reason in quarantine_reasons:[0m
+2026-09-24T23:51:53.4501375Z [36;1m        quarantine_counts[reason] += 1[0m
+2026-09-24T23:51:53.4501675Z [36;1m[0m
+2026-09-24T23:51:53.4501823Z [36;1m    record = {[0m
+2026-09-24T23:51:53.4501998Z [36;1m        **row,[0m
+2026-09-24T23:51:53.4502175Z [36;1m        **availability,[0m
+2026-09-24T23:51:53.4502393Z [36;1m        "decision_status": decision,[0m
+2026-09-24T23:51:53.4502683Z [36;1m        "quarantine_reasons": sorted(set(quarantine_reasons)),[0m
+2026-09-24T23:51:53.4502998Z [36;1m        "model_name": "NFL_B0_ROLLING_PASSING_YARDS_V0",[0m
+2026-09-24T23:51:53.4503260Z [36;1m        "model_projection": projection,[0m
+2026-09-24T23:51:53.4503488Z [36;1m        "model_history_n": ([0m
+2026-09-24T23:51:53.4503771Z [36;1m            min(len(history), 5) if projection is not None else len(history)[0m
+2026-09-24T23:51:53.4504093Z [36;1m        ),[0m
+2026-09-24T23:51:53.4504276Z [36;1m        "model_scoring_status": ([0m
+2026-09-24T23:51:53.4504525Z [36;1m            "SCORED" if score is not None else "NOT_SCORED"[0m
+2026-09-24T23:51:53.4504769Z [36;1m        ),[0m
+2026-09-24T23:51:53.4504936Z [36;1m        **role_state,[0m
+2026-09-24T23:51:53.4505117Z [36;1m    }[0m
+2026-09-24T23:51:53.4505278Z [36;1m    if score is not None:[0m
+2026-09-24T23:51:53.4505483Z [36;1m        record.update(score)[0m
+2026-09-24T23:51:53.4505754Z [36;1m        # score helper is hard-coded SHADOW_ONLY; final decision may[0m
+2026-09-24T23:51:53.4506086Z [36;1m        # still be QUARANTINED by identity/availability gates.[0m
+2026-09-24T23:51:53.4506370Z [36;1m        record["decision_status"] = decision[0m
+2026-09-24T23:51:53.4506588Z [36;1m[0m
+2026-09-24T23:51:53.4506765Z [36;1m    snapshot_records.append(record)[0m
+2026-09-24T23:51:53.4506979Z [36;1m[0m
+2026-09-24T23:51:53.4507130Z [36;1msealed_at = utcnow()[0m
+2026-09-24T23:51:53.4507371Z [36;1mvalidate_pregame_timing(snapshot_records, sealed_at)[0m
+2026-09-24T23:51:53.4507744Z [36;1msource_vintage = ([0m
+2026-09-24T23:51:53.4507930Z [36;1m    max([0m
+2026-09-24T23:51:53.4508089Z [36;1m        ([0m
+2026-09-24T23:51:53.4508274Z [36;1m            str(r.get("captured_at") or "")[0m
+2026-09-24T23:51:53.4508510Z [36;1m            for r in snapshot_records[0m
+2026-09-24T23:51:53.4508730Z [36;1m        ),[0m
+2026-09-24T23:51:53.4508903Z [36;1m        default=sealed_at,[0m
+2026-09-24T23:51:53.4509097Z [36;1m    )[0m
+2026-09-24T23:51:53.4509246Z [36;1m    or sealed_at[0m
+2026-09-24T23:51:53.4509411Z [36;1m)[0m
+2026-09-24T23:51:53.4509573Z [36;1msnapshot = seal_snapshot([0m
+2026-09-24T23:51:53.4509772Z [36;1m    snapshot_records,[0m
+2026-09-24T23:51:53.4509966Z [36;1m    slate_date=TARGET_DATE,[0m
+2026-09-24T23:51:53.4510201Z [36;1m    code_sha=os.environ["FULL_COUNT_CODE_SHA"],[0m
+2026-09-24T23:51:53.4510454Z [36;1m    source_vintage=source_vintage,[0m
+2026-09-24T23:51:53.4510778Z [36;1m    sealed_at=sealed_at,[0m
+2026-09-24T23:51:53.4510967Z [36;1m)[0m
+2026-09-24T23:51:53.4511118Z [36;1m[0m
+2026-09-24T23:51:53.4511270Z [36;1mboard = {[0m
+2026-09-24T23:51:53.4511576Z [36;1m    "analysis": "NFL_LIVE_PASSING_YARDS_SHADOW_BOARD_AUDIT",[0m
+2026-09-24T23:51:53.4511880Z [36;1m    "status": "RESEARCH_ONLY_NO_PUBLICATION",[0m
+2026-09-24T23:51:53.4512119Z [36;1m    "created_at": sealed_at,[0m
+2026-09-24T23:51:53.4512353Z [36;1m    "code_sha": os.environ["FULL_COUNT_CODE_SHA"],[0m
+2026-09-24T23:51:53.4512607Z [36;1m    "target_local_date": TARGET_DATE,[0m
+2026-09-24T23:51:53.4512824Z [36;1m    "fan_duel": {[0m
+2026-09-24T23:51:53.4513038Z [36;1m        "root_observed_at": root.observed_at,[0m
+2026-09-24T23:51:53.4513300Z [36;1m        "events_discovered_total": len(discovered),[0m
+2026-09-24T23:51:53.4513571Z [36;1m        "target_sunday_events": len(slate_events),[0m
+2026-09-24T23:51:53.4513837Z [36;1m        "pregame_target_events": len(sunday_events),[0m
+2026-09-24T23:51:53.4514128Z [36;1m        "normalized_primary_candidates": len(normalized),[0m
+2026-09-24T23:51:53.4514404Z [36;1m        "market_failures": market_failures,[0m
+2026-09-24T23:51:53.4514620Z [36;1m    },[0m
+2026-09-24T23:51:53.4514780Z [36;1m    "identity": {[0m
+2026-09-24T23:51:53.4514983Z [36;1m        "roster_sha256": roster_sha,[0m
+2026-09-24T23:51:53.4515239Z [36;1m        "binding_status_counts": dict(binding_counts),[0m
+2026-09-24T23:51:53.4515530Z [36;1m        "team_candidate_counts": dict(team_candidate_counts),[0m
+2026-09-24T23:51:53.4515823Z [36;1m        "excluded_unbound_count": len(excluded_unbound),[0m
+2026-09-24T23:51:53.4516088Z [36;1m        "excluded_unbound": excluded_unbound,[0m
+2026-09-24T23:51:53.4516304Z [36;1m    },[0m
+2026-09-24T23:51:53.4516460Z [36;1m    "model": {[0m
+2026-09-24T23:51:53.4516663Z [36;1m        "name": "NFL_B0_ROLLING_PASSING_YARDS_V0",[0m
+2026-09-24T23:51:53.4516937Z [36;1m        "historical_benchmark_check": benchmark_check,[0m
+2026-09-24T23:51:53.4517214Z [36;1m        "pooled_residual_n": len(residuals),[0m
+2026-09-24T23:51:53.4517503Z [36;1m        "current_history_status_counts": dict(history_counts),[0m
+2026-09-24T23:51:53.4517794Z [36;1m        "public_selector_validated": False,[0m
+2026-09-24T23:51:53.4518067Z [36;1m        "decision_surface": "SHADOW_ONLY_OR_QUARANTINED",[0m
+2026-09-24T23:51:53.4518315Z [36;1m    },[0m
+2026-09-24T23:51:53.4518475Z [36;1m    "availability": {[0m
+2026-09-24T23:51:53.4518700Z [36;1m        "official_records": len(official_records),[0m
+2026-09-24T23:51:53.4518967Z [36;1m        "bound_inactive_reports": len(bound_reports),[0m
+2026-09-24T23:51:53.4519230Z [36;1m        "report_failures": report_failures,[0m
+2026-09-24T23:51:53.4519505Z [36;1m        "quarantine_reason_counts": dict(quarantine_counts),[0m
+2026-09-24T23:51:53.4519753Z [36;1m    },[0m
+2026-09-24T23:51:53.4519914Z [36;1m    "snapshot": snapshot,[0m
+2026-09-24T23:51:53.4520097Z [36;1m}[0m
+2026-09-24T23:51:53.4520248Z [36;1m[0m
+2026-09-24T23:51:53.4520601Z [36;1mpath = EVIDENCE_ROOT / "nfl-live-passing-yards-shadow-board.json"[0m
+2026-09-24T23:51:53.4520936Z [36;1mwith path.open("w", encoding="utf-8") as f:[0m
+2026-09-24T23:51:53.4521201Z [36;1m    json.dump(board, f, indent=2, sort_keys=True)[0m
+2026-09-24T23:51:53.4521437Z [36;1m[0m
+2026-09-24T23:51:53.4521676Z [36;1mprint(json.dumps({[0m
+2026-09-24T23:51:53.4521877Z [36;1m    "target_local_date": TARGET_DATE,[0m
+2026-09-24T23:51:53.4522120Z [36;1m    "target_events_total": len(slate_events),[0m
+2026-09-24T23:51:53.4522388Z [36;1m    "pregame_target_events": len(sunday_events),[0m
+2026-09-24T23:51:53.4522646Z [36;1m    "primary_candidates": len(normalized),[0m
+2026-09-24T23:51:53.4522898Z [36;1m    "binding_status_counts": dict(binding_counts),[0m
+2026-09-24T23:51:53.4523160Z [36;1m    "history_status_counts": dict(history_counts),[0m
+2026-09-24T23:51:53.4523424Z [36;1m    "bound_inactive_reports": len(bound_reports),[0m
+2026-09-24T23:51:53.4523811Z [36;1m    "quarantine_reason_counts": dict(quarantine_counts),[0m
+2026-09-24T23:51:53.4524079Z [36;1m    "decision_counts": dict(Counter([0m
+2026-09-24T23:51:53.4524339Z [36;1m        r["decision_status"] for r in snapshot["records"][0m
+2026-09-24T23:51:53.4524577Z [36;1m    )),[0m
+2026-09-24T23:51:53.4524772Z [36;1m    "snapshot_sha256": snapshot["snapshot_sha256"],[0m
+2026-09-24T23:51:53.4525033Z [36;1m    "record_count": snapshot["record_count"],[0m
+2026-09-24T23:51:53.4525266Z [36;1m}, indent=2, sort_keys=True))[0m
+2026-09-24T23:51:53.4525461Z [36;1mPY[0m
+2026-09-24T23:51:53.4584020Z shell: /usr/bin/bash -e {0}
+2026-09-24T23:51:53.4584227Z env:
+2026-09-24T23:51:53.4584448Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.16/x64
+2026-09-24T23:51:53.4584785Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.16/x64/lib/pkgconfig
+2026-09-24T23:51:53.4585107Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
+2026-09-24T23:51:53.4585399Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
+2026-09-24T23:51:53.4585693Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
+2026-09-24T23:51:53.4585973Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.16/x64/lib
+2026-09-24T23:51:53.4586279Z   FULL_COUNT_CODE_SHA: 11c038aadb2b05ec47ee98967238660657432079
+2026-09-24T23:51:53.4586540Z   TARGET_LOCAL_DATE: 2026-09-24
+2026-09-24T23:51:53.4586725Z ##[endgroup]
+2026-09-24T23:51:57.0530245Z FanDuel root not conclusive: SOURCE_FAILED all 4 FanDuel regions failed -- sbapi.nj: HTTP 403 -- AMBIGUOUS: cannot distinguish the origin refusing automated access from an egress/network policy refusing the host. Requires review before concluding the source is unusable. | sbapi.pa: HTTP 403 -- AMBIGUOUS: cannot distinguish the origin refusing automated access from an egress/network policy refusing the host. Requires review before concluding the source is unusable. | sbapi.az: HTTP 403 -- AMBIGUOUS: cannot distinguish the origin refusing automated access from an egress/network policy refusing the host. Requires review before concluding the source is unusable. | sbapi.co: HTTP 403 -- AMBIGUOUS: cannot distinguish the origin refusing automated access from an egress/network policy refusing the host. Requires review before concluding the source is unusable.
+2026-09-24T23:51:57.3098464Z ##[error]Process completed with exit code 1.
+2026-09-24T23:51:57.3215828Z Post job cleanup.
+2026-09-24T23:51:57.3909701Z [command]/usr/bin/git version
+2026-09-24T23:51:57.3944443Z git version 2.55.0
+2026-09-24T23:51:57.3972343Z Temporarily overriding HOME='/home/runner/work/_temp/e5851e0e-1ad7-4ee1-81f3-1e1529c4d343' before making global git config changes
+2026-09-24T23:51:57.3973556Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-24T23:51:57.3976463Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Full-Count/Full-Count
+2026-09-24T23:51:57.4008223Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-24T23:51:57.4037318Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-24T23:51:57.4247298Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-24T23:51:57.4271712Z http.https://github.com/.extraheader
+2026-09-24T23:51:57.4287304Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-09-24T23:51:57.4320345Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-24T23:51:57.4543940Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-24T23:51:57.4574891Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-24T23:51:57.4895333Z Cleaning up orphan processes
+2026-09-24T23:51:57.5129953Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
