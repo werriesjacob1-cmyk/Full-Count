@@ -1,0 +1,228 @@
+{
+  "status": "LOCKED_HOLDOUT_PER_PREREGISTRATION",
+  "holdout_seasons": [
+    2019,
+    2020,
+    2021,
+    2022
+  ],
+  "min_week": 8,
+  "n_paired_rows": 10961,
+  "n_players": 712,
+  "abstain_by_season": {
+    "2019": {
+      "B0_INSUFFICIENT_HISTORY": 240,
+      "NO_MATCHUP_ROW": 94,
+      "EXISTING_ENGINE_CATCH_RATE_OUT_OF_RANGE": 12
+    },
+    "2020": {
+      "B0_INSUFFICIENT_HISTORY": 181,
+      "EXISTING_ENGINE_TARGET_SHARE_OUT_OF_RANGE": 3,
+      "EXISTING_ENGINE_CATCH_RATE_OUT_OF_RANGE": 10
+    },
+    "2021": {
+      "B0_INSUFFICIENT_HISTORY": 251,
+      "EXISTING_ENGINE_CATCH_RATE_OUT_OF_RANGE": 20
+    },
+    "2022": {
+      "B0_INSUFFICIENT_HISTORY": 208,
+      "EXISTING_ENGINE_CATCH_RATE_OUT_OF_RANGE": 14,
+      "EXISTING_ENGINE_TARGET_SHARE_OUT_OF_RANGE": 1
+    }
+  },
+  "primary": {
+    "metric": "receptions MAE, C1 minus B0",
+    "point": -0.03339183336973221,
+    "ci95": [
+      -0.045573485117989615,
+      -0.02104414266216892
+    ],
+    "n_rows": 10961,
+    "n_clusters": 712,
+    "n_resamples": 2000,
+    "seed": 20260924,
+    "verdict": "CONFIRMED_IMPROVEMENT_OVER_B0"
+  },
+  "secondary_differences": {
+    "c1_minus_existing_unadjusted": {
+      "point": -0.11226548312397176,
+      "ci95": [
+        -0.12483436170128759,
+        -0.10026995916488478
+      ],
+      "n_rows": 10961,
+      "n_clusters": 712,
+      "n_resamples": 2000,
+      "seed": 20260924
+    },
+    "c1_minus_existing_full_engine": {
+      "point": -0.35754495261888825,
+      "ci95": [
+        -0.3997278034320033,
+        -0.31648450104565395
+      ],
+      "n_rows": 10961,
+      "n_clusters": 712,
+      "n_resamples": 2000,
+      "seed": 20260924
+    }
+  },
+  "models": {
+    "b0": {
+      "mae": 1.3873414834412918,
+      "bias": 0.029880181248669528,
+      "poisson_brier_lines_1p5_to_6p5": 0.12389557439308906,
+      "poisson_log_score": 4.190063780718362
+    },
+    "existing_unadjusted": {
+      "mae": 1.4662151331955315,
+      "bias": 0.4307701941686822,
+      "poisson_brier_lines_1p5_to_6p5": 0.12768175159697542,
+      "poisson_log_score": 1.8734618892174788
+    },
+    "existing_full_engine": {
+      "mae": 1.7114946026904472,
+      "bias": 0.7529455417011147,
+      "poisson_brier_lines_1p5_to_6p5": 0.1506492171493603,
+      "poisson_log_score": 2.0347089595279946
+    },
+    "c1_unit_consistent": {
+      "mae": 1.3539496500715595,
+      "bias": -0.016614713268999062,
+      "poisson_brier_lines_1p5_to_6p5": 0.12026758860376757,
+      "poisson_log_score": 1.8387609294645502
+    }
+  },
+  "by_group": {
+    "position_RB": {
+      "n": 3251,
+      "b0_mae": 1.2546088383061622,
+      "c1_mae": 1.2206823872399406,
+      "c1_minus_b0": -0.03392645106622161
+    },
+    "position_TE": {
+      "n": 2566,
+      "b0_mae": 1.235743050142894,
+      "c1_mae": 1.2172984830300624,
+      "c1_minus_b0": -0.01844456711283171
+    },
+    "position_WR": {
+      "n": 5144,
+      "b0_mae": 1.546850699844479,
+      "c1_mae": 1.5063405455019785,
+      "c1_minus_b0": -0.040510154342500604
+    },
+    "season_2019": {
+      "n": 2486,
+      "b0_mae": 1.4045052292839904,
+      "c1_mae": 1.3932512462416,
+      "c1_minus_b0": -0.011253983042390336
+    },
+    "season_2020": {
+      "n": 2702,
+      "b0_mae": 1.384708857636319,
+      "c1_mae": 1.3515957866460362,
+      "c1_minus_b0": -0.03311307099028271
+    },
+    "season_2021": {
+      "n": 2869,
+      "b0_mae": 1.4127919135587312,
+      "c1_mae": 1.3780109051140161,
+      "c1_minus_b0": -0.0347810084447151
+    },
+    "season_2022": {
+      "n": 2904,
+      "b0_mae": 1.3499540863177228,
+      "c1_mae": 1.2987239717589687,
+      "c1_minus_b0": -0.05123011455875415
+    },
+    "share_0.10_to_0.20": {
+      "n": 3522,
+      "b0_mae": 1.6541406397879992,
+      "c1_mae": 1.619577286754972,
+      "c1_minus_b0": -0.034563353033027155
+    },
+    "share_ge_0.20": {
+      "n": 1476,
+      "b0_mae": 2.145313911472448,
+      "c1_mae": 2.0324824707881954,
+      "c1_minus_b0": -0.11283144068425255
+    },
+    "share_lt_0.10": {
+      "n": 5963,
+      "b0_mae": 1.0421404214880654,
+      "c1_mae": 1.0291039382190135,
+      "c1_minus_b0": -0.013036483269051935
+    }
+  },
+  "prediction_change_c1_vs_unadjusted": {
+    "n": 10961,
+    "mean_ratio_c1_over_unadjusted": 0.8410406641564322,
+    "p05": 0.7725856697819314,
+    "p50": 0.8421052631578948,
+    "p95": 0.9035532994923858
+  },
+  "provenance": {
+    "player_weeks_2018": {
+      "url": "https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_2018.csv",
+      "rows_sha256": "1841e641b63b567eba541e3e23638ec229a9ba8c4fe818050e0fff4db2592018"
+    },
+    "team_offense_2018": {
+      "source": "PBP_SOURCE_ASSET_DIGESTS[2018]",
+      "rows_sha256": "7adab2c4e49c9ca4b605919dd3e0e3903baab9cba9bf3b6e11cc522a252c16d4"
+    },
+    "player_weeks_2019": {
+      "url": "https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_2019.csv",
+      "rows_sha256": "15cde78e9107ecda8f493413ad9825fcd93a0af4a71321fb90e681418a7e97f9"
+    },
+    "team_offense_2019": {
+      "source": "PBP_SOURCE_ASSET_DIGESTS[2019]",
+      "rows_sha256": "c1049843280dd159259aebcf2591576708eb9f77741a64f0d37455843dcb1159"
+    },
+    "player_weeks_2020": {
+      "url": "https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_2020.csv",
+      "rows_sha256": "c550215014e0f71c2edce05eef89c12e2baaa9ad012ac5b9622b99bf9e404d0a"
+    },
+    "team_offense_2020": {
+      "source": "PBP_SOURCE_ASSET_DIGESTS[2020]",
+      "rows_sha256": "53a7a66213e6888a81da8a2f258c814f5c03ed91c9e856ae467e5c64d46ce02a"
+    },
+    "player_weeks_2021": {
+      "url": "https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_2021.csv",
+      "rows_sha256": "144ba1385c51752f8fb0774083f32cd62d37a5bd807923cee796c8f72222ae7e"
+    },
+    "team_offense_2021": {
+      "source": "PBP_SOURCE_ASSET_DIGESTS[2021]",
+      "rows_sha256": "d2b74a26e0c3012cc2f9cf6485fd04f2a8167dfe12d4cdd31a7fdfd27a918984"
+    },
+    "player_weeks_2022": {
+      "url": "https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_2022.csv",
+      "rows_sha256": "7eb0b4e9fbe9ad49be045100ba9a87468c79529f075325606297c59b85c4e24f"
+    },
+    "team_offense_2022": {
+      "source": "PBP_SOURCE_ASSET_DIGESTS[2022]",
+      "rows_sha256": "50043368b70a060a8de30546c0073affc84fb697ca08276bb62433bfc568734c"
+    },
+    "snap_counts_2018": {
+      "source": "SNAP_SOURCE_ASSET_DIGESTS[2018] via fetch_snap_count_rows",
+      "rows_sha256": "9f9d839d4cc0544cc7f77c65f78ebacae4fcd9aecaca96d1e3fb4f87cadaf35c"
+    },
+    "snap_counts_2019": {
+      "source": "SNAP_SOURCE_ASSET_DIGESTS[2019] via fetch_snap_count_rows",
+      "rows_sha256": "31ae7379e0e09c0081226e872dc2429abc572826f905df904a68b0ad59ede834"
+    },
+    "snap_counts_2020": {
+      "source": "SNAP_SOURCE_ASSET_DIGESTS[2020] via fetch_snap_count_rows",
+      "rows_sha256": "51ceb77ec536c26a7e4ea208acbb67e40ccc2fac83cb429d835ace292cc8876b"
+    },
+    "snap_counts_2021": {
+      "source": "SNAP_SOURCE_ASSET_DIGESTS[2021] via fetch_snap_count_rows",
+      "rows_sha256": "5cdec2b5d593dcb5f88bd500194f76ee00c377297ba0f55244d72100a492d1d4"
+    },
+    "snap_counts_2022": {
+      "source": "SNAP_SOURCE_ASSET_DIGESTS[2022] via fetch_snap_count_rows",
+      "rows_sha256": "4bc6b22cc66293a925f7947bf5bd02764eaf9c50f75eb3405d72f71cad05101b"
+    }
+  },
+  "generated_in_seconds": 8.0
+}
