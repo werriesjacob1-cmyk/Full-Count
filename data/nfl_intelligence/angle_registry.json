@@ -221,7 +221,8 @@
       "dependencies": [],
       "owner": null,
       "active_workstream": null,
-      "last_reviewed": "2026-09-18"
+      "last_reviewed": "2026-09-18",
+      "code_evidence": "research: nfl/research/qb_continuity_features.py, qb_availability_gated_dropbacks.py, qb_change_team_dropbacks.py (#185 merged)"
     },
     {
       "angle_id": "QB-WEATHER",
@@ -557,11 +558,12 @@
         "clustered_uncertainty",
         "prospective_confirmation_before_promotion"
       ],
-      "implementation_state": "NOT_YET_INTEGRATED",
+      "implementation_state": "IN_PROGRESS",
       "dependencies": [],
-      "owner": null,
-      "active_workstream": null,
-      "last_reviewed": "2026-09-18"
+      "owner": "Claude Code",
+      "active_workstream": "tier1-WS-B claude/nfl-tier1-player-opportunity-20260924",
+      "last_reviewed": "2026-09-24",
+      "tier1_factor": "F2_SNAP_SHARE_ROLE"
     },
     {
       "angle_id": "RB-RUN-SCHEME",
@@ -666,11 +668,12 @@
         "clustered_uncertainty",
         "prospective_confirmation_before_promotion"
       ],
-      "implementation_state": "NOT_YET_INTEGRATED",
+      "implementation_state": "IN_PROGRESS",
       "dependencies": [],
-      "owner": null,
-      "active_workstream": null,
-      "last_reviewed": "2026-09-18"
+      "owner": "Claude Code",
+      "active_workstream": "tier1-WS-D claude/nfl-tier1-touchdown-20260924",
+      "last_reviewed": "2026-09-24",
+      "tier1_factor": "F4_RED_ZONE"
     },
     {
       "angle_id": "OL-CONTINUITY",
@@ -708,7 +711,8 @@
       "dependencies": [],
       "owner": null,
       "active_workstream": null,
-      "last_reviewed": "2026-09-18"
+      "last_reviewed": "2026-09-18",
+      "code_evidence": "research: nfl/research/ol_continuity_prior.py (not consumed by any live prediction)"
     },
     {
       "angle_id": "OL-AVAILABILITY",
@@ -943,7 +947,8 @@
       "dependencies": [],
       "owner": null,
       "active_workstream": null,
-      "last_reviewed": "2026-09-18"
+      "last_reviewed": "2026-09-18",
+      "code_evidence": "research: nfl/research/coach_regime_registry.py + coach_regime_data; coaching-aware dropbacks in receptions_team_opportunity_challenger.py (challenger underperformed B0)"
     },
     {
       "angle_id": "COACH-PROE",
@@ -981,11 +986,13 @@
         "clustered_uncertainty",
         "prospective_confirmation_before_promotion"
       ],
-      "implementation_state": "NOT_YET_INTEGRATED",
+      "implementation_state": "IN_PROGRESS",
       "dependencies": [],
-      "owner": null,
-      "active_workstream": null,
-      "last_reviewed": "2026-09-18"
+      "owner": "Claude Code",
+      "active_workstream": "tier1-WS-C claude/nfl-tier1-team-context-20260924",
+      "last_reviewed": "2026-09-24",
+      "tier1_factor": "F5_PASS_TENDENCY_PACE",
+      "code_evidence": "research: nfl/research/pbp_prior_tendencies.py neutral_dropback_rate_v1"
     },
     {
       "angle_id": "COACH-PACE",
@@ -1022,11 +1029,12 @@
         "clustered_uncertainty",
         "prospective_confirmation_before_promotion"
       ],
-      "implementation_state": "NOT_YET_INTEGRATED",
+      "implementation_state": "IN_PROGRESS",
       "dependencies": [],
-      "owner": null,
-      "active_workstream": null,
-      "last_reviewed": "2026-09-18"
+      "owner": "Claude Code",
+      "active_workstream": "tier1-WS-C claude/nfl-tier1-team-context-20260924",
+      "last_reviewed": "2026-09-24",
+      "tier1_factor": "F5_PASS_TENDENCY_PACE"
     },
     {
       "angle_id": "COACH-SCORE-RESPONSE",
@@ -1403,11 +1411,12 @@
         "clustered_uncertainty",
         "prospective_confirmation_before_promotion"
       ],
-      "implementation_state": "NOT_YET_INTEGRATED",
+      "implementation_state": "IN_PROGRESS",
       "dependencies": [],
-      "owner": null,
-      "active_workstream": null,
-      "last_reviewed": "2026-09-18"
+      "owner": "Claude Code",
+      "active_workstream": "tier1-WS-D claude/nfl-tier1-touchdown-20260924",
+      "last_reviewed": "2026-09-24",
+      "tier1_factor": "F4_RED_ZONE"
     },
     {
       "angle_id": "FOURTH-DOWN",
@@ -1477,11 +1486,13 @@
         "clustered_uncertainty",
         "prospective_confirmation_before_promotion"
       ],
-      "implementation_state": "NOT_YET_INTEGRATED",
+      "implementation_state": "IN_PROGRESS",
       "dependencies": [],
-      "owner": null,
-      "active_workstream": null,
-      "last_reviewed": "2026-09-18"
+      "owner": "Claude Code",
+      "active_workstream": "tier1-WS-B claude/nfl-tier1-player-opportunity-20260924",
+      "last_reviewed": "2026-09-24",
+      "tier1_factor": "F8_INJURY_PRACTICE",
+      "code_evidence": "research: nfl/research/injury_availability_features.py (starter availability only)"
     },
     {
       "angle_id": "OFFICIAL-INACTIVES",
@@ -1517,7 +1528,8 @@
       "dependencies": [],
       "owner": null,
       "active_workstream": null,
-      "last_reviewed": "2026-09-18"
+      "last_reviewed": "2026-09-18",
+      "code_evidence": "live fail-closed gate in nfl-live-receptions/passing-yards workflows (nfl/normalize/official_inactives.py, pregame_availability.py)"
     },
     {
       "angle_id": "REPLACEMENT-GRAPH",
@@ -1553,11 +1565,12 @@
         "clustered_uncertainty",
         "prospective_confirmation_before_promotion"
       ],
-      "implementation_state": "NOT_YET_INTEGRATED",
+      "implementation_state": "IN_PROGRESS",
       "dependencies": [],
-      "owner": null,
-      "active_workstream": null,
-      "last_reviewed": "2026-09-18"
+      "owner": "Claude Code",
+      "active_workstream": "tier1-WS-B claude/nfl-tier1-player-opportunity-20260924",
+      "last_reviewed": "2026-09-24",
+      "tier1_factor": "F9_ABSENCE_REDISTRIBUTION"
     },
     {
       "angle_id": "WEATHER",
@@ -1591,11 +1604,12 @@
         "clustered_uncertainty",
         "prospective_confirmation_before_promotion"
       ],
-      "implementation_state": "NOT_YET_INTEGRATED",
+      "implementation_state": "IN_PROGRESS",
       "dependencies": [],
-      "owner": null,
-      "active_workstream": null,
-      "last_reviewed": "2026-09-18"
+      "owner": "Claude Code",
+      "active_workstream": "tier1-WS-C claude/nfl-tier1-team-context-20260924",
+      "last_reviewed": "2026-09-24",
+      "tier1_factor": "F6_ENVIRONMENT"
     },
     {
       "angle_id": "SURFACE-ALTITUDE",
@@ -1627,11 +1641,12 @@
         "clustered_uncertainty",
         "prospective_confirmation_before_promotion"
       ],
-      "implementation_state": "NOT_YET_INTEGRATED",
+      "implementation_state": "IN_PROGRESS",
       "dependencies": [],
-      "owner": null,
-      "active_workstream": null,
-      "last_reviewed": "2026-09-18"
+      "owner": "Claude Code",
+      "active_workstream": "tier1-WS-C claude/nfl-tier1-team-context-20260924",
+      "last_reviewed": "2026-09-24",
+      "tier1_factor": "F6_ENVIRONMENT"
     },
     {
       "angle_id": "TRAVEL-CIRCADIAN",
@@ -1663,11 +1678,12 @@
         "clustered_uncertainty",
         "prospective_confirmation_before_promotion"
       ],
-      "implementation_state": "NOT_YET_INTEGRATED",
+      "implementation_state": "IN_PROGRESS",
       "dependencies": [],
-      "owner": null,
-      "active_workstream": null,
-      "last_reviewed": "2026-09-18"
+      "owner": "Claude Code",
+      "active_workstream": "tier1-WS-C claude/nfl-tier1-team-context-20260924",
+      "last_reviewed": "2026-09-24",
+      "tier1_factor": "F7_REST_TRAVEL"
     },
     {
       "angle_id": "SHORT-REST",
@@ -1700,11 +1716,12 @@
         "clustered_uncertainty",
         "prospective_confirmation_before_promotion"
       ],
-      "implementation_state": "NOT_YET_INTEGRATED",
+      "implementation_state": "IN_PROGRESS",
       "dependencies": [],
-      "owner": null,
-      "active_workstream": null,
-      "last_reviewed": "2026-09-18"
+      "owner": "Claude Code",
+      "active_workstream": "tier1-WS-C claude/nfl-tier1-team-context-20260924",
+      "last_reviewed": "2026-09-24",
+      "tier1_factor": "F7_REST_TRAVEL"
     },
     {
       "angle_id": "OFFICIALS",
@@ -2677,14 +2694,16 @@
         "prospective_confirmation_before_promotion",
         "change_point_precision_recall"
       ],
-      "implementation_state": "NOT_YET_INTEGRATED",
+      "implementation_state": "IN_PROGRESS",
       "dependencies": [
         "PLAYER_ROLE_STATE_V1",
         "NEWS_CLAIM_LEDGER_V1"
       ],
-      "owner": null,
-      "active_workstream": null,
-      "last_reviewed": "2026-09-18"
+      "owner": "Claude Code",
+      "active_workstream": "tier1-WS-B claude/nfl-tier1-player-opportunity-20260924",
+      "last_reviewed": "2026-09-24",
+      "tier1_factor": "F2_SNAP_SHARE_ROLE",
+      "code_evidence": "research: nfl/research/role_intelligence_features.py + role_regime_redistribution_audit.py (#183 merged); broad snap multiplier worsened receptions MAE (negative finding preserved)"
     },
     {
       "angle_id": "TEAMMATE-ON-OFF-REDISTRIBUTION",
@@ -2724,14 +2743,16 @@
         "prospective_confirmation_before_promotion",
         "redistribution_mass_balance"
       ],
-      "implementation_state": "NOT_YET_INTEGRATED",
+      "implementation_state": "IN_PROGRESS",
       "dependencies": [
         "PLAYER_ROLE_STATE_V1",
         "REPLACEMENT_HIERARCHY_V1"
       ],
-      "owner": null,
-      "active_workstream": null,
-      "last_reviewed": "2026-09-18"
+      "owner": "Claude Code",
+      "active_workstream": "tier1-WS-B claude/nfl-tier1-player-opportunity-20260924",
+      "last_reviewed": "2026-09-24",
+      "tier1_factor": "F9_ABSENCE_REDISTRIBUTION",
+      "code_evidence": "live SHADOW challenger only (nfl/research/receptions_role_adjusted_challenger.py, inactive-WR target redistribution), never authoritative B0; role_intelligence_features.py (#183 merged) research rows"
     },
     {
       "angle_id": "REPLACEMENT-HIERARCHY",
@@ -2771,14 +2792,224 @@
         "prospective_confirmation_before_promotion",
         "replacement_identity_accuracy"
       ],
-      "implementation_state": "NOT_YET_INTEGRATED",
+      "implementation_state": "IN_PROGRESS",
       "dependencies": [
         "PLAYER_ROLE_STATE_V1",
         "NEWS_CLAIM_LEDGER_V1"
       ],
-      "owner": null,
-      "active_workstream": null,
-      "last_reviewed": "2026-09-18"
+      "owner": "Claude Code",
+      "active_workstream": "tier1-WS-B claude/nfl-tier1-player-opportunity-20260924",
+      "last_reviewed": "2026-09-24",
+      "tier1_factor": "F9_ABSENCE_REDISTRIBUTION"
+    },
+    {
+      "angle_id": "GAME-LINE-CONTEXT",
+      "category": "game_context",
+      "hypothesis": "pregame spread, total and implied team total improve team-opportunity and player-volume forecasts beyond football features alone; market-derived, so never independent evidence of value against the same book",
+      "target_markets": [
+        "passing_yards",
+        "receptions",
+        "receiving_yards",
+        "rushing_yards",
+        "anytime_td"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "FANDUEL_NFL",
+        "NFLVERSE_SCHEDULES_AND_PFR_LINES"
+      ],
+      "multi_year_policy": "career+regime+season+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "IN_PROGRESS",
+      "dependencies": [],
+      "owner": "Claude Code",
+      "active_workstream": "tier1-WS-C claude/nfl-tier1-team-context-20260924",
+      "last_reviewed": "2026-09-24",
+      "tier1_factor": "F1_GAME_CONTEXT"
+    },
+    {
+      "angle_id": "TARGET-AIR-YARDS-SHARE",
+      "category": "receiver",
+      "hypothesis": "strictly-prior target share, air-yards share, aDOT and WOPR predict receptions and receiving yards beyond rolling production; targets are not routes (no route source)",
+      "target_markets": [
+        "receptions",
+        "receiving_yards"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "NFLVERSE_WEEKLY_STATS",
+        "NFLFASTR_PLAY_BY_PLAY"
+      ],
+      "multi_year_policy": "career+regime+season+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "IN_PROGRESS",
+      "dependencies": [],
+      "owner": "Claude Code",
+      "active_workstream": "tier1-WS-B claude/nfl-tier1-player-opportunity-20260924",
+      "last_reviewed": "2026-09-24",
+      "tier1_factor": "F3_TARGET_AIR_YARDS",
+      "code_evidence": "live SHADOW challenger uses last-5 target share (role-adjusted challenger); PR #193 (draft) target-share scale-bias fix, forward shadow grades 2026-09-30"
+    },
+    {
+      "angle_id": "OPPONENT-ALLOWED-BY-POSITION",
+      "category": "defense",
+      "hypothesis": "strictly-prior opponent allowed-by-position rates (targets, receptions, yards, EPA to WR/TE/RB and QB passing) improve player projections; not an individual WR-vs-CB matchup",
+      "target_markets": [
+        "receptions",
+        "receiving_yards",
+        "passing_yards",
+        "rushing_yards"
+      ],
+      "status": "BLUE",
+      "historical_depth_target": "MAX_DEFENSIBLE_POINT_IN_TIME_HISTORY",
+      "point_in_time_required": true,
+      "source_candidates": [
+        "NFLFASTR_PLAY_BY_PLAY",
+        "NFLVERSE_WEEKLY_STATS"
+      ],
+      "multi_year_policy": "career+regime+season+recent",
+      "regime_sensitive": true,
+      "leakage_risks": [
+        "future_outcomes",
+        "future_injury_or_depth_information",
+        "future_market_state",
+        "post_selection_holdout_reuse"
+      ],
+      "validation_requirements": [
+        "walk_forward_out_of_time",
+        "season_by_season_stability",
+        "equal_operational_volume",
+        "clustered_uncertainty",
+        "prospective_confirmation_before_promotion"
+      ],
+      "implementation_state": "IN_PROGRESS",
+      "dependencies": [],
+      "owner": "Claude Code",
+      "active_workstream": "tier1-WS-C claude/nfl-tier1-team-context-20260924",
+      "last_reviewed": "2026-09-24",
+      "tier1_factor": "F10_OPPONENT_POSITION"
     }
-  ]
+  ],
+  "tier1_crosswalk": {
+    "as_of": "2026-09-24",
+    "mission": "NFL operational completion + Tier 1 intelligence (Jacob, 2026-09-24)",
+    "foundation": "claude/nfl-tier1-foundation-20260924 @ e3ca166de9 (nfl/research/tier1/contract.py, harness.py)",
+    "rule": "IN_PROGRESS means a workstream is building it; BUILT requires a connected predictive consumer with real predictions, VALIDATED requires a controlled incremental benefit, LIVE_RESEARCH requires use in an authorized current-week research run. Updated only from verified evidence.",
+    "factors": {
+      "F1_GAME_CONTEXT": {
+        "workstream": "tier1-WS-C claude/nfl-tier1-team-context-20260924",
+        "angle_ids": [
+          "GAME-LINE-CONTEXT"
+        ],
+        "state": "IN_PROGRESS"
+      },
+      "F2_SNAP_SHARE_ROLE": {
+        "workstream": "tier1-WS-B claude/nfl-tier1-player-opportunity-20260924",
+        "angle_ids": [
+          "ROLE-CHANGE-DETECTION",
+          "RB-ROLE"
+        ],
+        "state": "IN_PROGRESS"
+      },
+      "F3_TARGET_AIR_YARDS": {
+        "workstream": "tier1-WS-B claude/nfl-tier1-player-opportunity-20260924",
+        "angle_ids": [
+          "TARGET-AIR-YARDS-SHARE"
+        ],
+        "state": "IN_PROGRESS"
+      },
+      "F4_RED_ZONE": {
+        "workstream": "tier1-WS-D claude/nfl-tier1-touchdown-20260924",
+        "angle_ids": [
+          "RED-ZONE",
+          "RB-GOAL-LINE"
+        ],
+        "state": "IN_PROGRESS"
+      },
+      "F5_PASS_TENDENCY_PACE": {
+        "workstream": "tier1-WS-C claude/nfl-tier1-team-context-20260924",
+        "angle_ids": [
+          "COACH-PROE",
+          "COACH-PACE"
+        ],
+        "state": "IN_PROGRESS"
+      },
+      "F6_ENVIRONMENT": {
+        "workstream": "tier1-WS-C claude/nfl-tier1-team-context-20260924",
+        "angle_ids": [
+          "WEATHER",
+          "SURFACE-ALTITUDE"
+        ],
+        "state": "IN_PROGRESS"
+      },
+      "F7_REST_TRAVEL": {
+        "workstream": "tier1-WS-C claude/nfl-tier1-team-context-20260924",
+        "angle_ids": [
+          "TRAVEL-CIRCADIAN",
+          "SHORT-REST"
+        ],
+        "state": "IN_PROGRESS"
+      },
+      "F8_INJURY_PRACTICE": {
+        "workstream": "tier1-WS-B claude/nfl-tier1-player-opportunity-20260924",
+        "angle_ids": [
+          "INJURY-PROGRESSION"
+        ],
+        "state": "IN_PROGRESS"
+      },
+      "F9_ABSENCE_REDISTRIBUTION": {
+        "workstream": "tier1-WS-B claude/nfl-tier1-player-opportunity-20260924",
+        "angle_ids": [
+          "TEAMMATE-ON-OFF-REDISTRIBUTION",
+          "REPLACEMENT-HIERARCHY",
+          "REPLACEMENT-GRAPH"
+        ],
+        "state": "IN_PROGRESS"
+      },
+      "F10_OPPONENT_POSITION": {
+        "workstream": "tier1-WS-C claude/nfl-tier1-team-context-20260924",
+        "angle_ids": [
+          "OPPONENT-ALLOWED-BY-POSITION"
+        ],
+        "state": "IN_PROGRESS"
+      }
+    }
+  },
+  "requirements_reference": {
+    "document": "engineering/NFL_INTELLIGENCE_REQUIREMENTS_V1.md",
+    "pr": 177,
+    "pinned_head": "fcd9094dba",
+    "merged": false,
+    "note": "Permanent requirements register (groups P/R/C/D/F/N/G/M/E/X plus the 20-extras crosswalk). Draft, unmerged; referenced here, not copied. Every angle row remains; no row was removed."
+  }
 }

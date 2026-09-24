@@ -5679,6 +5679,10 @@ was closed). Full `nfl/tests`: 1056/1056 (1041 PR #185 baseline + 15 new).
 Branch `claude/nfl-qb-availability-gate-20260923` (stacked on unmerged
 draft PR #185). Draft PR #189, not merged -- Jacob's separate explicit
 authorization required.
+*[Correction 2026-09-24: PR #185 and PR #189 were both merged at
+2026-09-23T23:37Z. The statement above was accurate when written; it is
+now stale. Claude's Mission 11 status `5806409900` also wrongly said
+#185 was not merged.]*
 
 Alligator
 
@@ -6202,3 +6206,104 @@ Jacob approved `POLICY_PROPOSAL.md` §1 with three decisions, recorded in
 
 This authorizes this display policy only. The selection algorithm and the
 grading rules are unchanged.
+
+## 2026-09-24 -- CURRENT NFL STATE (housekeeping checkpoint; supersedes older "current" NFL summaries above, which are kept as history)
+
+Priority: **100% NFL** (Jacob's mission "NFL operational completion + Tier 1
+intelligence", 2026-09-24). New MLB research is suspended. MLB production and
+customer safety are preserved. One already-locked MLB analysis
+(`claude/mlb-market-anchor-prereg-20260924`, pre-registered at `a50a5f378c`,
+frozen fit at `063aea6bb5`) still runs once on 2026-09-29 by schedule.
+
+**main** was `1292d75656` at 21:06Z. Only bot data commits have landed since
+the Tier 1 foundation branched from `d5d164ffe8`.
+
+### Status vocabulary used below
+- running = an agent or job is executing now
+- completed = work pushed
+- reviewed = an independent review returned a verdict
+- merged = on main
+- deployed = served by the live site
+- operational = actually used in a live research run
+
+### NFL workstreams (Claude)
+
+| WS | Scope | Branch / head | State |
+|---|---|---|---|
+| Foundation | Tier 1 contract + harness | `claude/nfl-tier1-foundation-20260924` @ `e3ca166de9` | completed; not reviewed, not merged |
+| A | Tonight's ATL@GB cycle, receptions/passing-yards operations, B0-to-offer join | existing workflows on main | scheduled (see below) |
+| B | F2, F3, F8, F9 | `claude/nfl-tier1-player-opportunity-20260924` | running (agent) |
+| C | F1, F5, F6, F7, F10 | `claude/nfl-tier1-team-context-20260924` | running (agent) |
+| D | F4 + TD research consumer | `claude/nfl-tier1-touchdown-20260924` | running (agent) |
+
+- **File ownership** is exclusive per workstream (Issue #91 `5822158541`):
+  - B owns `nfl/research/tier1/player_opportunity*`.
+  - C owns `team_context*`.
+  - D owns `touchdown*`.
+  - Each also owns its own tests and its own `engineering/nfl_tier1_*` folder.
+- **Shared read-only data:** `/tmp/claude-0/nfl_tier1_shared/` (with a
+  `MANIFEST.sha256`; it is container-local, so reproducing it means
+  re-downloading) plus the audited weekly cache.
+- **Tier 1 factor state:** all ten are **IN PROGRESS**. None is BUILT, VALIDATED
+  or LIVE yet. `data/nfl_intelligence/angle_registry.json` now carries the
+  `tier1_crosswalk` (factor → angle IDs → workstream).
+  - Three missing angles were added: GAME-LINE-CONTEXT,
+    TARGET-AIR-YARDS-SHARE, OPPONENT-ALLOWED-BY-POSITION.
+  - Every one of the original 72 angle rows is kept unchanged apart from the
+    Tier 1 annotations.
+  - PR #177's permanent requirements register is referenced (draft, pinned
+    at `fcd9094dba`), not copied.
+
+### Codex dependencies (read-only; Codex released ownership in `5816849815`)
+- **PR #196** `codex/nfl-price-aware-offers-20260923` @ `7626a0424f`: the
+  receptions price-aware offer research. Draft; independent GO for research
+  only.
+- **PR #199** `codex/nfl-price-b0-join-20260924` @ `285252d313`: stacked on
+  #196; joins an earlier sealed B0 to an authentic new quote. Draft.
+  - For tonight Claude *runs* its CLI from a detached worktree pinned at that
+    head. No edits.
+  - The pricing is **receptions-specific**. It is not a universal player-prop
+    pricing engine.
+  - Passing yards is priced separately by its own workflow's shadow scorer
+    (`nfl/research/passing_yards_shadow.py`, de-vigged two-sided FanDuel
+    lines), which is research only.
+- **The join only prices an offer whose line and both prices exactly match
+  the sealed B0 quote.** A 2026-09-24 scratch dry run against the 09-23 B0
+  joined nothing (`NO_EXACT_PRIOR_B0_QUOTE_JOIN` on all 56). Tonight's capture
+  must therefore follow the 22:50Z seal closely.
+
+### Tonight: ATL@GB `2026_03_ATL_GB`
+Kickoff 2026-09-25T00:15Z = 7:15 pm CDT. Lambeau Field, outdoors, grass.
+Reconfirmed from nflverse schedules.
+
+| When (UTC) | CDT | Existing trigger | Action |
+|---|---|---|---|
+| 22:50Z | 5:50 pm | `trig_01L2brcPk2oEpxzg6GeyUkgC` | post-inactives dispatch of both shadow workflows from main (#182 merged) |
+| after 22:50Z | ~6:00 pm | (same session) | archive B0 artifact bytes plus Actions identity; one new FanDuel capture; #199 join to a new create-only path |
+| 23:50Z | 6:50 pm | `trig_018jJR785LdQrGhcsdaCa54h` | final pre-lock dispatch |
+| 04:00Z 09-25 | 11:00 pm | `trig_01UNBqQNyxcDiDdML89VWbEV` | postgame verification; grade only authentic frozen pregame selections |
+
+**Prior evidence (09-23 16:40Z, pre-inactives)**, runs 35890373204 (receptions)
+and 35890876126 (passing yards):
+- Passing yards bound Penix (ATL) and Love (GB) to FanDuel event 36076208.
+  Both were **QUARANTINED** `UNKNOWN_GAME_COVERAGE`: no inactive report yet
+  covered the game, and one report failed to parse.
+
+### Next genuine operational blockers (NFL)
+1. **Official inactive coverage for this game.** It is expected about 90
+   minutes before kickoff. Without it, every record stays quarantined, which
+   is the correct fail-closed behaviour.
+2. **Quote-origin timestamp.** The FanDuel feed has no quote-origin time.
+   PR #196/#199 quarantine on it by design.
+3. **Applicable FanDuel action/settlement rules certification.**
+4. **Current-role verification.**
+5. **Exact same-quote B0 join timing** (see above).
+6. **Postgame settlement needs authoritative final stats and certified snap
+   counts** for DNP handling.
+
+The research-only restrictions stand: no merge, deploy, B0 promotion,
+public NFL pick, purchase or immutable-record change without Jacob's
+specific authorization.
+
+Alligator
+
