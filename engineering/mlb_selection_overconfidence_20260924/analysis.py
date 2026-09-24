@@ -269,7 +269,7 @@ def git_json(sha, path):
 
 
 def git_ls(sha, prefix):
-    return _git("ls-tree", "--name-only", sha, prefix + "/").decode().split()
+    return _git("ls-tree", "--full-tree", "--name-only", sha, prefix + "/").decode().split()
 
 
 def _y(grade):
@@ -612,6 +612,65 @@ def main():
         joint_decompose_bootstrap(pub, db_ref_nopub, game_cluster))
     rep["decomposition"]["DB_ref_rows_that_are_PUB_ids_same_date"] = len(db_ref) - len(db_ref_nopub)
 
+    # Added sensitivity (deviation D3): information cutoff. Drop DB rows whose
+    # prediction_timestamp is not strictly before the scheduled game_start
+    # recorded for that game_pk on a PUB row (the only start times bound to
+    # DB games in these artifacts).
+    starts_by_game = {r["game_pk"]: r["game_start"] for r in pub if r.get("game_start")}
+
+    def db_pregame_ok(r):
+        s = starts_by_game.get(r["game_pk"])
+        if not s or not r.get("prediction_ts"):
+            return True  # not checkable -> kept (counted in provenance)
+        return _ts(r["prediction_ts"]) < _ts(s)
+    rep["decomposition"]["sens_D3_PUB_vs_DB_ref_pregame_checked_game"] = fmt_decomp(
+        joint_decompose_bootstrap(pub, [r for r in db_ref if db_pregame_ok(r)], game_cluster))
+    rep["decomposition"]["sens_D3_DB_sel_vs_DB_ref_pregame_checked_game"] = fmt_decomp(
+        joint_decompose_bootstrap([r for r in db_sel if db_pregame_ok(r)],
+                                  [r for r in db_ref if db_pregame_ok(r)], game_cluster))
+
+    # EXPLORATORY (deviation D4, post hoc after seeing the pre-registered
+    # market_edge descriptive split): re-run the same decomposition with the
+    # reference curve conditioned on model-vs-market disagreement. The
+    # machinery is unchanged; only the "market" key of each row is replaced.
+    def rekey(rows, fn):
+        out = []
+        for r in rows:
+            k = fn(r)
+            if k is not None:
+                out.append({**r, "market": k})
+        return out
+
+    def eb_only(r):
+        return edge_band(r)
+
+    def mkt_eb(r):
+        e = edge_band(r)
+        return None if e is None else f"{r['market']}|{e}"
+    rep["exploratory_edge_conditioned"] = {
+        "note": "POST HOC. Cells = (market_edge band, p band) -> (edge band, p>=0.60) -> "
+                "(all, p band); and (market x edge band, p band) -> ... Same bootstrap.",
+        "PUB_vs_DB_ref_edge_x_band": fmt_decomp(joint_decompose_bootstrap(
+            rekey(pub, eb_only), rekey(db_ref, eb_only), game_cluster)),
+        "PUB_vs_DB_ref_market_x_edge_x_band": fmt_decomp(joint_decompose_bootstrap(
+            rekey(pub, mkt_eb), rekey(db_ref, mkt_eb), game_cluster)),
+        "DB_sel_vs_DB_ref_edge_x_band": fmt_decomp(joint_decompose_bootstrap(
+            rekey(db_sel, eb_only), rekey(db_ref, eb_only), game_cluster)),
+    }
+
+    def market_gap(rows):
+        s = [r for r in settled(rows) if r.get("implied") is not None]
+        return (sum(r["y"] - r["implied"] for r in s) / len(s)) if s else None
+    rep["exploratory_realized_minus_raw_market_implied"] = {
+        "note": "POST HOC. market_implied is the raw (vig-inclusive) implied probability of the "
+                "posted price bound in the artifact; a fair (de-vigged) probability is lower, so "
+                "a negative value here is expected at roughly -2 to -4pp even for a calibrated market.",
+        **{k: {"n": len([r for r in settled(pops[k]) if r.get("implied") is not None]),
+               **{kk: (r4(vv) if not isinstance(vv, list) else rci(vv)) for kk, vv in
+                  (lambda b: {"point": b["point"], "ci95_game": b["ci95"]})(
+                      cluster_bootstrap(pops[k], market_gap, game_cluster)).items()}}
+           for k in ("PUB", "DB_sel", "DB_ref_p>=0.60", "FB_E")}}
+
     # date stability
     rep["decomposition"]["date_halves"] = {
         h: {"PUB_vs_DB_ref": fmt_decomp(joint_decompose_bootstrap(
@@ -736,6 +795,26 @@ def main():
                      "FB_S": len(fb_s), "FB_T10": len(fb_t10),
                      "DB_date_range": [min(r["date"] for r in db), max(r["date"] for r in db)]}
 
+    rep["deviations"] = [
+        {"id": "D1", "what": "git ls-tree needed --full-tree to resolve paths when run from this "
+         "folder; first run crashed before producing any statistic. Mechanical fix, no estimand change."},
+        {"id": "D2", "what": "ADDED sensitivity not in the pre-registration: DB_ref excluding rows whose "
+         "(slate_date, id) is also a PUB row (the same outcome would otherwise sit on both sides). "
+         "Cannot create a verdict (sensitivities never can)."},
+        {"id": "D3", "what": "ADDED sensitivity not in the pre-registration: DB rows whose "
+         "prediction_timestamp is not before the PUB-recorded scheduled game_start for that game_pk "
+         "are dropped. Motivated by the provenance check finding such rows (likely delayed starts "
+         "still 'Pre-Game' at run time; not verified)."},
+        {"id": "D4", "what": "POST HOC exploratory: edge-conditioned decomposition and realized minus "
+         "raw market_implied, added after seeing the pre-registered market_edge descriptive split. "
+         "Hypothesis-generating only."},
+        {"id": "D5", "what": "Pre-registration said 'DB rank tercile'; the code uses fixed cutoffs "
+         "(<=10, 11-30, >30; FB: <=10, 11-50, >50, unranked). Not changed after seeing results. "
+         "Rank split is descriptive only."},
+        {"id": "D6", "what": "The pre-registered sensitivity table also reports fair_test-only "
+         "outcomes. fair_test=False is outcome-dependent for pitcher props (<4 IP), so that sensitivity "
+         "removes real, model-relevant failures; noted as a caveat, not changed."},
+    ]
     with open(args.out, "w", encoding="utf-8") as f:
         json.dump(rep, f, indent=1, sort_keys=False)
         f.write("\n")
