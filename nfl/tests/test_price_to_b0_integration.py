@@ -25,7 +25,10 @@ def sample():
         "player_name": candidate["player_name"], "team": candidate["team"],
         "line": candidate["line"], "over_odds": candidate["over_odds"],
         "under_odds": candidate["under_odds"],
+        "over_selection_id": candidate["over_selection_id"],
+        "under_selection_id": candidate["under_selection_id"],
         "captured_at": "2026-09-24T14:40:00Z",
+        "event_open_date": candidate["event_open_date"],
         "availability_status": "NOT_LISTED_INACTIVE",
         "decision_status": "SHADOW_ONLY", "model_projection": 3.2,
         "model_over_probability": .55, "model_under_probability": .45,
@@ -81,6 +84,7 @@ class PriceToB0Tests(unittest.TestCase):
         joined = [r for r in result["records"] if r["b0_observation_id"]]
         self.assertEqual(len(joined), 1)
         self.assertEqual(joined[0]["candidate"]["market_id"], candidate["market_id"])
+        self.assertEqual(joined[0]["authoritative_b0_record"], shadow["records"][0])
         self.assertEqual(len(joined[0]["b0_prices"]), 2)
         self.assertAlmostEqual(joined[0]["b0_prices"][0]["model_win_probability"], .55)
         self.assertIn("QUOTE_TIMESTAMP_NOT_PROVIDED", joined[0]["reasons"])
@@ -89,6 +93,8 @@ class PriceToB0Tests(unittest.TestCase):
         self.assertFalse(joined[0]["bettable"])
         self.assertTrue(all(not r["b0_observation_id"] for r in result["records"]
                             if r["candidate"]["shape"] != "primary"))
+        self.assertAlmostEqual(sum(p["market_fair_probability"]
+                                   for p in joined[0]["b0_prices"]), 1.0)
 
     def test_later_b0_and_identity_price_mismatch_do_not_join(self):
         _, original, row = sample()
@@ -115,6 +121,26 @@ class PriceToB0Tests(unittest.TestCase):
                        {"under_odds": row["under_odds"]-1}):
             with self.subTest(change=change):
                 self.assertIsNone(match_authoritative_b0(candidate, board({**row, **change})))
+
+    def test_b0_player_team_and_selection_mismatch_quarantined(self):
+        _, original, row = sample()
+        for change in ({"player_name": "Wrong Person"}, {"team": "WRONG"},
+                       {"over_selection_id": "wrong"},
+                       {"under_selection_id": "wrong"}):
+            with self.subTest(change=change):
+                b0_path = CAPTURE.parent / "test_mismatch_b0_temporary.json"
+                target = CAPTURE.parent / "test_mismatch_join_temporary.json"
+                b0_path.unlink(missing_ok=True)
+                target.unlink(missing_ok=True)
+                try:
+                    b0_path.write_text(json.dumps(board({**row, **change})), encoding="utf-8")
+                    result = integrate(CAPTURE, target, b0_path=b0_path,
+                                       as_of="2026-09-24T14:54:28Z")
+                    self.assertFalse(any(r["b0_observation_id"] for r in result["records"]))
+                    self.assertEqual(result["counts"], {"QUARANTINED": 57})
+                finally:
+                    b0_path.unlink(missing_ok=True)
+                    target.unlink(missing_ok=True)
 
     def test_duplicate_selection_and_corrupted_bytes_fail_closed(self):
         frozen, original, row = sample()
@@ -151,6 +177,13 @@ class PriceToB0Tests(unittest.TestCase):
             self.assertTrue(all(not r["bettable"] for r in result["records"]))
         finally:
             target.unlink(missing_ok=True)
+
+    def test_internally_impossible_b0_capture_after_seal_is_rejected(self):
+        _, _, row = sample()
+        impossible = board({**row, "captured_at": "2026-09-24T14:45:00Z"},
+                           sealed_at="2026-09-24T14:41:00Z")
+        with self.assertRaisesRegex(ValueError, "capture and decision sealing"):
+            validate_b0(impossible)
 
 
 if __name__ == "__main__":

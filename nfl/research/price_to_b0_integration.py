@@ -16,7 +16,7 @@ from pathlib import Path
 
 from nfl.archive.provenance import utcnow
 from nfl.normalize.player_prop_markets import normalize_payload
-from nfl.prospective.shadow_snapshot import seal_snapshot
+from nfl.prospective.shadow_snapshot import seal_snapshot, validate_pregame_timing
 from nfl.research.price_aware_offer_capture import (
     GAME, read_authoritative_b0, match_authoritative_b0,
     strict_observed_prices, verify_capture)
@@ -34,6 +34,9 @@ def validate_b0(snapshot: dict) -> None:
                             sealed_at=snapshot["sealed_at"])
     if rebuilt["snapshot_sha256"] != snapshot["snapshot_sha256"]:
         raise ValueError("B0 seal or structural identity mismatch")
+    # A content hash alone permits a synthetically sealed row observed after
+    # its stated seal. Reapply the prospective cutoff to every record.
+    validate_pregame_timing(snapshot["records"], snapshot["sealed_at"])
     if _time(snapshot["sealed_at"]) >= _time("2026-09-25T00:15:00Z"):
         raise ValueError("B0 snapshot at or after canonical kickoff")
 
@@ -123,6 +126,9 @@ def integrate(capture_dir: Path, output: Path, *, b0_path: Path | None = None,
         # B0 is a two-sided primary-line prediction. An alternate ladder must
         # never inherit a same-player projection as if it were that selection.
         b0 = match_authoritative_b0(c, shadow) if c["shape"] == "primary" else None
+        if b0 and any(b0.get(key) != c.get(key) for key in (
+                "player_name", "team", "over_selection_id", "under_selection_id")):
+            b0 = None
         if b0 and b0.get("event_id") != c["event_id"]:
             raise ValueError("B0 event mismatch")
         if b0:
@@ -146,6 +152,7 @@ def integrate(capture_dir: Path, output: Path, *, b0_path: Path | None = None,
                   else "QUARANTINED" if reasons else "SHADOW_ONLY")
         rows.append({"candidate":c, "source_sha256":original["source_sha256"],
                      "original_price_record_sha256":original["record_sha256"],
+                     "authoritative_b0_record":b0,
                      "b0_observation_id":b0.get("observation_id") if b0 else None,
                      "b0_projection":b0.get("model_projection") if b0 else None,
                      "b0_prices":b0_prices, "challenger_record_sha256":original["record_sha256"],
@@ -158,6 +165,8 @@ def integrate(capture_dir: Path, output: Path, *, b0_path: Path | None = None,
               "capture_started_at":captured["started_at"],
               "capture_source_verification":captured["_verification"],
               "b0_snapshot_sha256":shadow["snapshot_sha256"] if shadow else None,
+              "b0_code_sha":shadow["code_sha"] if shadow else None,
+              "b0_source_vintage":shadow["source_vintage"] if shadow else None,
               "b0_sealed_at":shadow["sealed_at"] if shadow else None,
               "integrated_at":now,"records":rows,
               "counts":dict(Counter(r["decision_status"] for r in rows)),
