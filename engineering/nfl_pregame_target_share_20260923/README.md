@@ -9,6 +9,13 @@ shares are hard to estimate. It multiplied a share of **team targets** by a
 prediction of **team dropbacks** (attempts + sacks), and real teams produce
 only ~0.83 targets per dropback. So every projection was inflated ~21%.
 
+**Independent review correction (see the section below):** the holdout
+supports a *global scale* correction, not a *per-team* one. A single
+constant (0.828, measured on the earlier exploratory rows) applied to the
+unadjusted chain does as well as C1's per-team ratio (slightly better on
+MAE, tied on MSE and Poisson Brier). C1's locked win over B0 stands; the
+"team's own ratio" is not what earns it.
+
 ## How it was found (exploratory; already-inspected 2024-2025 wk8+, n=5,877)
 
 `exploratory_diagnosis.py` / `exploratory_diagnosis_report.json`:
@@ -58,7 +65,8 @@ player-clustered 95% CI **[-0.0456, -0.0210]**, verdict
 Descriptively, C1 beat B0 in every season (2019 -0.011, 2020 -0.033, 2021
 -0.035, 2022 -0.051), position (WR -0.041, RB -0.034, TE -0.018), and share
 tier (<0.10 -0.013, 0.10-0.20 -0.035, >=0.20 -0.113). The largest gain is
-on high-share receivers. C1 changed every prediction, by a median factor of
+on high-share receivers, as expected from any multiplicative scale fix,
+since the largest projections move the most. C1 changed every prediction, by a median factor of
 0.842 (p05 0.773, p95 0.904).
 
 ### Honest limits
@@ -84,6 +92,49 @@ on high-share receivers. C1 changed every prediction, by a median factor of
   `role_regime_redistribution.py` trained a different model on 2012-2021
   absence-event rows. B0 research scored 2000-2025, which, if anything,
   favors the champion.
+
+## Independent adversarial review (EXPLORATORY, not a re-test)
+
+`independent_review_checks.py` / `independent_review_report.json`, run by
+a separate reviewer on the same 10,961 locked holdout rows. None of this
+changes the locked verdict. It asks what the verdict means.
+
+| Question | Result |
+|---|---|
+| Unadjusted chain x 0.828 (exploratory mean ratio, one constant) | MAE 1.3499 vs C1 1.3539; C1 minus constant **+0.0040**, CI [+0.0012, +0.0067], same sign in all four seasons |
+| Same comparison, proper scores | MSE C1 minus constant -0.0015, CI [-0.0168, +0.0126]; Poisson Brier +0.0000, CI [-0.0003, +0.0003] |
+| C1 vs B0, proper scores | MSE -0.1999, CI [-0.2622, -0.1391]; Brier -0.0036, CI [-0.0048, -0.0024] |
+| B0 x 0.862 (its exploratory MAE-optimal scale) | MAE 1.3588; C1 minus it -0.0049, CI [-0.0173, +0.0078] |
+| Adding 1,337 scorable players who logged offensive snaps but have no stats row (realized 0) | C1 minus B0 **-0.0239**, CI [-0.0361, -0.0118] (from -0.0334); on those rows C1 1.144 vs B0 1.090 |
+| C1 with player-derived vs PBP team offense (2025 wk8+, n=2,930) | C1 changes 1.35% on average (mean ratio 1.0002); unadjusted chain drops 6.9% |
+
+What this means:
+
+- **The per-team ratio adds nothing measurable.** The gain is a global
+  ~17% scale correction of the chain. The prior-8 team ratio does correlate
+  with the target game's realized ratio (r = 0.23), but that does not show
+  up as lower receptions error. The "team's own targets per dropback"
+  framing is withdrawn; the defensible claim is "the chain had a unit/scale
+  bias of about 0.83, and correcting it beats B0".
+- **C1 beats B0 on proper scores too**, so its MAE win is not just MAE
+  rewarding lower, median-like projections. On MAE alone, B0 shaded by a
+  constant closes most of the gap (no demonstrated MAE difference after
+  shading), which is why the proper-score result matters.
+- **The population contract modestly favors C1.** Dropping active players
+  with no recorded stat removes rows where C1 is worse than B0. The
+  improvement survives with those rows added, about 28% smaller. The
+  forward-shadow grader VOIDs the same players, so it has the same lean.
+- **The 94 2019 `NO_MATCHUP_ROW` abstentions are every 2019 wk8+ Raiders
+  WR/TE/RB row.** nflverse player stats code the 2018-2019 Raiders as `LV`
+  while pinned PBP codes them `OAK`, so the matchup join and the
+  targets-per-dropback join both miss them. The abstention is symmetric
+  across models. Side effect: 2020 Raiders ratios see no 2019 games.
+- **The source-substitution invariance argument holds** (table, last row).
+- **Order evidence has a limit.** Git proves the lock commit precedes the
+  report commit. It cannot prove no holdout outcome was looked at earlier.
+  The author's cache shows 2018-2022 player, PBP and snap files were
+  downloaded between 01:14 and 01:18 UTC, before the 01:20 lock. That fits
+  a cache warm-up and is not evidence of peeking, but it is recorded here.
 
 ## Frozen forward shadow (2026 week 3, genuinely prospective)
 
