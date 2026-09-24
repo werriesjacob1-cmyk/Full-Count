@@ -36,6 +36,64 @@ SCHEDULE = "https://raw.githubusercontent.com/nflverse/nfldata/master/data/games
 ROSTER = "https://github.com/nflverse/nflverse-data/releases/download/rosters/roster_2026.csv"
 
 
+def verify_capture(folder: Path) -> dict:
+    """Verify the frozen snapshot and every archived byte without network access.
+
+    An old price can be replayed for audit, never represented as a current quote.
+    """
+    snapshot = json.loads((folder/"snapshot.json").read_text(encoding="utf-8"))
+    seal = snapshot.pop("snapshot_sha256")
+    if _hash(snapshot) != seal:
+        raise ValueError("snapshot seal mismatch")
+    snapshot["snapshot_sha256"] = seal
+    book_hashes = set()
+    for entry in snapshot["sources"]:
+        if "raw_file" not in entry:
+            continue
+        wrapper = json.loads((folder/entry["raw_file"]).read_text(encoding="utf-8"))
+        if wrapper["encoding"] != "gzip+base64" or wrapper["sha256"] != entry["sha256"]:
+            raise ValueError("raw source envelope mismatch")
+        raw = gzip.decompress(base64.b64decode(wrapper["data"], validate=True))
+        if hashlib.sha256(raw).hexdigest() != entry["sha256"] or len(raw) != entry["byte_length"]:
+            raise ValueError("raw source bytes mismatch")
+        book_hashes.add(entry["sha256"])
+    if not book_hashes:
+        raise ValueError("no sportsbook source bytes")
+    for record in snapshot["records"]:
+        record_seal = record.get("record_sha256")
+        if _hash({k:v for k,v in record.items() if k != "record_sha256"}) != record_seal:
+            raise ValueError("price record seal mismatch")
+        if record["source_sha256"] not in book_hashes:
+            raise ValueError("price record source missing")
+        if record["candidate"].get("canonical_game_id") != snapshot["canonical_game_id"]:
+            raise ValueError("price record game mismatch")
+    return snapshot
+
+
+def replay_capture(folder: Path, output: Path) -> dict:
+    """Apply the current gate to genuine old offers at their ORIGINAL cutoff."""
+    old = verify_capture(folder)
+    rows = []
+    for original in old["records"]:
+        new = evaluate_offer(original["candidate"], original["distribution"],
+                             as_of=original["evaluated_at"],
+                             raw_source_sha256=original["source_sha256"])
+        # This cannot create a new prospective prediction or change captured odds.
+        if new["prices"] != original["prices"]:
+            raise ValueError("price math changed on frozen source")
+        rows.append({"original_record_sha256": original["record_sha256"],
+                     "replayed_record_sha256": new["record_sha256"],
+                     "decision_status": new["decision_status"], "reasons": new["reasons"]})
+    replay = {"schema_version": 1, "kind": "FORENSIC_REPLAY_NOT_CURRENT_QUOTES",
+              "original_snapshot_sha256": old["snapshot_sha256"],
+              "original_capture_at": old["started_at"], "replayed_at": utcnow(),
+              "counts": dict(Counter(row["decision_status"] for row in rows)),
+              "rows": rows}
+    replay["replay_sha256"] = _hash(replay)
+    write_evidence(output, replay)
+    return replay
+
+
 def download(url: str, dest: Path) -> dict:
     with urlopen(Request(url, headers={"User-Agent": "FullCount-Research/1.0"}), timeout=60) as response:
         body = response.read()
@@ -190,6 +248,7 @@ def capture(output: Path) -> dict:
                 bound.update(canonical_game_id=GAME, canonical_kickoff=game["kickoff"],
                              market_availability=market_state(raw_market),
                              quote_timestamp=None, quote_timestamp_status="NOT_PROVIDED",
+                             current_role_status="NOT_VERIFIED", sportsbook_rule=None,
                              availability_status="UNKNOWN_GAME_COVERAGE", decision_status="QUARANTINED")
                 key = (c["market_id"], c.get("selection_id", "PAIR"))
                 candidates[key] = (bound, source)
@@ -248,7 +307,12 @@ def archive_source(source, output: Path, manifest: list) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--replay", type=Path, help="Verify/replay existing capture without recapture")
     args = parser.parse_args()
-    result = capture(args.output)
-    print(json.dumps({k: result.get(k) for k in ("status", "failure", "counts", "snapshot_sha256")}))
+    if args.replay:
+        result = replay_capture(args.replay, args.output)
+        print(json.dumps({k: result.get(k) for k in ("kind", "counts", "replay_sha256")}))
+    else:
+        result = capture(args.output)
+        print(json.dumps({k: result.get(k) for k in ("status", "failure", "counts", "snapshot_sha256")}))
 

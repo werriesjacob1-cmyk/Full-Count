@@ -1,7 +1,6 @@
 """Synthetic arithmetic/contract tests; no fixture is represented as a real quote."""
 import copy
 import unittest
-import tempfile
 from pathlib import Path
 from unittest.mock import patch
 from nfl.research.price_aware_offers import evaluate_offer, settle_record, frozen_distribution, write_evidence
@@ -16,6 +15,10 @@ def inputs():
              captured_at=T, event_open_date="2026-09-24T00:00:00Z",
              availability_status="NOT_LISTED_INACTIVE", decision_status="SHADOW_ONLY")
     c.update(canonical_game_id="2026_03_ATL_GB", canonical_kickoff=c["event_open_date"], market_availability="AVAILABLE")
+    c.update(quote_timestamp=T,current_role_status="VERIFIED",sportsbook_rule=dict(
+        status="CERTIFIED",book="fanduel_nfl",market="receptions",event_id="e",
+        url="https://www.fanduel.com/fanduel-sportsbook-house-rules-nj",
+        source_sha256=H,observed_at=T))
     d = dict(model_version="SYNTHETIC", event_id="e", gsis_id="p", pmf=[.2,.3,.5],
              conditioning="PLAYED", feature_cutoff=T,
              source_available_at=T, generated_at=T, history_sha256=H)
@@ -39,6 +42,7 @@ class PriceTests(unittest.TestCase):
 
     def test_at_least_includes_boundary_no_push(self):
         c,d=inputs(); c.update(shape="alt_ladder",market="receptions_alt",threshold=1,yes_odds=150,selection_id="a")
+        c["sportsbook_rule"]["market"]="receptions_alt"
         p=run(c,d)["prices"][0]
         self.assertAlmostEqual(p["win"],.8); self.assertEqual(p["push"],0)
 
@@ -46,12 +50,14 @@ class PriceTests(unittest.TestCase):
         c,d=inputs(); c["line"]=1.5
         a=run(c,d)["prices"][0]["win"]
         c.update(shape="alt_ladder",market="receptions_alt",threshold=2,yes_odds=150,selection_id="a")
+        c["sportsbook_rule"]["market"]="receptions_alt"
         self.assertEqual(a,run(c,d)["prices"][0]["win"])
 
     def test_ladder_monotonic(self):
         c,d=inputs(); probs=[]
         for n in (1,2,3):
             c.update(shape="alt_ladder",market="receptions_alt",threshold=n,yes_odds=150,selection_id="a")
+            c["sportsbook_rule"]["market"]="receptions_alt"
             probs.append(run(c,d)["prices"][0]["win"])
         self.assertEqual(probs,sorted(probs,reverse=True))
 
@@ -79,16 +85,28 @@ class PriceTests(unittest.TestCase):
             c,d=inputs(); c.update(changes)
             self.assertEqual(run(c,d)["decision_status"],"NO_PLAY",changes)
 
+    def test_uncertified_book_or_unknown_quote_quarantines(self):
+        for changes in ({"sportsbook_rule":None},{"quote_timestamp":None},
+                        {"current_role_status":"UNKNOWN_GAME_COVERAGE"},
+                        {"sportsbook_rule":{"status":"CERTIFIED","book":"other"}}):
+            c,d=inputs(); c.update(changes)
+            self.assertEqual(run(c,d)["decision_status"],"QUARANTINED",changes)
+
     def test_atomic_create_only_and_failed_write(self):
-        with tempfile.TemporaryDirectory() as td:
-            path=Path(td)/"evidence.json"
+        td=Path.cwd()/"engineering"/"nfl_price_aware_20260923"
+        path=td/"atomic_writer_test.json"
+        failed=td/"atomic_writer_failure_test.json"
+        path.unlink(missing_ok=True); failed.unlink(missing_ok=True)
+        try:
             write_evidence(path,{"sealed":1})
             before=path.read_bytes()
             with self.assertRaises(FileExistsError): write_evidence(path,{"sealed":2})
             self.assertEqual(path.read_bytes(),before)
             with patch("nfl.research.price_aware_offers.json.dump",side_effect=OSError("disk")):
-                with self.assertRaises(OSError): write_evidence(Path(td)/"failed.json",{})
-            self.assertEqual([p.name for p in Path(td).iterdir()],["evidence.json"])
+                with self.assertRaises(OSError): write_evidence(failed,{})
+            self.assertFalse(failed.exists())
+        finally:
+            path.unlink(missing_ok=True); failed.unlink(missing_ok=True)
 
     def test_bad_model_and_future_vintage(self):
         for changes in ({"pmf":[.2,.2]},{"pmf":[-.1,1.1]},{"gsis_id":"wrong"},
@@ -113,9 +131,10 @@ class PriceTests(unittest.TestCase):
         c,d=inputs(); r=run(c,d); before=copy.deepcopy(r)
         o=dict(event_id="e",gsis_id="p",authority="OFFICIAL_FINAL",source_sha256=H,
                observed_at="2026-09-24T04:00:00Z",played=True,receptions=1,
+               offensive_snaps=10,participation_source_sha256=H,
                canonical_game_id=c["canonical_game_id"],stat="receptions")
         self.assertTrue(all(s["status"]=="PUSH" for s in settle_record(r,o)["settlements"]))
-        o["played"]=False; o["receptions"]=0
+        o["played"]=False; o["receptions"]=0; o["offensive_snaps"]=0
         self.assertTrue(all(s["status"]=="VOID_DNP" for s in settle_record(r,o)["settlements"]))
         self.assertEqual(r,before)
 
@@ -123,9 +142,11 @@ class PriceTests(unittest.TestCase):
         c,d=inputs(); r=run(c,d)
         o=dict(event_id="e",gsis_id="p",authority="OFFICIAL_FINAL",source_sha256=H,
                observed_at="2026-09-24T04:00:00Z",played=True,receptions=2,
+               offensive_snaps=10,participation_source_sha256=H,
                canonical_game_id=c["canonical_game_id"],stat="receptions")
         for changes in ({"gsis_id":"wrong"},{"authority":"LIVE"},{"played":None},{"receptions":2.5},{"observed_at":T},
-                        {"played":False}, {"canonical_game_id":"wrong"}, {"stat":"passing_yards"}):
+                        {"played":False}, {"offensive_snaps":None},
+                        {"offensive_snaps":0}, {"canonical_game_id":"wrong"}, {"stat":"passing_yards"}):
             with self.assertRaises(ValueError): settle_record(r,dict(o,**changes))
         r["candidate"]["over_odds"]=200
         with self.assertRaises(ValueError): settle_record(r,o)

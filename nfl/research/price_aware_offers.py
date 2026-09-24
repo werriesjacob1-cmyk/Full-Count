@@ -182,9 +182,31 @@ def evaluate_offer(candidate: dict, distribution: dict, *, as_of: str,
                 p["market_fair_conditional_on_no_push"] = q / sum(implied)
         result["prices"] = prices
         availability = candidate.get("availability_status", "UNKNOWN_GAME_COVERAGE")
-        if availability != "NOT_LISTED_INACTIVE" or candidate.get("decision_status") != "SHADOW_ONLY":
+        reasons = []
+        if availability != "NOT_LISTED_INACTIVE":
+            reasons.append(availability)
+        if candidate.get("decision_status") != "SHADOW_ONLY":
+            reasons.append("UPSTREAM_ELIGIBILITY_NOT_CLEARED")
+        if candidate.get("quote_timestamp") is None:
+            reasons.append("QUOTE_TIMESTAMP_NOT_PROVIDED")
+        if candidate.get("current_role_status") != "VERIFIED":
+            reasons.append("CURRENT_ROLE_NOT_VERIFIED")
+        rule = candidate.get("sportsbook_rule")
+        if not isinstance(rule, dict) or rule.get("status") != "CERTIFIED":
+            reasons.append("BOOK_ACTION_RULES_NOT_CERTIFIED")
+        elif (rule.get("book") != candidate["source"] or
+              rule.get("market") != candidate["market"] or
+              rule.get("event_id") != candidate["event_id"] or
+              not isinstance(rule.get("url"), str) or
+              not rule["url"].startswith("https://www.fanduel.com/")):
+            reasons.append("BOOK_ACTION_RULES_IDENTITY_MISMATCH")
+        else:
+            _digest(rule["source_sha256"])
+            if _time(rule["observed_at"]) > now:
+                reasons.append("BOOK_ACTION_RULES_AFTER_CUTOFF")
+        if reasons:
             result["decision_status"] = "QUARANTINED"
-            result["reasons"] = [availability, "UPSTREAM_ELIGIBILITY_NOT_CLEARED"]
+            result["reasons"] = reasons
         else:
             result["decision_status"] = "SHADOW_ONLY"
     except (KeyError, TypeError, ValueError, OverflowError) as exc:
@@ -200,6 +222,8 @@ def settle_record(record: dict, outcome: dict) -> dict:
     payload = {k: v for k, v in record.items() if k != "record_sha256"}
     if _hash(payload) != record.get("record_sha256"):
         raise ValueError("prediction seal mismatch")
+    if record.get("decision_status") not in {"QUARANTINED", "SHADOW_ONLY"} or not record.get("prices"):
+        raise ValueError("unpriced or invalid prediction cannot settle")
     candidate = record["candidate"]
     for field in ("event_id", "gsis_id"):
         if outcome.get(field) != candidate.get(field):
@@ -214,8 +238,12 @@ def settle_record(record: dict, outcome: dict) -> dict:
     if _time(outcome["observed_at"]) < max(_time(candidate["event_open_date"]),
                                          _time(candidate["canonical_kickoff"])):
         raise ValueError("outcome before kickoff")
-    if type(outcome.get("played")) is not bool:
-        raise ValueError("participation must be known")
+    snaps = outcome.get("offensive_snaps")
+    if type(snaps) is not int or snaps < 0:
+        raise ValueError("certified offensive snap count required")
+    _digest(outcome["participation_source_sha256"])
+    if type(outcome.get("played")) is not bool or outcome["played"] != (snaps > 0):
+        raise ValueError("participation contradicts snap count")
     actual = outcome.get("receptions")
     if not outcome["played"] and actual not in (None, 0):
         raise ValueError("DNP contradicts nonzero receptions")
