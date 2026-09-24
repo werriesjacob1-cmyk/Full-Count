@@ -5681,3 +5681,30 @@ draft PR #185). Draft PR #189, not merged -- Jacob's separate explicit
 authorization required.
 
 Alligator
+
+## 2026-09-24 -- SUPERCLAUDE MISSION 10: unit-consistent pregame target-share stage
+
+The opportunity engine's excess error versus B0 is mainly a unit mismatch,
+not bad share estimates. It multiplied a share of team TARGETS by predicted
+team DROPBACKS, and real teams produce ~0.83 targets per dropback (+21%
+inflation, bias +0.49 receptions). Six share estimators were equivalent
+(exploratory, 2024-2025 wk8+).
+
+`nfl/research/pregame_target_share.py` (C1) applies the share to predicted
+team TARGETS via the team's strictly-prior targets-per-dropback ratio. It
+was locked in `PREREGISTRATION.md` (commit `d1666e06d1`) before the
+untouched 2019-2022 wk8+ holdout was read. Locked primary result: C1 minus
+B0 MAE -0.0334, player-clustered 95% CI [-0.0456, -0.0210], n=10,961 / 712
+players, CONFIRMED_IMPROVEMENT_OVER_B0. It is consistent across every
+season, position and share tier, but modest (~2.4%). There are no real
+historical prices, so there is no hit-rate claim. One disclosed post-run
+fix to a secondary metric (`f43c07dd43`) left the primary result unchanged.
+
+A frozen forward shadow of 2026 week 3 (293 candidates, SHA-256
+`357c27f5...`, frozen 2026-09-24T01:24:56Z, ~23h pre-kickoff) is committed
+at `9744243f63`. Grade it only after FINAL; non-participants are VOID.
+
+Branch `claude/nfl-pregame-target-share-20260923`. Draft PR; not merged,
+not promoted. B0, live selectors and public picks are unchanged.
+
+Alligator
