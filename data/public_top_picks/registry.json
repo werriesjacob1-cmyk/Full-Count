@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-24T02:09:34.136573+00:00",
+  "updated_at": "2026-09-24T08:09:18.594377+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -47030,6 +47030,92 @@
         },
         "qualification_timestamp": "2026-09-24T01:56:17.308476+00:00",
         "board_timestamp": "2026-09-24T01:56:17.294206+00:00",
+        "slate_date": "2026-09-24"
+      }
+    },
+    "fc2:824623:player-571510:pitcher_outs:16:over": {
+      "canonical_id": "fc2:824623:player-571510:pitcher_outs:16:over",
+      "settlement_identity": [
+        "824623",
+        [
+          "player",
+          "571510"
+        ],
+        "pitcher_outs",
+        "16",
+        "over"
+      ],
+      "slate_date": "2026-09-24",
+      "first_published_at": "2026-09-24T08:09:18.594377+00:00",
+      "publication_provenance": {
+        "artifact_id": "4b16a8585c12f403ccb157498dd95dcb8e833d8ff28f49792375bf3c2f460c02",
+        "source_commit": "52a0b2101578d37f69b6b7302b1bb9033ef741b1",
+        "workflow_run_id": "35973165208",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-24T08:09:02.960086+00:00",
+        "data_hash": "83ddf1ea469366a181f78ec6f9e1fcd919251683c4f846abcc7ee3bbfdfe6e07",
+        "live_hash": "f60a8266e39110d7e03bde167092bc3daf20dc4ec80c708d4c47b301fdbbf685"
+      },
+      "snapshot": {
+        "id": "fc2:824623:player-571510:pitcher_outs:16:over",
+        "identity_version": 2,
+        "game_pk": 824623,
+        "player_id": 571510,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Matthew Boyd",
+        "team": "Chicago Cubs",
+        "matchup": "Miami Marlins @ Chicago Cubs",
+        "game_start": "2026-09-24T18:20:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 15.5,
+          "needs": 16
+        },
+        "prop": "Over 15.5 Outs Recorded",
+        "hit_probability": 0.6408,
+        "market_odds": 112,
+        "market_implied": 0.4415,
+        "market_edge": 0.1993,
+        "market_hold": 0.0685,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (20.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 16+ outs (5.1 IP) in 67.1% of his last 21 real starts (league 51.8%, avg 17.1 outs/start)"
+        ],
+        "watchouts": [],
+        "prob_ci": [
+          0.5723,
+          0.7457
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 21,
+        "lineup_assumed": null,
+        "base_rate": 0.5178,
+        "lift": 0.123,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "705ff1803",
+          "prediction_timestamp": "2026-09-24T08:04:43.860804+00:00",
+          "odds_fetched_at": "2026-09-24T08:04:40.396938+00:00",
+          "board_generated_at": "2026-09-24T08:04:43.843981+00:00"
+        },
+        "qualification_timestamp": "2026-09-24T08:04:43.860804+00:00",
+        "board_timestamp": "2026-09-24T08:04:43.843981+00:00",
         "slate_date": "2026-09-24"
       }
     }
