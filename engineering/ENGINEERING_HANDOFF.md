@@ -5681,3 +5681,133 @@ draft PR #185). Draft PR #189, not merged -- Jacob's separate explicit
 authorization required.
 
 Alligator
+
+## 2026-09-24 -- SUPERCLAUDE MISSION 11, P1: cross-slate price contamination,
+## Games price-state honesty, live History (draft PR, branch
+## `claude/product-history-live-games-pricing-20260924`)
+
+Base `eadff15696`. MLB customer product only: no NFL code, workflow, model
+weight, threshold, recommendation policy or settlement logic changed.
+
+**Root cause of the Mike Trout "not priced" Games card (real repo evidence,
+not the screenshot).**
+1. `mlb_daily.TODAY = datetime.now()` runs in UTC on GitHub runners. The
+   published board switched to `date: 2026-09-24` at 2026-09-24T00:13Z
+   (7:13 pm CDT on Sept 23) while Sept 23 late games were still pregame.
+   Already recorded as a known issue (see "New issues discovered" above,
+   PR #51 era). **Deliberately NOT changed here**: grading, public-pick
+   persistence, board-freeze and file naming all key on it. Needs its own
+   audit and Jacob's decision.
+2. The board build priced props from `fetch_prop_prices()`'s flat dict,
+   which is keyed by player name and merged across every listed FanDuel
+   event. At the 01:05Z build, Sept 23's Angels @ Athletics (824951, first
+   pitch 01:40Z) was still listed. All 10 of Trout's markets on the Sept 24
+   Angels @ Mariners game (823087) carried exactly his 824951 prices
+   (H+R+RBI -475, Hits -290, Runs -180, TB -130, ...). The independent
+   review counted 352 priced props on that board that exactly match another
+   game's prior-day prices. (Earlier drafts of this entry and of the PR
+   named 824951 as Angels @ Mariners; that was wrong, and the corrected
+   record is above.)
+3. The event-scoped live refresh correctly marked those markets
+   `NOT_POSTED` (checked 01:10Z onward). The Games highlight then collapsed
+   every null-price state into "71% · not priced" under "Best Overall
+   Read", a negative-edge lean (-475 implies 82.6% vs a 71% model).
+4. Latent: `_relevant_events`' matchup-only fallback would bind a
+   next-day row to the prior day's event of a series whenever the next
+   day's event was not listed yet. The same board has real exposure:
+   Padres @ Dodgers played on both slates, and 72 of its 168 priced props
+   carried the prior game's exact prices.
+
+**Changes.**
+- `odds_fanduel.py`: `slate_scoped_values` / `fetch_slate_prices` /
+  `slate_games_from_meta`. Board prices come only from events that uniquely
+  match a slate game, using the same `_relevant_events` rule the live
+  refresh uses. Merge semantics mirror each fetcher, and failure behaviour
+  matches the legacy non-strict call (a root transport failure raises; a
+  malformed or empty feed yields `{}`). The matchup-only fallback now
+  requires the listed start to be within 8h of the scheduled start;
+  unknown starts keep the legacy behaviour.
+- `generate_picks.py` and `dashboard/build_dashboard.py`: every board price
+  feed goes through `fetch_slate_prices`. `parlay_builder._finalize`'s
+  internal re-price (used only for `output/parlay_example_*.html`; the
+  dashboard parlay uses `price_legs=False`) is left unchanged and is a
+  known residual.
+- `dashboard/build_dashboard._game_pick_sections`: within each section,
+  price-clearing exact-line reads rank first, then priced reads, then
+  unpriced research projections. It reads existing price fields only, and
+  section diversity is unchanged.
+- `dashboard/static/app.js` (source of truth; `docs/app.js` and
+  `docs/app.css` synced byte-identical):
+  - `unpricedState()` gives one shared wording for NOT_POSTED /
+    FETCH_FAILED / IN_PLAY / never-priced, used by the Games line, the
+    compact card and the detail sheet. Unpriced highlights read "NN%
+    research projection · <reason>".
+  - `resolveGamePick` no longer falls back to a name match when the copy
+    carries an id.
+  - History re-fetches `history.json` every 3 min while open, on route
+    entry and on visibility. It accepts only a strictly newer
+    `generated_at` from the latest-applied request, shows live
+    provisional and official-final state from `LIVE_CACHE` joined by
+    canonical id only, lets the durable grade always win, computes the
+    official day record from durable grades only (live state is a
+    separate labelled tally), and preserves open day sections and
+    scroll. `pollLive` re-renders an open History page even when no
+    current-board prop changed.
+
+**Tests.** `test_slate_scoped_prices.py` (16, including the Trout replay),
+`test_frontend_history_games.py` (16, Node VM),
+`test_browser_history_games.py` (16 checks, real Chromium), plus a new block
+12c-2 in `test_build_dashboard.py`. Mutation checks: removing the drift
+guard, the slate scoping, the strictly-newer guard, durable-first, the
+History re-render on live, open-section preservation, scroll preservation,
+the id-only join, or the Games name-fallback tightening each fails at least
+one test.
+
+**Not claimed.** Nothing is deployed and production is not fixed. The
+board-date rollover still happens at 7 pm Central. Tonight's already
+published board still carries the contaminated prices until a rebuild on
+the merged code.
+
+**Independent adversarial review round 1** (separate agent, head
+`ad522aef23`) returned **HOLD** with 4 SHOULD-FIX findings and 8 NITs. All
+were fixed in the follow-up commit except where noted:
+- FETCH_FAILED with the reason "no unique relevant FanDuel event" (real
+  case: 177 White Sox @ Royals rows at 02:15Z) now reads "No FanDuel
+  listing found yet", not "FanDuel check failed".
+- Doubleheaders on the board path (completed in round 2): same-matchup
+  games resolve as a group. The group is used only when every game maps
+  to its own distinct event, and then only for keys every game carries at
+  the same price. A game-2 event that isn't listed yet, or a market only
+  one game has posted, prices neither game. `slate_match_report` counts
+  such games as unmatched. **Residual:** the live refresh
+  (`refresh_prices`, per row) can still bind a game-2 row to game 1's
+  event by matchup when game 2 is unlisted and the starts are within 8h.
+  Closing that needs slate context inside `refresh_prices` and is left
+  for a separate change.
+- `fetch_slate_prices` logs, per family, how many slate games matched and
+  which did not.
+- The detail sheet's header and Model-vs-Market lines use the same
+  wording (`noPriceText`).
+- The incident text is corrected (above).
+- The redundant request-sequence guard was removed; `generated_at` alone
+  is the ordering rule.
+- History ignores live or provisional observations older than 24h
+  (official finals are not age-limited).
+- `pollLive` re-renders History only when what it shows changed.
+- `visibilitychange` refetches only after 60s.
+- A newly appearing top day opens.
+- The new attributes use `escAttr`.
+- Residual, not changed: `value_board.py` and `prop_snapshot.py` still read
+  the flat feeds. Neither feeds the customer site; `prop_snapshot` is raw
+  archival capture. Also unchanged: the board call-site tests are still
+  source-level only.
+
+**Independent review round 2** (head `40216581ed`): **GO** for code
+integration, conditional on the doubleheader note above. That condition is
+met by completing the board-path fix rather than only documenting it.
+Wording nit also fixed: the detail sheet reads "FanDuel: not posted yet",
+not "FanDuel: Not yet posted on FanDuel". The reviewer rechecked all 12
+round-1 findings (10 fixed, 2 disclosed residuals) and found no regressions
+from the fixes.
+
+Alligator

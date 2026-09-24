@@ -770,6 +770,50 @@ check(bd._game_pick_sections([]) == [], "a game with no real picks at all return
       "not a crash or a fabricated empty-looking section")
 
 
+head("12c-2. _game_pick_sections(): 2026-09-24 Games 'not priced' incident -- priced reads "
+     "rank ahead of unpriced research projections inside every section, without losing the "
+     "section diversity 12c pins. Fixture mirrors the real 823087 (LAA @ SEA) highlights: "
+     "Trout's 71% H+R+RBI led 'Best Overall Read' although its -475 did not clear and the live "
+     "overlay then reported the line NOT_POSTED.")
+
+priced_picks = [
+    {"id": "trout", "name": "Mike Trout", "prop": "Over 0.5 Hits+Runs+RBIs", "type": "batter",
+     "projection": {"stat": "hits_runs_rbis"}, "hit_probability": 0.7095,
+     "market_odds": -475, "price_clears": False, "why": []},
+    {"id": "unpriced", "name": "Unpriced Bat", "prop": "Over 0.5 Hits+Runs+RBIs", "type": "batter",
+     "projection": {"stat": "hits_runs_rbis"}, "hit_probability": 0.74,
+     "market_odds": None, "price_clears": None, "why": []},
+    {"id": "clears", "name": "Value Bat", "prop": "Over 0.5 Hits", "type": "batter",
+     "projection": {"stat": "hits"}, "hit_probability": 0.60,
+     "market_odds": -110, "price_clears": True, "why": []},
+    {"id": "rodriguez", "name": "Grayson Rodriguez", "prop": "Over 3.5 Strikeouts", "type": "pitcher",
+     "projection": {"stat": "strikeouts"}, "hit_probability": 0.6176,
+     "market_odds": None, "price_clears": None, "why": []},
+    {"id": "canzone", "name": "Dominic Canzone", "prop": "Over 1.5 Total Bases", "type": "batter",
+     "projection": {"stat": "total_bases"}, "hit_probability": 0.3845,
+     "market_odds": 130, "price_clears": False, "why": []},
+]
+ps = bd._game_pick_sections(priced_picks)
+by_label = {s["label"]: [p["id"] for p in s["picks"]] for s in ps}
+check(by_label.get("Best Overall Read") == ["clears"],
+      "a price-clearing exact-line read leads Best Overall Read over higher raw probabilities",
+      f"got {by_label}")
+check(by_label.get("Best Batter Read") == ["trout"],
+      "an exact-line priced read (even one whose price does not clear) outranks an unpriced "
+      "research projection with a higher probability", f"got {by_label}")
+check(by_label.get("Best Pitcher Read") == ["rodriguez"],
+      "an unpriced candidate still fills a section when nothing priced exists for it -- the "
+      "tier orders, it never hides the only real candidate", f"got {by_label}")
+check(by_label.get("Best Power Angle") == ["canzone"],
+      "section diversity survives the tier: the power section still holds the power prop",
+      f"got {by_label}")
+check(by_label.get("Other Props") == ["unpriced"],
+      "the unpriced projection is kept, below every priced read", f"got {by_label}")
+check(all(p.get("market_odds") is None for p in priced_picks if p["id"] in ("unpriced", "rodriguez"))
+      and priced_picks[0]["market_odds"] == -475,
+      "ranking never writes or invents a price on the input rows", f"got {priced_picks}")
+
+
 head("12d. _team_bullpen_context()/_bullpen_fatigue_summary() (detailed bullpen presentation, "
      "2026-08-26): direct instruction -- \"Jacob specifically wants names and context\" -- and "
      "the two conservative-summary requirements: never claim a reliever is 'likely to appear' "
