@@ -191,6 +191,8 @@ def evaluate_offer(candidate: dict, distribution: dict, *, as_of: str,
             reasons.append("QUOTE_TIMESTAMP_NOT_PROVIDED")
         if candidate.get("current_role_status") != "VERIFIED":
             reasons.append("CURRENT_ROLE_NOT_VERIFIED")
+        if candidate.get("authoritative_b0_status") != "JOINED":
+            reasons.append("AUTHORITATIVE_B0_NOT_JOINED")
         rule = candidate.get("sportsbook_rule")
         if not isinstance(rule, dict) or rule.get("status") != "CERTIFIED":
             reasons.append("BOOK_ACTION_RULES_NOT_CERTIFIED")

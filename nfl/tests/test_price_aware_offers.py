@@ -19,6 +19,7 @@ def inputs():
         status="CERTIFIED",book="fanduel_nfl",market="receptions",event_id="e",
         url="https://www.fanduel.com/fanduel-sportsbook-house-rules-nj",
         source_sha256=H,observed_at=T))
+    c["authoritative_b0_status"]="JOINED"
     d = dict(model_version="SYNTHETIC", event_id="e", gsis_id="p", pmf=[.2,.3,.5],
              conditioning="PLAYED", feature_cutoff=T,
              source_available_at=T, generated_at=T, history_sha256=H)
