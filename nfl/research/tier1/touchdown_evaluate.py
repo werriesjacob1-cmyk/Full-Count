@@ -309,6 +309,75 @@ def live_rows(data: dict[str, Any]) -> dict[str, Any]:
             "label": "RESEARCH_ONLY_NOT_A_PICK"}
 
 
+FANDUEL_RULES = {
+    "source": "FanDuel Sportsbook House Rules (Massachusetts filing), "
+              "https://massgaming.com/wp-content/uploads/FanDuel-House-Rules-8.24.23.pdf",
+    "sha256": "2a8cb81b2cc616ef06796a9e4b68e2af634b772411e5252a4e3c9596c9bfa845",
+    "retrieved_utc": "2026-09-24T21:26Z",
+    "caveat": "2023-08-24 filing; the current fanduel.com house-rules pages returned HTTP 403 to "
+              "this session, so the 2026 wording is not verified",
+    "quoted_rules": [
+        "Only when a player does not play a snap in that game are the selections voided.",
+        "For touchdown scorer markets, the winning selection is the player who possesses the ball "
+        "in the endzone. For example - on a pass TD play, the receiver in the endzone is graded as "
+        "the winner, not the QB.",
+        "In the event of an abandoned game, bets stand on scores that have taken place already "
+        "(and overtime counts for these markets)."],
+    "differences_vs_research_outcome": [
+        "VOID: FanDuel voids only a player who plays ZERO snaps. The research population is "
+        "players with >=1 carry or target in the game (the harness role), which is known only "
+        "after the game. A player who plays snaps but gets no touch is a FanDuel LOSS but is "
+        "absent here, so research probabilities are conditional on a touch and run HIGH relative "
+        "to FanDuel's settled population. Paired comparisons are unaffected (same rows).",
+        "SCOPE: FanDuel counts any TD where the player possesses the ball in the end zone, "
+        "including kick/punt return, defensive and fumble-recovery TDs (the repo grader "
+        "player_prop_grader/box_score_outcomes agrees). The research outcome counts rushing and "
+        "receiving TDs only; see settlement_gap_other_td_only for the measured share.",
+        "PASSING TDs: excluded by both (the receiver, not the QB, wins).",
+        "TWO-POINT CONVERSIONS: not touchdowns for either; excluded from features too.",
+        "OVERTIME: counts for FanDuel; nflverse weekly stats include overtime.",
+        "LIVE: the challenger predicts P(TD | plays and gets a touch); it does not model the "
+        "chance of being inactive (F8 is Workstream B)."],
+}
+
+
+def status_annotations(report: dict) -> dict:
+    prim = report["variants"][report["primary_variant"]]["summary"]
+    vol = report["primary_vs_volume_only_control"][report["primary_variant"]]
+    hold, fresh = vol["HOLDOUT_2023_2025"], vol["FRESH_2026"]
+    beats_scale = (prim["HOLDOUT_2023_2025"]["vs_scale_control"]["ci95"][1] < 0
+                   and prim["FRESH_2026"]["vs_scale_control"]["delta_logloss"] <= 0)
+    beats_volume = hold["paired_delta_ci95"][1] < 0 and fresh["paired_delta_mean"] <= 0
+    milestone = "VALIDATED" if beats_scale and beats_volume else "BUILT"
+    evaluation = {
+        "primary_variant": report["primary_variant"],
+        "vs_scale_control": {p: prim[p]["vs_scale_control"] for p in prim},
+        "vs_b0": {p: prim[p]["vs_b0"] for p in prim},
+        "vs_volume_only_control": {p: {k: v[p].get(k) for k in
+                                       ("n_matched", "activation_share", "paired_delta_mean",
+                                        "paired_delta_ci95", "n_game_clusters")} for p in v}
+        if (v := vol) else {},
+        "claim": ("historically supported, not prospectively validated" if milestone == "VALIDATED"
+                  else "built; not supported by the declared criterion"),
+    }
+    record = C.status_record(
+        TF.FACTOR_ID, milestone=milestone, consumer=TC.CONSUMER_ID,
+        evidence=("engineering/nfl_tier1_touchdown_20260924/touchdown_report.json; primary "
+                  "rz_blend declared at commit 47d35ab540 before holdout scoring"),
+        blockers=[
+            "harness anytime_td B0 is degenerate for log loss (B0 = 0 on ~36% of rows while "
+            "those rows score at 11-15%); beating B0/scale control is not F4 evidence -- the "
+            "factor-specific test is vs the no-red-zone volume_only control",
+            "the incremental gain over volume_only is small (holdout log loss -0.0017)",
+            "probabilities are under-dispersed by decile and conditional on the player getting "
+            "a touch; not a validated anytime-TD pricing system",
+            "HOLDOUT_2023_2025 previously inspected by other NFL experiments (exploratory)"],
+        activation={p: prim[p]["vs_b0"]["activation"] for p in prim}
+        | {f"vs_volume_only_{p}": vol[p].get("activation_share") for p in vol},
+        evaluation=evaluation)
+    return {"status_records": [record], "fanduel_settlement": FANDUEL_RULES}
+
+
 def _summary(ev: dict) -> dict:
     out = {}
     for which in ("vs_b0", "vs_scale_control"):
@@ -326,12 +395,19 @@ def _summary(ev: dict) -> dict:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--stage", choices=("fit", "full"), required=True)
+    ap.add_argument("--stage", choices=("fit", "full", "status"), required=True)
     for k, v in DEFAULTS.items():
         ap.add_argument(f"--{k}", default=v)
     ap.add_argument("--out", default="engineering/nfl_tier1_touchdown_20260924/touchdown_report.json")
     args = ap.parse_args()
 
+    if args.stage == "status":
+        path = Path(args.out)
+        report = json.loads(path.read_text(encoding="utf-8"))
+        report.update(status_annotations(report))
+        path.write_text(json.dumps(report, indent=1, default=str) + "\n", encoding="utf-8")
+        print(json.dumps(report["status_records"], indent=1))
+        return
     data = load(args)
     implied, games_sha = closing_implied(Path(args.games), data["scored"])
     fitted = fit_params(data, implied)
