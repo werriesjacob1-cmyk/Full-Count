@@ -379,7 +379,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 50.4,
+          "score": 51.1,
           "notable_signals": 0,
           "matchup": "Arizona Diamondbacks @ Colorado Rockies",
           "game_pk": 824298,
@@ -389,13 +389,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 25.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 92.8571,
             "l14_k_pct": 23.5294,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 59.7637,
+            "ump_k_pct": -0.36,
+            "ump_bb_pct": -0.468
           },
-          "hit_probability": 0.5964,
-          "raw_hit_probability": 0.6122,
-          "lift": -0.1123,
+          "hit_probability": 0.5958,
+          "raw_hit_probability": 0.6095,
+          "lift": -0.1075,
           "reliability": "B",
           "sample_n": 11,
           "projection": {
@@ -405,9 +408,9 @@
           }
         },
         {
-          "prop": "Over 13.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 61.5,
+          "score": 49.0,
           "notable_signals": 0,
           "matchup": "Arizona Diamondbacks @ Colorado Rockies",
           "game_pk": 824298,
@@ -416,18 +419,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7485,
+            "outs_rate": 0.6773,
             "avg_outs_per_start": 14.18
           },
-          "hit_probability": 0.6899,
-          "raw_hit_probability": 0.7485,
-          "lift": -0.0975,
+          "hit_probability": 0.6452,
+          "raw_hit_probability": 0.6773,
+          "lift": -0.1072,
           "reliability": "B",
           "sample_n": 11,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 13.5,
-            "needs": 14
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]

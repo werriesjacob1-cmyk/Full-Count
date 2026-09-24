@@ -5812,6 +5812,149 @@ from the fixes.
 
 Alligator
 
+## 2026-09-24 -- Published Top Picks stay on Today through 11:59 pm Central
+## (branch `claude/product-published-today-ct-20260924`, stacked on PR #194)
+
+Jacob's decisions (session, 2026-09-24): the customer slate day is **Central
+time**, and this fix ships as a **separate PR stacked on #194**.
+
+Evidence (Issue #91 comment `5808992903`): at the UTC rollover (7:13 pm CDT)
+the build dropped 7 of 27 published Sept-23 Top Picks: 5 whose games hadn't
+started and 2 already final. After that, carried picks disappeared as soon as
+their games left "live".
+
+**Change** (`dashboard/build_dashboard.reconcile_public_lifecycle`):
+- New `DISPLAY_TIMEZONE = "America/Chicago"` and `display_slate_date(now)`.
+- A registered pick from another build slate is kept for its whole Central
+  day, whatever its game state. On any other day it is kept only while its
+  game is live, suspended or postponed. That is the pre-existing rule, and
+  it is still what stops settled picks from sticking to later boards.
+- A still-pregame registered pick from another build slate (absent from the
+  payload only because of the UTC rollover) is now carried. The
+  current-slate "withdrawn pregame pick" rule is unchanged.
+- Rows gain `published_slate_date`; the payload gains `display_date` and
+  `display_timezone`.
+- Frontend:
+  - Today's Top Picks are grouped as "Today · <date>", "Early picks for
+    <date>" (the next build slate published before Central midnight) and
+    "In progress from <date>".
+  - Started published picks carry "Published pick · game started —
+    original pregame odds shown, not a current offer".
+  - The Best Bets subtitle states the 11:59 pm Central contract.
+
+**Not changed:**
+- `mlb_daily.TODAY` (the build and grading slate date still rolls at UTC
+  midnight), grading, file names, the publication registry, History and
+  the official record.
+- The first step deliberately leaves the build date alone.
+
+**Verified by replaying real committed builds** (data.json + live.json +
+registry at each commit) through `reconcile_public_lifecycle`:
+
+| Build | Old code (matches production) | New code |
+|---|---|---|
+| 00:13Z (7:13 pm CDT) | 20 | 27 |
+| 01:56Z | 13 | 27 |
+| 03:31Z | 5 | 28 (27 Sept 23 + 1 Sept 24) |
+| 06:03Z (after Central midnight) | 1 | 1 (the Sept-23 settled picks correctly gone) |
+
+**Tests:**
+- `test_published_today_central.py` (8): the DST and Central-date
+  boundaries, the pregame/final carry at rollover, 23:59:59 vs 00:01
+  Central, no duplicates, the days-old sticky guard, the unchanged
+  current-slate withdrawal rule, and the new-slate and prior-day
+  coexistence.
+- `test_frontend_today_groups.py` (4).
+- Mutations: removing the Central-day rule, the pregame carry, or the
+  live-only rule after the Central day each fails tests. The last one also
+  fails the existing lifecycle suite.
+
+**Open (Jacob):**
+- When should the build/grading date itself move to Central?
+- Should a *demoted* same-slate pregame published pick also stay visible?
+  Today it becomes a lean, per the pre-existing policy.
+
+**Independent review round 1 (head `7410db9590`): HOLD.** Fixed in the
+follow-up commit:
+- **Line moves.** A carried pregame pick could trigger an unresolvable
+  LINE_MOVED reconciliation loop that failed Best Bets closed. Carried
+  picks (whose `published_slate_date` differs from the payload date) are
+  now frozen on both reconcile paths. `refresh_prices` never reprices or
+  reclassifies them, and `reconcile.line_moved_mismatches` ignores them.
+- **Inconsistent freezing.** The deploy path used to reprice these rows
+  while the full build pinned them; both now freeze. Carried pregame
+  cards say "Published pick — odds as of publication, not a current
+  quote".
+- **Midnight in the browser.** The browser now enforces Central midnight
+  itself (`Intl`, America/Chicago), so a late deploy or a tab left open
+  never shows yesterday's settled picks as today's.
+- **Count tile.** It now counts only today's slate-day Top Picks and is
+  labelled "Top Picks today".
+- **Postponed and suspended games.** The heading is now "Still open from
+  <date>". The "game started" note is limited to live, final and
+  suspended, so it no longer appears on postponed games whose start time
+  has passed.
+- **Subtitle.** Softened to "Today's published Top Picks".
+- **Tests.** New ones cover the first-loop freeze with current
+  presentation, refresh skipping carried picks, the line-moved exclusion,
+  browser expiry, the tile count, and the carried note. Each fix fails a
+  test when mutated (the freeze only when both freeze sites are removed,
+  since either one alone pins the fields).
+- **Pre-existing and unchanged:**
+  - The `(live, suspended, postponed)` tuple leaves out the "delayed"
+    game state.
+  - A postponed prior-slate pick stays until its game is resolved.
+  - When full builds stall, the payload's slate date lags, and the
+    Central-day contract is not enforced by the build. The board-age
+    fail-closed check mitigates this.
+
+Replay after the fixes: still 27/27/28/1 (the old code gives 20/13/5/1).
+
+**Independent review, round 2 (head `7f9b58e65f`): HOLD.** Fixed in the
+follow-up commit.
+- **BLOCKER.** When every Top Pick had expired in the browser (after
+  Central midnight, before the next deploy), `renderToday` read
+  `groups[0].kind` of an empty list. `boot()` then rejected before it
+  registered its polls, so the page stayed on the spinner. It now branches
+  on the group count and falls back to the gap explainer. A test renders
+  that case.
+- **Carried picks mislabelled.** The `refresh_prices` skip ran before the
+  game-state branch, so started carried picks lost IN_PLAY and the detail
+  sheet called their price "Current". The skip now sits just before
+  `pregame.append`, so started carried picks get their game fact and
+  IN_PLAY again. `priceFreshnessState` shows "As published · not a
+  current quote" for carried pregame picks. Both are tested.
+- **Locale-dependent date.** `centralDateNow` is now built from
+  `formatToParts` and validated as `YYYY-MM-DD`; anything else falls back
+  to the payload date.
+- **Tile count.** The tile discloses the other groups ("+N early/still
+  open").
+- **Scope of browser expiry.** It applies to the Today page's Top Picks
+  only. The All Props list still shows whatever the deployed payload
+  carries.
+
+**Independent review, round 3 (head `02f4e629d7`): GO** for code
+integration. The reviewer verified the round-2 BLOCKER fix in real Chromium
+and reproduced the old crash as a control. Its non-blocking findings are
+fixed in the follow-up commit:
+- **Medium: an open tab kept yesterday's settled picks after Central
+  midnight.** The round-1 claim that "a tab left open never shows
+  yesterday's settled picks" was not true, because nothing re-renders when
+  the board doesn't change. The once-a-minute `renderFreshness` tick now
+  re-renders the route when `displayToday()` changes. The new real-browser
+  test `test_browser_today_central.py` covers it: a Playwright fake clock
+  runs 11:55 pm to 12:05 am CDT with no reload. Removing the re-render
+  fails 4 of its 12 checks.
+- **Low:** for carried picks, "As published" now wins over stale LINE_MOVED
+  and FETCH_FAILED labels, and the browser overlay ignores live price
+  fields on carried picks before first pitch, as the build does.
+- **Low:** the tile's "+N early/still open" is now tested.
+- **Informational, unchanged:**
+  - After the picks expire, the empty-state wording still says "tonight".
+  - A device clock that runs ahead can hide the day's settled picks early.
+
+Alligator
+
 ## 2026-09-24 -- Mission 12 Workstream D: MLB Top Pick selection-overconfidence diagnostic (Claude Code)
 
 Branch `claude/mlb-selection-overconfidence-20260924`. Research only: new
