@@ -15,6 +15,23 @@ Rules (fixed now):
   confirmatory test. The confirmatory test is the locked 2019-2022 holdout.
 - No sportsbook line is invented. Real-line evaluation happens only where a
   real captured offer exists, in a separate step.
+
+Amendment, 2026-09-24, still BEFORE any week-3 outcome existed, following
+the independent review (Issue #91 comment 5805874000). Two descriptive
+secondaries were added; the rules above are unchanged:
+- `chain_x_constant`: the existing unadjusted chain times the single
+  constant 0.8277 (mean targets per dropback on the 2024-2025 exploratory
+  rows). The review showed this constant does as well as C1's per-team
+  ratio on the locked holdout. Caveat, stated now: the forward shadow's
+  team rows are player-derived, with dropbacks ~6.9% lower than pinned PBP,
+  so this constant variant is expected to project LOW here, while C1 is
+  source-invariant.
+- `including_zero_stat_actives`: frozen candidates with no stats row but
+  real offensive snaps in the live 2026 snap-count file are scored as 0
+  receptions instead of VOID. The review showed that excluding them favors
+  C1. Snap counts are a live, unpinned asset whose SHA-256 is recorded. If
+  the snap file or crosswalk cannot be fetched, this block is reported as
+  not computed and is never guessed.
 """
 from __future__ import annotations
 
@@ -79,6 +96,52 @@ if len(graded) >= 2:
             graded, lambda g: abs(g["c1_projection"] - g["realized_receptions"]),
             lambda g: abs(g["b0_projection"] - g["realized_receptions"]),
         )
+CHAIN_CONSTANT = 0.8277
+
+
+def _compare(rows):
+    if len({g["player_id"] for g in rows}) < 2:
+        return None
+    out = {}
+    for name, fn in {
+        "b0": lambda g: g["b0_projection"],
+        "c1": lambda g: g["c1_projection"],
+        "chain_x_constant": lambda g: g["existing_unadjusted_projection"] * CHAIN_CONSTANT,
+    }.items():
+        out[name] = {"n": len(rows), "mae": statistics.fmean(abs(fn(g) - g["realized_receptions"]) for g in rows)}
+    out["c1_minus_chain_x_constant_mae"] = player_clustered_diff_ci(
+        rows, lambda g: abs(g["c1_projection"] - g["realized_receptions"]),
+        lambda g: abs(g["existing_unadjusted_projection"] * CHAIN_CONSTANT - g["realized_receptions"]),
+    )
+    return out
+
+
+report["secondary_chain_x_constant"] = {"constant": CHAIN_CONSTANT, "graded_rows": _compare(graded)}
+
+try:
+    import urllib.request
+
+    from nfl.research.role_intelligence_data_prep import (
+        SNAP_COUNTS_URL_TMPL,
+        fetch_players_crosswalk,
+        parse_snap_counts_csv,
+    )
+    url = SNAP_COUNTS_URL_TMPL.format(season=season)
+    with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "full-count-mission10/1.0"}), timeout=180) as resp:
+        raw = resp.read()
+    snaps = parse_snap_counts_csv(raw.decode("utf-8"), season, fetch_players_crosswalk())
+    active = {(s["player_id"], s["team"]) for s in snaps if s["week"] == week and s["player_id"] and s["offense_snaps"] > 0}
+    by_id = {c["player_id"]: c for c in artifact["candidates"]}
+    zero_rows = [{**by_id[v["player_id"]], "realized_receptions": 0.0} for v in void
+                 if (v["player_id"], by_id[v["player_id"]]["team"]) in active]
+    report["secondary_including_zero_stat_actives"] = {
+        "snap_source": {"url": url, "sha256": hashlib.sha256(raw).hexdigest(), "unpinned_live_asset": True},
+        "n_void_with_real_offense_snaps": len(zero_rows),
+        "comparison": _compare(graded + zero_rows),
+    }
+except Exception as exc:  # noqa: BLE001 - a secondary is reported as not computed, never guessed
+    report["secondary_including_zero_stat_actives"] = {"status": "NOT_COMPUTED", "reason": repr(exc)}
+
 report["void_players"] = void
 out = HERE / "forward_shadow_2026_wk3_grade.json"
 out.write_text(json.dumps(report, indent=2))
