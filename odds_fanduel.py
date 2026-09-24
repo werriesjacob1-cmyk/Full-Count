@@ -388,12 +388,13 @@ MATCHUP_FALLBACK_MAX_DRIFT = timedelta(hours=8)
 def _plausible_same_game(row_start, event):
     """Whether a matchup-only match can be the row's own game.
 
-    Real incident, 2026-09-24T01:05Z: the board rolled to the next slate date
-    while the prior night's Angels @ Mariners event was still listed pregame.
-    A series repeats the matchup string, so an unconditional matchup fallback
-    can bind the next day's rows to the previous day's event whenever the next
-    day's event is not listed yet. Unknown start on either side keeps the
-    legacy behaviour: there is nothing to compare.
+    Real exposure, 2026-09-24 board (built 01:05Z after the slate date rolled
+    at UTC midnight): Padres @ Dodgers played on both slates, and 72 of its
+    168 priced props carried the prior game's exact prices. A series repeats
+    the matchup string, so an unconditional matchup fallback can bind the
+    next day's rows to the previous day's event whenever the next day's
+    event is not listed yet. Unknown start on either side keeps the legacy
+    behaviour: there is nothing to compare.
     """
     event_start = _utc_instant(event.start)
     if row_start is None or event_start is None:
@@ -408,9 +409,11 @@ def slate_scoped_values(observation, slate_games):
     game from another slate that is still open, and the board then looks a
     price up by player name (or matchup) alone. Real incident, 2026-09-24
     board built 2026-09-24T01:05Z: all ten of Mike Trout's markets for his
-    next-day game carried the exact prices of the game about to start that
-    night, while the event-scoped live refresh correctly reported the same
-    markets NOT_POSTED.
+    next-day game (823087, Angels @ Mariners) carried the exact prices of
+    his game about to start that night (824951, Angels @ Athletics), while
+    the event-scoped live refresh correctly reported the same markets
+    NOT_POSTED. 352 priced props on that board matched another game's
+    prices exactly.
 
     ``slate_games`` holds mappings with ``game_start`` (UTC ISO) and
     ``matchup``. An event contributes only when it is the unique event
@@ -418,7 +421,10 @@ def slate_scoped_values(observation, slate_games):
     refresh already applies per row -- so an unmatched game stays unpriced
     rather than borrowing another event's quote. Merge semantics mirror each
     fetcher: the general batter feed merges per-player market dicts, every
-    other family replaces by key.
+    other family replaces by key. One exception, because the flat dict has
+    no game dimension: when two chosen events (a doubleheader) carry the
+    same key with DIFFERENT prices, that key is dropped rather than letting
+    one game's price stand in for the other's. Equal prices are kept.
     """
     if not isinstance(observation, MarketFeedObservation):
         return {}
@@ -429,14 +435,39 @@ def slate_scoped_values(observation, slate_games):
         events = _relevant_events(observation, game)
         if len(events) == 1 and events[0] not in chosen:
             chosen.append(events[0])
-    out = {}
+    out, conflicted = {}, set()
     for event in chosen:
         if observation.family == "general_batter":
             for player, markets in (event.values or {}).items():
-                out.setdefault(player, {}).update(markets)
+                mine = out.setdefault(player, {})
+                for market, price in markets.items():
+                    key = (player, market)
+                    if key in conflicted:
+                        continue
+                    if market in mine and mine[market] != price:
+                        del mine[market]
+                        conflicted.add(key)
+                        continue
+                    mine[market] = price
         else:
-            out.update(event.values or {})
-    return out
+            for key, value in (event.values or {}).items():
+                if key in conflicted:
+                    continue
+                if key in out and out[key] != value:
+                    del out[key]
+                    conflicted.add(key)
+                    continue
+                out[key] = value
+    return {k: v for k, v in out.items() if v != {}}
+
+
+def slate_match_report(observation, slate_games):
+    """(matched, total, unmatched matchups) for one family, for run logs."""
+    games = list(slate_games or ())
+    if not isinstance(observation, MarketFeedObservation) or observation.root_state != EVENTS_DISCOVERED:
+        return 0, len(games), [g.get("matchup") for g in games]
+    unmatched = [g.get("matchup") for g in games if len(_relevant_events(observation, g)) != 1]
+    return len(games) - len(unmatched), len(games), unmatched
 
 
 def slate_games_from_meta(game_meta):
@@ -455,7 +486,14 @@ def fetch_slate_prices(fetcher, slate_games):
     if getattr(observation, "root_state", None) == ROOT_FETCH_FAILED:
         detail = "; ".join(observation.errors) or ROOT_FETCH_FAILED
         raise RuntimeError(f"indeterminate {observation.family} root feed: {detail}")
-    return slate_scoped_values(observation, slate_games)
+    games = list(slate_games or ())
+    # A key-format drift (team rename, start-time mismatch) would otherwise
+    # drop a whole game's prices without a trace.
+    matched, total, unmatched = slate_match_report(observation, games)
+    family = getattr(observation, "family", "?")
+    print(f"    FanDuel {family}: {matched}/{total} slate games matched to a unique event"
+          + (f"; unmatched: {', '.join(str(m) for m in unmatched)}" if unmatched else ""))
+    return slate_scoped_values(observation, games)
 
 
 def market_evidence_for_row(observation, row):

@@ -91,6 +91,8 @@ RUN = r"""
 """
 
 HISTORY_FIXTURES = r"""
+const NOW = Date.now();
+const at = m => new Date(NOW + m * 60000).toISOString();  // minutes from now
 const ID_A = "fc2:824951:player-545361:hits_runs_rbis:1:over";
 const ID_B = "fc2:824951:player-660271:hits:1:over";
 const ID_C = "fc2:824951:player-592450:total_bases:2:over";
@@ -136,9 +138,9 @@ def run_node(body: str) -> dict:
 class HistoryLiveStateTests(unittest.TestCase):
     def test_provisional_green_and_red_show_awaiting_final_and_are_not_counted(self):
         r = run_node(r"""
-          ingestLiveDocument(liveDoc("2026-09-24T02:00:00Z", {
-            [ID_A]: settlement("provisional_hit", "live_observation", "2026-09-24T02:00:00Z"),
-            [ID_B]: settlement("provisional_miss", "live_observation", "2026-09-24T02:00:00Z"),
+          ingestLiveDocument(liveDoc(at(-60), {
+            [ID_A]: settlement("provisional_hit", "live_observation", at(-60)),
+            [ID_B]: settlement("provisional_miss", "live_observation", at(-60)),
           }));
           const el = await openHistory(historyDoc("2026-09-24T01:00:00Z",
             [pick(ID_A), pick(ID_B), pick(ID_C, { grade: "hit" })]));
@@ -153,8 +155,8 @@ class HistoryLiveStateTests(unittest.TestCase):
 
     def test_official_final_in_live_is_labelled_pending_record_not_counted(self):
         r = run_node(r"""
-          ingestLiveDocument(liveDoc("2026-09-24T04:00:00Z", {
-            [ID_A]: settlement("hit", "official_final", "2026-09-24T04:00:00Z"),
+          ingestLiveDocument(liveDoc(at(-40), {
+            [ID_A]: settlement("hit", "official_final", at(-40)),
           }));
           const el = await openHistory(historyDoc("2026-09-24T01:00:00Z", [pick(ID_A)]));
           return { html: el.innerHTML };
@@ -165,8 +167,8 @@ class HistoryLiveStateTests(unittest.TestCase):
 
     def test_same_session_refresh_moves_to_official_final_without_reload(self):
         r = run_node(r"""
-          ingestLiveDocument(liveDoc("2026-09-24T02:00:00Z", {
-            [ID_A]: settlement("provisional_hit", "live_observation", "2026-09-24T02:00:00Z"),
+          ingestLiveDocument(liveDoc(at(-60), {
+            [ID_A]: settlement("provisional_hit", "live_observation", at(-60)),
           }));
           const el = await openHistory(historyDoc("2026-09-24T01:00:00Z", [pick(ID_A)]));
           const before = el.innerHTML;
@@ -190,8 +192,8 @@ class HistoryLiveStateTests(unittest.TestCase):
           const before = el.innerHTML;
           HISTORY_FETCHED_AT = Date.now();  // no history.json refetch in this step
           const p = pollLive();
-          __respond(__fetchQueue.length - 1, liveDoc("2026-09-24T02:10:00Z", {
-            [ID_A]: settlement("provisional_hit", "live_observation", "2026-09-24T02:10:00Z"),
+          __respond(__fetchQueue.length - 1, liveDoc(at(-50), {
+            [ID_A]: settlement("provisional_hit", "live_observation", at(-50)),
           }));
           await p; await __flush();
           return { before, after: el.innerHTML };
@@ -243,12 +245,12 @@ class HistoryLiveStateTests(unittest.TestCase):
     def test_provisional_never_overrides_durable_or_newer_official_final(self):
         r = run_node(r"""
           // Official final first, then an OLDER provisional observation.
-          ingestLiveDocument(liveDoc("2026-09-24T04:00:00Z", {
-            [ID_B]: settlement("miss", "official_final", "2026-09-24T04:00:00Z"),
+          ingestLiveDocument(liveDoc(at(-40), {
+            [ID_B]: settlement("miss", "official_final", at(-40)),
           }));
-          ingestLiveDocument(liveDoc("2026-09-24T04:05:00Z", {
-            [ID_B]: settlement("provisional_hit", "live_observation", "2026-09-24T04:05:00Z"),
-            [ID_A]: settlement("provisional_miss", "live_observation", "2026-09-24T04:05:00Z"),
+          ingestLiveDocument(liveDoc(at(-35), {
+            [ID_B]: settlement("provisional_hit", "live_observation", at(-35)),
+            [ID_A]: settlement("provisional_miss", "live_observation", at(-35)),
           }));
           const el = await openHistory(historyDoc("2026-09-24T05:00:00Z",
             [pick(ID_A, { grade: "hit" }), pick(ID_B)]));
@@ -261,8 +263,8 @@ class HistoryLiveStateTests(unittest.TestCase):
 
     def test_stable_id_join_only_never_by_name(self):
         r = run_node(r"""
-          ingestLiveDocument(liveDoc("2026-09-24T02:00:00Z", {
-            [ID_A]: settlement("provisional_hit", "live_observation", "2026-09-24T02:00:00Z"),
+          ingestLiveDocument(liveDoc(at(-60), {
+            [ID_A]: settlement("provisional_hit", "live_observation", at(-60)),
           }));
           // Same player name and prop as ID_A's live row, different game id.
           const other = pick("fc2:823087:player-545361:hits_runs_rbis:1:over",
@@ -305,8 +307,8 @@ class HistoryLiveStateTests(unittest.TestCase):
 
     def test_rendering_never_mutates_history_or_live_evidence(self):
         r = run_node(r"""
-          ingestLiveDocument(liveDoc("2026-09-24T02:00:00Z", {
-            [ID_A]: settlement("provisional_hit", "live_observation", "2026-09-24T02:00:00Z"),
+          ingestLiveDocument(liveDoc(at(-60), {
+            [ID_A]: settlement("provisional_hit", "live_observation", at(-60)),
           }));
           const doc = historyDoc("2026-09-24T01:00:00Z", [pick(ID_A), pick(ID_C, { grade: "hit" })]);
           const docBefore = JSON.stringify(doc);
@@ -321,6 +323,57 @@ class HistoryLiveStateTests(unittest.TestCase):
         self.assertTrue(r["same"])
         self.assertTrue(r["liveSame"])
         self.assertEqual((r["hits"], r["misses"]), (1, 0))
+
+    def test_stale_live_observations_age_out_but_official_finals_do_not(self):
+        r = run_node(r"""
+          const old = new Date(NOW - 3 * 24 * 3600 * 1000).toISOString();
+          ingestLiveDocument(liveDoc(old, {
+            [ID_A]: Object.assign(settlement("provisional_hit", "live_observation", old),
+                                  { game_state: "live", game_state_observed_at: old }),
+            [ID_B]: settlement("miss", "official_final", old),
+          }));
+          return { a: historyGradeChip(pick(ID_A)), b: historyGradeChip(pick(ID_B)) };
+        """)
+        self.assertIn("Ungraded", r["a"])
+        self.assertIn("Miss · Final, record updating", r["b"])
+
+    def test_new_top_day_opens_and_reader_choices_stay(self):
+        r = run_node(r"""
+          const day22 = { date: "2026-09-22", picks: [pick(ID_C, { grade: "miss" })], hits: 0, misses: 1, hit_rate: 0 };
+          const el = await openHistory(historyDoc("2026-09-24T01:00:00Z", [pick(ID_A)], [day22]));
+          el._toggled = { "2026-09-22": true };  // reader also opened the older day
+          const next = historyDoc("2026-09-25T01:00:00Z", [pick(ID_A, { grade: "hit" })], [day22]);
+          next.days[0].date = "2026-09-24";
+          next.days.splice(1, 0, { date: "2026-09-23", picks: [pick(ID_B, { grade: "hit" })], hits: 1, misses: 0, hit_rate: 1 });
+          const p = pollHistory();
+          __respond(__fetchQueue.length - 1, next);
+          await p; await __flush();
+          el._toggled = {};
+          return { html: el.innerHTML };
+        """)
+        self.assertIn('data-date="2026-09-24" open>', r["html"])
+        self.assertIn('data-date="2026-09-23" open>', r["html"])
+        self.assertIn('data-date="2026-09-22" open>', r["html"])
+
+    def test_pollLive_does_not_rerender_history_when_nothing_it_shows_changed(self):
+        r = run_node(r"""
+          DATA = { generated_at: "2026-09-24T01:00:00Z", props: [], summary: {} };
+          indexProps();
+          const el = await openHistory(historyDoc("2026-09-24T01:00:00Z", [pick(ID_A)]));
+          HISTORY_FETCHED_AT = Date.now();
+          el.innerHTML += "<!--marker-->";
+          const p = pollLive();
+          __respond(__fetchQueue.length - 1, liveDoc(at(-5), {
+            "fc2:1:player-9:hits:1:over": settlement("provisional_hit", "live_observation", at(-5)),
+          }));
+          await p; await __flush();
+          return { kept: el.innerHTML.includes("<!--marker-->") };
+        """)
+        self.assertTrue(r["kept"])
+
+    def test_attribute_values_escape_quotes(self):
+        r = run_node(r"""return { v: escAttr('a"b<c') };""")
+        self.assertEqual(r["v"], "a&quot;b&lt;c")
 
     def test_failed_refresh_keeps_current_page(self):
         r = run_node(r"""
@@ -377,6 +430,30 @@ class GamesPriceStateTests(unittest.TestCase):
                 self.assertIn(text, r[state]["card"])  # Today/Props card agrees with Games
                 self.assertEqual(r[state]["sheet"], text)  # and the detail sheet
                 self.assertNotIn("not priced", r[state]["game"])
+
+    def test_unmatched_event_is_not_reported_as_a_failed_check(self):
+        r = run_node(GAMES_SETUP + r"""
+          board(prop({ market_odds: null, market_fetch_state: "FETCH_FAILED",
+                       market_failure_reason: "no unique relevant FanDuel event was observed" }));
+          const p = PROPS_BY_ID.get(TROUT);
+          return { game: gamePickLine(copy), card: marketBlock(p), sheet: priceFreshnessState(p).label,
+                   header: noPriceText(p) };
+        """)
+        for key in ("game", "card"):
+            self.assertIn("No FanDuel listing found yet", r[key])
+            self.assertNotIn("check failed", r[key])
+        self.assertEqual(r["sheet"], "No FanDuel listing found yet")
+        self.assertEqual(r["header"], "No FanDuel listing found yet")
+
+    def test_detail_header_agrees_with_line_moved_and_failed_states(self):
+        r = run_node(GAMES_SETUP + r"""
+          board(prop({ market_odds: null, market_fetch_state: "LINE_MOVED", market_posted_line: 1.5 }));
+          const moved = noPriceText(PROPS_BY_ID.get(TROUT));
+          board(prop({ market_odds: null, market_fetch_state: "FETCH_FAILED", market_failure_reason: "HTTP 503" }));
+          return { moved, failed: noPriceText(PROPS_BY_ID.get(TROUT)) };
+        """)
+        self.assertEqual(r["moved"], "line moved")
+        self.assertEqual(r["failed"], "FanDuel check failed")
 
     def test_priced_line_shows_its_own_exact_line_price(self):
         r = run_node(GAMES_SETUP + r"""

@@ -5700,18 +5700,23 @@ not the screenshot).**
    audit and Jacob's decision.
 2. The board build priced props from `fetch_prop_prices()`'s flat dict,
    which is keyed by player name and merged across every listed FanDuel
-   event. At the 01:05Z build, Sept 23's LAA @ SEA (824951, first pitch
-   01:40Z) was still listed. All 10 of Trout's markets on the Sept 24 game
-   (823087) carried exactly his 824951 prices (H+R+RBI -475, Hits -290,
-   Runs -180, TB -130, ...). About 370 props across 3 games showed identical
-   same-player prices from a still-open prior-day game.
+   event. At the 01:05Z build, Sept 23's Angels @ Athletics (824951, first
+   pitch 01:40Z) was still listed. All 10 of Trout's markets on the Sept 24
+   Angels @ Mariners game (823087) carried exactly his 824951 prices
+   (H+R+RBI -475, Hits -290, Runs -180, TB -130, ...). The independent
+   review counted 352 priced props on that board that exactly match another
+   game's prior-day prices. (Earlier drafts of this entry and of the PR
+   named 824951 as Angels @ Mariners; that was wrong, and the corrected
+   record is above.)
 3. The event-scoped live refresh correctly marked those markets
    `NOT_POSTED` (checked 01:10Z onward). The Games highlight then collapsed
    every null-price state into "71% · not priced" under "Best Overall
    Read", a negative-edge lean (-475 implies 82.6% vs a 71% model).
 4. Latent: `_relevant_events`' matchup-only fallback would bind a
    next-day row to the prior day's event of a series whenever the next
-   day's event was not listed yet.
+   day's event was not listed yet. The same board has real exposure:
+   Padres @ Dodgers played on both slates, and 72 of its 168 priced props
+   carried the prior game's exact prices.
 
 **Changes.**
 - `odds_fanduel.py`: `slate_scoped_values` / `fetch_slate_prices` /
@@ -5762,5 +5767,31 @@ one test.
 board-date rollover still happens at 7 pm Central. Tonight's already
 published board still carries the contaminated prices until a rebuild on
 the merged code.
+
+**Independent adversarial review round 1** (separate agent, head
+`ad522aef23`) returned **HOLD** with 4 SHOULD-FIX findings and 8 NITs. All
+were fixed in the follow-up commit except where noted:
+- FETCH_FAILED with the reason "no unique relevant FanDuel event" (real
+  case: 177 White Sox @ Royals rows at 02:15Z) now reads "No FanDuel
+  listing found yet", not "FanDuel check failed".
+- Doubleheaders: a key carrying different prices in two chosen events is
+  dropped (fail closed); identical prices are kept.
+- `fetch_slate_prices` logs, per family, how many slate games matched and
+  which did not.
+- The detail sheet's header and Model-vs-Market lines use the same
+  wording (`noPriceText`).
+- The incident text is corrected (above).
+- The redundant request-sequence guard was removed; `generated_at` alone
+  is the ordering rule.
+- History ignores live or provisional observations older than 24h
+  (official finals are not age-limited).
+- `pollLive` re-renders History only when what it shows changed.
+- `visibilitychange` refetches only after 60s.
+- A newly appearing top day opens.
+- The new attributes use `escAttr`.
+- Residual, not changed: `value_board.py` and `prop_snapshot.py` still read
+  the flat feeds. Neither feeds the customer site; `prop_snapshot` is raw
+  archival capture. Also unchanged: the board call-site tests are still
+  source-level only.
 
 Alligator

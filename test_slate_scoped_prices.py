@@ -2,12 +2,14 @@
 """Cross-slate price contamination regressions (2026-09-24 incident).
 
 The 2026-09-24 board was built at 2026-09-24T01:05Z, while the previous
-night's Angels @ Mariners game (first pitch 2026-09-24T01:40Z) was still listed
-pregame on FanDuel. The flat price feed merged every listed event and the board
-looked prices up by player name, so all ten of Mike Trout's markets for the
-NEXT day's game carried that night's prices (Hits+Runs+RBIs -475, Hits -290,
-...). The event-scoped live refresh correctly reported the same markets
-NOT_POSTED. These tests pin both halves of the fix: slate-scoped board prices,
+night's Angels @ Athletics game (824951, first pitch 2026-09-24T01:40Z) was
+still listed pregame on FanDuel. The flat price feed merged every listed event
+and the board looked prices up by player name, so all ten of Mike Trout's
+markets for the NEXT day's Angels @ Mariners game (823087) carried that
+night's prices (Hits+Runs+RBIs -475, Hits -290, ...). The event-scoped live
+refresh correctly reported the same markets NOT_POSTED. The same board also
+carried Padres @ Dodgers prices across two days of one series, which is the
+matchup-fallback exposure. These tests pin both: slate-scoped board prices,
 and a matchup-only fallback that cannot cross to another day of a series.
 """
 from __future__ import annotations
@@ -55,6 +57,43 @@ def trout_candidate():
 
 
 class SlateScopedValuesTests(unittest.TestCase):
+    def test_incident_exact_trout_case_by_name_across_different_matchups(self):
+        # The real shape: prior game Angels @ Athletics, next game Angels @ Mariners.
+        observation = feed(
+            "general_batter",
+            event("824951", PRIOR_START, {TROUT: dict(TROUT_PRIOR)},
+                  name="Los Angeles Angels (A) @ Athletics (B)"),
+            event("823087", CURRENT_START, {}),
+        )
+        self.assertEqual(observation.values[TROUT][("hits_runs_rbis", 1)], -475)  # legacy flat leak
+        self.assertEqual(fd.slate_scoped_values(observation, slate()), {})
+
+    def test_doubleheader_both_games_on_slate_never_share_a_price(self):
+        g1, g2 = "2026-09-24T17:05:00Z", "2026-09-24T23:05:00Z"
+        observation = feed(
+            "general_batter",
+            event("g1", g1, {TROUT: {("hits", 1): -200, ("runs", 1): 150}}),
+            event("g2", g2, {TROUT: {("hits", 1): -210, ("runs", 1): 150}}),
+        )
+        scoped = fd.slate_scoped_values(observation, slate(start=g1) + slate(start=g2))
+        self.assertNotIn(("hits", 1), scoped.get(TROUT, {}))  # conflicting: dropped
+        self.assertEqual(scoped[TROUT][("runs", 1)], 150)       # identical: kept
+
+    def test_doubleheader_game_level_conflict_is_dropped(self):
+        g1, g2 = "2026-09-24T17:05:00Z", "2026-09-24T23:05:00Z"
+        observation = feed(
+            "first_inning",
+            event("g1", g1, {MATCHUP: {"over": -110, "under": -110}}),
+            event("g2", g2, {MATCHUP: {"over": 105, "under": -125}}),
+        )
+        self.assertEqual(fd.slate_scoped_values(observation, slate(start=g1) + slate(start=g2)), {})
+
+    def test_match_report_names_unmatched_games(self):
+        observation = feed("general_batter", event("current", CURRENT_START, {}))
+        other = {"game_start": "2026-09-25T00:10:00Z", "matchup": "Texas Rangers @ Houston Astros"}
+        self.assertEqual(fd.slate_match_report(observation, slate() + [other]),
+                         (1, 2, ["Texas Rangers @ Houston Astros"]))
+
     def test_incident_prior_night_prices_never_reach_the_next_slate(self):
         observation = feed(
             "general_batter",
