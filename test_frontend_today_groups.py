@@ -192,7 +192,7 @@ class TodayGroupsTests(unittest.TestCase):
 
 # 2026-09-24 published-downgrade-display (Mission 12 Workstream C). Companion
 # to test_current_slate_withdrawn_pregame_pick_is_carried_as_withdrawn and
-# test_current_slate_downgraded_pregame_pick_* in test_published_today_central
+# PregameDemotionPersistsTests in test_published_today_central
 # (the build side, which is what actually sets publication_snapshot /
 # withdrawn_since_publication on a real row). These tests exercise the client
 # purely from the row shape the build side is proven to produce.
@@ -281,6 +281,88 @@ class PublishedDowngradeDisplayTests(unittest.TestCase):
         best_bets_end = html.index("More Picks") if "More Picks" in html else len(html)
         self.assertLess(html.index('data-open="downgraded"'), best_bets_end)
         self.assertLess(html.index('data-open="withdrawn"'), best_bets_end)
+
+
+class DowngradeReviewFindingsTests(unittest.TestCase):
+    """Review of the Workstream C candidate: findings 1, 3, 5, 6, 7, 8."""
+
+    PUBLISHED = r"""
+      const published = { published_top_pick_at: "2026-09-24T15:00:00Z", publication_artifact_id: "x" };
+    """
+
+    def test_withdrawn_row_ignores_newer_live_status_and_price_deltas(self):
+        r = run_node(SETUP + SNAPSHOT_SETUP + self.PUBLISHED + r"""
+          DATA = { date: "2026-09-24", display_date: "2026-09-24", odds_fetched_at: "2026-09-24T17:00:00Z",
+                   summary: {}, props: [tp("w", Object.assign({ recommendation_status: "neutral",
+                     withdrawn_since_publication: true, market_odds: -120, game_state: "pregame",
+                     game_start: "2099-01-01T00:00:00Z", publication_snapshot: publishedSnapshot() }, published))] };
+          indexProps();
+          LIVE_CACHE = { props: { w: { recommendation_status: "top_pick", market_odds: -150,
+            _field_updated_at: { recommendation_status: "2026-09-24T17:30:00Z",
+                                 market_odds: "2026-09-24T17:30:00Z" } } } };
+          applyCachedLive();
+          const p = PROPS_BY_ID.get("w");
+          return { status: p.recommendation_status, odds: p.market_odds, n: DATA.summary.n_top_pick,
+                   note: publishedStartedNote(p) };
+        """)
+        self.assertEqual(r["status"], "neutral")
+        self.assertEqual(r["odds"], -120)
+        self.assertEqual(r["n"], 0)
+        self.assertIn("odds as of publication, not a current quote", r["note"])
+
+    def test_started_pick_keeps_its_before_first_pitch_label(self):
+        r = run_node(SETUP + SNAPSHOT_SETUP + self.PUBLISHED + r"""
+          const started = { game_state: "live", publication_snapshot: publishedSnapshot() };
+          return {
+            withdrawn: pickCard(tp("a", Object.assign({ demoted_before_start:
+              { status: "neutral", status_reasons: [], withdrawn: true } }, started, published))),
+            lean: pickCard(tp("b", Object.assign({ demoted_before_start:
+              { status: "lean", status_reasons: [], withdrawn: false } }, started, published))),
+            pregame: pickCard(tp("c", Object.assign({}, started, published, { game_state: "pregame",
+              game_start: "2099-01-01T00:00:00Z", demoted_before_start:
+              { status: "lean", status_reasons: [], withdrawn: false } }))),
+          };
+        """)
+        self.assertIn("Withdrawn before first pitch", r["withdrawn"])
+        self.assertIn("Downgraded to Lean before first pitch", r["lean"])
+        self.assertIn("Graded as originally published", r["lean"])
+        self.assertNotIn("before first pitch", r["pregame"])
+
+    def test_lean_and_value_tiles_match_their_filtered_pages(self):
+        r = run_node(SETUP + SNAPSHOT_SETUP + r"""
+          const rows = [tp("a", { recommendation_status: "lean", publication_snapshot: publishedSnapshot() }),
+                        tp("b", { recommendation_status: "lean" }),
+                        tp("c", { recommendation_status: "value", market_odds: -110,
+                                  publication_snapshot: publishedSnapshot() }),
+                        tp("d", { recommendation_status: "value", market_odds: -110 })];
+          DATA = { date: "2026-09-24", display_date: "2026-09-24", summary: {}, props: rows };
+          indexProps();
+          refreshSummary();
+          return { nLean: DATA.summary.n_lean, nValue: DATA.summary.n_value,
+                   lean: rows.filter(p => matchesStatusFilter(p, new Set(["lean"]))).length,
+                   value: rows.filter(p => matchesStatusFilter(p, new Set(["value"]))).length };
+        """)
+        self.assertEqual(r["nLean"], r["lean"])
+        self.assertEqual(r["nValue"], r["value"])
+
+    def test_missing_snapshot_probability_is_not_rendered_as_a_dash(self):
+        r = run_node(SETUP + SNAPSHOT_SETUP + r"""
+          return pickCard(tp("a", { recommendation_status: "lean",
+            publication_snapshot: publishedSnapshot({ hit_probability: null }) }));
+        """)
+        self.assertNotIn("(— probability)", r)
+
+    def test_next_slate_downgraded_pick_is_labelled_with_its_day(self):
+        r = run_node(SETUP + SNAPSHOT_SETUP + r"""
+          SHOW_UNVERIFIED = true;
+          DATA = { date: "2026-09-24", display_date: "2026-09-23", generated_at: "2026-09-24T01:00:00Z",
+                   summary: {}, schedule: [], families: [],
+                   props: [tp("e", { recommendation_status: "lean", published_slate_date: "2026-09-24",
+                                     publication_snapshot: publishedSnapshot() })] };
+          indexProps(); refreshSummary(); renderToday();
+          return __el("page-today").innerHTML;
+        """)
+        self.assertIn("Published earlier — no longer a Top Pick · Thu, Sep 24", r)
 
 
 if __name__ == "__main__":

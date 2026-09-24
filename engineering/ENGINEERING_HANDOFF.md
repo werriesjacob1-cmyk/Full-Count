@@ -6016,7 +6016,7 @@ otherwise restore the immutable snapshot's `recommendation_status ==
 "top_pick"`) and (b) `apply_live_overlay` (which could otherwise
 reintroduce a stale live.json `recommendation_status` from before the pick
 fell out of the pass) -- both run before it, so the override always wins
-last and nothing downstream can silently un-withdraw it. `refresh_prices.py`
+last within that one call. **Retracted after review:** "nothing downstream can silently un-withdraw it" was false -- see the review-fix section below. `refresh_prices.py`
 now explicitly skips any row carrying `withdrawn_since_publication` (new
 guard, alongside the pre-existing other-build-slate skip) so it is never
 re-priced. Re-registration was already structurally impossible before this
@@ -6118,4 +6118,63 @@ POLICY_PROPOSAL.md` section 1 -- not duplicated here to avoid the two
 copies drifting.
 
 Alligator
+
+### Workstream C review fixes (2026-09-24, same branch)
+
+An independent adversarial review of `7e7cecdd3f` returned **HOLD** and
+reproduced (backend script + real Chromium) a withdrawn pick coming back as
+a current Top Pick. Findings and fixes:
+
+1. **Second reconcile pass** (finalize/prepare re-reconcile the built
+   `data.json`; the withdrawn row then took the ordinary pregame branch and
+   a newer `live.json` status/price delta restored `top_pick`). Fix: a row
+   carrying `withdrawn_since_publication` on a same-slate pregame pass is
+   re-frozen and re-withdrawn; the browser's `frozenExposure` also skips
+   live price/status deltas for withdrawn rows.
+2. **UTC rollover (7 pm Central)** flipped a downgraded/withdrawn pregame
+   pick back to `top_pick` via PR #195's other-build-slate freeze. Fix: new
+   display-only, demote-only marker `demoted_before_start`
+   `{status, status_reasons, withdrawn}`, recorded while the pick is
+   live-priced, carried through the payload and `prior_payload`
+   (`docs/data.json`; previously discarded), and re-applied to frozen
+   pregame rows (`_apply_demotion_markers`).
+3. **First pitch**: the pick shows and grades as published (unchanged), but
+   now keeps a "Downgraded to X / Withdrawn before first pitch" label.
+   Whether it should instead stay in the "Published earlier" group is left
+   to Jacob (POLICY_PROPOSAL.md section 5, question 1).
+4. **Policy text overclaimed** the display lifetime; rewritten to state the
+   built behaviour (section 1, with a revision note).
+5. **Withdrawn card showed the publication price as a current quote**:
+   now carries "odds as of publication, not a current quote".
+6. **Leans/Value tiles vs filtered All Props** disagreed (495 vs 496):
+   `matchesStatusFilter` uses the same exclusion.
+7. **No day context** for a next-slate downgraded pick: the sub-group now
+   reuses `topPickGroups` (Central-day expiry and day label).
+8. `(— probability)` for a null snapshot probability; the withdrawn reason
+   was internal jargon. Both fixed.
+9. Tests: the stale test-name reference is fixed. There are 5 new backend
+   tests (`PregameDemotionPersistsTests`) and 5 new frontend tests
+   (`DowngradeReviewFindingsTests`). All 10 fail on the reviewed code and
+   pass after the fix. The one mutation the review found surviving
+   (`n_published_downgraded` counting only withdrawn rows) is now killed by
+   `test_downgrade_recorded_while_pregame_and_cleared_if_top_pick_again`.
+
+Suites green after the fix:
+
+| Suite | Result |
+|---|---|
+| `test_published_today_central` | 19 |
+| `test_frontend_today_groups` | 20 |
+| `test_build_dashboard` | 153/153 |
+| `test_browser_e2e` | 128/128 |
+| `test_browser_today_central` | 12/12 |
+| `test_fail_closed_surfaces` | 24/24 |
+
+Also green: `test_live_lifecycle`, `test_pages_preparation`,
+`test_pages_contract_v3`, `test_publication_registry`, `test_refresh_grades`,
+`test_refresh_prices` and `test_reconciliation`.
+
+Still NOT authorized or done: no merge and no deploy; the policy text awaits
+Jacob's approval. Grading, the registry, `recommendation.py` and the
+selector are untouched.
 

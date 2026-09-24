@@ -9,17 +9,30 @@ candidate.
 
 For Jacob to approve verbatim (or edit):
 
-> Once Full Count publishes a Top Pick, we never delete it or make it
-> disappear. New information -- a price move, a lineup change, or new data
-> -- can change whether that pick is still one of today's actionable Top
-> Picks, but it can never rewrite what we originally said, when we said it,
-> or at what odds and probability. If a published Top Pick is later
-> downgraded or withdrawn before first pitch, it stays visible on the Today
-> page in its own clearly labelled "Published earlier — no longer a Top
-> Pick" group, showing both the original published price/probability and
-> the current status and reason, until midnight Central. It always remains
-> part of Full Count's permanent published-pick performance record,
-> unchanged by anything that happens after publication.
+> Once Full Count publishes a Top Pick, we never delete it or rewrite it.
+> New information -- a price move, a lineup change, or new data -- can
+> change whether that pick is still one of today's actionable Top Picks, but
+> it can never change what we originally said, when we said it, or at what
+> odds and probability. If a published Top Pick is downgraded or withdrawn
+> before first pitch, the Today page moves it into its own clearly labelled
+> "Published earlier — no longer a Top Pick" group, showing the original
+> published odds and probability next to its current status and reason, and
+> it is never counted as one of today's Top Picks. Once the game starts,
+> the pick is shown and graded exactly as originally published, with a
+> "Downgraded/Withdrawn before first pitch" label. Every published Top Pick
+> stays on the Today page until midnight Central (longer only while its game
+> is still in progress) and always remains part of Full Count's permanent
+> published-pick performance record, unchanged by anything that happens
+> after publication. (If the board cannot be verified, the whole Top Picks
+> area is replaced by a notice until it can -- that applies to every pick.)
+
+Revision note (2026-09-24, after the adversarial review): the first draft
+claimed the labelled group lasted "until midnight Central". In the reviewed
+code the label was lost -- and the pick reappeared as a current Top Pick --
+on the second reconcile pass, at the 7 pm Central UTC rollover, and at first
+pitch (review findings 1-4). The code now persists the pregame demotion
+(`demoted_before_start`, see section 2) and this text states the first-pitch
+behaviour explicitly instead of overclaiming.
 
 ## 2. What changes
 
@@ -42,6 +55,19 @@ For Jacob to approve verbatim (or edit):
   `dashboard/verify_pages_artifact.py`); a withdrawn row's
   `recommendation_status` is set to `neutral` with an explicit
   `status_reasons` entry, never a fifth invented status value.
+- **New backend field `demoted_before_start`** (review fix). `{status,
+  status_reasons, withdrawn}`: the last pregame display status of a
+  published Top Pick that stopped being one before first pitch. Recorded
+  from the current scoring pass while the pick is live-priced, carried from
+  pass to pass (the built payload, then `prior_payload` = the deployed
+  `docs/data.json` when the pick is no longer in the scoring pass), and
+  re-applied to frozen pregame rows so neither the finalize/prepare
+  re-reconcile, a newer `live.json` delta, nor the UTC build-date rollover
+  can restore `top_pick`. It can only demote a display: it is ignored on any
+  row without a registry publication, never read by grading, the registry,
+  or the manifest, and cleared if the live scoring pass makes the pick a Top
+  Pick again. After first pitch it only drives the "before first pitch"
+  label; the row shows the published snapshot.
 - **New optional summary count.** `summary.n_published_downgraded`: how many
   currently-displayed rows were published as a Top Pick and are not one now
   (downgraded + withdrawn combined). Purely additive; `summary.n_top_pick`
@@ -91,25 +117,31 @@ second one it introduces: "published, now downgraded/withdrawn" is *derived*
 by comparing `publication_snapshot.recommendation_status == "top_pick"`
 against the row's own current `recommendation_status` -- never stored as an
 independent flag that could drift out of sync with the two real fields it
-describes. The only new stored field, `withdrawn_since_publication`, marks a
+describes. The stored field `withdrawn_since_publication` marks a
 distinct *mechanism* (dropped from the current pass vs. reclassified within
 it) that genuinely cannot be derived by comparing two `recommendation_status`
 values, because in that case there is no "current" classification to compare
-against at all.
+against at all. `demoted_before_start` is the one piece of state that cannot
+be re-derived after the fact (once the pick leaves the scoring pass or its
+game starts, nothing current says what its last pregame status was), so it
+is carried explicitly -- display-only, demote-only.
 
-## 5. Open question for Jacob
+## 5. Open questions for Jacob
 
-**Retention window for a withdrawn/downgraded card.** This candidate carries
-a withdrawn/downgraded published pick on the Today page using the exact same
-same-slate/Central-midnight retention rule PR #195 already established for
-every other published pick (`reconcile_public_lifecycle`'s existing
-`_prior_slate_still_displayed` / Central-day logic, unchanged by this
-candidate). That means a withdrawn pick disappears from Today at the same
-midnight-Central boundary a still-actionable published pick does, then lives
-on only in History/grading via the registry, exactly like any other
-published pick. Is that the intended lifecycle, or should a withdrawn/
-downgraded pick instead be surfaced longer (e.g., until its game reaches a
-terminal state) precisely because a customer may not have seen the
-downgrade before it happened? No inspection of engineering/PROJECT_STATE.md,
-ENGINEERING_HANDOFF.md, or Issue #91 turned up a prior decision on this
-specific point, so it is left open rather than assumed.
+1. **At first pitch.** As built, a downgraded/withdrawn pick leaves the
+   "Published earlier" group when its game starts and shows as a published
+   pick (original odds, graded as published) with a "Downgraded to Lean /
+   Withdrawn before first pitch" label. Alternative: keep it in the
+   "Published earlier" group through the game. The built behaviour matches
+   how grading already works; the alternative may read less like a
+   re-endorsement. Which do you want?
+2. **Retention window.** The pick follows PR #195's rule for every published
+   pick: on Today until 11:59 pm Central, and after that only while its game
+   is still in progress; settled picks live in History. Should a
+   withdrawn/downgraded pick instead stay longer, because a customer may not
+   have seen the downgrade? No prior decision on this was found in
+   PROJECT_STATE.md, ENGINEERING_HANDOFF.md or Issue #91.
+3. **All Props status filters.** The "Leans"/"Value" tiles and the filtered
+   All Props pages they link to now both leave out downgraded published
+   picks (they are shown once, in the Today group). Tell me if you'd rather
+   they appear in both places.

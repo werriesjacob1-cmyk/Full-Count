@@ -863,7 +863,7 @@ function publishedStartedNote(p) {
   if (STARTED_NOTE_STATES.has(p.game_state)) {
     return `<div class="pc-published-note">Published pick · game started — original pregame odds shown, not a current offer</div>`;
   }
-  if (isCarriedPublished(p)) {
+  if (isCarriedPublished(p) || p.withdrawn_since_publication) {
     return `<div class="pc-published-note">Published pick — odds as of publication, not a current quote</div>`;
   }
   return "";
@@ -886,11 +886,27 @@ function wasPublishedTopPick(p) {
 function isDowngradedPublished(p) {
   return wasPublishedTopPick(p) && p.recommendation_status !== "top_pick";
 }
+// After first pitch a published pick shows and grades exactly as published
+// (the registry is the grading truth), but if it had stopped being a Top
+// Pick before first pitch the card keeps saying so -- the build carries
+// that last pregame status as `demoted_before_start`.
+const STATUS_LABEL = { lean: "Lean", value: "Value", neutral: "no current recommendation" };
+function demotedBeforeStartNote(p) {
+  const m = p.demoted_before_start;
+  if (!m || !wasPublishedTopPick(p) || isDowngradedPublished(p)) return "";
+  if (!STARTED_NOTE_STATES.has(p.game_state)) return "";
+  const label = m.withdrawn ? "Withdrawn before first pitch"
+    : `Downgraded to ${STATUS_LABEL[m.status] || "no current recommendation"} before first pitch`;
+  return `<div class="pc-downgraded-note">
+    <span class="chip chip-downgraded">${esc(label)}</span>
+    <div class="pc-downgraded-detail">Graded as originally published.</div>
+  </div>`;
+}
 function publishedDowngradedNote(p) {
-  if (!isDowngradedPublished(p)) return "";
+  if (!isDowngradedPublished(p)) return demotedBeforeStartNote(p);
   const snap = p.publication_snapshot || {};
   const originalOdds = fmtOdds(snap.market_odds);
-  const originalProb = pctBig(snap.hit_probability);
+  const originalProb = snap.hit_probability != null ? pctBig(snap.hit_probability) : "";
   const label = p.withdrawn_since_publication ? "Withdrawn" : "Downgraded after publication";
   const reason = esc((p.status_reasons || [])[0] || "");
   const detail = [
@@ -1149,9 +1165,10 @@ function renderToday() {
   // Pick chip on these cards -- see pickCard/statusChip). "Top Picks today"
   // above counts only the actionable group; this is a separate, honestly
   // labelled population.
-  if (downgradedPublished.length) {
-    html += `<h3 class="top-pick-group-head top-pick-group-downgraded">Published earlier — no longer a Top Pick</h3>
-      <div class="card-grid">${downgradedPublished.map(p => pickCard(p)).join("")}</div>`;
+  for (const g of topPickGroups(downgradedPublished)) {
+    const when = g.kind === "today" ? "" : ` · ${slateDayLabel(g.date)}`;
+    html += `<h3 class="top-pick-group-head top-pick-group-downgraded">Published earlier — no longer a Top Pick${when}</h3>
+      <div class="card-grid">${g.picks.map(p => pickCard(p)).join("")}</div>`;
   }
   html += `</section>`;
 
@@ -1377,7 +1394,8 @@ function familyFilterValue(stat) {
 function matchesStatusFilter(p, statusSet) {
   for (const s of statusSet) {
     if (s === "longshot" ? isLongshot(p)
-      : s === "value" ? (p.recommendation_status === "value" && !isLongshot(p))
+      : s === "value" ? (p.recommendation_status === "value" && !isLongshot(p) && !isDowngradedPublished(p))
+      : s === "lean" ? (p.recommendation_status === "lean" && !isDowngradedPublished(p))
       : p.recommendation_status === s) return true;
   }
   return false;
@@ -3348,7 +3366,7 @@ function applyCachedLive() {
       if (field === "_field_updated_at" || LIVE_SETTLEMENT_FIELDS.has(field) || LIVE_GAME_FIELDS.has(field)) continue;
       // A carried published pick (another build slate) is frozen before
       // first pitch too; the build and refresh never reprice it.
-      const frozenExposure = (gameHasStarted(p) || isCarriedPublished(p))
+      const frozenExposure = (gameHasStarted(p) || isCarriedPublished(p) || !!p.withdrawn_since_publication)
         && ((!!p.published_top_pick_at && !!p.publication_artifact_id)
           || !!p.publication_candidate_token);
       if (frozenExposure && LIVE_PRICE_FIELDS.has(field)) continue;
