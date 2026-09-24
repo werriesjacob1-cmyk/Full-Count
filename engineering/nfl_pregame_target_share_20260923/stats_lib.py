@@ -11,8 +11,12 @@ POISSON_LINES = (1.5, 2.5, 3.5, 4.5, 5.5, 6.5)
 
 
 def poisson_pmf(k: int, lam: float) -> float:
-    if lam <= 0:
-        raise ValueError("Poisson mean must be positive")
+    if lam < 0:
+        raise ValueError("Poisson mean must be non-negative")
+    if lam == 0:
+        # Degenerate Poisson: all mass at zero. B0 legitimately projects 0
+        # for a player targeted but never catching a pass in his last 5.
+        return 1.0 if k == 0 else 0.0
     return math.exp(-lam + k * math.log(lam) - math.lgamma(k + 1))
 
 

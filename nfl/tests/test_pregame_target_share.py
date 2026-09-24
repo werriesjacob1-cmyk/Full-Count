@@ -108,6 +108,13 @@ class StatsLibTests(unittest.TestCase):
         self.assertLess(poisson_brier(4.0, 4.0), poisson_brier(8.0, 4.0))
         self.assertLess(poisson_log_score(4.0, 4.0), poisson_log_score(8.0, 4.0))
 
+    def test_zero_mean_is_a_point_mass_at_zero_not_an_error(self):
+        # Regression: B0 can legitimately project exactly 0 receptions;
+        # the first locked holdout run crashed in this secondary metric.
+        self.assertEqual(poisson_prob_over(0.5, 0.0), 0.0)
+        self.assertEqual(poisson_brier(0.0, 0.0), 0.0)
+        self.assertGreater(poisson_log_score(0.0, 2.0), 100.0)
+
     def test_clustered_ci_resamples_whole_players(self):
         rows = [{"player_id": f"p{i}", "a": 1.0, "b": 0.0} for i in range(10)]
         result = player_clustered_diff_ci(rows, lambda r: r["a"], lambda r: r["b"], n_resamples=200)
