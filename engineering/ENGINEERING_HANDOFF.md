@@ -5681,3 +5681,82 @@ draft PR #185). Draft PR #189, not merged -- Jacob's separate explicit
 authorization required.
 
 Alligator
+
+## 2026-09-24 -- MLB MISSION 10: pre-registered Top Pick calibration
+## holdout replication -- CONFIRMS persistent overconfidence, but the
+## per-market pattern contradicts PR #128's own mechanism story
+
+Agent: Claude Code, workstream `MLB-MISSION10-ACCURACY`.
+
+Branch: `claude/mlb-mission10-toppick-calibration-holdout-20260924`.
+Deliverable: `engineering/mlb_mission10_toppick_calibration_holdout_
+20260924/` (`DESIGN.md`, `calibration_holdout_lib.py`, `test_calibration_
+holdout_lib.py` (15/15 pass), `run_holdout_replication.py`, `report.json`,
+`README.md`).
+
+**First checked whether PR #188's locked board-freeze rerun threshold
+(n>=30 fair-test-graded Top Picks across >=10 games) is now met, since a
+fourth graded board-freeze date exists (`output/board_freeze_graded_2026-
+09-23.json`).** It is not: all 668 records in that file are `grade:
+"ungraded"` (game(s) not yet final at freeze-grading time). Real fair-test-
+graded population is unchanged from PR #188 -- n=10 Top Picks, 4 games.
+That test was correctly not rerun.
+
+**What was done instead**: a pre-registered, out-of-sample replication of
+PR #128's merged 2026-09-18 finding (n=371 real graded public Top Picks
+then available, mean stated `hit_probability` 64.6% vs. realized 53.6%,
+gap +11.0pp, naive binomial `p=0.000009`). PR #128 explicitly left
+"does this persist on fresh data" as unchecked recommended next work. The
+locked design (`DESIGN.md`, committed as this branch's first commit,
+before any aggregate outcome statistic was computed) defines the holdout
+population as `results/grades_2026-09-19.json` through `results/grades_
+2026-09-23.json` -> `public_top_picks`, `grade` in `{hit, miss}` -- rows
+PR #128 never saw -- with one row (`fc2:822844:player-678218:hits_runs_
+rbis:1:over`, Brandon Valenzuela) disclosed and excluded because both its
+`hit_probability` and `grade` were incidentally visible during pre-design
+schema discovery, before the design was locked. No other row's outcome was
+inspected first.
+
+**Real result, n=69**: mean stated `hit_probability` 64.4% vs. realized
+52.2% -- gap +12.2pp, naive binomial `p=0.043`, cluster-bootstrap 90% CI
+(by `(slate_date, game_pk)`, 10,000 resamples, 32 clusters) **[+3.9pp,
++20.4pp]**, entirely positive. Per the locked rule (gap>0 AND CI excludes
+zero AND n>=50): **CONFIRMS_PERSISTENT_OVERCONFIDENCE**. The magnitude
+(+12.2pp) closely matches PR #128's own +11.0pp on an independent,
+non-overlapping window roughly a fifth the size -- this is a real,
+pre-registered replication, not a re-analysis of the same rows.
+
+**A real, disclosed contradiction, not smoothed over**: PR #128 found the
+gap concentrated in `hits_runs_rbis` (n=194, +12.5pp) and `pitcher_outs`
+(n=33, +30.2pp), with plain `hits` (n=78) "essentially perfectly
+calibrated." In this fresh 69-row holdout, the pattern inverts:
+`hits_runs_rbis` (n=42) gap shrinks to +6.0pp (not significant, p=0.42),
+`pitcher_outs` (n=7) gap is slightly *negative* (-5.6pp), while `hits`
+(n=13) shows the largest and only individually-significant gap in this
+window (+30.5pp, p=0.042). This experiment cannot and does not adjudicate
+between "the market-level story was itself overfit to PR #128's window and
+the real effect is Top-Pick-wide" versus "the per-market pattern is
+genuinely non-stationary and 69 rows is too thin to say anything about it"
+-- both are disclosed, and the per-market breakdown was pre-declared
+exploratory/non-confirmatory at any n specifically because a 5-day window
+was expected to be thin per market.
+
+**What this does NOT do**: no model, weight, calibrator, selector, or
+workflow change. Does not identify a mechanism or propose a fix. Does not
+touch `board_freeze.py`, `board_freeze_grader.py`, `grade_board_freeze.py`,
+`generate_picks.py`, `mlb_daily.py`, `mlb_sources.py`, any workflow YAML,
+or any published History/ledger file.
+
+**Concrete next milestone** (not attempted here): PR #128's own deferred
+recommendation -- measure calibration within the argmax-*selected* subset
+against the much larger `backtest/` candidate pool, to test the
+winner's-curse/selection-effect hypothesis directly, since this mission's
+result is now consistent with the effect living in the *selection step*
+(any market can get picked on a hot day) rather than in any one market's
+probability formula specifically.
+
+Branch `claude/mlb-mission10-toppick-calibration-holdout-20260924`. Draft
+PR, not merged -- independent review + Jacob's separate explicit
+authorization required, same doctrine as every other PR.
+
+Alligator

@@ -1,0 +1,125 @@
+{
+  "workstream_id": "MLB-MISSION10-ACCURACY",
+  "experiment": "top_pick_calibration_holdout_replication",
+  "generated_at": "2026-09-24T01:21:14.786663+00:00",
+  "design_file": "DESIGN.md",
+  "population": {
+    "source": "results/grades_YYYY-MM-DD.json -> public_top_picks",
+    "dates": [
+      "2026-09-19",
+      "2026-09-20",
+      "2026-09-21",
+      "2026-09-22",
+      "2026-09-23"
+    ],
+    "grade_filter": [
+      "hit",
+      "miss"
+    ],
+    "excluded_ids": [
+      "fc2:822844:player-678218:hits_runs_rbis:1:over"
+    ],
+    "excluded_row_detail": {
+      "id": "fc2:822844:player-678218:hits_runs_rbis:1:over",
+      "name": "Brandon Valenzuela",
+      "stat": "hits_runs_rbis",
+      "hit_probability": 0.6379,
+      "grade": "hit",
+      "reason_excluded": "incidentally inspected during pre-design schema discovery, before DESIGN.md was locked; excluded from the confirmatory analysis for pre-registration integrity (see DESIGN.md)"
+    },
+    "n": 69
+  },
+  "pregame_integrity_check": "PASSED (all published_top_pick_at strictly before game_start)",
+  "primary_result": {
+    "label": "primary: all holdout public Top Picks (2026-09-19..23)",
+    "n": 69,
+    "hits": 36,
+    "mean_predicted": 0.6439942028985506,
+    "realized_rate": 0.5217391304347826,
+    "gap": 0.12225507246376799,
+    "naive_binomial_two_sided_p": 0.04342538239539813
+  },
+  "primary_cluster_bootstrap_ci": {
+    "method": "cluster bootstrap by (slate_date, game_pk)",
+    "ci_level": 0.9,
+    "n_resamples": 10000,
+    "seed": 20260924,
+    "n_clusters": 32,
+    "lower": 0.03910724637681173,
+    "upper": 0.20363906250000008,
+    "excludes_zero_on_positive_side": true
+  },
+  "locked_success_rule": {
+    "confirms_if": "gap > 0 AND 90% cluster-bootstrap CI excludes 0 (entirely positive) AND n >= 50",
+    "falsifies_if": "90% CI includes 0, or gap <= 0",
+    "min_n_for_confirmatory_labeling": 50
+  },
+  "verdict": "CONFIRMS_PERSISTENT_OVERCONFIDENCE",
+  "exploratory_market_breakdown_not_confirmatory": {
+    "flagged_markets_hits_runs_rbis_and_pitcher_outs": {
+      "label": "exploratory: hits_runs_rbis + pitcher_outs",
+      "n": 49,
+      "hits": 30,
+      "mean_predicted": 0.6557408163265307,
+      "realized_rate": 0.6122448979591837,
+      "gap": 0.04349591836734701,
+      "naive_binomial_two_sided_p": 0.5487020837854925
+    },
+    "all_other_markets": {
+      "label": "exploratory: all other markets",
+      "n": 20,
+      "hits": 6,
+      "mean_predicted": 0.6152149999999998,
+      "realized_rate": 0.3,
+      "gap": 0.31521499999999986,
+      "naive_binomial_two_sided_p": 0.005099498237437383
+    },
+    "per_market": {
+      "hits": {
+        "label": "exploratory: hits",
+        "n": 13,
+        "hits": 4,
+        "mean_predicted": 0.6127769230769231,
+        "realized_rate": 0.3076923076923077,
+        "gap": 0.3050846153846154,
+        "naive_binomial_two_sided_p": 0.0415016570784225
+      },
+      "hits_runs_rbis": {
+        "label": "exploratory: hits_runs_rbis",
+        "n": 42,
+        "hits": 25,
+        "mean_predicted": 0.6553404761904763,
+        "realized_rate": 0.5952380952380952,
+        "gap": 0.060102380952381074,
+        "naive_binomial_two_sided_p": 0.41989967606421785
+      },
+      "pitcher_outs": {
+        "label": "exploratory: pitcher_outs",
+        "n": 7,
+        "hits": 5,
+        "mean_predicted": 0.6581428571428571,
+        "realized_rate": 0.7142857142857143,
+        "gap": -0.05614285714285716,
+        "naive_binomial_two_sided_p": 1.0
+      },
+      "strikeouts": {
+        "label": "exploratory: strikeouts",
+        "n": 7,
+        "hits": 2,
+        "mean_predicted": 0.6197428571428573,
+        "realized_rate": 0.2857142857142857,
+        "gap": 0.33402857142857156,
+        "naive_binomial_two_sided_p": 0.11350406478667466
+      }
+    }
+  },
+  "prior_context_pr128_not_recomputed_here": {
+    "date": "2026-09-18",
+    "n": 371,
+    "mean_predicted": 0.646,
+    "realized_rate": 0.536,
+    "gap": 0.11,
+    "p_value": 9e-06,
+    "source_commit": "1379fb99e4b58765166cab9976f11eeb43d5a727"
+  }
+}
