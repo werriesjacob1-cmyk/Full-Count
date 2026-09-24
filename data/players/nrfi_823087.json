@@ -1,34 +1,34 @@
 {
-  "player_id": "nrfi_824623",
-  "name": "Miami Marlins @ Chicago Cubs \u2014 1st Inning (Both Teams)",
+  "player_id": "nrfi_823087",
+  "name": "Los Angeles Angels @ Seattle Mariners \u2014 1st Inning (Both Teams)",
   "snapshots": [
     {
       "date": "2026-09-24",
       "evaluations": [
         {
-          "prop": "No runs in the 1st (both teams)",
+          "prop": "A run scores in the 1st (either team)",
           "type": "game",
-          "score": 62.3,
+          "score": 61.5,
           "notable_signals": 0,
-          "matchup": "Miami Marlins @ Chicago Cubs",
-          "game_pk": 824623,
+          "matchup": "Los Angeles Angels @ Seattle Mariners",
+          "game_pk": 823087,
           "team": null,
           "side": "both",
-          "lean": "NRFI",
+          "lean": "YRFI",
           "combo_player_ids": null,
           "signals": {
-            "home_team_scores_p": 0.2999,
-            "away_team_scores_p": 0.2741,
+            "home_team_scores_p": 0.3138,
+            "away_team_scores_p": 0.2717,
             "fi_n_starts": 19.0
           },
-          "hit_probability": 0.5082,
+          "hit_probability": 0.5002,
           "raw_hit_probability": null,
-          "lift": 0.0098,
+          "lift": -0.0014,
           "reliability": "A",
           "sample_n": 19,
           "projection": {
             "stat": "nrfi_combined",
-            "value": 50.8
+            "value": 50.0
           }
         }
       ]
