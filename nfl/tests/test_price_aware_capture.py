@@ -64,11 +64,16 @@ class ArchiveTests(unittest.TestCase):
 
     def test_corrupted_history_bytes_fail_when_locally_present(self):
         original = Path.read_bytes
+        original_exists = Path.exists
         def corrupted(path):
             if path.name == "stats_player_week_2025.csv":
                 return b"corrupted"
             return original(path)
-        with patch.object(Path, "read_bytes", corrupted):
+        def present(path):
+            if path.name == "stats_player_week_2025.csv":
+                return True
+            return original_exists(path)
+        with patch.object(Path, "exists", present), patch.object(Path, "read_bytes", corrupted):
             with self.assertRaisesRegex(ValueError, "external source bytes mismatch"):
                 verify_capture(CAPTURE)
 
