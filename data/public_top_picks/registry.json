@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-24T19:32:46.755873+00:00",
+  "updated_at": "2026-09-24T19:58:03.648787+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -47697,6 +47697,105 @@
         },
         "qualification_timestamp": "2026-09-24T19:28:17.477249+00:00",
         "board_timestamp": "2026-09-24T19:28:17.463030+00:00",
+        "slate_date": "2026-09-24"
+      }
+    },
+    "fc2:823493:player-676609:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823493:player-676609:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823493",
+        [
+          "player",
+          "676609"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-24",
+      "first_published_at": "2026-09-24T19:58:03.648787+00:00",
+      "publication_provenance": {
+        "artifact_id": "8ec7c3b9f55df3d88b0a8eeb1b23c37b426b1063b98b67b7b84a15877809a992",
+        "source_commit": "ccb063a36c210565589a9c73d3b4e60904553938",
+        "workflow_run_id": "36051514016",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-24T19:57:51.383848+00:00",
+        "data_hash": "2a0c70a4d6cf11be5c2407085d927a37882f00ce62ac33f90cba18c4cb2826a4",
+        "live_hash": "fe37c8f03d017a8c2a560e0b7ea079ab36f6370711d99d76cc70c6317133c38f"
+      },
+      "snapshot": {
+        "id": "fc2:823493:player-676609:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823493,
+        "player_id": 676609,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Jos\u00e9 Caballero",
+        "team": "New York Yankees",
+        "matchup": "Tampa Bay Rays @ New York Yankees",
+        "game_start": "2026-09-24T23:05:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6499,
+        "market_odds": -150,
+        "market_implied": 0.6,
+        "market_edge": 0.0499,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 22.2 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+1.1mph 2nd-half vs 1st-half)",
+          "Platoon: R bat vs LHP (favorable)",
+          "Hitter batting behind him: 0.333 wOBA (league ~.320)"
+        ],
+        "watchouts": [
+          "L7 avg EV 75.8mph (league ~88.5) \u2014 cold recent contact",
+          "Projected 3.51 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.276 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Team implied for 3.32 runs (league avg 4.245; line 3.5, game total 6) \u2014 a weak offensive environment",
+          "Public heavy on New York Yankees (money% trails tickets% by 11 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 4.2 \u2014 below-average barrel rate",
+          "Wind blowing IN (11mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 0/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading New York Yankees (money% -11 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.6366,
+          0.6815
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 125,
+        "lineup_assumed": null,
+        "base_rate": 0.6731,
+        "lift": -0.0232,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "9ea805bf8",
+          "prediction_timestamp": "2026-09-24T19:54:47.290892+00:00",
+          "odds_fetched_at": "2026-09-24T19:54:43.247200+00:00",
+          "board_generated_at": "2026-09-24T19:54:47.275512+00:00"
+        },
+        "qualification_timestamp": "2026-09-24T19:54:47.290892+00:00",
+        "board_timestamp": "2026-09-24T19:54:47.275512+00:00",
         "slate_date": "2026-09-24"
       }
     }
