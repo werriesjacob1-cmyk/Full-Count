@@ -1,0 +1,159 @@
+{
+ "F2": {
+  "receiving_yards": {
+   "alphas": {
+    "FALL": 0.6,
+    "RISE_AFTER_RECENT_TEAMMATE_ABSENCE": -0.2,
+    "RISE_NO_TEAMMATE_EVENT": -0.1,
+    "RISE_TEAMMATE_OUT_NOW": 0.5,
+    "STABLE": 0.0
+   },
+   "broad_alpha": 0.3,
+   "dev_rows_by_scenario": {
+    "FALL": 3224,
+    "RISE_AFTER_RECENT_TEAMMATE_ABSENCE": 300,
+    "RISE_NO_TEAMMATE_EVENT": 3613,
+    "RISE_TEAMMATE_OUT_NOW": 260,
+    "STABLE": 18499,
+    "UNKNOWN": 1205
+   }
+  },
+  "receptions": {
+   "alphas": {
+    "FALL": 0.4,
+    "RISE_AFTER_RECENT_TEAMMATE_ABSENCE": -0.1,
+    "RISE_NO_TEAMMATE_EVENT": 0.2,
+    "RISE_TEAMMATE_OUT_NOW": 0.7,
+    "STABLE": 0.0
+   },
+   "broad_alpha": 0.3,
+   "dev_rows_by_scenario": {
+    "FALL": 3224,
+    "RISE_AFTER_RECENT_TEAMMATE_ABSENCE": 300,
+    "RISE_NO_TEAMMATE_EVENT": 3613,
+    "RISE_TEAMMATE_OUT_NOW": 260,
+    "STABLE": 18499,
+    "UNKNOWN": 1205
+   }
+  },
+  "rushing_yards": {
+   "alphas": {
+    "FALL": 0.6,
+    "RISE_AFTER_RECENT_TEAMMATE_ABSENCE": -0.1,
+    "RISE_NO_TEAMMATE_EVENT": 0.3,
+    "RISE_TEAMMATE_OUT_NOW": 1.0,
+    "STABLE": 0.0
+   },
+   "broad_alpha": 0.5,
+   "dev_rows_by_scenario": {
+    "FALL": 1416,
+    "RISE_AFTER_RECENT_TEAMMATE_ABSENCE": 148,
+    "RISE_NO_TEAMMATE_EVENT": 1492,
+    "RISE_TEAMMATE_OUT_NOW": 86,
+    "STABLE": 9337,
+    "UNKNOWN": 689
+   }
+  }
+ },
+ "F3": {
+  "c0": 0.7567858896915107,
+  "c1": -0.011688995772336808,
+  "w_receiving_yards": 0.4,
+  "w_receptions": 0.35,
+  "y0": 6.129834069238239,
+  "y1": 0.15569381761945317
+ },
+ "F8": {
+  "receiving_yards": {
+   "dev_rows_by_category": {
+    "DOUBTFUL|DNP": 2,
+    "DOUBTFUL|LIMITED": 1,
+    "NONE_DESIGNATED|DNP": 255,
+    "NONE_DESIGNATED|FULL": 2891,
+    "NONE_DESIGNATED|LIMITED": 511,
+    "NOT_LISTED": 21710,
+    "QUESTIONABLE|DNP": 133,
+    "QUESTIONABLE|FULL": 322,
+    "QUESTIONABLE|LIMITED": 1036,
+    "QUESTIONABLE|UNKNOWN_PRACTICE": 12,
+    "RETURNING_FROM_OUT": 194,
+    "UNKNOWN": 34
+   },
+   "multipliers": {
+    "NONE_DESIGNATED|DNP": 1.08,
+    "NONE_DESIGNATED|FULL": 0.99,
+    "QUESTIONABLE|FULL": 0.79,
+    "QUESTIONABLE|LIMITED": 0.86
+   }
+  },
+  "receptions": {
+   "dev_rows_by_category": {
+    "DOUBTFUL|DNP": 2,
+    "DOUBTFUL|LIMITED": 1,
+    "NONE_DESIGNATED|DNP": 255,
+    "NONE_DESIGNATED|FULL": 2891,
+    "NONE_DESIGNATED|LIMITED": 511,
+    "NOT_LISTED": 21710,
+    "QUESTIONABLE|DNP": 133,
+    "QUESTIONABLE|FULL": 322,
+    "QUESTIONABLE|LIMITED": 1036,
+    "QUESTIONABLE|UNKNOWN_PRACTICE": 12,
+    "RETURNING_FROM_OUT": 194,
+    "UNKNOWN": 34
+   },
+   "multipliers": {
+    "NONE_DESIGNATED|DNP": 0.95,
+    "NONE_DESIGNATED|LIMITED": 0.99,
+    "QUESTIONABLE|FULL": 0.96,
+    "QUESTIONABLE|LIMITED": 0.92
+   }
+  },
+  "rushing_yards": {
+   "dev_rows_by_category": {
+    "NONE_DESIGNATED|DNP": 103,
+    "NONE_DESIGNATED|FULL": 1513,
+    "NONE_DESIGNATED|LIMITED": 192,
+    "NOT_LISTED": 10683,
+    "QUESTIONABLE|DNP": 40,
+    "QUESTIONABLE|FULL": 117,
+    "QUESTIONABLE|LIMITED": 408,
+    "QUESTIONABLE|UNKNOWN_PRACTICE": 5,
+    "RETURNING_FROM_OUT": 90,
+    "UNKNOWN": 17
+   },
+   "multipliers": {
+    "QUESTIONABLE|LIMITED": 0.9
+   }
+  }
+ },
+ "F9": {
+  "receiving_yards": {
+   "retention": 0.5,
+   "same_position_weight": 0.75
+  },
+  "receptions": {
+   "retention": 0.4,
+   "same_position_weight": 1.0
+  },
+  "rushing_yards": {
+   "retention": 0.5,
+   "same_position_weight": 1.0
+  }
+ },
+ "declared": {
+  "F8_MIN_DEV_ROWS": 200,
+  "REDISTRIBUTION_PER_PLAYER_CAP": 0.5,
+  "ROLE_TREND_THRESHOLD": 0.15,
+  "SHRINK_TARGETS_M": 20.0,
+  "SNAP_RATIO_CLAMP": [
+   0.5,
+   2.0
+  ]
+ },
+ "fit_partition": "DEV_2016_2022",
+ "k": {
+  "receiving_yards": 0.78,
+  "receptions": 0.87,
+  "rushing_yards": 0.81
+ }
+}
