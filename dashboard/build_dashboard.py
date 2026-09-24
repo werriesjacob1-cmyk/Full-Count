@@ -40,6 +40,7 @@ import sys
 import tempfile
 from collections import defaultdict
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 
 try:
     from .live_state import (FROZEN_PUBLICATION_FIELDS, GAME_FIELDS, PUBLICATION_FIELDS,
@@ -1445,6 +1446,39 @@ def _with_base_lifecycle(row, state, observed_at, source="mlb_schedule"):
     return row
 
 
+# The customer's slate day (Jacob's decision, 2026-09-24): a published Top
+# Pick stays on that day's Today page through 11:59:59 pm Central, whatever
+# its game state, even though mlb_daily.TODAY (the build/grading slate date)
+# still rolls at UTC midnight -- 7 pm Central. Before this, the UTC rollover
+# removed Sept 23's still-pregame and already-final published picks at 7:13
+# pm Central, and every carried pick vanished the moment it left "live".
+DISPLAY_TIMEZONE = "America/Chicago"
+
+
+def display_slate_date(now):
+    """The Central-time calendar date for an ISO-8601 UTC instant."""
+    moment = datetime.fromisoformat(str(now).replace("Z", "+00:00"))
+    if moment.tzinfo is None:
+        moment = moment.replace(tzinfo=timezone.utc)
+    return moment.astimezone(ZoneInfo(DISPLAY_TIMEZONE)).date().isoformat()
+
+
+def _prior_slate_still_displayed(slate_date, payload_date, display_date, observed):
+    """Whether a registered pick from another build slate belongs on Today.
+
+    Same Central day: always (pregame, live, final, void alike). Any other
+    day: only while its game is verifiably incomplete -- the pre-existing
+    rule, which is what stops a settled pick from sticking to later boards.
+    Keyed on game state, never settlement state, for the reason documented
+    at the call sites (live.json compaction prunes settlement facts).
+    """
+    if slate_date == payload_date:
+        return True
+    if slate_date and slate_date == display_date:
+        return True
+    return observed in ("live", "suspended", "postponed")
+
+
 def reconcile_public_lifecycle(payload, prior_payload=None, live=None, schedule=None,
                                now=None, registry=None):
     """Apply the final publication gate and carry deployment-proven Top Picks.
@@ -1461,6 +1495,9 @@ def reconcile_public_lifecycle(payload, prior_payload=None, live=None, schedule=
     registry = registry or load_registry(DEFAULT_REGISTRY_PATH)
     published = all_published_snapshots(registry)
     published_by_identity = {prop_identity_key(row): row for row in published}
+    display_date = display_slate_date(now)
+    payload["display_date"] = display_date
+    payload["display_timezone"] = DISPLAY_TIMEZONE
 
     reconciled = []
     seen_identities = set()
@@ -1503,7 +1540,8 @@ def reconcile_public_lifecycle(payload, prior_payload=None, live=None, schedule=
         if registered is not None and registered.get("slate_date") != payload.get("date"):
             existing = apply_live_overlay({"props": [dict(row)]}, live)["props"][0]
             observed = state if state != "unknown" else (existing.get("game_state") or "unknown")
-            if observed not in ("live", "suspended", "postponed"):
+            if not _prior_slate_still_displayed(registered.get("slate_date"), payload.get("date"),
+                                                display_date, observed):
                 continue
 
         # Unknown/non-pregame status and the scheduled start are independent
@@ -1531,6 +1569,7 @@ def reconcile_public_lifecycle(payload, prior_payload=None, live=None, schedule=
             row.update(_publication_provenance(registered))
         if registered is not None:
             row["publication_snapshot"] = _publication_snapshot(registered)
+            row["published_slate_date"] = registered.get("slate_date")
 
         source = "mlb_schedule" if status else "mlb_status_unavailable"
         _with_base_lifecycle(row, state, now, source=source)
@@ -1552,20 +1591,26 @@ def reconcile_public_lifecycle(payload, prior_payload=None, live=None, schedule=
         if observed == "unknown":
             observed = existing.get("game_state") or "unknown"
         crossed = not before_betting_cutoff(registered, now) or observed != "pregame"
-        if not crossed:
+        other_build_slate = registered.get("slate_date") != payload.get("date")
+        if not crossed and not other_build_slate:
             # A demoted/withdrawn pregame recommendation remains in history,
             # but need not remain on the current wagering board before start.
             continue
+        # A still-pregame pick from ANOTHER build slate is absent from the
+        # payload only because the build date rolled at UTC midnight (the
+        # 2026-09-23 late games: first pitches 00:40-02:10Z). It stays on its
+        # Central day as published; on any other day it is not carried.
         # Keyed on game state, not settlement state, for the same reason as
         # the identical check above: a prior-slate pick's settlement fact in
         # live.json is legitimately pruned by compact_live_state() once it
         # drops off the current board, and a settlement-based check would
         # then default to "open" and readmit it forever.
-        if registered.get("slate_date") != payload.get("date") and observed not in (
-                "live", "suspended", "postponed"):
+        if not _prior_slate_still_displayed(registered.get("slate_date"), payload.get("date"),
+                                            display_date, observed):
             continue
         carried = dict(registered)
         carried["publication_snapshot"] = _publication_snapshot(registered)
+        carried["published_slate_date"] = registered.get("slate_date")
         _with_base_lifecycle(
             carried, observed, now,
             source="mlb_schedule" if status else existing.get("game_state_source", "last_known_good"),

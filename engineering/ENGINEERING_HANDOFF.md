@@ -5811,3 +5811,67 @@ round-1 findings (10 fixed, 2 disclosed residuals) and found no regressions
 from the fixes.
 
 Alligator
+
+## 2026-09-24 -- Published Top Picks stay on Today through 11:59 pm Central
+## (branch `claude/product-published-today-ct-20260924`, stacked on PR #194)
+
+Jacob's decisions (session, 2026-09-24): the customer slate day is **Central
+time**, and this fix ships as a **separate PR stacked on #194**.
+
+Evidence (Issue #91 comment `5808992903`): at the UTC rollover (7:13 pm CDT)
+the build dropped 7 of 27 published Sept-23 Top Picks: 5 whose games hadn't
+started and 2 already final. After that, carried picks disappeared as soon as
+their games left "live".
+
+**Change** (`dashboard/build_dashboard.reconcile_public_lifecycle`):
+- New `DISPLAY_TIMEZONE = "America/Chicago"` and `display_slate_date(now)`.
+- A registered pick from another build slate is kept for its whole Central
+  day, whatever its game state. On any other day it is kept only while its
+  game is live, suspended or postponed. That is the pre-existing rule, and
+  it is still what stops settled picks from sticking to later boards.
+- A still-pregame registered pick from another build slate (absent from the
+  payload only because of the UTC rollover) is now carried. The
+  current-slate "withdrawn pregame pick" rule is unchanged.
+- Rows gain `published_slate_date`; the payload gains `display_date` and
+  `display_timezone`.
+- Frontend:
+  - Today's Top Picks are grouped as "Today · <date>", "Early picks for
+    <date>" (the next build slate published before Central midnight) and
+    "In progress from <date>".
+  - Started published picks carry "Published pick · game started —
+    original pregame odds shown, not a current offer".
+  - The Best Bets subtitle states the 11:59 pm Central contract.
+
+**Not changed:**
+- `mlb_daily.TODAY` (the build and grading slate date still rolls at UTC
+  midnight), grading, file names, the publication registry, History and
+  the official record.
+- The first step deliberately leaves the build date alone.
+
+**Verified by replaying real committed builds** (data.json + live.json +
+registry at each commit) through `reconcile_public_lifecycle`:
+
+| Build | Old code (matches production) | New code |
+|---|---|---|
+| 00:13Z (7:13 pm CDT) | 20 | 27 |
+| 01:56Z | 13 | 27 |
+| 03:31Z | 5 | 28 (27 Sept 23 + 1 Sept 24) |
+| 06:03Z (after Central midnight) | 1 | 1 (the Sept-23 settled picks correctly gone) |
+
+**Tests:**
+- `test_published_today_central.py` (8): the DST and Central-date
+  boundaries, the pregame/final carry at rollover, 23:59:59 vs 00:01
+  Central, no duplicates, the days-old sticky guard, the unchanged
+  current-slate withdrawal rule, and the new-slate and prior-day
+  coexistence.
+- `test_frontend_today_groups.py` (4).
+- Mutations: removing the Central-day rule, the pregame carry, or the
+  live-only rule after the Central day each fails tests. The last one also
+  fails the existing lifecycle suite.
+
+**Open (Jacob):**
+- When should the build/grading date itself move to Central?
+- Should a *demoted* same-slate pregame published pick also stay visible?
+  Today it becomes a lean, per the pre-existing policy.
+
+Alligator

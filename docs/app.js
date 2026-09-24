@@ -780,6 +780,42 @@ function marketBlock(p) {
     <div class="pc-edge ${edgeClass}">${edgeText} edge</div>
   </div>`;
 }
+// Top Picks grouped by the Central-time slate day they were published for
+// (2026-09-24, Jacob's contract): today's published picks, next-slate picks
+// published early (the build date rolls at 7 pm Central), and picks from an
+// earlier day whose game is still in progress after Central midnight.
+function slateDayLabel(iso) {
+  const d = new Date(`${iso}T12:00:00Z`);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" });
+}
+function topPickGroups(topPicks) {
+  const today = DATA.display_date || DATA.date;
+  const byDate = new Map();
+  for (const p of topPicks) {
+    const d = p.published_slate_date || DATA.date || today;
+    if (!byDate.has(d)) byDate.set(d, []);
+    byDate.get(d).push(p);
+  }
+  const kindOf = d => (d === today ? "today" : d > today ? "early" : "carried");
+  const order = { today: 0, early: 1, carried: 2 };
+  return [...byDate.keys()]
+    .sort((a, b) => order[kindOf(a)] - order[kindOf(b)] || a.localeCompare(b))
+    .map(d => {
+      const kind = kindOf(d);
+      const heading = kind === "today" ? `Today · ${slateDayLabel(d)}`
+        : kind === "early" ? `Early picks for ${slateDayLabel(d)}`
+        : `In progress from ${slateDayLabel(d)}`;
+      return { date: d, kind, heading, picks: byDate.get(d) };
+    });
+}
+// A published pick whose game has started is a record of what we said, not
+// an offer: its odds are the original pregame price.
+function publishedStartedNote(p) {
+  const published = (p.published_top_pick_at && p.publication_artifact_id) || p.publication_candidate_token;
+  if (!published || !gameHasStarted(p)) return "";
+  return `<div class="pc-published-note">Published pick · game started — original pregame odds shown, not a current offer</div>`;
+}
 function pickCard(p) {
   // Evidence quality is deliberately NOT repeated here -- it's one tap away
   // in the detail sheet's "Underlying data," and showing it on every single
@@ -836,6 +872,7 @@ function pickCard(p) {
       <span class="pc-prob-label">Full Count<br>Probability</span>
     </div>
     ${marketBlock(p)}
+    ${publishedStartedNote(p)}
     <div class="pc-chips">${chips}</div>
     ${why}
   </button>`;
@@ -990,10 +1027,15 @@ function renderToday() {
     return;
   }
 
+  const dayNote = DATA.display_timezone === "America/Chicago"
+    ? " Published picks stay here through 11:59 pm Central, then live on in History." : "";
   html += `<section class="section"><div class="section-head"><h2>Best Bets</h2>
-    <span class="section-sub">Full Count's official Top Picks — probability, evidence, price, and freshness all cleared.</span></div>`;
+    <span class="section-sub">Full Count's official Top Picks — probability, evidence, price, and freshness all cleared.${dayNote}</span></div>`;
   if (topPicks.length) {
-    html += `<div class="card-grid">${topPicks.map(p => pickCard(p)).join("")}</div>`;
+    const groups = topPickGroups(topPicks);
+    const labelled = groups.length > 1 || groups[0].kind !== "today";
+    html += groups.map(g => `${labelled ? `<h3 class="top-pick-group-head">${esc(g.heading)}</h3>` : ""}
+      <div class="card-grid">${g.picks.map(p => pickCard(p)).join("")}</div>`).join("");
   } else {
     html += topPickGapExplainer(props);
   }
