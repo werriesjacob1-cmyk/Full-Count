@@ -417,7 +417,13 @@ function refreshSummary() {
   const props = publicProps();
   DATA.summary = DATA.summary || {};
   DATA.summary.n_props = props.length;
-  DATA.summary.n_top_pick = props.filter(p => p.recommendation_status === "top_pick").length;
+  // Today's slate-day Top Picks only: early next-slate picks and still-open
+  // picks from an earlier day are shown in their own groups, not counted.
+  const today = topPickGroups(props.filter(p => p.recommendation_status === "top_pick"))
+    .find(g => g.kind === "today");
+  DATA.summary.n_top_pick = today ? today.picks.length : 0;
+  DATA.summary.n_top_pick_other = topPickGroups(props.filter(p => p.recommendation_status === "top_pick"))
+    .filter(g => g.kind !== "today").reduce((n, g) => n + g.picks.length, 0);
   DATA.summary.n_lean = props.filter(p => p.recommendation_status === "lean").length;
   DATA.summary.n_value = props.filter(p => p.recommendation_status === "value").length;
 }
@@ -780,6 +786,83 @@ function marketBlock(p) {
     <div class="pc-edge ${edgeClass}">${edgeText} edge</div>
   </div>`;
 }
+// Top Picks grouped by the Central-time slate day they were published for
+// (2026-09-24, Jacob's contract): today's published picks, next-slate picks
+// published early (the build date rolls at 7 pm Central), and picks from an
+// earlier day whose game is still in progress after Central midnight.
+function slateDayLabel(iso) {
+  const d = new Date(`${iso}T12:00:00Z`);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" });
+}
+// The browser enforces the Central-midnight end of a slate day itself: the
+// payload's display_date is fixed at deploy time, and a deploy can be late
+// (GitHub scheduler gaps) or a tab can stay open past midnight.
+const CARRY_WHILE_STATES = new Set(["live", "suspended", "postponed"]);
+function centralDateNow() {
+  // Built from parts, never from a locale's formatted string, whose shape
+  // differs across ICU versions; anything not YYYY-MM-DD yields null (the
+  // payload's own display_date is then used).
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", { timeZone: "America/Chicago",
+      year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date());
+    const get = type => (parts.find(x => x.type === type) || {}).value;
+    const iso = `${get("year")}-${get("month")}-${get("day")}`;
+    return /^\d{4}-\d{2}-\d{2}$/.test(iso) ? iso : null;
+  } catch (e) {
+    return null;
+  }
+}
+function displayToday() {
+  const fromPayload = DATA.display_date || DATA.date;
+  if (DATA.display_timezone !== "America/Chicago") return fromPayload;
+  const browser = centralDateNow();
+  return browser && fromPayload && browser > fromPayload ? browser : fromPayload;
+}
+function topPickGroups(topPicks) {
+  const today = displayToday();
+  const byDate = new Map();
+  for (const p of topPicks) {
+    const d = p.published_slate_date || DATA.date || today;
+    // An earlier Central day's pick stays only while its game is still
+    // incomplete -- the same rule the build applies.
+    if (d < today && !CARRY_WHILE_STATES.has(p.game_state)) continue;
+    if (!byDate.has(d)) byDate.set(d, []);
+    byDate.get(d).push(p);
+  }
+  const kindOf = d => (d === today ? "today" : d > today ? "early" : "carried");
+  const order = { today: 0, early: 1, carried: 2 };
+  return [...byDate.keys()]
+    .sort((a, b) => order[kindOf(a)] - order[kindOf(b)] || a.localeCompare(b))
+    .map(d => {
+      const kind = kindOf(d);
+      const heading = kind === "today" ? `Today · ${slateDayLabel(d)}`
+        : kind === "early" ? `Early picks for ${slateDayLabel(d)}`
+        : `Still open from ${slateDayLabel(d)}`;
+      return { date: d, kind, heading, picks: byDate.get(d) };
+    });
+}
+// A published pick is a record of what we said, not an offer, once its game
+// has started -- and also, before first pitch, when it is carried from
+// another build slate (its odds are the publication-time price; the price
+// refresh deliberately never reprices it).
+const STARTED_NOTE_STATES = new Set(["live", "final", "suspended"]);
+function isCarriedPublished(p) {
+  const published = (p.published_top_pick_at && p.publication_artifact_id) || p.publication_candidate_token;
+  return !!(published && p.published_slate_date && DATA && DATA.date
+            && p.published_slate_date !== DATA.date);
+}
+function publishedStartedNote(p) {
+  const published = (p.published_top_pick_at && p.publication_artifact_id) || p.publication_candidate_token;
+  if (!published) return "";
+  if (STARTED_NOTE_STATES.has(p.game_state)) {
+    return `<div class="pc-published-note">Published pick · game started — original pregame odds shown, not a current offer</div>`;
+  }
+  if (isCarriedPublished(p)) {
+    return `<div class="pc-published-note">Published pick — odds as of publication, not a current quote</div>`;
+  }
+  return "";
+}
 function pickCard(p) {
   // Evidence quality is deliberately NOT repeated here -- it's one tap away
   // in the detail sheet's "Underlying data," and showing it on every single
@@ -836,6 +919,7 @@ function pickCard(p) {
       <span class="pc-prob-label">Full Count<br>Probability</span>
     </div>
     ${marketBlock(p)}
+    ${publishedStartedNote(p)}
     <div class="pc-chips">${chips}</div>
     ${why}
   </button>`;
@@ -965,7 +1049,7 @@ function renderToday() {
   // gets its own tile linking to its own correctly-filtered destination.
   let html = `
     <div class="stat-row">
-      <a class="stat-tile" href="#/props?status=top_pick"><span class="n">${summary.n_top_pick ?? 0}</span><span class="l">Top Picks tonight</span></a>
+      <a class="stat-tile" href="#/props?status=top_pick"><span class="n">${summary.n_top_pick ?? 0}</span><span class="l">Top Picks today${summary.n_top_pick_other ? ` · +${summary.n_top_pick_other} early/still open` : ""}</span></a>
       <a class="stat-tile" href="#/props?status=lean"><span class="n">${summary.n_lean ?? 0}</span><span class="l">Leans on the board</span></a>
       <a class="stat-tile" href="#/props?status=value"><span class="n">${valueAll.length}</span><span class="l">Value bets</span></a>
       <a class="stat-tile" href="#/props?status=longshot"><span class="n">${longshotsAll.length}</span><span class="l">Longshots</span></a>
@@ -990,10 +1074,17 @@ function renderToday() {
     return;
   }
 
+  const dayNote = DATA.display_timezone === "America/Chicago"
+    ? " Today's published Top Picks stay here through 11:59 pm Central, then live on in History." : "";
   html += `<section class="section"><div class="section-head"><h2>Best Bets</h2>
-    <span class="section-sub">Full Count's official Top Picks — probability, evidence, price, and freshness all cleared.</span></div>`;
-  if (topPicks.length) {
-    html += `<div class="card-grid">${topPicks.map(p => pickCard(p)).join("")}</div>`;
+    <span class="section-sub">Full Count's official Top Picks — probability, evidence, price, and freshness all cleared.${dayNote}</span></div>`;
+  // Every Top Pick can expire in the browser (after Central midnight, before
+  // the next deploy): no groups then, and the explainer renders instead.
+  const groups = topPickGroups(topPicks);
+  if (groups.length) {
+    const labelled = groups.length > 1 || groups[0].kind !== "today";
+    html += groups.map(g => `${labelled ? `<h3 class="top-pick-group-head">${esc(g.heading)}</h3>` : ""}
+      <div class="card-grid">${g.picks.map(p => pickCard(p)).join("")}</div>`).join("");
   } else {
     html += topPickGapExplainer(props);
   }
@@ -2262,6 +2353,12 @@ function weatherText(wx) {
 // it does not invent a state refresh_prices.py doesn't actually produce.
 // A stale/failed price must never look equally current as a verified one.
 function priceFreshnessState(p) {
+  // A carried published pick is never re-priced, so no later check's state
+  // (line moved, failed fetch, not posted) describes it; only IN_PLAY does.
+  if (p.market_fetch_state !== "IN_PLAY" && isCarriedPublished(p)) {
+    return { label: "As published · not a current quote", tone: "stale",
+      detail: "This is the price when the pick was published. It is kept as the record of what Full Count said and is not refreshed." };
+  }
   if (p.market_odds == null) {
     // LINE_MOVED before the generic unposted case (2026-08-28 P0). "FanDuel
     // hasn't posted a price for this line yet" was shown for Drew Anderson's
@@ -2981,7 +3078,24 @@ function liveStaleChip(p) {
   return `<span class="chip chip-stale">${label}</span>`;
 }
 
+// The Central slate day can turn over while a tab sits open with nothing on
+// the board changing (after the last game ends, no poll re-renders). The
+// once-a-minute freshness tick re-renders the route when it does, so an open
+// Today page drops yesterday's settled picks at Central midnight.
+let LAST_DISPLAY_TODAY = null;
+function rerenderOnSlateDayChange() {
+  if (!DATA) return;
+  const day = displayToday();
+  if (LAST_DISPLAY_TODAY !== null && day !== LAST_DISPLAY_TODAY) {
+    LAST_DISPLAY_TODAY = day;
+    refreshSummary();
+    renderRoute();
+    return;
+  }
+  LAST_DISPLAY_TODAY = day;
+}
 function renderFreshness() {
+  rerenderOnSlateDayChange();
   const bar = document.getElementById("freshness-bar");
   // Each clock named for what it actually measures (2026-08-28 P0). The
   // old bar printed "Board built Xh ago · odds updated Ym ago", which is
@@ -3167,7 +3281,9 @@ function applyCachedLive() {
     p._field_updated_at = p._field_updated_at || {};
     for (const [field, value] of Object.entries(delta)) {
       if (field === "_field_updated_at" || LIVE_SETTLEMENT_FIELDS.has(field) || LIVE_GAME_FIELDS.has(field)) continue;
-      const frozenExposure = gameHasStarted(p)
+      // A carried published pick (another build slate) is frozen before
+      // first pitch too; the build and refresh never reprice it.
+      const frozenExposure = (gameHasStarted(p) || isCarriedPublished(p))
         && ((!!p.published_top_pick_at && !!p.publication_artifact_id)
           || !!p.publication_candidate_token);
       if (frozenExposure && LIVE_PRICE_FIELDS.has(field)) continue;
