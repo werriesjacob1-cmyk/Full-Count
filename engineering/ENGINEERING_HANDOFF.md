@@ -5933,5 +5933,25 @@ follow-up commit.
   only. The All Props list still shows whatever the deployed payload
   carries.
 
+**Independent review, round 3 (head `02f4e629d7`): GO** for code
+integration. The reviewer verified the round-2 BLOCKER fix in real Chromium
+and reproduced the old crash as a control. Its non-blocking findings are
+fixed in the follow-up commit:
+- **Medium: an open tab kept yesterday's settled picks after Central
+  midnight.** The round-1 claim that "a tab left open never shows
+  yesterday's settled picks" was not true, because nothing re-renders when
+  the board doesn't change. The once-a-minute `renderFreshness` tick now
+  re-renders the route when `displayToday()` changes. The new real-browser
+  test `test_browser_today_central.py` covers it: a Playwright fake clock
+  runs 11:55 pm to 12:05 am CDT with no reload. Removing the re-render
+  fails 4 of its 12 checks.
+- **Low:** for carried picks, "As published" now wins over stale LINE_MOVED
+  and FETCH_FAILED labels, and the browser overlay ignores live price
+  fields on carried picks before first pitch, as the build does.
+- **Low:** the tile's "+N early/still open" is now tested.
+- **Informational, unchanged:**
+  - After the picks expire, the empty-state wording still says "tonight".
+  - A device clock that runs ahead can hide the day's settled picks early.
+
 Alligator
 

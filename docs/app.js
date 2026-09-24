@@ -2353,6 +2353,12 @@ function weatherText(wx) {
 // it does not invent a state refresh_prices.py doesn't actually produce.
 // A stale/failed price must never look equally current as a verified one.
 function priceFreshnessState(p) {
+  // A carried published pick is never re-priced, so no later check's state
+  // (line moved, failed fetch, not posted) describes it; only IN_PLAY does.
+  if (p.market_fetch_state !== "IN_PLAY" && isCarriedPublished(p)) {
+    return { label: "As published · not a current quote", tone: "stale",
+      detail: "This is the price when the pick was published. It is kept as the record of what Full Count said and is not refreshed." };
+  }
   if (p.market_odds == null) {
     // LINE_MOVED before the generic unposted case (2026-08-28 P0). "FanDuel
     // hasn't posted a price for this line yet" was shown for Drew Anderson's
@@ -2377,10 +2383,6 @@ function priceFreshnessState(p) {
   if (state === "FETCH_FAILED") {
     return { label: "Last known · price fetch failed", tone: "stale",
       detail: "The last successful FanDuel fetch is shown below; the most recent check didn't succeed." };
-  }
-  if (state !== "IN_PLAY" && isCarriedPublished(p)) {
-    return { label: "As published · not a current quote", tone: "stale",
-      detail: "This is the price when the pick was published. It is kept as the record of what Full Count said and is not refreshed." };
   }
   if (state === "IN_PLAY") {
     // 2026-08-25 release-readiness audit: traced this state to
@@ -3076,7 +3078,24 @@ function liveStaleChip(p) {
   return `<span class="chip chip-stale">${label}</span>`;
 }
 
+// The Central slate day can turn over while a tab sits open with nothing on
+// the board changing (after the last game ends, no poll re-renders). The
+// once-a-minute freshness tick re-renders the route when it does, so an open
+// Today page drops yesterday's settled picks at Central midnight.
+let LAST_DISPLAY_TODAY = null;
+function rerenderOnSlateDayChange() {
+  if (!DATA) return;
+  const day = displayToday();
+  if (LAST_DISPLAY_TODAY !== null && day !== LAST_DISPLAY_TODAY) {
+    LAST_DISPLAY_TODAY = day;
+    refreshSummary();
+    renderRoute();
+    return;
+  }
+  LAST_DISPLAY_TODAY = day;
+}
 function renderFreshness() {
+  rerenderOnSlateDayChange();
   const bar = document.getElementById("freshness-bar");
   // Each clock named for what it actually measures (2026-08-28 P0). The
   // old bar printed "Board built Xh ago · odds updated Ym ago", which is
@@ -3262,7 +3281,9 @@ function applyCachedLive() {
     p._field_updated_at = p._field_updated_at || {};
     for (const [field, value] of Object.entries(delta)) {
       if (field === "_field_updated_at" || LIVE_SETTLEMENT_FIELDS.has(field) || LIVE_GAME_FIELDS.has(field)) continue;
-      const frozenExposure = gameHasStarted(p)
+      // A carried published pick (another build slate) is frozen before
+      // first pitch too; the build and refresh never reprice it.
+      const frozenExposure = (gameHasStarted(p) || isCarriedPublished(p))
         && ((!!p.published_top_pick_at && !!p.publication_artifact_id)
           || !!p.publication_candidate_token);
       if (frozenExposure && LIVE_PRICE_FIELDS.has(field)) continue;

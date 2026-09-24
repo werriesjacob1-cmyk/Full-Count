@@ -83,9 +83,10 @@ class TodayGroupsTests(unittest.TestCase):
                       published_top_pick_at: "x", publication_artifact_id: "y" }),
           ] };
           refreshSummary();
-          return { n: DATA.summary.n_top_pick };
+          return { n: DATA.summary.n_top_pick, other: DATA.summary.n_top_pick_other };
         """)
         self.assertEqual(r["n"], 1)
+        self.assertEqual(r["other"], 2)  # the early pick and the still-open pick
 
     def test_carried_pregame_pick_says_odds_are_as_of_publication(self):
         r = run_node(SETUP + r"""
@@ -142,6 +143,36 @@ class TodayGroupsTests(unittest.TestCase):
         self.assertEqual(r["pregame"], "As published · not a current quote")
         self.assertEqual(r["started"], "Game live · price locked pregame")
         self.assertTrue(r["current"].startswith("Current"))
+
+    def test_open_tab_rerenders_when_the_central_day_turns_over(self):
+        r = run_node(SETUP + r"""
+          DATA = { date: "2020-01-02", display_date: "2020-01-01", display_timezone: "America/Chicago",
+                   props: [], summary: {} };
+          let renders = 0;
+          renderRoute = () => { renders += 1; };
+          LAST_DISPLAY_TODAY = "2020-01-01";   // the day the page was rendered on
+          rerenderOnSlateDayChange();          // the browser's Central date is later now
+          const afterTurnover = renders;
+          rerenderOnSlateDayChange();          // same day again: no extra render
+          return { afterTurnover, afterSameDay: renders };
+        """)
+        self.assertEqual(r["afterTurnover"], 1)
+        self.assertEqual(r["afterSameDay"], 1)
+
+    def test_carried_pick_label_wins_over_stale_line_moved_or_failed_states(self):
+        r = run_node(SETUP + r"""
+          DATA = { date: "2026-09-24", props: [], summary: {} };
+          const published = { published_top_pick_at: "x", publication_artifact_id: "y",
+                              published_slate_date: "2026-09-23", game_state: "pregame" };
+          return {
+            moved: priceFreshnessState(tp("a", Object.assign({ market_odds: null,
+                     market_fetch_state: "LINE_MOVED", market_posted_line: 1.5 }, published))).label,
+            failed: priceFreshnessState(tp("b", Object.assign({ market_fetch_state: "FETCH_FAILED" },
+                     published))).label,
+          };
+        """)
+        self.assertEqual(r["moved"], "As published · not a current quote")
+        self.assertEqual(r["failed"], "As published · not a current quote")
 
     def test_started_published_pick_says_it_is_not_a_current_offer(self):
         r = run_node(SETUP + r"""
