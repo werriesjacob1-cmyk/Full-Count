@@ -453,6 +453,43 @@ class PregameDemotionPersistsTests(unittest.TestCase):
         self.assertEqual(fresh["recommendation_status"], "top_pick")
         self.assertNotIn("demoted_before_start", fresh)
 
+    def test_prior_marker_needs_a_published_prior_row(self):
+        # A marker on a prior_payload row that carries no publication
+        # snapshot (never written by a reconcile pass) is ignored.
+        row = late_pick()
+        registry = published_registry(row)
+        forged = dict(row)
+        forged["demoted_before_start"] = {"status": "neutral", "status_reasons": [], "withdrawn": True}
+        out = bd.reconcile_public_lifecycle(
+            payload([], date="2026-08-18"), prior_payload=payload([forged]),
+            live=default_live_state(), registry=registry,
+            schedule={1: {"status": PREVIEW}}, now=ROLLOVER)
+        self.assertEqual(out["props"][0]["recommendation_status"], "top_pick")
+        self.assertNotIn("demoted_before_start", out["props"][0])
+
+    def test_unpublished_rows_never_carry_a_marker(self):
+        lean = dict(prop(player_id=404, status="lean"))
+        lean["demoted_before_start"] = {"status": "lean", "status_reasons": [], "withdrawn": False}
+        out = reconcile([lean], published_registry(late_pick()), date="2026-08-17",
+                        now="2026-08-17T17:00:00Z", schedule={1: {"status": PREVIEW}})
+        row = next(p for p in out["props"] if p["id"] == lean["id"])
+        self.assertNotIn("demoted_before_start", row)
+
+    def test_prior_slate_row_marked_withdrawn_is_not_rewithdrawn_as_same_slate(self):
+        # A withdrawn marker from the Aug-17 slate, seen again by an Aug-18
+        # build while still pregame: it follows the other-build-slate path
+        # (carried marker), not the same-slate re-withdrawal.
+        row = late_pick()
+        registry = published_registry(row)
+        first = reconcile([], registry, date="2026-08-17", now=self.NOW,
+                          schedule={1: {"status": PREVIEW}})
+        baked = dict(first["props"][0])
+        baked.pop("demoted_before_start")
+        out = reconcile([baked], registry, date="2026-08-18", now=ROLLOVER,
+                        schedule={1: {"status": PREVIEW}})
+        self.assertEqual(out["props"][0]["recommendation_status"], "top_pick")
+        self.assertNotIn("withdrawn_since_publication", out["props"][0])
+
 
 if __name__ == "__main__":
     unittest.main()

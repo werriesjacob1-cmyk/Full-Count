@@ -1586,7 +1586,10 @@ def reconcile_public_lifecycle(payload, prior_payload=None, live=None, schedule=
     """
     prior_markers = {}
     for prior_row in (prior_payload or {}).get("props") or []:
-        if _valid_marker(prior_row.get("demoted_before_start")):
+        # Only a marker a prior reconcile pass wrote onto a published Top
+        # Pick counts (review of 90f5a014b4, finding 1).
+        if (_was_published_top_pick(prior_row)
+                and _valid_marker(prior_row.get("demoted_before_start"))):
             prior_markers[prop_identity_key(prior_row)] = prior_row["demoted_before_start"]
     now = now or utc_now()
     schedule = schedule or {}
