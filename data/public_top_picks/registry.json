@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-24T13:24:39.505535+00:00",
+  "updated_at": "2026-09-24T18:47:38.634700+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -47405,6 +47405,201 @@
         },
         "qualification_timestamp": "2026-09-24T13:18:02.960517+00:00",
         "board_timestamp": "2026-09-24T13:18:02.934830+00:00",
+        "slate_date": "2026-09-24"
+      }
+    },
+    "fc2:824707:player-596115:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824707:player-596115:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824707",
+        [
+          "player",
+          "596115"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-24",
+      "first_published_at": "2026-09-24T18:47:38.634700+00:00",
+      "publication_provenance": {
+        "artifact_id": "a8f33d434d8e875d861a571b6944de8cb639db98992029c8801c9694a4ffd96c",
+        "source_commit": "ced39f66921f18e05ea90788804f88aa22e3a039",
+        "workflow_run_id": "36043541231",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-24T18:47:14.740239+00:00",
+        "data_hash": "e23044a05731f4990dfeb000535468ab877ea17f09a0eb5c74de09637b626549",
+        "live_hash": "03827a69b9d6dd0518d2bf2001fd54d1f17c6f2c9a1daaabe1f1bafa42125cd8"
+      },
+      "snapshot": {
+        "id": "fc2:824707:player-596115:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824707,
+        "player_id": 596115,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Trevor Story",
+        "team": "Boston Red Sox",
+        "matchup": "Cleveland Guardians @ Boston Red Sox",
+        "game_start": "2026-09-24T22:45:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.7082,
+        "market_odds": -175,
+        "market_implied": 0.6364,
+        "market_edge": 0.0718,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (11.9 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 23.1 \u2014 hot recent contact"
+        ],
+        "watchouts": [
+          "L7 avg EV 86.1mph (league ~88.5) \u2014 cold recent contact",
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Projected 3.66 PA (batting slot 8) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.274 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.288 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.37 runs (league avg 4.245; line 3.5, game total 6.5) \u2014 a weak offensive environment",
+          "AVG vs xBA: 0.243 vs 0.216 (+0.027) \u2014 outperforming his contact quality, regression risk",
+          "wOBA vs xwOBA: 0.277 vs 0.250 (+0.027) \u2014 outperforming his contact quality, regression risk",
+          "Season barrel% 5.5 \u2014 below-average barrel rate",
+          "Wind blowing IN (12mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 1/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6915,
+          0.7502
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 61,
+        "lineup_assumed": null,
+        "base_rate": 0.6775,
+        "lift": 0.0307,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "5f26c965e",
+          "prediction_timestamp": "2026-09-24T18:45:47.633382+00:00",
+          "odds_fetched_at": "2026-09-24T18:45:42.186277+00:00",
+          "board_generated_at": "2026-09-24T18:45:47.617039+00:00"
+        },
+        "qualification_timestamp": "2026-09-24T18:45:47.633382+00:00",
+        "board_timestamp": "2026-09-24T18:45:47.617039+00:00",
+        "slate_date": "2026-09-24"
+      }
+    },
+    "fc2:824707:player-681508:hits:1:over": {
+      "canonical_id": "fc2:824707:player-681508:hits:1:over",
+      "settlement_identity": [
+        "824707",
+        [
+          "player",
+          "681508"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-24",
+      "first_published_at": "2026-09-24T18:47:38.634700+00:00",
+      "publication_provenance": {
+        "artifact_id": "a8f33d434d8e875d861a571b6944de8cb639db98992029c8801c9694a4ffd96c",
+        "source_commit": "ced39f66921f18e05ea90788804f88aa22e3a039",
+        "workflow_run_id": "36043541231",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-24T18:47:14.740239+00:00",
+        "data_hash": "e23044a05731f4990dfeb000535468ab877ea17f09a0eb5c74de09637b626549",
+        "live_hash": "03827a69b9d6dd0518d2bf2001fd54d1f17c6f2c9a1daaabe1f1bafa42125cd8"
+      },
+      "snapshot": {
+        "id": "fc2:824707:player-681508:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 824707,
+        "player_id": 681508,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Mickey Gasper",
+        "team": "Boston Red Sox",
+        "matchup": "Cleveland Guardians @ Boston Red Sox",
+        "game_start": "2026-09-24T22:45:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6084,
+        "market_odds": -135,
+        "market_implied": 0.5745,
+        "market_edge": 0.0339,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.6 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 11.1 \u2014 hot recent contact",
+          "Platoon: S bat vs RHP (handedness unknown)",
+          "Projected 4.35 PA (batting slot 2) \u2014 a favorable lineup slot",
+          "Pitch-type exploit: RV/100 +5.5 vs FF (opposing SP throws it 61.3% of the time)",
+          "Season barrel% 10.5",
+          "Hitters batting ahead of him: 0.329 wOBA (league ~.320)"
+        ],
+        "watchouts": [
+          "L7 avg EV 84.7mph (league ~88.5) \u2014 cold recent contact",
+          "Team implied for 3.37 runs (league avg 4.245; line 3.5, game total 6.5) \u2014 a weak offensive environment",
+          "Hitter batting behind him: 0.321 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Wind blowing IN (12mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 1/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.5997,
+          0.637
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 64,
+        "lineup_assumed": null,
+        "base_rate": 0.5577,
+        "lift": 0.0507,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "5f26c965e",
+          "prediction_timestamp": "2026-09-24T18:45:47.633382+00:00",
+          "odds_fetched_at": "2026-09-24T18:45:42.186277+00:00",
+          "board_generated_at": "2026-09-24T18:45:47.617039+00:00"
+        },
+        "qualification_timestamp": "2026-09-24T18:45:47.633382+00:00",
+        "board_timestamp": "2026-09-24T18:45:47.617039+00:00",
         "slate_date": "2026-09-24"
       }
     }
