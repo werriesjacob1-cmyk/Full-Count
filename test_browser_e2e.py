@@ -37,7 +37,8 @@ import re
 import os
 import sys
 import threading
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -123,6 +124,83 @@ def _rebased(raw):
     return json.dumps(doc).encode("utf-8")
 
 
+# ── Deterministic Today fixture (2026-09-25) ────────────────────────────
+# The interaction checks below (detail sheet, My Board save/unsave/Clear
+# All, mobile detail sheet) need clickable cards on Today. Real Today
+# content depends on how many Top Picks production published and on the
+# checked-in docs/data.json's slate date -- zero published picks, or a
+# day-old snapshot, legitimately leaves Today empty, and the suite used to
+# fail then even though the dashboard was working. The SERVED copy of
+# data.json (in memory only; never written to disk) therefore gets three
+# synthetic, unmistakably labelled Top Picks for the day the real app will
+# call "today", starting well in the future. Every real prop is served
+# unchanged, and the cards still render through the real app.js/CSS/HTML.
+# A separate phase serves the board with NO Top Picks and asserts the real
+# empty state. None of this is a published selection: ids carry
+# FIXTURE_PREFIX and every row has fixture_synthetic=true.
+FIXTURE_PREFIX = "fc-e2e-fixture:"
+_FIXTURE = {"mode": "augment"}   # "augment" | "no_top_picks"
+_CENTRAL = ZoneInfo("America/Chicago")
+
+
+def _fixture_today(doc, now=None):
+    """The date the real displayToday() will use: the later of the payload's
+    display date and the browser's Central calendar date."""
+    now = now or datetime.now(timezone.utc)
+    central = now.astimezone(_CENTRAL).date().isoformat()
+    payload = doc.get("display_date") or doc.get("date") or central
+    return max(payload, central)
+
+
+def _fixture_picks(doc, now=None, n=3):
+    now = now or datetime.now(timezone.utc)
+    props = doc.get("props") or []
+    template = next((p for p in props if p.get("hit_probability") is not None
+                     and p.get("market_odds") is not None), {})
+    day = _fixture_today(doc, now)
+    start = (now + timedelta(hours=6)).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    picks = []
+    for i in range(1, n + 1):
+        row = {k: v for k, v in template.items()
+               if not k.startswith(("publication", "published", "settlement", "game_state",
+                                    "downgrad", "withdraw"))}
+        row.update({
+            "id": f"{FIXTURE_PREFIX}{i}", "fixture_synthetic": True,
+            "name": f"Fixture Player {i}", "player_id": 990000 + i, "game_pk": 990001,
+            "matchup": "Fixture Away @ Fixture Home", "team": "FXA",
+            "prop": row.get("prop") or "Over 0.5 Hits", "hit_probability": row.get("hit_probability", 0.7),
+            "market_odds": row.get("market_odds", -150), "recommendation_status": "top_pick",
+            "rank": i, "game_start": start, "game_state": "pregame",
+            "published_slate_date": day, "published_top_pick_at": now.isoformat(),
+            "publication_artifact_id": "e" * 64, "settlement_state": "open",
+            "settlement_authority": "none", "why": [],
+        })
+        row["publication_snapshot"] = {k: row[k] for k in ("id", "recommendation_status", "market_odds")}
+        picks.append(row)
+    return picks
+
+
+def _apply_fixture(doc, mode, now=None):
+    """Return the served document for `mode`; the input is not mutated."""
+    doc = json.loads(json.dumps(doc))
+    props = doc.get("props") or []
+    if mode == "augment":
+        doc["props"] = props + _fixture_picks(doc, now)
+    elif mode == "no_top_picks":
+        doc["props"] = [p for p in props if p.get("recommendation_status") != "top_pick"
+                        and not p.get("published_top_pick_at")
+                        and not p.get("publication_candidate_token")]
+        if isinstance(doc.get("summary"), dict):
+            doc["summary"]["n_top_pick"] = 0
+    else:
+        raise ValueError(mode)
+    return doc
+
+
+def _served(raw):
+    return json.dumps(_apply_fixture(json.loads(_rebased(raw)), _FIXTURE["mode"])).encode("utf-8")
+
+
 # Pure regression guard for the clock fixture itself. This specifically catches
 # the failure that let freshness.model_basis_at remain old while generated_at
 # was moved forward.
@@ -138,6 +216,33 @@ check(_probe["generated_at"] != _probe_old
       and _probe["reconciliation"]["checked_at"] != _probe_old,
       "interaction fixture rebases top-level and scoped four-clock freshness timestamps")
 
+# Pure guards for the Today fixture: real props pass through untouched,
+# fixtures are always present and labelled, the empty-state mode strips
+# every published Top Pick, and "today" matches the app's own rule.
+_fx_now = datetime(2026, 9, 25, 4, 30, tzinfo=timezone.utc)   # 11:30 pm CDT Sept 24
+for _n_real in (0, 1, 5):
+    _real = [{"id": f"real-{i}", "recommendation_status": "top_pick", "hit_probability": 0.6,
+              "market_odds": -120, "published_top_pick_at": "2026-09-24T18:00:00+00:00",
+              "publication_artifact_id": "a" * 64} for i in range(_n_real)]
+    _real.append({"id": "real-lean", "recommendation_status": "lean", "hit_probability": 0.55,
+                  "market_odds": 110})
+    _src = {"date": "2026-09-24", "display_date": "2026-09-24", "props": _real}
+    _aug = _apply_fixture(_src, "augment", _fx_now)
+    _fx = [p for p in _aug["props"] if str(p.get("id", "")).startswith(FIXTURE_PREFIX)]
+    check(_aug["props"][:len(_real)] == _real and len(_fx) == 3
+          and all(p["fixture_synthetic"] and p["published_slate_date"] == "2026-09-24"
+                  and p["game_start"] > _fx_now.isoformat() for p in _fx)
+          and _src["props"] == _real,
+          f"Today fixture with {_n_real} real Top Pick(s): real props unchanged, 3 labelled "
+          "future-dated synthetic picks added, source document not mutated")
+    _empty = _apply_fixture(_src, "no_top_picks", _fx_now)
+    check([p["id"] for p in _empty["props"]] == ["real-lean"],
+          f"empty-state mode with {_n_real} real Top Pick(s) removes every published Top Pick "
+          "and keeps the other real props")
+check(_fixture_today({"date": "2026-09-23"}, _fx_now) == "2026-09-24"
+      and _fixture_today({"date": "2026-09-25", "display_date": "2026-09-25"}, _fx_now) == "2026-09-25",
+      "fixture 'today' follows displayToday(): the later of the payload date and the Central date")
+
 
 class _QuietHandler(http.server.SimpleHTTPRequestHandler):
     def log_message(self, *a, **kw):
@@ -147,9 +252,12 @@ class _QuietHandler(http.server.SimpleHTTPRequestHandler):
         name = os.path.basename(self.path.split("?")[0])
         if name in _CLOCK_REBASED:
             path = os.path.join(DOCS_DIR, name)
+            if name == "data.json" and os.environ.get("FC_E2E_DATA_JSON"):
+                path = os.environ["FC_E2E_DATA_JSON"]   # test-only: alternate real snapshot
             try:
                 with open(path, "rb") as fh:
-                    body = _rebased(fh.read())
+                    raw = fh.read()
+                body = _served(raw) if name == "data.json" else _rebased(raw)
             except (OSError, ValueError):
                 return super().do_GET()
             self.send_response(200)
@@ -161,6 +269,9 @@ class _QuietHandler(http.server.SimpleHTTPRequestHandler):
         return super().do_GET()
 
 
+import hashlib as _hashlib
+_DOCS_DIGESTS_BEFORE = {n: _hashlib.sha256(open(os.path.join(DOCS_DIR, n), "rb").read()).hexdigest()
+                        for n in sorted(os.listdir(DOCS_DIR)) if n.endswith(".json")}
 _handler = functools.partial(_QuietHandler, directory=DOCS_DIR)
 _httpd = http.server.ThreadingHTTPServer(("127.0.0.1", PORT), _handler)
 _server_thread = threading.Thread(target=_httpd.serve_forever, daemon=True)
@@ -497,7 +608,7 @@ try:
             check(page.eval_on_selector_all("#page-watchlist [data-open]", "els => els.length") == 0,
                   "My Board still renders as empty after reload, not repopulated from stale state")
     else:
-        check(False, "the current slate has at least 2 distinct real props to test Clear All "
+        check(False, "the served board has at least 2 distinct props to test Clear All "
               "against (needs >=2 to prove it clears more than one)")
     ctx.close()
 
@@ -651,6 +762,35 @@ try:
         check(len(page._console_errors) == 0, f"zero console errors at {w}x{h}",
               f"errors: {page._console_errors}")
         ctx.close()
+
+    # ── 8b. Empty Today: no legitimate Top Picks -> the real empty state ──
+    head("8b. Empty state: when the board has NO published Top Picks, Today "
+         "renders the real 'No bets currently meet Full Count's Top Pick "
+         "standards' explanation instead of cards, with zero console errors.")
+    _FIXTURE["mode"] = "no_top_picks"
+    try:
+        ctx, page = new_page()
+        load(page)
+        n_top = page.evaluate("() => publicProps().filter(p => p.recommendation_status === 'top_pick').length")
+        check(n_top == 0, "the served board genuinely has zero Top Picks in this phase", f"got {n_top}")
+        empty_text = page.evaluate(
+            "() => [...document.querySelectorAll('#page-today .empty-state')].map(e => e.innerText).join(' | ')")
+        check("No bets currently meet Full Count" in empty_text,
+              "Today shows the real no-Top-Pick empty state", f"got {empty_text[:160]!r}")
+        check(len(page._console_errors) == 0, "zero console errors on an empty Today",
+              f"errors: {page._console_errors}")
+        ctx.close()
+    finally:
+        _FIXTURE["mode"] = "augment"
+
+    # ── 8c. The fixture never leaves this process ─────────────────────────
+    _after = {n: _hashlib.sha256(open(os.path.join(DOCS_DIR, n), "rb").read()).hexdigest()
+              for n in sorted(os.listdir(DOCS_DIR)) if n.endswith(".json")}
+    check(_after == _DOCS_DIGESTS_BEFORE,
+          "no docs/*.json file changed during the run (fixtures are served from memory only)")
+    _leak = [n for n in sorted(os.listdir(DOCS_DIR)) if n.endswith(".json")
+             and FIXTURE_PREFIX.encode() in open(os.path.join(DOCS_DIR, n), "rb").read()]
+    check(not _leak, "no fixture id appears in any real docs/*.json record", f"found in {_leak}")
 
     # ── 9. Source/docs parity sanity (already enforced in test_build_dashboard.py,
     #      re-verified here for good measure since this suite serves docs/ directly) ─
