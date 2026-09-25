@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-25T21:12:50.273352+00:00",
+  "updated_at": "2026-09-25T21:17:39.700650+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -49372,6 +49372,99 @@
         },
         "qualification_timestamp": "2026-09-25T20:54:35.574933+00:00",
         "board_timestamp": "2026-09-25T20:54:35.555401+00:00",
+        "slate_date": "2026-09-25"
+      }
+    },
+    "fc2:824706:player-678394:strikeouts:5:over": {
+      "canonical_id": "fc2:824706:player-678394:strikeouts:5:over",
+      "settlement_identity": [
+        "824706",
+        [
+          "player",
+          "678394"
+        ],
+        "strikeouts",
+        "5",
+        "over"
+      ],
+      "slate_date": "2026-09-25",
+      "first_published_at": "2026-09-25T21:17:39.700650+00:00",
+      "publication_provenance": {
+        "artifact_id": "a05ee740d7dab0a2f5abca2a88a69568d0c94e6b98c658c816de138025aea861",
+        "source_commit": "f51c0f3a2dddb61e85cd2f559e104bf3564bbd73",
+        "workflow_run_id": "36190637200",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-25T21:17:27.477822+00:00",
+        "data_hash": "d80e4b40bcdca62cfa6ea43fde41b68470386b4fc04005be34fad9b37c19d5e9",
+        "live_hash": "c95142e07c9d7a4c46e579fb453b065d4109b1f73172e956111106d0df490811"
+      },
+      "snapshot": {
+        "id": "fc2:824706:player-678394:strikeouts:5:over",
+        "identity_version": 2,
+        "game_pk": 824706,
+        "player_id": 678394,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Brayan Bello",
+        "team": "Boston Red Sox",
+        "matchup": "Chicago Cubs @ Boston Red Sox",
+        "game_start": "2026-09-25T21:35:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 4.5,
+          "needs": 5
+        },
+        "prop": "Over 4.5 Strikeouts",
+        "hit_probability": 0.6203,
+        "market_odds": 126,
+        "market_implied": 0.4171,
+        "market_edge": 0.2032,
+        "market_hold": 0.0608,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (1.5x the market's estimate \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Opposing team K% 21.1",
+          "Expected workload 24.7 batters faced (his own 29.0/start over 1 real start, shrunk toward the 23.1 league mean)",
+          "Platoon advantage: 4 of 7 projected hitters bat right-handed against this RHP",
+          "L14 K% 38.2 (34 PA) \u2014 hot recent form",
+          "Recency-weighted K rate 32.4% (exp. decay, halflife 30d, 10 real starts / 236 BF) \u2014 drives a favorable strikeout-probability read",
+          "HP ump accuracy 93.0%"
+        ],
+        "watchouts": [
+          "Workload estimate rests on only 1 start in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+        ],
+        "prob_ci": [
+          0.5909,
+          0.7088
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 10,
+        "lineup_assumed": null,
+        "base_rate": 0.5225,
+        "lift": 0.0978,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "a86912bf6",
+          "prediction_timestamp": "2026-09-25T21:14:13.918951+00:00",
+          "odds_fetched_at": "2026-09-25T21:14:06.798712+00:00",
+          "board_generated_at": "2026-09-25T21:14:13.893183+00:00"
+        },
+        "qualification_timestamp": "2026-09-25T21:14:13.918951+00:00",
+        "board_timestamp": "2026-09-25T21:14:13.893183+00:00",
         "slate_date": "2026-09-25"
       }
     }
