@@ -6368,3 +6368,13 @@ Alligator
 **Bridge:** #91 AGENT RELEASE for F17.
 
 Alligator
+
+## 2026-09-25 16:50Z -- Week-3 seal recovery verified; trigger ready
+- **Recovery:** `claude/nfl-seal-inputs-20260925` @ `4b7fd4babe` holds the complete strace-verified input set (1,840 bundled plus 50 upstream-identical files, pinned in MANIFEST.json), a fail-closed `restore.py`, and `recover_environment.sh`.
+- **Isolated drill (empty `/tmp/claude-0`):** restore passed, both negative tests failed closed, and all 1,441 primary predictions were identical to the original-container run. Evidence is in `drill_20260925/`.
+- **Seal branch:** `claude/nfl-tier1-seal-2026w03` at `e05e02c592`.
+- **Trigger:** `trig_01FiiD9MknrMxbB1zbeS4d5N` (Saturday 18:30Z) updated in place.
+- **Not yet captured.**
+- **Bridge:** #91 comment 5836087551.
+
+Alligator
