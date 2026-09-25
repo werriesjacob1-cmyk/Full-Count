@@ -176,6 +176,17 @@ def refresh(data_path, live_path=None, registry_path=DEFAULT_REGISTRY_PATH):
             # again. Placed after the game-state branch so a STARTED carried
             # pick still gets its game fact and IN_PLAY like any other.
             continue
+        if row.get("withdrawn_since_publication"):
+            # 2026-09-24 published-downgrade-display: a same-slate pregame
+            # pick reconcile_public_lifecycle carried ONLY because the
+            # CURRENT scoring pass no longer produces it at all. It is a
+            # withdrawn record, not an offer -- reusing this build's own
+            # row (dict(registered), never a fresh candidate) for pricing
+            # would silently re-actionize a pick nothing currently
+            # recommends, and could reopen a LINE_MOVED reconciliation no
+            # rebuild can clear the same way the other-build-slate case
+            # above cannot. See reconcile_public_lifecycle's carry loop.
+            continue
         pregame.append(row)
 
     if not pregame:

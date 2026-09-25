@@ -399,10 +399,10 @@
       "date": "2026-09-24",
       "evaluations": [
         {
-          "prop": "Over 7.5 Strikeouts",
+          "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.2,
-          "notable_signals": 0,
+          "score": 41.3,
+          "notable_signals": 1,
           "matchup": "San Diego Padres @ Los Angeles Dodgers",
           "game_pk": 823895,
           "team": "Los Angeles Dodgers",
@@ -410,26 +410,29 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "opp_team_k_pct": 46.0,
+            "opp_team_k_pct": 45.0,
             "same_hand_ratio": 88.8889,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 71.8614,
+            "ump_k_pct": 0.132,
+            "ump_bb_pct": -0.12
           },
-          "hit_probability": 0.3294,
-          "raw_hit_probability": 0.3294,
-          "lift": 0.1917,
+          "hit_probability": 0.4683,
+          "raw_hit_probability": 0.4683,
+          "lift": 0.2232,
           "reliability": "B",
           "sample_n": 12,
           "projection": {
             "stat": "strikeouts",
-            "value": 7.5,
-            "needs": 8
+            "value": 6.5,
+            "needs": 7
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 85.3,
+          "score": 75.5,
           "notable_signals": 1,
           "matchup": "San Diego Padres @ Los Angeles Dodgers",
           "game_pk": 823895,
@@ -438,18 +441,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.653,
+            "outs_rate": 0.5825,
             "avg_outs_per_start": 16.92
           },
-          "hit_probability": 0.6293,
-          "raw_hit_probability": 0.653,
-          "lift": 0.1704,
+          "hit_probability": 0.5817,
+          "raw_hit_probability": 0.5825,
+          "lift": 0.1676,
           "reliability": "B",
           "sample_n": 12,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

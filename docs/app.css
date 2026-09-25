@@ -831,3 +831,14 @@ main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 80px; }
 /* Today page: Top Picks grouped by Central slate day; started published picks */
 .top-pick-group-head { font-size: 13px; font-weight: 700; letter-spacing: .02em; color: var(--ink-faint); margin: 14px 0 8px; text-transform: uppercase; }
 .pc-published-note { font-size: 11.5px; color: var(--ink-faint); margin: 6px 0 2px; }
+
+/* 2026-09-24 published-downgrade-display: a Top Pick published earlier and
+   now downgraded (real reclassified status) or withdrawn (fell out of the
+   current scoring pass -- see isDowngradedPublished in app.js). Warm/warn
+   tone (not good/bad) -- neither a fresh recommendation nor a settled
+   loss, a lifecycle fact about a published pick that needs a clear,
+   distinct look from every other chip on the card. */
+.top-pick-group-downgraded { color: var(--warn); }
+.chip-downgraded { background: var(--warn-soft); color: var(--warn); }
+.pc-downgraded-note { margin: 6px 0 2px; padding: 6px 8px; border-radius: 8px; background: var(--warn-soft); }
+.pc-downgraded-detail { font-size: 11.5px; color: var(--ink-faint); margin-top: 4px; }
