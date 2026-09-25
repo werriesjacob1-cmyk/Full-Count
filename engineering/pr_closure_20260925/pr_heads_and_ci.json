@@ -1,0 +1,915 @@
+{
+ "prs": [
+  {
+   "number": 214,
+   "title": "Record F18 individual-defender coverage source gate and blocker",
+   "draft": true,
+   "head_ref": "codex/nfl-tier2-defender-coverage-f18-20260925",
+   "head_sha": "0d324fd961",
+   "base_ref": "main",
+   "base_sha": "a1a32f52c6",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36160147508",
+     "id": 36160147508
+    },
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36160147384",
+     "id": 36160147384
+    }
+   }
+  },
+  {
+   "number": 213,
+   "title": "NFL Tier 2 F17: advanced receiving efficiency challenger (research only; NOT SUPPORTED vs simple control)",
+   "draft": true,
+   "head_ref": "claude/nfl-tier2-player-efficiency-f17-20260925",
+   "head_sha": "edddb9ab2b",
+   "base_ref": "claude/nfl-tier1-foundation-20260924",
+   "base_sha": "e05e02c592",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36159569976",
+     "id": 36159569976
+    },
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36159570083",
+     "id": 36159570083
+    }
+   }
+  },
+  {
+   "number": 212,
+   "title": "Research F16 verified defensive-box matchup proxy for rushing yards",
+   "draft": true,
+   "head_ref": "codex/nfl-tier2-rushing-box-f16-20260925",
+   "head_sha": "0a303be087",
+   "base_ref": "claude/nfl-rushing-yards-baseline-20260923",
+   "base_sha": "a24dfe45d6",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36158323581",
+     "id": 36158323581
+    },
+    "Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36158323547",
+     "id": 36158323547
+    }
+   }
+  },
+  {
+   "number": 211,
+   "title": "Research F15 personnel-conditioned field opportunity for receptions",
+   "draft": true,
+   "head_ref": "codex/nfl-tier2-personnel-f15-20260925",
+   "head_sha": "2930030da4",
+   "base_ref": "main",
+   "base_sha": "44b5dacebe",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36156586107",
+     "id": 36156586107
+    },
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36156586048",
+     "id": 36156586048
+    }
+   }
+  },
+  {
+   "number": 210,
+   "title": "ci(nfl): install NumPy for Tier 1 research tests",
+   "draft": true,
+   "head_ref": "superchad/nfl-ci-numpy-dependency-20260925",
+   "head_sha": "3f5368d924",
+   "base_ref": "main",
+   "base_sha": "bc52e92290",
+   "ci": {
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36155296333",
+     "id": 36155296333
+    },
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36155296323",
+     "id": 36155296323
+    }
+   }
+  },
+  {
+   "number": 209,
+   "title": "Research F14 offensive concepts to receptions \u2014 null evaluation",
+   "draft": true,
+   "head_ref": "codex/nfl-tier2-concepts-f14-20260925",
+   "head_sha": "c5403efa9a",
+   "base_ref": "main",
+   "base_sha": "f43d0e5423",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36154570736",
+     "id": 36154570736
+    },
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36154570569",
+     "id": 36154570569
+    }
+   }
+  },
+  {
+   "number": 208,
+   "title": "test: make Central-midnight browser fixture independent of live Top Pick count",
+   "draft": true,
+   "head_ref": "superchad/ci-today-fixture-stability-20260925",
+   "head_sha": "d68b2d6073",
+   "base_ref": "main",
+   "base_sha": "ae6d29bbc5",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36153963241",
+     "id": 36153963241
+    },
+    "Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36153963351",
+     "id": 36153963351
+    }
+   }
+  },
+  {
+   "number": 207,
+   "title": "NFL Tier 2 F11/F12: receiver vs coverage + defensive coverage tendencies (man/zone and coverage-family; research only)",
+   "draft": true,
+   "head_ref": "claude/nfl-tier2-coverage-20260925",
+   "head_sha": "f4fb17aa0b",
+   "base_ref": "claude/nfl-tier1-foundation-20260924",
+   "base_sha": "d974dd0f15",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36157035013",
+     "id": 36157035013
+    },
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36157034994",
+     "id": 36157034994
+    }
+   }
+  },
+  {
+   "number": 206,
+   "title": "Research F13 pressure and blitz QB passing-yards challenger \u2014 negative evaluation",
+   "draft": true,
+   "head_ref": "codex/nfl-tier2-pressure-f13-20260925",
+   "head_sha": "556bc26e6e",
+   "base_ref": "main",
+   "base_sha": "41124ce3b2",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36148185695",
+     "id": 36148185695
+    },
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36148185837",
+     "id": 36148185837
+    }
+   }
+  },
+  {
+   "number": 205,
+   "title": "NFL Tier 1 WS-D: red-zone opportunity + anytime-TD research consumer (F4)",
+   "draft": true,
+   "head_ref": "claude/nfl-tier1-touchdown-20260924",
+   "head_sha": "76b42547c3",
+   "base_ref": "claude/nfl-tier1-foundation-20260924",
+   "base_sha": "c128fc6b60",
+   "ci": {
+    "Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36062920159",
+     "id": 36062920159
+    },
+    "NFL Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36062920098",
+     "id": 36062920098
+    }
+   }
+  },
+  {
+   "number": 204,
+   "title": "NFL Tier 1 WS-C: game lines, PROE/pace, weather/roof/surface, rest/travel, opponent by position (F1/F5/F6/F7/F10)",
+   "draft": true,
+   "head_ref": "claude/nfl-tier1-team-context-20260924",
+   "head_sha": "40d842c9a9",
+   "base_ref": "claude/nfl-tier1-foundation-20260924",
+   "base_sha": "c128fc6b60",
+   "ci": {
+    "Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36062903514",
+     "id": 36062903514
+    },
+    "NFL Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36062903531",
+     "id": 36062903531
+    }
+   }
+  },
+  {
+   "number": 203,
+   "title": "NFL Tier 1 WS-B: snap/role, target share, injury/practice, absence redistribution (F2/F3/F8/F9)",
+   "draft": true,
+   "head_ref": "claude/nfl-tier1-player-opportunity-20260924",
+   "head_sha": "8aa8067fbc",
+   "base_ref": "claude/nfl-tier1-foundation-20260924",
+   "base_sha": "c128fc6b60",
+   "ci": {
+    "Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36062890834",
+     "id": 36062890834
+    },
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36062890696",
+     "id": 36062890696
+    }
+   }
+  },
+  {
+   "number": 202,
+   "title": "NFL Tier 1: shared factor contract, matched evaluation harness, post-review status",
+   "draft": true,
+   "head_ref": "claude/nfl-tier1-foundation-20260924",
+   "head_sha": "e05e02c592",
+   "base_ref": "main",
+   "base_sha": "ea40ec502b",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36162946955",
+     "id": 36162946955
+    },
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36162946809",
+     "id": 36162946809
+    }
+   }
+  },
+  {
+   "number": 201,
+   "title": "Research: MLB Top Pick selection-overconfidence diagnostic (pre-registered; inconclusive)",
+   "draft": true,
+   "head_ref": "claude/mlb-selection-overconfidence-20260924",
+   "head_sha": "025fdf63ed",
+   "base_ref": "main",
+   "base_sha": "f40b42567e",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166966118",
+     "id": 36166966118
+    },
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166966127",
+     "id": 36166966127
+    }
+   }
+  },
+  {
+   "number": 199,
+   "title": "Research: bind authentic NFL offers to earlier sealed B0 without weakening gates",
+   "draft": true,
+   "head_ref": "codex/nfl-price-b0-join-20260924",
+   "head_sha": "285252d313",
+   "base_ref": "codex/nfl-price-aware-offers-20260923",
+   "base_sha": "7626a0424f",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36017944942",
+     "id": 36017944942
+    },
+    "Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36017944941",
+     "id": 36017944941
+    }
+   }
+  },
+  {
+   "number": 198,
+   "title": "Audit: MLB slate-date contract (UTC build date vs Central customer day) \u2014 staged plan, no code change",
+   "draft": true,
+   "head_ref": "claude/central-slate-contract-20260924",
+   "head_sha": "d21ba2f5fc",
+   "base_ref": "main",
+   "base_sha": "f40b42567e",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166973509",
+     "id": 36166973509
+    },
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166973536",
+     "id": 36166973536
+    },
+    "NFL Web Integration Tests": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166973498",
+     "id": 36166973498
+    }
+   }
+  },
+  {
+   "number": 196,
+   "title": "Draft: seal actual NFL receptions offers with price-aware research gates",
+   "draft": true,
+   "head_ref": "codex/nfl-price-aware-offers-20260923",
+   "head_sha": "7626a0424f",
+   "base_ref": "main",
+   "base_sha": "4bafdbe305",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36015414843",
+     "id": 36015414843
+    },
+    "Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36015414637",
+     "id": 36015414637
+    }
+   }
+  },
+  {
+   "number": 193,
+   "title": "NFL: remove the receptions chain's ~0.83 scale bias (Mission 10)",
+   "draft": true,
+   "head_ref": "claude/nfl-pregame-target-share-20260923",
+   "head_sha": "675d84f087",
+   "base_ref": "main",
+   "base_sha": "7097b0fb9e",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35943683950",
+     "id": 35943683950
+    },
+    "Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35943683937",
+     "id": 35943683937
+    }
+   }
+  },
+  {
+   "number": 192,
+   "title": "MLB Mission 10: pre-registered Top Pick calibration holdout replication (confirms persistent overconfidence)",
+   "draft": true,
+   "head_ref": "claude/mlb-mission10-toppick-calibration-holdout-20260924",
+   "head_sha": "c30c1c3a37",
+   "base_ref": "main",
+   "base_sha": "f40b42567e",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166977687",
+     "id": 36166977687
+    },
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166979086",
+     "id": 36166979086
+    },
+    "NFL Web Integration Tests": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166978958",
+     "id": 36166978958
+    }
+   }
+  },
+  {
+   "number": 191,
+   "title": "NFL: component error decomposition of the receptions opportunity engine (Mission 9 Workstream D)",
+   "draft": true,
+   "head_ref": "claude/nfl-opportunity-error-decomposition-20260923",
+   "head_sha": "0d85251d7e",
+   "base_ref": "main",
+   "base_sha": "f40b42567e",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166996467",
+     "id": 36166996467
+    },
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166996402",
+     "id": 36166996402
+    },
+    "NFL Web Integration Tests": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166996347",
+     "id": 36166996347
+    }
+   }
+  },
+  {
+   "number": 190,
+   "title": "NFL: reusable passing-yards alternate-line ladder + real evaluation",
+   "draft": true,
+   "head_ref": "claude/nfl-passing-yards-alt-ladder-20260923",
+   "head_sha": "fddbed763a",
+   "base_ref": "main",
+   "base_sha": "455a6f7536",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35929799012",
+     "id": 35929799012
+    },
+    "Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35929798958",
+     "id": 35929798958
+    }
+   }
+  },
+  {
+   "number": 188,
+   "title": "MLB full-board calibration / winner's-curse investigation (Mission 9, Workstream E)",
+   "draft": true,
+   "head_ref": "claude/mlb-fullboard-calibration-analysis-20260923",
+   "head_sha": "9266b78980",
+   "base_ref": "main",
+   "base_sha": "95517fe8b3",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35927980289",
+     "id": 35927980289
+    },
+    "Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35927980278",
+     "id": 35927980278
+    }
+   }
+  },
+  {
+   "number": 187,
+   "title": "MLB: close real full-board-snapshot test-coverage gap (Mission 8 Workstream C) \u2014 the mechanism already exists",
+   "draft": true,
+   "head_ref": "claude/mlb-fullboard-snapshot-20260923",
+   "head_sha": "8e413cc072",
+   "base_ref": "main",
+   "base_sha": "f40b42567e",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166997810",
+     "id": 36166997810
+    },
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166998097",
+     "id": 36166998097
+    },
+    "NFL Web Integration Tests": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166997949",
+     "id": 36166997949
+    }
+   }
+  },
+  {
+   "number": 186,
+   "title": "NFL: rushing-yards baseline + feature-informed challenger (research only)",
+   "draft": true,
+   "head_ref": "claude/nfl-rushing-yards-baseline-20260923",
+   "head_sha": "efb40423ff",
+   "base_ref": "main",
+   "base_sha": "f40b42567e",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36167027099",
+     "id": 36167027099
+    },
+    "NFL Web Integration Tests": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36167027068",
+     "id": 36167027068
+    },
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36167027103",
+     "id": 36167027103
+    }
+   }
+  },
+  {
+   "number": 184,
+   "title": "NFL: diagnostic ablation of the opportunity engine on a fresh 2024 holdout (Mission 7 Workstream C)",
+   "draft": true,
+   "head_ref": "claude/nfl-opportunity-ablation-2024-holdout-20260923",
+   "head_sha": "ba757f1fdf",
+   "base_ref": "main",
+   "base_sha": "f40b42567e",
+   "ci": {
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166998425",
+     "id": 36166998425
+    },
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166998209",
+     "id": 36166998209
+    },
+    "NFL Web Integration Tests": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166998252",
+     "id": 36166998252
+    }
+   }
+  },
+  {
+   "number": 177,
+   "title": "docs(nfl): permanent complete intelligence requirements and independent gap discovery",
+   "draft": true,
+   "head_ref": "superchad/nfl-intelligence-completeness-20260923",
+   "head_sha": "fcd9094dba",
+   "base_ref": "main",
+   "base_sha": "94de623852",
+   "ci": {
+    "Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35905406576",
+     "id": 35905406576
+    },
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35905406694",
+     "id": 35905406694
+    }
+   }
+  },
+  {
+   "number": 174,
+   "title": "Research: bind real FTN tactical charting to prior legal pass targets",
+   "draft": true,
+   "head_ref": "codex/nfl-real-tactical-source-20260922",
+   "head_sha": "db54f1f6dc",
+   "base_ref": "main",
+   "base_sha": "766fa08148",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35889072017",
+     "id": 35889072017
+    },
+    "Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35889072031",
+     "id": 35889072031
+    }
+   }
+  },
+  {
+   "number": 170,
+   "title": "Add fail-closed NFL film observation prototype",
+   "draft": true,
+   "head_ref": "codex/nfl-film-intelligence-prototype-20260922",
+   "head_sha": "a898e3660d",
+   "base_ref": "main",
+   "base_sha": "ab37fa144a",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35763446798",
+     "id": 35763446798
+    },
+    "Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35763446598",
+     "id": 35763446598
+    }
+   }
+  },
+  {
+   "number": 131,
+   "title": "MLB calibration: selector-diagnosis + hits_runs_rbis trace converge on one missing artifact",
+   "draft": false,
+   "head_ref": "claude/hits-runs-rbis-mechanism-20260918",
+   "head_sha": "c7dc7fdfd1",
+   "base_ref": "main",
+   "base_sha": "f40b42567e",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36167006908",
+     "id": 36167006908
+    },
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36167006895",
+     "id": 36167006895
+    },
+    "NFL Web Integration Tests": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36167006844",
+     "id": 36167006844
+    }
+   }
+  },
+  {
+   "number": 130,
+   "title": "gitignore: exclude per-session Agent worktree checkouts",
+   "draft": false,
+   "head_ref": "claude/gitignore-agent-worktrees-20260918",
+   "head_sha": "342f69e71e",
+   "base_ref": "main",
+   "base_sha": "3f22b68dc8",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35365047137",
+     "id": 35365047137
+    },
+    "Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35365047176",
+     "id": 35365047176
+    }
+   }
+  },
+  {
+   "number": 110,
+   "title": "Add explicit-final strictly-prior NFL scoring features",
+   "draft": true,
+   "head_ref": "superchad/nfl-scoring-prior-features-20260914",
+   "head_sha": "390e04d3fd",
+   "base_ref": "main",
+   "base_sha": "20c0fedfdf",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "cancelled",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/34911668831",
+     "id": 34911668831
+    },
+    "Test Suite": {
+     "conclusion": "cancelled",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/34911668842",
+     "id": 34911668842
+    }
+   }
+  },
+  {
+   "number": 85,
+   "title": "Mission 1.1 prospective PA-v1 lifecycle closure \u2014 DO NOT MERGE",
+   "draft": true,
+   "head_ref": "claude/prospective-hits-pa-lifecycle-closure-01",
+   "head_sha": "4744ad2fc7",
+   "base_ref": "main",
+   "base_sha": "b50f2c78a3",
+   "ci": {
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33667172866",
+     "id": 33667172866
+    }
+   }
+  },
+  {
+   "number": 84,
+   "title": "research: integrated HR contact-state Stage-1 readiness stack",
+   "draft": true,
+   "head_ref": "superchad/hr-contact-state-integration-01",
+   "head_sha": "d9d40fa175",
+   "base_ref": "superchad/experiment-primitives-01",
+   "base_sha": "7794220733",
+   "ci": {
+    "Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33261367760",
+     "id": 33261367760
+    }
+   }
+  },
+  {
+   "number": 83,
+   "title": "research: locked no-intercept HR offset estimator scaffold",
+   "draft": true,
+   "head_ref": "superchad/hr-offset-estimator-scaffold-01",
+   "head_sha": "d9e6021b7b",
+   "base_ref": "superchad/hr-contact-state-feature-scaffold-01",
+   "base_sha": "77442dabfe",
+   "ci": {
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259948724",
+     "id": 33259948724
+    }
+   }
+  },
+  {
+   "number": 82,
+   "title": "certification: read-only canonical artifact certifier",
+   "draft": true,
+   "head_ref": "superchad/canonical-certification-readiness-01",
+   "head_sha": "926cf3f814",
+   "base_ref": "superchad/fix-board-first-paint-clock-fixture-01",
+   "base_sha": "26d37fd475",
+   "ci": {
+    "Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33261504428",
+     "id": 33261504428
+    }
+   }
+  },
+  {
+   "number": 81,
+   "title": "research: decisive PA opportunity runner scaffold",
+   "draft": true,
+   "head_ref": "superchad/pa-opportunity-runner-scaffold-01",
+   "head_sha": "95a4b80521",
+   "base_ref": "superchad/experiment-primitives-01",
+   "base_sha": "556e57ad14",
+   "ci": {
+    "Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259481528",
+     "id": 33259481528
+    }
+   }
+  },
+  {
+   "number": 80,
+   "title": "research: strict pregame HR contact-state feature scaffold",
+   "draft": true,
+   "head_ref": "superchad/hr-contact-state-feature-scaffold-01",
+   "head_sha": "77442dabfe",
+   "base_ref": "superchad/hr-execution-prereg-v2-01",
+   "base_sha": "5869216a73",
+   "ci": {
+    "Test Suite": {
+     "conclusion": "cancelled",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259890063",
+     "id": 33259890063
+    }
+   }
+  },
+  {
+   "number": 79,
+   "title": "research: shared per-date experiment integrity primitives",
+   "draft": true,
+   "head_ref": "superchad/experiment-primitives-01",
+   "head_sha": "7794220733",
+   "base_ref": "superchad/fix-board-first-paint-clock-fixture-01",
+   "base_sha": "26d37fd475",
+   "ci": {
+    "Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33260060751",
+     "id": 33260060751
+    }
+   }
+  },
+  {
+   "number": 78,
+   "title": "prereg: decisive per-date PA opportunity replication",
+   "draft": true,
+   "head_ref": "superchad/pa-opportunity-decisive-prereg-01",
+   "head_sha": "b019e49981",
+   "base_ref": "main",
+   "base_sha": "b50f2c78a3",
+   "ci": {
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33258381531",
+     "id": 33258381531
+    }
+   }
+  },
+  {
+   "number": 77,
+   "title": "prereg: HR contact-state execution v2 \u2014 close pre-holdout degrees of freedom",
+   "draft": true,
+   "head_ref": "superchad/hr-execution-prereg-v2-01",
+   "head_sha": "5869216a73",
+   "base_ref": "main",
+   "base_sha": "b50f2c78a3",
+   "ci": {
+    "Test Suite": {
+     "conclusion": "cancelled",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259352845",
+     "id": 33259352845
+    }
+   }
+  },
+  {
+   "number": 76,
+   "title": "SuperClaude activation follow-up: correct pin-ref and recovery guidance",
+   "draft": true,
+   "head_ref": "superchad/superclaude-activation-corrections-01",
+   "head_sha": "26dbe36714",
+   "base_ref": "tooling/superclaude-activation-01",
+   "base_sha": "9c4473aa62",
+   "ci": {
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33256810680",
+     "id": 33256810680
+    }
+   }
+  },
+  {
+   "number": 75,
+   "title": "Fix four-clock stale-board browser test fixture",
+   "draft": true,
+   "head_ref": "superchad/fix-board-first-paint-clock-fixture-01",
+   "head_sha": "26d37fd475",
+   "base_ref": "main",
+   "base_sha": "b50f2c78a3",
+   "ci": {
+    "Test Suite": {
+     "conclusion": "cancelled",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259722404",
+     "id": 33259722404
+    }
+   }
+  },
+  {
+   "number": 74,
+   "title": "prereg: HR challenger EXECUTION spec \u2014 lock the estimator before holdout (DO NOT MERGE \u2014 review only)",
+   "draft": true,
+   "head_ref": "accuracy/hr-execution-prereg-01",
+   "head_sha": "0ae4535d5a",
+   "base_ref": "main",
+   "base_sha": "b50f2c78a3",
+   "ci": {
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33548879722",
+     "id": 33548879722
+    }
+   }
+  },
+  {
+   "number": 73,
+   "title": "SuperClaude activation: control-plane import + capability revalidation (DO NOT MERGE \u2014 review only)",
+   "draft": true,
+   "head_ref": "tooling/superclaude-activation-01",
+   "head_sha": "79f1109fc1",
+   "base_ref": "main",
+   "base_sha": "b50f2c78a3",
+   "ci": {
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33548167737",
+     "id": 33548167737
+    }
+   }
+  }
+ ],
+ "main_test_suite_recent": [
+  {
+   "sha": "627720a8a5",
+   "conclusion": "success",
+   "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36056205774"
+  },
+  {
+   "sha": "e050b008bb",
+   "conclusion": "success",
+   "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36013762982"
+  },
+  {
+   "sha": "b2f1f7112a",
+   "conclusion": "success",
+   "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36011397655"
+  }
+ ]
+}

@@ -1,106 +1,157 @@
-# PR closure and merge readiness: integration matrix (2026-09-25)
+# PR closure and merge readiness: final integration matrix (2026-09-25)
 
-- **Workstream:** PR-CLOSURE-MERGE-READINESS-20260925. Codex started it (it claimed the work at 16:34Z and then ran out of usage). Claude Code continued it on #91, comment 5836256690.
-- **Base:** main at `e48bb2ac21` when refreshed.
-- **Open PRs:** 44.
-- **Authority:** nothing here merges, closes, deploys or promotes anything. Every READY item still needs Jacob's explicit approval.
-- **Seal isolation:** the Saturday Tier 1 seal is on its own branch and trigger and is outside this work: `claude/nfl-tier1-seal-2026w03`, `claude/nfl-seal-inputs-20260925`, `trig_01FiiD9MknrMxbB1zbeS4d5N`.
+- **Workstream:** PR-CLOSURE-MERGE-READINESS-20260925. Codex started it, then ran out of usage; Claude Code completed it (#91 claim 5836256690).
+- **Main:** `800596c78d` at the final collection. The certified integration trees were built on `e48bb2ac21`; since then main has only received automated dashboard-data commits, which don't trigger CI.
+- **Open PRs:** 44, every one with a disposition.
+- **Authority:** nothing was merged, closed, deployed or promoted. Every step still needs Jacob's explicit approval.
+- **Seal isolation:** the Saturday Tier 1 seal (`claude/nfl-tier1-seal-2026w03`, `claude/nfl-seal-inputs-20260925`, `trig_01FiiD9MknrMxbB1zbeS4d5N`) was not touched.
 
-**Certification standard.** A PR is READY only when all of these hold:
-- a complete implementation for its declared scope;
-- exact-integration-tree CI passing (root `test.yml` and `nfl-tests.yml`);
+**Readiness standard.** A PR is READY FOR APPROVAL only when all of these hold:
+- a complete implementation for its scope;
+- green exact-integration-tree CI (root `test.yml` and `nfl-tests.yml`);
 - an independent review of the actual diff;
 - no conflict;
-- no undocumented dependency;
+- documented dependencies;
 - no research-integrity defect;
 - no production or customer change;
 - no interference with frozen evidence.
 
-"READY (research-only)" means safe to integrate as research code. **It is not production readiness, and it is not model promotion.**
+"Research-only" means safe to integrate as research code. It is **not** production readiness and **not** model promotion.
 
-## Certified integration trees
+Every number below comes from the scripts and JSON in this directory:
 
-| Tree | SHA | Contents | Root CI | NFL CI | Local evidence |
+| Script | Output |
+|---|---|
+| `collect_prs.py` | `pr_heads_and_ci.json` |
+| `fail_files.py` | `ci_failure_attribution.json` (failing test and message, parsed from each failed job's log) |
+| `old_prs.py` | `rerooted_pr_unique_files.json` |
+| `gen_matrix.py` | the table below |
+
+## 1. Certified integration trees (exact-head CI)
+
+| Tree | SHA | Contents | Root CI | NFL CI | Applies to |
 |---|---|---|---|---|---|
-| `codex/pr208-integration-20260925` | `6f282f2d80` | main + #208 | ✅ [36164562893](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36164562893) | ✅ 36164562999 | Main reproduces the failure: 1 live Top Pick → `AssertionError: fixture needs four top picks`. The tree passes 12/12. A mutation (renaming the "Still open from" label in `docs/app.js`) is caught (11/12). |
-| `codex/pr210-integration-20260925` | `0933a89b3a` | + #210 | ✅ [36164601803](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36164601803) | ✅ 36164601793 | In a clean CI-equivalent venv with only `nfl/requirements-nfl.txt` and requests, and with no pandas, all 93 NFL test files pass. Without numpy, the Tier 1 team-context and touchdown tests fail with "No module named 'numpy'". |
-| `codex/pr177-integration-20260925` | `8dfbac39ce` | main + #177 + Codex §15 + Claude §16 | ✗ only because #208 is missing (docs-only change; main fails the same fixture) | ✅ | Certified inside the sequence tree below |
-| `claude/tier1-research-integration-20260925` | `59492822f8` | #210 tree + #202, #203, #204, #205, #207, #213 | ✅ [36164939177](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36164939177) | ✅ [36164938965](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36164938965) | Merges are conflict-free. The frozen harness, protocol, seal builder and drivers are byte-identical to `e05e02c592`. There is no production reference. |
-| `claude/pr186-integration-20260925` | `6f549c9d0a` | main + #186 (append-only handoff union) + #212 + #208/#210 | ✅ [36165038521](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36165038521) | ✅ 36165038564; web ✅ 36165038510 | Main's handoff is preserved as a byte prefix. Rushing and F16 tests pass. |
-| `claude/merge-sequence-integration-20260925` | `9abf854193` | Everything above, in the proposed order | ✅ [36165557380](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36165557380) | ✅ [36165557531](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36165557531) | 95 NFL test files pass, and the browser fixture passes 12/12 (on `0b39dc7ad0`, before the §16 wording fix) |
+| `codex/pr208-integration-20260925` | `6f282f2d80` | main + #208 | ✅ [36164562893](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36164562893) | ✅ [36164562999](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36164562999) | #208 |
+| `codex/pr210-integration-20260925` | `0933a89b3a` | + #210 | ✅ [36164601803](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36164601803) | ✅ [36164601793](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36164601793) | #210 |
+| `codex/pr177-integration-20260925` | `8dfbac39ce` | main + #177 + §15/§16 | ✗ only `test_browser_today_central.py: fixture needs four top picks`, the known #208 defect; the diff vs main is one .md file | ✅ | #177 content; certified in the sequence tree |
+| `claude/tier1-research-integration-20260925` | `59492822f8` | #210 tree + #202, #203, #204, #205, #207, #213 | ✅ [36164939177](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36164939177) | ✅ [36164938965](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36164938965) | Tier 1 stack |
+| `claude/pr186-integration-20260925` | `6f549c9d0a` | main + #186 + #212 + #208/#210 | ✅ [36165038521](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36165038521) | ✅ 36165038564; web ✅ | #186/#212 |
+| **`claude/merge-sequence-integration-20260925`** | **`9abf854193`** | #208 → #210 → #177 → Tier 1 stack → #186 → #212 | ✅ [36165557380](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36165557380) | ✅ [36165557531](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36165557531) | Steps 1–5 of §4 |
 
-**Independent review** (sonnet reviewer, read-only, against the actual diffs): #208, #210, #177, the #186 union resolution and the combined tree are all clean. There were no HIGH or MEDIUM findings; the one LOW finding (the F-namespace wording in #177 §16) is fixed in `8dfbac39ce`. The Tier 1 research PRs (#202–#205, #207, #213) each had their own independent reviews, recorded in their READMEs and PRs.
+**Local corroboration:**
+- The #208 fixture passes 12/12.
+- Renaming the "Still open from" label in `docs/app.js` makes it fail (11/12), so the real dashboard assets are still exercised.
+- A clean CI-equivalent venv (NFL requirements + requests, no pandas) passes all 93–95 NFL test files.
+- Without numpy, the Tier 1 WS-C/WS-D tests fail. So #210 is both necessary and sufficient.
+- The frozen harness, protocol, seal builder and drivers are byte-identical to `e05e02c592`.
+- No workflow, dashboard or root script references the research modules.
 
-## Disposition of all 44 open PRs
+**Independent reviews** (read-only, against the actual diffs), none with HIGH or MEDIUM findings:
+- #208, #210, #177 (its LOW F-namespace note is fixed in `8dfbac39ce`), the #186 union and the combined tree;
+- #174, #170, #206, #209: all CLEAN, with LOW items listed in their rows.
 
-| PR | Owner | Disposition | Evidence / blocker | Next action |
-|---|---|---|---|---|
-| #208 fixture | SUPERCHAD → Claude | **READY FOR APPROVAL** | Tree `6f282f2d80`, both suites green, reviewed | Jacob: approve and merge first |
-| #210 NumPy (NFL only) | SUPERCHAD → Claude | **READY FOR APPROVAL** | Tree `0933a89b3a`, green; necessity and sufficiency shown | Merge second (required by #204/#205) |
-| #177 requirements register | SUPERCHAD → Claude | **READY FOR APPROVAL**, via the integration tree | The PR head (`superchad/…`) lacks §15/§16; the certified content is `8dfbac39ce` | Merge the integration branch, or update the PR head to it, after #208 |
-| #202 Tier 1 foundation | Claude | **READY FOR APPROVAL (research-only)** | Part of the Tier 1 tree; no production activation. The seal runs from exact SHAs and is unaffected by merging | After #208/#210 |
-| #203 WS-B | Claude | READY (research-only) | Based on foundation; merges clean in the tree | Retarget to main after #202, or merge into foundation first |
-| #204 WS-C | Claude | READY (research-only) | Needs #210 (numpy) | Same as #203 |
-| #205 WS-D | Claude | READY (research-only) | Needs #210 | Same as #203 |
-| #207 F11/F12 | Claude | READY (research-only; F11 REJECTED, F12 NOT SUPPORTED; results preserved) | Reviewed | Same as #203 |
-| #213 F17 | Claude | READY (research-only; NOT SUPPORTED preserved) | Reviewed | Same as #203 |
-| #186 rushing B0 research | Claude | **REPAIRED → READY (research-only)** | The union resolution is now also in the PR head (`efb40423ff`), conflict-free vs main; #212's diff against it is still F16-only (4 files) | After #208/#210 |
-| #212 F16 | Codex | READY (research-only; negative result preserved), stacked on #186 | Codex recorded an identity-review correction; merges clean | After #186 |
-| #196 price-aware offers | Codex | **ACTIVE WORK** | The 3 eligibility gates are uncertified (rules, current role, quote timestamp) | Codex: certify the gates |
-| #199 offer→B0 join | Codex | **ACTIVE WORK** (stacked on #196) | Same | Same |
-| #174 FTN tactical charting | Codex | **READY AFTER #208 CI refresh (research-only; independently reviewed)** | Review 2026-09-25: CLEAN. 14/14 tests pass; strictly prior capture and cutoff checks; FTN CC-BY-SA attribution. LOW: README says "10 tests" (actually 14) | Exact-tree CI after #208; optional LOW fixes are Codex's |
-| #170 film prototype | Codex | **READY AFTER #208 CI refresh (research-only; independently reviewed)** | Review 2026-09-25: CLEAN. 13/13 tests pass; fail-closed rights; synthetic fixtures unambiguously labelled; real-source gate documented as BLOCKED | Exact-tree CI after #208; optional LOW fixes are Codex's |
-| #206 F13 | Codex | **READY AFTER #208 CI refresh (research-only; independently reviewed)** | Review 2026-09-25: CLEAN. 8/8 tests pass; 2024 charting precedes the 2025 evaluation; disjoint dev/held weeks; honest NEGATIVE result (CI [+0.035, +2.534], harmful direction). LOW: tests write temp files into the repo path (cleaned up) | Exact-tree CI after #208; optional LOW fixes are Codex's |
-| #209 F14 | Codex | **READY AFTER #208 CI refresh (research-only; independently reviewed)** | Review 2026-09-25: CLEAN. 6/6 tests pass; same point-in-time structure; honest NULL result (CI [−0.0042, +0.0057]); seal verified. LOW: same temp-file pattern | Exact-tree CI after #208; optional LOW fixes are Codex's |
-| #211 F15 | Codex | READY AFTER #208 CI refresh (research-only) | Independent-review corrections recorded; merges clean | Exact-tree CI after #208 |
-| #214 F18 source gate | Codex | READY AFTER #208 CI refresh (documentation) | Revised after independent review; merges clean | Same |
-| #193 target-share forward shadow | Claude | **ACTIVE WORK** | Pre-registered grading is scheduled for Sep 30 (`trig_017aueLwd923cGSr4ZVdkKGQ`); conflicts only on the handoff | Grade, then union-resolve the handoff |
-| #201 MLB overconfidence | Claude | **REPAIRED → READY AFTER #208 CI refresh** | Handoff union merged into the PR head (`025fdf63ed`), main's handoff kept byte-for-byte as prefix; conflict-free vs main; the PR's added tests pass locally | Exact-tree CI after #208 (root fails only on main's inherited fixture until then) |
-| #198 MLB slate-date audit | Claude | **REPAIRED → READY AFTER #208 CI refresh** | Handoff union merged into the PR head (`d21ba2f5fc`), main's handoff kept byte-for-byte as prefix; conflict-free vs main; the PR's added tests pass locally | Exact-tree CI after #208 (root fails only on main's inherited fixture until then) |
-| #192 MLB Top Pick calibration | Claude | **REPAIRED → READY AFTER #208 CI refresh** | Handoff union merged into the PR head (`c30c1c3a37`), main's handoff kept byte-for-byte as prefix; conflict-free vs main; the PR's added tests pass locally | Exact-tree CI after #208 (root fails only on main's inherited fixture until then) |
-| #191 NFL error decomposition | Claude | **REPAIRED → READY AFTER #208 CI refresh** | Handoff union merged into the PR head (`0d85251d7e`), main's handoff kept byte-for-byte as prefix; conflict-free vs main; the PR's added tests pass locally | Exact-tree CI after #208 (root fails only on main's inherited fixture until then) |
-| #187 MLB full-board snapshot test | Claude | **REPAIRED → READY AFTER #208 CI refresh** | Handoff union merged into the PR head (`8e413cc072`), main's handoff kept byte-for-byte as prefix; conflict-free vs main; the PR's added tests pass locally | Exact-tree CI after #208 (root fails only on main's inherited fixture until then) |
-| #184 NFL 2024 ablation | Claude | **REPAIRED → READY AFTER #208 CI refresh** | Handoff union merged into the PR head (`ba757f1fdf`), main's handoff kept byte-for-byte as prefix; conflict-free vs main; the PR's added tests pass locally | Exact-tree CI after #208 (root fails only on main's inherited fixture until then) |
-| #131 MLB selector diagnosis | Claude | **REPAIRED → READY AFTER #208 CI refresh** | Handoff union merged into the PR head (`c7dc7fdfd1`), main's handoff kept byte-for-byte as prefix; conflict-free vs main; the PR's added tests pass locally | Exact-tree CI after #208 (root fails only on main's inherited fixture until then) |
-| #190 passing-yards alternate ladder | Claude | READY AFTER #208 CI refresh (research-only) | Merges clean; reviewed in its mission | Exact-tree CI after #208 |
-| #188 MLB full-board calibration | Claude | READY AFTER #208 CI refresh (research-only) | Merges clean | Same |
-| #130 gitignore worktrees | Claude | **SUPERSEDED** | Main already contains the identical `.claude/worktrees/` rule and comment (`.gitignore` lines 28–32) | Jacob: close; nothing unique is lost |
-| #110 scoring prior features | SUPERCHAD | **SUPERSEDED** | Both files are byte-identical on main | Jacob: close |
-| #73 / #76 SuperClaude activation | SUPERCHAD | DEPENDENCY BLOCKED (history re-rooted) | No merge base with main (different root commit); 29 unique `.claude/` agent files; marked "DO NOT MERGE — review only" | Jacob or SUPERCHAD: port the wanted files to current main, or archive |
-| #74 / #77 HR execution prereg v1/v2 | SUPERCHAD | DEPENDENCY BLOCKED (re-rooted) | Unique `engineering/PREREG_HR_EXECUTION_V1/V2*.md` | Same |
-| #78 PA opportunity prereg | SUPERCHAD | DEPENDENCY BLOCKED (re-rooted) | Unique `PREREG_PA_OPPORTUNITY_DECISIVE_V1.md` | Same |
-| #79 / #81 experiment primitives, PA runner | SUPERCHAD | DEPENDENCY BLOCKED (re-rooted) | Unique `backtest/experiment_primitives.py`, `pa_opportunity_decisive.py` and their tests | Same |
-| #80 / #83 / #84 HR contact-state stack | SUPERCHAD | DEPENDENCY BLOCKED (re-rooted) | Unique `backtest/hr_contact_state_*`, `hr_offset_estimator.py` (17 files in #84) | Same |
-| #82 canonical certifier | SUPERCHAD | DEPENDENCY BLOCKED (re-rooted) | Unique `backtest/canonical_certification.py`, `generation_regime.py` and their tests | Same |
-| #85 PA-v1 lifecycle closure | Claude | DEPENDENCY BLOCKED (re-rooted; "DO NOT MERGE") | 48 unique files, including `backtest/pa_v1_*` | Same |
-| #75 four-clock fixture | SUPERCHAD | SUPERSEDED candidate (re-rooted) | No files unique to the PR | Jacob: confirm and close |
+The Tier 1 research PRs and #212 carry their own recorded independent reviews.
 
-Count: 11 certified items (#208, #210, #177, #202–#205, #207, #213, #186, #212) + 2 active pricing (#196, #199) + 4 review-required (#174, #170, #206, #209) + 2 Codex after-refresh (#211, #214) + 1 active shadow (#193) + 7 handoff repairs + 2 clean Claude (#190, #188) + 2 superseded (#130, #110) + 13 re-rooted (#73–#85, including the #75 superseded candidate) = **44**.
+## 2. Every CI failure on a current PR head, with its demonstrated cause
+From `ci_failure_attribution.json`. Failures on the 13 re-rooted PRs (#73–#85) come from their pre-rewrite trees and are not integration candidates.
 
-## Proposed dependency-aware merge sequence (every step needs Jacob's explicit approval)
+| Failing test / message | PRs | Cause | Repair |
+|---|---|---|---|
+| `test_browser_today_central.py` — `AssertionError: fixture needs four top picks` | #214, #211, #210, #209, #206, #201, #198, #192, #191, #187, #186, #184, #131, INT177, report branch | The fixture copies live Top Picks. Current main data has 1; the fixture needs 4. It reproduces on plain main locally | **#208**, verified green in every tree that contains it |
+| `nfl/tests/test_tier1_team_context.py` / `test_tier1_touchdown.py` — `ModuleNotFoundError: No module named 'numpy'` | #204, #205 | NFL CI installs only `nfl/requirements-nfl.txt`, which lacks numpy | **#210**, which the negative control shows is necessary and sufficient |
+| `test_browser_e2e.py` — `at least one clickable pick-card/prop-row exists on Today…` | #202, #207, #213 | The branches carry a stale Sept 24 `docs/data.json` snapshot; they change no `docs/` files. The e2e test rebases timestamps but Today filters by Central slate date, so a day-old snapshot shows no Today cards | None needed for these PRs: the Tier 1 tree with current main data is green |
 
+**Latent defect found (not introduced by any PR; recorded, not fixed here).** `test_browser_e2e.py` needs at least one visible Today card in `docs/data.json`, so main's own root CI will fail on any day when no Top Pick is visible. That is the same live-data-volume class of defect #208 fixed in the Central-midnight test.
+- **Proposed narrow repair:** give the e2e detail-sheet and My Board checks a deterministic synthetic Top Pick, following #208's pattern, without weakening any assertion.
+- **Owner:** unassigned (proposed Claude, as one small test-only PR once Jacob approves).
+
+## 3. Disposition of every open PR (44)
+
+| PR | Head | Base | Disposition | CI (latest on head) | Dependencies | Scientific status | Remaining blocker | Owner | Next action |
+|---|---|---|---|---|---|---|---|---|---|
+| #214 | `0d324fd961` | main | READY AFTER #208 exact-tree CI | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36160147508) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36160147384) | #208 | F18 source-gate docs (rights/assignment blocked) | root: #208 fixes `fixture needs four top picks` | Codex | CI refresh after #208 |
+| #213 | `edddb9ab2b` | claude/nfl-tier1-foundation-20260924 | READY (research-only) | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36159569976) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36159570083) | #202 | F17 NOT SUPPORTED (preserved) | head e2e stale-data snapshot only | Claude | after #202 |
+| #212 | `0a303be087` | claude/nfl-rushing-yards-baseline-20260923 | READY (research-only) | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36158323581) [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36158323547) | #186 | F16 negative (preserved) | none | Codex | after #186 |
+| #211 | `2930030da4` | main | READY AFTER #208 exact-tree CI | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36156586107) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36156586048) | #208 | F15 held evaluation, independent-review corrections recorded | root: #208 fixes `fixture needs four top picks` | Codex | CI refresh after #208 |
+| #210 | `3f5368d924` | main | **READY FOR APPROVAL** | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36155296333) [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36155296323) | #208 (root CI) | NFL-CI-only dependency | none | SUPERCHAD→Claude | Jacob: merge 2nd (tree `0933a89b3a`) |
+| #209 | `c5403efa9a` | main | READY AFTER #208 exact-tree CI | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36154570736) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36154570569) | #208 | F14 NULL; independently reviewed CLEAN 2026-09-25 | root: #208 fixes `fixture needs four top picks`; LOW: same temp-file pattern | Codex | CI refresh after #208 |
+| #208 | `d68b2d6073` | main | **READY FOR APPROVAL** | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36153963241) [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36153963351) | none | test-infrastructure repair | none | SUPERCHAD→Claude | Jacob: merge 1st (tree `6f282f2d80`) |
+| #207 | `f4fb17aa0b` | claude/nfl-tier1-foundation-20260924 | READY (research-only) | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36157035013) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36157034994) | #202 | F11 REJECTED / F12 NOT SUPPORTED (preserved) | head e2e stale-data snapshot only | Claude | after #202 |
+| #206 | `556bc26e6e` | main | READY AFTER #208 exact-tree CI | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36148185695) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36148185837) | #208 | F13 NEGATIVE; independently reviewed CLEAN 2026-09-25 | root: #208 fixes `fixture needs four top picks`; LOW: tests write temp files in repo path | Codex | CI refresh after #208 |
+| #205 | `76b42547c3` | claude/nfl-tier1-foundation-20260924 | READY (research-only) | [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36062920159) [✗ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36062920098) | #202, #210 | F4 narrow historical; H3 prospective active | head NFL CI needs numpy → #210 | Claude | after #202/#210 |
+| #204 | `40d842c9a9` | claude/nfl-tier1-foundation-20260924 | READY (research-only) | [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36062903514) [✗ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36062903531) | #202, #210 | F1/F5/F6/F7/F10; H2 prospective active | head NFL CI needs numpy (`No module named 'numpy'`) → #210 | Claude | after #202/#210 |
+| #203 | `8aa8067fbc` | claude/nfl-tier1-foundation-20260924 | READY (research-only) | [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36062890834) [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36062890696) | #202 | F2/F3/F8/F9 historical; H1 prospective active | none | Claude | retarget to main after #202; merge |
+| #202 | `e05e02c592` | main | **READY FOR APPROVAL** (research-only) | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36162946955) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36162946809) | #208, #210 | Tier 1 contract/harness/protocol; seal runs from exact SHAs on a separate branch | head's e2e failure is its stale Sept 24 `docs/data.json` snapshot (the PR touches no docs); integration tree green | Claude | Jacob: merge 4th |
+| #201 | `025fdf63ed` | main | READY AFTER #208 exact-tree CI | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166966118) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166966127) | #208 | MLB overconfidence, pre-registered, inconclusive | root: #208 fixes `fixture needs four top picks` (handoff repaired `025fdf63ed`) | Claude | CI refresh after #208 |
+| #199 | `285252d313` | codex/nfl-price-aware-offers-20260923 | ACTIVE WORK | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36017944942) [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36017944941) | #196 | offer→sealed-B0 join research | same gates | Codex | after #196 |
+| #198 | `d21ba2f5fc` | main | READY AFTER #208 exact-tree CI | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166973509) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166973536) [✅ web](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166973498) | #208 | MLB slate-date audit, no code change | root: #208 fixes `fixture needs four top picks` (repaired `d21ba2f5fc`) | Claude | CI refresh after #208 |
+| #196 | `7626a0424f` | main | ACTIVE WORK | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36015414843) [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36015414637) | none | price-aware offer research | 3 gates: BOOK_ACTION_RULES_NOT_CERTIFIED, CURRENT_ROLE_NOT_VERIFIED, QUOTE_TIMESTAMP_NOT_PROVIDED | Codex | certify gates |
+| #193 | `675d84f087` | main | ACTIVE WORK | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35943683950) [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35943683937) | none | Mission 10 pre-registered forward shadow | handoff conflict deliberately unrepaired until grading | Claude | Sep 30 trigger grades; then union-repair |
+| #192 | `c30c1c3a37` | main | READY AFTER #208 exact-tree CI | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166977687) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166979086) [✅ web](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166978958) | #208 | MLB Top Pick calibration holdout | root: #208 fixes `fixture needs four top picks` (repaired `c30c1c3a37`) | Claude | CI refresh after #208 |
+| #191 | `0d85251d7e` | main | READY AFTER #208 exact-tree CI | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166996467) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166996402) [✅ web](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166996347) | #208 | NFL error-decomposition diagnostic | root: #208 fixes `fixture needs four top picks` (repaired `0d85251d7e`) | Claude | CI refresh after #208 |
+| #190 | `fddbed763a` | main | READY AFTER #208 exact-tree CI | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35929799012) [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35929798958) | #208 | NFL passing-yards alt ladder research | head CI green on its older base; needs exact-tree run on new main | Claude | CI refresh after #208 |
+| #188 | `9266b78980` | main | READY AFTER #208 exact-tree CI | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35927980289) [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35927980278) | #208 | MLB full-board calibration research | head CI green on older base | Claude | CI refresh after #208 |
+| #187 | `8e413cc072` | main | READY AFTER #208 exact-tree CI | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166997810) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166998097) [✅ web](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166997949) | #208 | MLB test-coverage (adds a test) | root: #208 fixes `fixture needs four top picks` (repaired `8e413cc072`) | Claude | CI refresh after #208 |
+| #186 | `efb40423ff` | main | READY (research-only) | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36167027099) [✅ web](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36167027068) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36167027103) | #208, #210 (combined tree) | rushing B0 research, not authoritative | none (handoff union applied to head `efb40423ff`) | Claude | after Tier 1 |
+| #184 | `ba757f1fdf` | main | READY AFTER #208 exact-tree CI | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166998425) [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166998209) [✅ web](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36166998252) | #208 | NFL ablation diagnostic | root: #208 fixes `fixture needs four top picks` (repaired `ba757f1fdf`) | Claude | CI refresh after #208 |
+| #177 | `fcd9094dba` | main | **READY FOR APPROVAL** (via integration tree `8dfbac39ce`) | [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35905406576) [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35905406694) | #208 | permanent requirements register (docs only) | PR head (`superchad/…`) lacks §15/§16; certified content is the integration branch | SUPERCHAD→Claude | Jacob: merge the integration content 3rd |
+| #174 | `db54f1f6dc` | main | READY AFTER #208 exact-tree CI | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35889072017) [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35889072031) | none | FTN descriptive charting; independently reviewed CLEAN | LOW: README says 10 tests (14) | Codex | CI refresh on new main |
+| #170 | `a898e3660d` | main | READY AFTER #208 exact-tree CI | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35763446798) [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35763446598) | none | synthetic film prototype; real source BLOCKED; reviewed CLEAN | none | Codex | CI refresh on new main |
+| #131 | `c7dc7fdfd1` | main | READY AFTER #208 exact-tree CI | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36167006908) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36167006895) [✅ web](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36167006844) | #208 | MLB selector diagnosis (handoff doc) | root: #208 fixes `fixture needs four top picks` (repaired `c7dc7fdfd1`) | Claude | CI refresh after #208 |
+| #130 | `342f69e71e` | main | **SUPERSEDED** | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35365047137) [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35365047176) | none | — | identical `.claude/worktrees/` rule + comment already on main (.gitignore 28–32) | Claude | Jacob: close |
+| #110 | `390e04d3fd` | main | **SUPERSEDED** | [cancelled NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/34911668831) [cancelled root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/34911668842) | none | — | both files byte-identical on main | SUPERCHAD | Jacob: close |
+| #85 | `4744ad2fc7` | main | DEPENDENCY BLOCKED (re-rooted history) | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33667172866) | — | PA-v1 lifecycle closure, marked DO NOT MERGE | no merge base; 48 unique files Unique files absent on main: 48. | Claude / Jacob | archive (preserve branch) unless PA-v1 is revived |
+| #84 | `d9d40fa175` | superchad/experiment-primitives-01 | DEPENDENCY BLOCKED (re-rooted history) | [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33261367760) | stacked superchad chain | MLB research code scaffolds (unvalidated) | no merge base; unique backtest/*.py + tests written against the old tree Unique files absent on main: 15. | SUPERCHAD | port with fresh review + CI on current main, or archive |
+| #83 | `d9e6021b7b` | superchad/hr-contact-state-feature-scaffold-01 | DEPENDENCY BLOCKED (re-rooted history) | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259948724) | stacked superchad chain | MLB research code scaffolds (unvalidated) | no merge base; unique backtest/*.py + tests written against the old tree Unique files absent on main: 2. | SUPERCHAD | port with fresh review + CI on current main, or archive |
+| #82 | `926cf3f814` | superchad/fix-board-first-paint-clock-fixture-01 | DEPENDENCY BLOCKED (re-rooted history) | [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33261504428) | stacked superchad chain | MLB research code scaffolds (unvalidated) | no merge base; unique backtest/*.py + tests written against the old tree Unique files absent on main: 4. | SUPERCHAD | port with fresh review + CI on current main, or archive |
+| #81 | `95a4b80521` | superchad/experiment-primitives-01 | DEPENDENCY BLOCKED (re-rooted history) | [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259481528) | stacked superchad chain | MLB research code scaffolds (unvalidated) | no merge base; unique backtest/*.py + tests written against the old tree Unique files absent on main: 2. | SUPERCHAD | port with fresh review + CI on current main, or archive |
+| #80 | `77442dabfe` | superchad/hr-execution-prereg-v2-01 | DEPENDENCY BLOCKED (re-rooted history) | [cancelled root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259890063) | stacked superchad chain | MLB research code scaffolds (unvalidated) | no merge base; unique backtest/*.py + tests written against the old tree Unique files absent on main: 2. | SUPERCHAD | port with fresh review + CI on current main, or archive |
+| #79 | `7794220733` | superchad/fix-board-first-paint-clock-fixture-01 | DEPENDENCY BLOCKED (re-rooted history) | [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33260060751) | stacked superchad chain | MLB research code scaffolds (unvalidated) | no merge base; unique backtest/*.py + tests written against the old tree Unique files absent on main: 2. | SUPERCHAD | port with fresh review + CI on current main, or archive |
+| #78 | `b019e49981` | main | DEPENDENCY BLOCKED (re-rooted history) | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33258381531) | — | MLB pre-registration documents | no merge base; unique prereg docs only (rest is old generated data) Unique files absent on main: 1. | SUPERCHAD | smallest action: port the prereg .md files into engineering/ in one docs PR |
+| #77 | `5869216a73` | main | DEPENDENCY BLOCKED (re-rooted history) | [cancelled root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259352845) | — | MLB pre-registration documents | no merge base; unique prereg docs only (rest is old generated data) Unique files absent on main: 1. | SUPERCHAD | smallest action: port the prereg .md files into engineering/ in one docs PR |
+| #76 | `26dbe36714` | tooling/superclaude-activation-01 | DEPENDENCY BLOCKED (re-rooted history) | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33256810680) | — | SuperClaude activation tooling | no merge base with main; unique `.claude/` files + CLAUDE.md edits Unique files absent on main: 3. | SUPERCHAD / Jacob | decide: port agent/skill definitions via a new docs PR, or archive |
+| #75 | `26d37fd475` | main | **SUPERSEDED** (verified) | [cancelled root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259722404) | none | — | all 3 commits' fixes present on main in equivalent/evolved form (5b67: 28/28 lines; 26d37: 19/20; c001 superseded by main's model_basis_at+market_prices_at stale fixture) Unique files absent on main: 0. | SUPERCHAD | Jacob: close |
+| #74 | `0ae4535d5a` | main | DEPENDENCY BLOCKED (re-rooted history) | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33548879722) | — | MLB pre-registration documents | no merge base; unique prereg docs only (rest is old generated data) Unique files absent on main: 2. | SUPERCHAD | smallest action: port the prereg .md files into engineering/ in one docs PR |
+| #73 | `79f1109fc1` | main | DEPENDENCY BLOCKED (re-rooted history) | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33548167737) | — | SuperClaude activation tooling | no merge base with main; unique `.claude/` files + CLAUDE.md edits Unique files absent on main: 20. | SUPERCHAD / Jacob | decide: port agent/skill definitions via a new docs PR, or archive |
+
+**Totals:**
+
+| Category | Count | PRs |
+|---|---|---|
+| READY FOR APPROVAL | 4 | #208, #210, #177, #202 |
+| READY (research-only) | 7 | #203, #204, #205, #207, #213, #186, #212 |
+| READY AFTER #208 exact-tree CI | 15 | #211, #214, #206, #209, #174, #170, #201, #198, #192, #191, #190, #188, #187, #184, #131 |
+| ACTIVE WORK | 3 | #196, #199, #193 |
+| SUPERSEDED | 3 | #130, #110, #75 |
+| DEPENDENCY BLOCKED (re-rooted history) | 12 | #73, #74, #76–#85 |
+
+**The re-rooted PRs.** Their unique content is listed file by file in `rerooted_pr_unique_files.json`. The "differs on main" entries there are almost entirely old generated `output/`, `data/` and dashboard-state files; that material is obsolete.
+
+What is worth preserving:
+- **Prereg documents** (#74, #77, #78): the smallest action is one docs-only port PR.
+- **MLB research code** (#79–#84, #85): port only with fresh review and CI on current main, or archive.
+- **`.claude/` agent and skill definitions** (#73, #76): Jacob decides.
+
+**Every branch stays in place, and nothing is closed or deleted.**
+
+## 4. Dependency-aware merge sequence (each step needs Jacob's explicit approval)
 1. **#208**, which fixes the shared root-CI failure.
-2. **#210**, the NFL-only numpy pin, required by #204/#205.
-3. **#177**, using the integration content (`8dfbac39ce`).
-4. **#202**, then #203, #204, #205, #207, #213: research-only; retarget to main after #202.
-5. **#186**, using the union resolution, then **#212**.
-6. #211, #214, #190, #188: after an exact-tree CI refresh on the new main.
-7. The handoff-only repairs (#201, #198, #192, #191, #187, #184, #131), each union-resolved and CI-refreshed. #193 after its Sep 30 grading.
-8. Reviews for #174, #170, #206, #209. #196/#199 wait for Codex's gate certification.
-9. Jacob decides #110 and #130 (superseded) and #73–#85 (port or archive).
+2. **#210**, the NFL-only numpy pin. It must land before #204/#205.
+3. **#177**, using the integration content `8dfbac39ce`.
+4. **#202**, then #203, #204, #205, #207, #213, retargeted to main. Research-only; no production activation; the seal is unaffected.
+5. **#186** (head `efb40423ff`, union-repaired), then **#212**.
+6. **Exact-tree CI refresh on the new main**, then the 15 READY-AFTER-#208 PRs.
+7. **#193** after its Sep 30 pre-registered grading. **#196/#199** after Codex's gate certification.
+8. **Jacob's decisions** on #130, #110 and #75 (superseded) and #73–#85 (port or archive).
 
-The combined tree for steps 1–5 is `claude/merge-sequence-integration-20260925` (see CI above).
+The combined tree for steps 1–5 is `9abf854193`, green on both suites.
 
-## Update 2026-09-25 ~17:40Z
-- **Wait loops removed:** two orphaned wait loops left over from the F11/F12 fit were terminated (a `pgrep -f` self-match). Nothing else was touched.
-- **F11/F12 artifacts verified:** all eight on the remote (`f4fb17aa0b`) are byte-identical to the local copies.
-- **Handoff repairs applied to the PR heads:** #201, #198, #192, #191, #187, #184, #131 and #186 (merge commits; no history rewritten). #193 is deliberately left alone until its Sep 30 pre-registered grading.
-- **Research PRs reviewed:** an independent read-only review of #174, #170, #206 and #209 found all four CLEAN for research-only merge (no BLOCKING or HIGH findings). The 2 LOW cosmetic items are listed in their rows.
-
-## Genuinely unresolved
-- **Pricing gates:** Codex owns certifying `BOOK_ACTION_RULES_NOT_CERTIFIED`, `CURRENT_ROLE_NOT_VERIFIED` and `QUOTE_TIMESTAMP_NOT_PROVIDED` (#196/#199).
-- **Pre-rewrite history:** 13 PRs sit on a history with no common base with main. Jacob or SUPERCHAD must choose port or archive; this workstream does not port them.
-- **Main's root CI** fails until #208 lands, because live Top Pick volume varies. Every PR's root CI inherits that failure until then.
-- **Seal:** the Saturday seal remains the priority; the trigger fires 2026-09-26 18:30Z.
+## 5. Genuinely unresolved (owner, then next action)
+- **Pricing gates:** Codex must certify `BOOK_ACTION_RULES_NOT_CERTIFIED`, `CURRENT_ROLE_NOT_VERIFIED` and `QUOTE_TIMESTAMP_NOT_PROVIDED` (#196/#199).
+- **Re-rooted PRs:** Jacob or SUPERCHAD chooses port or archive for #73–#85.
+- **Latent e2e defect:** unassigned; the proposed repair is in §2.
+- **Optional LOW cleanups in Codex PRs:** Codex (#174 README test count; #206/#209 temporary-file location).
+- **Merge authorization** for each step in §4: Jacob.
+- **Saturday seal:** Claude runs the prospective capture at 2026-09-26 18:30Z.
 
 Alligator.
