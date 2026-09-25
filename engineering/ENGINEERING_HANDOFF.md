@@ -6388,3 +6388,13 @@ Alligator
 - **Merges:** none.
 
 Alligator
+
+## 2026-09-25 evening -- e2e repair, legacy preregistration port, sequence re-certified
+- **#215** (`claude/e2e-deterministic-today-fixture-20260925` @ `57f764491a`, test-only): makes the browser e2e test independent of live Top Pick volume using in-memory synthetic picks. The integration main + #208 + #215 `08155801a9` is green.
+- **#216** (`claude/legacy-prereg-port-20260925` @ `1fa6c6031d`, docs-only): verbatim preregistrations from #74, #77, #78 and #84, with provenance.
+- **Full sequence:** `claude/merge-sequence-integration-20260925` @ `ace4cec2f4` on main `1c1a9c9db5` is green on root (36171904275) and NFL (36171904185).
+- **Matrix:** `codex/pr-closure-readiness-20260925` @ `319ef92c14`, 46 PRs.
+- **Bridge:** #91 comment 5837351947.
+- **Merges:** none. **Seal:** untouched.
+
+Alligator
