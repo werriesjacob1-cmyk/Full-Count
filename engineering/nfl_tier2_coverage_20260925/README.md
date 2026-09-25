@@ -6,8 +6,9 @@ Research only. Nothing here changes authoritative B0, a workflow, a public pick 
 **F11 and F12 are REJECTED for receptions and receiving yards under this formulation.**
 - The pre-declared DEV fit (target seasons 2019–2022) gave the receiver-specific man/zone split zero weight (α = 0) in both markets. F12 alone got a small weight (α = 0.3).
 - Every holdout and 2026 interval spans 0, including the pre-declared full-strength (α = 1) sensitivity.
-- The largest effect anywhere is about 0.0005 receptions or 0.005 receiving yards per player-game.
-- **Why the effect is so small:** coverage-driven matchup ratios have a standard deviation of only 0.02–0.03. Once B0 and the scale control are in place, man/zone tendencies move a receiver's expected output very little.
+- On HOLDOUT the largest effect is about 0.0005 receptions or 0.005 receiving yards per player-game. FRESH 2026 (n = 436) has larger but very noisy point estimates at α = 1; for example, F11_ONLY receiving yards is −0.017 with a CI of [−0.054, +0.013].
+- **F12 is negligible and borderline, not strictly zero.** DEV chose α = 0.3. The frozen F12_ONLY HOLDOUT receptions Δ is −0.00020 [−0.00042, +0.000013]. It is rejected on magnitude.
+- **Why the effect is so small:** coverage-driven matchup ratios have a standard deviation of about 0.018–0.029 for COMBINED, 0.014–0.018 for F11_ONLY and 0.010–0.022 for F12_ONLY. Once B0 and the scale control are in place, man/zone tendencies move a receiver's expected output very little.
 
 This is a real negative finding, kept as such. It is **not** evidence about route-level or individual-matchup effects, which the source cannot observe (see "Unsupported").
 
@@ -75,8 +76,9 @@ This is a real negative finding, kept as such. It is **not** evidence about rout
 
 **Descriptive holdout splits** (`coverage_report.json`) are computed at the α = 1 sensitivity, because the frozen COMBINED α is 0 and frozen splits would be identically 0. They cover opponent man-share tercile, receiver sample tercile, season and position.
 - All are within ±0.004 receptions and ±0.02 receiving yards.
-- Signs are inconsistent.
-- No subgroup shows a coverage effect.
+- Signs are mostly inconsistent. The exception is receiving yards by season, where all three seasons are slightly positive (+0.008, +0.004, +0.005), meaning slightly harmful.
+- No subgroup shows a beneficial coverage effect.
+- The switch to α = 1 splits was made after the parameter freeze. It affects only this descriptive output, not the frozen scoring.
 
 **Real 2026 examples** (`fresh_2026_examples`, largest COMBINED ratios): these show how the matchup would move a prediction at α = 1. At the frozen α = 0 the challenger equals the scale control.
 - `2026_02_LV_LAC`, RB `00-0040666` vs LV:
@@ -92,6 +94,10 @@ This is a real negative finding, kept as such. It is **not** evidence about rout
 - **Coordinator tendencies across teams, and the current DC's identity.** BLOCKED: no DC intervals in the registry. A licensed source would be needed.
 - **Coverage by down and distance, and personnel-dependent coverage.** Available in the data but not modelled. The man/zone null makes finer splits unlikely to help receptions or yards, and they would multiply thin cells.
 - **2026 in-season coverage behaviour.** Unavailable until after the 2026 postseason.
+
+## Known limitations (independent review)
+- **Baseline mismatch.** The ratio compares the opponent's man share with the share the receiver faced in S−1/S−2, but B0 is a 5-game rolling mean over a different opponent mix. So F11_ONLY actually tests "schedule exposure reverting to league average", not F11 in isolation. This weakens the test, but it cannot manufacture a null: at α = 1, the correlation between COMBINED and the residual is 0.007 for receptions and −0.005 for yards, over 21,029 rows.
+- **Position mapping.** Each player's modal position is taken across all seasons, including seasons after the target season. This is a minor future-season leak with negligible effect.
 
 ## Remaining requirements before any prospective use
 None are recommended. F11 and F12 are rejected for these markets.
@@ -121,3 +127,12 @@ ad01aeb4045ee19a4f086ff38b52b14c8f427d3401e529c3078a4545921650a9  pbp_participat
 b1f436a98b2a7759eb4ed1181e072a35c2666f9aeb356a49c943d28d6be6b0b9  pbp_participation_2024.csv
 59069adfee7b0f464befba8a5e8be331e523633cc6a7ab403d37bcbcdfbe66ac  pbp_participation_2025.csv
 ```
+
+## Independent review
+One independent review was run (opus) at `2a639bcf57`. **Verdict: REJECTED is correct (CONFIRMED).**
+- **No false-null bug:** no bug that could produce a false null was found.
+- **Join:** 100% of REG dropbacks join in every season, and the target is on the field in ≥99.89% of plays.
+- **Leakage:** the controls hold.
+- **Reproducibility:** re-running the final stage was byte-identical.
+- **Corrections applied:** the review's README corrections (HOLDOUT vs FRESH magnitudes, F12 "borderline", ratio SDs, the receiving-yards-by-season sign pattern, and disclosure of the post-freeze split change) are applied above.
+- **Documented, not changed:** the baseline mismatch and the position-mapping leak.
