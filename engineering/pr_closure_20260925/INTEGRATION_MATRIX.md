@@ -27,6 +27,70 @@ Every number below comes from the scripts and JSON in this directory:
 | `old_prs.py` | `rerooted_pr_unique_files.json` |
 | `gen_matrix.py` | the table below |
 
+## 0. Update (2026-09-25, later): e2e repair, legacy preregistration port, re-certified sequence
+
+**New PRs:**
+- **#215** `57f764491a`: test-only. Makes `test_browser_e2e.py` independent of live Top Pick volume, using in-memory synthetic Top Picks that are clearly labelled and served only to the test. It adds a real empty-state phase and a no-disk-leak guard.
+  - Local results: 140/140 on main; 140/140 with 0 real Top Picks; 139/139 on the stale 8-pick snapshot, where the original test scores 92/99.
+  - Three mutations of the real `docs/app.js` are all detected.
+  - Independent review: MINOR FIXES, all applied (MEDIUM: template field allowlist).
+- **#216** `1fa6c6031d`: docs-only. Verbatim port of the #74/#77/#78 preregistrations plus #84's amendment, with a SHA-256 provenance manifest.
+
+**CI, kept separate as required:**
+
+| Kind | Tree | SHA | Root | NFL |
+|---|---|---|---|---|
+| PR head | #215 | `57f764491a` | ✗ only `test_browser_today_central.py` (the #208 fixture) | ✅ |
+| PR head | #216 | `1fa6c6031d` | ✗ only the #208 fixture | ✅ |
+| Integration | main + #208 + #215 (`claude/e2e-fixture-integration-20260925`) | `08155801a9` | ✅ [36171787626](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36171787626) | ✅ [36171787642](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36171787642) |
+| Integration | **Full sequence on main `1c1a9c9db5`**: #208 → #210 → #177 → Tier 1 stack → #186 → #212 → #215 → #216 (`claude/merge-sequence-integration-20260925`) | **`ace4cec2f4`** | ✅ [36171904275](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36171904275) | ✅ [36171904185](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36171904185) |
+
+**Merge prefixes with their own exact-tree CI:**
+- [#208] `6f282f2d80`
+- [#208, #210] `0933a89b3a`
+- [#208, #215] `08155801a9`
+- [#208, #210, Tier 1 stack] `59492822f8`
+- [#208, #210, #186, #212] `6f549c9d0a`
+- the full sequence `ace4cec2f4`
+
+**Not separately CI-tested:** [#208, #210, #177] and [… + #216]. Their deltas are documentation only, and they are covered inside the full sequence.
+
+**Main drift check.** Since `e48bb2ac21`, main has changed only 3 automated dashboard data files; no code changed. The earlier tree evidence still applies, and the full sequence was re-run on current main.
+
+**Preservation checks on `ace4cec2f4` vs main:**
+- 0 workflow files changed.
+- 0 `docs/` or `dashboard/` files changed.
+- 0 MLB ledger or data files changed. The only `.jsonl` hit is NFL research evidence under `engineering/`.
+- No root production `*.py` changed.
+- The only non-research NFL change is `nfl/requirements-nfl.txt` (#210).
+- The frozen harness, protocol, seal builder, drivers and ATL@GB seal file are byte-identical to `e05e02c592`.
+- The #177 register is identical to its certified content `8dfbac39ce`.
+
+**Classification of every failure:**
+
+| Kind | What it covers |
+|---|---|
+| Missing dependency repair | The #208 fixture on 17 PR heads; numpy on #204/#205; the stale `docs/` snapshot on #202/#207/#213, which #215 now also removes as a failure mode |
+| Genuine implementation defect | None found in any integration candidate. #85's legacy capture is broken against current main (not a candidate) |
+| Readiness scope | Research PRs are research-only integration, not production readiness |
+
+**Recommended merge order** (each step needs Jacob's explicit approval):
+1. #208
+2. #215 and #216
+3. #210
+4. #177 (content `8dfbac39ce`)
+5. #202, then #203, #204, #205, #207, #213
+6. #186, then #212
+7. A CI refresh on the new main, then the READY-AFTER-#208 PRs
+8. The remaining decisions
+
+**Legacy (re-rooted) PRs:**
+- The preregistrations are ported (#216).
+- #79, #80, #82 and #83 are portable: their tests pass on current main and nothing equivalent exists there. They wait on the owner's decision about the MLB research program.
+- #81 and #84 must follow #79.
+- #85 needs repair if it is revived.
+- #73 and #76 (agent configuration, including `settings.json` permissions) need Jacob's decision.
+
 ## 1. Certified integration trees (exact-head CI)
 
 | Tree | SHA | Contents | Root CI | NFL CI | Applies to |
@@ -69,6 +133,8 @@ From `ci_failure_attribution.json`. Failures on the 13 re-rooted PRs (#73–#85)
 
 | PR | Head | Base | Disposition | CI (latest on head) | Dependencies | Scientific status | Remaining blocker | Owner | Next action |
 |---|---|---|---|---|---|---|---|---|---|
+| #216 | `1fa6c6031d` | main | **READY FOR APPROVAL** (after #208) | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36171841141) [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36171840933) | #208 | docs-only verbatim preservation of #74/#77/#78/#84 preregs with provenance manifest | head root fails only on #208 fixture; in sequence tree `ace4cec2f4` green | Claude | Jacob: merge after #208; then #74/#77/#78 become superseded |
+| #215 | `57f764491a` | main | **READY FOR APPROVAL** (after #208) | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36171825722) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36171825687) | #208 | test-only e2e reliability repair; independently reviewed (MINOR FIXES applied) | head root fails only on #208 fixture; integration main+#208+#215 `08155801a9` green | Claude | Jacob: merge right after #208 |
 | #214 | `0d324fd961` | main | READY AFTER #208 exact-tree CI | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36160147508) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36160147384) | #208 | F18 source-gate docs (rights/assignment blocked) | root: #208 fixes `fixture needs four top picks` | Codex | CI refresh after #208 |
 | #213 | `edddb9ab2b` | claude/nfl-tier1-foundation-20260924 | READY (research-only) | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36159569976) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36159570083) | #202 | F17 NOT SUPPORTED (preserved) | head e2e stale-data snapshot only | Claude | after #202 |
 | #212 | `0a303be087` | claude/nfl-rushing-yards-baseline-20260923 | READY (research-only) | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36158323581) [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36158323547) | #186 | F16 negative (preserved) | none | Codex | after #186 |
@@ -77,7 +143,7 @@ From `ci_failure_attribution.json`. Failures on the 13 re-rooted PRs (#73–#85)
 | #209 | `c5403efa9a` | main | READY AFTER #208 exact-tree CI | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36154570736) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36154570569) | #208 | F14 NULL; independently reviewed CLEAN 2026-09-25 | root: #208 fixes `fixture needs four top picks`; LOW: same temp-file pattern | Codex | CI refresh after #208 |
 | #208 | `d68b2d6073` | main | **READY FOR APPROVAL** | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36153963241) [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36153963351) | none | test-infrastructure repair | none | SUPERCHAD→Claude | Jacob: merge 1st (tree `6f282f2d80`) |
 | #207 | `f4fb17aa0b` | claude/nfl-tier1-foundation-20260924 | READY (research-only) | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36157035013) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36157034994) | #202 | F11 REJECTED / F12 NOT SUPPORTED (preserved) | head e2e stale-data snapshot only | Claude | after #202 |
-| #206 | `556bc26e6e` | main | READY AFTER #208 exact-tree CI | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36148185695) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36148185837) | #208 | F13 NEGATIVE; independently reviewed CLEAN 2026-09-25 | root: #208 fixes `fixture needs four top picks`; LOW: tests write temp files in repo path | Codex | CI refresh after #208 |
+| #206 | `556bc26e6e` | main | READY AFTER #208 exact-tree CI | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36148185837) [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36148185695) | #208 | F13 NEGATIVE; independently reviewed CLEAN 2026-09-25 | root: #208 fixes `fixture needs four top picks`; LOW: tests write temp files in repo path | Codex | CI refresh after #208 |
 | #205 | `76b42547c3` | claude/nfl-tier1-foundation-20260924 | READY (research-only) | [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36062920159) [✗ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36062920098) | #202, #210 | F4 narrow historical; H3 prospective active | head NFL CI needs numpy → #210 | Claude | after #202/#210 |
 | #204 | `40d842c9a9` | claude/nfl-tier1-foundation-20260924 | READY (research-only) | [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36062903514) [✗ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36062903531) | #202, #210 | F1/F5/F6/F7/F10; H2 prospective active | head NFL CI needs numpy (`No module named 'numpy'`) → #210 | Claude | after #202/#210 |
 | #203 | `8aa8067fbc` | claude/nfl-tier1-foundation-20260924 | READY (research-only) | [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36062890834) [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36062890696) | #202 | F2/F3/F8/F9 historical; H1 prospective active | none | Claude | retarget to main after #202; merge |
@@ -100,30 +166,29 @@ From `ci_failure_attribution.json`. Failures on the 13 re-rooted PRs (#73–#85)
 | #131 | `c7dc7fdfd1` | main | READY AFTER #208 exact-tree CI | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36167006908) [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36167006895) [✅ web](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36167006844) | #208 | MLB selector diagnosis (handoff doc) | root: #208 fixes `fixture needs four top picks` (repaired `c7dc7fdfd1`) | Claude | CI refresh after #208 |
 | #130 | `342f69e71e` | main | **SUPERSEDED** | [✅ NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35365047137) [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/35365047176) | none | — | identical `.claude/worktrees/` rule + comment already on main (.gitignore 28–32) | Claude | Jacob: close |
 | #110 | `390e04d3fd` | main | **SUPERSEDED** | [cancelled NFL](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/34911668831) [cancelled root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/34911668842) | none | — | both files byte-identical on main | SUPERCHAD | Jacob: close |
-| #85 | `4744ad2fc7` | main | DEPENDENCY BLOCKED (re-rooted history) | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33667172866) | — | PA-v1 lifecycle closure, marked DO NOT MERGE | no merge base; 48 unique files Unique files absent on main: 48. | Claude / Jacob | archive (preserve branch) unless PA-v1 is revived |
-| #84 | `d9d40fa175` | superchad/experiment-primitives-01 | DEPENDENCY BLOCKED (re-rooted history) | [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33261367760) | stacked superchad chain | MLB research code scaffolds (unvalidated) | no merge base; unique backtest/*.py + tests written against the old tree Unique files absent on main: 15. | SUPERCHAD | port with fresh review + CI on current main, or archive |
-| #83 | `d9e6021b7b` | superchad/hr-contact-state-feature-scaffold-01 | DEPENDENCY BLOCKED (re-rooted history) | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259948724) | stacked superchad chain | MLB research code scaffolds (unvalidated) | no merge base; unique backtest/*.py + tests written against the old tree Unique files absent on main: 2. | SUPERCHAD | port with fresh review + CI on current main, or archive |
-| #82 | `926cf3f814` | superchad/fix-board-first-paint-clock-fixture-01 | DEPENDENCY BLOCKED (re-rooted history) | [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33261504428) | stacked superchad chain | MLB research code scaffolds (unvalidated) | no merge base; unique backtest/*.py + tests written against the old tree Unique files absent on main: 4. | SUPERCHAD | port with fresh review + CI on current main, or archive |
-| #81 | `95a4b80521` | superchad/experiment-primitives-01 | DEPENDENCY BLOCKED (re-rooted history) | [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259481528) | stacked superchad chain | MLB research code scaffolds (unvalidated) | no merge base; unique backtest/*.py + tests written against the old tree Unique files absent on main: 2. | SUPERCHAD | port with fresh review + CI on current main, or archive |
-| #80 | `77442dabfe` | superchad/hr-execution-prereg-v2-01 | DEPENDENCY BLOCKED (re-rooted history) | [cancelled root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259890063) | stacked superchad chain | MLB research code scaffolds (unvalidated) | no merge base; unique backtest/*.py + tests written against the old tree Unique files absent on main: 2. | SUPERCHAD | port with fresh review + CI on current main, or archive |
-| #79 | `7794220733` | superchad/fix-board-first-paint-clock-fixture-01 | DEPENDENCY BLOCKED (re-rooted history) | [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33260060751) | stacked superchad chain | MLB research code scaffolds (unvalidated) | no merge base; unique backtest/*.py + tests written against the old tree Unique files absent on main: 2. | SUPERCHAD | port with fresh review + CI on current main, or archive |
-| #78 | `b019e49981` | main | DEPENDENCY BLOCKED (re-rooted history) | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33258381531) | — | MLB pre-registration documents | no merge base; unique prereg docs only (rest is old generated data) Unique files absent on main: 1. | SUPERCHAD | smallest action: port the prereg .md files into engineering/ in one docs PR |
-| #77 | `5869216a73` | main | DEPENDENCY BLOCKED (re-rooted history) | [cancelled root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259352845) | — | MLB pre-registration documents | no merge base; unique prereg docs only (rest is old generated data) Unique files absent on main: 1. | SUPERCHAD | smallest action: port the prereg .md files into engineering/ in one docs PR |
-| #76 | `26dbe36714` | tooling/superclaude-activation-01 | DEPENDENCY BLOCKED (re-rooted history) | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33256810680) | — | SuperClaude activation tooling | no merge base with main; unique `.claude/` files + CLAUDE.md edits Unique files absent on main: 3. | SUPERCHAD / Jacob | decide: port agent/skill definitions via a new docs PR, or archive |
-| #75 | `26d37fd475` | main | **SUPERSEDED** (verified) | [cancelled root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259722404) | none | — | all 3 commits' fixes present on main in equivalent/evolved form (5b67: 28/28 lines; 26d37: 19/20; c001 superseded by main's model_basis_at+market_prices_at stale fixture) Unique files absent on main: 0. | SUPERCHAD | Jacob: close |
-| #74 | `0ae4535d5a` | main | DEPENDENCY BLOCKED (re-rooted history) | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33548879722) | — | MLB pre-registration documents | no merge base; unique prereg docs only (rest is old generated data) Unique files absent on main: 2. | SUPERCHAD | smallest action: port the prereg .md files into engineering/ in one docs PR |
-| #73 | `79f1109fc1` | main | DEPENDENCY BLOCKED (re-rooted history) | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33548167737) | — | SuperClaude activation tooling | no merge base with main; unique `.claude/` files + CLAUDE.md edits Unique files absent on main: 20. | SUPERCHAD / Jacob | decide: port agent/skill definitions via a new docs PR, or archive |
+| #85 | `4744ad2fc7` | main | REPAIR REQUIRED if revived (marked DO NOT MERGE) | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33667172866) | — | PA-v1 prospective lifecycle (48 files); no equivalent on main | `test_prospective_capture.py` fails against current main (API drift: 'str' object has no attribute 'get'); 8 other tests pass Unique files absent on main: 48. | Claude / Jacob | archive unless PA-v1 is revived; then repair + review |
+| #84 | `d9d40fa175` | superchad/experiment-primitives-01 | SCIENTIFIC REVIEW REQUIRED (depends on #79) | [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33261367760) | #79, #80, #83 | integrated HR contact-state Stage-1/2 stack (15 files); amended prereg ported via #216 | stage tests need #79's primitives Unique files absent on main: 15. | SUPERCHAD / Jacob | port after #79/#80/#83 |
+| #83 | `d9e6021b7b` | superchad/hr-contact-state-feature-scaffold-01 | SCIENTIFIC REVIEW REQUIRED (portable) | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259948724) | — | HR no-intercept offset estimator; tests pass on current main | same Unique files absent on main: 2. | SUPERCHAD / Jacob | same |
+| #82 | `926cf3f814` | superchad/fix-board-first-paint-clock-fixture-01 | SCIENTIFIC REVIEW REQUIRED (portable) | [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33261504428) | — | canonical artifact certifier + generation regime; no equivalent on main; both tests pass on current main | same as #79 Unique files absent on main: 4. | SUPERCHAD / Jacob | same |
+| #81 | `95a4b80521` | superchad/experiment-primitives-01 | SCIENTIFIC REVIEW REQUIRED (depends on #79) | [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259481528) | #79 | PA opportunity runner | its test needs `backtest.experiment_primitives` (#79) Unique files absent on main: 2. | SUPERCHAD / Jacob | port after #79 |
+| #80 | `77442dabfe` | superchad/hr-execution-prereg-v2-01 | SCIENTIFIC REVIEW REQUIRED (portable) | [cancelled root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259890063) | — | HR contact-state features; no equivalent on main; its test passes on current main (prereg dup ported via #216) | same Unique files absent on main: 2. | SUPERCHAD / Jacob | same |
+| #79 | `7794220733` | superchad/fix-board-first-paint-clock-fixture-01 | SCIENTIFIC REVIEW REQUIRED (portable) | [✅ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33260060751) | — | MLB experiment-integrity primitives; no equivalent on main; its test passes on current main | unused on main; the MLB research program's status needs an owner decision Unique files absent on main: 2. | SUPERCHAD / Jacob | confirm program is active, then port as its own PR with review + CI |
+| #78 | `b019e49981` | main | PORTED via #216 → SUPERSEDED once #216 merges | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33258381531) | #216 | pre-registration records (verbatim, provenance kept) | remaining branch content is obsolete generated output/data from the old tree Unique files absent on main: 1. | SUPERCHAD | after #216 merges, Jacob may close |
+| #77 | `5869216a73` | main | PORTED via #216 → SUPERSEDED once #216 merges | [cancelled root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259352845) | #216 | pre-registration records (verbatim, provenance kept) | remaining branch content is obsolete generated output/data from the old tree Unique files absent on main: 1. | SUPERCHAD | after #216 merges, Jacob may close |
+| #76 | `26dbe36714` | tooling/superclaude-activation-01 | DEPENDENCY BLOCKED — Jacob decision (agent configuration) | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33256810680) | — | SuperClaude activation: .claude agents/skills/rules/settings.json + CLAUDE.md edits | re-rooted; `.claude/settings.json` can change agent permissions, so porting needs explicit authorization; main has only `.claude/worktree-autosave.sh` Unique files absent on main: 3. | Jacob | decide port (as its own reviewed PR) or archive |
+| #75 | `26d37fd475` | main | **SUPERSEDED** (verified) | [cancelled root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259722404) | none | — | all 3 commits' fixes present on main in equivalent/evolved form (5b67: 28/28 lines; 26d37: 19/20; c001 superseded by main's model**Totals (46 open PRs, recomputed from the table):**
 
-**Totals:**
-
-| Category | Count | PRs |
-|---|---|---|
-| READY FOR APPROVAL | 4 | #208, #210, #177, #202 |
-| READY (research-only) | 7 | #203, #204, #205, #207, #213, #186, #212 |
-| READY AFTER #208 exact-tree CI | 15 | #211, #214, #206, #209, #174, #170, #201, #198, #192, #191, #190, #188, #187, #184, #131 |
-| ACTIVE WORK | 3 | #196, #199, #193 |
-| SUPERSEDED | 3 | #130, #110, #75 |
-| DEPENDENCY BLOCKED (re-rooted history) | 12 | #73, #74, #76–#85 |
+| Category | Count |
+|---|---|
+| READY AFTER #208 exact-tree CI | 15 |
+| READY (research-only) | 7 |
+| READY FOR APPROVAL | 6 |
+| SCIENTIFIC REVIEW REQUIRED (legacy code) | 6 |
+| ACTIVE WORK | 3 |
+| SUPERSEDED | 3 |
+| PORTED → superseded after #216 | 3 |
+| DEPENDENCY BLOCKED (Jacob decision) | 2 |
+| REPAIR REQUIRED | 1 |
 
 **The re-rooted PRs.** Their unique content is listed file by file in `rerooted_pr_unique_files.json`. The "differs on main" entries there are almost entirely old generated `output/`, `data/` and dashboard-state files; that material is obsolete.
 

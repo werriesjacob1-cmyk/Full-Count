@@ -1,6 +1,48 @@
 {
  "prs": [
   {
+   "number": 216,
+   "title": "docs: preserve re-rooted MLB preregistration records verbatim (#74, #77, #78, #84)",
+   "draft": true,
+   "head_ref": "claude/legacy-prereg-port-20260925",
+   "head_sha": "1fa6c6031d",
+   "base_ref": "main",
+   "base_sha": "33e43f29df",
+   "ci": {
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36171841141",
+     "id": 36171841141
+    },
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36171840933",
+     "id": 36171840933
+    }
+   }
+  },
+  {
+   "number": 215,
+   "title": "test: make browser e2e interaction checks independent of live Top Pick volume",
+   "draft": true,
+   "head_ref": "claude/e2e-deterministic-today-fixture-20260925",
+   "head_sha": "57f764491a",
+   "base_ref": "main",
+   "base_sha": "33e43f29df",
+   "ci": {
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36171825722",
+     "id": 36171825722
+    },
+    "Test Suite": {
+     "conclusion": "failure",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36171825687",
+     "id": 36171825687
+    }
+   }
+  },
+  {
    "number": 214,
    "title": "Record F18 individual-defender coverage source gate and blocker",
    "draft": true,
@@ -177,15 +219,15 @@
    "base_ref": "main",
    "base_sha": "41124ce3b2",
    "ci": {
-    "NFL Test Suite": {
-     "conclusion": "success",
-     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36148185695",
-     "id": 36148185695
-    },
     "Test Suite": {
      "conclusion": "failure",
      "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36148185837",
      "id": 36148185837
+    },
+    "NFL Test Suite": {
+     "conclusion": "success",
+     "url": "https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/36148185695",
+     "id": 36148185695
     }
    }
   },
