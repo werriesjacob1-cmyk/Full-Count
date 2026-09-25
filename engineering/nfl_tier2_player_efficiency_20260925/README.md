@@ -20,7 +20,7 @@ FRESH 2026 (weeks 1–2, n = 549) gives −0.028 [−0.125, +0.067].
 | F17_FULL | −0.120 [−0.173, −0.070] |
 | SIMPLE_EFF | −0.110 [−0.154, −0.066] |
 
-Almost all of that comes from regressing efficiency, which the simple control already does. It overlaps Tier 1 F3, which shrinks last-5 yards per target toward an ADOT prior. Relative size: about 0.7% of a 16.8-yard MAE.
+Almost all of that comes from regressing efficiency, which the simple control already does. It overlaps Tier 1 F3, which shrinks last-5 yards per target toward an ADOT prior. See `f3_estimate` in `nfl/research/tier1/player_opportunity_challenger.py` at `8aa8067fbc` (PR #203): `rate = (receiving_yards_last5 + K·(y0 + y1·adot)) / (targets + K)`. Relative size: about 0.7% of a 16.8-yard MAE.
 
 **Decomposition** (HOLDOUT, game-clustered):
 - **Skill adds beyond depth:** F17_FULL − F17_DEPTH = −0.026 [−0.039, −0.013]. Persistent yards over expectation carries information that depth-conditioned expectation lacks.
@@ -103,6 +103,16 @@ The population is REG player-games where the player took **offense_snaps > 0** a
 ## Preserved hypotheses (not pursued; no retuning here)
 - **YOE skill beyond F3:** yards-over-expected skill (the significant increment over depth) as an addition to Tier 1 F3's existing efficiency shrinkage, tested prospectively. It is not refit on these outcomes.
 - **Median-targeted markets:** evaluating over/under lines directly with a median-targeted loss.
+
+## Independent review
+A read-only adversarial review (sonnet reviewer) covered leakage, correctness, protocol and claims, and found them clean:
+- same-week and POST ordering checked;
+- B0 factorization and the w = 0 nesting checked;
+- the snap/weekly join checked against a 2024 sample, where no-weekly-row cases were real zero-target games;
+- commit order and the refit-equality gate checked;
+- the verdict recomputed.
+
+Its one LOW evidence gap, the F3 citation, is added above.
 
 ## Reproduce
 From a checkout of this branch, with the pinned inputs under `/tmp/claude-0/nfl_tier1_shared`:
