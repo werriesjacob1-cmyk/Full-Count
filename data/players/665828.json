@@ -85,6 +85,49 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 28.8,
+          "notable_signals": 2,
+          "matchup": "Cincinnati Reds @ Toronto Blue Jays",
+          "game_pk": 822760,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 34.8571,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 0.0,
+            "park_hr_index": 50.0,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 16.6667,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 2.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "ump_k_pct": 0.564,
+            "ump_bb_pct": 0.06
+          },
+          "hit_probability": 0.5382,
+          "raw_hit_probability": 0.5568,
+          "lift": -0.0186,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

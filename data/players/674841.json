@@ -555,7 +555,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 37.9,
+          "score": 38.5,
           "notable_signals": 0,
           "matchup": "New York Mets @ Washington Nationals",
           "game_pk": 822681,
@@ -567,7 +567,10 @@
             "opp_team_k_pct": 52.0,
             "same_hand_ratio": 43.75,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 56.1223,
+            "ump_k_pct": -0.264,
+            "ump_bb_pct": -0.468
           },
           "hit_probability": 0.6028,
           "raw_hit_probability": 0.6438,
@@ -592,12 +595,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5752,
+            "outs_rate": 0.575,
             "avg_outs_per_start": 15.25
           },
-          "hit_probability": 0.5766,
-          "raw_hit_probability": 0.5752,
-          "lift": -0.1993,
+          "hit_probability": 0.5765,
+          "raw_hit_probability": 0.575,
+          "lift": -0.1985,
           "reliability": "A",
           "sample_n": 16,
           "projection": {

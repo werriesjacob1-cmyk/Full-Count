@@ -2552,6 +2552,109 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 53.0,
+          "notable_signals": 3,
+          "matchup": "Chicago Cubs @ Boston Red Sox",
+          "game_pk": 824706,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 56.8571,
+            "pitch_exploit": 10.8571,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 25.4,
+            "season_barrel_pct": 58.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": 3.04,
+            "platoon_xwoba": 0.9,
+            "park_hand_index": -1.74,
+            "opp_catcher_framing": -0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 38.1818,
+            "woba_behind": 36.3636,
+            "pull_park_synergy": -1.2911,
+            "hard_hit_105_rate": -0.0125,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 2.416,
+            "vs_rp_ops": 2.904,
+            "ump_k_pct": -0.432,
+            "ump_bb_pct": -0.396
+          },
+          "hit_probability": 0.5803,
+          "raw_hit_probability": 0.5868,
+          "lift": 0.0235,
+          "reliability": "A",
+          "sample_n": 110,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 4.4,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Boston Red Sox",
+          "game_pk": 824706,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0461
+          },
+          "hit_probability": 0.0461,
+          "raw_hit_probability": null,
+          "lift": -0.0013,
+          "reliability": "A",
+          "sample_n": 110,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.6,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Boston Red Sox",
+          "game_pk": 824706,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0187
+          },
+          "hit_probability": 0.0187,
+          "raw_hit_probability": null,
+          "lift": -0.0018,
+          "reliability": "A",
+          "sample_n": 110,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

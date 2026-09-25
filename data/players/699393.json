@@ -3804,6 +3804,133 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 33.9,
+          "notable_signals": 3,
+          "matchup": "Chicago Cubs @ Boston Red Sox",
+          "game_pk": 824706,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 56.8571,
+            "l7_avg_ev": 39.4231,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 2.925,
+            "park_hr_index": 25.4,
+            "season_barrel_pct": 8.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": -2.16,
+            "platoon_xwoba": -3.06,
+            "opp_catcher_framing": -0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 8.1818,
+            "woba_behind": 29.0909,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.24,
+            "vs_rp_ops": 0.936,
+            "ump_k_pct": -0.432,
+            "ump_bb_pct": -0.396
+          },
+          "hit_probability": 0.6364,
+          "raw_hit_probability": 0.6144,
+          "lift": -0.0347,
+          "reliability": "B",
+          "sample_n": 76,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 42.3,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Boston Red Sox",
+          "game_pk": 824706,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 4.8,
+            "sprint_speed": 31.25,
+            "catcher_poptime": 11.4286,
+            "on_base": 52.0154
+          },
+          "hit_probability": 0.099,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 76,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Boston Red Sox",
+          "game_pk": 824706,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0199
+          },
+          "hit_probability": 0.0199,
+          "raw_hit_probability": null,
+          "lift": -0.0275,
+          "reliability": "B",
+          "sample_n": 76,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Boston Red Sox",
+          "game_pk": 824706,
+          "team": "Chicago Cubs",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0042
+          },
+          "hit_probability": 0.0042,
+          "raw_hit_probability": null,
+          "lift": -0.0163,
+          "reliability": "B",
+          "sample_n": 76,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

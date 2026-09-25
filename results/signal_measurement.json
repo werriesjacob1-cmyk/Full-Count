@@ -51,8 +51,8 @@
     "2026-09-24",
     "2026-09-25"
   ],
-  "n_graded": 28148,
-  "hit_rate": 0.3299701577376723,
+  "n_graded": 28150,
+  "hit_rate": 0.32994671403197157,
   "signals": [
     {
       "signal": "hard_hit_rate",
@@ -108,16 +108,16 @@
     },
     {
       "signal": "outs_rate",
-      "n": 1001,
+      "n": 1002,
       "n_hit": 513,
-      "n_miss": 488,
-      "auc": 0.5559270443869236,
-      "se": 0.018106354853720835,
-      "lo": 0.5204385888736308,
-      "hi": 0.5914154999002165,
+      "n_miss": 489,
+      "auc": 0.5557588586326074,
+      "se": 0.01809843814857582,
+      "lo": 0.5202859198613988,
+      "hi": 0.591231797403816,
       "separates": true,
       "enough_data": true,
-      "strength": 0.05592704438692364
+      "strength": 0.05575885863260743
     },
     {
       "signal": "catcher_poptime",
@@ -185,6 +185,19 @@
       "strength": 0.03192313044592576
     },
     {
+      "signal": "l14_k_pct",
+      "n": 1212,
+      "n_hit": 613,
+      "n_miss": 599,
+      "auc": 0.5306465098165241,
+      "se": 0.01654989550373238,
+      "lo": 0.49820871462920857,
+      "hi": 0.5630843050038395,
+      "separates": false,
+      "enough_data": true,
+      "strength": 0.03064650981652406
+    },
+    {
       "signal": "yrfi_rate",
       "n": 131,
       "n_hit": 91,
@@ -196,19 +209,6 @@
       "separates": false,
       "enough_data": true,
       "strength": 0.030631868131868134
-    },
-    {
-      "signal": "l14_k_pct",
-      "n": 1211,
-      "n_hit": 613,
-      "n_miss": 598,
-      "auc": 0.5305777278257596,
-      "se": 0.01655679600089148,
-      "lo": 0.49812640766401234,
-      "hi": 0.563029047987507,
-      "separates": false,
-      "enough_data": true,
-      "strength": 0.030577727825759626
     },
     {
       "signal": "woba_ahead",
@@ -224,17 +224,17 @@
       "strength": 0.027122185790539377
     },
     {
-      "signal": "tto_penalty",
-      "n": 267,
-      "n_hit": 144,
-      "n_miss": 123,
-      "auc": 0.4758638211382114,
-      "se": 0.03550360456783552,
-      "lo": 0.4062767561852538,
-      "hi": 0.545450886091169,
+      "signal": "avg_outs_per_start",
+      "n": 1002,
+      "n_hit": 513,
+      "n_miss": 489,
+      "auc": 0.4768633125645288,
+      "se": 0.01823637656585481,
+      "lo": 0.44112001449545335,
+      "hi": 0.5126066106336042,
       "separates": false,
       "enough_data": true,
-      "strength": 0.024136178861788593
+      "strength": 0.023136687435471204
     },
     {
       "signal": "away_team_scores_p",
@@ -250,19 +250,6 @@
       "strength": 0.02284615384615385
     },
     {
-      "signal": "avg_outs_per_start",
-      "n": 1001,
-      "n_hit": 513,
-      "n_miss": 488,
-      "auc": 0.47733918128654973,
-      "se": 0.018247065661842102,
-      "lo": 0.4415749325893392,
-      "hi": 0.5131034299837602,
-      "separates": false,
-      "enough_data": true,
-      "strength": 0.02266081871345027
-    },
-    {
       "signal": "platoon_xwoba",
       "n": 9832,
       "n_hit": 6283,
@@ -274,6 +261,19 @@
       "separates": true,
       "enough_data": true,
       "strength": 0.022435163077188514
+    },
+    {
+      "signal": "tto_penalty",
+      "n": 268,
+      "n_hit": 144,
+      "n_miss": 124,
+      "auc": 0.4781586021505376,
+      "se": 0.035428889367632124,
+      "lo": 0.40871797898997864,
+      "hi": 0.5475992253110966,
+      "separates": false,
+      "enough_data": true,
+      "strength": 0.021841397849462374
     },
     {
       "signal": "ump_run_impact",
@@ -289,19 +289,6 @@
       "strength": 0.019368131868131855
     },
     {
-      "signal": "same_hand_ratio",
-      "n": 1279,
-      "n_hit": 640,
-      "n_miss": 639,
-      "auc": 0.514908548513302,
-      "se": 0.016141155462934362,
-      "lo": 0.4832718838059507,
-      "hi": 0.5465452132206534,
-      "separates": false,
-      "enough_data": true,
-      "strength": 0.014908548513302033
-    },
-    {
       "signal": "sp_era_weak",
       "n": 10166,
       "n_hit": 6457,
@@ -313,6 +300,19 @@
       "separates": true,
       "enough_data": true,
       "strength": 0.014721942820775102
+    },
+    {
+      "signal": "same_hand_ratio",
+      "n": 1280,
+      "n_hit": 640,
+      "n_miss": 640,
+      "auc": 0.514207763671875,
+      "se": 0.016135769613751925,
+      "lo": 0.48258165522892127,
+      "hi": 0.5458338721148288,
+      "separates": false,
+      "enough_data": true,
+      "strength": 0.01420776367187504
     },
     {
       "signal": "l7_barrel_pct",
@@ -328,19 +328,6 @@
       "strength": 0.014125774711033157
     },
     {
-      "signal": "opp_team_k_pct",
-      "n": 1062,
-      "n_hit": 518,
-      "n_miss": 544,
-      "auc": 0.4859630507608449,
-      "se": 0.01771752622870118,
-      "lo": 0.4512366993525906,
-      "hi": 0.5206894021690992,
-      "separates": false,
-      "enough_data": true,
-      "strength": 0.014036949239155105
-    },
-    {
       "signal": "vs_rp_ops",
       "n": 9594,
       "n_hit": 6157,
@@ -352,6 +339,19 @@
       "separates": true,
       "enough_data": true,
       "strength": 0.014026130999774122
+    },
+    {
+      "signal": "opp_team_k_pct",
+      "n": 1063,
+      "n_hit": 518,
+      "n_miss": 545,
+      "auc": 0.4860224575820906,
+      "se": 0.017709526103409742,
+      "lo": 0.4513117864194075,
+      "hi": 0.5207331287447737,
+      "separates": false,
+      "enough_data": true,
+      "strength": 0.013977542417909383
     },
     {
       "signal": "ump_accuracy",
@@ -680,13 +680,13 @@
     },
     {
       "signal": "env_neutral",
-      "n": 1279,
+      "n": 1280,
       "n_hit": 640,
-      "n_miss": 639,
+      "n_miss": 640,
       "auc": 0.5,
-      "se": 0.01615005277038364,
-      "lo": 0.46834589657004805,
-      "hi": 0.5316541034299519,
+      "se": 0.016143733062321735,
+      "lo": 0.4683582831978494,
+      "hi": 0.5316417168021506,
       "separates": false,
       "enough_data": true,
       "strength": 0.0

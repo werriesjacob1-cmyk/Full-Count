@@ -231,7 +231,7 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 54.9,
+          "score": 35.0,
           "notable_signals": 1,
           "matchup": "Texas Rangers @ Minnesota Twins",
           "game_pk": 823652,
@@ -244,7 +244,10 @@
             "same_hand_ratio": 88.8889,
             "l14_k_pct": 0.0,
             "tto_penalty": 8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 51.8657,
+            "ump_k_pct": -0.588,
+            "ump_bb_pct": -0.0
           },
           "hit_probability": 0.2256,
           "raw_hit_probability": 0.2256,
@@ -260,7 +263,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 58.0,
+          "score": 58.5,
           "notable_signals": 0,
           "matchup": "Texas Rangers @ Minnesota Twins",
           "game_pk": 823652,
@@ -269,12 +272,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6067,
+            "outs_rate": 0.6056,
             "avg_outs_per_start": 16.0
           },
-          "hit_probability": 0.5982,
-          "raw_hit_probability": 0.6067,
-          "lift": 0.0292,
+          "hit_probability": 0.5975,
+          "raw_hit_probability": 0.6056,
+          "lift": 0.0343,
           "reliability": "A",
           "sample_n": 26,
           "projection": {

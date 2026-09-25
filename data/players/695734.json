@@ -3875,6 +3875,134 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 44.2,
+          "notable_signals": 2,
+          "matchup": "New York Mets @ Washington Nationals",
+          "game_pk": 822681,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 65.0,
+            "l7_avg_ev": 26.0417,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 2.85,
+            "park_hr_index": 50.7,
+            "season_barrel_pct": 45.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 16.6667,
+            "park_hand_index": 2.28,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 2.0,
+            "woba_ahead": 20.9091,
+            "woba_behind": 39.0909,
+            "pull_park_synergy": 0.9257,
+            "hard_hit_105_rate": -0.08,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.056,
+            "vs_rp_ops": 0.096,
+            "ump_k_pct": 0.264,
+            "ump_bb_pct": 0.468
+          },
+          "hit_probability": 0.6799,
+          "raw_hit_probability": 0.6889,
+          "lift": 0.0088,
+          "reliability": "A",
+          "sample_n": 157,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 57.9,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Washington Nationals",
+          "game_pk": 822681,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -4.38,
+            "sprint_speed": 65.625,
+            "catcher_poptime": 5.7143,
+            "on_base": 52.0154
+          },
+          "hit_probability": 0.0879,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 157,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 3.7,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Washington Nationals",
+          "game_pk": 822681,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0434
+          },
+          "hit_probability": 0.0434,
+          "raw_hit_probability": null,
+          "lift": -0.004,
+          "reliability": "A",
+          "sample_n": 157,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.2,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Washington Nationals",
+          "game_pk": 822681,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0132
+          },
+          "hit_probability": 0.0132,
+          "raw_hit_probability": null,
+          "lift": -0.0073,
+          "reliability": "A",
+          "sample_n": 157,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
