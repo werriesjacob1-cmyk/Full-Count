@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "workstream": "NFL-TIER2-F18-DEFENDER-COVERAGE-20260925",
+  "status": "PARTIAL_INDIVIDUAL_EVIDENCE_RECEIVER_CONSUMER_BLOCKED",
+  "capture_time_utc": "2026-09-25T16:16:55Z",
+  "source": {
+    "provider_chain": "Sportradar game charting -> Pro-Football-Reference advanced defense -> nflverse public release",
+    "url": "https://github.com/nflverse/nflverse-data/releases/download/pfr_advstats/advstats_week_def_2024.csv.gz",
+    "release_asset_created_at": "2025-02-13T07:17:35Z",
+    "release_asset_updated_at": "2025-02-13T07:17:36Z",
+    "bytes": 201021,
+    "sha256": "55cac555ab518f949bc0ed3e20991f8e51f42ad5278147aae5af347e41e4b4f8",
+    "format": "gzip CSV",
+    "raw_file_committed": false
+  },
+  "observed_schema_fields": [
+    "game_id", "pfr_game_id", "season", "week", "game_type", "team", "opponent",
+    "pfr_player_name", "pfr_player_id", "def_targets", "def_completions_allowed",
+    "def_yards_allowed", "def_yards_after_catch", "def_adot"
+  ],
+  "measured_coverage": {
+    "rows": 7992,
+    "unique_games": 285,
+    "unique_pfr_defender_ids": 954,
+    "unique_teams": 32,
+    "duplicate_game_defender_keys": 0,
+    "rows_with_zero_or_blank_def_targets": 2645,
+    "rows_with_positive_def_targets": 5347,
+    "rows_with_positive_targets_but_blank_yards_allowed": 528,
+    "regular_season_rows": 7632,
+    "postseason_rows": 360
+  },
+  "directly_observed": [
+    "weekly PFR defender identity and team/opponent",
+    "targets and completions attributed to a defender",
+    "some targets-conditioned yards and YAC attributed to a defender"
+  ],
+  "not_observed_in_file": [
+    "covered receiver identity",
+    "game/play-level coverage responsibility",
+    "coverage snaps or routes covered",
+    "slot/outside alignment",
+    "help, bracket, or double coverage",
+    "current-game expected defender assignment and availability"
+  ],
+  "legal_gate": "No verified rights for product/predictive model use of underlying PFR/Sportradar charting; no fitting or redistribution performed",
+  "decision": "STOP_BEFORE_MODEL_FITTING_AND_RECEIVER_ADJUSTMENT"
+}
+
