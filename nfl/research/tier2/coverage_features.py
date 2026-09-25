@@ -41,6 +41,14 @@ K_MIX = 200.0                       # labelled dropbacks of prior for a defense'
 HC_CHANGE_WEIGHT = 0.5              # prior-season weight multiplier after a verified HC change
 MIN_PLAYER_ONFIELD = 100.0          # weighted on-field labelled dropbacks to use F11
 MIN_DEFENSE_LABELLED = 200.0        # weighted labelled dropbacks to use F12
+# Coverage-family extension (pre-declared 2026-09-25 before any family fit or scoring).
+# Families shared by the NGS and FTN taxonomies plus OTHER (source-specific labels);
+# UNKNOWN is excluded. Each family's receiver rates shrink toward the receiver's own
+# shrunk man/zone rate for the family's structure (OTHER: toward his exposure-pooled
+# rate); opponent family mixes shrink toward the league family mix of the same window.
+FAMILY_PARENT = {"COVER_0": "MAN", "COVER_1": "MAN", "2_MAN": "MAN", "COVER_2": "ZONE",
+                 "COVER_3": "ZONE", "COVER_4": "ZONE", "COVER_6": "ZONE", "OTHER": None}
+K_FAM = 60.0                        # on-field family dropbacks of prior toward the parent rate
 
 
 class SeasonTables:
@@ -52,6 +60,9 @@ class SeasonTables:
         self.pos = defaultdict(lambda: defaultdict(lambda: [0.0, 0.0, 0.0, 0.0]))
         self.league = defaultdict(lambda: [0.0, 0.0])
         self.family = defaultdict(lambda: defaultdict(float))
+        self.player_fam = defaultdict(lambda: defaultdict(lambda: [0.0, 0.0, 0.0, 0.0]))
+        self.pos_fam = defaultdict(lambda: defaultdict(lambda: [0.0, 0.0, 0.0, 0.0]))
+        self.league_fam = defaultdict(lambda: defaultdict(float))
         for r in rows:
             if r["season_type"] != "REG" or r["man_zone"] == UNKNOWN:
                 continue
@@ -60,6 +71,9 @@ class SeasonTables:
             d[0] += 1
             self.league[s][0 if b == "MAN" else 1] += 1
             self.family[(s, r["defteam"])][r["family"]] += 1
+            fam = r["family"] if r["family"] in FAMILY_PARENT else None
+            if fam:
+                self.league_fam[s][fam] += 1
             for pid in r["offense_players"]:
                 pos = positions.get(pid)
                 if pos not in ("WR", "TE", "RB"):
@@ -76,6 +90,18 @@ class SeasonTables:
                         cell[3] += r["yards"]
                         pcell[2] += 1
                         pcell[3] += r["yards"]
+                if fam:
+                    fc, pfc = self.player_fam[(s, pid)][fam], self.pos_fam[(s, pos)][fam]
+                    fc[0] += 1
+                    pfc[0] += 1
+                    if r["target"] == pid:
+                        fc[1] += 1
+                        pfc[1] += 1
+                        if r["complete"]:
+                            fc[2] += 1
+                            fc[3] += r["yards"]
+                            pfc[2] += 1
+                            pfc[3] += r["yards"]
 
 
 def _window(target_season: int, available: set[int]) -> list[tuple[int, float]]:
@@ -189,3 +215,98 @@ def position_profile(tables: SeasonTables, pos: str, target_season: int,
         bins[b] = {"target_rate": t / n, "catch_rate_given_target": c / t,
                    "yards_per_target": y / t}
     return {"status": "OK", "bins": bins}
+
+
+def _parent_rates(profile: dict, parent: str | None) -> tuple[float, float, float]:
+    if parent is not None:
+        b = profile["bins"][parent]
+        return b["target_rate"], b["catch_rate_given_target"], b["yards_per_target"]
+    m = profile["exposure_man_share"]
+    bm, bz = profile["bins"]["MAN"], profile["bins"]["ZONE"]
+    r = m * bm["target_rate"] + (1 - m) * bz["target_rate"]
+    q = (m * bm["target_rate"] * bm["catch_rate_given_target"]
+         + (1 - m) * bz["target_rate"] * bz["catch_rate_given_target"]) / r if r else 0.0
+    v = (m * bm["target_rate"] * bm["yards_per_target"]
+         + (1 - m) * bz["target_rate"] * bz["yards_per_target"]) / r if r else 0.0
+    return r, q, v
+
+
+def receiver_family_profile(tables: SeasonTables, pid: str, profile: dict, target_season: int,
+                            seasons_available: set[int]) -> dict:
+    """F11 by coverage family. Requires an OK man/zone `profile` (same gates)."""
+    if profile.get("status") != "OK":
+        return {"status": profile.get("status", "NO_RECEIVER_PROFILE")}
+    win = _window(target_season, seasons_available)
+    agg = {f: [0.0, 0.0, 0.0, 0.0] for f in FAMILY_PARENT}
+    for season, w in win:
+        for f in FAMILY_PARENT:
+            c = tables.player_fam.get((season, pid), {}).get(f)
+            if c:
+                for i in range(4):
+                    agg[f][i] += w * c[i]
+    n_tot = sum(v[0] for v in agg.values())
+    if n_tot <= 0:
+        return {"status": "NO_FAMILY_LABELLED_EXPOSURE"}
+    fams = {}
+    for f, parent in FAMILY_PARENT.items():
+        n, t, c, y = agg[f]
+        r_p, q_p, v_p = _parent_rates(profile, parent)
+        fams[f] = {"n_onfield": n, "targets": t,
+                   "target_rate": (t + K_FAM * r_p) / (n + K_FAM),
+                   "catch_rate_given_target": (c + K_EFF * q_p) / (t + K_EFF),
+                   "yards_per_target": (y + K_EFF * v_p) / (t + K_EFF)}
+    return {"status": "OK", "families": fams, "faced_mix": {f: agg[f][0] / n_tot for f in FAMILY_PARENT}}
+
+
+def league_family_mix(tables: SeasonTables, win: list[tuple[int, float]]) -> dict[str, float] | None:
+    tot = {f: sum(w * tables.league_fam[s].get(f, 0.0) for s, w in win) for f in FAMILY_PARENT}
+    n = sum(tot.values())
+    return {f: v / n for f, v in tot.items()} if n else None
+
+
+def defense_family_mix(tables: SeasonTables, defteam: str, target_season: int,
+                       seasons_available: set[int], hc_changed: bool | None) -> dict:
+    """F12 by coverage family: shrunk family mix (same HC rule and gate as F12)."""
+    win = _window(target_season, seasons_available)
+    if not win:
+        return {"status": "NO_PRIOR_SEASON"}
+    league = league_family_mix(tables, win)
+    mult = 1.0 if hc_changed is False else HC_CHANGE_WEIGHT
+    cnt = {f: sum(w * mult * tables.family.get((s, defteam), {}).get(f, 0.0) for s, w in win)
+           for f in FAMILY_PARENT}
+    lab = sum(cnt.values())
+    if league is None or lab < MIN_DEFENSE_LABELLED * mult:
+        return {"status": "INSUFFICIENT_DEFENSE_COVERAGE_SAMPLE", "labelled": lab}
+    return {"status": "OK", "mix": {f: (cnt[f] + K_MIX * league[f]) / (lab + K_MIX) for f in FAMILY_PARENT},
+            "league_mix": league, "dc_identity": UNKNOWN}
+
+
+def position_family_profile(tables: SeasonTables, pos: str, target_season: int,
+                            seasons_available: set[int]) -> dict | None:
+    win = _window(target_season, seasons_available)
+    if not win or pos not in ("WR", "TE", "RB"):
+        return None
+    fams = {}
+    for f in FAMILY_PARENT:
+        n = t = c = y = 0.0
+        for season, w in win:
+            cell = tables.pos_fam.get((season, pos), {}).get(f)
+            if cell:
+                n += w * cell[0]; t += w * cell[1]; c += w * cell[2]; y += w * cell[3]
+        if not n or not t:
+            return None
+        fams[f] = {"target_rate": t / n, "catch_rate_given_target": c / t, "yards_per_target": y / t}
+    return {"status": "OK", "families": fams}
+
+
+def expected_family(profile: dict, mix: dict[str, float], quantity: str) -> float:
+    total = 0.0
+    for f, weight in mix.items():
+        cell = profile["families"][f]
+        value = cell["target_rate"]
+        if quantity == "receptions":
+            value *= cell["catch_rate_given_target"]
+        elif quantity == "receiving_yards":
+            value *= cell["yards_per_target"]
+        total += weight * value
+    return total

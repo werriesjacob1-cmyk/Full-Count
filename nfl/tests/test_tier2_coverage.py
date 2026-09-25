@@ -146,6 +146,44 @@ class ChallengerTests(unittest.TestCase):
         self.assertTrue(C.RATIO_LO <= a[0] <= C.RATIO_HI)
 
 
+class FamilyTests(unittest.TestCase):
+    def setUp(self):
+        rows = []
+        for i in range(300):   # wr1 targeted on 20% of COVER_1 (man) and 5% of COVER_3 (zone) snaps
+            rows.append(drop(2021, "D", "MAN", ["wr1", "wr2"], "wr1" if i % 5 == 0 else None, True, 10.0,
+                             family="COVER_1"))
+            rows.append(drop(2021, "D", "ZONE", ["wr1", "wr2"], "wr1" if i % 20 == 0 else None, True, 10.0,
+                             family="COVER_3"))
+        for i in range(300):   # a COVER_1-heavy opponent
+            rows.append(drop(2021, "C1TEAM", "MAN", ["wr1", "wr2"], None, family="COVER_1"))
+        self.t = F.SeasonTables(rows, POS)
+        self.rec = F.receiver_profile(self.t, "wr1", "WR", 2022, {2021})
+        self.fam = F.receiver_family_profile(self.t, "wr1", self.rec, 2022, {2021})
+
+    def test_family_rates_shrink_toward_parent_and_unseen_family_equals_parent(self):
+        c1, c3 = self.fam["families"]["COVER_1"], self.fam["families"]["COVER_3"]
+        self.assertGreater(c1["target_rate"], c3["target_rate"])
+        self.assertAlmostEqual(self.fam["families"]["COVER_0"]["target_rate"],
+                               self.rec["bins"]["MAN"]["target_rate"])   # no exposure -> parent
+        self.assertAlmostEqual(self.fam["faced_mix"]["COVER_1"], 2 / 3)   # 600 of 900 on-field dropbacks
+
+    def test_family_ratio_one_at_faced_mix_and_above_one_vs_cover1_heavy(self):
+        d = {"status": "OK", "mix": dict(self.fam["faced_mix"]), "league_mix": dict(self.fam["faced_mix"])}
+        r, why = C.family_ratio("FAMILY_COMBINED", "receptions", self.fam, None, d, None)
+        self.assertEqual(why, "OK")
+        self.assertAlmostEqual(r, 1.0)
+        heavy = F.defense_family_mix(self.t, "C1TEAM", 2022, {2021}, False)
+        self.assertEqual(heavy["dc_identity"], D.UNKNOWN)
+        r2, _ = C.family_ratio("FAMILY_COMBINED", "receptions", self.fam, None, heavy, None)
+        self.assertGreater(r2, 1.0)
+
+    def test_family_missing_side_falls_back(self):
+        r, why = C.family_ratio("FAMILY_COMBINED", "receptions", {"status": "INSUFFICIENT_RECEIVER_COVERAGE_SAMPLE"},
+                                None, None, None)
+        self.assertIsNone(r)
+        self.assertEqual(why, "INSUFFICIENT_RECEIVER_COVERAGE_SAMPLE")
+
+
 class HcChangeMapTests(unittest.TestCase):
     def test_hc_change_detection(self):
         import sys

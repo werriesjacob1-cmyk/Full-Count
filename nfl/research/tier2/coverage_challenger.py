@@ -24,6 +24,7 @@ from typing import Mapping
 from nfl.research.tier2 import coverage_features as F
 
 MODES = ("COMBINED", "F11_ONLY", "F12_ONLY")
+FAMILY_MODES = ("FAMILY_COMBINED", "FAMILY_F11_ONLY", "FAMILY_F12_ONLY")
 RATIO_LO, RATIO_HI = 0.75, 1.0 / 0.75
 QUANTITY = {"receptions": "receptions", "receiving_yards": "receiving_yards"}
 
@@ -59,3 +60,30 @@ def matchup_ratio(mode: str, market: str, receiver: Mapping | None,
 def predict(b0: float, k: float, ratio: float | None, alpha: float) -> float:
     base = k * b0
     return base if ratio is None else base * ratio ** alpha
+
+
+def family_ratio(mode: str, market: str, receiver_fam: Mapping | None, position_fam: Mapping | None,
+                 defense_fam: Mapping | None, league_mix: Mapping | None) -> tuple[float | None, str]:
+    """Coverage-family analogue of matchup_ratio (same modes, same clip)."""
+    q = QUANTITY[market]
+    if mode in ("FAMILY_COMBINED", "FAMILY_F11_ONLY"):
+        if not receiver_fam or receiver_fam.get("status") != "OK":
+            return None, (receiver_fam or {}).get("status", "NO_RECEIVER_PROFILE")
+        if mode == "FAMILY_COMBINED":
+            if not defense_fam or defense_fam.get("status") != "OK":
+                return None, (defense_fam or {}).get("status", "NO_DEFENSE_PROFILE")
+            target_mix = defense_fam["mix"]
+        else:
+            if not league_mix:
+                return None, "NO_LEAGUE_MIX"
+            target_mix = league_mix
+        den = F.expected_family(receiver_fam, receiver_fam["faced_mix"], q)
+        num = F.expected_family(receiver_fam, target_mix, q)
+    else:
+        if not position_fam or not defense_fam or defense_fam.get("status") != "OK":
+            return None, (defense_fam or {}).get("status", "NO_POSITION_OR_DEFENSE_PROFILE")
+        den = F.expected_family(position_fam, defense_fam["league_mix"], q)
+        num = F.expected_family(position_fam, defense_fam["mix"], q)
+    if den <= 0:
+        return None, "ZERO_DENOMINATOR"
+    return min(max(num / den, RATIO_LO), RATIO_HI), "OK"
