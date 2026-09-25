@@ -29,3 +29,10 @@ Kickoff was 2026-09-25T00:15Z (7:15 pm CDT). This folder is research evidence on
   - `integration_03b.json` is the correct join against the pre-lock B0 (23:51:55Z): **9 joined, 0 bettable**, integration seal `b2509c7b16229b62…`.
 - **Quote stability:** none of the 9 primary quotes changed between 22:56Z and 23:52Z.
 - **Gates still blocking eligibility:** rules certification, current role, and quote-origin timestamp.
+
+## Postgame (04:00Z trigger)
+- **Final status:** ESPN event 401872948 is `STATUS_FINAL`. Score: ATL 35, GB 14. Snapshot `espn_scoreboard_20260924_postgame.json` fetched at 04:02Z.
+- **Player outcomes are PENDING.** The repo's grading path (`box_score_outcomes` → `receptions_paired_grader` / `player_prop_grader`) reads nflverse `stats_player_week_2026.csv`. That file was last modified 2026-09-24T14:13:56Z and has 0 rows for `2026_03_ATL_GB`.
+- **Nothing is graded from any other source.**
+- **What will be graded once outcomes exist:** the frozen research predictions, meaning the receptions SHADOW_ONLY B0 plus challengers, and the passing-yards SHADOW_ONLY B0.
+- **What is not graded:** eligible selections. There were 0 bettable offers.
