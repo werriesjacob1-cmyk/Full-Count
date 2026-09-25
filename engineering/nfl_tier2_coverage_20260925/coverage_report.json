@@ -1,0 +1,2512 @@
+{
+  "markets": {
+    "receiving_yards": {
+      "combined_fallback_reasons": {
+        "INSUFFICIENT_RECEIVER_COVERAGE_SAMPLE": 6493,
+        "NO_FEATURES_PRE_2019": 10321,
+        "OK": 21423,
+        "UNSUPPORTED_POSITION_OR_NO_PRIOR_SEASON": 408
+      },
+      "fresh_2026_examples": [
+        {
+          "actual": 21.0,
+          "b0": 16.4,
+          "challenger": 13.880922016385501,
+          "dc_identity": "UNKNOWN",
+          "game_id": "2026_02_LV_LAC",
+          "opponent": "LV",
+          "opponent_man_share": 0.3022276409440744,
+          "opponent_regime": "HC_CHANGED",
+          "player_id": "00-0040666",
+          "pos": "RB",
+          "ratio": 1.0851252358024939,
+          "receiver_faced_man_share": 0.4594594594594595,
+          "receiver_man_rate": 0.10869669736915766,
+          "receiver_n_onfield": 185.0,
+          "receiver_zone_rate": 0.22210271546635185,
+          "scale_control": 12.792
+        },
+        {
+          "actual": 29.0,
+          "b0": 15.0,
+          "challenger": 10.742632180491638,
+          "dc_identity": "UNKNOWN",
+          "game_id": "2026_02_PHI_TEN",
+          "opponent": "PHI",
+          "opponent_man_share": 0.4585404762056196,
+          "opponent_regime": "HC_UNCHANGED",
+          "player_id": "00-0039032",
+          "pos": "RB",
+          "ratio": 0.9181736906403108,
+          "receiver_faced_man_share": 0.31974921630094044,
+          "receiver_man_rate": 0.12120525349901608,
+          "receiver_n_onfield": 319.0,
+          "receiver_zone_rate": 0.22622800781086636,
+          "scale_control": 11.700000000000001
+        },
+        {
+          "actual": 65.0,
+          "b0": 64.0,
+          "challenger": 46.48662367617017,
+          "dc_identity": "UNKNOWN",
+          "game_id": "2026_01_GB_MIN",
+          "opponent": "MIN",
+          "opponent_man_share": 0.2702064382297659,
+          "opponent_regime": "HC_UNCHANGED",
+          "player_id": "00-0038996",
+          "pos": "TE",
+          "ratio": 0.9312224294104601,
+          "receiver_faced_man_share": 0.4132231404958678,
+          "receiver_man_rate": 0.2101402999516207,
+          "receiver_n_onfield": 423.5,
+          "receiver_zone_rate": 0.15836399582898658,
+          "scale_control": 49.92
+        },
+        {
+          "actual": 23.0,
+          "b0": 35.4,
+          "challenger": 25.75262391509598,
+          "dc_identity": "UNKNOWN",
+          "game_id": "2026_01_DEN_KC",
+          "opponent": "KC",
+          "opponent_man_share": 0.42561370969280704,
+          "opponent_regime": "HC_UNCHANGED",
+          "player_id": "00-0040730",
+          "pos": "RB",
+          "ratio": 0.932660579280602,
+          "receiver_faced_man_share": 0.18421052631578946,
+          "receiver_man_rate": 0.1484609240289048,
+          "receiver_n_onfield": 266.0,
+          "receiver_zone_rate": 0.20306724486808705,
+          "scale_control": 27.612
+        },
+        {
+          "actual": 12.0,
+          "b0": 18.2,
+          "challenger": 13.3042923012681,
+          "dc_identity": "UNKNOWN",
+          "game_id": "2026_01_NYJ_TEN",
+          "opponent": "NYJ",
+          "opponent_man_share": 0.42629240247973776,
+          "opponent_regime": "HC_UNCHANGED",
+          "player_id": "00-0039032",
+          "pos": "RB",
+          "ratio": 0.937185989100317,
+          "receiver_faced_man_share": 0.31974921630094044,
+          "receiver_man_rate": 0.12120525349901608,
+          "receiver_n_onfield": 319.0,
+          "receiver_zone_rate": 0.22622800781086636,
+          "scale_control": 14.196
+        },
+        {
+          "actual": 19.0,
+          "b0": 71.2,
+          "challenger": 52.179413514395044,
+          "dc_identity": "UNKNOWN",
+          "game_id": "2026_01_DEN_KC",
+          "opponent": "DEN",
+          "opponent_man_share": 0.4790906422158391,
+          "opponent_regime": "HC_UNCHANGED",
+          "player_id": "00-0039067",
+          "pos": "WR",
+          "ratio": 0.9395601684384011,
+          "receiver_faced_man_share": 0.35551330798479086,
+          "receiver_man_rate": 0.2713592409039052,
+          "receiver_n_onfield": 263.0,
+          "receiver_zone_rate": 0.2848512258630043,
+          "scale_control": 55.536
+        },
+        {
+          "actual": 9.0,
+          "b0": 10.6,
+          "challenger": 7.7773769131345665,
+          "dc_identity": "UNKNOWN",
+          "game_id": "2026_01_CHI_CAR",
+          "opponent": "CHI",
+          "opponent_man_share": 0.40163912380566946,
+          "opponent_regime": "HC_UNCHANGED",
+          "player_id": "00-0040187",
+          "pos": "TE",
+          "ratio": 0.9406600040075672,
+          "receiver_faced_man_share": 0.19548872180451127,
+          "receiver_man_rate": 0.16077044025157233,
+          "receiver_n_onfield": 133.0,
+          "receiver_zone_rate": 0.18719086512782548,
+          "scale_control": 8.268
+        },
+        {
+          "actual": 0.0,
+          "b0": 5.8,
+          "challenger": 4.258024907251328,
+          "dc_identity": "UNKNOWN",
+          "game_id": "2026_02_JAX_DEN",
+          "opponent": "DEN",
+          "opponent_man_share": 0.4790906422158391,
+          "opponent_regime": "HC_UNCHANGED",
+          "player_id": "00-0040238",
+          "pos": "RB",
+          "ratio": 0.9412079812668719,
+          "receiver_faced_man_share": 0.2804878048780488,
+          "receiver_man_rate": 0.08950879531506148,
+          "receiver_n_onfield": 164.0,
+          "receiver_zone_rate": 0.14748387636786553,
+          "scale_control": 4.524
+        }
+      ],
+      "holdout_by_opponent_man_tercile": {
+        "high": {
+          "mean_delta_vs_scale": -0.0012333618558290171,
+          "n": 3099
+        },
+        "low": {
+          "mean_delta_vs_scale": 0.015443060689276403,
+          "n": 3097
+        },
+        "mid": {
+          "mean_delta_vs_scale": 0.003405506163666631,
+          "n": 3097
+        }
+      },
+      "holdout_by_position": {
+        "RB": {
+          "mean_delta_vs_scale": -0.0017457356392759627,
+          "n": 2151
+        },
+        "TE": {
+          "mean_delta_vs_scale": 0.010250062588266114,
+          "n": 2473
+        },
+        "WR": {
+          "mean_delta_vs_scale": 0.007059005296990994,
+          "n": 4669
+        }
+      },
+      "holdout_by_receiver_sample_tercile": {
+        "large": {
+          "mean_delta_vs_scale": 0.016324453402032812,
+          "n": 3099
+        },
+        "mid": {
+          "mean_delta_vs_scale": 0.001958237974764885,
+          "n": 3097
+        },
+        "small": {
+          "mean_delta_vs_scale": -0.000678824975265125,
+          "n": 3097
+        }
+      },
+      "holdout_by_season": {
+        "2023": {
+          "mean_delta_vs_scale": 0.008218432250292337,
+          "n": 3076
+        },
+        "2024": {
+          "mean_delta_vs_scale": 0.004052655932814539,
+          "n": 3103
+        },
+        "2025": {
+          "mean_delta_vs_scale": 0.005361764351614548,
+          "n": 3114
+        }
+      },
+      "modes": {
+        "COMBINED": {
+          "market": "receiving_yards",
+          "scale_control_k": 0.78,
+          "vs_b0": {
+            "market": "receiving_yards",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.9992724487842236,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 20.700481843129943,
+                    "challenger": 19.88807937966702
+                  },
+                  "error": {
+                    "b0": 0.3494243410555879,
+                    "challenger": -6.762478690407844
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  -0.9138835521769172,
+                  -0.7091844721999419
+                ],
+                "paired_delta_mean": -0.8124024634628885,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 0.9977064220183486,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 20.169036697247712,
+                    "challenger": 19.37716972477065
+                  },
+                  "error": {
+                    "b0": 0.3638379204892963,
+                    "challenger": -6.41005963302752
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  -1.463870150435472,
+                  -0.10343883792048973
+                ],
+                "paired_delta_mean": -0.7918669724770645,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.9995038862245742,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 19.61986935670587,
+                    "challenger": 18.800803704316202
+                  },
+                  "error": {
+                    "b0": 0.3376440108042543,
+                    "challenger": -6.353355052091903
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  -0.9712544891301363,
+                  -0.6657013975370137
+                ],
+                "paired_delta_mean": -0.8190656523896147,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          },
+          "vs_scale_control": {
+            "market": "receiving_yards",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.0,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 19.88807937966702,
+                    "challenger": 19.88807937966702
+                  },
+                  "error": {
+                    "b0": -6.762478690407844,
+                    "challenger": -6.762478690407844
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  0.0,
+                  0.0
+                ],
+                "paired_delta_mean": 0.0,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 0.0,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 19.37716972477065,
+                    "challenger": 19.37716972477065
+                  },
+                  "error": {
+                    "b0": -6.41005963302752,
+                    "challenger": -6.41005963302752
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  0.0,
+                  0.0
+                ],
+                "paired_delta_mean": 0.0,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.0,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 18.800803704316202,
+                    "challenger": 18.800803704316202
+                  },
+                  "error": {
+                    "b0": -6.353355052091903,
+                    "challenger": -6.353355052091903
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  0.0,
+                  0.0
+                ],
+                "paired_delta_mean": 0.0,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          }
+        },
+        "COMBINED_ALPHA1_SENSITIVITY": {
+          "market": "receiving_yards",
+          "scale_control_k": 0.78,
+          "vs_b0": {
+            "market": "receiving_yards",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.9992724487842236,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 20.700481843129943,
+                    "challenger": 19.891290171202925
+                  },
+                  "error": {
+                    "b0": 0.3494243410555879,
+                    "challenger": -6.7662417600490254
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  -0.9110583000555763,
+                  -0.70608606297941
+                ],
+                "paired_delta_mean": -0.8091916719268486,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 0.9977064220183486,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 20.169036697247712,
+                    "challenger": 19.3759818572684
+                  },
+                  "error": {
+                    "b0": 0.3638379204892963,
+                    "challenger": -6.476146526214054
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  -1.4671472505716443,
+                  -0.09077720206400806
+                ],
+                "paired_delta_mean": -0.7930548399793017,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.9995038862245742,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 19.61986935670587,
+                    "challenger": 18.80531435613971
+                  },
+                  "error": {
+                    "b0": 0.3376440108042543,
+                    "challenger": -6.3547964750707315
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  -0.9681997884826321,
+                  -0.6605492830484636
+                ],
+                "paired_delta_mean": -0.8145550005662022,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          },
+          "vs_scale_control": {
+            "market": "receiving_yards",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.44932031399578787,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 19.88807937966702,
+                    "challenger": 19.891290171202925
+                  },
+                  "error": {
+                    "b0": -6.762478690407844,
+                    "challenger": -6.7662417600490254
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  -0.0022336357180484222,
+                  0.008232016313202957
+                ],
+                "paired_delta_mean": 0.0032107915360398876,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 0.9013761467889908,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 19.37716972477065,
+                    "challenger": 19.3759818572684
+                  },
+                  "error": {
+                    "b0": -6.41005963302752,
+                    "challenger": -6.476146526214054
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  -0.043071868192096824,
+                  0.044024460785667734
+                ],
+                "paired_delta_mean": -0.0011878675022371891,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.7683148668761369,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 18.800803704316202,
+                    "challenger": 18.80531435613971
+                  },
+                  "error": {
+                    "b0": -6.353355052091903,
+                    "challenger": -6.3547964750707315
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  -0.004001391048309556,
+                  0.013668914869219879
+                ],
+                "paired_delta_mean": 0.004510651823412473,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          }
+        },
+        "F11_ONLY": {
+          "market": "receiving_yards",
+          "scale_control_k": 0.78,
+          "vs_b0": {
+            "market": "receiving_yards",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.9992724487842236,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 20.700481843129943,
+                    "challenger": 19.88807937966702
+                  },
+                  "error": {
+                    "b0": 0.3494243410555879,
+                    "challenger": -6.762478690407844
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  -0.9138835521769172,
+                  -0.7091844721999419
+                ],
+                "paired_delta_mean": -0.8124024634628885,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 0.9977064220183486,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 20.169036697247712,
+                    "challenger": 19.37716972477065
+                  },
+                  "error": {
+                    "b0": 0.3638379204892963,
+                    "challenger": -6.41005963302752
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  -1.463870150435472,
+                  -0.10343883792048973
+                ],
+                "paired_delta_mean": -0.7918669724770645,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.9995038862245742,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 19.61986935670587,
+                    "challenger": 18.800803704316202
+                  },
+                  "error": {
+                    "b0": 0.3376440108042543,
+                    "challenger": -6.353355052091903
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  -0.9712544891301363,
+                  -0.6657013975370137
+                ],
+                "paired_delta_mean": -0.8190656523896147,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          },
+          "vs_scale_control": {
+            "market": "receiving_yards",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.0,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 19.88807937966702,
+                    "challenger": 19.88807937966702
+                  },
+                  "error": {
+                    "b0": -6.762478690407844,
+                    "challenger": -6.762478690407844
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  0.0,
+                  0.0
+                ],
+                "paired_delta_mean": 0.0,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 0.0,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 19.37716972477065,
+                    "challenger": 19.37716972477065
+                  },
+                  "error": {
+                    "b0": -6.41005963302752,
+                    "challenger": -6.41005963302752
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  0.0,
+                  0.0
+                ],
+                "paired_delta_mean": 0.0,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.0,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 18.800803704316202,
+                    "challenger": 18.800803704316202
+                  },
+                  "error": {
+                    "b0": -6.353355052091903,
+                    "challenger": -6.353355052091903
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  0.0,
+                  0.0
+                ],
+                "paired_delta_mean": 0.0,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          }
+        },
+        "F11_ONLY_ALPHA1_SENSITIVITY": {
+          "market": "receiving_yards",
+          "scale_control_k": 0.78,
+          "vs_b0": {
+            "market": "receiving_yards",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.9992724487842236,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 20.700481843129943,
+                    "challenger": 19.890621119710868
+                  },
+                  "error": {
+                    "b0": 0.3494243410555879,
+                    "challenger": -6.768905674805926
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  -0.9114812711102916,
+                  -0.708276427158161
+                ],
+                "paired_delta_mean": -0.8098607234189432,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 0.9977064220183486,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 20.169036697247712,
+                    "challenger": 19.359816183023867
+                  },
+                  "error": {
+                    "b0": 0.3638379204892963,
+                    "challenger": -6.456972064873822
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  -1.4808929163937388,
+                  -0.11146883711362844
+                ],
+                "paired_delta_mean": -0.8092205142238424,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.9995038862245742,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 19.61986935670587,
+                    "challenger": 18.80145417928352
+                  },
+                  "error": {
+                    "b0": 0.3376440108042543,
+                    "challenger": -6.355643298578224
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  -0.9702683371805222,
+                  -0.6622694988059836
+                ],
+                "paired_delta_mean": -0.8184151774223353,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          },
+          "vs_scale_control": {
+            "market": "receiving_yards",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.44932031399578787,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 19.88807937966702,
+                    "challenger": 19.890621119710868
+                  },
+                  "error": {
+                    "b0": -6.762478690407844,
+                    "challenger": -6.768905674805926
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  -0.0007740065179408315,
+                  0.00543304618529068
+                ],
+                "paired_delta_mean": 0.002541740043945321,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 0.9013761467889908,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 19.37716972477065,
+                    "challenger": 19.359816183023867
+                  },
+                  "error": {
+                    "b0": -6.41005963302752,
+                    "challenger": -6.456972064873822
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  -0.05420017435658245,
+                  0.012945064940084607
+                ],
+                "paired_delta_mean": -0.017353541746777997,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.7683148668761369,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 18.800803704316202,
+                    "challenger": 18.80145417928352
+                  },
+                  "error": {
+                    "b0": -6.353355052091903,
+                    "challenger": -6.355643298578224
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  -0.005120230486417554,
+                  0.006282736429528856
+                ],
+                "paired_delta_mean": 0.0006504749672795118,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          }
+        },
+        "F12_ONLY": {
+          "market": "receiving_yards",
+          "scale_control_k": 0.78,
+          "vs_b0": {
+            "market": "receiving_yards",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.9992724487842236,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 20.700481843129943,
+                    "challenger": 19.88800085480752
+                  },
+                  "error": {
+                    "b0": 0.3494243410555879,
+                    "challenger": -6.762348910245349
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  -0.9138386861109161,
+                  -0.7092354417835215
+                ],
+                "paired_delta_mean": -0.8124809883223048,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 0.9977064220183486,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 20.169036697247712,
+                    "challenger": 19.37754401252665
+                  },
+                  "error": {
+                    "b0": 0.3638379204892963,
+                    "challenger": -6.407914621509869
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  -1.4602083016418306,
+                  -0.10444206637900358
+                ],
+                "paired_delta_mean": -0.7914926847210586,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.9995038862245742,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 19.61986935670587,
+                    "challenger": 18.800667852761134
+                  },
+                  "error": {
+                    "b0": 0.3376440108042543,
+                    "challenger": -6.353793479293518
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  -0.9721662733957473,
+                  -0.6658257092254644
+                ],
+                "paired_delta_mean": -0.8192015039446005,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          },
+          "vs_scale_control": {
+            "market": "receiving_yards",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.594868849320314,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 19.88807937966702,
+                    "challenger": 19.88800085480752
+                  },
+                  "error": {
+                    "b0": -6.762478690407844,
+                    "challenger": -6.762348910245349
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  -0.0009677707040657749,
+                  0.0008793689105693735
+                ],
+                "paired_delta_mean": -7.852485941627294e-05,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 0.9908256880733946,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 19.37716972477065,
+                    "challenger": 19.37754401252665
+                  },
+                  "error": {
+                    "b0": -6.41005963302752,
+                    "challenger": -6.407914621509869
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  -0.0054764276816004365,
+                  0.006250058500215843
+                ],
+                "paired_delta_mean": 0.0003742877560058931,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.9867702993219778,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 18.800803704316202,
+                    "challenger": 18.800667852761134
+                  },
+                  "error": {
+                    "b0": -6.353355052091903,
+                    "challenger": -6.353793479293518
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  -0.0015304613771428557,
+                  0.001204205556550332
+                ],
+                "paired_delta_mean": -0.0001358515549857999,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          }
+        },
+        "F12_ONLY_ALPHA1_SENSITIVITY": {
+          "market": "receiving_yards",
+          "scale_control_k": 0.78,
+          "vs_b0": {
+            "market": "receiving_yards",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.9992724487842236,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 20.700481843129943,
+                    "challenger": 19.88865634435956
+                  },
+                  "error": {
+                    "b0": 0.3494243410555879,
+                    "challenger": -6.760957089182533
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  -0.912847353794029,
+                  -0.7094105741072652
+                ],
+                "paired_delta_mean": -0.8118254987701701,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 0.9977064220183486,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 20.169036697247712,
+                    "challenger": 19.37851000082233
+                  },
+                  "error": {
+                    "b0": 0.3638379204892963,
+                    "challenger": -6.40239420521629
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  -1.4525657272976567,
+                  -0.1067755226224749
+                ],
+                "paired_delta_mean": -0.7905266964253855,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.9995038862245742,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 19.61986935670587,
+                    "challenger": 18.80108423032319
+                  },
+                  "error": {
+                    "b0": 0.3376440108042543,
+                    "challenger": -6.353790110231309
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  -0.9734485869146815,
+                  -0.6645517717587954
+                ],
+                "paired_delta_mean": -0.8187851263826632,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          },
+          "vs_scale_control": {
+            "market": "receiving_yards",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.594868849320314,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 19.88807937966702,
+                    "challenger": 19.88865634435956
+                  },
+                  "error": {
+                    "b0": -6.762478690407844,
+                    "challenger": -6.760957089182533
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  -0.002267442473002605,
+                  0.003659494393061311
+                ],
+                "paired_delta_mean": 0.00057696469271844,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 0.9908256880733946,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 19.37716972477065,
+                    "challenger": 19.37851000082233
+                  },
+                  "error": {
+                    "b0": -6.41005963302752,
+                    "challenger": -6.40239420521629
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  -0.01819265745228381,
+                  0.02096159214314631
+                ],
+                "paired_delta_mean": 0.0013402760516789888,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.9867702993219778,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 18.800803704316202,
+                    "challenger": 18.80108423032319
+                  },
+                  "error": {
+                    "b0": -6.353355052091903,
+                    "challenger": -6.353790110231309
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  -0.004413976426718256,
+                  0.004782131192578515
+                ],
+                "paired_delta_mean": 0.00028052600695155214,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          }
+        }
+      },
+      "splits_basis": "COMBINED at alpha=1.0 sensitivity, delta vs scale control"
+    },
+    "receptions": {
+      "combined_fallback_reasons": {
+        "INSUFFICIENT_RECEIVER_COVERAGE_SAMPLE": 6493,
+        "NO_FEATURES_PRE_2019": 10321,
+        "OK": 21423,
+        "UNSUPPORTED_POSITION_OR_NO_PRIOR_SEASON": 408
+      },
+      "fresh_2026_examples": [
+        {
+          "actual": 2.0,
+          "b0": 3.6,
+          "challenger": 3.511129220735218,
+          "dc_identity": "UNKNOWN",
+          "game_id": "2026_02_LV_LAC",
+          "opponent": "LV",
+          "opponent_man_share": 0.3022276409440744,
+          "opponent_regime": "HC_CHANGED",
+          "player_id": "00-0040666",
+          "pos": "RB",
+          "ratio": 1.1210501981913212,
+          "receiver_faced_man_share": 0.4594594594594595,
+          "receiver_man_rate": 0.10869669736915766,
+          "receiver_n_onfield": 185.0,
+          "receiver_zone_rate": 0.22210271546635185,
+          "scale_control": 3.132
+        },
+        {
+          "actual": 0.0,
+          "b0": 1.2,
+          "challenger": 0.9321090869658146,
+          "dc_identity": "UNKNOWN",
+          "game_id": "2026_02_JAX_DEN",
+          "opponent": "DEN",
+          "opponent_man_share": 0.4790906422158391,
+          "opponent_regime": "HC_UNCHANGED",
+          "player_id": "00-0040238",
+          "pos": "RB",
+          "ratio": 0.8928247959442669,
+          "receiver_faced_man_share": 0.2804878048780488,
+          "receiver_man_rate": 0.08950879531506148,
+          "receiver_n_onfield": 164.0,
+          "receiver_zone_rate": 0.14748387636786553,
+          "scale_control": 1.044
+        },
+        {
+          "actual": 3.0,
+          "b0": 3.0,
+          "challenger": 2.3753769752126144,
+          "dc_identity": "UNKNOWN",
+          "game_id": "2026_01_DEN_KC",
+          "opponent": "DEN",
+          "opponent_man_share": 0.4790906422158391,
+          "opponent_regime": "HC_UNCHANGED",
+          "player_id": "00-0038134",
+          "pos": "RB",
+          "ratio": 0.9101061207711167,
+          "receiver_faced_man_share": 0.2872503840245776,
+          "receiver_man_rate": 0.12954301388809877,
+          "receiver_n_onfield": 325.5,
+          "receiver_zone_rate": 0.20163790279211505,
+          "scale_control": 2.61
+        },
+        {
+          "actual": 2.0,
+          "b0": 3.4,
+          "challenger": 2.6979283999009187,
+          "dc_identity": "UNKNOWN",
+          "game_id": "2026_02_PHI_TEN",
+          "opponent": "PHI",
+          "opponent_man_share": 0.4585404762056196,
+          "opponent_regime": "HC_UNCHANGED",
+          "player_id": "00-0039032",
+          "pos": "RB",
+          "ratio": 0.9120785665655575,
+          "receiver_faced_man_share": 0.31974921630094044,
+          "receiver_man_rate": 0.12120525349901608,
+          "receiver_n_onfield": 319.0,
+          "receiver_zone_rate": 0.22622800781086636,
+          "scale_control": 2.9579999999999997
+        },
+        {
+          "actual": 3.0,
+          "b0": 1.6,
+          "challenger": 1.5078115698388177,
+          "dc_identity": "UNKNOWN",
+          "game_id": "2026_01_TB_CIN",
+          "opponent": "TB",
+          "opponent_man_share": 0.3194125639974542,
+          "opponent_regime": "HC_UNCHANGED",
+          "player_id": "00-0033526",
+          "pos": "RB",
+          "ratio": 1.083197966838231,
+          "receiver_faced_man_share": 0.45286195286195285,
+          "receiver_man_rate": 0.1020869029235573,
+          "receiver_n_onfield": 297.0,
+          "receiver_zone_rate": 0.17768217237308148,
+          "scale_control": 1.3920000000000001
+        },
+        {
+          "actual": 4.0,
+          "b0": 3.8,
+          "challenger": 3.043287746071126,
+          "dc_identity": "UNKNOWN",
+          "game_id": "2026_01_DEN_KC",
+          "opponent": "KC",
+          "opponent_man_share": 0.42561370969280704,
+          "opponent_regime": "HC_UNCHANGED",
+          "player_id": "00-0040730",
+          "pos": "RB",
+          "ratio": 0.9205347084304676,
+          "receiver_faced_man_share": 0.18421052631578946,
+          "receiver_man_rate": 0.1484609240289048,
+          "receiver_n_onfield": 266.0,
+          "receiver_zone_rate": 0.20306724486808705,
+          "scale_control": 3.306
+        },
+        {
+          "actual": 2.0,
+          "b0": 3.4,
+          "challenger": 2.7583558946852675,
+          "dc_identity": "UNKNOWN",
+          "game_id": "2026_01_NYJ_TEN",
+          "opponent": "NYJ",
+          "opponent_man_share": 0.42629240247973776,
+          "opponent_regime": "HC_UNCHANGED",
+          "player_id": "00-0039032",
+          "pos": "RB",
+          "ratio": 0.932507063788123,
+          "receiver_faced_man_share": 0.31974921630094044,
+          "receiver_man_rate": 0.12120525349901608,
+          "receiver_n_onfield": 319.0,
+          "receiver_zone_rate": 0.22622800781086636,
+          "scale_control": 2.9579999999999997
+        },
+        {
+          "actual": 0.0,
+          "b0": 1.2,
+          "challenger": 1.1128427928380256,
+          "dc_identity": "UNKNOWN",
+          "game_id": "2026_01_GB_MIN",
+          "opponent": "MIN",
+          "opponent_man_share": 0.2702064382297659,
+          "opponent_regime": "HC_UNCHANGED",
+          "player_id": "00-0038685",
+          "pos": "RB",
+          "ratio": 1.065941372450216,
+          "receiver_faced_man_share": 0.3911671924290221,
+          "receiver_man_rate": 0.11577228246109458,
+          "receiver_n_onfield": 158.5,
+          "receiver_zone_rate": 0.18265995483402822,
+          "scale_control": 1.044
+        }
+      ],
+      "holdout_by_opponent_man_tercile": {
+        "high": {
+          "mean_delta_vs_scale": -0.001369538579705318,
+          "n": 3099
+        },
+        "low": {
+          "mean_delta_vs_scale": 0.00020100787572489254,
+          "n": 3097
+        },
+        "mid": {
+          "mean_delta_vs_scale": -0.00044560133746267435,
+          "n": 3097
+        }
+      },
+      "holdout_by_position": {
+        "RB": {
+          "mean_delta_vs_scale": -0.003755335292988094,
+          "n": 2151
+        },
+        "TE": {
+          "mean_delta_vs_scale": 0.0005541064758974771,
+          "n": 2473
+        },
+        "WR": {
+          "mean_delta_vs_scale": 0.00036532766991095275,
+          "n": 4669
+        }
+      },
+      "holdout_by_receiver_sample_tercile": {
+        "large": {
+          "mean_delta_vs_scale": 0.00015564776471387916,
+          "n": 3099
+        },
+        "mid": {
+          "mean_delta_vs_scale": -0.0005110952411772987,
+          "n": 3097
+        },
+        "small": {
+          "mean_delta_vs_scale": -0.0012596695093415916,
+          "n": 3097
+        }
+      },
+      "holdout_by_season": {
+        "2023": {
+          "mean_delta_vs_scale": -0.0017427728066570765,
+          "n": 3076
+        },
+        "2024": {
+          "mean_delta_vs_scale": 0.00024959510185489477,
+          "n": 3103
+        },
+        "2025": {
+          "mean_delta_vs_scale": -0.00013340734016932009,
+          "n": 3114
+        }
+      },
+      "modes": {
+        "COMBINED": {
+          "market": "receptions",
+          "scale_control_k": 0.87,
+          "vs_b0": {
+            "market": "receptions",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.999310740953475,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.5007607377624792,
+                    "challenger": 1.4695772927436228
+                  },
+                  "error": {
+                    "b0": 0.013440551407237234,
+                    "challenger": -0.35901704001534773
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  -0.03663139616389478,
+                  -0.02633046822274002
+                ],
+                "paired_delta_mean": -0.031183445018826996,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 1.0,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.4363532110091746,
+                    "challenger": 1.4148153669724761
+                  },
+                  "error": {
+                    "b0": -0.030313455657492362,
+                    "challenger": -0.38148738532110077
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  -0.056346501128668194,
+                  0.010202463433410277
+                ],
+                "paired_delta_mean": -0.02153784403669727,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.9995038862245742,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.424590706135293,
+                    "challenger": 1.3948912683975334
+                  },
+                  "error": {
+                    "b0": 0.029292762251254108,
+                    "challenger": -0.33178419050770275
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  -0.03764010739363902,
+                  -0.022058113302139026
+                ],
+                "paired_delta_mean": -0.0296994377377212,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          },
+          "vs_scale_control": {
+            "market": "receptions",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.0,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.4695772927436228,
+                    "challenger": 1.4695772927436228
+                  },
+                  "error": {
+                    "b0": -0.35901704001534773,
+                    "challenger": -0.35901704001534773
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  0.0,
+                  0.0
+                ],
+                "paired_delta_mean": 0.0,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 0.0,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.4148153669724761,
+                    "challenger": 1.4148153669724761
+                  },
+                  "error": {
+                    "b0": -0.38148738532110077,
+                    "challenger": -0.38148738532110077
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  0.0,
+                  0.0
+                ],
+                "paired_delta_mean": 0.0,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.0,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.3948912683975334,
+                    "challenger": 1.3948912683975334
+                  },
+                  "error": {
+                    "b0": -0.33178419050770275,
+                    "challenger": -0.33178419050770275
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  0.0,
+                  0.0
+                ],
+                "paired_delta_mean": 0.0,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          }
+        },
+        "COMBINED_ALPHA1_SENSITIVITY": {
+          "market": "receptions",
+          "scale_control_k": 0.87,
+          "vs_b0": {
+            "market": "receptions",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.999310740953475,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.5007607377624792,
+                    "challenger": 1.470202970484541
+                  },
+                  "error": {
+                    "b0": 0.013440551407237234,
+                    "challenger": -0.35930754123492653
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  -0.03593998441299515,
+                  -0.025711171803001292
+                ],
+                "paired_delta_mean": -0.030557767277912342,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 1.0,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.4363532110091746,
+                    "challenger": 1.4147405543947758
+                  },
+                  "error": {
+                    "b0": -0.030313455657492362,
+                    "challenger": -0.3892487262154907
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  -0.05802228130543045,
+                  0.012193422500873866
+                ],
+                "paired_delta_mean": -0.021612656614398422,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.9995038862245742,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.424590706135293,
+                    "challenger": 1.3944776991888828
+                  },
+                  "error": {
+                    "b0": 0.029292762251254108,
+                    "challenger": -0.33159392470655025
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  -0.038337750368228694,
+                  -0.02204033275577593
+                ],
+                "paired_delta_mean": -0.0301130069463791,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          },
+          "vs_scale_control": {
+            "market": "receptions",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.44932031399578787,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.4695772927436228,
+                    "challenger": 1.470202970484541
+                  },
+                  "error": {
+                    "b0": -0.35901704001534773,
+                    "challenger": -0.35930754123492653
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  -2.796561670508976e-05,
+                  0.0012473883917173952
+                ],
+                "paired_delta_mean": 0.0006256777409146563,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 0.9036697247706422,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.4148153669724761,
+                    "challenger": 1.4147405543947758
+                  },
+                  "error": {
+                    "b0": -0.38148738532110077,
+                    "challenger": -0.3892487262154907
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  -0.0047507347738172685,
+                  0.0049724928263930575
+                ],
+                "paired_delta_mean": -7.481257770114856e-05,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.7683148668761369,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.3948912683975334,
+                    "challenger": 1.3944776991888828
+                  },
+                  "error": {
+                    "b0": -0.33178419050770275,
+                    "challenger": -0.33159392470655025
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  -0.0014138221676922912,
+                  0.0006113404069042567
+                ],
+                "paired_delta_mean": -0.000413569208657904,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          }
+        },
+        "F11_ONLY": {
+          "market": "receptions",
+          "scale_control_k": 0.87,
+          "vs_b0": {
+            "market": "receptions",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.999310740953475,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.5007607377624792,
+                    "challenger": 1.4695772927436228
+                  },
+                  "error": {
+                    "b0": 0.013440551407237234,
+                    "challenger": -0.35901704001534773
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  -0.03663139616389478,
+                  -0.02633046822274002
+                ],
+                "paired_delta_mean": -0.031183445018826996,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 1.0,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.4363532110091746,
+                    "challenger": 1.4148153669724761
+                  },
+                  "error": {
+                    "b0": -0.030313455657492362,
+                    "challenger": -0.38148738532110077
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  -0.056346501128668194,
+                  0.010202463433410277
+                ],
+                "paired_delta_mean": -0.02153784403669727,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.9995038862245742,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.424590706135293,
+                    "challenger": 1.3948912683975334
+                  },
+                  "error": {
+                    "b0": 0.029292762251254108,
+                    "challenger": -0.33178419050770275
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  -0.03764010739363902,
+                  -0.022058113302139026
+                ],
+                "paired_delta_mean": -0.0296994377377212,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          },
+          "vs_scale_control": {
+            "market": "receptions",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.0,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.4695772927436228,
+                    "challenger": 1.4695772927436228
+                  },
+                  "error": {
+                    "b0": -0.35901704001534773,
+                    "challenger": -0.35901704001534773
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  0.0,
+                  0.0
+                ],
+                "paired_delta_mean": 0.0,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 0.0,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.4148153669724761,
+                    "challenger": 1.4148153669724761
+                  },
+                  "error": {
+                    "b0": -0.38148738532110077,
+                    "challenger": -0.38148738532110077
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  0.0,
+                  0.0
+                ],
+                "paired_delta_mean": 0.0,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.0,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.3948912683975334,
+                    "challenger": 1.3948912683975334
+                  },
+                  "error": {
+                    "b0": -0.33178419050770275,
+                    "challenger": -0.33178419050770275
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  0.0,
+                  0.0
+                ],
+                "paired_delta_mean": 0.0,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          }
+        },
+        "F11_ONLY_ALPHA1_SENSITIVITY": {
+          "market": "receptions",
+          "scale_control_k": 0.87,
+          "vs_b0": {
+            "market": "receptions",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.999310740953475,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.5007607377624792,
+                    "challenger": 1.469976947622024
+                  },
+                  "error": {
+                    "b0": 0.013440551407237234,
+                    "challenger": -0.35972501879455315
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  -0.0362547140904471,
+                  -0.02591495837696892
+                ],
+                "paired_delta_mean": -0.03078379014042384,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 1.0,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.4363532110091746,
+                    "challenger": 1.4172873798889765
+                  },
+                  "error": {
+                    "b0": -0.030313455657492362,
+                    "challenger": -0.3875012771575609
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  -0.05467350696707455,
+                  0.013731459072531234
+                ],
+                "paired_delta_mean": -0.019065831120196622,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.9995038862245742,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.424590706135293,
+                    "challenger": 1.3951273892920575
+                  },
+                  "error": {
+                    "b0": 0.029292762251254108,
+                    "challenger": -0.33170141549444276
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  -0.037469745700129085,
+                  -0.021427732323214092
+                ],
+                "paired_delta_mean": -0.029463316843207233,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          },
+          "vs_scale_control": {
+            "market": "receptions",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.44932031399578787,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.4695772927436228,
+                    "challenger": 1.469976947622024
+                  },
+                  "error": {
+                    "b0": -0.35901704001534773,
+                    "challenger": -0.35972501879455315
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  -2.5914892691364083e-05,
+                  0.0007420329785387558
+                ],
+                "paired_delta_mean": 0.0003996548784031586,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 0.9036697247706422,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.4148153669724761,
+                    "challenger": 1.4172873798889765
+                  },
+                  "error": {
+                    "b0": -0.38148738532110077,
+                    "challenger": -0.3875012771575609
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  -0.0010572140513944242,
+                  0.006111937680712187
+                ],
+                "paired_delta_mean": 0.002472012916500648,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.7683148668761369,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.3948912683975334,
+                    "challenger": 1.3951273892920575
+                  },
+                  "error": {
+                    "b0": -0.33178419050770275,
+                    "challenger": -0.33170141549444276
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  -0.0004544087522482463,
+                  0.0009156055225809547
+                ],
+                "paired_delta_mean": 0.00023612089451396223,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          }
+        },
+        "F12_ONLY": {
+          "market": "receptions",
+          "scale_control_k": 0.87,
+          "vs_b0": {
+            "market": "receptions",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.999310740953475,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.5007607377624792,
+                    "challenger": 1.469568498035639
+                  },
+                  "error": {
+                    "b0": 0.013440551407237234,
+                    "challenger": -0.35902159309589793
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  -0.036610624718400146,
+                  -0.02631230736799174
+                ],
+                "paired_delta_mean": -0.031192239726809453,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 1.0,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.4363532110091746,
+                    "challenger": 1.4143888831146059
+                  },
+                  "error": {
+                    "b0": -0.030313455657492362,
+                    "challenger": -0.38145350882434764
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  -0.056980930202042264,
+                  0.009873767291980003
+                ],
+                "paired_delta_mean": -0.02196432789456885,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.9995038862245742,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.424590706135293,
+                    "challenger": 1.394693437675134
+                  },
+                  "error": {
+                    "b0": 0.029292762251254108,
+                    "challenger": -0.3318621463441905
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  -0.03778191829241408,
+                  -0.022292673580450752
+                ],
+                "paired_delta_mean": -0.029897268460145544,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          },
+          "vs_scale_control": {
+            "market": "receptions",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.5947922649818113,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.4695772927436228,
+                    "challenger": 1.469568498035639
+                  },
+                  "error": {
+                    "b0": -0.35901704001534773,
+                    "challenger": -0.35902159309589793
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  -0.0001655268562546951,
+                  0.00014100011647392904
+                ],
+                "paired_delta_mean": -8.794707982455809e-06,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 0.9931192660550459,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.4148153669724761,
+                    "challenger": 1.4143888831146059
+                  },
+                  "error": {
+                    "b0": -0.38148738532110077,
+                    "challenger": -0.38145350882434764
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  -0.0012806638610122567,
+                  0.00046996826834478533
+                ],
+                "paired_delta_mean": -0.0004264838578715763,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.9867702993219778,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.3948912683975334,
+                    "challenger": 1.394693437675134
+                  },
+                  "error": {
+                    "b0": -0.33178419050770275,
+                    "challenger": -0.3318621463441905
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  -0.0004238294494571275,
+                  1.3158976095447515e-05
+                ],
+                "paired_delta_mean": -0.00019783072242434706,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          }
+        },
+        "F12_ONLY_ALPHA1_SENSITIVITY": {
+          "market": "receptions",
+          "scale_control_k": 0.87,
+          "vs_b0": {
+            "market": "receptions",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.999310740953475,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.5007607377624792,
+                    "challenger": 1.4697641077377506
+                  },
+                  "error": {
+                    "b0": 0.013440551407237234,
+                    "challenger": -0.3588175257027341
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  -0.03637713223257875,
+                  -0.026151512656884156
+                ],
+                "paired_delta_mean": -0.030996630024711962,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 1.0,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.4363532110091746,
+                    "challenger": 1.4136787394011228
+                  },
+                  "error": {
+                    "b0": -0.030313455657492362,
+                    "challenger": -0.3812380477616397
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  -0.05793303926675692,
+                  0.009892557880023066
+                ],
+                "paired_delta_mean": -0.022674471608049765,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.9995038862245742,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.424590706135293,
+                    "challenger": 1.3943924544868704
+                  },
+                  "error": {
+                    "b0": 0.029292762251254108,
+                    "challenger": -0.3318548127595508
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  -0.038322605851950076,
+                  -0.022341185142525366
+                ],
+                "paired_delta_mean": -0.0301982516484064,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          },
+          "vs_scale_control": {
+            "market": "receptions",
+            "partitions": {
+              "DEV_2016_2022": {
+                "activation_share": 0.5947922649818113,
+                "evidence_label": "DEVELOPMENT",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.4695772927436228,
+                    "challenger": 1.4697641077377506
+                  },
+                  "error": {
+                    "b0": -0.35901704001534773,
+                    "challenger": -0.3588175257027341
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 1775,
+                "n_matched": 26115,
+                "n_rows": 29475,
+                "paired_delta_ci95": [
+                  -0.0003229573296490616,
+                  0.0006671123309339229
+                ],
+                "paired_delta_mean": 0.00018681499411503318,
+                "previously_inspected": false
+              },
+              "FRESH_2026": {
+                "activation_share": 0.9931192660550459,
+                "evidence_label": "FRESH_OUT_OF_TIME",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.4148153669724761,
+                    "challenger": 1.4136787394011228
+                  },
+                  "error": {
+                    "b0": -0.38148738532110077,
+                    "challenger": -0.3812380477616397
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 32,
+                "n_matched": 436,
+                "n_rows": 508,
+                "paired_delta_ci95": [
+                  -0.004109878971297779,
+                  0.0019484524701287003
+                ],
+                "paired_delta_mean": -0.0011366275713524947,
+                "previously_inspected": false
+              },
+              "HOLDOUT_2023_2025": {
+                "activation_share": 0.9867702993219778,
+                "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+                "metrics": {
+                  "abs_error": {
+                    "b0": 1.3948912683975334,
+                    "challenger": 1.3943924544868704
+                  },
+                  "error": {
+                    "b0": -0.33178419050770275,
+                    "challenger": -0.3318548127595508
+                  }
+                },
+                "n_b0_without_challenger": 0,
+                "n_challenger_without_b0": 0,
+                "n_game_clusters": 816,
+                "n_matched": 12094,
+                "n_rows": 12953,
+                "paired_delta_ci95": [
+                  -0.0012248428055914257,
+                  0.00018625251569265476
+                ],
+                "paired_delta_mean": -0.0004988139106852018,
+                "previously_inspected": true
+              }
+            },
+            "primary_metric": "abs_error"
+          }
+        }
+      },
+      "splits_basis": "COMBINED at alpha=1.0 sensitivity, delta vs scale control"
+    }
+  },
+  "params": {
+    "receiving_yards": {
+      "k": 0.78,
+      "modes": {
+        "COMBINED": {
+          "alpha": 0.0,
+          "dev_mae": 20.98739451261077,
+          "n_activated_dev": 11736
+        },
+        "F11_ONLY": {
+          "alpha": 0.0,
+          "dev_mae": 20.98739451261077,
+          "n_activated_dev": 11736
+        },
+        "F12_ONLY": {
+          "alpha": 0.3,
+          "dev_mae": 19.877801410493237,
+          "n_activated_dev": 15543
+        }
+      }
+    },
+    "receptions": {
+      "k": 0.87,
+      "modes": {
+        "COMBINED": {
+          "alpha": 0.0,
+          "dev_mae": 1.5562529822767555,
+          "n_activated_dev": 11736
+        },
+        "F11_ONLY": {
+          "alpha": 0.0,
+          "dev_mae": 1.5562529822767555,
+          "n_activated_dev": 11736
+        },
+        "F12_ONLY": {
+          "alpha": 0.3,
+          "dev_mae": 1.4749763447340305,
+          "n_activated_dev": 15543
+        }
+      }
+    }
+  },
+  "provenance": {
+    "coverage_sources": {
+      "participation": {
+        "2018": "b577ac402622dbecda8589bbc0b6ef1e08c1fece9916b6105ce4b29a675be905",
+        "2019": "1a6091df8e4fdb6f937c5ca5be555e4d5b65ea363a69c3d1a3b7dd9fdb0fbf0b",
+        "2020": "7e3e47021025067d2229716867523f1a42e995dff608bfafd55ed9ee385433fc",
+        "2021": "b58e79cd91ea078396c91f9c06452da0b9d650fa42203ee580e1df06e306e785",
+        "2022": "37eae0a8c388d0974c6df9a1f9a1d01f09f63a21440d3b03d7f208c1438c51e4",
+        "2023": "ad01aeb4045ee19a4f086ff38b52b14c8f427d3401e529c3078a4545921650a9",
+        "2024": "b1f436a98b2a7759eb4ed1181e072a35c2666f9aeb356a49c943d28d6be6b0b9",
+        "2025": "59069adfee7b0f464befba8a5e8be331e523633cc6a7ab403d37bcbcdfbe66ac"
+      },
+      "pbp": {
+        "2018": "d37899610b397b96a90da6902827de5b46c5457b93e0e16d5f95a8eb524e4a7d",
+        "2019": "b764668137052be23745953cbc33fa17e537a70c81e9b73785a19a15e7288216",
+        "2020": "bc954b5780e325df4faa255fac092585c981a4de5d2f553a8a4e0a3c8b3a3cf2",
+        "2021": "e8743a568f99667a8bdcd29ba12224ee1782ad2b7916bee78ee335c099383739",
+        "2022": "0c69a71eb39498956c7b1d5c1ca52ce7fe679934a95d1af249facb5ea9829ea4",
+        "2023": "4649804ee0f0a40b41e51ec75a1ce921949d7fab5459213488656b92f78560e8",
+        "2024": "23370d5d10f8104d80d46a1fc5e61f4f6f5a3263fe96fe2dd629913cfcb08c06",
+        "2025": "2f135887790a013fd004e609e37096bb4816d5cc80b9f19122e1bad478961978"
+      }
+    },
+    "games_csv_sha256": "7fdc123e11cf224b97d120980a4cd18171147f6db6d4c3b193f27406b4856c4e",
+    "harness": {
+      "audit_manifest_sha256": "35eaf8cb803f5d1a516bd7873d090a133ec5ab7567854f54353dcf1e23f45e40",
+      "current_season": {
+        "path": "stats_player_week_2026.csv",
+        "rows": 2223,
+        "seasons": [
+          2026
+        ],
+        "sha256": "736bdddef4779023f7eb1831a1f2c8627181aee60cc280d5f0464cf5f41a8e67"
+      },
+      "seasons": {
+        "2016": "eb0264c65d1ef593196afcd4ba24e9f2e9b7942923bf6f4bb4639684e2c4d470",
+        "2017": "592b0916065987b0b3afb0480162f03350d16b12250dc42b0f194e2ab1378563",
+        "2018": "c53021bcfc9f89d30edd6f1fe145a1d7d6ce469efeec75974fe9f0adac568642",
+        "2019": "a05558126b1209b80fe11a8f18938cb35816370bf9990975a87de49e9eed7376",
+        "2020": "05b992676faccc8940efbf6242cb76358069372d31d7c2e02c1a4acdcd3cbe18",
+        "2021": "41915fb49238902ad1f129ebf0405b11a1e710454ae0fe8f7b3e4f9145875f48",
+        "2022": "ad426c3fe5bf1cc30c3f137fdfe96d054e19d400879ee4413129da49fa7b54be",
+        "2023": "f19cb71a5de0dce7fd09376026237c9ee9d5a93fe13815a2ea3ec2d37204cb17",
+        "2024": "3ddc45a84f759aa348ce465ae001752c530575455717657cdfe1f8abfcdb4759",
+        "2025": "e5e0615b3d96a3eaebfaee91e55afb4a4e7fe0caf057454177bcd7d6ad4bcfc2"
+      }
+    }
+  }
+}
