@@ -139,7 +139,16 @@ def _rebased(raw):
 # empty state. None of this is a published selection: ids carry
 # FIXTURE_PREFIX and every row has fixture_synthetic=true.
 FIXTURE_PREFIX = "fc-e2e-fixture:"
+_FIXTURE_TEMPLATE_FIELDS = ("type", "stat", "market", "market_side", "bet_side", "direction",
+                            "lean", "line", "projection", "hit_probability", "market_odds",
+                            "market_implied", "market_edge", "market_hold", "price_clears",
+                            "prob_ci", "prob_ci_source", "reliability", "sample_n", "base_rate",
+                            "lift", "lift_reference_rate", "posted_implied", "market_fair",
+                            "market_fair_method", "edge_vs_fair", "identity_version")
 _FIXTURE = {"mode": "augment"}   # "augment" | "no_top_picks"
+# Read per request by the server threads. app.js's pollFullBoard() refetches
+# data.json every 3 minutes; every section closes its browser context long
+# before that, so no page from one mode can re-render with another mode's data.
 _CENTRAL = ZoneInfo("America/Chicago")
 
 
@@ -149,6 +158,8 @@ def _fixture_today(doc, now=None):
     now = now or datetime.now(timezone.utc)
     central = now.astimezone(_CENTRAL).date().isoformat()
     payload = doc.get("display_date") or doc.get("date") or central
+    if doc.get("display_timezone", "America/Chicago") != "America/Chicago":
+        return payload          # displayToday() uses the payload date as-is then
     return max(payload, central)
 
 
@@ -161,10 +172,12 @@ def _fixture_picks(doc, now=None, n=3):
     start = (now + timedelta(hours=6)).replace(microsecond=0).isoformat().replace("+00:00", "Z")
     picks = []
     for i in range(1, n + 1):
-        row = {k: v for k, v in template.items()
-               if not k.startswith(("publication", "published", "settlement", "game_state",
-                                    "downgrad", "withdraw"))}
+        # Allowlist only market-shape/number fields from a real prop so the
+        # card renders like a real one; never copy a real player's reasons,
+        # analysis text, identity, status history or publication state.
+        row = {k: template[k] for k in _FIXTURE_TEMPLATE_FIELDS if k in template}
         row.update({
+            "status_reasons": [], "watchouts": [], "reliability_note": "",
             "id": f"{FIXTURE_PREFIX}{i}", "fixture_synthetic": True,
             "name": f"Fixture Player {i}", "player_id": 990000 + i, "game_pk": 990001,
             "matchup": "Fixture Away @ Fixture Home", "team": "FXA",
@@ -232,7 +245,9 @@ for _n_real in (0, 1, 5):
     check(_aug["props"][:len(_real)] == _real and len(_fx) == 3
           and all(p["fixture_synthetic"] and p["published_slate_date"] == "2026-09-24"
                   and p["game_start"] > _fx_now.isoformat() for p in _fx)
-          and _src["props"] == _real,
+          and _src["props"] == _real
+          and all(p["status_reasons"] == [] and p["why"] == [] and "status_reasons" not in _FIXTURE_TEMPLATE_FIELDS
+                  for p in _fx),
           f"Today fixture with {_n_real} real Top Pick(s): real props unchanged, 3 labelled "
           "future-dated synthetic picks added, source document not mutated")
     _empty = _apply_fixture(_src, "no_top_picks", _fx_now)
@@ -270,8 +285,13 @@ class _QuietHandler(http.server.SimpleHTTPRequestHandler):
 
 
 import hashlib as _hashlib
-_DOCS_DIGESTS_BEFORE = {n: _hashlib.sha256(open(os.path.join(DOCS_DIR, n), "rb").read()).hexdigest()
-                        for n in sorted(os.listdir(DOCS_DIR)) if n.endswith(".json")}
+def _docs_json_files():
+    return sorted(os.path.join(d, n) for d, _, names in os.walk(DOCS_DIR) for n in names if n.endswith(".json"))
+
+
+# Guards a by-construction invariant (this suite never writes files); kept so a
+# future edit that does cannot silently leak a fixture row into docs/.
+_DOCS_DIGESTS_BEFORE = {f: _hashlib.sha256(open(f, "rb").read()).hexdigest() for f in _docs_json_files()}
 _handler = functools.partial(_QuietHandler, directory=DOCS_DIR)
 _httpd = http.server.ThreadingHTTPServer(("127.0.0.1", PORT), _handler)
 _server_thread = threading.Thread(target=_httpd.serve_forever, daemon=True)
@@ -784,12 +804,10 @@ try:
         _FIXTURE["mode"] = "augment"
 
     # ── 8c. The fixture never leaves this process ─────────────────────────
-    _after = {n: _hashlib.sha256(open(os.path.join(DOCS_DIR, n), "rb").read()).hexdigest()
-              for n in sorted(os.listdir(DOCS_DIR)) if n.endswith(".json")}
+    _after = {f: _hashlib.sha256(open(f, "rb").read()).hexdigest() for f in _docs_json_files()}
     check(_after == _DOCS_DIGESTS_BEFORE,
           "no docs/*.json file changed during the run (fixtures are served from memory only)")
-    _leak = [n for n in sorted(os.listdir(DOCS_DIR)) if n.endswith(".json")
-             and FIXTURE_PREFIX.encode() in open(os.path.join(DOCS_DIR, n), "rb").read()]
+    _leak = [f for f in _docs_json_files() if FIXTURE_PREFIX.encode() in open(f, "rb").read()]
     check(not _leak, "no fixture id appears in any real docs/*.json record", f"found in {_leak}")
 
     # ── 9. Source/docs parity sanity (already enforced in test_build_dashboard.py,
