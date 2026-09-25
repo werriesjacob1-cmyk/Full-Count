@@ -45,7 +45,9 @@ class PriceTests(unittest.TestCase):
     def test_push_price_math_and_input_immutability(self):
         c,d=inputs(); before=copy.deepcopy((c,d)); r=run(c,d)
         self.assertEqual((c,d),before)
-        self.assertEqual(r["decision_status"],"SHADOW_ONLY")
+        self.assertEqual(r["decision_status"],"QUARANTINED")
+        self.assertIn("CURRENT_ROLE_EVIDENCE_MISSING", r["reasons"])
+        self.assertIn("BOOK_ACTION_RULES_EVIDENCE_MISSING_OR_MISMATCHED", r["reasons"])
         p=r["prices"][0]
         self.assertAlmostEqual(p["win"],.5); self.assertAlmostEqual(p["push"],.3)
         self.assertAlmostEqual(p["expected_net_units"],.55)
@@ -120,6 +122,16 @@ class PriceTests(unittest.TestCase):
         self.assertIn("CURRENT_ROLE_EVIDENCE_MISSING",run(changed,d)["reasons"])
         changed=copy.deepcopy(c); changed["sportsbook_rule"]["void_if_no_game_snap"]=False
         self.assertIn("BOOK_ACTION_RULES_EVIDENCE_MISSING_OR_MISMATCHED",run(changed,d)["reasons"])
+
+    def test_self_declared_role_and_rule_sources_never_clear_gates(self):
+        c,d=inputs()
+        # Even syntactically plausible source metadata is untrusted until an
+        # independent adapter verifies the raw role and applicable rule bytes.
+        result=run(c,d)
+        self.assertEqual(result["decision_status"],"QUARANTINED")
+        self.assertFalse(result["bettable"])
+        self.assertIn("CURRENT_ROLE_EVIDENCE_MISSING",result["reasons"])
+        self.assertIn("BOOK_ACTION_RULES_EVIDENCE_MISSING_OR_MISMATCHED",result["reasons"])
 
     def test_atomic_create_only_and_failed_write(self):
         td=Path.cwd()/"engineering"/"nfl_price_aware_20260923"

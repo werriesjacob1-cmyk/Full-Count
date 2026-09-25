@@ -81,14 +81,15 @@ The three outstanding gates are the exact reasons emitted by
 `price_aware_offers.evaluate_offer`: `QUOTE_TIMESTAMP_NOT_PROVIDED`,
 `CURRENT_ROLE_NOT_VERIFIED`, and `BOOK_ACTION_RULES_NOT_CERTIFIED`. The
 September 24 authentic capture sets each source field to unknown. These are
-real blockers, not a count to optimize away. The newer code additionally
-rejects a caller that merely flips a status flag without matching provenance.
+real blockers, not a count to optimize away. The quote verifier checks raw
+market bytes; current-role and book-rule metadata have no independent raw
+source verifier and remain closed even if a caller claims certification.
 
 | Gate | Available evidence | Exact remaining blocker |
 |---|---|---|
 | Quote origin | The archived FanDuel response contains OPEN, non-in-play markets, active runners, exact prices and observation time; raw bytes and SHA-256 are sealed. | The response has no market/runner price-update timestamp. `marketTime` equals the scheduled event time (`2026-09-25T00:16:00Z`), not quote origin. The integration verifier forbids using it as such. Observation time establishes when *we saw* a displayed quote, not how long the book had displayed it or that a wager would be accepted at that price. |
-| Current role | The B0 shadow board can establish official inactive coverage and identity; a prior-season model alone cannot verify current projected routes/snaps or a limited role. | No source-backed, game/player/team-bound current role evidence is in either pricing capture. A `VERIFIED` string without source digest and available-at time is insufficient. |
-| Book action/settlement | FanDuel's [NJ house rules](https://www.fanduel.com/fanduel-sportsbook-house-rules-nj) (effective July 30, 2026) describe full-game NFL props' no-snap void condition and league-stat settlement. | The NJ page does not establish the applicable jurisdiction/product for every customer, nor that an individual ticket is accepted. No rules bytes/jurisdiction binding were captured with these offers. A `CERTIFIED` string or a URL/hash alone cannot establish applicability. |
+| Current role | The B0 shadow board can establish official inactive coverage and identity; a prior-season model alone cannot verify current projected routes/snaps or a limited role. | No source-backed, game/player/team-bound current role evidence is in either pricing capture. Candidate-supplied status, digest, and available-at time cannot authenticate that evidence. The gate stays closed until an independent raw-source verifier is connected. |
+| Book action/settlement | FanDuel's [NJ house rules](https://www.fanduel.com/fanduel-sportsbook-house-rules-nj) (effective July 30, 2026) describe full-game NFL props' no-snap void condition and league-stat settlement. | The NJ page does not establish the applicable jurisdiction/product for every customer, nor that an individual ticket is accepted. No rules bytes/jurisdiction binding were captured with these offers. The gate stays closed until an independent applicable-rule verifier is connected. |
 
 The published rules also say displayed odds can change before acceptance and
 accepted odds control. The archived market is therefore authentic *observed*
@@ -103,12 +104,26 @@ offers (9 primary two-sided and 48 N+ alternates). All 57 were quarantined.
 Other raw market entries are an inventory of displayed markets, not normalized
 offers with a compatible probability, action rule, eligibility and grade.
 
-| Family | Current component status | Actionable/customer status |
-|---|---|---|
-| Receptions, standard and N+ | Authentic offer capture, GSIS binding, PMF/price math, sealed B0 primary-line join and research settlement exist. B0 alternate probabilities are deliberately unsupported. | No official eligibility: all three gates above; no public selector/pick output. |
-| Passing yards | Dedicated live normalizer/B0, pregame shadow and outcome grade exist elsewhere. This adapter has no passing-yards quote-to-B0 join. | Not connected to this price-aware eligible-pick path. |
-| Rushing/receiving yards, rushing/passing attempts, passing TDs, interceptions, anytime TD and combined player yards | Some observed raw market types, normalizers or research models exist for subsets. They do not establish the complete six-part offer → probability → identity/rule → eligibility → customer output → grade chain here. | Unsupported by this pricing integration; do not infer availability from a market label. |
-| Spreads, totals, moneylines, team totals, alternate/plus-money game markets | Some raw book markets and separate game-market research exist. No customer-certified joint distribution/eligibility/settlement path is connected here. | Research only; not actionable through #196/#199. |
+| Market | Current offer | Probability/distribution | Identity + settlement | Eligibility | Customer output | Grading |
+|---|---|---|---|---|---|---|
+| Receptions, standard | Historical FanDuel two-sided bytes and price verified; no current executable offer proved | Sealed B0 exact half-line join and challenger PMF research | GSIS/game/selection binding; research count settlement, book rule unverified | Closed: quote vintage, role, rule | None | Research settlement contract; no official priced-pick grade |
+| Receptions, N+ alternate | Historical FanDuel yes-side bytes verified | Challenger PMF only; authoritative B0 threshold probability unsupported | GSIS/game/selection binding; book rule unverified | Closed, including B0 threshold gate | None | Research count settlement only |
+| Passing yards | Dedicated FanDuel source/normalizer elsewhere; no current offer certified here | Separate B0 shadow research | Separate identity/outcome contract; book rule not certified here | No price-aware join | None from this path | Separate research outcome grade exists |
+| Passing attempts | Not verified here | Not verified here | Not verified here | Unsupported | None | Not verified here |
+| Rushing yards | Not verified here | Not verified here | Not verified here | Unsupported | None | Not verified here |
+| Rushing attempts | Not verified here | Not verified here | Not verified here | Unsupported | None | Not verified here |
+| Receiving yards | Not verified here | Not verified here | Not verified here | Unsupported | None | Not verified here |
+| Anytime touchdowns | Not verified here | Not verified here | Not verified here | Unsupported | None | Not verified here |
+| Passing touchdowns | Not verified here | Not verified here | Not verified here | Unsupported | None | Not verified here |
+| Interceptions | Not verified here | Not verified here | Not verified here | Unsupported | None | Not verified here |
+| Combined player yardage | Not verified here | Not verified here | Not verified here | Unsupported | None | Not verified here |
+| Other player props | Not verified here | Not verified here | Not verified here | Unsupported | None | Not verified here |
+| Alternate lines beyond receptions N+ | Not verified here | Not verified here | Not verified here | Unsupported | None | Not verified here |
+| Plus-money outcomes | Historical reception prices include plus-money; no independent market family | Receptions-only research probabilities | Receptions-only research settlement | Closed | None | Research only |
+| Spreads | Game-market research elsewhere; no current offer certified here | Research-only, not verified here | Not certified here | Unsupported | None | Not verified here |
+| Totals | Game-market research elsewhere; no current offer certified here | Research-only, not verified here | Not certified here | Unsupported | None | Not verified here |
+| Moneylines | Game-market research elsewhere; no current offer certified here | Research-only, not verified here | Not certified here | Unsupported | None | Not verified here |
+| Team totals | Not verified here | Not verified here | Not verified here | Unsupported | None | Not verified here |
 
 `price_to_b0_integration.integrate` still writes `research_only=true` and
 `bettable=false` for every row. The NFL website publication guard requires

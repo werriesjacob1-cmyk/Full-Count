@@ -114,39 +114,18 @@ def _quote_evidence_valid(candidate: dict, raw_source_sha256: str, captured: dat
 
 
 def _role_evidence_valid(candidate: dict, captured: datetime) -> bool:
-    evidence = candidate.get("current_role_evidence")
-    if not isinstance(evidence, dict) or candidate.get("current_role_status") != "VERIFIED":
-        return False
-    try:
-        if any(evidence.get(key) != candidate.get(key) for key in
-               ("canonical_game_id", "gsis_id", "team")):
-            return False
-        _digest(evidence["source_sha256"])
-        _text(evidence["source_id"])
-        _text(evidence["role_basis"])
-        return _time(evidence["available_at"]) <= captured
-    except (KeyError, TypeError, ValueError):
-        return False
+    # No trusted role-source verifier is connected to this research evaluator.
+    # Metadata supplied inside a candidate can describe evidence, but cannot
+    # authenticate it. Keep the gate closed until raw source bytes are checked
+    # outside the candidate and bound to this player, team, game and cutoff.
+    return False
 
 
 def _rule_evidence_valid(candidate: dict, now: datetime) -> bool:
-    rule = candidate.get("sportsbook_rule")
-    if not isinstance(rule, dict) or rule.get("status") != "CERTIFIED":
-        return False
-    try:
-        if (rule.get("book") != candidate["source"] or
-                rule.get("market") != candidate["market"] or
-                rule.get("event_id") != candidate["event_id"] or
-                rule.get("settlement_stat") != "receptions" or
-                rule.get("void_if_no_game_snap") is not True or
-                rule.get("jurisdiction") != candidate.get("audience_jurisdiction") or
-                not _text(rule.get("jurisdiction")) or
-                not _text(rule.get("url")).startswith("https://www.fanduel.com/")):
-            return False
-        _digest(rule["source_sha256"])
-        return _time(rule["observed_at"]) <= now
-    except (KeyError, TypeError, ValueError):
-        return False
+    # A URL, formatted digest, and caller-declared jurisdiction do not prove
+    # the sportsbook's applicable settlement terms. No verified rule-source
+    # adapter exists yet, so a self-certified record must never clear this gate.
+    return False
 
 
 def evaluate_offer(candidate: dict, distribution: dict, *, as_of: str,
