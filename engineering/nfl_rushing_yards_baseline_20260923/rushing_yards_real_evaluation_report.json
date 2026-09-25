@@ -1,0 +1,243 @@
+{
+  "carries_rushing_yards_coverage_by_season": {
+    "1999": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 1986,
+      "total_rows": 16839
+    },
+    "2000": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 1966,
+      "total_rows": 16623
+    },
+    "2001": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2051,
+      "total_rows": 16789
+    },
+    "2002": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2153,
+      "total_rows": 17481
+    },
+    "2003": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2139,
+      "total_rows": 17232
+    },
+    "2004": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 1999,
+      "total_rows": 17272
+    },
+    "2005": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2007,
+      "total_rows": 17355
+    },
+    "2006": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2048,
+      "total_rows": 17214
+    },
+    "2007": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2057,
+      "total_rows": 17265
+    },
+    "2008": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2049,
+      "total_rows": 17212
+    },
+    "2009": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2164,
+      "total_rows": 17690
+    },
+    "2010": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2112,
+      "total_rows": 17590
+    },
+    "2011": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2158,
+      "total_rows": 17440
+    },
+    "2012": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2136,
+      "total_rows": 17419
+    },
+    "2013": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2057,
+      "total_rows": 17248
+    },
+    "2014": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2178,
+      "total_rows": 17622
+    },
+    "2015": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2116,
+      "total_rows": 17613
+    },
+    "2016": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2100,
+      "total_rows": 17552
+    },
+    "2017": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2137,
+      "total_rows": 17477
+    },
+    "2018": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2188,
+      "total_rows": 17414
+    },
+    "2019": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2146,
+      "total_rows": 17362
+    },
+    "2020": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2266,
+      "total_rows": 17602
+    },
+    "2021": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2374,
+      "total_rows": 18969
+    },
+    "2022": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2386,
+      "total_rows": 18831
+    },
+    "2023": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2379,
+      "total_rows": 18643
+    },
+    "2024": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2358,
+      "total_rows": 18983
+    },
+    "2025": {
+      "blank_or_invalid_numeric_rows": 0,
+      "rushing_role_positive_rows": 2355,
+      "total_rows": 19422
+    }
+  },
+  "generated_at": "2026-09-23T18:47:36.581974Z",
+  "partitions": {
+    "development_2000_2019": {
+      "native": {
+        "b0": {
+          "bias_prediction_minus_actual": 0.18698922932522977,
+          "mae": 19.12809529119853,
+          "median_absolute_error": 11.8,
+          "n": 35869,
+          "rmse": 28.486030914786674
+        },
+        "c1_carries3_times_ypc8": {
+          "bias_prediction_minus_actual": 0.36924755894621114,
+          "mae": 19.077239740168846,
+          "median_absolute_error": 11.621212121212123,
+          "n": 35869,
+          "rmse": 28.505406634541213
+        }
+      },
+      "paired": {
+        "c1_carries3_times_ypc8": {
+          "b0_mae": 19.12809529119853,
+          "challenger_mae": 19.077239740168846,
+          "mae_delta_vs_b0": -0.05085555102968442,
+          "n": 35869
+        }
+      }
+    },
+    "held_2023_2025": {
+      "native": {
+        "b0": {
+          "bias_prediction_minus_actual": 0.4473572938689218,
+          "mae": 17.9172982056703,
+          "median_absolute_error": 12.0,
+          "n": 6149,
+          "rmse": 25.895616026333073
+        },
+        "c1_carries3_times_ypc8": {
+          "bias_prediction_minus_actual": 0.6205108816820929,
+          "mae": 18.15469143528017,
+          "median_absolute_error": 12.126436781609193,
+          "n": 6149,
+          "rmse": 26.210616760537217
+        }
+      },
+      "paired": {
+        "c1_carries3_times_ypc8": {
+          "b0_mae": 17.9172982056703,
+          "challenger_mae": 18.15469143528017,
+          "mae_delta_vs_b0": 0.23739322960987153,
+          "n": 6149,
+          "player_cluster_bootstrap": {
+            "cluster": "player_id",
+            "iterations": 2000,
+            "mae_delta_vs_b0_p2_5": 0.08312069215591222,
+            "mae_delta_vs_b0_p50": 0.2372434933875489,
+            "mae_delta_vs_b0_p97_5": 0.39141846652579204,
+            "players": 436,
+            "seed": 20260923
+          }
+        }
+      }
+    },
+    "validation_2020_2022": {
+      "native": {
+        "b0": {
+          "bias_prediction_minus_actual": 0.0919975531086642,
+          "mae": 18.814091869647427,
+          "median_absolute_error": 12.4,
+          "n": 5994,
+          "rmse": 27.029695679429995
+        },
+        "c1_carries3_times_ypc8": {
+          "bias_prediction_minus_actual": 0.1718877311218251,
+          "mae": 18.82367061597122,
+          "median_absolute_error": 12.333333333333332,
+          "n": 5994,
+          "rmse": 27.19438047119385
+        }
+      },
+      "paired": {
+        "c1_carries3_times_ypc8": {
+          "b0_mae": 18.814091869647427,
+          "challenger_mae": 18.82367061597122,
+          "mae_delta_vs_b0": 0.009578746323793297,
+          "n": 5994
+        }
+      }
+    }
+  },
+  "research_decision": {
+    "decision": "REJECTED_RESEARCH_CHALLENGER",
+    "held_mae_delta_vs_b0": 0.23739322960987153,
+    "reason": "Paired MAE was worse than B0 in both validation and held partitions.",
+    "validation_mae_delta_vs_b0": 0.009578746323793297
+  },
+  "rusher_source_rows": 58065,
+  "rushing_stat_invariant_failures": {
+    "production_with_zero_carries": 12
+  },
+  "schema_version": 1,
+  "source_audit_manifest_sha256": "35eaf8cb803f5d1a516bd7873d090a133ec5ab7567854f54353dcf1e23f45e40",
+  "status": "RESEARCH_ONLY_NOT_PROMOTED",
+  "workstream": "NFL-RUSHING-YARDS-BASELINE-20260923"
+}
