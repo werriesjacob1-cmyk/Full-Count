@@ -1,0 +1,437 @@
+{
+ "214": {
+  "branch": "codex/nfl-tier2-defender-coverage-f18-20260925",
+  "head": "0d324fd961",
+  "ahead": 2,
+  "behind": 12,
+  "files": 2,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": [
+   "engineering/nfl_tier2_defender_coverage_20260925/README.md",
+   "engineering/nfl_tier2_defender_coverage_20260925/source_audit.json"
+  ]
+ },
+ "211": {
+  "branch": "codex/nfl-tier2-personnel-f15-20260925",
+  "head": "2930030da4",
+  "ahead": 2,
+  "behind": 20,
+  "files": 4,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": [
+   "engineering/nfl_tier2_personnel_20260925/README.md",
+   "engineering/nfl_tier2_personnel_20260925/evaluation.json.gz",
+   "nfl/research/tier2/personnel_f15.py",
+   "nfl/tests/test_tier2_personnel_f15.py"
+  ]
+ },
+ "209": {
+  "branch": "codex/nfl-tier2-concepts-f14-20260925",
+  "head": "c5403efa9a",
+  "ahead": 2,
+  "behind": 22,
+  "files": 4,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": [
+   "engineering/nfl_tier2_concepts_20260925/README.md",
+   "engineering/nfl_tier2_concepts_20260925/evaluation.json.gz",
+   "nfl/research/tier2/concepts_f14.py",
+   "nfl/tests/test_tier2_concepts_f14.py"
+  ]
+ },
+ "206": {
+  "branch": "codex/nfl-tier2-pressure-f13-20260925",
+  "head": "556bc26e6e",
+  "ahead": 2,
+  "behind": 36,
+  "files": 4,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": [
+   "engineering/nfl_tier2_pressure_20260925/README.md",
+   "engineering/nfl_tier2_pressure_20260925/evaluation.json",
+   "nfl/research/tier2/pressure_f13.py",
+   "nfl/tests/test_tier2_pressure_f13.py"
+  ]
+ },
+ "201": {
+  "branch": "claude/mlb-selection-overconfidence-20260924",
+  "head": "ea4a7f081d",
+  "ahead": 5,
+  "behind": 320,
+  "files": 8,
+  "files_equal_to_main": 0,
+  "conflict_files": [
+   "engineering/ENGINEERING_HANDOFF.md"
+  ],
+  "top_files": [
+   "engineering/ENGINEERING_HANDOFF.md",
+   "engineering/mlb_selection_overconfidence_20260924/PREREGISTRATION.md",
+   "engineering/mlb_selection_overconfidence_20260924/README.md",
+   "engineering/mlb_selection_overconfidence_20260924/analysis.py"
+  ]
+ },
+ "199": {
+  "branch": "codex/nfl-price-b0-join-20260924",
+  "head": "285252d313",
+  "ahead": 9,
+  "behind": 422,
+  "files": 34,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": [
+   "engineering/nfl_price_aware_20260923/README.md",
+   "engineering/nfl_price_aware_20260923/capture_01/baseline.raw.json",
+   "engineering/nfl_price_aware_20260923/capture_01/d-st.raw.json",
+   "engineering/nfl_price_aware_20260923/capture_01/game-specials.raw.json"
+  ]
+ },
+ "198": {
+  "branch": "claude/central-slate-contract-20260924",
+  "head": "a5755cd02a",
+  "ahead": 1,
+  "behind": 418,
+  "files": 3,
+  "files_equal_to_main": 0,
+  "conflict_files": [
+   "engineering/ENGINEERING_HANDOFF.md"
+  ],
+  "top_files": [
+   "engineering/ENGINEERING_HANDOFF.md",
+   "engineering/central_slate_contract_20260924/AUDIT.md",
+   "engineering/central_slate_contract_20260924/replay_evidence.py"
+  ]
+ },
+ "196": {
+  "branch": "codex/nfl-price-aware-offers-20260923",
+  "head": "7626a0424f",
+  "ahead": 6,
+  "behind": 422,
+  "files": 18,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": [
+   "engineering/nfl_price_aware_20260923/README.md",
+   "engineering/nfl_price_aware_20260923/capture_01/baseline.raw.json",
+   "engineering/nfl_price_aware_20260923/capture_01/d-st.raw.json",
+   "engineering/nfl_price_aware_20260923/capture_01/game-specials.raw.json"
+  ]
+ },
+ "193": {
+  "branch": "claude/nfl-pregame-target-share-20260923",
+  "head": "675d84f087",
+  "ahead": 9,
+  "behind": 636,
+  "files": 19,
+  "files_equal_to_main": 0,
+  "conflict_files": [
+   "engineering/ENGINEERING_HANDOFF.md"
+  ],
+  "top_files": [
+   "engineering/ENGINEERING_HANDOFF.md",
+   "engineering/nfl_pregame_target_share_20260923/PREREGISTRATION.md",
+   "engineering/nfl_pregame_target_share_20260923/README.md",
+   "engineering/nfl_pregame_target_share_20260923/data_cache.py"
+  ]
+ },
+ "192": {
+  "branch": "claude/mlb-mission10-toppick-calibration-holdout-20260924",
+  "head": "833ed483dd",
+  "ahead": 3,
+  "behind": 610,
+  "files": 7,
+  "files_equal_to_main": 0,
+  "conflict_files": [
+   "engineering/ENGINEERING_HANDOFF.md"
+  ],
+  "top_files": [
+   "engineering/ENGINEERING_HANDOFF.md",
+   "engineering/mlb_mission10_toppick_calibration_holdout_20260924/DESIGN.md",
+   "engineering/mlb_mission10_toppick_calibration_holdout_20260924/README.md",
+   "engineering/mlb_mission10_toppick_calibration_holdout_20260924/calibration_holdout_lib.py"
+  ]
+ },
+ "191": {
+  "branch": "claude/nfl-opportunity-error-decomposition-20260923",
+  "head": "13e88c38fe",
+  "ahead": 2,
+  "behind": 678,
+  "files": 7,
+  "files_equal_to_main": 1,
+  "conflict_files": [
+   "engineering/ENGINEERING_HANDOFF.md"
+  ],
+  "top_files": [
+   "engineering/ENGINEERING_HANDOFF.md",
+   "engineering/nfl_opportunity_error_decomposition_20260923/README.md",
+   "engineering/nfl_opportunity_error_decomposition_20260923/component_error_decomposition.py",
+   "engineering/nfl_opportunity_error_decomposition_20260923/component_error_decomposition_report.json"
+  ]
+ },
+ "190": {
+  "branch": "claude/nfl-passing-yards-alt-ladder-20260923",
+  "head": "fddbed763a",
+  "ahead": 2,
+  "behind": 678,
+  "files": 6,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": [
+   "engineering/ENGINEERING_HANDOFF.md",
+   "engineering/nfl_passing_yards_alt_ladder_20260923/README.md",
+   "engineering/nfl_passing_yards_alt_ladder_20260923/passing_yards_alt_ladder_evaluation.py",
+   "engineering/nfl_passing_yards_alt_ladder_20260923/passing_yards_alt_ladder_evaluation_report.json"
+  ]
+ },
+ "188": {
+  "branch": "claude/mlb-fullboard-calibration-analysis-20260923",
+  "head": "9266b78980",
+  "ahead": 1,
+  "behind": 677,
+  "files": 6,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": [
+   "engineering/ENGINEERING_HANDOFF.md",
+   "engineering/mlb_fullboard_calibration_20260923/README.md",
+   "engineering/mlb_fullboard_calibration_20260923/analyze_fullboard_calibration.py",
+   "engineering/mlb_fullboard_calibration_20260923/calibration_lib.py"
+  ]
+ },
+ "187": {
+  "branch": "claude/mlb-fullboard-snapshot-20260923",
+  "head": "d44e905930",
+  "ahead": 1,
+  "behind": 752,
+  "files": 2,
+  "files_equal_to_main": 0,
+  "conflict_files": [
+   "engineering/ENGINEERING_HANDOFF.md"
+  ],
+  "top_files": [
+   "engineering/ENGINEERING_HANDOFF.md",
+   "test_mlb_fullboard_snapshot_wiring.py"
+  ]
+ },
+ "184": {
+  "branch": "claude/nfl-opportunity-ablation-2024-holdout-20260923",
+  "head": "39729bf120",
+  "ahead": 2,
+  "behind": 770,
+  "files": 6,
+  "files_equal_to_main": 0,
+  "conflict_files": [
+   "engineering/ENGINEERING_HANDOFF.md"
+  ],
+  "top_files": [
+   "engineering/ENGINEERING_HANDOFF.md",
+   "engineering/nfl_opportunity_ablation_2024_holdout_20260923/README.md",
+   "engineering/nfl_opportunity_ablation_2024_holdout_20260923/component_ablation_2024.py",
+   "engineering/nfl_opportunity_ablation_2024_holdout_20260923/component_ablation_2024_report.json"
+  ]
+ },
+ "174": {
+  "branch": "codex/nfl-real-tactical-source-20260922",
+  "head": "db54f1f6dc",
+  "ahead": 5,
+  "behind": 1089,
+  "files": 4,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": [
+   "engineering/tactical_source_20260922/README.md",
+   "engineering/tactical_source_20260922/evidence.json",
+   "nfl/research/tactical_source_adapter.py",
+   "nfl/tests/test_tactical_source_adapter.py"
+  ]
+ },
+ "170": {
+  "branch": "codex/nfl-film-intelligence-prototype-20260922",
+  "head": "a898e3660d",
+  "ahead": 13,
+  "behind": 1187,
+  "files": 7,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": [
+   "engineering/NFL_FILM_INTELLIGENCE_SOURCE_GATE_2026-09-22.md",
+   "nfl/research/film_observations.py",
+   "nfl/research/fixtures/film_synthetic_independent.jsonl",
+   "nfl/research/fixtures/film_synthetic_manifest.json"
+  ]
+ },
+ "131": {
+  "branch": "claude/hits-runs-rbis-mechanism-20260918",
+  "head": "254fe47b2f",
+  "ahead": 1,
+  "behind": 3087,
+  "files": 1,
+  "files_equal_to_main": 0,
+  "conflict_files": [
+   "engineering/ENGINEERING_HANDOFF.md"
+  ],
+  "top_files": [
+   "engineering/ENGINEERING_HANDOFF.md"
+  ]
+ },
+ "130": {
+  "branch": "claude/gitignore-agent-worktrees-20260918",
+  "head": "342f69e71e",
+  "ahead": 1,
+  "behind": 3087,
+  "files": 1,
+  "files_equal_to_main": 0,
+  "conflict_files": [
+   ".gitignore"
+  ],
+  "top_files": [
+   ".gitignore"
+  ]
+ },
+ "110": {
+  "branch": "superchad/nfl-scoring-prior-features-20260914",
+  "head": "390e04d3fd",
+  "ahead": 2,
+  "behind": 4806,
+  "files": 2,
+  "files_equal_to_main": 2,
+  "conflict_files": [],
+  "top_files": [
+   "nfl/research/scoring_prior_features.py",
+   "nfl/tests/test_scoring_prior_features.py"
+  ]
+ },
+ "85": {
+  "branch": "claude/prospective-hits-pa-lifecycle-closure-01",
+  "head": "4744ad2fc7",
+  "ahead": 4414,
+  "behind": 6759,
+  "files": 0,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": []
+ },
+ "84": {
+  "branch": "superchad/hr-contact-state-integration-01",
+  "head": "d9d40fa175",
+  "ahead": 2921,
+  "behind": 6759,
+  "files": 0,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": []
+ },
+ "83": {
+  "branch": "superchad/hr-offset-estimator-scaffold-01",
+  "head": "d9e6021b7b",
+  "ahead": 2887,
+  "behind": 6759,
+  "files": 0,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": []
+ },
+ "82": {
+  "branch": "superchad/canonical-certification-readiness-01",
+  "head": "926cf3f814",
+  "ahead": 2887,
+  "behind": 6759,
+  "files": 0,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": []
+ },
+ "81": {
+  "branch": "superchad/pa-opportunity-runner-scaffold-01",
+  "head": "95a4b80521",
+  "ahead": 2884,
+  "behind": 6759,
+  "files": 0,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": []
+ },
+ "80": {
+  "branch": "superchad/hr-contact-state-feature-scaffold-01",
+  "head": "77442dabfe",
+  "ahead": 2884,
+  "behind": 6759,
+  "files": 0,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": []
+ },
+ "79": {
+  "branch": "superchad/experiment-primitives-01",
+  "head": "7794220733",
+  "ahead": 2884,
+  "behind": 6759,
+  "files": 0,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": []
+ },
+ "78": {
+  "branch": "superchad/pa-opportunity-decisive-prereg-01",
+  "head": "b019e49981",
+  "ahead": 2883,
+  "behind": 6759,
+  "files": 0,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": []
+ },
+ "77": {
+  "branch": "superchad/hr-execution-prereg-v2-01",
+  "head": "5869216a73",
+  "ahead": 2882,
+  "behind": 6759,
+  "files": 0,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": []
+ },
+ "76": {
+  "branch": "superchad/superclaude-activation-corrections-01",
+  "head": "26dbe36714",
+  "ahead": 2631,
+  "behind": 6759,
+  "files": 0,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": []
+ },
+ "75": {
+  "branch": "superchad/fix-board-first-paint-clock-fixture-01",
+  "head": "26d37fd475",
+  "ahead": 2880,
+  "behind": 6759,
+  "files": 0,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": []
+ },
+ "74": {
+  "branch": "accuracy/hr-execution-prereg-01",
+  "head": "0ae4535d5a",
+  "ahead": 2626,
+  "behind": 6759,
+  "files": 0,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": []
+ },
+ "73": {
+  "branch": "tooling/superclaude-activation-01",
+  "head": "79f1109fc1",
+  "ahead": 2628,
+  "behind": 6759,
+  "files": 0,
+  "files_equal_to_main": 0,
+  "conflict_files": [],
+  "top_files": []
+ }
+}
