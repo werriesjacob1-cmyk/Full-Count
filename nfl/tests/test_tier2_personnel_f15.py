@@ -35,10 +35,16 @@ def test_duplicate_play_and_source_cutoff():
     with patch.object(f,"verify"), patch.object(Path,"open",opened):
         with unittest.TestCase().assertRaisesRegex(ValueError,"duplicate participation"):
             f.load_profiles(p,chart)
+    ctext += "2024_01_ARI_BUF,1\n"
+    with patch.object(f,"verify"), patch.object(Path,"open",opened):
+        with unittest.TestCase().assertRaisesRegex(ValueError,"duplicate FTN"):
+            f.load_profiles(p,chart)
     with patch.object(Path,"stat") as stat, patch.object(Path,"read_bytes",return_value=b"ok"):
         stat.return_value.st_size=2
         with unittest.TestCase().assertRaisesRegex(ValueError,"published after"):
             f.verify(p,{"sha256":f.hashlib.sha256(b"ok").hexdigest(),"published_at":"2025-09-12T00:00:00Z"})
+        with unittest.TestCase().assertRaisesRegex(ValueError,"SHA-256 mismatch"):
+            f.verify(p,{"sha256":"0"*64,"published_at":"2025-09-04T00:00:00Z"})
 
 
 def test_identity_cutoff_abstention_and_personnel_connection():
@@ -64,17 +70,21 @@ def test_identity_cutoff_abstention_and_personnel_connection():
         f.feature({**row,"team":"NYJ"},profiles)
     assert f.feature({**row,"week":1},profiles)["status"]=="NO_ADJUSTMENT"
     assert f.feature({**row,"player_id":"00-0000010"},profiles)["reason"].startswith("INSUFFICIENT")
+    p_small=Counter({"11":99})
+    assert f.feature(row,{**profiles,"player":{("00-0000001","ARI"):p_small}})["reason"]=="INSUFFICIENT_PRIOR_SAME_TEAM_PLAYER_PLAYS"
     with unittest.TestCase().assertRaisesRegex(ValueError,"post-cutoff"):
         f.feature(row,{**profiles,"source_published_at":"2025-09-12T00:00:00Z"})
 
 
 def test_fit_is_dev_only_and_predict_preserves_b0():
-    r={"week":2,"b0":4.0,"actual":5.0,"f15":{"status":"ACTIVE","opportunity":0.35}}
+    r={"season":2025,"week":2,"b0":4.0,"actual":5.0,"f15":{"status":"ACTIVE","opportunity":0.35}}
     model=f.fit([r,{**r,"b0":6.0,"actual":5.0,"week":3}])
     z=f.predict(r,model)
     assert z["b0"]==4.0 and r["b0"]==4.0
     with unittest.TestCase().assertRaisesRegex(ValueError,"weeks 2-8"):
         f.fit([{**r,"week":9}])
+    with unittest.TestCase().assertRaisesRegex(ValueError,"2025 weeks"):
+        f.fit([{**r,"season":2024}])
 
 
 class PersonnelTests(unittest.TestCase):

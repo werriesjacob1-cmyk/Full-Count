@@ -1,0 +1,32 @@
+# F15: historical offensive personnel and receptions research
+
+Status: **exploratory research; no promotion or pick integration**. Predictive code and tests were frozen and pushed as `db935381e48544369e8dbf81845e4b42da4e571c` before the single held-period evaluation. This folder records that evaluation without fitting to it. The later comment-only clarification in the code does not change predictions.
+
+## Source and identity
+
+Inputs are FTN Data via nflverse, under CC BY-SA 4.0: 2024 participation `pbp_participation_2024.csv`, SHA-256 `b1f436a98b2a7759eb4ed1181e072a35c2666f9aeb356a49c943d28d6be6b0b9`, 49,688,308 bytes, release timestamp 2025-09-04 10:24:49 UTC; 2024 charting `ftn_charting_2024.csv`, SHA-256 `6faae8118cc13ce62589210d553733128ed35e558671009b4a7a8fc5c674c2cb`, 8,254,908 bytes, release timestamp 2025-09-01 01:29:37 UTC. Sources are attributed, hashed, and required to precede the 2025 week-2 information cutoff. The 2023–25 weekly stat file digests are pinned in code; the copies evaluated were retrieved in 2026, so their exact historical revisions are not proven point-in-time. No historical sportsbook quote is implied.
+
+An exact game/play join to 48,031 FTN charted plays and full offense player IDs/positions is required. Conventional labels count RB+FB as backs and TE as tight ends. Each classified play has 11 unique GSIS IDs, exactly one QB, five players marked C/G/T, five players marked RB/FB/TE/WR, a matching textual position composition, and offense matching game identity. This yields 36,954 classified plays (76.94% of charted plays). The other 11,077 charted plays are unknown rather than assigned a guessed package: 8,951 joined rows with incomplete/contradictory packages and 2,126 charted plays without a participation row. Separately, 14 participation plays had no exact FTN match. A source text composition is a consistency check, not independent annotation, because it may derive from the same positions. The source does not establish individual routes, targets, blocking, formation, or responsibilities.
+
+## Frozen predictive pathway
+
+For each 2024 team, count observed package frequency. For each 2024 same-team player, count field presence conditional on package. Convert to a slot-share opportunity index: sum over packages of `team package frequency × player presence within package / WR, TE, or backfield slots in package`. RB and FB share the backfield denominator. This is historical field opportunity, not an on-field rate, expected 2025 snap count, or a 2025 game-specific package forecast. The 2025 receptions B0 remains an unmodified read-only import. A separate two-coefficient ridge model uses `B0` and `B0 × (slot opportunity − 0.25)`; a one-coefficient scale-only comparator is fitted on the same development population. The fixed ridge strength is 10. Both fits use 2025 regular-season weeks 2–8 only. Eligibility requires at least 400 classified 2024 team plays, 100 same-team player plays, one consistent on-field player position, prior source publication, a valid player/team/game identity, and an existing B0 prediction. All other cases abstain from F15 adjustment. The outcome is receptions only.
+
+This is a team/player historical package-context signal. It does not know the 2025 offense's current package mix. The repository's regime registry covers head coaches but not verified offensive coordinators or playcallers; this formulation does not make a coaching-change adjustment. Current availability, roster turnover, and opponent defensive package response are also not observed as prospective inputs. These can alter personnel mix, so this feature must not be presented as a current-week role forecast or as operationally eligible.
+
+## One held comparison
+
+The held population is 2025 weeks 9–18. There are 2,399 role-positive candidate player-games; 1,383 activate (216 players, 32 teams). The role-positive selection uses each game's subsequently observed targets/receptions, so this is **not a pregame eligibility population**. There were 902 same-team prior sample abstentions, 108 missing B0/outside supported population, and six inconsistent player-position abstentions. Development had 1,012 active rows. All errors below use the **same 1,383 activated rows**.
+
+| Projection | MAE receptions | RMSE | Bias (prediction minus actual) |
+| --- | ---: | ---: | ---: |
+| Unmodified B0 | 1.459581 | 1.948869 | +0.080839 |
+| Fitted scale only | 1.433930 | 1.926469 | −0.172897 |
+| F15 personnel | 1.433851 | 1.926071 | −0.173106 |
+
+F15's MAE difference versus scale only is −0.000080 receptions. Fixed-seed 1,000-resample percentile intervals for that difference are [−0.001134, +0.001056] when clustering by player and [−0.001505, +0.001356] when clustering by game (151 games). Both span zero; **incremental predictive value is not demonstrated**. The code changed 1,383 projections relative to scale only, with mean absolute change 0.01937 receptions. One authentic example: Trey McBride in 2025 week 16 versus ATL had a prior Arizona TE slot-opportunity share of 0.6178; B0 8.8 receptions, scale-only 8.052, F15 8.159, actual four. The changed prediction was worse in this example. This is not a pick hit-rate, EV, or market-price result. The 2025 period had been inspected in prior work, so even the held partition is exploratory rather than untouched confirmation.
+
+The complete deterministic `evaluation.json.gz` contains the input identities, all activated matched rows, fitted parameters, abstention counts, error metrics, and examples. Its uncompressed canonical JSON SHA-256 is `2dfdbc37b86f4e833681097a003a6f35dbe48069187224f4eab9e2afeaa0cb72`; gzip SHA-256 is `f0dcd5adc0b6ece638754e20ad0619389a3a0a9ff99745ff146e695580043df8` (mtime zero). The evaluation reporting code added a game-cluster interval after independent review; model features, fit, and predictions stayed frozen and identical. Reproduce with `python -m nfl.research.tier2.personnel_f15 --participation PATH --ftn PATH --stats-dir PATH --output PATH`, supplying byte-matched pinned inputs. Four focused adversarial tests pass with `python -m unittest nfl.tests.test_tier2_personnel_f15 -v`.
+
+This negative/flat formulation is preserved for independent review. A future study would need genuinely pregame current-season participation and credible coaching/availability information before testing a changing package forecast; none is inferred here.
+

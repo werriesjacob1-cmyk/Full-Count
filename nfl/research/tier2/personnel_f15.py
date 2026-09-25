@@ -55,7 +55,8 @@ def classify(ids: list[str], positions: list[str], label: str) -> tuple[str, dic
         return None
     if set(c) - {"QB", "C", "G", "T", "RB", "FB", "TE", "WR"}:
         return None
-    # The upstream explicit composition is an independent disagreement check.
+    # Check the upstream text composition against the per-player position list.
+    # The two fields may share upstream derivation; this is consistency only.
     found = Counter({name: int(n) for n, name in re.findall(r"(\d+) ([A-Z]+)", label)})
     if found != c:
         return None
@@ -133,7 +134,7 @@ def feature(row: dict, profiles: dict) -> dict:
     if len(pc) != 1:
         return {"status": "NO_ADJUSTMENT", "reason": "CONFLICTING_PLAYER_POSITION"}
     position = next(iter(pc))
-    # Weighted share of available same-position skill slots. A presence in a
+    # Weighted share of WR, TE, or backfield slots. A presence in a
     # three-WR package is not equated with a one-WR package. This is field
     # opportunity, not receiving usage, and is calculated solely from 2024.
     opportunity = 0.0
@@ -178,7 +179,7 @@ def load_baseline(stats_dir: Path) -> list[dict]:
 
 
 def fit(rows: list[dict]) -> dict:
-    if not rows or any(r["week"] not in DEV for r in rows):
+    if not rows or any(r["season"] != 2025 or r["week"] not in DEV for r in rows):
         raise ValueError("only 2025 weeks 2-8 may fit")
     b = [r["b0"] for r in rows]
     x = [r["b0"] * (r["f15"]["opportunity"] - 0.25) for r in rows]
@@ -227,13 +228,22 @@ def evaluate(participation: Path, ftn: Path, stats_dir: Path, *, bootstrap: int 
     clusters = defaultdict(list)
     for r in scored:
         clusters[r["player_id"]].append(r)
+    games = defaultdict(list)
+    for r in scored:
+        games[r["game_id"]].append(r)
     rng = random.Random(15)
+    game_rng = random.Random(16)
     keys = sorted(clusters)
+    game_keys = sorted(games)
     deltas = []
+    game_deltas = []
     for _ in range(bootstrap):
         sample = [r for k in rng.choices(keys,k=len(keys)) for r in clusters[k]]
         deltas.append(metrics(sample,"challenger")["mae"]-metrics(sample,"scale_only")["mae"])
+        game_sample = [r for k in game_rng.choices(game_keys,k=len(game_keys)) for r in games[k]]
+        game_deltas.append(metrics(game_sample,"challenger")["mae"]-metrics(game_sample,"scale_only")["mae"])
     deltas.sort()
+    game_deltas.sort()
     team_plays = sum(sum(v.values()) for v in profiles["team"].values())
     return {"status": "EXPLORATORY_RESEARCH_ONLY_NOT_PROMOTED",
             "source": {"sha256": profiles["source_sha256"], "published_at": profiles["source_published_at"],
@@ -243,12 +253,14 @@ def evaluate(participation: Path, ftn: Path, stats_dir: Path, *, bootstrap: int 
             "population": {"year": 2025, "dev_weeks": [2,8], "held_weeks": [9,18],
                            "development_active": len(dev), "held_candidates": len(held_candidates),
                            "held_active": len(scored), "players": len(clusters),
+                           "games": len(games),
                            "teams": len({r["team"] for r in scored}),
                            "held_abstentions": dict(Counter(r["f15"]["reason"] for r in held_candidates if r["f15"]["status"] != "ACTIVE"))},
             "fit": fitted,
             "metrics": {k: metrics(scored,k) for k in ("b0","scale_only","challenger")},
             "delta_mae_challenger_minus_scale": metrics(scored,"challenger")["mae"]-metrics(scored,"scale_only")["mae"],
             "player_cluster_95_interval": [deltas[int(.025*bootstrap)],deltas[int(.975*bootstrap)]],
+            "game_cluster_95_interval": [game_deltas[int(.025*bootstrap)],game_deltas[int(.975*bootstrap)]],
             "prediction_changes": {"count_vs_scale": sum(abs(r["challenger"]-r["scale_only"])>1e-9 for r in scored),
                                    "mean_absolute_vs_scale": sum(abs(r["challenger"]-r["scale_only"]) for r in scored)/len(scored)},
             "examples": [{k:r[k] for k in ("player_name","game_id","week","actual","b0","scale_only","challenger","personnel_term")} | {"feature": r["f15"]}
