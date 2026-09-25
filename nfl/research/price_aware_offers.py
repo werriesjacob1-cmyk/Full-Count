@@ -92,6 +92,42 @@ def _validate_distribution(dist: dict) -> None:
         raise ValueError("PMF must be finite nonnegative and normalized; no tail folding")
 
 
+def _quote_evidence_valid(candidate: dict, raw_source_sha256: str, captured: datetime) -> bool:
+    """A caller-provided timestamp alone is never proof of quote origin.
+
+    The raw-byte verifier in the capture/integration layer must additionally
+    compare source_field to the actual market payload before this can be used
+    outside a contract test. Current FanDuel responses have no such field.
+    """
+    evidence = candidate.get("quote_evidence")
+    if not isinstance(evidence, dict) or candidate.get("quote_timestamp_status") != "SOURCE_FIELD_VERIFIED":
+        return False
+    try:
+        if (evidence.get("source_sha256") != raw_source_sha256 or
+                evidence.get("market_id") != candidate["market_id"] or
+                evidence.get("timestamp") != candidate["quote_timestamp"] or
+                not _text(evidence.get("source_field"))):
+            return False
+        return _time(evidence["timestamp"]) <= captured
+    except (KeyError, TypeError, ValueError):
+        return False
+
+
+def _role_evidence_valid(candidate: dict, captured: datetime) -> bool:
+    # No trusted role-source verifier is connected to this research evaluator.
+    # Metadata supplied inside a candidate can describe evidence, but cannot
+    # authenticate it. Keep the gate closed until raw source bytes are checked
+    # outside the candidate and bound to this player, team, game and cutoff.
+    return False
+
+
+def _rule_evidence_valid(candidate: dict, now: datetime) -> bool:
+    # A URL, formatted digest, and caller-declared jurisdiction do not prove
+    # the sportsbook's applicable settlement terms. No verified rule-source
+    # adapter exists yet, so a self-certified record must never clear this gate.
+    return False
+
+
 def evaluate_offer(candidate: dict, distribution: dict, *, as_of: str,
                    raw_source_sha256: str, max_age_seconds: int = 900) -> dict:
     """Return sealed research evidence, or explicit NO_PLAY with untouched inputs.
@@ -189,23 +225,19 @@ def evaluate_offer(candidate: dict, distribution: dict, *, as_of: str,
             reasons.append("UPSTREAM_ELIGIBILITY_NOT_CLEARED")
         if candidate.get("quote_timestamp") is None:
             reasons.append("QUOTE_TIMESTAMP_NOT_PROVIDED")
+        elif not _quote_evidence_valid(candidate, raw_source_sha256, captured):
+            reasons.append("QUOTE_PROVENANCE_UNVERIFIED")
         if candidate.get("current_role_status") != "VERIFIED":
             reasons.append("CURRENT_ROLE_NOT_VERIFIED")
+        elif not _role_evidence_valid(candidate, captured):
+            reasons.append("CURRENT_ROLE_EVIDENCE_MISSING")
         if candidate.get("authoritative_b0_status") != "JOINED":
             reasons.append("AUTHORITATIVE_B0_NOT_JOINED")
         rule = candidate.get("sportsbook_rule")
         if not isinstance(rule, dict) or rule.get("status") != "CERTIFIED":
             reasons.append("BOOK_ACTION_RULES_NOT_CERTIFIED")
-        elif (rule.get("book") != candidate["source"] or
-              rule.get("market") != candidate["market"] or
-              rule.get("event_id") != candidate["event_id"] or
-              not isinstance(rule.get("url"), str) or
-              not rule["url"].startswith("https://www.fanduel.com/")):
-            reasons.append("BOOK_ACTION_RULES_IDENTITY_MISMATCH")
-        else:
-            _digest(rule["source_sha256"])
-            if _time(rule["observed_at"]) > now:
-                reasons.append("BOOK_ACTION_RULES_AFTER_CUTOFF")
+        elif not _rule_evidence_valid(candidate, now):
+            reasons.append("BOOK_ACTION_RULES_EVIDENCE_MISSING_OR_MISMATCHED")
         if reasons:
             result["decision_status"] = "QUARANTINED"
             result["reasons"] = reasons
