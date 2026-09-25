@@ -44,24 +44,24 @@
 | #205 WS-D | Claude | READY (research-only) | Needs #210 | Same as #203 |
 | #207 F11/F12 | Claude | READY (research-only; F11 REJECTED, F12 NOT SUPPORTED; results preserved) | Reviewed | Same as #203 |
 | #213 F17 | Claude | READY (research-only; NOT SUPPORTED preserved) | Reviewed | Same as #203 |
-| #186 rushing B0 research | Claude | **REPAIR DONE → READY (research-only)** via `claude/pr186-integration-20260925` | The PR head still conflicts on the handoff; the resolution is on the integration branch | Merge the integration branch, or apply the union to the PR head |
+| #186 rushing B0 research | Claude | **REPAIRED → READY (research-only)** | The union resolution is now also in the PR head (`efb40423ff`), conflict-free vs main; #212's diff against it is still F16-only (4 files) | After #208/#210 |
 | #212 F16 | Codex | READY (research-only; negative result preserved), stacked on #186 | Codex recorded an identity-review correction; merges clean | After #186 |
 | #196 price-aware offers | Codex | **ACTIVE WORK** | The 3 eligibility gates are uncertified (rules, current role, quote timestamp) | Codex: certify the gates |
 | #199 offer→B0 join | Codex | **ACTIVE WORK** (stacked on #196) | Same | Same |
-| #174 FTN tactical charting | Codex | SCIENTIFIC REVIEW REQUIRED | Descriptive prototype; merges clean; the diff has not been independently reviewed this round | Independent diff review, then an exact-tree CI run after #208 |
-| #170 film prototype | Codex | SCIENTIFIC REVIEW REQUIRED | Synthetic prototype, not an operational film source | Same |
-| #206 F13 | Codex | SCIENTIFIC REVIEW REQUIRED | Negative result; no independent review recorded | Review, then CI after #208 |
-| #209 F14 | Codex | SCIENTIFIC REVIEW REQUIRED | Null result; no independent review recorded | Same |
+| #174 FTN tactical charting | Codex | **READY AFTER #208 CI refresh (research-only; independently reviewed)** | Review 2026-09-25: CLEAN. 14/14 tests pass; strictly prior capture and cutoff checks; FTN CC-BY-SA attribution. LOW: README says "10 tests" (actually 14) | Exact-tree CI after #208; optional LOW fixes are Codex's |
+| #170 film prototype | Codex | **READY AFTER #208 CI refresh (research-only; independently reviewed)** | Review 2026-09-25: CLEAN. 13/13 tests pass; fail-closed rights; synthetic fixtures unambiguously labelled; real-source gate documented as BLOCKED | Exact-tree CI after #208; optional LOW fixes are Codex's |
+| #206 F13 | Codex | **READY AFTER #208 CI refresh (research-only; independently reviewed)** | Review 2026-09-25: CLEAN. 8/8 tests pass; 2024 charting precedes the 2025 evaluation; disjoint dev/held weeks; honest NEGATIVE result (CI [+0.035, +2.534], harmful direction). LOW: tests write temp files into the repo path (cleaned up) | Exact-tree CI after #208; optional LOW fixes are Codex's |
+| #209 F14 | Codex | **READY AFTER #208 CI refresh (research-only; independently reviewed)** | Review 2026-09-25: CLEAN. 6/6 tests pass; same point-in-time structure; honest NULL result (CI [−0.0042, +0.0057]); seal verified. LOW: same temp-file pattern | Exact-tree CI after #208; optional LOW fixes are Codex's |
 | #211 F15 | Codex | READY AFTER #208 CI refresh (research-only) | Independent-review corrections recorded; merges clean | Exact-tree CI after #208 |
 | #214 F18 source gate | Codex | READY AFTER #208 CI refresh (documentation) | Revised after independent review; merges clean | Same |
 | #193 target-share forward shadow | Claude | **ACTIVE WORK** | Pre-registered grading is scheduled for Sep 30 (`trig_017aueLwd923cGSr4ZVdkKGQ`); conflicts only on the handoff | Grade, then union-resolve the handoff |
-| #201 MLB overconfidence | Claude | REPAIR REQUIRED | Conflicts only on the handoff (append-only union, as done for #186) | Union-resolve, then CI after #208 |
-| #198 MLB slate-date audit | Claude | REPAIR REQUIRED | Same, handoff only | Same |
-| #192 MLB Top Pick calibration | Claude | REPAIR REQUIRED | Same, handoff only | Same |
-| #191 NFL error decomposition | Claude | REPAIR REQUIRED | Same, handoff only | Same |
-| #187 MLB full-board snapshot test | Claude | REPAIR REQUIRED | Same, handoff only | Same |
-| #184 NFL 2024 ablation | Claude | REPAIR REQUIRED | Same, handoff only | Same |
-| #131 MLB selector diagnosis | Claude | REPAIR REQUIRED | Handoff-only PR; its section is not on main | Union-resolve |
+| #201 MLB overconfidence | Claude | **REPAIRED → READY AFTER #208 CI refresh** | Handoff union merged into the PR head (`025fdf63ed`), main's handoff kept byte-for-byte as prefix; conflict-free vs main; the PR's added tests pass locally | Exact-tree CI after #208 (root fails only on main's inherited fixture until then) |
+| #198 MLB slate-date audit | Claude | **REPAIRED → READY AFTER #208 CI refresh** | Handoff union merged into the PR head (`d21ba2f5fc`), main's handoff kept byte-for-byte as prefix; conflict-free vs main; the PR's added tests pass locally | Exact-tree CI after #208 (root fails only on main's inherited fixture until then) |
+| #192 MLB Top Pick calibration | Claude | **REPAIRED → READY AFTER #208 CI refresh** | Handoff union merged into the PR head (`c30c1c3a37`), main's handoff kept byte-for-byte as prefix; conflict-free vs main; the PR's added tests pass locally | Exact-tree CI after #208 (root fails only on main's inherited fixture until then) |
+| #191 NFL error decomposition | Claude | **REPAIRED → READY AFTER #208 CI refresh** | Handoff union merged into the PR head (`0d85251d7e`), main's handoff kept byte-for-byte as prefix; conflict-free vs main; the PR's added tests pass locally | Exact-tree CI after #208 (root fails only on main's inherited fixture until then) |
+| #187 MLB full-board snapshot test | Claude | **REPAIRED → READY AFTER #208 CI refresh** | Handoff union merged into the PR head (`8e413cc072`), main's handoff kept byte-for-byte as prefix; conflict-free vs main; the PR's added tests pass locally | Exact-tree CI after #208 (root fails only on main's inherited fixture until then) |
+| #184 NFL 2024 ablation | Claude | **REPAIRED → READY AFTER #208 CI refresh** | Handoff union merged into the PR head (`ba757f1fdf`), main's handoff kept byte-for-byte as prefix; conflict-free vs main; the PR's added tests pass locally | Exact-tree CI after #208 (root fails only on main's inherited fixture until then) |
+| #131 MLB selector diagnosis | Claude | **REPAIRED → READY AFTER #208 CI refresh** | Handoff union merged into the PR head (`c7dc7fdfd1`), main's handoff kept byte-for-byte as prefix; conflict-free vs main; the PR's added tests pass locally | Exact-tree CI after #208 (root fails only on main's inherited fixture until then) |
 | #190 passing-yards alternate ladder | Claude | READY AFTER #208 CI refresh (research-only) | Merges clean; reviewed in its mission | Exact-tree CI after #208 |
 | #188 MLB full-board calibration | Claude | READY AFTER #208 CI refresh (research-only) | Merges clean | Same |
 | #130 gitignore worktrees | Claude | **SUPERSEDED** | Main already contains the identical `.claude/worktrees/` rule and comment (`.gitignore` lines 28–32) | Jacob: close; nothing unique is lost |
@@ -91,9 +91,14 @@ Count: 11 certified items (#208, #210, #177, #202–#205, #207, #213, #186, #212
 
 The combined tree for steps 1–5 is `claude/merge-sequence-integration-20260925` (see CI above).
 
+## Update 2026-09-25 ~17:40Z
+- **Wait loops removed:** two orphaned wait loops left over from the F11/F12 fit were terminated (a `pgrep -f` self-match). Nothing else was touched.
+- **F11/F12 artifacts verified:** all eight on the remote (`f4fb17aa0b`) are byte-identical to the local copies.
+- **Handoff repairs applied to the PR heads:** #201, #198, #192, #191, #187, #184, #131 and #186 (merge commits; no history rewritten). #193 is deliberately left alone until its Sep 30 pre-registered grading.
+- **Research PRs reviewed:** an independent read-only review of #174, #170, #206 and #209 found all four CLEAN for research-only merge (no BLOCKING or HIGH findings). The 2 LOW cosmetic items are listed in their rows.
+
 ## Genuinely unresolved
 - **Pricing gates:** Codex owns certifying `BOOK_ACTION_RULES_NOT_CERTIFIED`, `CURRENT_ROLE_NOT_VERIFIED` and `QUOTE_TIMESTAMP_NOT_PROVIDED` (#196/#199).
-- **Unreviewed research:** #174, #170, #206 and #209 lack an independent diff review this round (owner Codex; any reviewer).
 - **Pre-rewrite history:** 13 PRs sit on a history with no common base with main. Jacob or SUPERCHAD must choose port or archive; this workstream does not port them.
 - **Main's root CI** fails until #208 lands, because live Top Pick volume varies. Every PR's root CI inherits that failure until then.
 - **Seal:** the Saturday seal remains the priority; the trigger fires 2026-09-26 18:30Z.
