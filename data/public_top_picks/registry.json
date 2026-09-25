@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-25T19:57:44.240618+00:00",
+  "updated_at": "2026-09-25T20:13:06.573638+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -48777,6 +48777,402 @@
         },
         "qualification_timestamp": "2026-09-25T19:53:13.448329+00:00",
         "board_timestamp": "2026-09-25T19:53:13.426725+00:00",
+        "slate_date": "2026-09-25"
+      }
+    },
+    "fc2:823409:player-802415:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823409:player-802415:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823409",
+        [
+          "player",
+          "802415"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-25",
+      "first_published_at": "2026-09-25T20:13:06.573638+00:00",
+      "publication_provenance": {
+        "artifact_id": "b6f0331866c5d63705019e0bf1fa78654020d9b30237cf08a153c46703a38a92",
+        "source_commit": "1736e878850e0dfd8acccfbeadfc880485fba3de",
+        "workflow_run_id": "36184298864",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-25T20:12:53.334670+00:00",
+        "data_hash": "5d8eb774da32f68c3c880f881faae3470cc1f9c02b93ca5c03e87b771f9e7fcc",
+        "live_hash": "fab17c8843d935ee7272d5f8f86170be69d93662d3066eae15267186696def3c"
+      },
+      "snapshot": {
+        "id": "fc2:823409:player-802415:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823409,
+        "player_id": 802415,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Chandler Simpson",
+        "team": "Tampa Bay Rays",
+        "matchup": "Tampa Bay Rays @ Philadelphia Phillies",
+        "game_start": "2026-09-25T22:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.7215,
+        "market_odds": -200,
+        "market_implied": 0.6667,
+        "market_edge": 0.0548,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 17.4 \u2014 hot recent contact",
+          "Projected 3.84 PA (batting slot 6)"
+        ],
+        "watchouts": [
+          "L7 avg EV 82.3mph (league ~88.5) \u2014 cold recent contact",
+          "Platoon: L bat vs LHP (unfavorable)",
+          "Opposing SP ERA 2.92 \u2014 elite pitcher, tough matchup",
+          "Hitters batting ahead of him: 0.310 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.284 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 2.83 runs (league avg 4.245; line 2.5, game total 6.5) \u2014 a weak offensive environment",
+          "AVG vs xBA: 0.308 vs 0.262 (+0.046) \u2014 outperforming his contact quality, regression risk",
+          "wOBA vs xwOBA: 0.306 vs 0.264 (+0.042) \u2014 outperforming his contact quality, regression risk",
+          "Public heavy on Tampa Bay Rays (money% trails tickets% by 23 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 0.0 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 3/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Tampa Bay Rays (money% -23 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.7047,
+          0.7634
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 147,
+        "lineup_assumed": null,
+        "base_rate": 0.6707,
+        "lift": 0.0508,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "cf2532487",
+          "prediction_timestamp": "2026-09-25T20:10:12.533488+00:00",
+          "odds_fetched_at": "2026-09-25T20:10:04.182743+00:00",
+          "board_generated_at": "2026-09-25T20:10:12.511329+00:00"
+        },
+        "qualification_timestamp": "2026-09-25T20:10:12.533488+00:00",
+        "board_timestamp": "2026-09-25T20:10:12.511329+00:00",
+        "slate_date": "2026-09-25"
+      }
+    },
+    "fc2:823409:player-666018:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823409:player-666018:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823409",
+        [
+          "player",
+          "666018"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-25",
+      "first_published_at": "2026-09-25T20:13:06.573638+00:00",
+      "publication_provenance": {
+        "artifact_id": "b6f0331866c5d63705019e0bf1fa78654020d9b30237cf08a153c46703a38a92",
+        "source_commit": "1736e878850e0dfd8acccfbeadfc880485fba3de",
+        "workflow_run_id": "36184298864",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-25T20:12:53.334670+00:00",
+        "data_hash": "5d8eb774da32f68c3c880f881faae3470cc1f9c02b93ca5c03e87b771f9e7fcc",
+        "live_hash": "fab17c8843d935ee7272d5f8f86170be69d93662d3066eae15267186696def3c"
+      },
+      "snapshot": {
+        "id": "fc2:823409:player-666018:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823409,
+        "player_id": 666018,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Jonathan Aranda",
+        "team": "Tampa Bay Rays",
+        "matchup": "Tampa Bay Rays @ Philadelphia Phillies",
+        "game_start": "2026-09-25T22:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.7005,
+        "market_odds": -200,
+        "market_implied": 0.6667,
+        "market_edge": 0.0338,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 45.5 \u2014 hot recent contact",
+          "Projected 4.29 PA (batting slot 2) \u2014 a favorable lineup slot",
+          "Hitters batting ahead of him: 0.350 wOBA (league ~.320)",
+          "Hitter batting behind him: 0.375 wOBA (league ~.320) \u2014 real lineup protection, pitchers can't just pitch around him",
+          "Pitch-type exploit: RV/100 +1.5 vs CH (opposing SP throws it 36.9% of the time)",
+          "Season barrel% 10.0"
+        ],
+        "watchouts": [
+          "L7 avg EV 83.0mph (league ~88.5) \u2014 cold recent contact",
+          "Platoon: L bat vs LHP (unfavorable)",
+          "Opposing SP ERA 2.92 \u2014 elite pitcher, tough matchup",
+          "Team implied for 2.83 runs (league avg 4.245; line 2.5, game total 6.5) \u2014 a weak offensive environment",
+          "Public heavy on Tampa Bay Rays (money% trails tickets% by 23 pts) \u2014 sharp money is fading this side",
+          "Opposing bullpen fatigue: 3/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Tampa Bay Rays (money% -23 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.6838,
+          0.7425
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 152,
+        "lineup_assumed": null,
+        "base_rate": 0.6707,
+        "lift": 0.0298,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "cf2532487",
+          "prediction_timestamp": "2026-09-25T20:10:12.533488+00:00",
+          "odds_fetched_at": "2026-09-25T20:10:04.182743+00:00",
+          "board_generated_at": "2026-09-25T20:10:12.511329+00:00"
+        },
+        "qualification_timestamp": "2026-09-25T20:10:12.533488+00:00",
+        "board_timestamp": "2026-09-25T20:10:12.511329+00:00",
+        "slate_date": "2026-09-25"
+      }
+    },
+    "fc2:823816:player-691788:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823816:player-691788:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823816",
+        [
+          "player",
+          "691788"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-25",
+      "first_published_at": "2026-09-25T20:13:06.573638+00:00",
+      "publication_provenance": {
+        "artifact_id": "b6f0331866c5d63705019e0bf1fa78654020d9b30237cf08a153c46703a38a92",
+        "source_commit": "1736e878850e0dfd8acccfbeadfc880485fba3de",
+        "workflow_run_id": "36184298864",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-25T20:12:53.334670+00:00",
+        "data_hash": "5d8eb774da32f68c3c880f881faae3470cc1f9c02b93ca5c03e87b771f9e7fcc",
+        "live_hash": "fab17c8843d935ee7272d5f8f86170be69d93662d3066eae15267186696def3c"
+      },
+      "snapshot": {
+        "id": "fc2:823816:player-691788:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823816,
+        "player_id": 691788,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Joe Mack",
+        "team": "Miami Marlins",
+        "matchup": "Atlanta Braves @ Miami Marlins",
+        "game_start": "2026-09-25T23:10:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.647,
+        "market_odds": -155,
+        "market_implied": 0.6078,
+        "market_edge": 0.0392,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 90.6mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 15.4 \u2014 hot recent contact",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "Platoon: L bat vs LHP (unfavorable)",
+          "Opposing SP ERA 1.76 \u2014 elite pitcher, tough matchup",
+          "Projected 3.68 PA (batting slot 8) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.191 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.227 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.62 runs (league avg 4.245; line 3.5, game total 8) \u2014 a weak offensive environment",
+          "Season barrel% 8.0 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 1/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6337,
+          0.6786
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 101,
+        "lineup_assumed": null,
+        "base_rate": 0.6707,
+        "lift": -0.0237,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "cf2532487",
+          "prediction_timestamp": "2026-09-25T20:10:12.533488+00:00",
+          "odds_fetched_at": "2026-09-25T20:10:04.182743+00:00",
+          "board_generated_at": "2026-09-25T20:10:12.511329+00:00"
+        },
+        "qualification_timestamp": "2026-09-25T20:10:12.533488+00:00",
+        "board_timestamp": "2026-09-25T20:10:12.511329+00:00",
+        "slate_date": "2026-09-25"
+      }
+    },
+    "fc2:823409:player-802415:hits:1:over": {
+      "canonical_id": "fc2:823409:player-802415:hits:1:over",
+      "settlement_identity": [
+        "823409",
+        [
+          "player",
+          "802415"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-25",
+      "first_published_at": "2026-09-25T20:13:06.573638+00:00",
+      "publication_provenance": {
+        "artifact_id": "b6f0331866c5d63705019e0bf1fa78654020d9b30237cf08a153c46703a38a92",
+        "source_commit": "1736e878850e0dfd8acccfbeadfc880485fba3de",
+        "workflow_run_id": "36184298864",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-25T20:12:53.334670+00:00",
+        "data_hash": "5d8eb774da32f68c3c880f881faae3470cc1f9c02b93ca5c03e87b771f9e7fcc",
+        "live_hash": "fab17c8843d935ee7272d5f8f86170be69d93662d3066eae15267186696def3c"
+      },
+      "snapshot": {
+        "id": "fc2:823409:player-802415:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 823409,
+        "player_id": 802415,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Chandler Simpson",
+        "team": "Tampa Bay Rays",
+        "matchup": "Tampa Bay Rays @ Philadelphia Phillies",
+        "game_start": "2026-09-25T22:40:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6532,
+        "market_odds": -160,
+        "market_implied": 0.6154,
+        "market_edge": 0.0378,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 17.4 \u2014 hot recent contact",
+          "Projected 3.84 PA (batting slot 6)"
+        ],
+        "watchouts": [
+          "L7 avg EV 82.3mph (league ~88.5) \u2014 cold recent contact",
+          "Platoon: L bat vs LHP (unfavorable)",
+          "Opposing SP ERA 2.92 \u2014 elite pitcher, tough matchup",
+          "AVG vs xBA: 0.308 vs 0.262 (+0.046) \u2014 outperforming his contact quality, regression risk",
+          "wOBA vs xwOBA: 0.306 vs 0.264 (+0.042) \u2014 outperforming his contact quality, regression risk",
+          "Public heavy on Tampa Bay Rays (money% trails tickets% by 23 pts) \u2014 sharp money is fading this side",
+          "Team implied for 2.83 runs (league avg 4.245; line 2.5, game total 6.5) \u2014 a weak offensive environment",
+          "Season barrel% 0.0 \u2014 below-average barrel rate",
+          "Hitters batting ahead of him: 0.310 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.284 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Opposing bullpen fatigue: 3/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Tampa Bay Rays (money% -23 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.6411,
+          0.6653
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 147,
+        "lineup_assumed": null,
+        "base_rate": 0.5568,
+        "lift": 0.0964,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "cf2532487",
+          "prediction_timestamp": "2026-09-25T20:10:12.533488+00:00",
+          "odds_fetched_at": "2026-09-25T20:10:04.182743+00:00",
+          "board_generated_at": "2026-09-25T20:10:12.511329+00:00"
+        },
+        "qualification_timestamp": "2026-09-25T20:10:12.533488+00:00",
+        "board_timestamp": "2026-09-25T20:10:12.511329+00:00",
         "slate_date": "2026-09-25"
       }
     }
