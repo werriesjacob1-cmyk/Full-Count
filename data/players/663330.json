@@ -1123,7 +1123,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 67.8,
+          "score": 66.3,
           "notable_signals": 3,
           "matchup": "Cleveland Guardians @ Boston Red Sox",
           "game_pk": 824710,
@@ -1152,11 +1152,13 @@
             "getaway_day": 0.0,
             "series_game": 1.0,
             "sp_rp_ops_gap": -2.776,
-            "vs_rp_ops": 2.004
+            "vs_rp_ops": 2.004,
+            "ump_k_pct": 0.036,
+            "ump_bb_pct": -0.42
           },
-          "hit_probability": 0.5498,
-          "raw_hit_probability": 0.565,
-          "lift": -0.0099,
+          "hit_probability": 0.5504,
+          "raw_hit_probability": 0.5654,
+          "lift": -0.0093,
           "reliability": "A",
           "sample_n": 89,
           "projection": {
@@ -1182,7 +1184,7 @@
             "catcher_poptime": 0.0,
             "on_base": 39.5393
           },
-          "hit_probability": 0.0481,
+          "hit_probability": 0.0478,
           "raw_hit_probability": null,
           "lift": null,
           "reliability": "A",
@@ -1237,6 +1239,136 @@
           "lift": 0.0019,
           "reliability": "A",
           "sample_n": 89,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 28.1,
+          "notable_signals": 2,
+          "matchup": "Cleveland Guardians @ Boston Red Sox",
+          "game_pk": 824707,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 63.4286,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 75.0,
+            "park_hr_index": 25.1,
+            "season_barrel_pct": 47.3333,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": -5.0,
+            "platoon_xwoba": -5.0,
+            "park_hand_index": -2.31,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -2.3851,
+            "hard_hit_105_rate": 0.2125,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -3.056,
+            "vs_rp_ops": 1.656,
+            "ump_k_pct": -0.396,
+            "ump_bb_pct": -0.12
+          },
+          "hit_probability": 0.545,
+          "raw_hit_probability": 0.545,
+          "lift": -0.0127,
+          "reliability": "A",
+          "sample_n": 90,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 43.3,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Boston Red Sox",
+          "game_pk": 824707,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 4.26,
+            "sprint_speed": 37.5,
+            "catcher_poptime": 11.4286,
+            "on_base": 42.4184
+          },
+          "hit_probability": 0.0432,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 90,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 6.8,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Boston Red Sox",
+          "game_pk": 824707,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0551
+          },
+          "hit_probability": 0.0551,
+          "raw_hit_probability": null,
+          "lift": 0.0078,
+          "reliability": "A",
+          "sample_n": 90,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 2.5,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Boston Red Sox",
+          "game_pk": 824707,
+          "team": "Boston Red Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0223
+          },
+          "hit_probability": 0.0223,
+          "raw_hit_probability": null,
+          "lift": 0.0018,
+          "reliability": "A",
+          "sample_n": 90,
           "projection": {
             "stat": "moonshot_420",
             "value": 1,

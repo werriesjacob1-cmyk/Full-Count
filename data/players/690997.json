@@ -521,7 +521,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 79.2,
+          "score": 74.9,
           "notable_signals": 1,
           "matchup": "New York Mets @ Texas Rangers",
           "game_pk": 822841,
@@ -530,18 +530,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6336,
+            "outs_rate": 0.6397,
             "avg_outs_per_start": 17.27
           },
-          "hit_probability": 0.6164,
-          "raw_hit_probability": 0.6336,
-          "lift": 0.1481,
+          "hit_probability": 0.6205,
+          "raw_hit_probability": 0.6397,
+          "lift": 0.1159,
           "reliability": "A",
           "sample_n": 30,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 5.7,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Texas Rangers",
+          "game_pk": 822841,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            690997,
+            674003
+          ],
+          "signals": {
+            "combined_k_edge": -0.204
+          },
+          "hit_probability": 0.3612,
+          "raw_hit_probability": null,
+          "lift": -0.204,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

@@ -4256,7 +4256,7 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 51.0,
+          "score": 49.9,
           "notable_signals": 2,
           "matchup": "Cincinnati Reds @ Atlanta Braves",
           "game_pk": 824868,
@@ -4290,9 +4290,9 @@
             "ump_k_pct": 0.372,
             "ump_bb_pct": 0.348
           },
-          "hit_probability": 0.6632,
-          "raw_hit_probability": 0.6489,
-          "lift": 0.1035,
+          "hit_probability": 0.6622,
+          "raw_hit_probability": 0.6481,
+          "lift": 0.1025,
           "reliability": "A",
           "sample_n": 151,
           "projection": {
@@ -4317,7 +4317,7 @@
             "sprint_speed": 9.375,
             "on_base": 82.7255
           },
-          "hit_probability": 0.0795,
+          "hit_probability": 0.0794,
           "raw_hit_probability": null,
           "lift": null,
           "reliability": "A",
@@ -4372,6 +4372,137 @@
           "lift": 0.0101,
           "reliability": "A",
           "sample_n": 151,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Atlanta Braves",
+          "game_pk": 824866,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 90.5714,
+            "pitch_exploit": 0.0,
+            "l7_avg_ev": 87.4306,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 36.8,
+            "season_barrel_pct": 47.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 15.1515,
+            "platoon_barrel_pct": 4.08,
+            "platoon_xwoba": 2.46,
+            "park_hand_index": 0.99,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 60.9091,
+            "woba_behind": 22.7273,
+            "pull_park_synergy": 0.4227,
+            "hard_hit_105_rate": 0.38,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.208,
+            "vs_rp_ops": 2.004,
+            "ump_k_pct": 0.096,
+            "ump_bb_pct": 0.348
+          },
+          "hit_probability": 0.6665,
+          "raw_hit_probability": 0.6515,
+          "lift": 0.1088,
+          "reliability": "A",
+          "sample_n": 152,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 42.5,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Atlanta Braves",
+          "game_pk": 824866,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 3.12,
+            "sprint_speed": 9.375,
+            "catcher_poptime": 28.5714,
+            "on_base": 80.8061
+          },
+          "hit_probability": 0.08,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 152,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 8.5,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Atlanta Braves",
+          "game_pk": 824866,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0618
+          },
+          "hit_probability": 0.0618,
+          "raw_hit_probability": null,
+          "lift": 0.0145,
+          "reliability": "A",
+          "sample_n": 152,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.6,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Atlanta Braves",
+          "game_pk": 824866,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0306
+          },
+          "hit_probability": 0.0306,
+          "raw_hit_probability": null,
+          "lift": 0.0101,
+          "reliability": "A",
+          "sample_n": 152,
           "projection": {
             "stat": "moonshot_420",
             "value": 1,

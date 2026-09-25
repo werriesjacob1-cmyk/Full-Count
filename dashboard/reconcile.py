@@ -307,8 +307,16 @@ def line_moved_mismatches(payload):
     correction is owed, not to redo the fetch.
     """
     out = []
+    board_date = (payload or {}).get("date")
     for row in (payload or {}).get("props") or []:
         if row.get("market_fetch_state") != "LINE_MOVED":
+            continue
+        published_for = row.get("published_slate_date")
+        if published_for and published_for != board_date:
+            # A published pick carried from another build slate is not on
+            # offer (refresh_prices never reprices it), so a line move owes
+            # no correction -- and a rebuild could never clear one, since it
+            # carries the same row again.
             continue
         prop_id = row.get("id")
         posted = row.get("market_posted_line")
