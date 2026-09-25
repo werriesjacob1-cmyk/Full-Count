@@ -6343,3 +6343,13 @@ Passing yards additionally has no Codex join path, and the FanDuel 403 affects A
 **Open.** The week-3 Saturday seal (after 18:00Z) for Sunday and Monday games is not yet built.
 
 Alligator
+
+## 2026-09-25 (later) -- Seal builder; F11/F12 coverage-family round
+- **Seal builder.** `claude/nfl-tier1-foundation-20260924` @ `e05e02c592`, `engineering/nfl_tier1_status_20260924/seal/`. It stores the H1–H3 primary predictions directly, running the frozen commits via `git archive`. The Saturday trigger `trig_01FiiD9MknrMxbB1zbeS4d5N` runs it at 18:30Z, plus `live_coverage.py` as exploratory.
+- **F11/F12.** `claude/nfl-tier2-coverage-20260925` @ `f4fb17aa0b` (draft PR #207).
+  - Coverage-family formulation: F11 α = 0, so REJECTED. The F12 family mix has α = 0.8 / 0.9, sign-consistent but with CIs spanning 0, so NOT SUPPORTED.
+  - DC identity is UNKNOWN because PFR returns a 403.
+  - PR #174 parity: same hashes, same 21 unlabelled targets.
+- **Bridge:** #91 comment 5835314568.
+
+Alligator
