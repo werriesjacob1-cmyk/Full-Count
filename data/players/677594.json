@@ -5058,6 +5058,137 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 66.7,
+          "notable_signals": 2,
+          "matchup": "Los Angeles Angels @ Seattle Mariners",
+          "game_pk": 823085,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 27.7143,
+            "l7_avg_ev": 24.4643,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 39.3333,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 37.037,
+            "bvp_ops": 3.234,
+            "platoon_barrel_pct": 3.36,
+            "platoon_xwoba": 2.7,
+            "park_hand_index": 0.8,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 52.7273,
+            "woba_behind": 9.0909,
+            "pull_park_synergy": 0.252,
+            "hard_hit_105_rate": 1.4425,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.408,
+            "vs_rp_ops": 0.348,
+            "ump_k_pct": 0.108,
+            "ump_bb_pct": 0.024
+          },
+          "hit_probability": 0.6998,
+          "raw_hit_probability": 0.7245,
+          "lift": 0.0332,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 48.3,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Seattle Mariners",
+          "game_pk": 823085,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 2.46,
+            "sprint_speed": 43.75,
+            "catcher_poptime": 11.4286,
+            "on_base": 51.0557
+          },
+          "hit_probability": 0.1235,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 19.1,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Angels @ Seattle Mariners",
+          "game_pk": 823085,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1043
+          },
+          "hit_probability": 0.1043,
+          "raw_hit_probability": null,
+          "lift": 0.0569,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 3.3,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Seattle Mariners",
+          "game_pk": 823085,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0256
+          },
+          "hit_probability": 0.0256,
+          "raw_hit_probability": null,
+          "lift": 0.0051,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

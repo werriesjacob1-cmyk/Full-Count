@@ -258,6 +258,79 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 56.8,
+          "notable_signals": 2,
+          "matchup": "Los Angeles Angels @ Seattle Mariners",
+          "game_pk": 823085,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 27.7143,
+            "l7_avg_ev": 54.75,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 13.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 37.037,
+            "park_hand_index": 0.8,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 9.0909,
+            "woba_behind": 14.5455,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": 0.108,
+            "ump_bb_pct": 0.024
+          },
+          "hit_probability": 0.5985,
+          "raw_hit_probability": 0.6,
+          "lift": 0.0417,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 27.8,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Seattle Mariners",
+          "game_pk": 823085,
+          "team": "Seattle Mariners",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 2.46,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 11.4286
+          },
+          "hit_probability": 0.1287,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -564,7 +564,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 52.2,
+          "score": 48.9,
           "notable_signals": 1,
           "matchup": "Cleveland Guardians @ Kansas City Royals",
           "game_pk": 824058,
@@ -573,18 +573,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5014,
+            "outs_rate": 0.5061,
             "avg_outs_per_start": 17.52
           },
-          "hit_probability": 0.525,
-          "raw_hit_probability": 0.5014,
-          "lift": 0.0997,
+          "hit_probability": 0.5283,
+          "raw_hit_probability": 0.5061,
+          "lift": 0.0738,
           "reliability": "A",
           "sample_n": 31,
           "projection": {
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 12.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.7,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Kansas City Royals",
+          "game_pk": 824058,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            668909,
+            702070
+          ],
+          "signals": {
+            "combined_k_edge": 0.368
+          },
+          "hit_probability": 0.6757,
+          "raw_hit_probability": null,
+          "lift": 0.368,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 12.5,
+            "needs": 13
           }
         }
       ]

@@ -226,6 +226,55 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 63.9,
+          "notable_signals": 3,
+          "matchup": "Los Angeles Dodgers @ San Francisco Giants",
+          "game_pk": 823167,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 10.0,
+            "l7_avg_ev": 20.1389,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 25.7,
+            "season_barrel_pct": 10.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 25.641,
+            "platoon_barrel_pct": 0.08,
+            "platoon_xwoba": -0.06,
+            "park_hand_index": -1.6,
+            "opp_catcher_framing": 1.08,
+            "days_rest": 2.0,
+            "woba_ahead": 23.6364,
+            "woba_behind": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "ump_k_pct": -0.036,
+            "ump_bb_pct": 0.624
+          },
+          "hit_probability": 0.5185,
+          "raw_hit_probability": 0.5185,
+          "lift": -0.0383,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

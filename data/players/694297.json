@@ -530,7 +530,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 49.3,
+          "score": 50.3,
           "notable_signals": 1,
           "matchup": "Arizona Diamondbacks @ San Diego Padres",
           "game_pk": 823248,
@@ -543,7 +543,10 @@
             "same_hand_ratio": 100.0,
             "l14_k_pct": 31.7647,
             "tto_penalty": 8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 60.2582,
+            "ump_k_pct": -0.024,
+            "ump_bb_pct": 0.228
           },
           "hit_probability": 0.5985,
           "raw_hit_probability": 0.623,
@@ -559,7 +562,7 @@
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 67.9,
+          "score": 65.2,
           "notable_signals": 1,
           "matchup": "Arizona Diamondbacks @ San Diego Padres",
           "game_pk": 823248,
@@ -568,12 +571,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5647,
+            "outs_rate": 0.572,
             "avg_outs_per_start": 17.83
           },
-          "hit_probability": 0.5693,
-          "raw_hit_probability": 0.5647,
-          "lift": 0.144,
+          "hit_probability": 0.5744,
+          "raw_hit_probability": 0.572,
+          "lift": 0.1199,
           "reliability": "A",
           "sample_n": 18,
           "projection": {

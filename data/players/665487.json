@@ -1,6 +1,6 @@
 {
   "player_id": 665487,
-  "name": "Fernando Tatis",
+  "name": "Fernando Tatis Jr.",
   "snapshots": [
     {
       "date": "2026-08-05",
@@ -4989,6 +4989,137 @@
           "lift": 0.0321,
           "reliability": "A",
           "sample_n": 156,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 61.7,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ San Diego Padres",
+          "game_pk": 823248,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 34.8571,
+            "pitch_exploit": 1.7143,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 35.2,
+            "season_barrel_pct": 64.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 18.5185,
+            "bvp_ops": -1.17,
+            "platoon_barrel_pct": 4.56,
+            "platoon_xwoba": 3.66,
+            "park_hand_index": 0.54,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "woba_behind": 24.5455,
+            "pull_park_synergy": 0.1323,
+            "hard_hit_105_rate": 1.605,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.424,
+            "vs_rp_ops": 1.692,
+            "ump_k_pct": 0.024,
+            "ump_bb_pct": -0.228
+          },
+          "hit_probability": 0.7244,
+          "raw_hit_probability": 0.7707,
+          "lift": 0.0578,
+          "reliability": "A",
+          "sample_n": 157,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 57.5,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ San Diego Padres",
+          "game_pk": 823248,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 3.6,
+            "sprint_speed": 50.0,
+            "catcher_poptime": 0.0,
+            "on_base": 93.2821
+          },
+          "hit_probability": 0.2137,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 157,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 20.7,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ San Diego Padres",
+          "game_pk": 823248,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1108
+          },
+          "hit_probability": 0.1108,
+          "raw_hit_probability": null,
+          "lift": 0.0634,
+          "reliability": "A",
+          "sample_n": 157,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 10.1,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ San Diego Padres",
+          "game_pk": 823248,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0523
+          },
+          "hit_probability": 0.0523,
+          "raw_hit_probability": null,
+          "lift": 0.0318,
+          "reliability": "A",
+          "sample_n": 157,
           "projection": {
             "stat": "moonshot_420",
             "value": 1,

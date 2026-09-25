@@ -547,8 +547,8 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 40.5,
-          "notable_signals": 0,
+          "score": 42.3,
+          "notable_signals": 1,
           "matchup": "Houston Astros @ Athletics",
           "game_pk": 824947,
           "team": "Houston Astros",
@@ -560,7 +560,10 @@
             "same_hand_ratio": 75.0,
             "l14_k_pct": 100.0,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 68.1863,
+            "ump_k_pct": 0.552,
+            "ump_bb_pct": 0.288
           },
           "hit_probability": 0.5858,
           "raw_hit_probability": 0.5606,
@@ -576,7 +579,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 40.7,
+          "score": 37.8,
           "notable_signals": 0,
           "matchup": "Houston Astros @ Athletics",
           "game_pk": 824947,
@@ -585,12 +588,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5352,
+            "outs_rate": 0.5427,
             "avg_outs_per_start": 16.11
           },
-          "hit_probability": 0.5488,
-          "raw_hit_probability": 0.5352,
-          "lift": -0.0144,
+          "hit_probability": 0.554,
+          "raw_hit_probability": 0.5427,
+          "lift": -0.0406,
           "reliability": "A",
           "sample_n": 19,
           "projection": {
