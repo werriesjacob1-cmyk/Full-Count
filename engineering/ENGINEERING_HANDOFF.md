@@ -6307,3 +6307,39 @@ specific authorization.
 
 Alligator
 
+
+## 2026-09-25 -- NFL ATL@GB graded; Tier 1 week-3 seal integrity
+
+**Evidence.** Branch `claude/nfl-atl-gb-evidence-20260924` @ `49db077278`, folder `engineering/nfl_atl_gb_20260924/`. Bridge: Issue #91 comment 5834637904.
+
+**Outcome source.** nflverse `stats_player_week_2026.csv`, 2026-09-25 14:37:31Z, sha `315cfb8d…3b2b`, with 69 ATL@GB rows. It was graded through the repo's own unmodified grading path.
+
+**Receptions.** The 9 SHADOW_ONLY paired records:
+
+| Model | Mean Brier | Mean log loss |
+|---|---|---|
+| B0 | 0.4055 | 1.1128 |
+| NB challenger | 0.4276 | 1.3696 |
+
+7 of the 9 went OVER. This is anecdotal (n=9).
+
+**Passing yards.** 2 SHADOW_ONLY rows, research direction only:
+- Love UNDER 231.5, actual 312: MISS.
+- Penix OVER 204.5, actual 256: HIT.
+
+There were 0 eligible offers, so there is no P&L.
+
+**Tier 1 protocol v1.** Integrity check only. All 3 seals re-hash to their recorded values and were committed before kickoff. No accuracy was computed, because protocol §5 forbids interim looks and §3 requires the post-MNF outcome release; that conflicts with the earlier self-scheduled trigger text, and the protocol wins.
+
+**Gap.** The seals lack stored F3-only, F6-alone and volume_only predictions. Future seals must store the H1–H3 primary and comparator predictions directly.
+
+**Capabilities.** Receptions, passing yards and pricing are all PARTIAL. Eligibility is blocked by the #196/#199 gates:
+- `BOOK_ACTION_RULES_NOT_CERTIFIED`
+- `CURRENT_ROLE_NOT_VERIFIED`
+- `QUOTE_TIMESTAMP_NOT_PROVIDED`
+
+Passing yards additionally has no Codex join path, and the FanDuel 403 affects Actions runners.
+
+**Open.** The week-3 Saturday seal (after 18:00Z) for Sunday and Monday games is not yet built.
+
+Alligator
