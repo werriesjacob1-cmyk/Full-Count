@@ -1,0 +1,93 @@
+{
+  "declared": "F11/F12 evaluation (research only).\n\n    --stage fit    fit alpha per (market, mode) on DEV target seasons 2019-2022\n                   only; write coverage_params.json (commit before --stage final)\n    --stage final  refit on DEV and abort unless identical to the committed\n                   params, then score HOLDOUT 2023-2025 (previously inspected;\n                   exploratory) and FRESH 2026 wk1-2 with\n                   harness.evaluate_against_controls; write coverage_report.json\n\nPre-declared (before any scoring): WINDOW S-1 (1.0) + S-2 (0.5), K_RATE 150,\nK_EFF 30, K_MIX 200, HC_CHANGE_WEIGHT 0.5, MIN_PLAYER_ONFIELD 100,\nMIN_DEFENSE_LABELLED 200, ratio clip [0.75, 1.333], alpha grid 0.0..2.0 step\n0.1 minimizing DEV mean absolute error of k*B0*ratio**alpha on activated rows.\nPre-declared sensitivity (added after the DEV fit returned alpha=0 for\nCOMBINED/F11_ONLY, before any HOLDOUT/FRESH scoring): every mode is also\nscored at full strength alpha=1.0, to show what forcing the adjustment does.\n",
+  "params": {
+    "receiving_yards": {
+      "k": 0.78,
+      "modes": {
+        "COMBINED": {
+          "alpha": 0.0,
+          "dev_mae": 20.98739451261077,
+          "n_activated_dev": 11736
+        },
+        "F11_ONLY": {
+          "alpha": 0.0,
+          "dev_mae": 20.98739451261077,
+          "n_activated_dev": 11736
+        },
+        "F12_ONLY": {
+          "alpha": 0.3,
+          "dev_mae": 19.877801410493237,
+          "n_activated_dev": 15543
+        }
+      }
+    },
+    "receptions": {
+      "k": 0.87,
+      "modes": {
+        "COMBINED": {
+          "alpha": 0.0,
+          "dev_mae": 1.5562529822767555,
+          "n_activated_dev": 11736
+        },
+        "F11_ONLY": {
+          "alpha": 0.0,
+          "dev_mae": 1.5562529822767555,
+          "n_activated_dev": 11736
+        },
+        "F12_ONLY": {
+          "alpha": 0.3,
+          "dev_mae": 1.4749763447340305,
+          "n_activated_dev": 15543
+        }
+      }
+    }
+  },
+  "provenance": {
+    "coverage_sources": {
+      "participation": {
+        "2018": "b577ac402622dbecda8589bbc0b6ef1e08c1fece9916b6105ce4b29a675be905",
+        "2019": "1a6091df8e4fdb6f937c5ca5be555e4d5b65ea363a69c3d1a3b7dd9fdb0fbf0b",
+        "2020": "7e3e47021025067d2229716867523f1a42e995dff608bfafd55ed9ee385433fc",
+        "2021": "b58e79cd91ea078396c91f9c06452da0b9d650fa42203ee580e1df06e306e785",
+        "2022": "37eae0a8c388d0974c6df9a1f9a1d01f09f63a21440d3b03d7f208c1438c51e4",
+        "2023": "ad01aeb4045ee19a4f086ff38b52b14c8f427d3401e529c3078a4545921650a9",
+        "2024": "b1f436a98b2a7759eb4ed1181e072a35c2666f9aeb356a49c943d28d6be6b0b9",
+        "2025": "59069adfee7b0f464befba8a5e8be331e523633cc6a7ab403d37bcbcdfbe66ac"
+      },
+      "pbp": {
+        "2018": "d37899610b397b96a90da6902827de5b46c5457b93e0e16d5f95a8eb524e4a7d",
+        "2019": "b764668137052be23745953cbc33fa17e537a70c81e9b73785a19a15e7288216",
+        "2020": "bc954b5780e325df4faa255fac092585c981a4de5d2f553a8a4e0a3c8b3a3cf2",
+        "2021": "e8743a568f99667a8bdcd29ba12224ee1782ad2b7916bee78ee335c099383739",
+        "2022": "0c69a71eb39498956c7b1d5c1ca52ce7fe679934a95d1af249facb5ea9829ea4",
+        "2023": "4649804ee0f0a40b41e51ec75a1ce921949d7fab5459213488656b92f78560e8",
+        "2024": "23370d5d10f8104d80d46a1fc5e61f4f6f5a3263fe96fe2dd629913cfcb08c06",
+        "2025": "2f135887790a013fd004e609e37096bb4816d5cc80b9f19122e1bad478961978"
+      }
+    },
+    "games_csv_sha256": "7fdc123e11cf224b97d120980a4cd18171147f6db6d4c3b193f27406b4856c4e",
+    "harness": {
+      "audit_manifest_sha256": "35eaf8cb803f5d1a516bd7873d090a133ec5ab7567854f54353dcf1e23f45e40",
+      "current_season": {
+        "path": "stats_player_week_2026.csv",
+        "rows": 2223,
+        "seasons": [
+          2026
+        ],
+        "sha256": "736bdddef4779023f7eb1831a1f2c8627181aee60cc280d5f0464cf5f41a8e67"
+      },
+      "seasons": {
+        "2016": "eb0264c65d1ef593196afcd4ba24e9f2e9b7942923bf6f4bb4639684e2c4d470",
+        "2017": "592b0916065987b0b3afb0480162f03350d16b12250dc42b0f194e2ab1378563",
+        "2018": "c53021bcfc9f89d30edd6f1fe145a1d7d6ce469efeec75974fe9f0adac568642",
+        "2019": "a05558126b1209b80fe11a8f18938cb35816370bf9990975a87de49e9eed7376",
+        "2020": "05b992676faccc8940efbf6242cb76358069372d31d7c2e02c1a4acdcd3cbe18",
+        "2021": "41915fb49238902ad1f129ebf0405b11a1e710454ae0fe8f7b3e4f9145875f48",
+        "2022": "ad426c3fe5bf1cc30c3f137fdfe96d054e19d400879ee4413129da49fa7b54be",
+        "2023": "f19cb71a5de0dce7fd09376026237c9ee9d5a93fe13815a2ea3ec2d37204cb17",
+        "2024": "3ddc45a84f759aa348ce465ae001752c530575455717657cdfe1f8abfcdb4759",
+        "2025": "e5e0615b3d96a3eaebfaee91e55afb4a4e7fe0caf057454177bcd7d6ad4bcfc2"
+      }
+    }
+  }
+}
