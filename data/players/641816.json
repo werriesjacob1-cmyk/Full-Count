@@ -577,6 +577,69 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-24",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 51.2,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Atlanta Braves",
+          "game_pk": 824866,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 85.0,
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 24.1176,
+            "tto_penalty": -8.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 75.0601,
+            "ump_k_pct": -0.096,
+            "ump_bb_pct": -0.348
+          },
+          "hit_probability": 0.3946,
+          "raw_hit_probability": 0.3946,
+          "lift": 0.0186,
+          "reliability": "A",
+          "sample_n": 26,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "Over 16.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 51.5,
+          "notable_signals": 1,
+          "matchup": "Cincinnati Reds @ Atlanta Braves",
+          "game_pk": 824866,
+          "team": "Atlanta Braves",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5267,
+            "avg_outs_per_start": 16.62
+          },
+          "hit_probability": 0.5428,
+          "raw_hit_probability": 0.5267,
+          "lift": 0.067,
+          "reliability": "A",
+          "sample_n": 26,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 16.5,
+            "needs": 17
+          }
+        }
+      ]
     }
   ]
 }

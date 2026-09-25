@@ -493,10 +493,10 @@
       "date": "2026-09-23",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 51.0,
-          "notable_signals": 0,
+          "score": 29.0,
+          "notable_signals": 1,
           "matchup": "Minnesota Twins @ San Francisco Giants",
           "game_pk": 823168,
           "team": "Minnesota Twins",
@@ -504,26 +504,29 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "opp_team_k_pct": 48.0,
-            "same_hand_ratio": 88.8889,
+            "opp_team_k_pct": 49.0,
+            "same_hand_ratio": 33.3333,
             "l14_k_pct": 27.0588,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 89.995,
+            "ump_k_pct": 0.744,
+            "ump_bb_pct": 0.132
           },
-          "hit_probability": 0.6278,
-          "raw_hit_probability": 0.7693,
-          "lift": -0.0813,
+          "hit_probability": 0.4224,
+          "raw_hit_probability": 0.4224,
+          "lift": 0.05,
           "reliability": "A",
           "sample_n": 21,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 39.0,
+          "score": 77.5,
           "notable_signals": 0,
           "matchup": "Minnesota Twins @ San Francisco Giants",
           "game_pk": 823168,
@@ -532,18 +535,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5362,
+            "outs_rate": 0.799,
             "avg_outs_per_start": 15.9
           },
-          "hit_probability": 0.5495,
-          "raw_hit_probability": 0.5362,
-          "lift": -0.0299,
+          "hit_probability": 0.7196,
+          "raw_hit_probability": 0.799,
+          "lift": -0.0424,
           "reliability": "A",
           "sample_n": 21,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 14.5,
+            "needs": 15
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 10.6,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ San Francisco Giants",
+          "game_pk": 823168,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            687570,
+            702885
+          ],
+          "signals": {
+            "combined_k_edge": -0.201
+          },
+          "hit_probability": 0.4053,
+          "raw_hit_probability": null,
+          "lift": -0.201,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]

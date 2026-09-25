@@ -64,6 +64,10 @@ function esc(s) {
   d.textContent = s ?? "";
   return d.innerHTML;
 }
+// esc() leaves quotes alone (text-node escaping); attribute values need them.
+function escAttr(s) {
+  return esc(s).replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
 function fmtOdds(v) {
   if (v === null || v === undefined) return null;
   return v > 0 ? "+" + v : String(v);
@@ -408,14 +412,37 @@ function freezePublishedSnapshot(p) {
   for (const [field, value] of Object.entries(p.publication_snapshot)) {
     if (FROZEN_PUBLICATION_FIELDS.has(field)) p[field] = value;
   }
+  // Jacob's approved policy (2026-09-24): a pick downgraded/withdrawn before
+  // first pitch keeps that display status after its game starts -- it stays
+  // in "Published earlier — no longer a Top Pick" and is still graded as
+  // published (from the registry). The build carries the last pregame
+  // status as `demoted_before_start`; the frozen odds/probability above stay.
+  const m = p.demoted_before_start;
+  if (m && DEMOTED_STATES.has(m.status)) {
+    p.recommendation_status = m.status;
+    p.status_reasons = Array.isArray(m.status_reasons) ? m.status_reasons.slice() : [];
+    if (m.withdrawn) p.withdrawn_since_publication = true;
+  }
 }
+const DEMOTED_STATES = new Set(["lean", "value", "neutral"]);
 function refreshSummary() {
   const props = publicProps();
   DATA.summary = DATA.summary || {};
   DATA.summary.n_props = props.length;
-  DATA.summary.n_top_pick = props.filter(p => p.recommendation_status === "top_pick").length;
-  DATA.summary.n_lean = props.filter(p => p.recommendation_status === "lean").length;
-  DATA.summary.n_value = props.filter(p => p.recommendation_status === "value").length;
+  // Today's slate-day Top Picks only: early next-slate picks and still-open
+  // picks from an earlier day are shown in their own groups, not counted.
+  const today = topPickGroups(props.filter(p => p.recommendation_status === "top_pick"))
+    .find(g => g.kind === "today");
+  DATA.summary.n_top_pick = today ? today.picks.length : 0;
+  DATA.summary.n_top_pick_other = topPickGroups(props.filter(p => p.recommendation_status === "top_pick"))
+    .filter(g => g.kind !== "today").reduce((n, g) => n + g.picks.length, 0);
+  DATA.summary.n_lean = props.filter(p => p.recommendation_status === "lean" && !isDowngradedPublished(p)).length;
+  DATA.summary.n_value = props.filter(p => p.recommendation_status === "value" && !isDowngradedPublished(p)).length;
+  // Published as a Top Pick, currently something else -- see
+  // isDowngradedPublished's own docstring. Optional, separate count (never
+  // folded into n_top_pick above); the Today page's own sub-group heading
+  // is the primary surface for this population.
+  DATA.summary.n_published_downgraded = props.filter(isDowngradedPublished).length;
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -689,6 +716,47 @@ function renderRoute() {
 // ══════════════════════════════════════════════════════════════════════
 //  CARD / ROW BUILDERS
 // ══════════════════════════════════════════════════════════════════════
+// WHY THERE IS NO PRICE (2026-09-24, Games "not priced" incident). Every
+// surface used to collapse every no-price state into one phrase -- the
+// Games highlight line said "not priced", the compact card "Not yet posted
+// on FanDuel" -- even though refresh_prices.py records WHICH of several
+// different facts is true. A failed check is not the book being silent, and
+// neither is "we never had a price at this line". One mapping, shared by
+// every surface, so Today, Props, Games and the detail sheet cannot drift
+// apart. LINE_MOVED is handled by each caller before this (it carries the
+// book's other line) and never reaches here.
+function unpricedState(p) {
+  const checked = _agoText(p.market_fetch_checked_at);
+  switch (p.market_fetch_state) {
+    case "NOT_POSTED":
+      return { short: "Not yet posted on FanDuel", bare: "not posted yet",
+        detail: "FanDuel isn't posting this exact line right now"
+          + (checked ? ` (checked ${checked})` : "") + "." };
+    case "FETCH_FAILED":
+      // refresh_prices.py records FETCH_FAILED both for a check that broke
+      // and for "no unique relevant FanDuel event was observed" -- almost
+      // always a game FanDuel has not listed yet (all 177 White Sox @ Royals
+      // rows at 2026-09-24T02:15Z). Calling that a failed check would be a
+      // new false alarm, so the reason decides the wording.
+      if (String(p.market_failure_reason || "").startsWith("no unique relevant FanDuel event")) {
+        return { short: "No FanDuel listing found yet", bare: "no listing yet",
+          detail: "FanDuel isn't listing a game we can match to this one yet, so there's no price to show. It's checked again every few minutes." };
+      }
+      return { short: "FanDuel check failed", bare: "check failed",
+        detail: "The latest FanDuel price check didn't complete, so no price is shown. It retries automatically." };
+    case "IN_PLAY":
+      return { short: "No pregame price captured", bare: "no pregame price",
+        detail: "No FanDuel price was captured for this line before first pitch." };
+    default:
+      return { short: "No FanDuel price at this line", bare: "no price at this line",
+        detail: "No FanDuel price was found for this exact line when the board was built." };
+  }
+}
+// The few words used right after "FanDuel" where a price would otherwise
+// print ("FanDuel: not posted yet"), so the label never repeats "FanDuel".
+function noPriceText(p) {
+  return p.market_fetch_state === "LINE_MOVED" ? "line moved" : unpricedState(p).bare;
+}
 function marketBlock(p) {
   const marketOdds = fmtOdds(p.market_odds);
   if (marketOdds === null) {
@@ -713,7 +781,7 @@ function marketBlock(p) {
         <div class="m-detail">Not bettable at our number</div>
       </div>`;
     }
-    return `<div class="pc-market"><span class="m-detail">Not yet posted on FanDuel</span></div>`;
+    return `<div class="pc-market"><span class="m-detail">${esc(unpricedState(p).short)}</span></div>`;
   }
   // Real bug, found 2026-08-26 (Part 2 item 5, richer compact cards): this
   // used p.market_implied (the raw price-implied probability) and
@@ -733,6 +801,129 @@ function marketBlock(p) {
     <div><span class="book-price">${marketOdds}</span> <span class="m-detail">FanDuel</span></div>
     <div class="m-detail">Market: ${pct(marketProb, 0)}</div>
     <div class="pc-edge ${edgeClass}">${edgeText} edge</div>
+  </div>`;
+}
+// Top Picks grouped by the Central-time slate day they were published for
+// (2026-09-24, Jacob's contract): today's published picks, next-slate picks
+// published early (the build date rolls at 7 pm Central), and picks from an
+// earlier day whose game is still in progress after Central midnight.
+function slateDayLabel(iso) {
+  const d = new Date(`${iso}T12:00:00Z`);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" });
+}
+// The browser enforces the Central-midnight end of a slate day itself: the
+// payload's display_date is fixed at deploy time, and a deploy can be late
+// (GitHub scheduler gaps) or a tab can stay open past midnight.
+const CARRY_WHILE_STATES = new Set(["live", "suspended", "postponed"]);
+function centralDateNow() {
+  // Built from parts, never from a locale's formatted string, whose shape
+  // differs across ICU versions; anything not YYYY-MM-DD yields null (the
+  // payload's own display_date is then used).
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", { timeZone: "America/Chicago",
+      year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date());
+    const get = type => (parts.find(x => x.type === type) || {}).value;
+    const iso = `${get("year")}-${get("month")}-${get("day")}`;
+    return /^\d{4}-\d{2}-\d{2}$/.test(iso) ? iso : null;
+  } catch (e) {
+    return null;
+  }
+}
+function displayToday() {
+  const fromPayload = DATA.display_date || DATA.date;
+  if (DATA.display_timezone !== "America/Chicago") return fromPayload;
+  const browser = centralDateNow();
+  return browser && fromPayload && browser > fromPayload ? browser : fromPayload;
+}
+function topPickGroups(topPicks) {
+  const today = displayToday();
+  const byDate = new Map();
+  for (const p of topPicks) {
+    const d = p.published_slate_date || DATA.date || today;
+    // An earlier Central day's pick stays only while its game is still
+    // incomplete -- the same rule the build applies.
+    if (d < today && !CARRY_WHILE_STATES.has(p.game_state)) continue;
+    if (!byDate.has(d)) byDate.set(d, []);
+    byDate.get(d).push(p);
+  }
+  const kindOf = d => (d === today ? "today" : d > today ? "early" : "carried");
+  const order = { today: 0, early: 1, carried: 2 };
+  return [...byDate.keys()]
+    .sort((a, b) => order[kindOf(a)] - order[kindOf(b)] || a.localeCompare(b))
+    .map(d => {
+      const kind = kindOf(d);
+      const heading = kind === "today" ? `Today · ${slateDayLabel(d)}`
+        : kind === "early" ? `Early picks for ${slateDayLabel(d)}`
+        : `Still open from ${slateDayLabel(d)}`;
+      return { date: d, kind, heading, picks: byDate.get(d) };
+    });
+}
+// A published pick is a record of what we said, not an offer, once its game
+// has started -- and also, before first pitch, when it is carried from
+// another build slate (its odds are the publication-time price; the price
+// refresh deliberately never reprices it).
+const STARTED_NOTE_STATES = new Set(["live", "final", "suspended"]);
+function isCarriedPublished(p) {
+  const published = (p.published_top_pick_at && p.publication_artifact_id) || p.publication_candidate_token;
+  return !!(published && p.published_slate_date && DATA && DATA.date
+            && p.published_slate_date !== DATA.date);
+}
+function publishedStartedNote(p) {
+  const published = (p.published_top_pick_at && p.publication_artifact_id) || p.publication_candidate_token;
+  if (!published) return "";
+  if (STARTED_NOTE_STATES.has(p.game_state)) {
+    return `<div class="pc-published-note">Published pick · game started — original pregame odds shown, not a current offer</div>`;
+  }
+  if (isCarriedPublished(p) || p.withdrawn_since_publication) {
+    return `<div class="pc-published-note">Published pick — odds as of publication, not a current quote</div>`;
+  }
+  return "";
+}
+// 2026-09-24 published-downgrade-display (Mission 12 Workstream C). A Top
+// Pick can be reclassified before first pitch -- a price refresh, a lineup
+// change, or simply falling out of the current scoring pass entirely
+// (dashboard/build_dashboard.py's reconcile_public_lifecycle then carries it
+// as `withdrawn_since_publication`). Jacob's requirement: never hide a
+// previously published pick just because it became less attractive, and
+// never let it look like a current, actionable Top Pick either. Derived
+// from data already on the row -- no second source of truth: the immutable
+// publication_snapshot (see dashboard/build_dashboard.py's
+// _publication_snapshot) always carries the ORIGINAL recommendation_status,
+// price, and probability at publication time; the row's own top-level
+// fields are always the CURRENT truth.
+function wasPublishedTopPick(p) {
+  return !!(p.publication_snapshot && p.publication_snapshot.recommendation_status === "top_pick");
+}
+function isDowngradedPublished(p) {
+  return wasPublishedTopPick(p) && p.recommendation_status !== "top_pick";
+}
+// After first pitch a downgraded/withdrawn pick stays in its own group (see
+// freezePublishedSnapshot) and says it was demoted before first pitch; it is
+// graded as originally published (the registry is the grading truth).
+const STATUS_LABEL = { lean: "Lean", value: "Value", neutral: "no current recommendation" };
+function publishedDowngradedNote(p) {
+  if (!isDowngradedPublished(p)) return "";
+  const started = STARTED_NOTE_STATES.has(p.game_state);
+  const withdrawn = !!(p.withdrawn_since_publication
+                       || (p.demoted_before_start && p.demoted_before_start.withdrawn));
+  const snap = p.publication_snapshot || {};
+  const originalOdds = fmtOdds(snap.market_odds);
+  const originalProb = snap.hit_probability != null ? pctBig(snap.hit_probability) : "";
+  const label = started
+    ? (withdrawn ? "Withdrawn before first pitch"
+       : `Downgraded to ${STATUS_LABEL[p.recommendation_status] || "no current recommendation"} before first pitch`)
+    : (withdrawn ? "Withdrawn" : "Downgraded after publication");
+  const reason = esc((p.status_reasons || [])[0] || "");
+  const detail = [
+    "Published as a Top Pick" + (originalOdds ? ` at ${originalOdds}` : "")
+      + (originalProb ? ` (${originalProb} probability)` : "") + ".",
+    reason ? `${started ? "Before first pitch" : "Now"}: ${capSentence(humanizeReason(reason))}` : "",
+    started ? "Graded as originally published." : "",
+  ].filter(Boolean).join(" ");
+  return `<div class="pc-downgraded-note">
+    <span class="chip chip-downgraded">${label}</span>
+    <div class="pc-downgraded-detail">${detail}</div>
   </div>`;
 }
 function pickCard(p) {
@@ -791,6 +982,8 @@ function pickCard(p) {
       <span class="pc-prob-label">Full Count<br>Probability</span>
     </div>
     ${marketBlock(p)}
+    ${publishedStartedNote(p)}
+    ${publishedDowngradedNote(p)}
     <div class="pc-chips">${chips}</div>
     ${why}
   </button>`;
@@ -818,6 +1011,9 @@ function topPickGapSummary(props) {
   const counts = { lineupPending: 0, pricePending: 0, closeRead: 0, thinSample: 0, other: 0 };
   for (const p of props) {
     if (p.recommendation_status === "top_pick") continue;
+    // Already shown, already explained, in its own "Published earlier" card
+    // -- don't also fold it into the generic "why no Top Picks" gap count.
+    if (isDowngradedPublished(p)) continue;
     const reason = (p.status_reasons || [])[0] || "";
     if (reason.includes("lineup slot is still a projection")) counts.lineupPending++;
     else if (reason.includes("no market price is posted yet")) counts.pricePending++;
@@ -894,11 +1090,21 @@ function renderToday() {
   const topPicks = props.filter(p => p.recommendation_status === "top_pick")
     .sort((a, b) => (a.rank != null && b.rank != null) ? a.rank - b.rank
                     : (b.market_edge || 0) - (a.market_edge || 0));
-  const valueAll = props.filter(p => p.recommendation_status === "value" && !isLongshot(p))
+  // Published earlier as a Top Pick, currently downgraded (a real
+  // reclassified status: lean/value/longshot) or withdrawn (fell out of the
+  // current scoring pass entirely -- always "neutral", see
+  // isDowngradedPublished's own docstring). Shown once, in its own labelled
+  // sub-group within the Top Picks area below -- excluded from
+  // valueAll/longshotsAll/leansAll/morePicks so it never also duplicates
+  // into "More Picks" under its current status alone.
+  const downgradedPublished = props.filter(isDowngradedPublished)
+    .sort((a, b) => (b.rank != null || a.rank != null) ? (a.rank ?? 1e9) - (b.rank ?? 1e9)
+                    : (b.market_edge || 0) - (a.market_edge || 0));
+  const valueAll = props.filter(p => p.recommendation_status === "value" && !isLongshot(p) && !isDowngradedPublished(p))
     .sort((a, b) => (b.market_edge || 0) - (a.market_edge || 0));
-  const longshotsAll = props.filter(isLongshot)
+  const longshotsAll = props.filter(p => isLongshot(p) && !isDowngradedPublished(p))
     .sort((a, b) => (b.market_edge || 0) - (a.market_edge || 0));
-  const leansAll = props.filter(p => p.recommendation_status === "lean")
+  const leansAll = props.filter(p => p.recommendation_status === "lean" && !isDowngradedPublished(p))
     .sort((a, b) => (b.lift || 0) - (a.lift || 0));
   // MORE PICKS: every real Lean/Value/Longshot read in one list, ranked by
   // whichever real number each one actually has (edge for Value/Longshot,
@@ -920,7 +1126,7 @@ function renderToday() {
   // gets its own tile linking to its own correctly-filtered destination.
   let html = `
     <div class="stat-row">
-      <a class="stat-tile" href="#/props?status=top_pick"><span class="n">${summary.n_top_pick ?? 0}</span><span class="l">Top Picks tonight</span></a>
+      <a class="stat-tile" href="#/props?status=top_pick"><span class="n">${summary.n_top_pick ?? 0}</span><span class="l">Top Picks today${summary.n_top_pick_other ? ` · +${summary.n_top_pick_other} early/still open` : ""}</span></a>
       <a class="stat-tile" href="#/props?status=lean"><span class="n">${summary.n_lean ?? 0}</span><span class="l">Leans on the board</span></a>
       <a class="stat-tile" href="#/props?status=value"><span class="n">${valueAll.length}</span><span class="l">Value bets</span></a>
       <a class="stat-tile" href="#/props?status=longshot"><span class="n">${longshotsAll.length}</span><span class="l">Longshots</span></a>
@@ -945,12 +1151,31 @@ function renderToday() {
     return;
   }
 
+  const dayNote = DATA.display_timezone === "America/Chicago"
+    ? " Today's published Top Picks stay here through 11:59 pm Central, then live on in History." : "";
   html += `<section class="section"><div class="section-head"><h2>Best Bets</h2>
-    <span class="section-sub">Full Count's official Top Picks — probability, evidence, price, and freshness all cleared.</span></div>`;
-  if (topPicks.length) {
-    html += `<div class="card-grid">${topPicks.map(p => pickCard(p)).join("")}</div>`;
+    <span class="section-sub">Full Count's official Top Picks — probability, evidence, price, and freshness all cleared.${dayNote}</span></div>`;
+  // Every Top Pick can expire in the browser (after Central midnight, before
+  // the next deploy): no groups then, and the explainer renders instead.
+  const groups = topPickGroups(topPicks);
+  if (groups.length) {
+    const labelled = groups.length > 1 || groups[0].kind !== "today";
+    html += groups.map(g => `${labelled ? `<h3 class="top-pick-group-head">${esc(g.heading)}</h3>` : ""}
+      <div class="card-grid">${g.picks.map(p => pickCard(p)).join("")}</div>`).join("");
   } else {
     html += topPickGapExplainer(props);
+  }
+  // Published earlier, no longer a current Top Pick -- its own clearly
+  // labelled sub-group within the Top Picks area, so a downgraded/withdrawn
+  // published pick is never simply hidden (Jacob's requirement), while
+  // never being mistaken for one of the actionable Top Picks above (no Top
+  // Pick chip on these cards -- see pickCard/statusChip). "Top Picks today"
+  // above counts only the actionable group; this is a separate, honestly
+  // labelled population.
+  for (const g of topPickGroups(downgradedPublished)) {
+    const when = g.kind === "today" ? "" : ` · ${slateDayLabel(g.date)}`;
+    html += `<h3 class="top-pick-group-head top-pick-group-downgraded">Published earlier — no longer a Top Pick${when}</h3>
+      <div class="card-grid">${g.picks.map(p => pickCard(p)).join("")}</div>`;
   }
   html += `</section>`;
 
@@ -1175,8 +1400,9 @@ function familyFilterValue(stat) {
 // is pulled out to a shared helper rather than duplicated per call site.
 function matchesStatusFilter(p, statusSet) {
   for (const s of statusSet) {
-    if (s === "longshot" ? isLongshot(p)
-      : s === "value" ? (p.recommendation_status === "value" && !isLongshot(p))
+    if (s === "longshot" ? (isLongshot(p) && !isDowngradedPublished(p))
+      : s === "value" ? (p.recommendation_status === "value" && !isLongshot(p) && !isDowngradedPublished(p))
+      : s === "lean" ? (p.recommendation_status === "lean" && !isDowngradedPublished(p))
       : p.recommendation_status === s) return true;
   }
   return false;
@@ -1472,7 +1698,12 @@ function renderGames() {
 // through PROPS_BY_ID and render the CURRENT prop. Never mutate the copy,
 // never compute a second opinion here.
 function resolveGamePick(p) {
-  if (p.id && PROPS_BY_ID.has(p.id)) return PROPS_BY_ID.get(p.id);
+  // A copy that carries a canonical id resolves by that id or not at all.
+  // Falling back to name+prop for an id the board no longer has could bind
+  // the highlight to the same player's prop in a DIFFERENT game (a series
+  // repeats every name and prop) -- a probability paired with an unrelated
+  // line. The name match only serves legacy copies written before ids.
+  if (p.id) return PROPS_BY_ID.get(p.id) || null;
   const matches = [...PROPS_BY_ID.values()].filter(
     x => x.name === p.name && x.prop === p.prop);
   return matches.length === 1 ? matches[0] : null;
@@ -1511,11 +1742,19 @@ function gamePickLine(p) {
         <span class="gp-note">Line moved · FanDuel now ${esc(posted)}</span>
       </div>`;
   }
-  const priceText = live.market_odds != null ? " · " + fmtOdds(live.market_odds)
-                                             : " · not priced";
-  return `<div class="game-pick-line">
+  // A priced line is this prop's own exact-line FanDuel quote. An unpriced
+  // one is a research projection and says so, with the specific reason
+  // (2026-09-24: "71% · not priced" under "Best Overall Read" read like a
+  // bettable top read while FanDuel was not posting the line at all).
+  if (live.market_odds != null) {
+    return `<div class="game-pick-line game-pick-priced">
       <span>${esc(live.name)} — ${esc(live.prop)}</span>
-      <span>${pctBig(live.hit_probability)}${priceText}</span>
+      <span>${pctBig(live.hit_probability)} · FanDuel ${fmtOdds(live.market_odds)}</span>
+    </div>`;
+  }
+  return `<div class="game-pick-line game-pick-unpriced">
+      <span>${esc(live.name)} — ${esc(live.prop)}</span>
+      <span class="gp-note">${pctBig(live.hit_probability)} research projection · ${esc(unpricedState(live).short)}</span>
     </div>`;
 }
 // Real bug, found 2026-08-26 (games-drill-down honesty audit): the backend
@@ -1737,11 +1976,107 @@ function renderPerformance() {
 let HISTORY = null;
 let HISTORY_LOADING = false;
 let HISTORY_ERROR = false;
+// LIVE HISTORY (2026-09-24). history.json used to be fetched once per page
+// session and cached forever, and every card read only its durable grade --
+// so a pick that had already cashed stayed "Ungraded" until the reader
+// reloaded, and a finished day never turned into its final record on an
+// open page. The fix reuses the machinery the board already trusts:
+//  * history.json is re-fetched on an interval while the page is open, and
+//    a response only replaces the current document when its generated_at
+//    is strictly newer than the one on screen -- a cached, slow or
+//    out-of-order response can never move it backwards;
+//  * live settlement state comes from LIVE_CACHE, which pollLive() already
+//    accumulates with acceptSettlement()'s authority/recency guard, joined
+//    on the canonical prop id ONLY (never a name -- a missing or unknown id
+//    simply shows no live state);
+//  * the durable grade always wins, and the official record in each day
+//    header is computed from durable grades only. Live state is shown as
+//    separately labelled pending information, never counted, never written
+//    back into the history document.
+let HISTORY_FETCHED_AT = 0;
+// Dates already shown once, so a day that newly appears at the top opens
+// like the first render did instead of arriving collapsed.
+let HISTORY_SEEN_DATES = new Set();
+// Signature of what the last History render showed; pollLive re-renders
+// only when this changes.
+let HISTORY_RENDER_SIG = null;
+const HISTORY_REFRESH_MS = 3 * 60000;
+
+function acceptHistoryDocument(current, incoming) {
+  if (!incoming || !Array.isArray(incoming.days)) return false;
+  if (!current) return true;
+  const priorAt = timeMs(current.generated_at);
+  const nextAt = timeMs(incoming.generated_at);
+  if (nextAt == null) return false;
+  return priorAt == null || nextAt > priorAt;
+}
+
+// Returns true only when a newer document was actually applied.
+async function refreshHistory() {
+  let doc;
+  try {
+    doc = await fetchJSON("history.json");
+  } catch (e) {
+    // Keep showing what is already on screen; only a page with nothing to
+    // show reports the failure.
+    if (!HISTORY) HISTORY_ERROR = true;
+    return false;
+  }
+  HISTORY_FETCHED_AT = Date.now();
+  if (!acceptHistoryDocument(HISTORY, doc)) return false;
+  HISTORY = doc;
+  HISTORY_ERROR = false;
+  return true;
+}
+
+async function pollHistory({ force = false } = {}) {
+  if (!force && route !== "history") return;
+  if (HISTORY_LOADING) return;
+  if (!HISTORY) { await renderHistory(); return; }
+  const changed = await refreshHistory();
+  if (changed && route === "history") renderHistoryContent(document.getElementById("page-history"));
+}
+
+const DURABLE_HISTORY_GRADES = new Set(["hit", "miss", "void"]);
+// live.json keeps ids whose last observation was "live" or provisional and
+// that never reached a final (thousands, back to 2026-08-18). Past this age
+// such an observation says nothing about the pick any more, so History
+// shows it as ungraded rather than "In progress" forever. Official finals
+// are authoritative at any age and are not limited.
+const HISTORY_LIVE_MAX_AGE_MS = 24 * 3600 * 1000;
+function recentObservation(iso) {
+  const at = timeMs(iso);
+  return at != null && Date.now() - at <= HISTORY_LIVE_MAX_AGE_MS;
+}
+function historyDisplayState(p) {
+  if (p.grade === "hit" || p.grade === "miss") return { kind: p.grade, durable: true };
+  if (p.grade === "void" || p.settlement_state === "void") return { kind: "void", durable: true };
+  const live = p.id ? (LIVE_CACHE.props || {})[p.id] : null;
+  if (!live) return { kind: "ungraded", durable: false };
+  const state = live.settlement_state;
+  if (live.settlement_authority === "official_final" && DURABLE_HISTORY_GRADES.has(state)) {
+    return { kind: state, durable: false, finalPendingRecord: true };
+  }
+  if ((state === "provisional_hit" || state === "provisional_miss")
+      && recentObservation(live.settlement_observed_at)) return { kind: state, durable: false };
+  if (live.game_state === "live" && recentObservation(live.game_state_observed_at)) {
+    return { kind: "live", durable: false };
+  }
+  return { kind: "ungraded", durable: false };
+}
 
 function historyGradeChip(p) {
-  if (p.grade === "hit") return `<span class="chip chip-grade-hit">Hit ✓</span>`;
-  if (p.grade === "miss") return `<span class="chip chip-grade-miss">Miss</span>`;
-  if (p.settlement_state === "void" || p.grade === "void") return `<span class="chip chip-grade-void">Void</span>`;
+  const s = historyDisplayState(p);
+  if (s.finalPendingRecord) {
+    const word = s.kind === "hit" ? "Hit ✓" : s.kind === "miss" ? "Miss" : "Void";
+    return `<span class="chip chip-grade-${s.kind}">${word} · Final, record updating</span>`;
+  }
+  if (s.kind === "hit") return `<span class="chip chip-grade-hit">Hit ✓</span>`;
+  if (s.kind === "miss") return `<span class="chip chip-grade-miss">Miss</span>`;
+  if (s.kind === "void") return `<span class="chip chip-grade-void">Void</span>`;
+  if (s.kind === "provisional_hit") return `<span class="chip chip-grade-hit">Cashed — awaiting official final</span>`;
+  if (s.kind === "provisional_miss") return `<span class="chip chip-grade-miss">Trending miss — awaiting official final</span>`;
+  if (s.kind === "live") return `<span class="chip chip-grade-ungraded">In progress</span>`;
   return `<span class="chip chip-grade-ungraded">Ungraded</span>`;
 }
 
@@ -1752,7 +2087,7 @@ function historyPickCard(p) {
   const actualLine = p.actual !== null && p.actual !== undefined
     ? `<div class="m-detail">Actual: ${esc(String(p.actual))}${p.threshold != null ? ` (line ${esc(String(p.threshold))})` : ""}</div>`
     : "";
-  return `<div class="pick-card history-pick-card">
+  return `<div class="pick-card history-pick-card" data-pick-id="${escAttr(p.id || "")}">
     <div class="pc-top">
       <div>
         <div class="pc-name">${esc(p.name)}</div>
@@ -1773,14 +2108,34 @@ function historyPickCard(p) {
   </div>`;
 }
 
-function historyDayBlock(day, isFirst) {
+// Live, not-yet-recorded outcomes for a day, reported next to -- never
+// inside -- the official record.
+function historyPendingText(day) {
+  let finals = 0, cashed = 0, trending = 0;
+  for (const p of day.picks || []) {
+    const s = historyDisplayState(p);
+    if (s.durable) continue;
+    if (s.finalPendingRecord) finals++;
+    else if (s.kind === "provisional_hit") cashed++;
+    else if (s.kind === "provisional_miss") trending++;
+  }
+  const bits = [];
+  if (finals) bits.push(`${finals} final, record updating`);
+  if (cashed) bits.push(`${cashed} cashed`);
+  if (trending) bits.push(`${trending} trending miss`);
+  return bits.length ? `+ ${bits.join(" · ")}` : "";
+}
+
+function historyDayBlock(day, isOpen) {
   const rate = day.hit_rate == null ? "—" : pct(day.hit_rate, 1);
   const record = day.hits + day.misses > 0 ? `${day.hits}-${day.misses}` : "ungraded";
+  const pending = historyPendingText(day);
   const cards = day.picks.map(historyPickCard).join("");
-  return `<details class="history-day" ${isFirst ? "open" : ""}>
+  return `<details class="history-day" data-date="${escAttr(day.date)}" ${isOpen ? "open" : ""}>
     <summary>
       <span class="history-day-date">${esc(day.date)}</span>
       <span class="history-day-record">${record}</span>
+      ${pending ? `<span class="history-day-pending">${esc(pending)}</span>` : ""}
       <span class="history-day-rate">${rate}</span>
     </summary>
     <div class="history-day-picks">${cards}</div>
@@ -1789,26 +2144,37 @@ function historyDayBlock(day, isFirst) {
 
 async function renderHistory() {
   const el = document.getElementById("page-history");
-  if (HISTORY) { renderHistoryContent(el); return; }
+  if (HISTORY) {
+    renderHistoryContent(el);
+    // Entering the page (or any re-render) with an old copy refreshes it in
+    // the background; the interval keeps it current while the page is open.
+    if (Date.now() - HISTORY_FETCHED_AT >= HISTORY_REFRESH_MS / 3) pollHistory();
+    return;
+  }
   if (HISTORY_LOADING) return;
   el.innerHTML = `<div class="section-head"><h2>History</h2>
     <span class="section-sub">Every published Top Pick, every past day, graded.</span></div>
     <div class="empty-state"><div class="es-icon">⏳</div><p>Loading past picks…</p></div>`;
   HISTORY_LOADING = true;
   try {
-    HISTORY = await fetchJSON("history.json");
-    HISTORY_ERROR = false;
-  } catch (e) {
-    HISTORY_ERROR = true;
+    await refreshHistory();
   } finally {
     HISTORY_LOADING = false;
   }
   if (route === "history") renderHistoryContent(el);
 }
 
+// Which day sections the reader has open right now; null before the first
+// render (then the newest day opens by default).
+function historyOpenDates(el) {
+  const nodes = el && el.querySelectorAll ? [...el.querySelectorAll("details.history-day")] : [];
+  if (!nodes.length) return null;
+  return new Set(nodes.filter(d => d.open).map(d => d.dataset.date));
+}
+
 function renderHistoryContent(el) {
   let html = `<div class="section-head"><h2>History</h2>
-    <span class="section-sub">Every published Top Pick, every past day, graded. Nothing here is re-decided after the fact -- these are the same grades results/grades_{date}.json already recorded.</span></div>`;
+    <span class="section-sub">Every published Top Pick, every past day, graded. Each day's record counts official grades only -- the same grades results/grades_{date}.json recorded. Live results still awaiting the official final are labelled as such and never counted.</span></div>`;
 
   if (HISTORY_ERROR) {
     html += `<div class="empty-state">
@@ -1831,8 +2197,31 @@ function renderHistoryContent(el) {
     return;
   }
 
-  html += `<div class="perf-block">${days.map((d, i) => historyDayBlock(d, i === 0)).join("")}</div>`;
+  const open = historyOpenDates(el);
+  const isOpen = (d, i) => {
+    if (!open) return i === 0;
+    return open.has(d.date) || (i === 0 && !HISTORY_SEEN_DATES.has(d.date));
+  };
+  html += `<div class="perf-block">${days.map((d, i) => historyDayBlock(d, isOpen(d, i))).join("")}</div>`;
+  for (const d of days) HISTORY_SEEN_DATES.add(d.date);
+  HISTORY_RENDER_SIG = historyRenderSignature();
+  const scrollY = window.scrollY;
   el.innerHTML = html;
+  if (window.scrollY !== scrollY) window.scrollTo(0, scrollY);
+}
+
+// Everything a History render depends on besides the DOM: the document
+// version and each pick's display state.
+function historyRenderSignature() {
+  if (!HISTORY) return null;
+  const states = [];
+  for (const day of HISTORY.days || []) {
+    for (const p of day.picks || []) {
+      const s = historyDisplayState(p);
+      if (!s.durable) states.push(`${p.id}:${s.kind}:${s.finalPendingRecord ? 1 : 0}`);
+    }
+  }
+  return `${HISTORY.generated_at}|${states.join(",")}`;
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -2054,6 +2443,12 @@ function weatherText(wx) {
 // it does not invent a state refresh_prices.py doesn't actually produce.
 // A stale/failed price must never look equally current as a verified one.
 function priceFreshnessState(p) {
+  // A carried published pick is never re-priced, so no later check's state
+  // (line moved, failed fetch, not posted) describes it; only IN_PLAY does.
+  if (p.market_fetch_state !== "IN_PLAY" && isCarriedPublished(p)) {
+    return { label: "As published · not a current quote", tone: "stale",
+      detail: "This is the price when the pick was published. It is kept as the record of what Full Count said and is not refreshed." };
+  }
   if (p.market_odds == null) {
     // LINE_MOVED before the generic unposted case (2026-08-28 P0). "FanDuel
     // hasn't posted a price for this line yet" was shown for Drew Anderson's
@@ -2070,7 +2465,9 @@ function priceFreshnessState(p) {
           + `so this projection can't be bet at the line shown. The projection is left at its own line `
           + `rather than quietly re-pointed at FanDuel's -- a different line is a different bet.` };
     }
-    return { label: "Not posted", tone: "unposted", detail: "FanDuel hasn't posted a price for this line yet." };
+    const unpriced = unpricedState(p);
+    return { label: unpriced.short, tone: p.market_fetch_state === "FETCH_FAILED" ? "stale" : "unposted",
+      detail: unpriced.detail };
   }
   const state = p.market_fetch_state;
   if (state === "FETCH_FAILED") {
@@ -2224,7 +2621,7 @@ function detailBody(p) {
       </div>
       <div class="hero-meta">
         <div><b>${esc(statusLabel(p))}</b></div>
-        <div>FanDuel: ${fmtOdds(p.market_odds) ?? "not posted"}</div>
+        <div>FanDuel: ${fmtOdds(p.market_odds) ?? esc(noPriceText(p))}</div>
       </div>
     </div>
     <div class="pc-chips" style="margin-bottom:18px;">${[statusChip(p), suspectChip(p), lineupChip(p), evidenceChip(p), staleChip(p), liveStaleChip(p), gradeChip(p)].filter(Boolean).join("")}</div>
@@ -2254,7 +2651,7 @@ function detailBody(p) {
         <div class="mvm-row"><span class="mvm-label">Market fair value</span><span class="mvm-value">${(p.market_fair ?? p.market_implied) != null ? pct(p.market_fair ?? p.market_implied, 0) : "—"}</span></div>
         <div class="mvm-row mvm-diff"><span class="mvm-label">Edge</span><span class="mvm-value">${(p.edge_vs_fair ?? p.market_edge) != null ? ((p.edge_vs_fair ?? p.market_edge) >= 0 ? "+" : "") + Math.round((p.edge_vs_fair ?? p.market_edge) * 100) + " pts" : "—"}</span></div>
       </div>
-      <p class="section-sub">FanDuel ${fmtOdds(p.market_odds) ?? "— not posted"}${p.posted_implied != null ? ` (${pct(p.posted_implied, 0)} raw)` : ""}${
+      <p class="section-sub">FanDuel ${fmtOdds(p.market_odds) ?? "— " + esc(noPriceText(p))}${p.posted_implied != null ? ` (${pct(p.posted_implied, 0)} raw)` : ""}${
         p.market_fair_method === "exact_two_sided" ? " · exact no-vig (both sides priced)"
         : p.market_fair_method === "assumed_hold" ? " · estimated no-vig (only one side posted)"
         : (p.market_hold != null ? " · exact no-vig" : "")
@@ -2771,7 +3168,24 @@ function liveStaleChip(p) {
   return `<span class="chip chip-stale">${label}</span>`;
 }
 
+// The Central slate day can turn over while a tab sits open with nothing on
+// the board changing (after the last game ends, no poll re-renders). The
+// once-a-minute freshness tick re-renders the route when it does, so an open
+// Today page drops yesterday's settled picks at Central midnight.
+let LAST_DISPLAY_TODAY = null;
+function rerenderOnSlateDayChange() {
+  if (!DATA) return;
+  const day = displayToday();
+  if (LAST_DISPLAY_TODAY !== null && day !== LAST_DISPLAY_TODAY) {
+    LAST_DISPLAY_TODAY = day;
+    refreshSummary();
+    renderRoute();
+    return;
+  }
+  LAST_DISPLAY_TODAY = day;
+}
 function renderFreshness() {
+  rerenderOnSlateDayChange();
   const bar = document.getElementById("freshness-bar");
   // Each clock named for what it actually measures (2026-08-28 P0). The
   // old bar printed "Board built Xh ago · odds updated Ym ago", which is
@@ -2957,7 +3371,9 @@ function applyCachedLive() {
     p._field_updated_at = p._field_updated_at || {};
     for (const [field, value] of Object.entries(delta)) {
       if (field === "_field_updated_at" || LIVE_SETTLEMENT_FIELDS.has(field) || LIVE_GAME_FIELDS.has(field)) continue;
-      const frozenExposure = gameHasStarted(p)
+      // A carried published pick (another build slate) is frozen before
+      // first pitch too; the build and refresh never reprice it.
+      const frozenExposure = (gameHasStarted(p) || isCarriedPublished(p) || !!p.withdrawn_since_publication)
         && ((!!p.published_top_pick_at && !!p.publication_artifact_id)
           || !!p.publication_candidate_token);
       if (frozenExposure && LIVE_PRICE_FIELDS.has(field)) continue;
@@ -3004,7 +3420,11 @@ async function pollLive({ silent = false } = {}) {
     ingestLiveDocument(fresh);
     const changed = applyCachedLive();
     if (silent) return;
+    // A History page shows past slates, whose props are usually no longer
+    // on the board (PROPS_BY_ID), so `changed` can be 0 while their live
+    // settlement just moved in LIVE_CACHE. Re-render it either way.
     if (changed > 0) { renderRoute(); }
+    else if (route === "history" && historyRenderSignature() !== HISTORY_RENDER_SIG) { renderHistory(); }
     renderFreshness();
   } catch (e) {
     // A missed poll on an ALREADY-OVERLAID board just tries again next
@@ -3109,6 +3529,11 @@ async function boot() {
   // one small JSON GET, not the multi-minute FanGraphs/Statcast/FanDuel
   // pull Dashboard Refresh itself avoids running too often for.
   setInterval(pollFullBoard, 3 * 60000);
+  setInterval(pollHistory, HISTORY_REFRESH_MS);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible"
+        && Date.now() - HISTORY_FETCHED_AT >= HISTORY_REFRESH_MS / 3) pollHistory();
+  });
 
   document.querySelectorAll("[data-close-detail]").forEach(el => el.addEventListener("click", closeDetail));
   document.addEventListener("keydown", e => { if (e.key === "Escape") closeDetail(); });

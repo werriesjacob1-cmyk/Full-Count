@@ -2084,6 +2084,207 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 89.8,
+          "notable_signals": 3,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824301,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 74.0,
+            "pitch_exploit": 9.1429,
+            "l7_avg_ev": 40.4687,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 55.6,
+            "season_barrel_pct": 42.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": 1.12,
+            "platoon_xwoba": 1.02,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 24.5455,
+            "woba_behind": 78.1818,
+            "hard_hit_105_rate": 1.3575,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.544,
+            "vs_rp_ops": 0.852,
+            "ump_k_pct": -0.12,
+            "ump_bb_pct": 0.204
+          },
+          "hit_probability": 0.6313,
+          "raw_hit_probability": 0.6244,
+          "lift": 0.0716,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 18.2,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824301,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1009
+          },
+          "hit_probability": 0.1009,
+          "raw_hit_probability": null,
+          "lift": 0.0535,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 8.6,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824301,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0469
+          },
+          "hit_probability": 0.0469,
+          "raw_hit_probability": null,
+          "lift": 0.0263,
+          "reliability": "A",
+          "sample_n": 136,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 74.5,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824298,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 100.0,
+            "l7_avg_ev": 33.9583,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 37.0,
+            "season_barrel_pct": 41.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 37.037,
+            "platoon_barrel_pct": 1.12,
+            "platoon_xwoba": 1.02,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 21.8182,
+            "woba_behind": 80.9091,
+            "hard_hit_105_rate": 1.3425,
+            "team_total_move": 0.0,
+            "team_total_open": 4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.64,
+            "vs_rp_ops": 0.912,
+            "ump_k_pct": 0.36,
+            "ump_bb_pct": 0.468
+          },
+          "hit_probability": 0.628,
+          "raw_hit_probability": 0.6219,
+          "lift": 0.0703,
+          "reliability": "A",
+          "sample_n": 137,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 18.1,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824298,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1003
+          },
+          "hit_probability": 0.1003,
+          "raw_hit_probability": null,
+          "lift": 0.053,
+          "reliability": "A",
+          "sample_n": 137,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 8.6,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824298,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0466
+          },
+          "hit_probability": 0.0466,
+          "raw_hit_probability": null,
+          "lift": 0.0261,
+          "reliability": "A",
+          "sample_n": 137,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -5556,6 +5556,653 @@ required, same doctrine as every other PR.
 
 Alligator
 
+## 2026-09-23 -- SUPERCLAUDE MISSION 8, Workstream A: QB-change-aware
+## team-dropback consumer + real PR #177 correction pushed
+
+**Workstream A (my ownership)**: `nfl/research/qb_change_team_dropbacks.py`
+connects the real, previously-unconsumed strictly-prior QB-starter-identity
+substrate (`qb_continuity_features.py` -- its own docstring states it is
+never wired into any model) to the existing per-player opportunity-
+projection chain (`receptions_team_opportunity_challenger.py`, reused
+read-only, zero bytes changed). Structurally mirrors the already-merged
+coaching-aware consumer (PR #179/#181) but keyed on real recorded QB
+pass-attempt identity instead of HC identity -- the real P10 factor
+("account for QB change effects on ALL teammates").
+
+**Real, disclosed result on the main matched population** (same real
+2025-week-8+ population precedent as the coaching/snap-share ablations,
+n=3,059): baseline (existing coaching-aware engine) MAE=1.386444868319182
+vs QB-aware MAE=1.38511789320672 -- a negligible, inconclusive difference,
+not a demonstrated win. The feature is far more ACTIVE than the coaching
+feature (1,027/3,059 = 33.6% of real projections changed, vs 0/2,954),
+since real in-season QB changes are more common than real in-season HC
+changes, but higher activation did not translate into measured accuracy
+gain.
+
+**Real named single-player demonstration** (not synthetic, not tomorrow's
+not-yet-available inactive, per Mission 8's own explicit allowance): real
+2025 week 8, Baltimore, DeAndre Hopkins (`00-0030564`), real incumbent
+Cooper Rush (`qb_tenure_starts=2`). Baseline projection 2.561 receptions
+(`model_over_probability=0.596`) vs QB-aware projection 2.408
+(`model_over_probability=0.500`) -- target share/catch rate held
+identical, isolating exactly what the QB feature changed. A real
+DECREASE, not a uniform inflation of every teammate.
+
+**Real largest activation** (non-cherry-picked scan of every real
+(team, season, week) in the 2023-2025 starter substrate, same methodology
+as Mission 6's real 2026 snap-share example): New Orleans week 9 2025,
+real incumbent Tyler Shough (`qb_tenure_starts=1`), a real 21.6-dropback
+difference -- disclosed as a real but `n=1` single-game, high-variance
+sample, not a well-calibrated number.
+
+**Explicit NO_ADJUSTMENT path**: `NO_ADJUSTMENT_INSUFFICIENT_QB_TENURE_
+HISTORY` status when a real incumbent is resolved but no team box score
+yet exists under that identity. Never activates on completed historical
+seasons (by construction every played game already has a box score by
+the time this script scores it) -- proven correct by dedicated unit
+tests instead, with an honest disclosure of why a live-data example of
+this exact branch isn't available from historical data.
+
+**Tests**: 18 new (`nfl/tests/test_qb_change_team_dropbacks.py`). Full
+`nfl/tests`: 1041/1041 in an isolated worktree off current main (1023
+baseline + 18 new).
+
+Branch `claude/nfl-qb-change-opportunity-20260923`. Draft PR #185, not
+merged -- independent review requested (Issue #91 comment `5800930623`)
++ Jacob's separate explicit authorization required.
+
+**Deliverable E (PR #177 correction)**: pushed the actual proposed
+Section 12 refresh (citing every real PR #178-185 outcome) and the
+Section 0 "consumed vs. passed-through" epistemic-rule addition (real
+PR #179/#181 coaching-filter example) directly to PR #177's own branch
+`superchad/nfl-intelligence-completeness-20260923`, head `fcd9094dba` --
+per Mission 8's explicit new instruction to make the real edit rather
+than leave it as a review comment (comment `5800054493`, from Mission 7).
+Also corrected a stale claim: PR #175 (roster re-pin) is CLOSED, not
+open -- superseded by PR #178's schema/sanity-check pattern. No merge
+action taken or requested; remains Jacob's separate decision.
+
+Alligator
+
+## 2026-09-23 -- SUPERCLAUDE MISSION 9, Workstream B: current-week-safe
+## QB-availability gate (draft PR #189)
+
+Connects a second real, previously-unconsumed source (`nfl/research/
+injury_availability_features.py` -- its own docstring: never wired into any
+model) to PR #185's QB-continuity-aware team-dropback consumer, via a new
+module `nfl/research/qb_availability_gated_dropbacks.py`. Directly answers
+SUPERCHAD's Mission 8 checkpoint (Issue #91 comment `5800978133`):
+`resolve_incumbent_qb` is a strictly-prior historical-incumbent proxy, never
+a current-week starter confirmation. This module cannot determine a NEW
+starter's identity (no depth-chart source exists in this repo, disclosed
+not solved) but uses the real weekly injury report (filed before that
+week's own games) to classify the OLD incumbent's real current-week
+availability into four states -- `CONFIRMED_AVAILABLE` / `DISPUTED`
+(Questionable) / `EXPECTED_UNAVAILABLE` (Out/Doubtful) / `UNKNOWN` -- and
+falls back to the naive control (never a guessed new starter) whenever he
+isn't confirmed available.
+
+**Real, disclosed findings**: 83 real gate activations in a non-cherry-
+picked 2023-2025 scan (real, verifiable cases: MIN/J.J. McCarthy, WAS/
+Jayden Daniels, NYG/Tyrod Taylor, NYG/Drew Lock, LV/Geno Smith, LV/Jimmy
+Garoppolo, LV/Aidan O'Connell, GB/Malik Willis) -- far more active than the
+coaching-regime feature (0/2,954). Both directions occur (real numbers go
+both up and down), matching Mission 9's explicit requirement not to claim
+uniform teammate-level effects from a team-volume change. Real matched
+2025-week-8+ population (n=328): 309 CONFIRMED_AVAILABLE, 6 DISPUTED, 13
+EXPECTED_UNAVAILABLE (5.8% activation rate).
+
+**Two real data-quality findings, handled at the ingestion boundary without
+touching `injury_availability_features.py`**: (1) nflverse's real injury
+report carries multiple within-week update rows per player (resolved by
+keeping the latest real `date_modified` snapshot per key); (2) 6 of 6,215
+real 2024 rows carry a non-standard `"NOTE"` `report_status` value outside
+the module's documented vocabulary (excluded, counted, not guessed).
+
+**Independent review** (Issue #91 comment `5804049029`): GO. Reproduced
+every real number exactly (83 activations, all 8 named examples, the
+328/309/6/13 matched-population split, both real duplicate-key rows and
+both real "NOTE" rows independently re-fetched and confirmed) via a live
+re-execution against real nflverse data, not the PR's own word. One
+disclosed, non-blocking gap flagged: the `UNKNOWN` bucket never gates, even
+for a genuine (theoretical, pre-2009, no live relevance) case where a real
+incumbent resolves but the injury source has no coverage -- fixed by adding
+an explicit module-docstring disclosure and a dedicated end-to-end
+regression test (`test_pre_2009_season_with_a_real_resolved_incumbent_is_
+unknown_and_not_gated`) proving the module's documented conservative
+default (trust continuity absent real contrary evidence) rather than
+leaving it silently untested.
+
+**Tests**: 15 total in the file (14 -> 15 after the reviewer's flagged gap
+was closed). Full `nfl/tests`: 1056/1056 (1041 PR #185 baseline + 15 new).
+
+Branch `claude/nfl-qb-availability-gate-20260923` (stacked on unmerged
+draft PR #185). Draft PR #189, not merged -- Jacob's separate explicit
+authorization required.
+
+Alligator
+
+## 2026-09-24 -- SUPERCLAUDE MISSION 11, P1: cross-slate price contamination,
+## Games price-state honesty, live History (draft PR, branch
+## `claude/product-history-live-games-pricing-20260924`)
+
+Base `eadff15696`. MLB customer product only: no NFL code, workflow, model
+weight, threshold, recommendation policy or settlement logic changed.
+
+**Root cause of the Mike Trout "not priced" Games card (real repo evidence,
+not the screenshot).**
+1. `mlb_daily.TODAY = datetime.now()` runs in UTC on GitHub runners. The
+   published board switched to `date: 2026-09-24` at 2026-09-24T00:13Z
+   (7:13 pm CDT on Sept 23) while Sept 23 late games were still pregame.
+   Already recorded as a known issue (see "New issues discovered" above,
+   PR #51 era). **Deliberately NOT changed here**: grading, public-pick
+   persistence, board-freeze and file naming all key on it. Needs its own
+   audit and Jacob's decision.
+2. The board build priced props from `fetch_prop_prices()`'s flat dict,
+   which is keyed by player name and merged across every listed FanDuel
+   event. At the 01:05Z build, Sept 23's Angels @ Athletics (824951, first
+   pitch 01:40Z) was still listed. All 10 of Trout's markets on the Sept 24
+   Angels @ Mariners game (823087) carried exactly his 824951 prices
+   (H+R+RBI -475, Hits -290, Runs -180, TB -130, ...). The independent
+   review counted 352 priced props on that board that exactly match another
+   game's prior-day prices. (Earlier drafts of this entry and of the PR
+   named 824951 as Angels @ Mariners; that was wrong, and the corrected
+   record is above.)
+3. The event-scoped live refresh correctly marked those markets
+   `NOT_POSTED` (checked 01:10Z onward). The Games highlight then collapsed
+   every null-price state into "71% · not priced" under "Best Overall
+   Read", a negative-edge lean (-475 implies 82.6% vs a 71% model).
+4. Latent: `_relevant_events`' matchup-only fallback would bind a
+   next-day row to the prior day's event of a series whenever the next
+   day's event was not listed yet. The same board has real exposure:
+   Padres @ Dodgers played on both slates, and 72 of its 168 priced props
+   carried the prior game's exact prices.
+
+**Changes.**
+- `odds_fanduel.py`: `slate_scoped_values` / `fetch_slate_prices` /
+  `slate_games_from_meta`. Board prices come only from events that uniquely
+  match a slate game, using the same `_relevant_events` rule the live
+  refresh uses. Merge semantics mirror each fetcher, and failure behaviour
+  matches the legacy non-strict call (a root transport failure raises; a
+  malformed or empty feed yields `{}`). The matchup-only fallback now
+  requires the listed start to be within 8h of the scheduled start;
+  unknown starts keep the legacy behaviour.
+- `generate_picks.py` and `dashboard/build_dashboard.py`: every board price
+  feed goes through `fetch_slate_prices`. `parlay_builder._finalize`'s
+  internal re-price (used only for `output/parlay_example_*.html`; the
+  dashboard parlay uses `price_legs=False`) is left unchanged and is a
+  known residual.
+- `dashboard/build_dashboard._game_pick_sections`: within each section,
+  price-clearing exact-line reads rank first, then priced reads, then
+  unpriced research projections. It reads existing price fields only, and
+  section diversity is unchanged.
+- `dashboard/static/app.js` (source of truth; `docs/app.js` and
+  `docs/app.css` synced byte-identical):
+  - `unpricedState()` gives one shared wording for NOT_POSTED /
+    FETCH_FAILED / IN_PLAY / never-priced, used by the Games line, the
+    compact card and the detail sheet. Unpriced highlights read "NN%
+    research projection · <reason>".
+  - `resolveGamePick` no longer falls back to a name match when the copy
+    carries an id.
+  - History re-fetches `history.json` every 3 min while open, on route
+    entry and on visibility. It accepts only a strictly newer
+    `generated_at` from the latest-applied request, shows live
+    provisional and official-final state from `LIVE_CACHE` joined by
+    canonical id only, lets the durable grade always win, computes the
+    official day record from durable grades only (live state is a
+    separate labelled tally), and preserves open day sections and
+    scroll. `pollLive` re-renders an open History page even when no
+    current-board prop changed.
+
+**Tests.** `test_slate_scoped_prices.py` (16, including the Trout replay),
+`test_frontend_history_games.py` (16, Node VM),
+`test_browser_history_games.py` (16 checks, real Chromium), plus a new block
+12c-2 in `test_build_dashboard.py`. Mutation checks: removing the drift
+guard, the slate scoping, the strictly-newer guard, durable-first, the
+History re-render on live, open-section preservation, scroll preservation,
+the id-only join, or the Games name-fallback tightening each fails at least
+one test.
+
+**Not claimed.** Nothing is deployed and production is not fixed. The
+board-date rollover still happens at 7 pm Central. Tonight's already
+published board still carries the contaminated prices until a rebuild on
+the merged code.
+
+**Independent adversarial review round 1** (separate agent, head
+`ad522aef23`) returned **HOLD** with 4 SHOULD-FIX findings and 8 NITs. All
+were fixed in the follow-up commit except where noted:
+- FETCH_FAILED with the reason "no unique relevant FanDuel event" (real
+  case: 177 White Sox @ Royals rows at 02:15Z) now reads "No FanDuel
+  listing found yet", not "FanDuel check failed".
+- Doubleheaders on the board path (completed in round 2): same-matchup
+  games resolve as a group. The group is used only when every game maps
+  to its own distinct event, and then only for keys every game carries at
+  the same price. A game-2 event that isn't listed yet, or a market only
+  one game has posted, prices neither game. `slate_match_report` counts
+  such games as unmatched. **Residual:** the live refresh
+  (`refresh_prices`, per row) can still bind a game-2 row to game 1's
+  event by matchup when game 2 is unlisted and the starts are within 8h.
+  Closing that needs slate context inside `refresh_prices` and is left
+  for a separate change.
+- `fetch_slate_prices` logs, per family, how many slate games matched and
+  which did not.
+- The detail sheet's header and Model-vs-Market lines use the same
+  wording (`noPriceText`).
+- The incident text is corrected (above).
+- The redundant request-sequence guard was removed; `generated_at` alone
+  is the ordering rule.
+- History ignores live or provisional observations older than 24h
+  (official finals are not age-limited).
+- `pollLive` re-renders History only when what it shows changed.
+- `visibilitychange` refetches only after 60s.
+- A newly appearing top day opens.
+- The new attributes use `escAttr`.
+- Residual, not changed: `value_board.py` and `prop_snapshot.py` still read
+  the flat feeds. Neither feeds the customer site; `prop_snapshot` is raw
+  archival capture. Also unchanged: the board call-site tests are still
+  source-level only.
+
+**Independent review round 2** (head `40216581ed`): **GO** for code
+integration, conditional on the doubleheader note above. That condition is
+met by completing the board-path fix rather than only documenting it.
+Wording nit also fixed: the detail sheet reads "FanDuel: not posted yet",
+not "FanDuel: Not yet posted on FanDuel". The reviewer rechecked all 12
+round-1 findings (10 fixed, 2 disclosed residuals) and found no regressions
+from the fixes.
+
+Alligator
+
+## 2026-09-24 -- Published Top Picks stay on Today through 11:59 pm Central
+## (branch `claude/product-published-today-ct-20260924`, stacked on PR #194)
+
+Jacob's decisions (session, 2026-09-24): the customer slate day is **Central
+time**, and this fix ships as a **separate PR stacked on #194**.
+
+Evidence (Issue #91 comment `5808992903`): at the UTC rollover (7:13 pm CDT)
+the build dropped 7 of 27 published Sept-23 Top Picks: 5 whose games hadn't
+started and 2 already final. After that, carried picks disappeared as soon as
+their games left "live".
+
+**Change** (`dashboard/build_dashboard.reconcile_public_lifecycle`):
+- New `DISPLAY_TIMEZONE = "America/Chicago"` and `display_slate_date(now)`.
+- A registered pick from another build slate is kept for its whole Central
+  day, whatever its game state. On any other day it is kept only while its
+  game is live, suspended or postponed. That is the pre-existing rule, and
+  it is still what stops settled picks from sticking to later boards.
+- A still-pregame registered pick from another build slate (absent from the
+  payload only because of the UTC rollover) is now carried. The
+  current-slate "withdrawn pregame pick" rule is unchanged.
+- Rows gain `published_slate_date`; the payload gains `display_date` and
+  `display_timezone`.
+- Frontend:
+  - Today's Top Picks are grouped as "Today · <date>", "Early picks for
+    <date>" (the next build slate published before Central midnight) and
+    "In progress from <date>".
+  - Started published picks carry "Published pick · game started —
+    original pregame odds shown, not a current offer".
+  - The Best Bets subtitle states the 11:59 pm Central contract.
+
+**Not changed:**
+- `mlb_daily.TODAY` (the build and grading slate date still rolls at UTC
+  midnight), grading, file names, the publication registry, History and
+  the official record.
+- The first step deliberately leaves the build date alone.
+
+**Verified by replaying real committed builds** (data.json + live.json +
+registry at each commit) through `reconcile_public_lifecycle`:
+
+| Build | Old code (matches production) | New code |
+|---|---|---|
+| 00:13Z (7:13 pm CDT) | 20 | 27 |
+| 01:56Z | 13 | 27 |
+| 03:31Z | 5 | 28 (27 Sept 23 + 1 Sept 24) |
+| 06:03Z (after Central midnight) | 1 | 1 (the Sept-23 settled picks correctly gone) |
+
+**Tests:**
+- `test_published_today_central.py` (8): the DST and Central-date
+  boundaries, the pregame/final carry at rollover, 23:59:59 vs 00:01
+  Central, no duplicates, the days-old sticky guard, the unchanged
+  current-slate withdrawal rule, and the new-slate and prior-day
+  coexistence.
+- `test_frontend_today_groups.py` (4).
+- Mutations: removing the Central-day rule, the pregame carry, or the
+  live-only rule after the Central day each fails tests. The last one also
+  fails the existing lifecycle suite.
+
+**Open (Jacob):**
+- When should the build/grading date itself move to Central?
+- Should a *demoted* same-slate pregame published pick also stay visible?
+  Today it becomes a lean, per the pre-existing policy.
+
+**Independent review round 1 (head `7410db9590`): HOLD.** Fixed in the
+follow-up commit:
+- **Line moves.** A carried pregame pick could trigger an unresolvable
+  LINE_MOVED reconciliation loop that failed Best Bets closed. Carried
+  picks (whose `published_slate_date` differs from the payload date) are
+  now frozen on both reconcile paths. `refresh_prices` never reprices or
+  reclassifies them, and `reconcile.line_moved_mismatches` ignores them.
+- **Inconsistent freezing.** The deploy path used to reprice these rows
+  while the full build pinned them; both now freeze. Carried pregame
+  cards say "Published pick — odds as of publication, not a current
+  quote".
+- **Midnight in the browser.** The browser now enforces Central midnight
+  itself (`Intl`, America/Chicago), so a late deploy or a tab left open
+  never shows yesterday's settled picks as today's.
+- **Count tile.** It now counts only today's slate-day Top Picks and is
+  labelled "Top Picks today".
+- **Postponed and suspended games.** The heading is now "Still open from
+  <date>". The "game started" note is limited to live, final and
+  suspended, so it no longer appears on postponed games whose start time
+  has passed.
+- **Subtitle.** Softened to "Today's published Top Picks".
+- **Tests.** New ones cover the first-loop freeze with current
+  presentation, refresh skipping carried picks, the line-moved exclusion,
+  browser expiry, the tile count, and the carried note. Each fix fails a
+  test when mutated (the freeze only when both freeze sites are removed,
+  since either one alone pins the fields).
+- **Pre-existing and unchanged:**
+  - The `(live, suspended, postponed)` tuple leaves out the "delayed"
+    game state.
+  - A postponed prior-slate pick stays until its game is resolved.
+  - When full builds stall, the payload's slate date lags, and the
+    Central-day contract is not enforced by the build. The board-age
+    fail-closed check mitigates this.
+
+Replay after the fixes: still 27/27/28/1 (the old code gives 20/13/5/1).
+
+**Independent review, round 2 (head `7f9b58e65f`): HOLD.** Fixed in the
+follow-up commit.
+- **BLOCKER.** When every Top Pick had expired in the browser (after
+  Central midnight, before the next deploy), `renderToday` read
+  `groups[0].kind` of an empty list. `boot()` then rejected before it
+  registered its polls, so the page stayed on the spinner. It now branches
+  on the group count and falls back to the gap explainer. A test renders
+  that case.
+- **Carried picks mislabelled.** The `refresh_prices` skip ran before the
+  game-state branch, so started carried picks lost IN_PLAY and the detail
+  sheet called their price "Current". The skip now sits just before
+  `pregame.append`, so started carried picks get their game fact and
+  IN_PLAY again. `priceFreshnessState` shows "As published · not a
+  current quote" for carried pregame picks. Both are tested.
+- **Locale-dependent date.** `centralDateNow` is now built from
+  `formatToParts` and validated as `YYYY-MM-DD`; anything else falls back
+  to the payload date.
+- **Tile count.** The tile discloses the other groups ("+N early/still
+  open").
+- **Scope of browser expiry.** It applies to the Today page's Top Picks
+  only. The All Props list still shows whatever the deployed payload
+  carries.
+
+**Independent review, round 3 (head `02f4e629d7`): GO** for code
+integration. The reviewer verified the round-2 BLOCKER fix in real Chromium
+and reproduced the old crash as a control. Its non-blocking findings are
+fixed in the follow-up commit:
+- **Medium: an open tab kept yesterday's settled picks after Central
+  midnight.** The round-1 claim that "a tab left open never shows
+  yesterday's settled picks" was not true, because nothing re-renders when
+  the board doesn't change. The once-a-minute `renderFreshness` tick now
+  re-renders the route when `displayToday()` changes. The new real-browser
+  test `test_browser_today_central.py` covers it: a Playwright fake clock
+  runs 11:55 pm to 12:05 am CDT with no reload. Removing the re-render
+  fails 4 of its 12 checks.
+- **Low:** for carried picks, "As published" now wins over stale LINE_MOVED
+  and FETCH_FAILED labels, and the browser overlay ignores live price
+  fields on carried picks before first pitch, as the build does.
+- **Low:** the tile's "+N early/still open" is now tested.
+- **Informational, unchanged:**
+  - After the picks expire, the empty-state wording still says "tonight".
+  - A device clock that runs ahead can hide the day's settled picks early.
+
+Alligator
+
+## 2026-09-24 -- MISSION 12 WORKSTREAM C: published-pick downgrade/withdrawal
+## display (isolated candidate, branch
+## `claude/published-downgrade-display-20260924`, base `175bf7ce1a`)
+
+Isolated candidate for Jacob's review; not posted to Issue #91, not opened
+as a PR, not merged. MLB customer product only -- no NFL code, workflow,
+model weight, threshold, recommendation/selector policy, registry, grading,
+or generated `output`/`results`/`docs/*.json` state touched.
+
+**Problem** (as given): a Top Pick already recorded in the immutable
+publication registry (`data/public_top_picks/registry.json`) could be
+downgraded (a price/lineup refresh reclassifies it) or effectively
+disappear (the current scoring pass no longer produces it at all) before
+first pitch, and `dashboard/build_dashboard.reconcile_public_lifecycle`
+either kept only the demoted CURRENT status with no distinguishing label,
+or (the carry loop's pre-existing "withdrawn pregame pick" rule,
+`if not crossed and not other_build_slate: continue`) silently dropped the
+row from the Today page entirely -- hiding a previously published
+recommendation instead of labelling it.
+
+**Design chosen.** Both candidate designs from the brief, combined: (1) a
+clearly labelled sub-group, "Published earlier — no longer a Top Pick,"
+inside the Today page's Top Picks ("Best Bets") area, and (2) each card in
+that sub-group carries a distinct "Downgraded after publication" or
+"Withdrawn" chip showing the original published odds/probability alongside
+the current status and reason. Chosen over either alone because the brief's
+"must not look like a current Top Pick" and "must not be hidden" are two
+separate, independently-checkable requirements -- the sub-group placement
+satisfies visibility without needing to scan every card, the chip satisfies
+non-confusability without needing to notice which group a card is in.
+
+**The demotion case (loop 1, same-slate row still present, reclassified)
+needed NO backend change.** `reconcile_public_lifecycle`'s existing
+`row.update(_publication_provenance(registered))` branch already keeps the
+row's CURRENT (possibly demoted) `recommendation_status` as the actionable
+truth while unconditionally attaching `row["publication_snapshot"] =
+_publication_snapshot(registered)` (the immutable original, including its
+own `recommendation_status: "top_pick"`, `market_odds`, `hit_probability`).
+So "published, now downgraded" is fully derivable, client-side, from data
+already on the row -- `dashboard/static/app.js`'s new
+`isDowngradedPublished(p)`:
+`p.publication_snapshot?.recommendation_status === "top_pick" &&
+p.recommendation_status !== "top_pick"`. No second source of truth added.
+
+**The withdrawal case (loop 2, row absent from the current scoring pass
+entirely) needed a small, explicit backend change**, because there IS no
+"current" `recommendation_status` to derive from -- the row was never
+scored this cycle at all. `reconcile_public_lifecycle` now carries it
+(`withdrawn_pregame = not crossed and not other_build_slate`, replacing the
+old unconditional `continue`), but only for DISPLAY: its
+`recommendation_status` is forced to `"neutral"` (the only honest member of
+the deployed contract's 4-value enum -- `dashboard/live_state.
+RECOMMENDATION_STATES` / `verify_pages_artifact.py`'s `_validate_row` --
+for "no current classification exists"), with a synthetic
+`status_reasons` entry, and a new boolean marker,
+`withdrawn_since_publication`. The override is applied in a NEW step added
+after both (a) the existing `frozen_by_id` reapplication pass (which would
+otherwise restore the immutable snapshot's `recommendation_status ==
+"top_pick"`) and (b) `apply_live_overlay` (which could otherwise
+reintroduce a stale live.json `recommendation_status` from before the pick
+fell out of the pass) -- both run before it, so the override always wins
+last within that one call. **Retracted after review:** "nothing downstream can silently un-withdraw it" was false -- see the review-fix section below. `refresh_prices.py`
+now explicitly skips any row carrying `withdrawn_since_publication` (new
+guard, alongside the pre-existing other-build-slate skip) so it is never
+re-priced. Re-registration was already structurally impossible before this
+change and remains so: `publication_registry.build_publication_manifest`
+skips any id already in `registry["entries"]` regardless of status --
+verified by a new regression test, not just asserted.
+
+**`summary.n_published_downgraded`** (build side, `_recount_payload`, and
+frontend, `refreshSummary()`): counts rows where
+`publication_snapshot.recommendation_status == "top_pick"` and the current
+`recommendation_status` differs -- covers both the demotion and withdrawal
+cases with the same derivation, purely additive, never folded into
+`n_top_pick`/"Top Picks today" (which continues to read only the CURRENT
+field, unchanged).
+
+**Files changed.**
+- `dashboard/build_dashboard.py`: `reconcile_public_lifecycle`'s carry loop
+  (withdrawn-pregame carry + `withdrawn_ids` tracking), the frozen-fields
+  reapplication step (override applied last), `_recount_payload`
+  (+`n_published_downgraded`, +`_was_published_top_pick` helper), new
+  `WITHDRAWN_STATUS_REASONS` constant.
+- `dashboard/refresh_prices.py`: new `withdrawn_since_publication` skip
+  guard in the pregame-selection loop.
+- `dashboard/static/app.js` (source of truth; `docs/app.js`/`docs/app.css`
+  synced byte-identical -- verified by the existing
+  `StaticSourceParityTests` in `test_build_dashboard.py`): `STATUS_META`
+  unchanged; new `wasPublishedTopPick`/`isDowngradedPublished`/
+  `publishedDowngradedNote`; `pickCard` renders the new note;
+  `renderToday` adds the "Published earlier — no longer a Top Pick"
+  sub-group inside Best Bets and excludes those rows from
+  `valueAll`/`longshotsAll`/`leansAll` (so a downgraded pick never also
+  duplicates into "More Picks" under its current status alone);
+  `refreshSummary` computes `n_published_downgraded` and excludes
+  downgraded rows from `n_lean`/`n_value`; `topPickGapSummary` excludes them
+  from the generic "why no Top Picks" gap breakdown (already explained by
+  the new sub-group).
+- `dashboard/static/app.css` / `docs/app.css`: `.chip-downgraded`,
+  `.pc-downgraded-note`, `.pc-downgraded-detail`,
+  `.top-pick-group-downgraded` (warn/amber tone -- neither a fresh
+  recommendation nor a settled result).
+- `test_published_today_central.py`: replaced
+  `test_current_slate_withdrawn_pregame_pick_rule_unchanged` (asserted the
+  OLD silent-drop behavior this workstream was explicitly asked to change)
+  with `test_current_slate_withdrawn_pregame_pick_is_carried_as_withdrawn`;
+  added `test_withdrawn_pregame_pick_is_never_a_publication_candidate` and
+  `test_withdrawn_pregame_pick_is_never_repriced_even_on_its_own_slate`.
+- `test_frontend_today_groups.py`: new `PublishedDowngradeDisplayTests`
+  (derivation correctness, no-Top-Pick-chip + chip/label/original-odds
+  content, sub-group rendering + exactly-once card de-duplication against
+  "More Picks", tile-count integrity).
+- `engineering/published_downgrade_policy_20260924/POLICY_PROPOSAL.md`
+  (new).
+
+**Tests.** All touched/relevant suites individually green
+(`test_live_lifecycle.py` 15/15, `test_published_today_central.py` 14/14,
+`test_frontend_today_groups.py` 15/15, `test_pages_preparation.py` 12/12,
+`test_pages_contract_v3.py` 11/11, `test_publication_registry.py` 6/6,
+`test_refresh_grades.py` 12/12, `test_refresh_prices.py` 19/19,
+`test_build_dashboard.py` 153/153, `test_fail_closed_surfaces.py` 24/24,
+`test_browser_e2e.py` 128/128 real Chromium checks). Full suite: every root
+`test_*.py` (146 files) run individually, zero failures.
+
+**Mutation checks** (temporarily broke the guard, confirmed the test that
+should catch it fails, restored, re-verified green):
+- `refresh_prices.py`'s `withdrawn_since_publication` skip removed ->
+  `test_withdrawn_pregame_pick_is_never_repriced_even_on_its_own_slate`
+  fails (the row gets a live.json price delta).
+- `build_dashboard.py`'s post-reapplication override block removed ->
+  `test_current_slate_withdrawn_pregame_pick_is_carried_as_withdrawn` fails
+  (`recommendation_status` reverts to `"top_pick"`).
+- `app.js`'s `isDowngradedPublished` forced to always return `false` -> all
+  3 new `PublishedDowngradeDisplayTests` fail (no chip, no sub-group, wrong
+  tile behavior undetected).
+
+**Grading/History unaffected by construction, not just by test result.**
+`dashboard/refresh_grades.py` and `grade_results.py`/`build_history`
+(`results/history.json`) read the durable population directly from the
+registry (`all_published_snapshots` / `published_snapshots_for_date`),
+independent of `reconcile_public_lifecycle`'s Today-page output this
+candidate changes. `registry.json` itself, `recommendation.py`,
+`generate_picks.py`'s selection logic, and every workflow file are
+untouched. Noted, not required, positive side effect: `refresh_grades.
+_active_public_snapshots`'s `current_ids` bound now includes a carried
+withdrawn row (it's in `payload["props"]` for the first time), which keeps
+it on the tighter five-minute polling cadence instead of falling back to
+the 72h recent-cutoff heuristic -- strictly an improvement, not a behavior
+this workstream needed.
+
+**Open question for Jacob** (see the policy doc's own section 5): should a
+withdrawn/downgraded card's retention window differ from an ordinary
+published pick's (same-slate/Central-midnight, unchanged by this
+candidate), given a customer may not have seen the downgrade happen? No
+prior decision on this specific point was found in PROJECT_STATE.md,
+ENGINEERING_HANDOFF.md, or Issue #91.
+
+**Exact customer-facing policy text proposed for Jacob's verbatim
+approval** is in `engineering/published_downgrade_policy_20260924/
+POLICY_PROPOSAL.md` section 1 -- not duplicated here to avoid the two
+copies drifting.
+
+Alligator
+
+### Workstream C review fixes (2026-09-24, same branch)
+
+An independent adversarial review of `7e7cecdd3f` returned **HOLD** and
+reproduced (backend script + real Chromium) a withdrawn pick coming back as
+a current Top Pick. Findings and fixes:
+
+1. **Second reconcile pass** (finalize/prepare re-reconcile the built
+   `data.json`; the withdrawn row then took the ordinary pregame branch and
+   a newer `live.json` status/price delta restored `top_pick`). Fix: a row
+   carrying `withdrawn_since_publication` on a same-slate pregame pass is
+   re-frozen and re-withdrawn; the browser's `frozenExposure` also skips
+   live price/status deltas for withdrawn rows.
+2. **UTC rollover (7 pm Central)** flipped a downgraded/withdrawn pregame
+   pick back to `top_pick` via PR #195's other-build-slate freeze. Fix: new
+   display-only, demote-only marker `demoted_before_start`
+   `{status, status_reasons, withdrawn}`, recorded while the pick is
+   live-priced, carried through the payload and `prior_payload`
+   (`docs/data.json`; previously discarded), and re-applied to frozen
+   pregame rows (`_apply_demotion_markers`).
+3. **First pitch**: the pick shows and grades as published (unchanged), but
+   now keeps a "Downgraded to X / Withdrawn before first pitch" label.
+   Whether it should instead stay in the "Published earlier" group is left
+   to Jacob (POLICY_PROPOSAL.md section 5, question 1).
+4. **Policy text overclaimed** the display lifetime; rewritten to state the
+   built behaviour (section 1, with a revision note).
+5. **Withdrawn card showed the publication price as a current quote**:
+   now carries "odds as of publication, not a current quote".
+6. **Leans/Value tiles vs filtered All Props** disagreed (495 vs 496):
+   `matchesStatusFilter` uses the same exclusion.
+7. **No day context** for a next-slate downgraded pick: the sub-group now
+   reuses `topPickGroups` (Central-day expiry and day label).
+8. `(— probability)` for a null snapshot probability; the withdrawn reason
+   was internal jargon. Both fixed.
+9. Tests: the stale test-name reference is fixed. There are 5 new backend
+   tests (`PregameDemotionPersistsTests`) and 5 new frontend tests
+   (`DowngradeReviewFindingsTests`). All 10 fail on the reviewed code and
+   pass after the fix. The one mutation the review found surviving
+   (`n_published_downgraded` counting only withdrawn rows) is now killed by
+   `test_downgrade_recorded_while_pregame_and_cleared_if_top_pick_again`.
+
+Suites green after the fix:
+
+| Suite | Result |
+|---|---|
+| `test_published_today_central` | 19 |
+| `test_frontend_today_groups` | 20 |
+| `test_build_dashboard` | 153/153 |
+| `test_browser_e2e` | 128/128 |
+| `test_browser_today_central` | 12/12 |
+| `test_fail_closed_surfaces` | 24/24 |
+
+Also green: `test_live_lifecycle`, `test_pages_preparation`,
+`test_pages_contract_v3`, `test_publication_registry`, `test_refresh_grades`,
+`test_refresh_prices` and `test_reconciliation`.
+
+Still NOT authorized or done: no merge and no deploy; the policy text awaits
+Jacob's approval. Grading, the registry, `recommendation.py` and the
+selector are untouched.
+
+
+### Workstream C: Jacob's policy approval implemented (2026-09-24)
+
+Jacob approved `POLICY_PROPOSAL.md` §1 with three decisions, recorded in
+§5 of that file. Only decision 1 changed behaviour:
+
+- **At first pitch,** a downgraded or withdrawn published Top Pick now
+  **stays in "Published earlier — no longer a Top Pick"**. Before this
+  change it showed as a normal published Top Pick with a label.
+  - Backend: `_apply_demotion_markers` applies the carried marker to frozen
+    rows regardless of game state.
+  - Browser: `freezePublishedSnapshot` re-applies the marker after freezing
+    the snapshot, so a started demoted pick never regains `top_pick`.
+  - Published odds and probability stay frozen, the snapshot is untouched,
+    and grading reads the registry.
+- **Tests:** the two old first-pitch tests were rewritten to the approved
+  behaviour, and a started pick that was never demoted still shows as a Top
+  Pick. Mutations that restore the old behaviour are killed on both the
+  backend and the frontend.
+- **Decisions 2 and 3** (retention, and no duplication in Leans, Value or
+  filtered All Props) needed no code change.
+
+This authorizes this display policy only. The selection algorithm and the
+grading rules are unchanged.
+
 ## 2026-09-23 -- MISSION 7 WORKSTREAM C: component-level opportunity-engine
 ## ablation on a genuinely fresh 2024 holdout
 ## (NFL-OPPORTUNITY-ABLATION-2024-HOLDOUT-20260923)

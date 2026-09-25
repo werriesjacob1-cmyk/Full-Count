@@ -466,7 +466,7 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.6,
+          "score": 40.3,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ Los Angeles Dodgers",
           "game_pk": 823894,
@@ -475,14 +475,17 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "opp_team_k_pct": 45.0,
-            "same_hand_ratio": 100.0,
+            "opp_team_k_pct": 46.0,
+            "same_hand_ratio": 88.8889,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 60.5798,
+            "ump_k_pct": 0.708,
+            "ump_bb_pct": 0.072
           },
-          "hit_probability": 0.3974,
-          "raw_hit_probability": 0.3974,
-          "lift": 0.1606,
+          "hit_probability": 0.3996,
+          "raw_hit_probability": 0.3996,
+          "lift": 0.1584,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
@@ -492,9 +495,9 @@
           }
         },
         {
-          "prop": "Over 19.5 Outs Recorded",
+          "prop": "Over 18.5 Outs Recorded",
           "type": "pitcher",
-          "score": 64.8,
+          "score": 81.0,
           "notable_signals": 1,
           "matchup": "San Diego Padres @ Los Angeles Dodgers",
           "game_pk": 823894,
@@ -503,18 +506,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.391,
+            "outs_rate": 0.4924,
             "avg_outs_per_start": 19.89
           },
-          "hit_probability": 0.391,
-          "raw_hit_probability": 0.391,
-          "lift": 0.2407,
+          "hit_probability": 0.5186,
+          "raw_hit_probability": 0.4924,
+          "lift": 0.3103,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 19.5,
-            "needs": 20
+            "value": 18.5,
+            "needs": 19
           }
         }
       ]
