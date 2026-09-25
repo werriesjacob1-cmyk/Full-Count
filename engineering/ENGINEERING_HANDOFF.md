@@ -6202,3 +6202,48 @@ Jacob approved `POLICY_PROPOSAL.md` §1 with three decisions, recorded in
 
 This authorizes this display policy only. The selection algorithm and the
 grading rules are unchanged.
+
+## 2026-09-24 -- Mission 12 Workstream D: MLB Top Pick selection-overconfidence diagnostic (Claude Code)
+
+Branch `claude/mlb-selection-overconfidence-20260924`. Research only: new
+files under `engineering/mlb_selection_overconfidence_20260924/`, plus this
+section.
+
+- **Pre-registration:** `c0d87a1488` (committed alone). Analysis code
+  `c203ed1c7e` was committed before its first real-data run. Data pinned at
+  `3890c23a15`.
+- **Mission 11 figure confirmed:** 489 picks, 455 settled, 64.57% stated vs
+  53.19% realized. At the data pin: gap **-11.0pp [-15.6, -6.6]**, n=480.
+- **Locked verdict: inconclusive.**
+  - W (world-model component) -7.0 [-13.3, +0.1]
+  - S_sel (selection component) -4.0 [-12.7, +3.5]
+  - The verdict sits on Monte Carlo noise: at seeds 1 to 4, and with date
+    clustering, W's upper bound is below 0.
+- **Independent statistical review: PARTLY supported.** The headline gap and
+  the computation hold. The interpretive claims were over-read, and are
+  corrected in the README (`review_checks.py` / `.json` reproduce the
+  review's numbers):
+  - the "disagreement" pattern is a market-family / de-vig artifact;
+  - the non-selected p >= 0.60 overconfidence disappears on eligible rows;
+  - H1 and H2 are not separable with this reference;
+  - FB is last-run-wins.
+- **Contradiction, surfaced not resolved:** this handoff's earlier finding #5
+  ("mostly a SELECTION effect") is not supported either.
+- **Tests:** 17 synthetic tests; 4 were added to kill mutations that
+  survived the original tests.
+- **Proposed next experiment** (revised; not pre-registered yet): per-family
+  market-anchored blend vs a market-only arm on paired log loss, plus ROI at
+  the posted price and CLV. Equal volume. Realistically reads out in 2027.
+- **Backlog (evidence pipeline, not model):**
+  - `grade_board_freeze.py` grades only "yesterday UTC" and has no catch-up
+    or completeness flag. The 09-23 file was 668/668 ungraded from 01:36Z
+    until a later run regraded it at 18:33Z.
+  - Proposed fix: regrade the last ~7 Eastern-time slates when the graded
+    file is missing, its sha mismatches, or any record is "not final yet".
+    Add `settlement_complete`, and never replace a file with a less-settled
+    one.
+  - Board freezes are last-run-wins; append-only per-run freezes are
+    proposed.
+  - Both need a Jacob decision; related to PR #198.
+- Nothing was promoted, merged or deployed. The selector and model are
+  untouched.

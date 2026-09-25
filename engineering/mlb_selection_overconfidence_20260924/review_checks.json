@@ -1,0 +1,186 @@
+{
+  "F1_batter_DB_ref_hi_edge_bands": {
+    "<0.05": 385,
+    ">=0.10": 1,
+    "None": 11,
+    "[0.05,0.10)": 9
+  },
+  "F1_edge>=0.10_gaps": {
+    "DB_ref_hi_all": {
+      "ci95": [
+        -0.304,
+        -0.0927
+      ],
+      "gap": -0.1952,
+      "n": 121
+    },
+    "DB_ref_hi_excl_combined_strikeouts": {
+      "ci95": [
+        -0.2549,
+        0.0217
+      ],
+      "gap": -0.1114,
+      "n": 83
+    },
+    "DB_ref_hi_pitcher_excl_combined": {
+      "ci95": [
+        -0.2569,
+        0.0204
+      ],
+      "gap": -0.1169,
+      "n": 82
+    },
+    "PUB_all": {
+      "ci95": [
+        -0.3399,
+        -0.1076
+      ],
+      "gap": -0.2236,
+      "n": 76
+    },
+    "PUB_pitcher": {
+      "ci95": [
+        -0.3521,
+        -0.1207
+      ],
+      "gap": -0.2405,
+      "n": 72
+    }
+  },
+  "F1_edge>=0.10_market_mix": {
+    "DB_ref_p>=0.60": {
+      "combined_strikeouts": 38,
+      "hits": 1,
+      "pitcher_outs": 70,
+      "strikeouts": 12
+    },
+    "PUB": {
+      "hits": 1,
+      "hits_runs_rbis": 3,
+      "pitcher_outs": 41,
+      "strikeouts": 31
+    }
+  },
+  "F1_market_implied_is_raw_by_market": {
+    "DB_ref_p>=0.60": {
+      "combined_strikeouts": {
+        "raw": 90
+      },
+      "hits": {
+        "raw": 210
+      },
+      "hits_runs_rbis": {
+        "raw": 185
+      },
+      "pitcher_outs": {
+        "not_raw": 99
+      },
+      "strikeouts": {
+        "not_raw": 36
+      }
+    },
+    "PUB": {
+      "hits": {
+        "raw": 96
+      },
+      "hits_runs_rbis": {
+        "raw": 265
+      },
+      "pitcher_outs": {
+        "not_raw": 45
+      },
+      "strikeouts": {
+        "not_raw": 85
+      }
+    }
+  },
+  "F1_realized_minus_market_implied_edge>=0.10_pitcher": {
+    "DB_ref_hi": {
+      "mean_y_minus_implied": 0.0564,
+      "n": 82
+    },
+    "PUB": {
+      "mean_y_minus_implied": -0.0898,
+      "n": 72
+    }
+  },
+  "F2_DB_ref_p>=0.60": {
+    "all": {
+      "ci95": [
+        -0.1057,
+        -0.0226
+      ],
+      "gap": -0.0661,
+      "n": 674
+    },
+    "eligible": {
+      "ci95": [
+        -0.0872,
+        0.0155
+      ],
+      "gap": -0.0351,
+      "n": 460
+    }
+  },
+  "F4_primary_by_seed": {
+    "1": {
+      "S_sel": [
+        -0.1201,
+        0.032
+      ],
+      "W": [
+        -0.1313,
+        -0.005
+      ]
+    },
+    "2": {
+      "S_sel": [
+        -0.1212,
+        0.0358
+      ],
+      "W": [
+        -0.1298,
+        -0.0011
+      ]
+    },
+    "3": {
+      "S_sel": [
+        -0.1206,
+        0.0357
+      ],
+      "W": [
+        -0.1325,
+        -0.0011
+      ]
+    },
+    "4": {
+      "S_sel": [
+        -0.1171,
+        0.0367
+      ],
+      "W": [
+        -0.1294,
+        -0.0051
+      ]
+    }
+  },
+  "F4_primary_date_clustered": {
+    "ci95": {
+      "G": [
+        -0.1678,
+        -0.0574
+      ],
+      "S_sel": [
+        -0.1303,
+        0.0438
+      ],
+      "W": [
+        -0.1333,
+        -0.0011
+      ]
+    },
+    "n_clusters": 38
+  },
+  "data_sha": "3890c23a15b17fae29407d01489350f97c570d84",
+  "note": "post hoc review checks; not pre-registered"
+}
