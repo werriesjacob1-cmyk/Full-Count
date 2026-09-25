@@ -1,0 +1,1355 @@
+{
+  "changed_projections_2023_plus": {
+    "abs_gt_0.5yd": 13504,
+    "abs_gt_2yd": 7576,
+    "abs_gt_5yd": 2083,
+    "mean_abs_change": 2.523246442253444,
+    "n": 15909
+  },
+  "fallback_reasons": {
+    "F17_DEPTH": {
+      "NO_POSITION_PRIOR": 4391,
+      "NO_PRIOR_TARGETS": 111,
+      "OK": 44417
+    },
+    "F17_FULL": {
+      "NO_POSITION_PRIOR": 4391,
+      "NO_PRIOR_TARGETS": 111,
+      "OK": 44417
+    },
+    "SIMPLE_EFF": {
+      "NO_POSITION_PRIOR": 4391,
+      "NO_PRIOR_TARGETS": 111,
+      "OK": 44417
+    }
+  },
+  "fresh_2026_examples": [
+    {
+      "actual": 74.0,
+      "b0": 91.0,
+      "catch_oe": 0.03271529828669866,
+      "f17_full": 74.6769810504939,
+      "game_id": "2026_01_SF_LA",
+      "player_id": "00-0039075",
+      "position": "WR",
+      "scale_control": 62.78999999999999,
+      "simple_eff": 69.47916790582198,
+      "skill": 0.7292915737101551,
+      "tgt5": 12.6,
+      "xypt_recent": 8.771701649680287,
+      "yac_oe": 0.12956405725986025,
+      "ypt5": 7.222222222222222,
+      "ypt_simple": 8.76102321274948
+    },
+    {
+      "actual": 25.0,
+      "b0": 25.2,
+      "catch_oe": -0.00502593730464329,
+      "f17_full": 28.672158785764566,
+      "game_id": "2026_02_JAX_DEN",
+      "player_id": "00-0034348",
+      "position": "WR",
+      "scale_control": 17.387999999999998,
+      "simple_eff": 25.35750100506869,
+      "skill": -0.45368209883897787,
+      "tgt5": 6.2,
+      "xypt_recent": 8.91439535494174,
+      "yac_oe": -0.3828986496386987,
+      "ypt5": 4.064516129032258,
+      "ypt_simple": 7.790323050522997
+    },
+    {
+      "actual": 11.0,
+      "b0": 40.2,
+      "catch_oe": 0.000531681436716737,
+      "f17_full": 37.97506954340531,
+      "game_id": "2026_01_DEN_KC",
+      "player_id": "00-0034348",
+      "position": "WR",
+      "scale_control": 27.738,
+      "simple_eff": 34.560767383371136,
+      "skill": -0.34979340092011413,
+      "tgt5": 7.6,
+      "xypt_recent": 8.892848811359128,
+      "yac_oe": -0.37351928803350376,
+      "ypt5": 5.2894736842105265,
+      "ypt_simple": 7.8915970188295725
+    },
+    {
+      "actual": 60.0,
+      "b0": 29.4,
+      "catch_oe": -0.029483776692061404,
+      "f17_full": 30.189435026182814,
+      "game_id": "2026_01_NYJ_TEN",
+      "player_id": "00-0039890",
+      "position": "WR",
+      "scale_control": 20.285999999999998,
+      "simple_eff": 26.818119628627226,
+      "skill": -0.7134629130363959,
+      "tgt5": 6.6,
+      "xypt_recent": 8.79245391954453,
+      "yac_oe": -0.15221322561100945,
+      "ypt5": 4.454545454545454,
+      "ypt_simple": 7.323284861057194
+    },
+    {
+      "actual": 52.0,
+      "b0": 38.0,
+      "catch_oe": -0.02032031696948906,
+      "f17_full": 36.11992407126725,
+      "game_id": "2026_01_CHI_CAR",
+      "player_id": "00-0039919",
+      "position": "WR",
+      "scale_control": 26.22,
+      "simple_eff": 30.602647327857067,
+      "skill": -0.44695776694589806,
+      "tgt5": 6.6,
+      "xypt_recent": 9.82769414202541,
+      "yac_oe": 0.07721336496349486,
+      "ypt5": 5.757575757575758,
+      "ypt_simple": 7.682322058786592
+    },
+    {
+      "actual": 150.0,
+      "b0": 88.8,
+      "catch_oe": 0.025683220480384218,
+      "f17_full": 51.84958747023747,
+      "game_id": "2026_01_BAL_IND",
+      "player_id": "00-0039064",
+      "position": "WR",
+      "scale_control": 61.27199999999999,
+      "simple_eff": 51.04308647615051,
+      "skill": 0.5956907285811673,
+      "tgt5": 6.8,
+      "xypt_recent": 9.116154778039137,
+      "yac_oe": 0.029653879361814572,
+      "ypt5": 13.058823529411764,
+      "ypt_simple": 8.698672837233811
+    },
+    {
+      "actual": 13.0,
+      "b0": 26.6,
+      "catch_oe": -0.010031757818884544,
+      "f17_full": 27.475001384740523,
+      "game_id": "2026_01_BAL_IND",
+      "player_id": "00-0040128",
+      "position": "TE",
+      "scale_control": 18.354,
+      "simple_eff": 26.30109890408477,
+      "skill": 0.1529462604683323,
+      "tgt5": 6.8,
+      "xypt_recent": 6.998730844085706,
+      "yac_oe": 0.19992089789200232,
+      "ypt5": 3.911764705882353,
+      "ypt_simple": 7.299274895176802
+    },
+    {
+      "actual": 83.0,
+      "b0": 101.4,
+      "catch_oe": 0.0006731128468006168,
+      "f17_full": 61.02510380202819,
+      "game_id": "2026_01_CLE_JAX",
+      "player_id": "00-0038606",
+      "position": "WR",
+      "scale_control": 69.966,
+      "simple_eff": 59.70068034671014,
+      "skill": -0.023569342384101098,
+      "tgt5": 8.8,
+      "xypt_recent": 9.092163930116916,
+      "yac_oe": -0.01690831253694483,
+      "ypt5": 11.522727272727273,
+      "ypt_simple": 8.141528440945368
+    },
+    {
+      "actual": 54.0,
+      "b0": 62.6,
+      "catch_oe": 0.020167547621225045,
+      "f17_full": 34.5499304598168,
+      "game_id": "2026_01_NO_DET",
+      "player_id": "00-0036040",
+      "position": "TE",
+      "scale_control": 43.193999999999996,
+      "simple_eff": 35.52187661461007,
+      "skill": 0.21175795965343733,
+      "tgt5": 5.2,
+      "xypt_recent": 7.811435304847121,
+      "yac_oe": -0.11585970018882362,
+      "ypt5": 12.038461538461538,
+      "ypt_simple": 7.76191561572468
+    },
+    {
+      "actual": 32.0,
+      "b0": 31.6,
+      "catch_oe": -0.005521697576642772,
+      "f17_full": 30.282042404774938,
+      "game_id": "2026_01_BAL_IND",
+      "player_id": "00-0030279",
+      "position": "WR",
+      "scale_control": 21.804,
+      "simple_eff": 28.603726260148523,
+      "skill": -0.5155866311934447,
+      "tgt5": 7.2,
+      "xypt_recent": 7.7486926446042546,
+      "yac_oe": -0.36245470257606427,
+      "ypt5": 4.388888888888889,
+      "ypt_simple": 7.126298816484913
+    }
+  ],
+  "head_to_head": {
+    "F17_DEPTH_vs_SIMPLE_EFF": {
+      "market": "receiving_yards",
+      "partitions": {
+        "DEV_2016_2022": {
+          "activation_share": 0.865252953650409,
+          "evidence_label": "DEVELOPMENT",
+          "metrics": {
+            "abs_error": {
+              "b0": 18.138496169309466,
+              "challenger": 18.135509798864813
+            },
+            "error": {
+              "b0": -5.650994818314113,
+              "challenger": -5.4500856529519375
+            }
+          },
+          "n_b0_without_challenger": 0,
+          "n_challenger_without_b0": 0,
+          "n_game_clusters": 1823,
+          "n_matched": 33010,
+          "n_rows": 33010,
+          "paired_delta_ci95": [
+            -0.012182725817273221,
+            0.0068753708579527804
+          ],
+          "paired_delta_mean": -0.002986370444581434,
+          "previously_inspected": false
+        },
+        "FRESH_2026": {
+          "activation_share": 0.9927140255009107,
+          "evidence_label": "FRESH_OUT_OF_TIME",
+          "metrics": {
+            "abs_error": {
+              "b0": 17.63494346883384,
+              "challenger": 17.60816271156343
+            },
+            "error": {
+              "b0": -5.0610285042130725,
+              "challenger": -4.677732664579102
+            }
+          },
+          "n_b0_without_challenger": 0,
+          "n_challenger_without_b0": 0,
+          "n_game_clusters": 32,
+          "n_matched": 549,
+          "n_rows": 549,
+          "paired_delta_ci95": [
+            -0.12406448685701162,
+            0.06741492064798864
+          ],
+          "paired_delta_mean": -0.026780757270423925,
+          "previously_inspected": false
+        },
+        "HOLDOUT_2023_2025": {
+          "activation_share": 0.9967447916666666,
+          "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+          "metrics": {
+            "abs_error": {
+              "b0": 16.722825944637354,
+              "challenger": 16.738076689853287
+            },
+            "error": {
+              "b0": -4.868695576685709,
+              "challenger": -4.548493660660609
+            }
+          },
+          "n_b0_without_challenger": 0,
+          "n_challenger_without_b0": 0,
+          "n_game_clusters": 816,
+          "n_matched": 15360,
+          "n_rows": 15360,
+          "paired_delta_ci95": [
+            3.6580678345495964e-05,
+            0.031528707550155695
+          ],
+          "paired_delta_mean": 0.015250745215818156,
+          "previously_inspected": true
+        }
+      },
+      "primary_metric": "abs_error"
+    },
+    "F17_FULL_vs_F17_DEPTH": {
+      "market": "receiving_yards",
+      "partitions": {
+        "DEV_2016_2022": {
+          "activation_share": 0.865252953650409,
+          "evidence_label": "DEVELOPMENT",
+          "metrics": {
+            "abs_error": {
+              "b0": 18.135509798864813,
+              "challenger": 18.108733000063914
+            },
+            "error": {
+              "b0": -5.4500856529519375,
+              "challenger": -5.249141655710397
+            }
+          },
+          "n_b0_without_challenger": 0,
+          "n_challenger_without_b0": 0,
+          "n_game_clusters": 1823,
+          "n_matched": 33010,
+          "n_rows": 33010,
+          "paired_delta_ci95": [
+            -0.03526708823702665,
+            -0.017342276271679846
+          ],
+          "paired_delta_mean": -0.026776798800783826,
+          "previously_inspected": false
+        },
+        "FRESH_2026": {
+          "activation_share": 0.9927140255009107,
+          "evidence_label": "FRESH_OUT_OF_TIME",
+          "metrics": {
+            "abs_error": {
+              "b0": 17.60816271156343,
+              "challenger": 17.606656025917687
+            },
+            "error": {
+              "b0": -4.677732664579102,
+              "challenger": -4.50816756920064
+            }
+          },
+          "n_b0_without_challenger": 0,
+          "n_challenger_without_b0": 0,
+          "n_game_clusters": 32,
+          "n_matched": 549,
+          "n_rows": 549,
+          "paired_delta_ci95": [
+            -0.0694868848959955,
+            0.07131854081027096
+          ],
+          "paired_delta_mean": -0.0015066856457276935,
+          "previously_inspected": false
+        },
+        "HOLDOUT_2023_2025": {
+          "activation_share": 0.9967447916666666,
+          "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+          "metrics": {
+            "abs_error": {
+              "b0": 16.738076689853287,
+              "challenger": 16.712535483971937
+            },
+            "error": {
+              "b0": -4.548493660660609,
+              "challenger": -4.364298408480797
+            }
+          },
+          "n_b0_without_challenger": 0,
+          "n_challenger_without_b0": 0,
+          "n_game_clusters": 816,
+          "n_matched": 15360,
+          "n_rows": 15360,
+          "paired_delta_ci95": [
+            -0.03903500119956458,
+            -0.012518948982956203
+          ],
+          "paired_delta_mean": -0.025541205881105915,
+          "previously_inspected": true
+        }
+      },
+      "primary_metric": "abs_error"
+    },
+    "F17_FULL_vs_SIMPLE_EFF": {
+      "market": "receiving_yards",
+      "partitions": {
+        "DEV_2016_2022": {
+          "activation_share": 0.865252953650409,
+          "evidence_label": "DEVELOPMENT",
+          "metrics": {
+            "abs_error": {
+              "b0": 18.138496169309466,
+              "challenger": 18.108733000063914
+            },
+            "error": {
+              "b0": -5.650994818314113,
+              "challenger": -5.249141655710397
+            }
+          },
+          "n_b0_without_challenger": 0,
+          "n_challenger_without_b0": 0,
+          "n_game_clusters": 1823,
+          "n_matched": 33010,
+          "n_rows": 33010,
+          "paired_delta_ci95": [
+            -0.040090951134856535,
+            -0.018253061169552835
+          ],
+          "paired_delta_mean": -0.02976316924536526,
+          "previously_inspected": false
+        },
+        "FRESH_2026": {
+          "activation_share": 0.9927140255009107,
+          "evidence_label": "FRESH_OUT_OF_TIME",
+          "metrics": {
+            "abs_error": {
+              "b0": 17.63494346883384,
+              "challenger": 17.606656025917687
+            },
+            "error": {
+              "b0": -5.0610285042130725,
+              "challenger": -4.50816756920064
+            }
+          },
+          "n_b0_without_challenger": 0,
+          "n_challenger_without_b0": 0,
+          "n_game_clusters": 32,
+          "n_matched": 549,
+          "n_rows": 549,
+          "paired_delta_ci95": [
+            -0.12488776950528524,
+            0.06698381149484674
+          ],
+          "paired_delta_mean": -0.028287442916151623,
+          "previously_inspected": false
+        },
+        "HOLDOUT_2023_2025": {
+          "activation_share": 0.9967447916666666,
+          "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+          "metrics": {
+            "abs_error": {
+              "b0": 16.722825944637354,
+              "challenger": 16.712535483971937
+            },
+            "error": {
+              "b0": -4.868695576685709,
+              "challenger": -4.364298408480797
+            }
+          },
+          "n_b0_without_challenger": 0,
+          "n_challenger_without_b0": 0,
+          "n_game_clusters": 816,
+          "n_matched": 15360,
+          "n_rows": 15360,
+          "paired_delta_ci95": [
+            -0.027180691535808935,
+            0.006749516066617293
+          ],
+          "paired_delta_mean": -0.010290460665287755,
+          "previously_inspected": true
+        }
+      },
+      "primary_metric": "abs_error"
+    }
+  },
+  "modes": {
+    "F17_DEPTH": {
+      "market": "receiving_yards",
+      "scale_control_k": 0.69,
+      "vs_b0": {
+        "market": "receiving_yards",
+        "partitions": {
+          "DEV_2016_2022": {
+            "activation_share": 0.9999394122993033,
+            "evidence_label": "DEVELOPMENT",
+            "metrics": {
+              "abs_error": {
+                "b0": 19.671195597293856,
+                "challenger": 18.135509798864813
+              },
+              "error": {
+                "b0": 3.227810764414818,
+                "challenger": -5.4500856529519375
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 1823,
+            "n_matched": 33010,
+            "n_rows": 33010,
+            "paired_delta_ci95": [
+              -1.6496317430574277,
+              -1.4235463787254987
+            ],
+            "paired_delta_mean": -1.5356857984288905,
+            "previously_inspected": false
+          },
+          "FRESH_2026": {
+            "activation_share": 1.0,
+            "evidence_label": "FRESH_OUT_OF_TIME",
+            "metrics": {
+              "abs_error": {
+                "b0": 19.01997571341833,
+                "challenger": 17.60816271156343
+              },
+              "error": {
+                "b0": 3.4165755919854304,
+                "challenger": -4.677732664579102
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 32,
+            "n_matched": 549,
+            "n_rows": 549,
+            "paired_delta_ci95": [
+              -2.2863634018012773,
+              -0.4702381982463257
+            ],
+            "paired_delta_mean": -1.4118130018549169,
+            "previously_inspected": false
+          },
+          "HOLDOUT_2023_2025": {
+            "activation_share": 1.0,
+            "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+            "metrics": {
+              "abs_error": {
+                "b0": 18.257173394097286,
+                "challenger": 16.738076689853287
+              },
+              "error": {
+                "b0": 3.238479817708326,
+                "challenger": -4.548493660660609
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 816,
+            "n_matched": 15360,
+            "n_rows": 15360,
+            "paired_delta_ci95": [
+              -1.6919728995593153,
+              -1.3480369061340025
+            ],
+            "paired_delta_mean": -1.5190967042440198,
+            "previously_inspected": true
+          }
+        },
+        "primary_metric": "abs_error"
+      },
+      "vs_scale_control": {
+        "market": "receiving_yards",
+        "partitions": {
+          "DEV_2016_2022": {
+            "activation_share": 0.865252953650409,
+            "evidence_label": "DEVELOPMENT",
+            "metrics": {
+              "abs_error": {
+                "b0": 18.235552983944363,
+                "challenger": 18.135509798864813
+              },
+              "error": {
+                "b0": -5.79657973341418,
+                "challenger": -5.4500856529519375
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 1823,
+            "n_matched": 33010,
+            "n_rows": 33010,
+            "paired_delta_ci95": [
+              -0.12609961847333803,
+              -0.07350636905589722
+            ],
+            "paired_delta_mean": -0.10004318507940042,
+            "previously_inspected": false
+          },
+          "FRESH_2026": {
+            "activation_share": 0.9927140255009107,
+            "evidence_label": "FRESH_OUT_OF_TIME",
+            "metrics": {
+              "abs_error": {
+                "b0": 17.635204007286006,
+                "challenger": 17.60816271156343
+              },
+              "error": {
+                "b0": -5.057153005464478,
+                "challenger": -4.677732664579102
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 32,
+            "n_matched": 549,
+            "n_rows": 549,
+            "paired_delta_ci95": [
+              -0.20826391411658832,
+              0.16891207075816292
+            ],
+            "paired_delta_mean": -0.02704129572255499,
+            "previously_inspected": false
+          },
+          "HOLDOUT_2023_2025": {
+            "activation_share": 0.9967447916666666,
+            "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+            "metrics": {
+              "abs_error": {
+                "b0": 16.83229534505206,
+                "challenger": 16.738076689853287
+              },
+              "error": {
+                "b0": -5.047280305989573,
+                "challenger": -4.548493660660609
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 816,
+            "n_matched": 15360,
+            "n_rows": 15360,
+            "paired_delta_ci95": [
+              -0.1396004489742,
+              -0.051372936191957055
+            ],
+            "paired_delta_mean": -0.09421865519888077,
+            "previously_inspected": true
+          }
+        },
+        "primary_metric": "abs_error"
+      }
+    },
+    "F17_FULL": {
+      "market": "receiving_yards",
+      "scale_control_k": 0.69,
+      "vs_b0": {
+        "market": "receiving_yards",
+        "partitions": {
+          "DEV_2016_2022": {
+            "activation_share": 0.9999394122993033,
+            "evidence_label": "DEVELOPMENT",
+            "metrics": {
+              "abs_error": {
+                "b0": 19.671195597293856,
+                "challenger": 18.108733000063914
+              },
+              "error": {
+                "b0": 3.227810764414818,
+                "challenger": -5.249141655710397
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 1823,
+            "n_matched": 33010,
+            "n_rows": 33010,
+            "paired_delta_ci95": [
+              -1.6763892262362952,
+              -1.4486881198422141
+            ],
+            "paired_delta_mean": -1.5624625972296744,
+            "previously_inspected": false
+          },
+          "FRESH_2026": {
+            "activation_share": 1.0,
+            "evidence_label": "FRESH_OUT_OF_TIME",
+            "metrics": {
+              "abs_error": {
+                "b0": 19.01997571341833,
+                "challenger": 17.606656025917687
+              },
+              "error": {
+                "b0": 3.4165755919854304,
+                "challenger": -4.50816756920064
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 32,
+            "n_matched": 549,
+            "n_rows": 549,
+            "paired_delta_ci95": [
+              -2.3208106568829567,
+              -0.452682588399546
+            ],
+            "paired_delta_mean": -1.4133196875006446,
+            "previously_inspected": false
+          },
+          "HOLDOUT_2023_2025": {
+            "activation_share": 1.0,
+            "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+            "metrics": {
+              "abs_error": {
+                "b0": 18.257173394097286,
+                "challenger": 16.712535483971937
+              },
+              "error": {
+                "b0": 3.238479817708326,
+                "challenger": -4.364298408480797
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 816,
+            "n_matched": 15360,
+            "n_rows": 15360,
+            "paired_delta_ci95": [
+              -1.7130557902206323,
+              -1.3685638971861163
+            ],
+            "paired_delta_mean": -1.5446379101251255,
+            "previously_inspected": true
+          }
+        },
+        "primary_metric": "abs_error"
+      },
+      "vs_scale_control": {
+        "market": "receiving_yards",
+        "partitions": {
+          "DEV_2016_2022": {
+            "activation_share": 0.865252953650409,
+            "evidence_label": "DEVELOPMENT",
+            "metrics": {
+              "abs_error": {
+                "b0": 18.235552983944363,
+                "challenger": 18.108733000063914
+              },
+              "error": {
+                "b0": -5.79657973341418,
+                "challenger": -5.249141655710397
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 1823,
+            "n_matched": 33010,
+            "n_rows": 33010,
+            "paired_delta_ci95": [
+              -0.15862023294043187,
+              -0.0942465622510407
+            ],
+            "paired_delta_mean": -0.12681998388018423,
+            "previously_inspected": false
+          },
+          "FRESH_2026": {
+            "activation_share": 0.9927140255009107,
+            "evidence_label": "FRESH_OUT_OF_TIME",
+            "metrics": {
+              "abs_error": {
+                "b0": 17.635204007286006,
+                "challenger": 17.606656025917687
+              },
+              "error": {
+                "b0": -5.057153005464478,
+                "challenger": -4.50816756920064
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 32,
+            "n_matched": 549,
+            "n_rows": 549,
+            "paired_delta_ci95": [
+              -0.26473749832172505,
+              0.2261454482623023
+            ],
+            "paired_delta_mean": -0.028547981368282686,
+            "previously_inspected": false
+          },
+          "HOLDOUT_2023_2025": {
+            "activation_share": 0.9967447916666666,
+            "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+            "metrics": {
+              "abs_error": {
+                "b0": 16.83229534505206,
+                "challenger": 16.712535483971937
+              },
+              "error": {
+                "b0": -5.047280305989573,
+                "challenger": -4.364298408480797
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 816,
+            "n_matched": 15360,
+            "n_rows": 15360,
+            "paired_delta_ci95": [
+              -0.17273045003105303,
+              -0.0701312202381018
+            ],
+            "paired_delta_mean": -0.11975986107998668,
+            "previously_inspected": true
+          }
+        },
+        "primary_metric": "abs_error"
+      }
+    },
+    "SIMPLE_EFF": {
+      "market": "receiving_yards",
+      "scale_control_k": 0.69,
+      "vs_b0": {
+        "market": "receiving_yards",
+        "partitions": {
+          "DEV_2016_2022": {
+            "activation_share": 0.9999394122993033,
+            "evidence_label": "DEVELOPMENT",
+            "metrics": {
+              "abs_error": {
+                "b0": 19.671195597293856,
+                "challenger": 18.138496169309466
+              },
+              "error": {
+                "b0": 3.227810764414818,
+                "challenger": -5.650994818314113
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 1823,
+            "n_matched": 33010,
+            "n_rows": 33010,
+            "paired_delta_ci95": [
+              -1.6513424659796516,
+              -1.4172937323219001
+            ],
+            "paired_delta_mean": -1.532699427984309,
+            "previously_inspected": false
+          },
+          "FRESH_2026": {
+            "activation_share": 1.0,
+            "evidence_label": "FRESH_OUT_OF_TIME",
+            "metrics": {
+              "abs_error": {
+                "b0": 19.01997571341833,
+                "challenger": 17.63494346883384
+              },
+              "error": {
+                "b0": 3.4165755919854304,
+                "challenger": -5.0610285042130725
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 32,
+            "n_matched": 549,
+            "n_rows": 549,
+            "paired_delta_ci95": [
+              -2.341111534355648,
+              -0.39240396498257407
+            ],
+            "paired_delta_mean": -1.3850322445844931,
+            "previously_inspected": false
+          },
+          "HOLDOUT_2023_2025": {
+            "activation_share": 1.0,
+            "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+            "metrics": {
+              "abs_error": {
+                "b0": 18.257173394097286,
+                "challenger": 16.722825944637354
+              },
+              "error": {
+                "b0": 3.238479817708326,
+                "challenger": -4.868695576685709
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 816,
+            "n_matched": 15360,
+            "n_rows": 15360,
+            "paired_delta_ci95": [
+              -1.7085990097810635,
+              -1.3554387023984904
+            ],
+            "paired_delta_mean": -1.5343474494598377,
+            "previously_inspected": true
+          }
+        },
+        "primary_metric": "abs_error"
+      },
+      "vs_scale_control": {
+        "market": "receiving_yards",
+        "partitions": {
+          "DEV_2016_2022": {
+            "activation_share": 0.865252953650409,
+            "evidence_label": "DEVELOPMENT",
+            "metrics": {
+              "abs_error": {
+                "b0": 18.235552983944363,
+                "challenger": 18.138496169309466
+              },
+              "error": {
+                "b0": -5.79657973341418,
+                "challenger": -5.650994818314113
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 1823,
+            "n_matched": 33010,
+            "n_rows": 33010,
+            "paired_delta_ci95": [
+              -0.123161301614076,
+              -0.070858855323057
+            ],
+            "paired_delta_mean": -0.09705681463481898,
+            "previously_inspected": false
+          },
+          "FRESH_2026": {
+            "activation_share": 0.9927140255009107,
+            "evidence_label": "FRESH_OUT_OF_TIME",
+            "metrics": {
+              "abs_error": {
+                "b0": 17.635204007286006,
+                "challenger": 17.63494346883384
+              },
+              "error": {
+                "b0": -5.057153005464478,
+                "challenger": -5.0610285042130725
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 32,
+            "n_matched": 549,
+            "n_rows": 549,
+            "paired_delta_ci95": [
+              -0.2022554702708661,
+              0.2300053182797329
+            ],
+            "paired_delta_mean": -0.0002605384521310632,
+            "previously_inspected": false
+          },
+          "HOLDOUT_2023_2025": {
+            "activation_share": 0.9967447916666666,
+            "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+            "metrics": {
+              "abs_error": {
+                "b0": 16.83229534505206,
+                "challenger": 16.722825944637354
+              },
+              "error": {
+                "b0": -5.047280305989573,
+                "challenger": -4.868695576685709
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 816,
+            "n_matched": 15360,
+            "n_rows": 15360,
+            "paired_delta_ci95": [
+              -0.15350386469537125,
+              -0.06647788163129853
+            ],
+            "paired_delta_mean": -0.10946940041469894,
+            "previously_inspected": true
+          }
+        },
+        "primary_metric": "abs_error"
+      }
+    }
+  },
+  "params": {
+    "k": 0.69,
+    "modes": {
+      "F17_DEPTH": {
+        "dev_mae": 18.01993179611123,
+        "n_dev_activated": 28562,
+        "w": 0.45
+      },
+      "F17_FULL": {
+        "dev_mae": 17.988985009177057,
+        "n_dev_activated": 28562,
+        "w": 0.6
+      },
+      "SIMPLE_EFF": {
+        "dev_mae": 18.023383238180262,
+        "n_dev_activated": 28562,
+        "w": 0.5
+      }
+    }
+  },
+  "player_cluster": {
+    "FRESH_2026": {
+      "F17_FULL_vs_SIMPLE_EFF": {
+        "ci95_player_cluster": [
+          -0.14317793796227313,
+          0.09074053511045031
+        ],
+        "delta": -0.028287442916151623,
+        "n": 549,
+        "n_players": 296
+      },
+      "F17_FULL_vs_scale_control": {
+        "ci95_player_cluster": [
+          -0.3089548857274379,
+          0.2689475316671153
+        ],
+        "delta": -0.028547981368282686,
+        "n": 549,
+        "n_players": 296
+      },
+      "SIMPLE_EFF_vs_scale_control": {
+        "ci95_player_cluster": [
+          -0.2331993685345431,
+          0.25435901178969744
+        ],
+        "delta": -0.0002605384521310632,
+        "n": 549,
+        "n_players": 296
+      }
+    },
+    "HOLDOUT_2023_2025": {
+      "F17_FULL_vs_SIMPLE_EFF": {
+        "ci95_player_cluster": [
+          -0.037027655595126996,
+          0.017771080983393188
+        ],
+        "delta": -0.010290460665287755,
+        "n": 15360,
+        "n_players": 629
+      },
+      "F17_FULL_vs_scale_control": {
+        "ci95_player_cluster": [
+          -0.19453826272548508,
+          -0.034995753126819865
+        ],
+        "delta": -0.11975986107998668,
+        "n": 15360,
+        "n_players": 629
+      },
+      "SIMPLE_EFF_vs_scale_control": {
+        "ci95_player_cluster": [
+          -0.17049635743680333,
+          -0.04479720878012967
+        ],
+        "delta": -0.10946940041469894,
+        "n": 15360,
+        "n_players": 629
+      }
+    }
+  },
+  "population": {
+    "DEV_2016_2022": {
+      "n_games": 1823,
+      "n_players": 956,
+      "n_rows": 33010
+    },
+    "FRESH_2026": {
+      "n_games": 32,
+      "n_players": 296,
+      "n_rows": 549
+    },
+    "HOLDOUT_2023_2025": {
+      "n_games": 816,
+      "n_players": 629,
+      "n_rows": 15360
+    }
+  },
+  "population_diagnostics": {
+    "no_b0": 6392,
+    "no_weekly_row_actual_0": 5210,
+    "non_receiver_position": 258,
+    "with_weekly_row": 43709
+  },
+  "provenance": {
+    "pbp_sha256": {
+      "2016": "dc1703d9aae3ec697ac2787617f82b6f074d0c151e1a54f8217f570a63dcb5ed",
+      "2017": "74032964ca6bdfc5bbe186253231a533d2d82aa531fac02b9382da01b3a8b34e",
+      "2018": "d37899610b397b96a90da6902827de5b46c5457b93e0e16d5f95a8eb524e4a7d",
+      "2019": "b764668137052be23745953cbc33fa17e537a70c81e9b73785a19a15e7288216",
+      "2020": "bc954b5780e325df4faa255fac092585c981a4de5d2f553a8a4e0a3c8b3a3cf2",
+      "2021": "e8743a568f99667a8bdcd29ba12224ee1782ad2b7916bee78ee335c099383739",
+      "2022": "0c69a71eb39498956c7b1d5c1ca52ce7fe679934a95d1af249facb5ea9829ea4",
+      "2023": "4649804ee0f0a40b41e51ec75a1ce921949d7fab5459213488656b92f78560e8",
+      "2024": "23370d5d10f8104d80d46a1fc5e61f4f6f5a3263fe96fe2dd629913cfcb08c06",
+      "2025": "2f135887790a013fd004e609e37096bb4816d5cc80b9f19122e1bad478961978",
+      "2026": "6643f82adb1158c8367fb806cfc531a079ce321ca8e2e21012d196dc1a51ece8"
+    },
+    "players_csv_sha256": "4dd70f328f31b0bb7cbf043412298d5a325863e27b8f2eeea22c9e925c808dee",
+    "snap_counts_sha256": {
+      "2016": "a778e24e9eb665ffe8f16093b03c5a263dca0250b3aa92bd6002f61f534bea59",
+      "2017": "eab2fad2df99249d4061ed9c5c34d312cdba07cf3159d027d255bdc9b6526917",
+      "2018": "9a408b78a55f799110aed70de3564e157faf089ce9bed780d0368bf49ae13e0b",
+      "2019": "0cd52be8fa57f18503b670cb8263246c4f548375b768cbcad1c7a7462c98970d",
+      "2020": "512e35f17d076eb5d99b933c4a144eb95dcddf40c0320dbb397cae3c35683716",
+      "2021": "8e4dae054a4749cf2d4919508d9161a6068fd67509979aefa385bfb3803d0ee5",
+      "2022": "0018a4833fbf0f825286c1c27450c6254391b548d6c55bcde728e93e4816815a",
+      "2023": "303b61aa5c33ffda863f93a750fc14483f397f9187ad502b1ce71e9b516a64c0",
+      "2024": "a2aa58efe093f8aa0ad5aadf09f81d8ec690a1183bd2dde68d20e7f109a9c335",
+      "2025": "3fc2deb0e9ad86d34d4578cb80bb21c95253e088ee22ca028adf46f7485eff1f",
+      "2026": "de7dee6776781052e85fd697d13e6c1d18fb22e04df0b2794cfd0ec758c7efab"
+    },
+    "snap_diagnostics": {
+      "rows": 55569,
+      "unmapped_pfr_id": 74,
+      "zero_offense_snaps": 4042
+    },
+    "weekly": {
+      "audit_manifest_sha256": "35eaf8cb803f5d1a516bd7873d090a133ec5ab7567854f54353dcf1e23f45e40",
+      "current_season": {
+        "path": "stats_player_week_2026.csv",
+        "rows": 2223,
+        "seasons": [
+          2026
+        ],
+        "sha256": "736bdddef4779023f7eb1831a1f2c8627181aee60cc280d5f0464cf5f41a8e67"
+      },
+      "seasons": {
+        "2015": "21052baa3b3291a92faf3e6827891295010dca8cc5cefd5a909984b9d7b64664",
+        "2016": "eb0264c65d1ef593196afcd4ba24e9f2e9b7942923bf6f4bb4639684e2c4d470",
+        "2017": "592b0916065987b0b3afb0480162f03350d16b12250dc42b0f194e2ab1378563",
+        "2018": "c53021bcfc9f89d30edd6f1fe145a1d7d6ce469efeec75974fe9f0adac568642",
+        "2019": "a05558126b1209b80fe11a8f18938cb35816370bf9990975a87de49e9eed7376",
+        "2020": "05b992676faccc8940efbf6242cb76358069372d31d7c2e02c1a4acdcd3cbe18",
+        "2021": "41915fb49238902ad1f129ebf0405b11a1e710454ae0fe8f7b3e4f9145875f48",
+        "2022": "ad426c3fe5bf1cc30c3f137fdfe96d054e19d400879ee4413129da49fa7b54be",
+        "2023": "f19cb71a5de0dce7fd09376026237c9ee9d5a93fe13815a2ea3ec2d37204cb17",
+        "2024": "3ddc45a84f759aa348ce465ae001752c530575455717657cdfe1f8abfcdb4759",
+        "2025": "e5e0615b3d96a3eaebfaee91e55afb4a4e7fe0caf057454177bcd7d6ad4bcfc2"
+      }
+    }
+  },
+  "role_sensitivity": {
+    "F17_FULL": {
+      "market": "receiving_yards",
+      "scale_control_k": 0.78,
+      "vs_b0": {
+        "market": "receiving_yards",
+        "partitions": {
+          "DEV_2016_2022": {
+            "activation_share": 0.999924789410349,
+            "evidence_label": "DEVELOPMENT",
+            "metrics": {
+              "abs_error": {
+                "b0": 20.886017724629117,
+                "challenger": 19.721252914020546
+              },
+              "error": {
+                "b0": 0.3538138036502203,
+                "challenger": -6.233963311254295
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 1823,
+            "n_matched": 26592,
+            "n_rows": 26592,
+            "paired_delta_ci95": [
+              -1.2692940820060754,
+              -1.0576094737833204
+            ],
+            "paired_delta_mean": -1.1647648106084363,
+            "previously_inspected": false
+          },
+          "FRESH_2026": {
+            "activation_share": 1.0,
+            "evidence_label": "FRESH_OUT_OF_TIME",
+            "metrics": {
+              "abs_error": {
+                "b0": 20.174364896073907,
+                "challenger": 19.27241397182834
+              },
+              "error": {
+                "b0": 0.2772132409545802,
+                "challenger": -5.9008215220054785
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 32,
+            "n_matched": 433,
+            "n_rows": 433,
+            "paired_delta_ci95": [
+              -1.7484778455424819,
+              -0.026638671025434126
+            ],
+            "paired_delta_mean": -0.9019509242455636,
+            "previously_inspected": false
+          },
+          "HOLDOUT_2023_2025": {
+            "activation_share": 1.0,
+            "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+            "metrics": {
+              "abs_error": {
+                "b0": 19.763598548297104,
+                "challenger": 18.547579072789468
+              },
+              "error": {
+                "b0": 0.3454048017867098,
+                "challenger": -5.664844043725034
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 816,
+            "n_matched": 11940,
+            "n_rows": 11940,
+            "paired_delta_ci95": [
+              -1.3838411504517287,
+              -1.0419487914268726
+            ],
+            "paired_delta_mean": -1.2160194755075557,
+            "previously_inspected": true
+          }
+        },
+        "primary_metric": "abs_error"
+      },
+      "vs_scale_control": {
+        "market": "receiving_yards",
+        "partitions": {
+          "DEV_2016_2022": {
+            "activation_share": 0.8621013838748496,
+            "evidence_label": "DEVELOPMENT",
+            "metrics": {
+              "abs_error": {
+                "b0": 20.057504851083163,
+                "challenger": 19.721252914020546
+              },
+              "error": {
+                "b0": -6.82040685168475,
+                "challenger": -6.233963311254295
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 1823,
+            "n_matched": 26592,
+            "n_rows": 26592,
+            "paired_delta_ci95": [
+              -0.3793633204037941,
+              -0.29415332813327677
+            ],
+            "paired_delta_mean": -0.33625193706250767,
+            "previously_inspected": false
+          },
+          "FRESH_2026": {
+            "activation_share": 0.9976905311778291,
+            "evidence_label": "FRESH_OUT_OF_TIME",
+            "metrics": {
+              "abs_error": {
+                "b0": 19.397944572748276,
+                "challenger": 19.27241397182834
+              },
+              "error": {
+                "b0": -6.505205542725172,
+                "challenger": -5.9008215220054785
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 32,
+            "n_matched": 433,
+            "n_rows": 433,
+            "paired_delta_ci95": [
+              -0.5104633445783298,
+              0.25158172409485124
+            ],
+            "paired_delta_mean": -0.12553060091992815,
+            "previously_inspected": false
+          },
+          "HOLDOUT_2023_2025": {
+            "activation_share": 0.9986599664991624,
+            "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+            "metrics": {
+              "abs_error": {
+                "b0": 18.93900335008377,
+                "challenger": 18.547579072789468
+              },
+              "error": {
+                "b0": -6.402664656616373,
+                "challenger": -5.664844043725034
+              }
+            },
+            "n_b0_without_challenger": 0,
+            "n_challenger_without_b0": 0,
+            "n_game_clusters": 816,
+            "n_matched": 11940,
+            "n_rows": 11940,
+            "paired_delta_ci95": [
+              -0.46432655679279455,
+              -0.32475591148030114
+            ],
+            "paired_delta_mean": -0.391424277294267,
+            "previously_inspected": true
+          }
+        },
+        "primary_metric": "abs_error"
+      }
+    },
+    "F17_FULL_vs_SIMPLE_EFF": {
+      "market": "receiving_yards",
+      "partitions": {
+        "DEV_2016_2022": {
+          "activation_share": 0.8621013838748496,
+          "evidence_label": "DEVELOPMENT",
+          "metrics": {
+            "abs_error": {
+              "b0": 19.76045164572802,
+              "challenger": 19.721252914020546
+            },
+            "error": {
+              "b0": -6.740616914283886,
+              "challenger": -6.233963311254295
+            }
+          },
+          "n_b0_without_challenger": 0,
+          "n_challenger_without_b0": 0,
+          "n_game_clusters": 1823,
+          "n_matched": 26592,
+          "n_rows": 26592,
+          "paired_delta_ci95": [
+            -0.052835088018902104,
+            -0.02472695598446011
+          ],
+          "paired_delta_mean": -0.03919873170755551,
+          "previously_inspected": false
+        },
+        "FRESH_2026": {
+          "activation_share": 0.9976905311778291,
+          "evidence_label": "FRESH_OUT_OF_TIME",
+          "metrics": {
+            "abs_error": {
+              "b0": 19.325449276011177,
+              "challenger": 19.27241397182834
+            },
+            "error": {
+              "b0": -6.6218346836257105,
+              "challenger": -5.9008215220054785
+            }
+          },
+          "n_b0_without_challenger": 0,
+          "n_challenger_without_b0": 0,
+          "n_game_clusters": 32,
+          "n_matched": 433,
+          "n_rows": 433,
+          "paired_delta_ci95": [
+            -0.1833450504131112,
+            0.06748843128488148
+          ],
+          "paired_delta_mean": -0.05303530418284364,
+          "previously_inspected": false
+        },
+        "HOLDOUT_2023_2025": {
+          "activation_share": 0.9986599664991624,
+          "evidence_label": "EXPLORATORY_PREVIOUSLY_INSPECTED",
+          "metrics": {
+            "abs_error": {
+              "b0": 18.586828559847344,
+              "challenger": 18.547579072789468
+            },
+            "error": {
+              "b0": -6.30806725739638,
+              "challenger": -5.664844043725034
+            }
+          },
+          "n_b0_without_challenger": 0,
+          "n_challenger_without_b0": 0,
+          "n_game_clusters": 816,
+          "n_matched": 11940,
+          "n_rows": 11940,
+          "paired_delta_ci95": [
+            -0.06281762807478543,
+            -0.01575561972295566
+          ],
+          "paired_delta_mean": -0.0392494870578862,
+          "previously_inspected": true
+        }
+      },
+      "primary_metric": "abs_error"
+    },
+    "k": 0.78
+  },
+  "verdict": "NOT_SUPPORTED"
+}
