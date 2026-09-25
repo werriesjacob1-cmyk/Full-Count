@@ -64,6 +64,107 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 30.9,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Toronto Blue Jays",
+          "game_pk": 822760,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 72.5714,
+            "l7_avg_ev": 71.75,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 53.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 16.6667,
+            "platoon_barrel_pct": 3.28,
+            "platoon_xwoba": -3.0,
+            "park_hand_index": -0.69,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 2.0,
+            "woba_ahead": 21.8182,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -0.256,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 3.872,
+            "vs_rp_ops": 2.04,
+            "ump_k_pct": 0.564,
+            "ump_bb_pct": 0.06
+          },
+          "hit_probability": 0.4871,
+          "raw_hit_probability": 0.4871,
+          "lift": -0.1843,
+          "reliability": "B",
+          "sample_n": 58,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 2.5,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Toronto Blue Jays",
+          "game_pk": 822760,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0383
+          },
+          "hit_probability": 0.0383,
+          "raw_hit_probability": null,
+          "lift": -0.0091,
+          "reliability": "B",
+          "sample_n": 58,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Toronto Blue Jays",
+          "game_pk": 822760,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0053
+          },
+          "hit_probability": 0.0053,
+          "raw_hit_probability": null,
+          "lift": -0.0152,
+          "reliability": "B",
+          "sample_n": 58,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -4510,6 +4510,137 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 55.8,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Miami Marlins",
+          "game_pk": 823816,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 46.8571,
+            "pitch_exploit": 0.5714,
+            "l7_avg_ev": 79.5109,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 48.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 30.303,
+            "platoon_barrel_pct": 4.16,
+            "platoon_xwoba": 2.64,
+            "park_hand_index": -0.9,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 58.1818,
+            "woba_behind": 23.6364,
+            "pull_park_synergy": -0.3811,
+            "hard_hit_105_rate": 0.3725,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 1.104,
+            "vs_rp_ops": 1.98,
+            "ump_k_pct": 0.576,
+            "ump_bb_pct": 0.192
+          },
+          "hit_probability": 0.6655,
+          "raw_hit_probability": 0.6507,
+          "lift": 0.1087,
+          "reliability": "A",
+          "sample_n": 153,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 34.9,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Miami Marlins",
+          "game_pk": 823816,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.66,
+            "sprint_speed": 9.375,
+            "catcher_poptime": 0.0,
+            "on_base": 82.7255
+          },
+          "hit_probability": 0.0793,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 153,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 8.4,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Miami Marlins",
+          "game_pk": 823816,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0615
+          },
+          "hit_probability": 0.0615,
+          "raw_hit_probability": null,
+          "lift": 0.0141,
+          "reliability": "A",
+          "sample_n": 153,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.5,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Miami Marlins",
+          "game_pk": 823816,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0304
+          },
+          "hit_probability": 0.0304,
+          "raw_hit_probability": null,
+          "lift": 0.0099,
+          "reliability": "A",
+          "sample_n": 153,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
