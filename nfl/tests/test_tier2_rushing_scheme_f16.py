@@ -70,6 +70,8 @@ class F16Tests(unittest.TestCase):
         self.assertNotEqual(f.predict({**r,"f16":changed},model)["challenger"],out["challenger"])
         self.assertEqual(f.feature({**r,"week":1},profiles)["status"],"NO_ADJUSTMENT")
         self.assertEqual(f.feature({**r,"position":"QB"},profiles)["status"],"NO_ADJUSTMENT")
+        self.assertEqual(f.feature({**r,"player_id":""},profiles)["reason"],"INVALID_PLAYER_GSIS_ID")
+        self.assertEqual(f.feature({**r,"player_id":"WR-123"},profiles)["reason"],"INVALID_PLAYER_GSIS_ID")
         with self.assertRaisesRegex(ValueError,"team/game mismatch"):
             f.feature({**r,"team":"NYJ"},profiles)
         with self.assertRaisesRegex(ValueError,"post-cutoff"):

@@ -116,6 +116,8 @@ def load_profiles(participation:Path,ftn:Path)->dict:
 def feature(row:dict,profiles:dict)->dict:
     if row["season"]!=2025 or row["week"]<2 or row["position"] not in ROLE or row.get("b0") is None:
         return {"status":"NO_ADJUSTMENT","reason":"OUTSIDE_PRIOR_RB_FB_B0_POPULATION"}
+    if not re.fullmatch(r"00-\d{7}",str(row.get("player_id") or "")):
+        return {"status":"NO_ADJUSTMENT","reason":"INVALID_PLAYER_GSIS_ID"}
     g=row["game_id"].split("_")
     if len(g)!=4 or row["team"] not in g[2:]:
         raise ValueError("player team/game mismatch")
