@@ -21,7 +21,7 @@
   "measured_coverage": {
     "rows": 7992,
     "unique_games": 285,
-    "unique_pfr_defender_ids": 954,
+    "unique_pfr_ids_in_defense_table": 954,
     "unique_teams": 32,
     "duplicate_game_defender_keys": 0,
     "rows_with_zero_or_blank_def_targets": 2645,
@@ -36,9 +36,10 @@
     "some targets-conditioned yards and YAC attributed to a defender"
   ],
   "not_observed_in_file": [
+    "defender position or GSIS identity crosswalk",
     "covered receiver identity",
     "game/play-level coverage responsibility",
-    "coverage snaps or routes covered",
+    "coverage snaps or routes covered (targets do support target-conditioned rates only)",
     "slot/outside alignment",
     "help, bracket, or double coverage",
     "current-game expected defender assignment and availability"
