@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-25T20:35:44.983301+00:00",
+  "updated_at": "2026-09-25T21:12:50.273352+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -49272,6 +49272,106 @@
         },
         "qualification_timestamp": "2026-09-25T20:34:15.093221+00:00",
         "board_timestamp": "2026-09-25T20:34:15.067788+00:00",
+        "slate_date": "2026-09-25"
+      }
+    },
+    "fc2:823652:player-668952:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823652:player-668952:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823652",
+        [
+          "player",
+          "668952"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-25",
+      "first_published_at": "2026-09-25T21:12:50.273352+00:00",
+      "publication_provenance": {
+        "artifact_id": "852fe57b15735b053b32d71adf128311ebdd152c7c30649c4e5deaf7af784b64",
+        "source_commit": "a841166010175a843430f105ce86c0382996509a",
+        "workflow_run_id": "36190186100",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-25T21:12:36.591455+00:00",
+        "data_hash": "591a1e81820d4d67ed2feab8c6236521769684ce59ba35dcf7c468573f596d9a",
+        "live_hash": "bc4abf511333fabba7b78ac8d5e3150df02d56db54e8cc9cbe586bf90e1ce372"
+      },
+      "snapshot": {
+        "id": "fc2:823652:player-668952:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823652,
+        "player_id": 668952,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Ryan Kreidler",
+        "team": "Minnesota Twins",
+        "matchup": "Texas Rangers @ Minnesota Twins",
+        "game_start": "2026-09-26T00:10:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6044,
+        "market_odds": -135,
+        "market_implied": 0.5745,
+        "market_edge": 0.0299,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 88.8mph (league ~88.5)",
+          "L7 barrel% 25.0 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+1.1mph 2nd-half vs 1st-half)",
+          "Hitter batting behind him: 0.339 wOBA (league ~.320)",
+          "Pitch-type exploit: RV/100 +1.7 vs FF (opposing SP throws it 42.0% of the time)",
+          "Wind blowing OUT (5mph) \u2014 HR boost"
+        ],
+        "watchouts": [
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Projected 3.53 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.295 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Team implied for 3.6 runs (league avg 4.245; line 3.5, game total 7.5) \u2014 a weak offensive environment",
+          "Public heavy on Minnesota Twins (money% trails tickets% by 20 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 8.2 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 2/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Minnesota Twins (money% -20 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.5911,
+          0.636
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 91,
+        "lineup_assumed": null,
+        "base_rate": 0.6703,
+        "lift": -0.0659,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "eb530db8a",
+          "prediction_timestamp": "2026-09-25T20:54:35.574933+00:00",
+          "odds_fetched_at": "2026-09-25T20:54:30.093465+00:00",
+          "board_generated_at": "2026-09-25T20:54:35.555401+00:00"
+        },
+        "qualification_timestamp": "2026-09-25T20:54:35.574933+00:00",
+        "board_timestamp": "2026-09-25T20:54:35.555401+00:00",
         "slate_date": "2026-09-25"
       }
     }
