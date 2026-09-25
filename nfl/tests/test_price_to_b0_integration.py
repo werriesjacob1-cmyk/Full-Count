@@ -163,6 +163,20 @@ class PriceToB0Tests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "envelope mismatch"):
                 verify_capture(CAPTURE)
 
+    def test_market_time_is_kickoff_not_quote_origin(self):
+        frozen, original, _ = sample()
+        candidate = copy.deepcopy(original["candidate"])
+        candidate["quote_timestamp"] = candidate["event_open_date"]
+        candidate["quote_timestamp_status"] = "SOURCE_FIELD_VERIFIED"
+        candidate["quote_evidence"] = {
+            "timestamp": candidate["quote_timestamp"],
+            "source_sha256": original["source_sha256"],
+            "market_id": candidate["market_id"],
+            "source_field": "market.marketTime",
+        }
+        self.assertFalse(raw_offer_matches(CAPTURE, frozen["sources"], candidate,
+                                           original["source_sha256"]))
+
     def test_invalid_probability_is_rejected(self):
         _, original, row = sample()
         with self.assertRaisesRegex(ValueError, "probabilities invalid"):

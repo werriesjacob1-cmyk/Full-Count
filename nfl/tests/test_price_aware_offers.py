@@ -15,10 +15,20 @@ def inputs():
              captured_at=T, event_open_date="2026-09-24T00:00:00Z",
              availability_status="NOT_LISTED_INACTIVE", decision_status="SHADOW_ONLY")
     c.update(canonical_game_id="2026_03_ATL_GB", canonical_kickoff=c["event_open_date"], market_availability="AVAILABLE")
-    c.update(quote_timestamp=T,current_role_status="VERIFIED",sportsbook_rule=dict(
+    c.update(team="GB", audience_jurisdiction="NJ",
+             quote_timestamp=T, quote_timestamp_status="SOURCE_FIELD_VERIFIED",
+             quote_evidence=dict(timestamp=T, source_sha256=H, market_id="m",
+                                 source_field="market.priceUpdatedAt"),
+             current_role_status="VERIFIED",
+             current_role_evidence=dict(canonical_game_id=c["canonical_game_id"],
+                                        gsis_id="p", team="GB", source_sha256=H,
+                                        source_id="synthetic_role_fixture", role_basis="projected_routes",
+                                        available_at=T),
+             sportsbook_rule=dict(
         status="CERTIFIED",book="fanduel_nfl",market="receptions",event_id="e",
         url="https://www.fanduel.com/fanduel-sportsbook-house-rules-nj",
-        source_sha256=H,observed_at=T))
+        source_sha256=H,observed_at=T, jurisdiction="NJ",
+        settlement_stat="receptions", void_if_no_game_snap=True))
     c["authoritative_b0_status"]="JOINED"
     d = dict(model_version="SYNTHETIC", event_id="e", gsis_id="p", pmf=[.2,.3,.5],
              conditioning="PLAYED", feature_cutoff=T,
@@ -92,6 +102,24 @@ class PriceTests(unittest.TestCase):
                         {"sportsbook_rule":{"status":"CERTIFIED","book":"other"}}):
             c,d=inputs(); c.update(changes)
             self.assertEqual(run(c,d)["decision_status"],"QUARANTINED",changes)
+
+    def test_status_flags_alone_cannot_clear_three_evidence_gates(self):
+        c,d=inputs()
+        for key,reason in (("quote_evidence","QUOTE_PROVENANCE_UNVERIFIED"),
+                           ("current_role_evidence","CURRENT_ROLE_EVIDENCE_MISSING"),
+                           ("audience_jurisdiction","BOOK_ACTION_RULES_EVIDENCE_MISSING_OR_MISMATCHED")):
+            changed=copy.deepcopy(c); changed.pop(key)
+            with self.subTest(key=key):
+                result=run(changed,d)
+                self.assertEqual(result["decision_status"],"QUARANTINED")
+                self.assertIn(reason,result["reasons"])
+                self.assertFalse(result["bettable"])
+        changed=copy.deepcopy(c); changed["quote_evidence"]["source_sha256"]="b"*64
+        self.assertIn("QUOTE_PROVENANCE_UNVERIFIED",run(changed,d)["reasons"])
+        changed=copy.deepcopy(c); changed["current_role_evidence"]["available_at"]="2026-09-23T00:00:00Z"
+        self.assertIn("CURRENT_ROLE_EVIDENCE_MISSING",run(changed,d)["reasons"])
+        changed=copy.deepcopy(c); changed["sportsbook_rule"]["void_if_no_game_snap"]=False
+        self.assertIn("BOOK_ACTION_RULES_EVIDENCE_MISSING_OR_MISMATCHED",run(changed,d)["reasons"])
 
     def test_atomic_create_only_and_failed_write(self):
         td=Path.cwd()/"engineering"/"nfl_price_aware_20260923"

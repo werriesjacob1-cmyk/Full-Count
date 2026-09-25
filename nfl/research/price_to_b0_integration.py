@@ -62,6 +62,20 @@ def raw_offer_matches(folder: Path, manifest: list[dict], candidate: dict,
     if (str(market.get("eventId")) != str(candidate["event_id"]) or
             market.get("marketStatus") != "OPEN" or market.get("inPlay") is not False):
         return False
+    if candidate.get("quote_timestamp") is not None:
+        evidence = candidate.get("quote_evidence")
+        if not isinstance(evidence, dict):
+            return False
+        # marketTime in the current FanDuel payload is the event time, not
+        # the time the displayed odds originated. Never accept it as a quote.
+        fields = {"market.priceUpdatedAt": "priceUpdatedAt",
+                  "market.lastUpdatedAt": "lastUpdatedAt",
+                  "market.oddsUpdatedAt": "oddsUpdatedAt"}
+        field = fields.get(evidence.get("source_field"))
+        if (field is None or market.get(field) != candidate["quote_timestamp"] or
+                evidence.get("source_sha256") != raw_sha or
+                evidence.get("market_id") != candidate["market_id"]):
+            return False
     if not strict_observed_prices(candidate, market):
         return False
     normalized = normalize_payload(payload, captured_at=entry["observed_at"])

@@ -74,3 +74,49 @@ The tests use authentic committed book bytes for binding and synthetic sealed
 B0 fixtures only to challenge chronology, identity, price, duplicate, and
 source-integrity boundaries. The synthetic fixture does not establish a live
 B0 join.
+
+## September 25 eligibility-source audit and integration boundary
+
+The three outstanding gates are the exact reasons emitted by
+`price_aware_offers.evaluate_offer`: `QUOTE_TIMESTAMP_NOT_PROVIDED`,
+`CURRENT_ROLE_NOT_VERIFIED`, and `BOOK_ACTION_RULES_NOT_CERTIFIED`. The
+September 24 authentic capture sets each source field to unknown. These are
+real blockers, not a count to optimize away. The newer code additionally
+rejects a caller that merely flips a status flag without matching provenance.
+
+| Gate | Available evidence | Exact remaining blocker |
+|---|---|---|
+| Quote origin | The archived FanDuel response contains OPEN, non-in-play markets, active runners, exact prices and observation time; raw bytes and SHA-256 are sealed. | The response has no market/runner price-update timestamp. `marketTime` equals the scheduled event time (`2026-09-25T00:16:00Z`), not quote origin. The integration verifier forbids using it as such. Observation time establishes when *we saw* a displayed quote, not how long the book had displayed it or that a wager would be accepted at that price. |
+| Current role | The B0 shadow board can establish official inactive coverage and identity; a prior-season model alone cannot verify current projected routes/snaps or a limited role. | No source-backed, game/player/team-bound current role evidence is in either pricing capture. A `VERIFIED` string without source digest and available-at time is insufficient. |
+| Book action/settlement | FanDuel's [NJ house rules](https://www.fanduel.com/fanduel-sportsbook-house-rules-nj) (effective July 30, 2026) describe full-game NFL props' no-snap void condition and league-stat settlement. | The NJ page does not establish the applicable jurisdiction/product for every customer, nor that an individual ticket is accepted. No rules bytes/jurisdiction binding were captured with these offers. A `CERTIFIED` string or a URL/hash alone cannot establish applicability. |
+
+The published rules also say displayed odds can change before acceptance and
+accepted odds control. The archived market is therefore authentic *observed*
+FanDuel data, not proof of an executable historical price. No retrospective
+repair may add these three missing observations to the immutable capture.
+
+### Market-support inventory, not an offer claim
+
+The September 24 archive contains 228 observed market entries across 133 raw
+market types, but this particular pricing consumer accepted only 57 receptions
+offers (9 primary two-sided and 48 N+ alternates). All 57 were quarantined.
+Other raw market entries are an inventory of displayed markets, not normalized
+offers with a compatible probability, action rule, eligibility and grade.
+
+| Family | Current component status | Actionable/customer status |
+|---|---|---|
+| Receptions, standard and N+ | Authentic offer capture, GSIS binding, PMF/price math, sealed B0 primary-line join and research settlement exist. B0 alternate probabilities are deliberately unsupported. | No official eligibility: all three gates above; no public selector/pick output. |
+| Passing yards | Dedicated live normalizer/B0, pregame shadow and outcome grade exist elsewhere. This adapter has no passing-yards quote-to-B0 join. | Not connected to this price-aware eligible-pick path. |
+| Rushing/receiving yards, rushing/passing attempts, passing TDs, interceptions, anytime TD and combined player yards | Some observed raw market types, normalizers or research models exist for subsets. They do not establish the complete six-part offer → probability → identity/rule → eligibility → customer output → grade chain here. | Unsupported by this pricing integration; do not infer availability from a market label. |
+| Spreads, totals, moneylines, team totals, alternate/plus-money game markets | Some raw book markets and separate game-market research exist. No customer-certified joint distribution/eligibility/settlement path is connected here. | Research only; not actionable through #196/#199. |
+
+`price_to_b0_integration.integrate` still writes `research_only=true` and
+`bettable=false` for every row. The NFL website publication guard requires
+`public_selector_validated=false`. A contract-level synthetic fixture can
+exercise all positive and negative gate branches, but it cannot establish a
+current, jurisdiction-compatible offer or authorize a customer pick. A
+legitimate future capture needs source quote-vintage evidence or an explicitly
+approved observation-freshness policy, a separately sourced current role, and
+book/market/jurisdiction action-rule certification before selection policy can
+be separately reviewed by Jacob. Neither archived ATL–GB capture can be
+upgraded into such evidence.
