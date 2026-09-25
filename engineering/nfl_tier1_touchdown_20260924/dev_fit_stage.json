@@ -1,0 +1,602 @@
+{
+ "params": {
+  "fit_partition": "DEV_2016_2022",
+  "conv": {
+   "RB": {
+    "tgt_Z5": 0.448421,
+    "tgt_Z10": 0.242303,
+    "tgt_Z20": 0.092699,
+    "tgt_OUT": 0.008011,
+    "car_Z5": 0.408529,
+    "car_Z10": 0.111569,
+    "car_Z20": 0.043403,
+    "car_OUT": 0.00468
+   },
+   "WR": {
+    "tgt_Z5": 0.442781,
+    "tgt_Z10": 0.294747,
+    "tgt_Z20": 0.147898,
+    "tgt_OUT": 0.020128,
+    "car_Z5": 0.450704,
+    "car_Z10": 0.192308,
+    "car_Z20": 0.104895,
+    "car_OUT": 0.01414
+   },
+   "TE": {
+    "tgt_Z5": 0.5068,
+    "tgt_Z10": 0.325077,
+    "tgt_Z20": 0.164749,
+    "tgt_OUT": 0.011458,
+    "car_Z5": 0.537037,
+    "car_Z10": 0.25,
+    "car_Z20": 0.019231,
+    "car_OUT": 0.008475
+   },
+   "QB": {
+    "tgt_Z5": 0.416667,
+    "tgt_Z10": 0.666667,
+    "tgt_Z20": 0.411765,
+    "tgt_OUT": 0.0,
+    "car_Z5": 0.537037,
+    "car_Z10": 0.215164,
+    "car_Z20": 0.067337,
+    "car_OUT": 0.004903
+   },
+   "OTHER": {
+    "tgt_Z5": 0.735294,
+    "tgt_Z10": 0.4,
+    "tgt_Z20": 0.3,
+    "tgt_OUT": 0.05,
+    "car_Z5": 0.5,
+    "car_Z10": 0.0,
+    "car_Z20": 0.0,
+    "car_OUT": 0.0
+   }
+  },
+  "conv_all": {
+   "RB": {
+    "tgt": 0.029972,
+    "car": 0.031328
+   },
+   "WR": {
+    "tgt": 0.04781,
+    "car": 0.037907
+   },
+   "TE": {
+    "tgt": 0.055391,
+    "car": 0.084677
+   },
+   "QB": {
+    "tgt": 0.164706,
+    "car": 0.056403
+   },
+   "OTHER": {
+    "tgt": 0.268657,
+    "car": 0.026786
+   }
+  },
+  "scale_c": {
+   "rz_blend": 0.98,
+   "rz_share_x_team": 0.98,
+   "rz_direct": 0.97,
+   "volume_only": 0.97,
+   "rz_zone_split": 0.98,
+   "rz_team_conv": 0.97,
+   "closing_line_proxy": 0.97
+  },
+  "closing_mean_implied": 22.8882,
+  "closing_gamma": 1.05,
+  "m_frac": 160.0,
+  "w_blend": 0.2
+ },
+ "dev": {
+  "rz_blend": {
+   "counts": {
+    "model": 50035,
+    "fallback_b0": 384,
+    "no_prediction": 1539
+   },
+   "vs_b0": {
+    "DEV_2016_2022": {
+     "n_rows": 35507,
+     "n_matched": 32751,
+     "n_b0_without_challenger": 0,
+     "n_challenger_without_b0": 1653,
+     "previously_inspected": false,
+     "evidence_label": "DEVELOPMENT",
+     "activation_share": 0.988275167170468,
+     "metrics": {
+      "brier": {
+       "b0": 0.18611340914474372,
+       "challenger": 0.16074779491386906
+      },
+      "log_loss": {
+       "b0": 1.1465570966159093,
+       "challenger": 0.5038927650009789
+      }
+     },
+     "paired_delta_mean": -0.6426643316150114,
+     "paired_delta_ci95": [
+      -0.6698593674204742,
+      -0.6126640680165298
+     ],
+     "n_game_clusters": 1823
+    }
+   },
+   "vs_scale": {
+    "DEV_2016_2022": {
+     "n_rows": 35507,
+     "n_matched": 32751,
+     "n_b0_without_challenger": 0,
+     "n_challenger_without_b0": 1653,
+     "previously_inspected": false,
+     "evidence_label": "DEVELOPMENT",
+     "activation_share": 0.9949619858935606,
+     "metrics": {
+      "brier": {
+       "b0": 0.17553450768116594,
+       "challenger": 0.16074779491386906
+      },
+      "log_loss": {
+       "b0": 1.0978263969758815,
+       "challenger": 0.5038927650009789
+      }
+     },
+     "paired_delta_mean": -0.5939336319749474,
+     "paired_delta_ci95": [
+      -0.6223226064918815,
+      -0.5634701309186152
+     ],
+     "n_game_clusters": 1823
+    }
+   },
+   "vs_volume_only": {
+    "DEV_2016_2022": {
+     "n_rows": 35507,
+     "n_matched": 34404,
+     "n_b0_without_challenger": 0,
+     "n_challenger_without_b0": 0,
+     "previously_inspected": false,
+     "evidence_label": "DEVELOPMENT",
+     "activation_share": 0.9888385071503314,
+     "metrics": {
+      "brier": {
+       "b0": 0.1590607659807943,
+       "challenger": 0.15891307899743168
+      },
+      "log_loss": {
+       "b0": 0.49982002417093574,
+       "challenger": 0.49943495763749235
+      }
+     },
+     "paired_delta_mean": -0.00038506653344251736,
+     "paired_delta_ci95": [
+      -0.0006612643920837338,
+      -0.00011330965303360417
+     ],
+     "n_game_clusters": 1823
+    }
+   }
+  },
+  "rz_share_x_team": {
+   "counts": {
+    "model": 50035,
+    "fallback_b0": 384,
+    "no_prediction": 1539
+   },
+   "vs_b0": {
+    "DEV_2016_2022": {
+     "n_rows": 35507,
+     "n_matched": 32751,
+     "n_b0_without_challenger": 0,
+     "n_challenger_without_b0": 1653,
+     "previously_inspected": false,
+     "evidence_label": "DEVELOPMENT",
+     "activation_share": 0.988275167170468,
+     "metrics": {
+      "brier": {
+       "b0": 0.18611340914474372,
+       "challenger": 0.16231506381248603
+      },
+      "log_loss": {
+       "b0": 1.1465570966159093,
+       "challenger": 0.509013402751848
+      }
+     },
+     "paired_delta_mean": -0.637543693864134,
+     "paired_delta_ci95": [
+      -0.6648259943073693,
+      -0.6080240634278256
+     ],
+     "n_game_clusters": 1823
+    }
+   },
+   "vs_scale": {
+    "DEV_2016_2022": {
+     "n_rows": 35507,
+     "n_matched": 32751,
+     "n_b0_without_challenger": 0,
+     "n_challenger_without_b0": 1653,
+     "previously_inspected": false,
+     "evidence_label": "DEVELOPMENT",
+     "activation_share": 0.9949619858935606,
+     "metrics": {
+      "brier": {
+       "b0": 0.17553450768116594,
+       "challenger": 0.16231506381248603
+      },
+      "log_loss": {
+       "b0": 1.0978263969758815,
+       "challenger": 0.509013402751848
+      }
+     },
+     "paired_delta_mean": -0.5888129942240701,
+     "paired_delta_ci95": [
+      -0.6168818021264694,
+      -0.5588098087819748
+     ],
+     "n_game_clusters": 1823
+    }
+   },
+   "vs_volume_only": {
+    "DEV_2016_2022": {
+     "n_rows": 35507,
+     "n_matched": 34404,
+     "n_b0_without_challenger": 0,
+     "n_challenger_without_b0": 0,
+     "previously_inspected": false,
+     "evidence_label": "DEVELOPMENT",
+     "activation_share": 0.9888385071503314,
+     "metrics": {
+      "brier": {
+       "b0": 0.1590607659807943,
+       "challenger": 0.1604657214123208
+      },
+      "log_loss": {
+       "b0": 0.49982002417093574,
+       "challenger": 0.5044980335030381
+      }
+     },
+     "paired_delta_mean": 0.004678009332110293,
+     "paired_delta_ci95": [
+      0.0033205530816782605,
+      0.006056913909444685
+     ],
+     "n_game_clusters": 1823
+    }
+   }
+  },
+  "rz_direct": {
+   "counts": {
+    "model": 50035,
+    "fallback_b0": 384,
+    "no_prediction": 1539
+   },
+   "vs_b0": {
+    "DEV_2016_2022": {
+     "n_rows": 35507,
+     "n_matched": 32751,
+     "n_b0_without_challenger": 0,
+     "n_challenger_without_b0": 1653,
+     "previously_inspected": false,
+     "evidence_label": "DEVELOPMENT",
+     "activation_share": 0.988275167170468,
+     "metrics": {
+      "brier": {
+       "b0": 0.18611340914474372,
+       "challenger": 0.16240180362525664
+      },
+      "log_loss": {
+       "b0": 1.1465570966159093,
+       "challenger": 0.509068134814051
+      }
+     },
+     "paired_delta_mean": -0.637488961801939,
+     "paired_delta_ci95": [
+      -0.6647715105002261,
+      -0.6080657376880084
+     ],
+     "n_game_clusters": 1823
+    }
+   },
+   "vs_scale": {
+    "DEV_2016_2022": {
+     "n_rows": 35507,
+     "n_matched": 32751,
+     "n_b0_without_challenger": 0,
+     "n_challenger_without_b0": 1653,
+     "previously_inspected": false,
+     "evidence_label": "DEVELOPMENT",
+     "activation_share": 0.9949619858935606,
+     "metrics": {
+      "brier": {
+       "b0": 0.17553450768116594,
+       "challenger": 0.16240180362525664
+      },
+      "log_loss": {
+       "b0": 1.0978263969758815,
+       "challenger": 0.509068134814051
+      }
+     },
+     "paired_delta_mean": -0.5887582621618751,
+     "paired_delta_ci95": [
+      -0.6167745883708932,
+      -0.5584412490508526
+     ],
+     "n_game_clusters": 1823
+    }
+   }
+  },
+  "volume_only": {
+   "counts": {
+    "model": 50035,
+    "fallback_b0": 384,
+    "no_prediction": 1539
+   },
+   "vs_b0": {
+    "DEV_2016_2022": {
+     "n_rows": 35507,
+     "n_matched": 32751,
+     "n_b0_without_challenger": 0,
+     "n_challenger_without_b0": 1653,
+     "previously_inspected": false,
+     "evidence_label": "DEVELOPMENT",
+     "activation_share": 0.988275167170468,
+     "metrics": {
+      "brier": {
+       "b0": 0.18611340914474372,
+       "challenger": 0.1609096752553726
+      },
+      "log_loss": {
+       "b0": 1.1465570966159093,
+       "challenger": 0.5043221341498408
+      }
+     },
+     "paired_delta_mean": -0.6422349624661476,
+     "paired_delta_ci95": [
+      -0.669615873253707,
+      -0.6120951720880293
+     ],
+     "n_game_clusters": 1823
+    }
+   },
+   "vs_scale": {
+    "DEV_2016_2022": {
+     "n_rows": 35507,
+     "n_matched": 32751,
+     "n_b0_without_challenger": 0,
+     "n_challenger_without_b0": 1653,
+     "previously_inspected": false,
+     "evidence_label": "DEVELOPMENT",
+     "activation_share": 0.9949619858935606,
+     "metrics": {
+      "brier": {
+       "b0": 0.17553450768116594,
+       "challenger": 0.1609096752553726
+      },
+      "log_loss": {
+       "b0": 1.0978263969758815,
+       "challenger": 0.5043221341498408
+      }
+     },
+     "paired_delta_mean": -0.5935042628260837,
+     "paired_delta_ci95": [
+      -0.6217986313589934,
+      -0.5629337575804046
+     ],
+     "n_game_clusters": 1823
+    }
+   }
+  },
+  "rz_zone_split": {
+   "counts": {
+    "model": 49937,
+    "fallback_b0": 472,
+    "no_prediction": 1549
+   },
+   "vs_b0": {
+    "DEV_2016_2022": {
+     "n_rows": 35507,
+     "n_matched": 32751,
+     "n_b0_without_challenger": 0,
+     "n_challenger_without_b0": 1643,
+     "previously_inspected": false,
+     "evidence_label": "DEVELOPMENT",
+     "activation_share": 0.9855882263137004,
+     "metrics": {
+      "brier": {
+       "b0": 0.18611340914474372,
+       "challenger": 0.16095035134806926
+      },
+      "log_loss": {
+       "b0": 1.1465570966159093,
+       "challenger": 0.5068043886032672
+      }
+     },
+     "paired_delta_mean": -0.6397527080127196,
+     "paired_delta_ci95": [
+      -0.6671091372152773,
+      -0.610276522020384
+     ],
+     "n_game_clusters": 1823
+    }
+   },
+   "vs_scale": {
+    "DEV_2016_2022": {
+     "n_rows": 35507,
+     "n_matched": 32751,
+     "n_b0_without_challenger": 0,
+     "n_challenger_without_b0": 1643,
+     "previously_inspected": false,
+     "evidence_label": "DEVELOPMENT",
+     "activation_share": 0.9939849164910995,
+     "metrics": {
+      "brier": {
+       "b0": 0.17553450768116594,
+       "challenger": 0.16095035134806926
+      },
+      "log_loss": {
+       "b0": 1.0978263969758815,
+       "challenger": 0.5068043886032672
+      }
+     },
+     "paired_delta_mean": -0.5910220083726556,
+     "paired_delta_ci95": [
+      -0.6185693779404607,
+      -0.5611661089354045
+     ],
+     "n_game_clusters": 1823
+    }
+   },
+   "vs_volume_only": {
+    "DEV_2016_2022": {
+     "n_rows": 35507,
+     "n_matched": 34394,
+     "n_b0_without_challenger": 10,
+     "n_challenger_without_b0": 0,
+     "previously_inspected": false,
+     "evidence_label": "DEVELOPMENT",
+     "activation_share": 0.988835261964296,
+     "metrics": {
+      "brier": {
+       "b0": 0.1590969364923199,
+       "challenger": 0.15914944559564811
+      },
+      "log_loss": {
+       "b0": 0.4999060961060413,
+       "challenger": 0.5023221260969296
+      }
+     },
+     "paired_delta_mean": 0.0024160299908916522,
+     "paired_delta_ci95": [
+      0.00043768477345412283,
+      0.004648848614309319
+     ],
+     "n_game_clusters": 1823
+    }
+   }
+  },
+  "rz_team_conv": {
+   "counts": {
+    "model": 50035,
+    "fallback_b0": 384,
+    "no_prediction": 1539
+   },
+   "vs_b0": {
+    "DEV_2016_2022": {
+     "n_rows": 35507,
+     "n_matched": 32751,
+     "n_b0_without_challenger": 0,
+     "n_challenger_without_b0": 1653,
+     "previously_inspected": false,
+     "evidence_label": "DEVELOPMENT",
+     "activation_share": 0.988275167170468,
+     "metrics": {
+      "brier": {
+       "b0": 0.18611340914474372,
+       "challenger": 0.16243900674760287
+      },
+      "log_loss": {
+       "b0": 1.1465570966159093,
+       "challenger": 0.5094921111994165
+      }
+     },
+     "paired_delta_mean": -0.637064985416574,
+     "paired_delta_ci95": [
+      -0.6642205678752527,
+      -0.6074276145979732
+     ],
+     "n_game_clusters": 1823
+    }
+   },
+   "vs_scale": {
+    "DEV_2016_2022": {
+     "n_rows": 35507,
+     "n_matched": 32751,
+     "n_b0_without_challenger": 0,
+     "n_challenger_without_b0": 1653,
+     "previously_inspected": false,
+     "evidence_label": "DEVELOPMENT",
+     "activation_share": 0.9949619858935606,
+     "metrics": {
+      "brier": {
+       "b0": 0.17553450768116594,
+       "challenger": 0.16243900674760287
+      },
+      "log_loss": {
+       "b0": 1.0978263969758815,
+       "challenger": 0.5094921111994165
+      }
+     },
+     "paired_delta_mean": -0.5883342857765099,
+     "paired_delta_ci95": [
+      -0.6160858208847813,
+      -0.5577920175072099
+     ],
+     "n_game_clusters": 1823
+    }
+   }
+  },
+  "closing_line_proxy": {
+   "counts": {
+    "model": 50035,
+    "fallback_b0": 384,
+    "no_prediction": 1539
+   },
+   "vs_b0": {
+    "DEV_2016_2022": {
+     "n_rows": 35507,
+     "n_matched": 32751,
+     "n_b0_without_challenger": 0,
+     "n_challenger_without_b0": 1653,
+     "previously_inspected": false,
+     "evidence_label": "DEVELOPMENT",
+     "activation_share": 0.988275167170468,
+     "metrics": {
+      "brier": {
+       "b0": 0.18611340914474372,
+       "challenger": 0.1594128215207894
+      },
+      "log_loss": {
+       "b0": 1.1465570966159093,
+       "challenger": 0.5003918669105658
+      }
+     },
+     "paired_delta_mean": -0.6461652297054228,
+     "paired_delta_ci95": [
+      -0.6733038410958054,
+      -0.6164459604948934
+     ],
+     "n_game_clusters": 1823
+    }
+   },
+   "vs_scale": {
+    "DEV_2016_2022": {
+     "n_rows": 35507,
+     "n_matched": 32751,
+     "n_b0_without_challenger": 0,
+     "n_challenger_without_b0": 1653,
+     "previously_inspected": false,
+     "evidence_label": "DEVELOPMENT",
+     "activation_share": 0.9949619858935606,
+     "metrics": {
+      "brier": {
+       "b0": 0.17553450768116594,
+       "challenger": 0.1594128215207894
+      },
+      "log_loss": {
+       "b0": 1.0978263969758815,
+       "challenger": 0.5003918669105658
+      }
+     },
+     "paired_delta_mean": -0.5974345300653587,
+     "paired_delta_ci95": [
+      -0.625671937884262,
+      -0.567091240773292
+     ],
+     "n_game_clusters": 1823
+    }
+   }
+  }
+ }
+}
