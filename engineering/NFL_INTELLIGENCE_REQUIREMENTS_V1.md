@@ -269,3 +269,137 @@ The permanent [Issue #91 directive](https://github.com/werriesjacob1-cmyk/Full-C
 - **Negative or near-zero narrow tests remain preserved:** #206 F13, #209 F14, #211 F15 and #212 F16 are not promoted; #207 F11 is rejected and F12 not supported; #213 F17 is not supported against its simple-efficiency control. These findings reject the tested formulations, not every broader football mechanism.
 - **Source/rights blocked is different from a failed model:** #214 F18 documents real defender-attributed target statistics but lacks verified receiver–defender assignments, coverage exposure and established downstream predictive-use rights. No individual matchup model was fit or promoted.
 - **Operational completion requires a separate decision:** a later legitimately sourced factor must demonstrate incremental value against matched B0 and a suitable simple control, with uncertainty, point-in-time-safe identity and prospective pregame evidence. Promotion then requires Jacob's explicit authorization and proof of more correct legitimately usable selections at comparable declared volume; actual-price returns remain separate.
+
+## 16. Per-angle accountability status (directive §"Accountability"; added 2026-09-25 by Claude Code, continuing Codex's §15)
+
+This section uses the directive's five statuses, one per listed angle:
+- **COMPLETE:** existing complete capability.
+- **PARTIAL:** partial or source-only.
+- **TESTED:** research tested. The row states whether the result was negative, near zero or positive, and whether it was historical or prospective.
+- **BLOCKED:** source or rights blocked.
+- **NOT YET:** not yet investigated.
+
+**No angle is COMPLETE today.** Nothing has passed matched historical evaluation, prospective pregame evidence and Jacob's promotion.
+
+**Other conventions:**
+- **IDs:** the IDs in §1–§10 and the §11 crosswalk still apply; this is a ledger, not a new register.
+- **Owner:** the agent that last held it. "Unassigned" means Jacob or SUPERCHAD assigns it.
+- **Scope of a TESTED result:** a TESTED result closes only the tested formulation (§15).
+- **Candidate sources:** "Candidate source" means named but not verified in this register.
+
+### 1. Opportunity, roles and redistribution
+
+| Angle | IDs | Status | Evidence | Owner | Next action |
+|---|---|---|---|---|---|
+| Expected snaps and snap-share role | P06, R02 | TESTED (historical; BUILT) | Tier 1 F2, #203 | Claude | Prospective exploratory rows in the protocol seal |
+| Target share × team targets | P06, R02 | TESTED (positive historical, narrow; prospective H1 active) | Tier 1 F3, #203; H1 seal | Claude | Week-8 protocol analysis |
+| Carries and carry share | P02, R07 | PARTIAL | #186 rushing B0 (unmerged); F16 #212 negative | Codex / Claude | Settle #186 disposition |
+| Routes run / routes per dropback | P06–P07 | BLOCKED | Participation `route` is target-only, and there is no in-season participation (#207 README) | Unassigned | A licensed all-route source |
+| Target probability per supported route | P07 | BLOCKED | No un-targeted route denominator (#174, #207) | Unassigned | Same as above |
+| First-read targets | P09, X04 | PARTIAL (source only) | FTN 2026 charting exposes a thrown-read field (#174 evidence); no consumer | Unassigned | Feasibility: coverage, vintage, rights |
+| First-team practice | N01 | BLOCKED | Not in official reports; beat reports only, unverified | Unassigned | News provenance pipeline (row 7) |
+| Designed touches and scripted screens | R02, C03 | NOT YET | — | Unassigned | Source check (play-by-play has no screen flag; FTN candidate) |
+| Third-down and two-minute roles | R02, C03 | NOT YET | Play-by-play supports it | Unassigned | Feature feasibility |
+| Short-yardage and goal-line roles | R02, P02 | TESTED (positive historical, narrow; prospective H3 active) | Tier 1 F4, #205 | Claude | Week-8 analysis |
+| Substitutions and rotations | R03, R07 | PARTIAL | Snap counts only (F2) | Claude | — |
+| Injury replacement hierarchy and absence redistribution | R04, R08 | TESTED (historical; BUILT) | Tier 1 F9, #203 | Claude | Prospective rows |
+| Limited-player workloads | N05, R05 | PARTIAL | F8 injury/practice, PARTIAL | Claude | Final-report timing |
+| Personnel-conditioned opportunity | R03 | TESTED (negative) | F15, #211 | Codex | None (preserved) |
+
+### 2. Coaching, playcallers and adaptation
+
+| Angle | IDs | Status | Evidence | Owner | Next action |
+|---|---|---|---|---|---|
+| HC identity and regimes | C01 | PARTIAL (HC complete; used in F12 regime rule) | #181 registry | — | — |
+| OC/DC and actual playcaller identity | C01 | BLOCKED | Registry DC/playcaller `NO_INTERVALS_INGESTED`; PFR returns a 403 bot challenge; nflverse has no staff data | Unassigned | A legitimate staff source |
+| Pass rate / pace tendencies | C02, R01 | TESTED (REJECTED) | Tier 1 F5, #204 | Claude | None |
+| Offensive concepts, play-action and RPO | C02 | TESTED (null) | F14, #209 | Codex | None |
+| Scripted drives, RB rotation, red-zone decisions, 2-minute | C03 | NOT YET (except red-zone via F4) | — | Unassigned | Feasibility |
+| Post-injury, bye and QB-change usage | C06, R06 | PARTIAL | F9 redistribution only | Claude | — |
+| Opponent-specific and halftime adjustment | C04–C05 | NOT YET | — | Unassigned | — |
+| Coordinator tendency transfer across teams | C06 | BLOCKED | Needs coordinator identity | Unassigned | — |
+| Coach and player statements with provenance | C09, N03 | NOT YET | — | Unassigned | Row 7 pipeline |
+
+### 3. Defense, coverage and individual matchups
+
+| Angle | IDs | Status | Evidence | Owner | Next action |
+|---|---|---|---|---|---|
+| Man/zone and coverage family, team level | D02 | TESTED (F11 REJECTED; F12 NOT SUPPORTED) | #207 | Claude | Exploratory prospective rows in the protocol seal |
+| Opponent allowed-by-position | D01 | TESTED (historical; BUILT) | Tier 1 F10, #204 | Claude | — |
+| Individual defender stats | D03 | PARTIAL (source only) | F18, #214: PFR advanced defense, defender-attributed targets | Codex | Rights for predictive use |
+| Verified defender→receiver assignment and shadow | D03–D04 | BLOCKED | #214: no assignment source; co-presence is not an assignment | Unassigned | F26 source search |
+| Brackets, doubles, rotations and disguise | D02, D08 | BLOCKED | No public label | Unassigned | — |
+| Defensive substitutions and replacement effects | D07 | NOT YET | — | Unassigned | — |
+
+### 4. QB decisions and chemistry
+
+| Angle | IDs | Status | Evidence | Owner | Next action |
+|---|---|---|---|---|---|
+| Pressure/blitz response | D05, P09 | TESTED (negative) | F13, #206 | Codex | None |
+| Read progression | P09 | PARTIAL (source only) | FTN thrown-read (#174) | Unassigned | Feasibility |
+| Time to throw, deep/checkdown/scramble, play-action response | P09, P01 | NOT YET | Candidate source: NGS passing aggregates | Unassigned | Source verification |
+| QB–receiver chemistry and QB-change effects on teammates | P10 | NOT YET | — | Unassigned | Interaction test vs simple baseline |
+
+### 5. OL, rushing and fronts
+
+| Angle | IDs | Status | Evidence | Owner | Next action |
+|---|---|---|---|---|---|
+| Rushing B0 / runner baseline | P02 | PARTIAL | #186, unmerged research | Claude | Disposition |
+| Box count / front proxy | D06 | TESTED (negative) | F16, #212 | Codex | None |
+| OL starters and continuity | D05–D06 | NOT YET | Snap counts support it | Unassigned | Feasibility |
+| Individual blocking; rushers vs OL matchups | D05, F04 | BLOCKED | No public assignment data | Unassigned | — |
+| Run concept, location and fit | D06, F03 | BLOCKED (concept); NOT YET (run location in play-by-play) | — | Unassigned | — |
+| Yards before/after contact, missed tackles forced, explosives | P02 | NOT YET | Candidate source: PFR advanced rushing via nflverse. F17 was scoped to receiving to avoid F16 overlap | Unassigned | Feasibility |
+
+### 6. Game script and joint outcomes
+
+| Angle | IDs | Status | Evidence | Owner | Next action |
+|---|---|---|---|---|---|
+| Game lines and implied totals | G01 | TESTED (historical; BUILT; uses market input) | Tier 1 F1, #204 | Claude | — |
+| Weather, roof and surface | G03 | TESTED (positive historical for receiving yards; prospective H2 active) | Tier 1 F6, #204 | Claude | Week-8 analysis |
+| Rest and travel | G04 | TESTED (REJECTED) | Tier 1 F7, #204 | Claude | None |
+| Score/time-conditioned workload, possessions, 4th-down, overtime | G02, G05 | NOT YET | — | Unassigned | — |
+| Coherent joint and alternate-line distributions, correlation | M06–M08, M14 | PARTIAL | #190 passing-yards alternate ladder (research) | Claude | — |
+
+### 7. 32-team current-week information
+
+| Angle | IDs | Status | Evidence | Owner | Next action |
+|---|---|---|---|---|---|
+| Official injuries, practice and inactives | N01 | PARTIAL | F8; inactives capture used in the ATL@GB cycle (`engineering/nfl_atl_gb_20260924`) | Claude | Final-report automation |
+| Transactions and depth charts | N01 | NOT YET | — | Unassigned | — |
+| Pressers, beat/local reporting, warmups | N02–N04 | NOT YET (source audits only; see NFL_GENIUS_NEWS_BRAIN_2026-09-18) | — | Unassigned | Provenance pipeline |
+| Converting verified news to role/availability changes | N05, N07 | NOT YET | — | Unassigned | — |
+
+### 8. Development and changing performance
+
+| Angle | IDs | Status | Evidence | Owner | Next action |
+|---|---|---|---|---|---|
+| Efficiency persistence and regression | P05 | TESTED (F17 NOT SUPPORTED vs simple control; skill persistence r ≈ 0.25) | #213 | Claude | None (preserved) |
+| Rookie/college priors, aging, injury return, fatigue, new-team adaptation | P04, P11, X12 | NOT YET | — | Unassigned | — |
+
+### 9. Tracking, charting and film
+
+| Angle | IDs | Status | Evidence | Owner | Next action |
+|---|---|---|---|---|---|
+| Structured third-party charting | F05, F08 | PARTIAL | #174 FTN charting (descriptive) | Codex | — |
+| Film observation pipeline | F02–F06 | PARTIAL (synthetic prototype) | #170 | Codex | Rights-cleared footage |
+| Rights-cleared All-22 / footage | F01 | BLOCKED | No licensed source | Unassigned | — |
+| Tracking speed, separation, cushion | F04, P08 | NOT YET | Candidate source: NGS receiving aggregates | Unassigned | Source verification |
+
+### 10. Market, grading and learning
+
+| Angle | IDs | Status | Evidence | Owner | Next action |
+|---|---|---|---|---|---|
+| Authentic offer capture and exact B0 join | M01–M03 | PARTIAL | #196/#199: 9/9 exact joins on ATL@GB; 0 eligible behind the 3 gates | Codex | Certify the gates |
+| Multiple books | M04 | NOT YET | FanDuel only | Unassigned | — |
+| Postgame grading path | M10, E05 | PARTIAL (exercised on ATL@GB research rows) | `engineering/nfl_atl_gb_20260924` | Claude | — |
+| Line movement vs news | M05, X13–X14 | NOT YET | — | Unassigned | — |
+| Matched-volume hit rate, separate from price return | M11, E01–E02 | PARTIAL | Protocol §4 equal-volume comparison: NOT AVAILABLE until eligible offers exist | Claude / Codex | — |
+
+### 11. Integration
+
+| Angle | IDs | Status | Evidence | Owner | Next action |
+|---|---|---|---|---|---|
+| Coherent multi-factor player/game predictions | P12, X01–X04, X18 | PARTIAL | Tier 1 challengers are single-family consumers; no validated combined model; prospective H1–H3 frozen for weeks 3–8 | Claude | Week-8 analysis, then a pre-registered combination |
+
+Alligator.
