@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-25T19:51:35.996326+00:00",
+  "updated_at": "2026-09-25T19:57:44.240618+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -48680,6 +48680,103 @@
         },
         "qualification_timestamp": "2026-09-25T19:44:22.676038+00:00",
         "board_timestamp": "2026-09-25T19:44:22.661033+00:00",
+        "slate_date": "2026-09-25"
+      }
+    },
+    "fc2:824220:player-665833:hits:1:over": {
+      "canonical_id": "fc2:824220:player-665833:hits:1:over",
+      "settlement_identity": [
+        "824220",
+        [
+          "player",
+          "665833"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-25",
+      "first_published_at": "2026-09-25T19:57:44.240618+00:00",
+      "publication_provenance": {
+        "artifact_id": "9af53bb1b1f0019c32f0244b77dffb6e185fe9046eb9c9aea5eea17a66e46321",
+        "source_commit": "33bf9c609bafd39184918d77bea43667f7b47167",
+        "workflow_run_id": "36182722341",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-25T19:57:30.575546+00:00",
+        "data_hash": "6842dd55a5c969f8437560c0c1fdba9137e2cbe04aa919ac9dc58806058a3064",
+        "live_hash": "7be23dd0bf9f7f6eb0a908bd1dc482dd56c2508017e6009a974ec408d99757cb"
+      },
+      "snapshot": {
+        "id": "fc2:824220:player-665833:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 824220,
+        "player_id": 665833,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Oneil Cruz",
+        "team": "Pittsburgh Pirates",
+        "matchup": "Pittsburgh Pirates @ Detroit Tigers",
+        "game_start": "2026-09-25T22:40:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6333,
+        "market_odds": -150,
+        "market_implied": 0.6,
+        "market_edge": 0.0333,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 37.5 \u2014 hot recent contact",
+          "Platoon: L bat vs RHP (favorable)",
+          "Projected 4.22 PA (batting slot 4)",
+          "Team implied for 4.1 runs (league avg 4.245; line 3.5, game total 8)",
+          "Season barrel% 15.4 \u2014 well above-average barrel rate",
+          "Hitters batting ahead of him: 0.349 wOBA (league ~.320)",
+          "Hitter batting behind him: 0.338 wOBA (league ~.320)"
+        ],
+        "watchouts": [
+          "L7 avg EV 86.8mph (league ~88.5) \u2014 cold recent contact",
+          "AVG vs xBA: 0.280 vs 0.252 (+0.028) \u2014 outperforming his contact quality, regression risk",
+          "Wind blowing IN (5mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 2/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6245,
+          0.6619
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 94,
+        "lineup_assumed": null,
+        "base_rate": 0.5568,
+        "lift": 0.0765,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "5eb063ec2",
+          "prediction_timestamp": "2026-09-25T19:53:13.448329+00:00",
+          "odds_fetched_at": "2026-09-25T19:53:02.681144+00:00",
+          "board_generated_at": "2026-09-25T19:53:13.426725+00:00"
+        },
+        "qualification_timestamp": "2026-09-25T19:53:13.448329+00:00",
+        "board_timestamp": "2026-09-25T19:53:13.426725+00:00",
         "slate_date": "2026-09-25"
       }
     }
