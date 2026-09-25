@@ -175,6 +175,8 @@ Results are in `coverage_family_report.json`: the same matched population (n = 1
 
 Standard deviation of the activated ratios on HOLDOUT/FRESH: FAMILY_COMBINED 0.031, FAMILY_F11_ONLY 0.022, FAMILY_F12_ONLY 0.016–0.018. As with man/zone, coverage-family tendencies barely move a receiver's expectation once B0 and the scale control are in place.
 
+**Multiplicity caveat (independent review).** The family formulation was declared about an hour after the man/zone formulation was rejected, on the same population and outcomes. These are two related tests of one idea. A nominal "win" in either one would need adjusting for that, and neither produced one.
+
 **Evidence status.** HOLDOUT 2023–2025 was previously inspected, so it is exploratory. FRESH 2026 weeks 1–2 is out-of-sample but small. There is **no prospective validation yet**. `live_coverage.py` produces frozen-parameter predictions for upcoming games, which the Saturday protocol seal stores as exploratory rows (see below). Nothing is graded before the protocol's week-8 analysis.
 
 ## Cross-check with PR #174 (Codex tactical source, read-only reuse)
@@ -199,5 +201,7 @@ PYTHONPATH=.:engineering/nfl_tier2_coverage_20260925 python3 engineering/nfl_tie
     --out engineering/nfl_tier1_status_20260924/seal/2026_w03_sun_mon/coverage_exploratory.json
 ```
 Run this from a checkout of this branch. It writes rows labelled `EXPLORATORY_RESEARCH_ONLY_NOT_A_PICK`, with params SHA-256, the feature window (2025 weight 1.0, 2024 weight 0.5) and every mode's ratio, reason, frozen-α prediction and α=1 sensitivity.
+
+Independent review (sonnet reviewer, read-only) of `ee7fb59e23`/`827df8984d`/`5348544bfb`: commit order is confirmed as pre-declaration → frozen params → report. It also confirmed that windows are strictly prior, that the ratio compares like with like, that the fallback is exactly k·B0, that the live B0 rows are leak-free, and that the verdict matches the numbers. Its one LOW finding is the multiplicity caveat above.
 
 Friday dry run: 297 receptions and 297 receiving-yards rows across 15 games, with 234 of 297 receiving a COMBINED profile. **READY for the Saturday seal.**
