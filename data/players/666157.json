@@ -585,9 +585,9 @@
       "date": "2026-09-25",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 44.8,
+          "score": 33.0,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Toronto Blue Jays",
           "game_pk": 822760,
@@ -597,25 +597,25 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 20.0,
-            "same_hand_ratio": 33.3333,
+            "same_hand_ratio": 5.5556,
             "l14_k_pct": 0.0,
             "env_neutral": 50.0
           },
-          "hit_probability": 0.6021,
-          "raw_hit_probability": 0.6407,
-          "lift": -0.0954,
+          "hit_probability": 0.4469,
+          "raw_hit_probability": 0.4469,
+          "lift": -0.0756,
           "reliability": "A",
           "sample_n": 20,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 25.1,
+          "score": 25.7,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Toronto Blue Jays",
           "game_pk": 822760,
@@ -624,12 +624,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.4811,
+            "outs_rate": 0.4781,
             "avg_outs_per_start": 15.55
           },
-          "hit_probability": 0.5106,
-          "raw_hit_probability": 0.4811,
-          "lift": -0.0743,
+          "hit_probability": 0.5085,
+          "raw_hit_probability": 0.4781,
+          "lift": -0.0632,
           "reliability": "A",
           "sample_n": 20,
           "projection": {

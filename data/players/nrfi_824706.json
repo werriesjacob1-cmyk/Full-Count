@@ -1,6 +1,6 @@
 {
-  "player_id": "nrfi_824220",
-  "name": "Pittsburgh Pirates @ Detroit Tigers \u2014 1st Inning (Both Teams)",
+  "player_id": "nrfi_824706",
+  "name": "Chicago Cubs @ Boston Red Sox \u2014 1st Inning (Both Teams)",
   "snapshots": [
     {
       "date": "2026-09-25",
@@ -8,27 +8,27 @@
         {
           "prop": "A run scores in the 1st (either team)",
           "type": "game",
-          "score": 59.0,
+          "score": 64.8,
           "notable_signals": 0,
-          "matchup": "Pittsburgh Pirates @ Detroit Tigers",
-          "game_pk": 824220,
+          "matchup": "Chicago Cubs @ Boston Red Sox",
+          "game_pk": 824706,
           "team": null,
           "side": "both",
           "lean": "YRFI",
           "combo_player_ids": null,
           "signals": {
-            "home_team_scores_p": 0.275,
-            "away_team_scores_p": 0.3548,
-            "fi_n_starts": 8.0
+            "home_team_scores_p": 0.3591,
+            "away_team_scores_p": 0.3171,
+            "fi_n_starts": 12.0
           },
-          "hit_probability": 0.5322,
+          "hit_probability": 0.5623,
           "raw_hit_probability": null,
-          "lift": 0.0306,
-          "reliability": "C",
-          "sample_n": 8,
+          "lift": 0.0607,
+          "reliability": "B",
+          "sample_n": 12,
           "projection": {
             "stat": "nrfi_combined",
-            "value": 53.2
+            "value": 56.2
           }
         }
       ]
