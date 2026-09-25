@@ -6202,3 +6202,75 @@ Jacob approved `POLICY_PROPOSAL.md` §1 with three decisions, recorded in
 
 This authorizes this display policy only. The selection algorithm and the
 grading rules are unchanged.
+
+## 2026-09-24 -- SUPERCLAUDE MISSION 12, Workstream B: MLB Central-time
+## slate-date contract audit (branch `claude/central-slate-contract-20260924`,
+## stacked on PR #195 @ `175bf7ce1a`)
+
+This workstream was audit-first and made **no code change**. The report is
+`engineering/central_slate_contract_20260924/AUDIT.md`. The read-only replay
+`engineering/central_slate_contract_20260924/replay_evidence.py` reproduces
+every number in it from git objects.
+
+**Findings:**
+
+1. **The slate identity is sound.** Every date-derived identity is the MLB
+   official date, i.e. the schedule `date` param:
+   - `picks_{date}`, `board_freeze_{date}`, `grades_{date}`;
+   - the payload `date`;
+   - registry `slate_date`.
+
+   All 494 of 494 registry entries have `slate_date` equal to the Central date
+   of their game's first pitch.
+2. **The selector is wrong.** `mlb_daily.TODAY` is the runner's UTC date, so
+   "current" moves on at 7 pm CDT.
+3. **Real failures that PR #195 does not cover:**
+   - **A.** On 11 of 14 nights, the first build after 00:00Z dropped 1–5
+     still-pregame games (158–876 research rows) from Games and All Props, and
+     the Games page showed tomorrow's games.
+   - **B.** The delayed 22:30/23:30Z MLB Daily runs execute at
+     00:35–02:05Z, twice a night on every night since 09-14. They build
+     tomorrow's board without lineups instead of tonight's prime time.
+   - **C.** The hourly odds and prop snapshots are keyed by UTC date:
+     - tonight's late game lines are not captured after 00:00Z;
+     - `grade_value` closing prices cross slate files (718 of 8,189 keys for
+       09-23).
+   - **D.** History briefly shows the next Central day. Late-evening grading
+     passes grade the in-progress day, which is harmless because they wait for
+     a Final status.
+
+**Why nothing changed.** Switching `mlb_daily.TODAY` to the Central date would
+make the post-00:00Z MLB Daily runs overwrite the canonical `picks_{D}.json` and
+`board_freeze_{D}.json` with only the 2 or 3 games still pregame. For 09-23
+that means 10 games, 127 rows and 668 frozen records replaced by 3, then 2
+games. That silently shrinks the accuracy and calibration population.
+
+A consistent switch also needs workflow edits (`value_board_$(date -u)`), and
+the dashboard needs a product rule for the evening once every game has started.
+
+**No duplicate grading under any selector.** Grade files are rewritten whole
+per date, history de-duplicates by date, and public picks are idempotent by
+canonical ID.
+
+**Staged plan** (AUDIT.md section 6):
+- **Stage 1:** a Central dashboard selector plus lineup-watch.
+- **Stage 1b:** History hides or labels future days.
+- **Stage 2:** a canonical-overwrite guard, then a joint MLB Daily, grading
+  and workflow move.
+- **Stage 3:** slate-scoped market snapshots and value closes, which
+  re-settle the value record.
+
+**Jacob decides** (AUDIT.md section 7):
+- the late-evening board: roll to D+1, or hold D until Central midnight;
+- evening next-day Top Picks (6.7% of the registry);
+- the canonical-board semantics: a guard, a union, or unchanged;
+- value-screen re-settlement;
+- workflow authority.
+
+**Tests.** The targeted date, grading, freeze, registry and lifecycle suites
+pass (22 files). The full suite also passes: `for f in test_*.py`, 146 of 146, including the real-browser Central-midnight test (12 of 12).
+
+**Also noted.** `mlb_daily.py:301` hard-codes EDT (`-4h`, labelled "ET") for the
+data-package display and `game_hour`. That is wrong by 1 h after Nov 1.
+
+Alligator
