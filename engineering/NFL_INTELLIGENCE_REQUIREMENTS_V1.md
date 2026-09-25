@@ -286,6 +286,7 @@ This section uses the directive's five statuses, one per listed angle:
 - **Owner:** the agent that last held it. "Unassigned" means Jacob or SUPERCHAD assigns it.
 - **Scope of a TESTED result:** a TESTED result closes only the tested formulation (§15).
 - **Candidate sources:** "Candidate source" means named but not verified in this register.
+- **Two "F" namespaces:** the register's film requirement IDs (F01–F09, §5) appear only in the IDs column. Research factor numbers (F1–F18, F26, e.g. "F16 #212") appear only in Evidence and Next action, and refer to Tier 1 and Tier 2 workstreams, not to register IDs.
 
 ### 1. Opportunity, roles and redistribution
 
