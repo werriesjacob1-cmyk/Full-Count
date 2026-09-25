@@ -129,7 +129,7 @@ From `ci_failure_attribution.json`. Failures on the 13 re-rooted PRs (#73–#85)
 - **Proposed narrow repair:** give the e2e detail-sheet and My Board checks a deterministic synthetic Top Pick, following #208's pattern, without weakening any assertion.
 - **Owner:** unassigned (proposed Claude, as one small test-only PR once Jacob approves).
 
-## 3. Disposition of every open PR (44)
+## 3. Disposition of every open PR (46)
 
 | PR | Head | Base | Disposition | CI (latest on head) | Dependencies | Scientific status | Remaining blocker | Owner | Next action |
 |---|---|---|---|---|---|---|---|---|---|
@@ -176,7 +176,11 @@ From `ci_failure_attribution.json`. Failures on the 13 re-rooted PRs (#73–#85)
 | #78 | `b019e49981` | main | PORTED via #216 → SUPERSEDED once #216 merges | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33258381531) | #216 | pre-registration records (verbatim, provenance kept) | remaining branch content is obsolete generated output/data from the old tree Unique files absent on main: 1. | SUPERCHAD | after #216 merges, Jacob may close |
 | #77 | `5869216a73` | main | PORTED via #216 → SUPERSEDED once #216 merges | [cancelled root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259352845) | #216 | pre-registration records (verbatim, provenance kept) | remaining branch content is obsolete generated output/data from the old tree Unique files absent on main: 1. | SUPERCHAD | after #216 merges, Jacob may close |
 | #76 | `26dbe36714` | tooling/superclaude-activation-01 | DEPENDENCY BLOCKED — Jacob decision (agent configuration) | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33256810680) | — | SuperClaude activation: .claude agents/skills/rules/settings.json + CLAUDE.md edits | re-rooted; `.claude/settings.json` can change agent permissions, so porting needs explicit authorization; main has only `.claude/worktree-autosave.sh` Unique files absent on main: 3. | Jacob | decide port (as its own reviewed PR) or archive |
-| #75 | `26d37fd475` | main | **SUPERSEDED** (verified) | [cancelled root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259722404) | none | — | all 3 commits' fixes present on main in equivalent/evolved form (5b67: 28/28 lines; 26d37: 19/20; c001 superseded by main's model**Totals (46 open PRs, recomputed from the table):**
+| #75 | `26d37fd475` | main | **SUPERSEDED** (verified) | [cancelled root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33259722404) | none | — | all 3 commits' fixes present on main in equivalent/evolved form (5b67: 28/28 lines; 26d37: 19/20; c001 superseded by main's model_basis_at+market_prices_at stale fixture) Unique files absent on main: 0. | SUPERCHAD | Jacob: close |
+| #74 | `0ae4535d5a` | main | PORTED via #216 → SUPERSEDED once #216 merges | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33548879722) | #216 | pre-registration records (verbatim, provenance kept) | remaining branch content is obsolete generated output/data from the old tree Unique files absent on main: 2. | SUPERCHAD | after #216 merges, Jacob may close |
+| #73 | `79f1109fc1` | main | DEPENDENCY BLOCKED — Jacob decision (agent configuration) | [✗ root](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/33548167737) | — | SuperClaude activation: .claude agents/skills/rules/settings.json + CLAUDE.md edits | re-rooted; `.claude/settings.json` can change agent permissions, so porting needs explicit authorization; main has only `.claude/worktree-autosave.sh` Unique files absent on main: 20. | Jacob | decide port (as its own reviewed PR) or archive |
+
+**Totals (46 open PRs, recomputed from the table):**
 
 | Category | Count |
 |---|---|
