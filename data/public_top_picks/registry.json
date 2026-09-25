@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-25T21:22:48.855466+00:00",
+  "updated_at": "2026-09-25T22:37:30.509280+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -49565,6 +49565,208 @@
         },
         "qualification_timestamp": "2026-09-25T21:14:13.918951+00:00",
         "board_timestamp": "2026-09-25T21:14:13.893183+00:00",
+        "slate_date": "2026-09-25"
+      }
+    },
+    "fc2:823248:player-669392:hits:1:over": {
+      "canonical_id": "fc2:823248:player-669392:hits:1:over",
+      "settlement_identity": [
+        "823248",
+        [
+          "player",
+          "669392"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-25",
+      "first_published_at": "2026-09-25T22:37:30.509280+00:00",
+      "publication_provenance": {
+        "artifact_id": "df385778a76af8066668832c3980340c6769580005ee50bc9d96a366776ad60b",
+        "source_commit": "447319663f2e3f38ebec1219fe7e474115d50ff2",
+        "workflow_run_id": "36197518588",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-25T22:37:16.428499+00:00",
+        "data_hash": "66e74ac841ec90d4d016b3323ddc1857d388951c2559dcd63f60fccdebca9c3a",
+        "live_hash": "0f66c9a3eefedf91657e7fd0e9cb012f161638eb9f9a5b6a0162eebdd1a92c25"
+      },
+      "snapshot": {
+        "id": "fc2:823248:player-669392:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 823248,
+        "player_id": 669392,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Samad Taylor",
+        "team": "San Diego Padres",
+        "matchup": "Arizona Diamondbacks @ San Diego Padres",
+        "game_start": "2026-09-26T01:40:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6274,
+        "market_odds": -125,
+        "market_implied": 0.5556,
+        "market_edge": 0.0718,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (11.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 16.7 \u2014 hot recent contact",
+          "Team implied for 3.91 runs (league avg 4.245; line 3.5, game total 7.5)",
+          "Pitch-type exploit: RV/100 +1.7 vs FF (opposing SP throws it 27.0% of the time)",
+          "Hitter batting behind him: 0.358 wOBA (league ~.320)"
+        ],
+        "watchouts": [
+          "L7 avg EV 79.7mph (league ~88.5) \u2014 cold recent contact",
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Opposing SP ERA 3.72 \u2014 elite pitcher, tough matchup",
+          "Projected 3.57 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "AVG vs xBA: 0.324 vs 0.253 (+0.071) \u2014 outperforming his contact quality, regression risk",
+          "wOBA vs xwOBA: 0.366 vs 0.310 (+0.056) \u2014 outperforming his contact quality, regression risk",
+          "Public heavy on San Diego Padres (money% trails tickets% by 40 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 3.8 \u2014 below-average barrel rate",
+          "Hitters batting ahead of him: 0.283 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Opposing bullpen fatigue: 1/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading San Diego Padres (money% -40 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.6186,
+          0.656
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 45,
+        "lineup_assumed": null,
+        "base_rate": 0.5568,
+        "lift": 0.0706,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "f2bdd3926",
+          "prediction_timestamp": "2026-09-25T22:33:35.231809+00:00",
+          "odds_fetched_at": "2026-09-25T22:33:23.761559+00:00",
+          "board_generated_at": "2026-09-25T22:33:35.220660+00:00"
+        },
+        "qualification_timestamp": "2026-09-25T22:33:35.231809+00:00",
+        "board_timestamp": "2026-09-25T22:33:35.220660+00:00",
+        "slate_date": "2026-09-25"
+      }
+    },
+    "fc2:823248:player-669392:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:823248:player-669392:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "823248",
+        [
+          "player",
+          "669392"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-25",
+      "first_published_at": "2026-09-25T22:37:30.509280+00:00",
+      "publication_provenance": {
+        "artifact_id": "df385778a76af8066668832c3980340c6769580005ee50bc9d96a366776ad60b",
+        "source_commit": "447319663f2e3f38ebec1219fe7e474115d50ff2",
+        "workflow_run_id": "36197518588",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-25T22:37:16.428499+00:00",
+        "data_hash": "66e74ac841ec90d4d016b3323ddc1857d388951c2559dcd63f60fccdebca9c3a",
+        "live_hash": "0f66c9a3eefedf91657e7fd0e9cb012f161638eb9f9a5b6a0162eebdd1a92c25"
+      },
+      "snapshot": {
+        "id": "fc2:823248:player-669392:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 823248,
+        "player_id": 669392,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Samad Taylor",
+        "team": "San Diego Padres",
+        "matchup": "Arizona Diamondbacks @ San Diego Padres",
+        "game_start": "2026-09-26T01:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6865,
+        "market_odds": -165,
+        "market_implied": 0.6226,
+        "market_edge": 0.0639,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (11.0 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 16.7 \u2014 hot recent contact",
+          "Hitter batting behind him: 0.358 wOBA (league ~.320)",
+          "Team implied for 3.91 runs (league avg 4.245; line 3.5, game total 7.5)",
+          "Pitch-type exploit: RV/100 +1.7 vs FF (opposing SP throws it 27.0% of the time)"
+        ],
+        "watchouts": [
+          "L7 avg EV 79.7mph (league ~88.5) \u2014 cold recent contact",
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Opposing SP ERA 3.72 \u2014 elite pitcher, tough matchup",
+          "Projected 3.57 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.283 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "AVG vs xBA: 0.324 vs 0.253 (+0.071) \u2014 outperforming his contact quality, regression risk",
+          "wOBA vs xwOBA: 0.366 vs 0.310 (+0.056) \u2014 outperforming his contact quality, regression risk",
+          "Public heavy on San Diego Padres (money% trails tickets% by 40 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 3.8 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 1/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading San Diego Padres (money% -40 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.6757,
+          0.7096
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 45,
+        "lineup_assumed": null,
+        "base_rate": 0.671,
+        "lift": 0.0155,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "f2bdd3926",
+          "prediction_timestamp": "2026-09-25T22:33:35.231809+00:00",
+          "odds_fetched_at": "2026-09-25T22:33:23.761559+00:00",
+          "board_generated_at": "2026-09-25T22:33:35.220660+00:00"
+        },
+        "qualification_timestamp": "2026-09-25T22:33:35.231809+00:00",
+        "board_timestamp": "2026-09-25T22:33:35.220660+00:00",
         "slate_date": "2026-09-25"
       }
     }
