@@ -606,6 +606,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-25",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 49.8,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Detroit Tigers",
+          "game_pk": 824220,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 58.0,
+            "same_hand_ratio": 61.1111,
+            "l14_k_pct": 32.3529,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.584,
+          "raw_hit_probability": 0.5514,
+          "lift": 0.0601,
+          "reliability": "A",
+          "sample_n": 29,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 52.5,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Detroit Tigers",
+          "game_pk": 824220,
+          "team": "Pittsburgh Pirates",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7048,
+            "avg_outs_per_start": 15.1
+          },
+          "hit_probability": 0.6628,
+          "raw_hit_probability": 0.7048,
+          "lift": -0.1154,
+          "reliability": "A",
+          "sample_n": 29,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        }
+      ]
     }
   ]
 }

@@ -404,8 +404,8 @@
         {
           "prop": "Over 7.5 Strikeouts",
           "type": "pitcher",
-          "score": 42.9,
-          "notable_signals": 0,
+          "score": 26.7,
+          "notable_signals": 1,
           "matchup": "Cincinnati Reds @ Atlanta Braves",
           "game_pk": 824868,
           "team": "Atlanta Braves",
@@ -416,7 +416,10 @@
             "opp_team_k_pct": 84.0,
             "same_hand_ratio": 0.0,
             "l14_k_pct": 47.6471,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 87.9676,
+            "ump_k_pct": -0.372,
+            "ump_bb_pct": -0.348
           },
           "hit_probability": 0.2908,
           "raw_hit_probability": 0.2908,
@@ -432,7 +435,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 90.8,
+          "score": 90.4,
           "notable_signals": 1,
           "matchup": "Cincinnati Reds @ Atlanta Braves",
           "game_pk": 824868,
@@ -441,12 +444,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7954,
+            "outs_rate": 0.8025,
             "avg_outs_per_start": 18.12
           },
-          "hit_probability": 0.7175,
-          "raw_hit_probability": 0.7954,
-          "lift": 0.1419,
+          "hit_probability": 0.8025,
+          "raw_hit_probability": 0.8025,
+          "lift": 0.1891,
           "reliability": "A",
           "sample_n": 26,
           "projection": {

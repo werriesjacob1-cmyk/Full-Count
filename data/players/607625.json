@@ -588,7 +588,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 44.3,
+          "score": 37.5,
           "notable_signals": 0,
           "matchup": "Chicago White Sox @ Kansas City Royals",
           "game_pk": 824060,
@@ -600,7 +600,10 @@
             "opp_team_k_pct": 73.0,
             "same_hand_ratio": 12.5,
             "l14_k_pct": 61.7647,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 63.9204,
+            "ump_k_pct": -0.084,
+            "ump_bb_pct": 0.312
           },
           "hit_probability": 0.451,
           "raw_hit_probability": 0.451,
@@ -616,7 +619,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 36.6,
+          "score": 32.2,
           "notable_signals": 0,
           "matchup": "Chicago White Sox @ Kansas City Royals",
           "game_pk": 824060,
@@ -625,12 +628,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5258,
+            "outs_rate": 0.5319,
             "avg_outs_per_start": 16.35
           },
-          "hit_probability": 0.5422,
-          "raw_hit_probability": 0.5258,
-          "lift": -0.0334,
+          "hit_probability": 0.5464,
+          "raw_hit_probability": 0.5319,
+          "lift": -0.067,
           "reliability": "A",
           "sample_n": 31,
           "projection": {

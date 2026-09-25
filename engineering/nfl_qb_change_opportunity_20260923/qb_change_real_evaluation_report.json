@@ -1,0 +1,310 @@
+{
+  "generated_in_seconds": 17.2,
+  "team_seasons": [
+    2023,
+    2024,
+    2025
+  ],
+  "player_seasons": [
+    2023,
+    2024,
+    2025,
+    2026
+  ],
+  "eval_season": 2025,
+  "eval_min_week": 8,
+  "n_real_team_week_starter_observations": 1696,
+  "main_ablation": {
+    "matched_n": 3059,
+    "baseline_coaching_aware_mae": 1.386444868319182,
+    "qb_aware_mae": 1.38511789320672,
+    "rows_where_qb_feature_changed_the_projection": 1027,
+    "rows_with_insufficient_qb_specific_box_score_history": 0,
+    "abstain_reasons": {
+      "MISSING_REQUIRED_INPUT": 159,
+      "CATCH_RATE_OUT_OF_RANGE": 24,
+      "TARGET_SHARE_OUT_OF_RANGE": 2
+    },
+    "sample_records": [
+      {
+        "player_id": "00-0030035",
+        "player_name": "Adam Thielen",
+        "team": "MIN",
+        "season": 2025,
+        "week": 8,
+        "realized_receptions": 0.0,
+        "baseline_projection": 2.742543903742033,
+        "qb_aware_projection": 2.823423214576249
+      },
+      {
+        "player_id": "00-0030061",
+        "player_name": "Zach Ertz",
+        "team": "WAS",
+        "season": 2025,
+        "week": 8,
+        "realized_receptions": 4.0,
+        "baseline_projection": 3.7364951260655586,
+        "qb_aware_projection": 4.119725395405616
+      },
+      {
+        "player_id": "00-0030279",
+        "player_name": "Keenan Allen",
+        "team": "LAC",
+        "season": 2025,
+        "week": 8,
+        "realized_receptions": 4.0,
+        "baseline_projection": 6.537917484728565,
+        "qb_aware_projection": 6.537917484728565
+      },
+      {
+        "player_id": "00-0030506",
+        "player_name": "Travis Kelce",
+        "team": "KC",
+        "season": 2025,
+        "week": 8,
+        "realized_receptions": 6.0,
+        "baseline_projection": 5.2976935891098655,
+        "qb_aware_projection": 5.2976935891098655
+      },
+      {
+        "player_id": "00-0030564",
+        "player_name": "DeAndre Hopkins",
+        "team": "BAL",
+        "season": 2025,
+        "week": 8,
+        "realized_receptions": 1.0,
+        "baseline_projection": 2.5608459889698874,
+        "qb_aware_projection": 2.4080682453097517
+      }
+    ],
+    "qb_change_activation_samples": [
+      {
+        "player_id": "00-0030035",
+        "player_name": "Adam Thielen",
+        "team": "MIN",
+        "season": 2025,
+        "week": 8,
+        "realized_receptions": 0.0,
+        "baseline_projection": 2.742543903742033,
+        "qb_aware_projection": 2.823423214576249,
+        "incumbent_player_id": "00-0032950",
+        "incumbent_name": "Carson Wentz",
+        "qb_tenure_starts": 4,
+        "own_games_used_qb_aware": 4,
+        "own_games_used_naive_control": 5
+      },
+      {
+        "player_id": "00-0030061",
+        "player_name": "Zach Ertz",
+        "team": "WAS",
+        "season": 2025,
+        "week": 8,
+        "realized_receptions": 4.0,
+        "baseline_projection": 3.7364951260655586,
+        "qb_aware_projection": 4.119725395405616,
+        "incumbent_player_id": "00-0039910",
+        "incumbent_name": "Jayden Daniels",
+        "qb_tenure_starts": 3,
+        "own_games_used_qb_aware": 5,
+        "own_games_used_naive_control": 5
+      },
+      {
+        "player_id": "00-0030564",
+        "player_name": "DeAndre Hopkins",
+        "team": "BAL",
+        "season": 2025,
+        "week": 8,
+        "realized_receptions": 1.0,
+        "baseline_projection": 2.5608459889698874,
+        "qb_aware_projection": 2.4080682453097517,
+        "incumbent_player_id": "00-0033662",
+        "incumbent_name": "Cooper Rush",
+        "qb_tenure_starts": 2,
+        "own_games_used_qb_aware": 2,
+        "own_games_used_naive_control": 5
+      },
+      {
+        "player_id": "00-0032764",
+        "player_name": "Derrick Henry",
+        "team": "BAL",
+        "season": 2025,
+        "week": 8,
+        "realized_receptions": 0.0,
+        "baseline_projection": 1.374820229797943,
+        "qb_aware_projection": 1.2927997047247703,
+        "incumbent_player_id": "00-0033662",
+        "incumbent_name": "Cooper Rush",
+        "qb_tenure_starts": 2,
+        "own_games_used_qb_aware": 2,
+        "own_games_used_naive_control": 5
+      },
+      {
+        "player_id": "00-0032775",
+        "player_name": "Demarcus Robinson",
+        "team": "SF",
+        "season": 2025,
+        "week": 8,
+        "realized_receptions": 2.0,
+        "baseline_projection": 1.492969420572801,
+        "qb_aware_projection": 1.5081650380849925,
+        "incumbent_player_id": "00-0036972",
+        "incumbent_name": "Mac Jones",
+        "qb_tenure_starts": 3,
+        "own_games_used_qb_aware": 5,
+        "own_games_used_naive_control": 5
+      },
+      {
+        "player_id": "00-0033280",
+        "player_name": "Christian McCaffrey",
+        "team": "SF",
+        "season": 2025,
+        "week": 8,
+        "realized_receptions": 3.0,
+        "baseline_projection": 7.5626273466744465,
+        "qb_aware_projection": 7.6396006530019225,
+        "incumbent_player_id": "00-0036972",
+        "incumbent_name": "Mac Jones",
+        "qb_tenure_starts": 3,
+        "own_games_used_qb_aware": 5,
+        "own_games_used_naive_control": 5
+      },
+      {
+        "player_id": "00-0033288",
+        "player_name": "George Kittle",
+        "team": "SF",
+        "season": 2025,
+        "week": 8,
+        "realized_receptions": 4.0,
+        "baseline_projection": 4.703659075841812,
+        "qb_aware_projection": 4.751533468471245,
+        "incumbent_player_id": "00-0036972",
+        "incumbent_name": "Mac Jones",
+        "qb_tenure_starts": 3,
+        "own_games_used_qb_aware": 5,
+        "own_games_used_naive_control": 5
+      },
+      {
+        "player_id": "00-0033293",
+        "player_name": "Aaron Jones",
+        "team": "MIN",
+        "season": 2025,
+        "week": 8,
+        "realized_receptions": 2.0,
+        "baseline_projection": 3.163577519943589,
+        "qb_aware_projection": 3.256873371738173,
+        "incumbent_player_id": "00-0032950",
+        "incumbent_name": "Carson Wentz",
+        "qb_tenure_starts": 4,
+        "own_games_used_qb_aware": 4,
+        "own_games_used_naive_control": 5
+      }
+    ]
+  },
+  "real_largest_qb_change_activation_2023_2025": {
+    "diff": 21.6,
+    "team": "NO",
+    "season": 2025,
+    "week": 9,
+    "predicted_dropbacks_qb_aware": 61.0,
+    "predicted_dropbacks_naive_control": 39.4,
+    "own_games_used_qb_aware": 1,
+    "own_games_used_naive_control": 5,
+    "incumbent_player_id": "00-0040743",
+    "incumbent_name": "Tyler Shough",
+    "qb_tenure_starts": 1
+  },
+  "real_named_single_player_demonstration_BAL_week8_2025": {
+    "candidate_player_id": "00-0030564",
+    "candidate_team": "BAL",
+    "target_season": 2025,
+    "target_week": 8,
+    "baseline_projection": 2.5608459889698874,
+    "baseline_probabilities": {
+      "decision_status": "SHADOW_ONLY",
+      "research_direction": "OVER",
+      "research_edge": 0.08531960996749732,
+      "projection": 2.5608459889698874,
+      "line": 2.5,
+      "line_gap": 0.060845988969887355,
+      "model_over_probability": 0.5961538461538461,
+      "model_under_probability": 0.40384615384615385,
+      "market_fair_over_probability": 0.5108342361863488,
+      "market_fair_under_probability": 0.4891657638136511,
+      "market_hold": 0.04707884288145214,
+      "residual_n": 50,
+      "probability_method": "pooled_B0_empirical_residuals_laplace"
+    },
+    "qb_aware_projection": 2.4080682453097517,
+    "qb_aware_probabilities": {
+      "decision_status": "SHADOW_ONLY",
+      "research_direction": "UNDER",
+      "research_edge": 0.010834236186348878,
+      "projection": 2.4080682453097517,
+      "line": 2.5,
+      "line_gap": -0.09193175469024828,
+      "model_over_probability": 0.5,
+      "model_under_probability": 0.5,
+      "market_fair_over_probability": 0.5108342361863488,
+      "market_fair_under_probability": 0.4891657638136511,
+      "market_hold": 0.04707884288145214,
+      "residual_n": 50,
+      "probability_method": "pooled_B0_empirical_residuals_laplace"
+    },
+    "team_dropbacks_baseline": {
+      "predicted_dropbacks_coaching_aware": 35.2,
+      "predicted_dropbacks_naive_control": 35.2,
+      "coaching_aware_basis": "BLENDED_OFFENSE_AND_DEFENSE",
+      "naive_control_basis": "BLENDED_OFFENSE_AND_DEFENSE",
+      "own_games_used_coaching_aware": 5,
+      "own_games_used_naive_control": 5,
+      "coaching_feature_changed_the_projection": false,
+      "regime_note": {
+        "regime_lookup_status": "UNKNOWN",
+        "regime_reason": "NO_GAME_DATE_FOR_SEASON_WEEK",
+        "regime_filter_applied": false
+      }
+    },
+    "team_dropbacks_qb_aware": {
+      "predicted_dropbacks_qb_aware": 33.1,
+      "predicted_dropbacks_naive_control": 35.2,
+      "qb_aware_basis": "BLENDED_OFFENSE_AND_DEFENSE",
+      "naive_control_basis": "BLENDED_OFFENSE_AND_DEFENSE",
+      "own_games_used_qb_aware": 2,
+      "own_games_used_naive_control": 5,
+      "qb_feature_changed_the_projection": true,
+      "qb_note": {
+        "incumbent_player_id": "00-0033662",
+        "qb_tenure_starts": 2,
+        "reason": null,
+        "qb_filter_applied": true,
+        "rows_excluded_by_qb_filter": 38,
+        "rows_with_unresolved_starter": 0
+      }
+    },
+    "target_share": {
+      "estimate": 0.10458869878130556,
+      "n_current_season_games": 6,
+      "current_season_mean": 0.08440893901420217,
+      "prior_season_value": 0.14494821831551233,
+      "weight_current_season": 0.6666666666666666,
+      "basis": "SHRUNK_CURRENT_TOWARD_PRIOR_SEASON",
+      "player_id": "00-0030564",
+      "target_season": 2025,
+      "target_week": 8
+    },
+    "catch_rate": {
+      "estimate": 0.6955943362193362,
+      "n_current_season_games": 6,
+      "current_season_mean": 0.6666666666666666,
+      "prior_season_value": 0.7303075396825397,
+      "weight_current_season": 0.5454545454545454,
+      "basis": "SHRUNK_CURRENT_TOWARD_PRIOR_SEASON",
+      "player_id": "00-0030564",
+      "target_season": 2025,
+      "target_week": 8
+    },
+    "qb_feature_changed_the_projection": true,
+    "status": "RESEARCH_ONLY_NOT_PROMOTED",
+    "prediction_source": "QB_CHANGE_AWARE_TEAM_OPPORTUNITY_V1"
+  }
+}
