@@ -1,0 +1,59 @@
+{
+  "evaluation": {
+    "held_n_rows": 1875,
+    "held_out_actual_over_rate": 0.48430469252196273,
+    "held_out_brier_over_probability": {
+      "EMPIRICAL_RESIDUAL_POOL": 0.24043196916850876,
+      "NORMAL_APPROXIMATION_CONTROL": 0.2404688125836118
+    },
+    "held_out_mean_predicted_over_probability": {
+      "EMPIRICAL_RESIDUAL_POOL": 0.4877313426229179,
+      "NORMAL_APPROXIMATION_CONTROL": 0.4948688722552925
+    },
+    "n_rung_observations": 9334,
+    "normal_fit_train": {
+      "mean": -0.6974845078012101,
+      "n": 13609,
+      "std": 89.15094482145027
+    },
+    "player_clustered_bootstrap_brier_gap": {
+      "brier_gap_p2_5": -0.0002756384026368409,
+      "brier_gap_p50": -3.416818899220937e-05,
+      "brier_gap_p97_5": 0.00019469084511472242,
+      "cluster": "player_id",
+      "iterations": 2000,
+      "players": 104,
+      "seed": 20260923
+    },
+    "predeclared_promotion_rule": "Empirical-residual ladder preferred over Normal-approximation control iff its held-out Brier score (macro-averaged over the five predeclared rungs) is strictly lower on the identical held-out population.",
+    "promotion_decision": {
+      "brier_gap_empirical_minus_normal": -3.68434151030439e-05,
+      "decision": "EMPIRICAL_PREFERRED_ON_PREDECLARED_RULE",
+      "empirical_beats_normal_on_brier": true
+    },
+    "residual_pool_n": 13609,
+    "rows_by_rung_count": {
+      "3": 2,
+      "4": 37,
+      "5": 1836
+    },
+    "schema_version": 1,
+    "status": "RESEARCH_ONLY_NOT_PROMOTED",
+    "train_n_rows": 13609
+  },
+  "held_partition": "2023 <= season <= 2025",
+  "passing_stat_invariant_failures": {},
+  "qb_source_rows": 17378,
+  "reused_projection_model": "passing_yards_baseline_research.rolling_predictions (B0)",
+  "rung_offsets_yards": [
+    -30.0,
+    -15.0,
+    0.0,
+    15.0,
+    30.0
+  ],
+  "schema_version": 1,
+  "source_audit_manifest_sha256": "35eaf8cb803f5d1a516bd7873d090a133ec5ab7567854f54353dcf1e23f45e40",
+  "status": "RESEARCH_ONLY_NOT_PROMOTED",
+  "train_partition": "season <= 2022"
+}
