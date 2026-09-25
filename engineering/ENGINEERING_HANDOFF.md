@@ -6353,3 +6353,18 @@ Alligator
 - **Bridge:** #91 comment 5835314568.
 
 Alligator
+
+## 2026-09-25 (later) -- Seal hardening; F17 receiving efficiency
+**Seal.**
+- Trigger `trig_01FiiD9MknrMxbB1zbeS4d5N` (Saturday 18:30Z) is pinned to `e05e02c592` (builder) and `f4fb17aa0b` (F11/F12 exploratory, written to `exploratory/`).
+- The pre-week-3 input recovery bundle is at `claude/nfl-seal-inputs-20260925` @ `73c32149a8`.
+- The Sunday predictions are not frozen until that run commits.
+
+**F17** (`claude/nfl-tier2-player-efficiency-f17-20260925` @ `edddb9ab2b`, draft PR #213): NOT SUPPORTED.
+- F17_FULL − SIMPLE_EFF on HOLDOUT: −0.010 yards [−0.027, +0.007].
+- Both beat the scale control by about 0.11–0.12 yards, from regressing efficiency, which overlaps F3.
+- The yards-over-expected skill increment over depth-only is significant, but depth-only loses to simple.
+
+**Bridge:** #91 AGENT RELEASE for F17.
+
+Alligator
