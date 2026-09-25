@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-25T12:12:53.406502+00:00",
+  "updated_at": "2026-09-25T19:32:57.025481+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -48286,6 +48286,303 @@
         },
         "qualification_timestamp": "2026-09-25T11:12:57.692731+00:00",
         "board_timestamp": "2026-09-25T11:12:57.663635+00:00",
+        "slate_date": "2026-09-25"
+      }
+    },
+    "fc2:824058:player-664728:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824058:player-664728:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824058",
+        [
+          "player",
+          "664728"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-25",
+      "first_published_at": "2026-09-25T19:32:57.025481+00:00",
+      "publication_provenance": {
+        "artifact_id": "1642690993da97b84d800b97199320c4f635f3302ba60c74cdf033be1d237960",
+        "source_commit": "7ce3c6928a8db1efa2925152855bc20abfd3906b",
+        "workflow_run_id": "36180232595",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-25T19:32:43.617385+00:00",
+        "data_hash": "a9ef8919a3bdfb840ef33df7c669266176da1246748f36969e30a26cb7437576",
+        "live_hash": "96a2354b72a94a0d16c09f9daa3d1156ed8cf6f40db7b486d637667b8acff451"
+      },
+      "snapshot": {
+        "id": "fc2:824058:player-664728:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824058,
+        "player_id": 664728,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Kyle Isbel",
+        "team": "Kansas City Royals",
+        "matchup": "Cleveland Guardians @ Kansas City Royals",
+        "game_start": "2026-09-25T23:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6135,
+        "market_odds": -135,
+        "market_implied": 0.5745,
+        "market_edge": 0.039,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 25.0 \u2014 hot recent contact",
+          "Platoon: L bat vs RHP (favorable)",
+          "Hitter batting behind him: 0.335 wOBA (league ~.320)"
+        ],
+        "watchouts": [
+          "L7 avg EV 76.4mph (league ~88.5) \u2014 cold recent contact",
+          "Opposing SP ERA 3.63 \u2014 elite pitcher, tough matchup",
+          "Projected 3.49 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.327 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Team implied for 3.14 runs (league avg 4.245; line 3.5, game total 7) \u2014 a weak offensive environment",
+          "Public heavy on Kansas City Royals (money% trails tickets% by 24 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 2.7 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 3/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Kansas City Royals (money% -24 pts vs ticket%) \u2014 smart money moving away from this side",
+          "BvP: 3-for-17 vs Gavin Williams (standard error \u00b19 pts on a 17-AB career sample -- weighted lightly on that basis, not just because the count looks small)"
+        ],
+        "prob_ci": [
+          0.6002,
+          0.6451
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 94,
+        "lineup_assumed": null,
+        "base_rate": 0.6714,
+        "lift": -0.0579,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "b6e32c2c7",
+          "prediction_timestamp": "2026-09-25T19:30:39.373999+00:00",
+          "odds_fetched_at": "2026-09-25T19:30:28.783928+00:00",
+          "board_generated_at": "2026-09-25T19:30:39.353912+00:00"
+        },
+        "qualification_timestamp": "2026-09-25T19:30:39.373999+00:00",
+        "board_timestamp": "2026-09-25T19:30:39.353912+00:00",
+        "slate_date": "2026-09-25"
+      }
+    },
+    "fc2:824058:player-686681:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824058:player-686681:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824058",
+        [
+          "player",
+          "686681"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-25",
+      "first_published_at": "2026-09-25T19:32:57.025481+00:00",
+      "publication_provenance": {
+        "artifact_id": "1642690993da97b84d800b97199320c4f635f3302ba60c74cdf033be1d237960",
+        "source_commit": "7ce3c6928a8db1efa2925152855bc20abfd3906b",
+        "workflow_run_id": "36180232595",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-25T19:32:43.617385+00:00",
+        "data_hash": "a9ef8919a3bdfb840ef33df7c669266176da1246748f36969e30a26cb7437576",
+        "live_hash": "96a2354b72a94a0d16c09f9daa3d1156ed8cf6f40db7b486d637667b8acff451"
+      },
+      "snapshot": {
+        "id": "fc2:824058:player-686681:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824058,
+        "player_id": 686681,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Michael Massey",
+        "team": "Kansas City Royals",
+        "matchup": "Cleveland Guardians @ Kansas City Royals",
+        "game_start": "2026-09-25T23:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6747,
+        "market_odds": -175,
+        "market_implied": 0.6364,
+        "market_edge": 0.0383,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.5 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 22.7 \u2014 hot recent contact",
+          "Platoon: L bat vs RHP (favorable)"
+        ],
+        "watchouts": [
+          "L7 avg EV 85.8mph (league ~88.5) \u2014 cold recent contact",
+          "Opposing SP ERA 3.63 \u2014 elite pitcher, tough matchup",
+          "Projected 3.75 PA (batting slot 7) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.283 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.327 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.14 runs (league avg 4.245; line 3.5, game total 7) \u2014 a weak offensive environment",
+          "Public heavy on Kansas City Royals (money% trails tickets% by 24 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 6.3 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 3/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Kansas City Royals (money% -24 pts vs ticket%) \u2014 smart money moving away from this side",
+          "BvP: 2-for-14 vs Gavin Williams (standard error \u00b19 pts on a 14-AB career sample -- weighted lightly on that basis, not just because the count looks small)"
+        ],
+        "prob_ci": [
+          0.6639,
+          0.6978
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 126,
+        "lineup_assumed": null,
+        "base_rate": 0.6714,
+        "lift": 0.0033,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "b6e32c2c7",
+          "prediction_timestamp": "2026-09-25T19:30:39.373999+00:00",
+          "odds_fetched_at": "2026-09-25T19:30:28.783928+00:00",
+          "board_generated_at": "2026-09-25T19:30:39.353912+00:00"
+        },
+        "qualification_timestamp": "2026-09-25T19:30:39.373999+00:00",
+        "board_timestamp": "2026-09-25T19:30:39.353912+00:00",
+        "slate_date": "2026-09-25"
+      }
+    },
+    "fc2:824058:player-670231:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824058:player-670231:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824058",
+        [
+          "player",
+          "670231"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-25",
+      "first_published_at": "2026-09-25T19:32:57.025481+00:00",
+      "publication_provenance": {
+        "artifact_id": "1642690993da97b84d800b97199320c4f635f3302ba60c74cdf033be1d237960",
+        "source_commit": "7ce3c6928a8db1efa2925152855bc20abfd3906b",
+        "workflow_run_id": "36180232595",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-25T19:32:43.617385+00:00",
+        "data_hash": "a9ef8919a3bdfb840ef33df7c669266176da1246748f36969e30a26cb7437576",
+        "live_hash": "96a2354b72a94a0d16c09f9daa3d1156ed8cf6f40db7b486d637667b8acff451"
+      },
+      "snapshot": {
+        "id": "fc2:824058:player-670231:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824058,
+        "player_id": 670231,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "John Rave",
+        "team": "Kansas City Royals",
+        "matchup": "Cleveland Guardians @ Kansas City Royals",
+        "game_start": "2026-09-25T23:40:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6408,
+        "market_odds": -155,
+        "market_implied": 0.6078,
+        "market_edge": 0.033,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 27.3 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+2.8mph 2nd-half vs 1st-half)",
+          "Platoon: L bat vs RHP (favorable)",
+          "Season barrel% 11.0"
+        ],
+        "watchouts": [
+          "L7 avg EV 79.9mph (league ~88.5) \u2014 cold recent contact",
+          "Opposing SP ERA 3.63 \u2014 elite pitcher, tough matchup",
+          "Projected 3.63 PA (batting slot 8) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.319 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.260 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.14 runs (league avg 4.245; line 3.5, game total 7) \u2014 a weak offensive environment",
+          "Public heavy on Kansas City Royals (money% trails tickets% by 24 pts) \u2014 sharp money is fading this side",
+          "Opposing bullpen fatigue: 3/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Kansas City Royals (money% -24 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.6275,
+          0.6724
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 47,
+        "lineup_assumed": null,
+        "base_rate": 0.6714,
+        "lift": -0.0306,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "b6e32c2c7",
+          "prediction_timestamp": "2026-09-25T19:30:39.373999+00:00",
+          "odds_fetched_at": "2026-09-25T19:30:28.783928+00:00",
+          "board_generated_at": "2026-09-25T19:30:39.353912+00:00"
+        },
+        "qualification_timestamp": "2026-09-25T19:30:39.373999+00:00",
+        "board_timestamp": "2026-09-25T19:30:39.353912+00:00",
         "slate_date": "2026-09-25"
       }
     }
