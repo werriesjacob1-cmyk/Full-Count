@@ -1,0 +1,281 @@
+{
+  "analysis": "NFL_RECEPTIONS_OPPORTUNITY_ENGINE_COMPONENT_ABLATION_2024_HOLDOUT",
+  "coaching_ablation": {
+    "coaching_aware_mae": 1.4249014201468604,
+    "hc_registry_source": {
+      "bytes": 2177838,
+      "commit": "8ed09b2fe3ea42332b2249a995737e13dd931ff3",
+      "fields_used": [
+        "season",
+        "week",
+        "game_type",
+        "gameday",
+        "away_team",
+        "home_team",
+        "away_coach",
+        "home_coach"
+      ],
+      "path": "data/games.csv",
+      "repository": "https://github.com/nflverse/nfldata",
+      "sha256": "26332ae5d8d8d0481f0670cf5e3849497a415351d4026ae5bee15a5aab96d188",
+      "verification_note": "Re-fetched raw.githubusercontent.com/nflverse/nfldata/8ed09b2fe3ea42332b2249a995737e13dd931ff3/data/games.csv and confirmed both byte count and SHA-256 against this pin before ingesting.",
+      "verified_at": "2026-09-19"
+    },
+    "matched_n": 3026,
+    "naive_control_mae": 1.4249014201468604,
+    "note": "Real coaching-aware team-dropback prediction (the value the full engine actually uses) vs. the naive-control (unfiltered) team-dropback prediction, player-side inputs held fixed at the shrunk share/rate.",
+    "real_hc_regime_intervals_loaded": 255,
+    "regime_lookup_status_counts": {
+      "RESOLVED": 3175
+    },
+    "rows_where_coaching_feature_changed_the_projection": 0,
+    "rows_where_coaching_feature_changed_the_projection_pct": 0.0
+  },
+  "core_ablation": {
+    "b0_mae": 1.3531934411191344,
+    "exclusion_reason_counts": {
+      "B0_INSUFFICIENT_REAL_HISTORY": 247,
+      "FULL_ENGINE_CATCH_RATE_OUT_OF_RANGE": 19,
+      "FULL_ENGINE_TARGET_SHARE_OUT_OF_RANGE": 1,
+      "TEAM_VOLUME_ONLY_CATCH_RATE_OUT_OF_RANGE": 1
+    },
+    "full_opportunity_engine_mae": 1.4554944346792342,
+    "matched_n": 2907,
+    "note": "B0 vs. a team-volume-only baseline (real team dropbacks x naive, unshrunk recent-average target share/catch rate) vs. the full current opportunity engine (coaching-aware dropbacks x shrinkage-blended share/rate), all on the SAME matched row set.",
+    "team_volume_only_naive_share_mae": 1.504352880969752
+  },
+  "eligible_eval_rows_considered": 3175,
+  "eval_min_week": 8,
+  "eval_season": 2024,
+  "generated_in_seconds": 24.019429445266724,
+  "note": "The 2025 season (weeks 8+) has been the test population for every prior evaluation of this challenger (Missions 3, 4, 6) and is therefore no longer a fair holdout for a new hypothesis about the same features. This script uses the 2024 season (weeks 8+) instead -- genuinely never inspected by any prior evaluation in this repository -- per this project's own anti-retuning doctrine. Numbers here are a real, different population from the established 2025 findings and must not be conflated with them.",
+  "sample_records": [
+    {
+      "b0_projection": 3.6,
+      "full_engine_projection": 4.745828791708649,
+      "naive_catch_rate": 0.7699999999999999,
+      "naive_target_share": 0.19304055043185478,
+      "player_id": "00-0030061",
+      "realized_receptions": 7.0,
+      "season": 2024,
+      "shrunk_catch_rate": 0.7404761904761905,
+      "shrunk_target_share": 0.18417120269409326,
+      "team": "WAS",
+      "team_dropbacks_plain": 34.8,
+      "team_volume_only_projection": 5.17271458937198,
+      "week": 8
+    },
+    {
+      "b0_projection": 4.2,
+      "full_engine_projection": 7.069992477990602,
+      "naive_catch_rate": 0.6727272727272727,
+      "naive_target_share": 0.24299006292277947,
+      "player_id": "00-0030279",
+      "realized_receptions": 2.0,
+      "season": 2024,
+      "shrunk_catch_rate": 0.7061148727815395,
+      "shrunk_target_share": 0.26629054575706346,
+      "team": "CHI",
+      "team_dropbacks_plain": 37.6,
+      "team_volume_only_projection": 6.146323191603106,
+      "week": 8
+    },
+    {
+      "b0_projection": 1.4,
+      "full_engine_projection": 1.880419031724564,
+      "naive_catch_rate": 0.6533333333333334,
+      "naive_target_share": 0.05049339257891396,
+      "player_id": "00-0030431",
+      "realized_receptions": 2.0,
+      "season": 2024,
+      "shrunk_catch_rate": 0.5654761904761905,
+      "shrunk_target_share": 0.08376253409246366,
+      "team": "HOU",
+      "team_dropbacks_plain": 39.7,
+      "team_volume_only_projection": 1.3096639544501514,
+      "week": 8
+    },
+    {
+      "b0_projection": 5.0,
+      "full_engine_projection": 5.46106086953672,
+      "naive_catch_rate": 0.7222222222222221,
+      "naive_target_share": 0.21697397799699591,
+      "player_id": "00-0030506",
+      "realized_receptions": 10.0,
+      "season": 2024,
+      "shrunk_catch_rate": 0.7433870002051819,
+      "shrunk_target_share": 0.21170571416465178,
+      "team": "KC",
+      "team_dropbacks_plain": 34.7,
+      "team_volume_only_projection": 5.437608970802492,
+      "week": 8
+    },
+    {
+      "b0_projection": 2.8,
+      "full_engine_projection": 4.2030046896296795,
+      "naive_catch_rate": 0.7047619047619047,
+      "naive_target_share": 0.1501433321866758,
+      "player_id": "00-0030564",
+      "realized_receptions": 2.0,
+      "season": 2024,
+      "shrunk_catch_rate": 0.6665182707963456,
+      "shrunk_target_share": 0.18172653288479187,
+      "team": "KC",
+      "team_dropbacks_plain": 34.7,
+      "team_volume_only_projection": 3.6717909370375823,
+      "week": 8
+    }
+  ],
+  "snap_share_ablation": {
+    "gated_thresholds": [
+      {
+        "gate_high": 1.4,
+        "gate_low": 0.7,
+        "label": "gate_0.7_1.4",
+        "mae": 1.6140590125352374,
+        "real_gated_in_examples": [
+          {
+            "gate_raw_ratio": 0.41493065205226454,
+            "gated_projection": 0.7802434949649611,
+            "gated_target_share": 0.034755642888535984,
+            "player_id": "00-0030431",
+            "realized_receptions": 2.0,
+            "season": 2024,
+            "team": "HOU",
+            "unadjusted_projection": 1.880419031724564,
+            "unadjusted_target_share": 0.08376253409246366,
+            "week": 8
+          },
+          {
+            "gate_raw_ratio": 0.6461777908943089,
+            "gated_projection": 2.7158882854633273,
+            "gated_target_share": 0.1174276495663768,
+            "player_id": "00-0030564",
+            "realized_receptions": 2.0,
+            "season": 2024,
+            "team": "KC",
+            "unadjusted_projection": 4.2030046896296795,
+            "unadjusted_target_share": 0.18172653288479187,
+            "week": 8
+          },
+          {
+            "gate_raw_ratio": 0.10180104724910785,
+            "gated_projection": 0.6723464146654687,
+            "gated_target_share": 0.03659719664026744,
+            "player_id": "00-0031428",
+            "realized_receptions": 0.0,
+            "season": 2024,
+            "team": "DET",
+            "unadjusted_projection": 1.6808660366636718,
+            "unadjusted_target_share": 0.09149299160066861,
+            "week": 8
+          },
+          {
+            "gate_raw_ratio": 2.763649850507957,
+            "gated_projection": 2.139793399857509,
+            "gated_target_share": 0.09881942140196315,
+            "player_id": "00-0031763",
+            "realized_receptions": 1.0,
+            "season": 2024,
+            "team": "CHI",
+            "unadjusted_projection": 0.8559173599430037,
+            "unadjusted_target_share": 0.039527768560785256,
+            "week": 8
+          },
+          {
+            "gate_raw_ratio": 3.445892546630577,
+            "gated_projection": 4.581203997609486,
+            "gated_target_share": 0.19831733968584142,
+            "player_id": "00-0032385",
+            "realized_receptions": 3.0,
+            "season": 2024,
+            "team": "TB",
+            "unadjusted_projection": 1.8324815990437946,
+            "unadjusted_target_share": 0.07932693587433656,
+            "week": 8
+          }
+        ],
+        "rows_gated_in": 1010,
+        "rows_left_unadjusted": 2016
+      },
+      {
+        "gate_high": 2.0,
+        "gate_low": 0.5,
+        "label": "gate_0.5_2.0",
+        "mae": 1.578455797587471,
+        "real_gated_in_examples": [
+          {
+            "gate_raw_ratio": 0.41493065205226454,
+            "gated_projection": 0.7802434949649611,
+            "gated_target_share": 0.034755642888535984,
+            "player_id": "00-0030431",
+            "realized_receptions": 2.0,
+            "season": 2024,
+            "team": "HOU",
+            "unadjusted_projection": 1.880419031724564,
+            "unadjusted_target_share": 0.08376253409246366,
+            "week": 8
+          },
+          {
+            "gate_raw_ratio": 0.10180104724910785,
+            "gated_projection": 0.6723464146654687,
+            "gated_target_share": 0.03659719664026744,
+            "player_id": "00-0031428",
+            "realized_receptions": 0.0,
+            "season": 2024,
+            "team": "DET",
+            "unadjusted_projection": 1.6808660366636718,
+            "unadjusted_target_share": 0.09149299160066861,
+            "week": 8
+          },
+          {
+            "gate_raw_ratio": 2.763649850507957,
+            "gated_projection": 2.139793399857509,
+            "gated_target_share": 0.09881942140196315,
+            "player_id": "00-0031763",
+            "realized_receptions": 1.0,
+            "season": 2024,
+            "team": "CHI",
+            "unadjusted_projection": 0.8559173599430037,
+            "unadjusted_target_share": 0.039527768560785256,
+            "week": 8
+          },
+          {
+            "gate_raw_ratio": 3.445892546630577,
+            "gated_projection": 4.581203997609486,
+            "gated_target_share": 0.19831733968584142,
+            "player_id": "00-0032385",
+            "realized_receptions": 3.0,
+            "season": 2024,
+            "team": "TB",
+            "unadjusted_projection": 1.8324815990437946,
+            "unadjusted_target_share": 0.07932693587433656,
+            "week": 8
+          },
+          {
+            "gate_raw_ratio": 2.5766071541143662,
+            "gated_projection": 9.430370584700661,
+            "gated_target_share": 0.34717384087847114,
+            "player_id": "00-0032775",
+            "realized_receptions": 2.0,
+            "season": 2024,
+            "team": "LA",
+            "unadjusted_projection": 3.772148233880265,
+            "unadjusted_target_share": 0.13886953635138846,
+            "week": 8
+          }
+        ],
+        "rows_gated_in": 495,
+        "rows_left_unadjusted": 2531
+      }
+    ],
+    "matched_n": 3026,
+    "note": "Real plain team dropbacks x shrunk target share/catch rate as the 'unadjusted' control, compared against the UNIVERSAL snap-share adjustment (current merged form, no gate) and two GATED thresholds (the new hypothesis under test) -- all on the same matched row set, since a gated row that doesn't trigger falls back to the identical unadjusted projection by construction.",
+    "rows_with_universal_adjustment_applied": 2978,
+    "unadjusted_mae": 1.4249014201468604,
+    "universal_adjusted_mae": 1.6383955488876694
+  },
+  "status": "HISTORICAL_OPERATIONAL_TESTING_NOT_PROSPECTIVE_FRESH_2024_HOLDOUT_NEVER_PREVIOUSLY_EVALUATED",
+  "team_offense_rows_excluded_for_negative_value_bug": 0,
+  "workstream_id": "NFL-OPPORTUNITY-ABLATION-2024-HOLDOUT-20260923"
+}
