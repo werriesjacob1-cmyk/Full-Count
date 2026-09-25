@@ -1,0 +1,101 @@
+{
+  "declared": "F17 advanced receiving efficiency: fit once on DEV, score once (research only).\n\n    --stage fit    k (harness DEV scale control) and w per mode on DEV target\n                   seasons 2017-2022 (2016 has no prior-season position prior);\n                   write f17_params.json -- commit it before --stage final\n    --stage final  refit, abort unless identical to the committed params, score\n                   every partition; write f17_report.json\n\nPRE-DECLARED (committed before any fit or scoring):\n* Market: receiving_yards. Primary population SNAP = REG player-games with\n  PFR offense_snaps > 0 at WR/TE/RB with a harness-rule B0 (settlement-aligned:\n  FanDuel voids only a player who plays no snap; eligibility never uses the\n  game's own targets/receptions). Actual = weekly receiving_yards, 0 when the\n  player has no weekly stat row. Sensitivity population ROLE = the harness's\n  target-conditioned role rows (disclosed as postgame-conditioned).\n* Constants: RECENT_GAMES 8, K_X 20, K_S 150, season weights 1.0/0.6/0.3,\n  w grid 0.00..1.00 step 0.05 minimising DEV MAE on activated rows (ties ->\n  smaller w). Modes: SIMPLE_EFF (control), F17_DEPTH, F17_FULL (primary).\n* Primary test: F17_FULL vs SIMPLE_EFF on HOLDOUT_2023_2025, paired MAE\n  difference, game-clustered bootstrap 95% CI (harness). Also reported:\n  every mode vs B0 and vs the scale control, F17_FULL vs F17_DEPTH (skill\n  increment), player-clustered CIs, FRESH_2026 (weeks 1-2), ROLE sensitivity.\n* Decision: w(F17_FULL) = 0 -> REJECTED. SUPPORTED_HISTORICAL_EXPLORATORY only\n  if (a) HOLDOUT F17_FULL - SIMPLE_EFF CI upper < 0, (b) HOLDOUT F17_FULL -\n  scale control CI upper < 0, and (c) FRESH point estimate vs SIMPLE_EFF <= 0.\n  Otherwise NOT_SUPPORTED. HOLDOUT outcomes were inspected by earlier\n  experiments, so no historical result is prospective evidence.\n",
+  "dev_mechanism_persistence": {
+    "expected_yards_per_target": {
+      "corr": 0.8114229389702325,
+      "n_player_pairs": 354
+    },
+    "raw_yards_per_target": {
+      "corr": 0.3861971509324599,
+      "n_player_pairs": 354
+    },
+    "yards_over_expected_per_target": {
+      "corr": 0.25125544780659037,
+      "n_player_pairs": 354
+    }
+  },
+  "params": {
+    "k": 0.69,
+    "modes": {
+      "F17_DEPTH": {
+        "dev_mae": 18.01993179611123,
+        "n_dev_activated": 28562,
+        "w": 0.45
+      },
+      "F17_FULL": {
+        "dev_mae": 17.988985009177057,
+        "n_dev_activated": 28562,
+        "w": 0.6
+      },
+      "SIMPLE_EFF": {
+        "dev_mae": 18.023383238180262,
+        "n_dev_activated": 28562,
+        "w": 0.5
+      }
+    }
+  },
+  "population_diagnostics": {
+    "no_b0": 6392,
+    "no_weekly_row_actual_0": 5210,
+    "non_receiver_position": 258,
+    "with_weekly_row": 43709
+  },
+  "provenance": {
+    "pbp_sha256": {
+      "2016": "dc1703d9aae3ec697ac2787617f82b6f074d0c151e1a54f8217f570a63dcb5ed",
+      "2017": "74032964ca6bdfc5bbe186253231a533d2d82aa531fac02b9382da01b3a8b34e",
+      "2018": "d37899610b397b96a90da6902827de5b46c5457b93e0e16d5f95a8eb524e4a7d",
+      "2019": "b764668137052be23745953cbc33fa17e537a70c81e9b73785a19a15e7288216",
+      "2020": "bc954b5780e325df4faa255fac092585c981a4de5d2f553a8a4e0a3c8b3a3cf2",
+      "2021": "e8743a568f99667a8bdcd29ba12224ee1782ad2b7916bee78ee335c099383739",
+      "2022": "0c69a71eb39498956c7b1d5c1ca52ce7fe679934a95d1af249facb5ea9829ea4",
+      "2023": "4649804ee0f0a40b41e51ec75a1ce921949d7fab5459213488656b92f78560e8",
+      "2024": "23370d5d10f8104d80d46a1fc5e61f4f6f5a3263fe96fe2dd629913cfcb08c06",
+      "2025": "2f135887790a013fd004e609e37096bb4816d5cc80b9f19122e1bad478961978",
+      "2026": "6643f82adb1158c8367fb806cfc531a079ce321ca8e2e21012d196dc1a51ece8"
+    },
+    "players_csv_sha256": "4dd70f328f31b0bb7cbf043412298d5a325863e27b8f2eeea22c9e925c808dee",
+    "snap_counts_sha256": {
+      "2016": "a778e24e9eb665ffe8f16093b03c5a263dca0250b3aa92bd6002f61f534bea59",
+      "2017": "eab2fad2df99249d4061ed9c5c34d312cdba07cf3159d027d255bdc9b6526917",
+      "2018": "9a408b78a55f799110aed70de3564e157faf089ce9bed780d0368bf49ae13e0b",
+      "2019": "0cd52be8fa57f18503b670cb8263246c4f548375b768cbcad1c7a7462c98970d",
+      "2020": "512e35f17d076eb5d99b933c4a144eb95dcddf40c0320dbb397cae3c35683716",
+      "2021": "8e4dae054a4749cf2d4919508d9161a6068fd67509979aefa385bfb3803d0ee5",
+      "2022": "0018a4833fbf0f825286c1c27450c6254391b548d6c55bcde728e93e4816815a",
+      "2023": "303b61aa5c33ffda863f93a750fc14483f397f9187ad502b1ce71e9b516a64c0",
+      "2024": "a2aa58efe093f8aa0ad5aadf09f81d8ec690a1183bd2dde68d20e7f109a9c335",
+      "2025": "3fc2deb0e9ad86d34d4578cb80bb21c95253e088ee22ca028adf46f7485eff1f",
+      "2026": "de7dee6776781052e85fd697d13e6c1d18fb22e04df0b2794cfd0ec758c7efab"
+    },
+    "snap_diagnostics": {
+      "rows": 55569,
+      "unmapped_pfr_id": 74,
+      "zero_offense_snaps": 4042
+    },
+    "weekly": {
+      "audit_manifest_sha256": "35eaf8cb803f5d1a516bd7873d090a133ec5ab7567854f54353dcf1e23f45e40",
+      "current_season": {
+        "path": "stats_player_week_2026.csv",
+        "rows": 2223,
+        "seasons": [
+          2026
+        ],
+        "sha256": "736bdddef4779023f7eb1831a1f2c8627181aee60cc280d5f0464cf5f41a8e67"
+      },
+      "seasons": {
+        "2015": "21052baa3b3291a92faf3e6827891295010dca8cc5cefd5a909984b9d7b64664",
+        "2016": "eb0264c65d1ef593196afcd4ba24e9f2e9b7942923bf6f4bb4639684e2c4d470",
+        "2017": "592b0916065987b0b3afb0480162f03350d16b12250dc42b0f194e2ab1378563",
+        "2018": "c53021bcfc9f89d30edd6f1fe145a1d7d6ce469efeec75974fe9f0adac568642",
+        "2019": "a05558126b1209b80fe11a8f18938cb35816370bf9990975a87de49e9eed7376",
+        "2020": "05b992676faccc8940efbf6242cb76358069372d31d7c2e02c1a4acdcd3cbe18",
+        "2021": "41915fb49238902ad1f129ebf0405b11a1e710454ae0fe8f7b3e4f9145875f48",
+        "2022": "ad426c3fe5bf1cc30c3f137fdfe96d054e19d400879ee4413129da49fa7b54be",
+        "2023": "f19cb71a5de0dce7fd09376026237c9ee9d5a93fe13815a2ea3ec2d37204cb17",
+        "2024": "3ddc45a84f759aa348ce465ae001752c530575455717657cdfe1f8abfcdb4759",
+        "2025": "e5e0615b3d96a3eaebfaee91e55afb4a4e7fe0caf057454177bcd7d6ad4bcfc2"
+      }
+    }
+  }
+}
