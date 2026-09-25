@@ -1,0 +1,754 @@
+{
+  "schema_version": 1,
+  "sport": "NFL",
+  "purpose": "Source control plane for NFL intelligence. Coverage and point-in-time integrity are separate from angle desirability.",
+  "status_vocabulary": {
+    "AUDITED": "Repository has explicit source audit/provenance evidence for stated use.",
+    "PARTIAL": "Some repository evidence exists; contract incomplete for intended use.",
+    "PROSPECTIVE_ONLY": "Usable only from captured future snapshots unless a legitimate historical archive is established.",
+    "REAUDIT_REQUIRED": "Previously referenced source must be rechecked before new modeling use.",
+    "DISCOVERY": "Candidate source; no modeling authorization.",
+    "RIGHTS_OR_COST_REVIEW": "Potentially useful but access/licensing/cost must be resolved."
+  },
+  "sources": [
+    {
+      "source_id": "NFLVERSE_WEEKLY_STATS",
+      "status": "AUDITED",
+      "intended_use": [
+        "historical_player_stats",
+        "historical_team_stats",
+        "player_role_research"
+      ],
+      "historical_coverage_claim": "1999-2025 assets fully file-audited in repo engineering evidence",
+      "current_season_policy": "must be revalidated for current-season availability before each integration",
+      "point_in_time_class": "COMPLETED_GAME_FACTS_ONLY_FOR_STRICTLY_PRIOR_FEATURES",
+      "repo_evidence": [
+        "engineering/NFLVERSE_WEEKLY_STATS_FULL_AUDIT_2026-09-14.md",
+        "engineering/NFLVERSE_WEEKLY_STATS_SOURCE_AUDIT_2026-09-14.md"
+      ],
+      "restrictions": [
+        "never use current-game outcome fields as pregame features"
+      ]
+    },
+    {
+      "source_id": "NFLVERSE_SCHEDULES_AND_PFR_LINES",
+      "status": "AUDITED",
+      "intended_use": [
+        "schedule_identity",
+        "historical_closing_market_control"
+      ],
+      "historical_coverage_claim": "1999-2026 schedule rows audited; settled PFR closing line subset documented",
+      "current_season_policy": "moving source; snapshot/digest when used",
+      "point_in_time_class": "SCHEDULE_IDENTITY_OK__PFR_LINES_RETROSPECTIVE_EVALUATION_ONLY",
+      "repo_evidence": [
+        "engineering/NFLVERSE_GAME_LINES_SOURCE_AUDIT_2026-09-15.md",
+        "engineering/NFLVERSE_GAME_LINES_NORMALIZATION_2026-09-15.md"
+      ],
+      "restrictions": [
+        "no book identity",
+        "no capture timestamp",
+        "not a pregame feature",
+        "not FanDuel-specific",
+        "not line-movement history"
+      ]
+    },
+    {
+      "source_id": "NFLFASTR_PLAY_BY_PLAY",
+      "status": "PARTIAL",
+      "intended_use": [
+        "team_tendencies",
+        "game_state",
+        "drive_efficiency",
+        "penalties",
+        "turnover_process",
+        "explosives",
+        "pace"
+      ],
+      "historical_coverage_claim": "feature builders exist; exhaustive warehouse/source-vintage audit still required for genius program",
+      "current_season_policy": "snapshot raw source and preserve source vintage",
+      "point_in_time_class": "STRICTLY_PRIOR_COMPLETED_PLAYS",
+      "repo_evidence": [
+        "nfl/research/pbp_prior_tendencies.py"
+      ],
+      "restrictions": [
+        "do not treat postgame-derived fields as pregame facts without field-level availability review"
+      ]
+    },
+    {
+      "source_id": "NFLVERSE_SNAP_COUNTS",
+      "status": "PARTIAL",
+      "intended_use": [
+        "ol_continuity",
+        "participation",
+        "role_history"
+      ],
+      "historical_coverage_claim": "Game-level PFR snap counts available from 2012 onward; nflreadr current-season feed updates multiple times daily. Repo still needs full-season digest/coverage audit before broad model use.",
+      "current_season_policy": "usable after completed games as strictly-prior history; snapshot/digest source asset and verify publication completeness",
+      "point_in_time_class": "RETROSPECTIVE_COMPLETED_GAME_FACTS_FOR_STRICTLY_PRIOR_FEATURES",
+      "repo_evidence": [
+        "nfl/research/ol_continuity_prior.py"
+      ],
+      "restrictions": [
+        "not a timestamped historical vintage archive",
+        "do not infer upcoming starters from current-game snap counts",
+        "2012 coverage quality must be audited before assuming full-season completeness"
+      ]
+    },
+    {
+      "source_id": "NFLVERSE_INJURY_REPORTS",
+      "status": "REAUDIT_REQUIRED",
+      "intended_use": [
+        "historical_weekly_injury_status",
+        "practice_status"
+      ],
+      "historical_coverage_claim": "nflreadr loader documents data since 2009, but nflverse status documentation states the source died after 2024 and there is no 2025 data/ETA. Historical 2009-2024 can be audited; current live use requires another source.",
+      "current_season_policy": "DO NOT use as 2026 live injury source unless nflverse explicitly restores current-season data and a new audit verifies it",
+      "point_in_time_class": "HISTORICAL_WEEKLY_REPORTS_ONLY_UNTIL_LIVE_SOURCE_RESTORED",
+      "repo_evidence": [
+        "nfl/research/injury_availability_features.py"
+      ],
+      "restrictions": [
+        "weekly filed status is not equivalent to official inactive list",
+        "must preserve publication/effective timing",
+        "current nflverse injury pipeline is not a reliable 2026 live feed"
+      ]
+    },
+    {
+      "source_id": "OFFICIAL_NFL_INACTIVES",
+      "status": "PROSPECTIVE_ONLY",
+      "intended_use": [
+        "final_game_day_availability"
+      ],
+      "historical_coverage_claim": "no bulk historical archive established in repo",
+      "current_season_policy": "archive raw page/article with publication and observation timestamps",
+      "point_in_time_class": "PREGAME_PROSPECTIVE",
+      "repo_evidence": [
+        "existing official inactive normalizer/capture path referenced by current NFL workflow"
+      ],
+      "restrictions": [
+        "do not fabricate historical inactive state"
+      ]
+    },
+    {
+      "source_id": "FANDUEL_NFL",
+      "status": "PROSPECTIVE_ONLY",
+      "intended_use": [
+        "live_market_prices",
+        "spread",
+        "total",
+        "player_props",
+        "market_movement"
+      ],
+      "historical_coverage_claim": "no legitimate broad historical point-in-time FanDuel archive established",
+      "current_season_policy": "archive raw payload, event identity, market time, capture time, selection id, price, line, digest",
+      "point_in_time_class": "PREGAME_PROSPECTIVE",
+      "repo_evidence": [
+        "nfl/archive/sources/fanduel_nfl.py",
+        "nfl/prospective/game_market_snapshot.py"
+      ],
+      "restrictions": [
+        "do not fabricate historical prices",
+        "future/closing state cannot enter earlier prediction"
+      ]
+    },
+    {
+      "source_id": "ESPN_SCOREBOARD",
+      "status": "PROSPECTIVE_ONLY",
+      "intended_use": [
+        "explicit_final_game_outcome"
+      ],
+      "historical_coverage_claim": "used as an explicit-final outcome adapter, not a pregame feature source",
+      "current_season_policy": "archive source payload digest and observation time",
+      "point_in_time_class": "POSTGAME_OUTCOME_ONLY",
+      "repo_evidence": [
+        "nfl/prospective/espn_final_outcome.py"
+      ],
+      "restrictions": [
+        "never use final score as pregame feature"
+      ]
+    },
+    {
+      "source_id": "NFLVERSE_ROSTERS",
+      "status": "PARTIAL",
+      "intended_use": [
+        "identity",
+        "roster_context"
+      ],
+      "historical_coverage_claim": "Season-level rosters are available back to 1920; weekly rosters are available back to 2002. Repo needs exact weekly-vintage/source audit before historical as-of role use.",
+      "current_season_policy": "prefer weekly/timestamped roster state for role/availability; snapshot raw bytes and source update time",
+      "point_in_time_class": "WEEKLY_ROSTER_CAN_SUPPORT_AS_OF_STATE_AFTER_VINTAGE_AUDIT",
+      "repo_evidence": [
+        "engineering/TOTAL_SPORTS_INTELLIGENCE_ROADMAP_2026-09-12.md"
+      ],
+      "restrictions": [
+        "season-level roster alone cannot prove exact historical week state",
+        "identity and status fields must be joined with stable player ids"
+      ]
+    },
+    {
+      "source_id": "DEPTH_CHARTS",
+      "status": "PARTIAL",
+      "intended_use": [
+        "role",
+        "replacement_graph",
+        "starter_projection"
+      ],
+      "historical_coverage_claim": "nflreadr documents team/week depth charts back to 2001. Source changed after 2024; from 2025 onward each appended record carries a timestamped ISO8601 dt for point-in-time assignment.",
+      "current_season_policy": "2025+ timestamped depth chart snapshots are promising live role input; archive exact source vintage/digest and map pos_slot/pos_rank to stable player ids",
+      "point_in_time_class": "2001_2024_WEEK_LEVEL__2025_PLUS_TIMESTAMPED_PIT",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_2026-09-18.md"
+      ],
+      "restrictions": [
+        "source/schema break after 2024 must be versioned",
+        "depth rank is not actual future snap share",
+        "historical weeks require season-specific source semantics"
+      ]
+    },
+    {
+      "source_id": "COACH_PLAYCALLER_HISTORY",
+      "status": "PARTIAL",
+      "intended_use": [
+        "coach_regime",
+        "coordinator_regime",
+        "playcaller_regime"
+      ],
+      "historical_coverage_claim": "Can be constructed from PFR team-season HC/OC/DC/scheme scaffold plus dated contemporaneous playcaller override evidence. Exact exhaustive historical playcaller intervals remain incomplete.",
+      "current_season_policy": "maintain separate role intervals for HC/OC/DC and actual offensive/defensive playcaller; update only from timestamped evidence",
+      "point_in_time_class": "COMPOSITE_REGIME_WITH_DATED_OVERRIDES",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_4_2026-09-18.md"
+      ],
+      "restrictions": [
+        "title != playcaller",
+        "midseason changes need effective date",
+        "shared responsibilities allowed",
+        "unknown responsibility must remain UNKNOWN"
+      ]
+    },
+    {
+      "source_id": "WEATHER",
+      "status": "PARTIAL",
+      "intended_use": [
+        "wind",
+        "gust",
+        "precipitation",
+        "temperature",
+        "humidity"
+      ],
+      "historical_coverage_claim": "Leakage-safe archived forecast data is available through Open-Meteo products for recent seasons; long-horizon historical weather/reanalysis is available much deeper but is not equivalent to a pregame forecast.",
+      "current_season_policy": "capture exact forecast run/lead time before kickoff and retain model, run initialization, observation time, stadium coordinates and raw digest",
+      "point_in_time_class": "PREGAME_FORECAST_RUN_REQUIRED__OBSERVED_OR_REANALYSIS_EVALUATION_ONLY",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_2026-09-18.md",
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_2_2026-09-18.md"
+      ],
+      "restrictions": [
+        "do not use postgame observed weather as if it were a pregame forecast",
+        "roof status must be modeled separately",
+        "forecast model/version and lead time matter"
+      ]
+    },
+    {
+      "source_id": "STADIUM_SURFACE",
+      "status": "DISCOVERY",
+      "intended_use": [
+        "roof",
+        "surface",
+        "altitude",
+        "stadium_geometry"
+      ],
+      "historical_coverage_claim": "not audited",
+      "current_season_policy": "version stadium/surface changes by effective date",
+      "point_in_time_class": "DATED_STATIC_OR_SLOW_CHANGING",
+      "repo_evidence": [],
+      "restrictions": [
+        "surface/roof changes require effective-date history"
+      ]
+    },
+    {
+      "source_id": "OFFICIAL_ASSIGNMENTS_AND_PENALTIES",
+      "status": "PARTIAL",
+      "intended_use": [
+        "referee_crew",
+        "penalty_tendencies"
+      ],
+      "historical_coverage_claim": "nflreadr officials assignments available from 2015 onward with game_id, official identity, position, season, week. Penalty outcome features can be joined separately from play-by-play.",
+      "current_season_policy": "verify current game crew assignment publication timing before using as pregame feature; completed-game crew history is strictly prior",
+      "point_in_time_class": "HISTORICAL_GAME_ASSIGNMENTS__CURRENT_ASSIGNMENT_PIT_REQUIRES_PUBLICATION_CHECK",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_2026-09-18.md"
+      ],
+      "restrictions": [
+        "crew effects require shrinkage and skeptical priors",
+        "historical assignment availability does not prove when future-game assignments became public"
+      ]
+    },
+    {
+      "source_id": "NEXT_GEN_OR_TRACKING_DERIVED",
+      "status": "RIGHTS_OR_COST_REVIEW",
+      "intended_use": [
+        "coverage",
+        "route",
+        "alignment",
+        "expected_rush",
+        "expected_pressure",
+        "player_geometry"
+      ],
+      "historical_coverage_claim": "not warehoused in repo",
+      "current_season_policy": "resolve access, rights, fields, update cadence and PIT semantics before implementation",
+      "point_in_time_class": "UNKNOWN_UNTIL_ACCESS_AUDIT",
+      "repo_evidence": [],
+      "restrictions": [
+        "do not imply raw tracking access merely because public NGS metrics exist"
+      ]
+    },
+    {
+      "source_id": "COMMERCIAL_CHARTING_PFF_OR_EQUIVALENT",
+      "status": "RIGHTS_OR_COST_REVIEW",
+      "intended_use": [
+        "route_charting",
+        "coverage",
+        "blocking",
+        "pressure",
+        "film_proxy"
+      ],
+      "historical_coverage_claim": "not authorized/purchased",
+      "current_season_policy": "requires Jacob purchase/access authorization if paid",
+      "point_in_time_class": "UNKNOWN_UNTIL_VENDOR_CONTRACT_AUDIT",
+      "repo_evidence": [],
+      "restrictions": [
+        "no purchase authorization implied",
+        "respect licensing/redistribution"
+      ]
+    },
+    {
+      "source_id": "LEGAL_FILM_VIDEO",
+      "status": "RIGHTS_OR_COST_REVIEW",
+      "intended_use": [
+        "future_visual_film_agent"
+      ],
+      "historical_coverage_claim": "no licensed film ingestion",
+      "current_season_policy": "do not ingest until rights/retrieval/play identity are solved",
+      "point_in_time_class": "NOT_APPROVED",
+      "repo_evidence": [],
+      "restrictions": [
+        "structured data should prove residual gap first"
+      ]
+    },
+    {
+      "source_id": "MULTI_BOOK_MARKETS",
+      "status": "RIGHTS_OR_COST_REVIEW",
+      "intended_use": [
+        "cross_book_disagreement",
+        "consensus",
+        "lead_lag",
+        "stale_price_detection"
+      ],
+      "historical_coverage_claim": "no legitimate historical multi-book archive established",
+      "current_season_policy": "preserve exact book/time/selection/price if added",
+      "point_in_time_class": "PROSPECTIVE_UNLESS_ARCHIVE_PROVEN",
+      "repo_evidence": [],
+      "restrictions": [
+        "no purchase or scraping expansion authorization implied"
+      ]
+    },
+    {
+      "source_id": "NFL_DRAFT_COMBINE_COLLEGE_PRIORS",
+      "status": "DISCOVERY",
+      "intended_use": [
+        "rookie_priors",
+        "athletic_profile",
+        "draft_capital",
+        "college_production"
+      ],
+      "historical_coverage_claim": "not yet source-audited in repo",
+      "current_season_policy": "bind prospect identity and draft/combine vintage before use",
+      "point_in_time_class": "PRE_NFL_PRIOR_ONLY_AFTER_SOURCE_AUDIT",
+      "repo_evidence": [],
+      "restrictions": [
+        "college competition and era adjustments required",
+        "do not treat draft capital as direct NFL ability"
+      ]
+    },
+    {
+      "source_id": "NEWS_TRANSACTIONS_CONTRACTS",
+      "status": "DISCOVERY",
+      "intended_use": [
+        "transactions",
+        "role_change_context",
+        "contract_context",
+        "narrative_hypotheses"
+      ],
+      "historical_coverage_claim": "no structured claim ledger or complete archive established",
+      "current_season_policy": "archive claim/source/speaker/publication/observation timestamps and contradictions",
+      "point_in_time_class": "PREGAME_CLAIM_VINTAGE_REQUIRED",
+      "repo_evidence": [
+        "engineering/TOTAL_SPORTS_INTELLIGENCE_ROADMAP_2026-09-12.md"
+      ],
+      "restrictions": [
+        "news claims are not facts until verified",
+        "speaker reliability must be measured by claim type"
+      ]
+    },
+    {
+      "source_id": "INTERNAL_REPO_FEATURE",
+      "status": "AUDITED",
+      "intended_use": [
+        "reuse_existing_point_in_time_safe_feature_modules"
+      ],
+      "historical_coverage_claim": "varies by feature; each caller must preserve the underlying source coverage and provenance",
+      "current_season_policy": "do not elevate a derived feature above the source evidence that created it",
+      "point_in_time_class": "INHERITS_UNDERLYING_SOURCE_CONTRACT",
+      "repo_evidence": [
+        "nfl/research/qb_continuity_features.py",
+        "nfl/research/ol_continuity_prior.py"
+      ],
+      "restrictions": [
+        "not an independent source",
+        "must retain original source/version lineage"
+      ]
+    },
+    {
+      "source_id": "INTERNAL_MODEL_OUTPUT",
+      "status": "AUDITED",
+      "intended_use": [
+        "correlation_research",
+        "cross_market_consistency",
+        "portfolio_research"
+      ],
+      "historical_coverage_claim": "only predictions/evidence actually frozen by FULL COUNT may be used",
+      "current_season_policy": "bind model version, code SHA, feature version, evidence timestamp and candidate universe",
+      "point_in_time_class": "INHERITS_FROZEN_MODEL_EVIDENCE",
+      "repo_evidence": [
+        "nfl/prospective/shadow_snapshot.py",
+        "nfl/prospective/game_market_snapshot.py"
+      ],
+      "restrictions": [
+        "never reconstruct missing historical predictions after outcomes",
+        "not an external information source"
+      ]
+    },
+    {
+      "source_id": "NFLVERSE_PARTICIPATION",
+      "status": "PARTIAL",
+      "intended_use": [
+        "historical_play_participation",
+        "formation",
+        "box_count",
+        "role_research"
+      ],
+      "historical_coverage_claim": "nflreadr participation available from 2016. Pre-2023 comes from NFL NGS; 2023+ comes from FTN and is released only after all postseason games are complete.",
+      "current_season_policy": "NOT suitable for in-season 2026 role/injury updates under current release policy; use completed historical seasons for research only",
+      "point_in_time_class": "HISTORICAL_ONLY_FOR_2023_PLUS__NOT_CURRENT_SEASON_LIVE",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_2026-09-18.md"
+      ],
+      "restrictions": [
+        "2023+ participation is not available during the season",
+        "license attribution requirements differ by era",
+        "do not treat postseason-released participation as contemporaneous pregame data"
+      ]
+    },
+    {
+      "source_id": "NFLVERSE_NEXTGEN_WEEKLY",
+      "status": "PARTIAL",
+      "intended_use": [
+        "weekly_passing_ngs",
+        "weekly_receiving_ngs",
+        "weekly_rushing_ngs",
+        "expected_rushing_yards",
+        "player_efficiency"
+      ],
+      "historical_coverage_claim": "nflreadr weekly NFL Next Gen Stats begin in 2016 for passing/receiving/rushing; current-season feed updates nightly, subject to NGS minimum-attempt thresholds.",
+      "current_season_policy": "can support strictly-prior weekly features after prior games; snapshot/digest release and preserve missing-below-threshold as missing, not zero",
+      "point_in_time_class": "WEEKLY_COMPLETED_GAME_FACTS_STRICTLY_PRIOR",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_2026-09-18.md"
+      ],
+      "restrictions": [
+        "thresholded population",
+        "not raw player-tracking coordinates",
+        "missing players may mean below NGS minimum rather than true zero"
+      ]
+    },
+    {
+      "source_id": "NFLVERSE_PFR_ADVSTATS",
+      "status": "PARTIAL",
+      "intended_use": [
+        "pressure_history",
+        "blitz_history",
+        "bad_throw_history",
+        "drops",
+        "advanced_rushing_receiving_defense"
+      ],
+      "historical_coverage_claim": "PFR advanced player stats via nflreadr available from 2018 onward for pass/rush/rec/def, with weekly and season summaries where supported.",
+      "current_season_policy": "use completed-game facts only as strictly-prior features; snapshot/digest and audit field-level definition changes",
+      "point_in_time_class": "RETROSPECTIVE_COMPLETED_GAME_FACTS_FOR_STRICTLY_PRIOR_FEATURES",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_2026-09-18.md"
+      ],
+      "restrictions": [
+        "not raw tracking",
+        "PFR definitions/schema may change",
+        "current-game values never enter pregame feature row"
+      ]
+    },
+    {
+      "source_id": "NFLVERSE_WEEKLY_ROSTERS",
+      "status": "PARTIAL",
+      "intended_use": [
+        "historical_week_roster_state",
+        "status",
+        "player_team_identity",
+        "depth_context"
+      ],
+      "historical_coverage_claim": "nflreadr weekly roster data available back to 2002.",
+      "current_season_policy": "snapshot weekly state and preserve source vintage before joining to target games",
+      "point_in_time_class": "WEEK_LEVEL_AS_OF_STATE_AFTER_SOURCE_AUDIT",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_2026-09-18.md"
+      ],
+      "restrictions": [
+        "status field semantics require audit by era",
+        "do not substitute season-level roster for weekly state"
+      ]
+    },
+    {
+      "source_id": "NFL_COM_OFFICIAL_INJURY_REPORT",
+      "status": "PROSPECTIVE_ONLY",
+      "intended_use": [
+        "practice_participation",
+        "injury_designation",
+        "game_status",
+        "current_week_availability"
+      ],
+      "historical_coverage_claim": "NFL.com exposes official current weekly injury reports; systematic historical archive depth has not yet been verified.",
+      "current_season_policy": "capture official NFL injury report repeatedly during the week with observed_at/source digest; preserve DNP/limited/full and game-status progression rather than only latest state",
+      "point_in_time_class": "PREGAME_PROSPECTIVE_OFFICIAL_REPORT",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_2_2026-09-18.md"
+      ],
+      "restrictions": [
+        "do not overwrite earlier practice states",
+        "game status and practice status are distinct",
+        "official inactive list remains separate and later"
+      ]
+    },
+    {
+      "source_id": "OPEN_METEO_FORECAST_ARCHIVE",
+      "status": "PARTIAL",
+      "intended_use": [
+        "historical_pregame_weather",
+        "prospective_weather",
+        "forecast_lead_time_research"
+      ],
+      "historical_coverage_claim": "Open-Meteo Historical Forecast coverage begins around 2021-2022; Previous Runs provides fixed 1-7 day lead-time archives mostly from Jan 2024 (some model fields deeper); Single Runs preserves exact run initialization, with ECMWF IFS HRES from Mar 2024 and most other models from Apr 2026.",
+      "current_season_policy": "for each game capture exact run initialization and lead time at defined clocks; preserve weather model/provider, stadium coordinates, valid time and raw response digest",
+      "point_in_time_class": "TRUE_ARCHIVED_FORECAST_RUNS_FOR_SUPPORTED_PERIODS",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_2_2026-09-18.md"
+      ],
+      "restrictions": [
+        "Historical Forecast stitched series is not identical to one exact forecast run",
+        "model versions change across years",
+        "older ERA5/reanalysis is outcome-context research, not a pregame forecast",
+        "roof status must gate outdoor weather exposure"
+      ]
+    },
+    {
+      "source_id": "NFLVERSE_FTN_CHARTING",
+      "status": "PARTIAL",
+      "intended_use": [
+        "motion",
+        "play_action",
+        "rpo",
+        "qb_location",
+        "box_count",
+        "no_huddle",
+        "blitzers",
+        "pass_rushers",
+        "qb_fault_sack",
+        "interception_worthy",
+        "throwaway",
+        "progression_read",
+        "catchable_ball",
+        "contested_ball",
+        "drop"
+      ],
+      "historical_coverage_claim": "nflreadr documents manually charted FTN play-level data from 2022 onward. Current-season charting is published during the season, generally within about 48 hours after games, and nflverse jobs poll multiple times daily.",
+      "current_season_policy": "use completed prior games only; preserve date_pulled/source release and nflverse game/play ids; current target game's charting is never available pregame",
+      "point_in_time_class": "COMPLETED_GAME_MANUAL_CHARTING_STRICTLY_PRIOR",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_3_2026-09-18.md"
+      ],
+      "restrictions": [
+        "CC-BY-SA attribution to FTN Data via nflverse required",
+        "2022 primary-read coding differs from 2023+ (primary reads may be NA in 2022)",
+        "not raw tracking coordinates",
+        "charting arrives after games and is only prior-history for future targets",
+        "coverage/schema must be audited season by season before modeling"
+      ]
+    },
+    {
+      "source_id": "PFR_TEAM_SEASON_COACHING",
+      "status": "PARTIAL",
+      "intended_use": [
+        "head_coach_history",
+        "offensive_coordinator_history",
+        "defensive_coordinator_history",
+        "scheme_labels",
+        "defensive_alignment"
+      ],
+      "historical_coverage_claim": "Pro-Football-Reference team-season pages expose head coach, OC, DC, notable assistants, offensive scheme and defensive alignment for historical seasons. Systematic season/team crawl depth has not yet been repo-audited.",
+      "current_season_policy": "use as broad team-season regime scaffold; snapshot source page and effective season; do not infer playcaller from coordinator title",
+      "point_in_time_class": "SEASON_LEVEL_HISTORICAL_REGIME_SCAFFOLD",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_4_2026-09-18.md"
+      ],
+      "restrictions": [
+        "coordinator title does not imply playcalling responsibility",
+        "midseason changes require dated overrides",
+        "scheme labels are coarse and source-defined"
+      ]
+    },
+    {
+      "source_id": "NFL_OFFICIAL_PLAYCALLER_REPORTING",
+      "status": "PROSPECTIVE_ONLY",
+      "intended_use": [
+        "offensive_playcaller_change",
+        "defensive_playcaller_change",
+        "dated_responsibility_override"
+      ],
+      "historical_coverage_claim": "NFL.com/team reporting can explicitly document playcalling responsibility changes; no exhaustive historical archive has yet been reconstructed.",
+      "current_season_policy": "capture explicit dated statements about who calls plays; preserve publication time, effective date, source reference and confidence",
+      "point_in_time_class": "DATED_CONTEMPORANEOUS_RESPONSIBILITY_EVIDENCE",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_SOURCE_AUDIT_4_2026-09-18.md"
+      ],
+      "restrictions": [
+        "absence of report is not proof of playcaller",
+        "HC/OC titles alone cannot fill missing responsibility",
+        "shared or partial playcalling must be representable"
+      ]
+    },
+    {
+      "source_id": "NFL_TEAM_OFFICIAL_PRESSERS",
+      "status": "PROSPECTIVE_ONLY",
+      "intended_use": [
+        "coach_press_conferences",
+        "player_press_conferences",
+        "coordinator_press_conferences",
+        "practice_context",
+        "role_comments",
+        "injury_context",
+        "scheme_comments"
+      ],
+      "historical_coverage_claim": "NFL.com maintains a league press-conference video channel and individual team sites maintain dated coach/player press-conference libraries; exhaustive team-by-team historical depth is not yet audited.",
+      "current_season_policy": "capture official team/NFL press conference item as soon as published; preserve event date, publication time, speaker, role, source URL, transcript/caption availability, and raw digest",
+      "point_in_time_class": "OFFICIAL_PUBLIC_STATEMENT_PREGAME_OR_POSTGAME_WITH_PUBLICATION_TIMESTAMP",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_NEWS_BRAIN_2026-09-18.md"
+      ],
+      "restrictions": [
+        "speaker statement is a claim, not automatically a verified fact",
+        "postgame comments may explain past outcomes but cannot enter pregame models for the game already played",
+        "coach strategic language may be deceptive or intentionally vague",
+        "video/caption extraction must retain exact source timestamp and speaker identity"
+      ]
+    },
+    {
+      "source_id": "NFL_TEAM_OFFICIAL_NEWS",
+      "status": "PROSPECTIVE_ONLY",
+      "intended_use": [
+        "practice_reports",
+        "transactions",
+        "depth_role_updates",
+        "team_announcements",
+        "coach_quotes",
+        "player_quotes"
+      ],
+      "historical_coverage_claim": "Official team sites publish dated news/practice material, but historical depth and page structure vary by team.",
+      "current_season_policy": "capture official team articles/posts with published_at and observed_at; classify statement type and whether it is team-authored reporting or quoted speaker claim",
+      "point_in_time_class": "OFFICIAL_TEAM_PUBLICATION",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_NEWS_BRAIN_2026-09-18.md"
+      ],
+      "restrictions": [
+        "team editorial framing may be promotional",
+        "quotation and reporter inference must be separated",
+        "later article edits must not overwrite earlier captured text"
+      ]
+    },
+    {
+      "source_id": "ACCREDITED_BEAT_REPORTERS",
+      "status": "DISCOVERY",
+      "intended_use": [
+        "practice_observation",
+        "first_team_reps",
+        "role_change",
+        "injury_visual_observation",
+        "depth_rotation",
+        "scheme_observation",
+        "coach_quote_context"
+      ],
+      "historical_coverage_claim": "No canonical team-by-team accredited reporter registry exists in FULL COUNT yet.",
+      "current_season_policy": "maintain per-team reporter/source directory; capture only public reporting with publication timestamp; preserve outlet, reporter, direct observation vs sourced report vs opinion, and links",
+      "point_in_time_class": "PREGAME_PUBLIC_REPORTING_TIMESTAMP_REQUIRED",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_NEWS_BRAIN_2026-09-18.md"
+      ],
+      "restrictions": [
+        "do not treat opinion/speculation as fact",
+        "distinguish observed practice fact from unnamed-source claim",
+        "do not infer private information",
+        "social posts may be edited/deleted; preserve observation timestamp and citation/reference where legally permitted",
+        "source reliability must be learned by claim type rather than one global reputation score"
+      ]
+    },
+    {
+      "source_id": "LOCAL_TEAM_MEDIA",
+      "status": "DISCOVERY",
+      "intended_use": [
+        "practice_reports",
+        "locker_room_quotes",
+        "press_conference_context",
+        "role_change",
+        "transactions",
+        "film_observation"
+      ],
+      "historical_coverage_claim": "Local newspapers, radio, TV and team-focused outlets vary by market; team-level source registry not yet built.",
+      "current_season_policy": "register outlet/reporter identity and publication timestamp; classify original reporting vs aggregation",
+      "point_in_time_class": "PREGAME_PUBLIC_REPORTING_TIMESTAMP_REQUIRED",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_NEWS_BRAIN_2026-09-18.md"
+      ],
+      "restrictions": [
+        "aggregation must cite original source",
+        "paywalled content rights must be respected",
+        "headline sentiment is not a model feature"
+      ]
+    },
+    {
+      "source_id": "NFL_POSTGAME_PRESSERS",
+      "status": "PROSPECTIVE_ONLY",
+      "intended_use": [
+        "role_explanation",
+        "injury_explanation",
+        "scheme_explanation",
+        "coach_decision_explanation",
+        "future_role_signal"
+      ],
+      "historical_coverage_claim": "Official team/NFL press conference libraries include postgame media; exhaustive historical capture not yet built.",
+      "current_season_policy": "capture after game with explicit event linkage; may inform future games only after publication timestamp",
+      "point_in_time_class": "POSTGAME_EXPLANATORY_EVIDENCE_FOR_FUTURE_TARGETS_ONLY",
+      "repo_evidence": [
+        "engineering/NFL_GENIUS_NEWS_BRAIN_2026-09-18.md"
+      ],
+      "restrictions": [
+        "never leak postgame explanation into prediction for same game",
+        "self-serving explanations require corroboration where material"
+      ]
+    }
+  ]
+}

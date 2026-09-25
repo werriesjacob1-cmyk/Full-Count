@@ -1402,6 +1402,633 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 44.9,
+          "notable_signals": 2,
+          "matchup": "Seattle Mariners @ Colorado Rockies",
+          "game_pk": 824303,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 39.4286,
+            "pitch_exploit": 9.7143,
+            "l7_avg_ev": 52.3295,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 55.6,
+            "season_barrel_pct": 36.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 0.4,
+            "platoon_xwoba": 1.26,
+            "park_hand_index": 0.17,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 48.1818,
+            "woba_behind": 34.5455,
+            "pull_park_synergy": 0.0625,
+            "hard_hit_105_rate": -0.1375,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.36,
+            "vs_rp_ops": 1.02,
+            "ump_k_pct": -0.348,
+            "ump_bb_pct": -0.288
+          },
+          "hit_probability": 0.675,
+          "raw_hit_probability": 0.6802,
+          "lift": 0.0027,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 3.1,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Colorado Rockies",
+          "game_pk": 824303,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0411
+          },
+          "hit_probability": 0.0411,
+          "raw_hit_probability": null,
+          "lift": -0.0066,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.9,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Colorado Rockies",
+          "game_pk": 824303,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0442
+          },
+          "hit_probability": 0.0442,
+          "raw_hit_probability": null,
+          "lift": 0.0235,
+          "reliability": "A",
+          "sample_n": 120,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 46.8,
+          "notable_signals": 2,
+          "matchup": "Seattle Mariners @ Colorado Rockies",
+          "game_pk": 824304,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 48.2857,
+            "pitch_exploit": 9.1429,
+            "l7_avg_ev": 89.4048,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 55.9,
+            "season_barrel_pct": 36.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 0.32,
+            "platoon_xwoba": 1.26,
+            "park_hand_index": 0.06,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 50.9091,
+            "woba_behind": 34.5455,
+            "pull_park_synergy": 0.0223,
+            "hard_hit_105_rate": -0.145,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.304,
+            "vs_rp_ops": 0.912,
+            "ump_k_pct": 0.792,
+            "ump_bb_pct": -0.108
+          },
+          "hit_probability": 0.5998,
+          "raw_hit_probability": 0.601,
+          "lift": 0.038,
+          "reliability": "A",
+          "sample_n": 121,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 3.0,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Colorado Rockies",
+          "game_pk": 824304,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0408
+          },
+          "hit_probability": 0.0408,
+          "raw_hit_probability": null,
+          "lift": -0.0069,
+          "reliability": "A",
+          "sample_n": 121,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.9,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Colorado Rockies",
+          "game_pk": 824304,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0439
+          },
+          "hit_probability": 0.0439,
+          "raw_hit_probability": null,
+          "lift": 0.0232,
+          "reliability": "A",
+          "sample_n": 121,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-20",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 58.0,
+          "notable_signals": 2,
+          "matchup": "Seattle Mariners @ Colorado Rockies",
+          "game_pk": 824300,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 80.8571,
+            "pitch_exploit": 9.1429,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 35.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 20.8333,
+            "platoon_barrel_pct": 1.84,
+            "platoon_xwoba": 2.34,
+            "park_hand_index": 0.15,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 50.0,
+            "woba_behind": 78.1818,
+            "pull_park_synergy": 0.0557,
+            "hard_hit_105_rate": -0.1525,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.296,
+            "vs_rp_ops": 0.9,
+            "ump_k_pct": -0.0,
+            "ump_bb_pct": -0.156
+          },
+          "hit_probability": 0.6072,
+          "raw_hit_probability": 0.6064,
+          "lift": 0.0439,
+          "reliability": "A",
+          "sample_n": 122,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 3.0,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Colorado Rockies",
+          "game_pk": 824300,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0405
+          },
+          "hit_probability": 0.0405,
+          "raw_hit_probability": null,
+          "lift": -0.0071,
+          "reliability": "A",
+          "sample_n": 122,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.8,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Colorado Rockies",
+          "game_pk": 824300,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0436
+          },
+          "hit_probability": 0.0436,
+          "raw_hit_probability": null,
+          "lift": 0.023,
+          "reliability": "A",
+          "sample_n": 122,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 42.0,
+          "notable_signals": 2,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824302,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 27.1429,
+            "pitch_exploit": 9.1429,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 33.5,
+            "season_barrel_pct": 35.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 0.24,
+            "platoon_xwoba": 1.32,
+            "park_hand_index": 0.16,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 4.0,
+            "woba_ahead": 48.1818,
+            "woba_behind": 30.9091,
+            "pull_park_synergy": 0.0594,
+            "hard_hit_105_rate": -0.1525,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.296,
+            "vs_rp_ops": 0.9,
+            "ump_k_pct": 0.096,
+            "ump_bb_pct": -0.42
+          },
+          "hit_probability": 0.6728,
+          "raw_hit_probability": 0.6763,
+          "lift": 0.0074,
+          "reliability": "A",
+          "sample_n": 122,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 3.0,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824302,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0405
+          },
+          "hit_probability": 0.0405,
+          "raw_hit_probability": null,
+          "lift": -0.007,
+          "reliability": "A",
+          "sample_n": 122,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.8,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824302,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0436
+          },
+          "hit_probability": 0.0436,
+          "raw_hit_probability": null,
+          "lift": 0.0229,
+          "reliability": "A",
+          "sample_n": 122,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 51.7,
+          "notable_signals": 2,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824301,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 71.4286,
+            "pitch_exploit": 8.5714,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 12.675,
+            "park_hr_index": 55.6,
+            "season_barrel_pct": 35.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 0.16,
+            "platoon_xwoba": 1.14,
+            "park_hand_index": 0.13,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "woba_ahead": 73.6364,
+            "woba_behind": 79.0909,
+            "pull_park_synergy": 0.0482,
+            "hard_hit_105_rate": -0.16,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.336,
+            "vs_rp_ops": 0.84,
+            "ump_k_pct": -0.12,
+            "ump_bb_pct": 0.204
+          },
+          "hit_probability": 0.6017,
+          "raw_hit_probability": 0.6024,
+          "lift": 0.042,
+          "reliability": "A",
+          "sample_n": 123,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 2.9,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824301,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0402
+          },
+          "hit_probability": 0.0402,
+          "raw_hit_probability": null,
+          "lift": -0.0072,
+          "reliability": "A",
+          "sample_n": 123,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.7,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824301,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0433
+          },
+          "hit_probability": 0.0433,
+          "raw_hit_probability": null,
+          "lift": 0.0227,
+          "reliability": "A",
+          "sample_n": 123,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 47.3,
+          "notable_signals": 2,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824298,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 11.1429,
+            "pitch_exploit": 8.5714,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 0.3,
+            "park_hr_index": 37.0,
+            "season_barrel_pct": 34.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 20.8333,
+            "bvp_ops": -0.282,
+            "platoon_barrel_pct": 1.84,
+            "platoon_xwoba": 2.34,
+            "park_hand_index": 0.24,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 0.0,
+            "woba_ahead": 45.4545,
+            "woba_behind": 2.7273,
+            "pull_park_synergy": 0.089,
+            "hard_hit_105_rate": -0.1675,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.352,
+            "vs_rp_ops": 0.864,
+            "ump_k_pct": 0.36,
+            "ump_bb_pct": 0.468
+          },
+          "hit_probability": 0.6731,
+          "raw_hit_probability": 0.6768,
+          "lift": -0.0017,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 2.9,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824298,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0399
+          },
+          "hit_probability": 0.0399,
+          "raw_hit_probability": null,
+          "lift": -0.0074,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.7,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824298,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.043
+          },
+          "hit_probability": 0.043,
+          "raw_hit_probability": null,
+          "lift": 0.0225,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

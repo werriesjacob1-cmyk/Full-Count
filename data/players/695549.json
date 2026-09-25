@@ -385,6 +385,155 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 40.2,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Chicago White Sox",
+          "game_pk": 824545,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 72.0,
+            "same_hand_ratio": 43.75,
+            "l14_k_pct": 100.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 58.6046,
+            "ump_k_pct": 0.288,
+            "ump_bb_pct": -0.564
+          },
+          "hit_probability": 0.5942,
+          "raw_hit_probability": 0.6016,
+          "lift": 0.0825,
+          "reliability": "C",
+          "sample_n": 7,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 49.3,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Chicago White Sox",
+          "game_pk": 824545,
+          "team": "Detroit Tigers",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7248,
+            "avg_outs_per_start": 14.86
+          },
+          "hit_probability": 0.6976,
+          "raw_hit_probability": 0.7248,
+          "lift": -0.0395,
+          "reliability": "C",
+          "sample_n": 7,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Detroit Tigers @ Chicago White Sox",
+          "game_pk": 824545,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            695549,
+            680732
+          ],
+          "signals": {
+            "combined_k_edge": 0.0205
+          },
+          "hit_probability": 0.678,
+          "raw_hit_probability": null,
+          "lift": 0.0205,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-25",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 39.7,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Detroit Tigers",
+          "game_pk": 824220,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 70.0,
+            "same_hand_ratio": 57.1429,
+            "l14_k_pct": 100.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5135,
+          "raw_hit_probability": 0.5135,
+          "lift": 0.1372,
+          "reliability": "C",
+          "sample_n": 8,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 48.0,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Detroit Tigers",
+          "game_pk": 824220,
+          "team": "Detroit Tigers",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7621,
+            "avg_outs_per_start": 15.25
+          },
+          "hit_probability": 0.6981,
+          "raw_hit_probability": 0.7621,
+          "lift": -0.0801,
+          "reliability": "C",
+          "sample_n": 8,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        }
+      ]
     }
   ]
 }

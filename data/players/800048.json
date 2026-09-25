@@ -576,6 +576,96 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 41.7,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Boston Red Sox",
+          "game_pk": 824709,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 45.0,
+            "same_hand_ratio": 21.4286,
+            "l14_k_pct": 71.1765,
+            "env_neutral": 50.0,
+            "ump_accuracy": 55.1086,
+            "ump_k_pct": 0.048,
+            "ump_bb_pct": -0.36
+          },
+          "hit_probability": 0.5188,
+          "raw_hit_probability": 0.5188,
+          "lift": 0.1521,
+          "reliability": "A",
+          "sample_n": 30,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 50.5,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Boston Red Sox",
+          "game_pk": 824709,
+          "team": "Cleveland Guardians",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.4854,
+            "avg_outs_per_start": 17.83
+          },
+          "hit_probability": 0.5137,
+          "raw_hit_probability": 0.4854,
+          "lift": 0.1013,
+          "reliability": "A",
+          "sample_n": 30,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        },
+        {
+          "prop": "Over 12.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.7,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Boston Red Sox",
+          "game_pk": 824709,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            800048,
+            801139
+          ],
+          "signals": {
+            "combined_k_edge": 0.3258
+          },
+          "hit_probability": 0.6537,
+          "raw_hit_probability": null,
+          "lift": 0.3258,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 12.5,
+            "needs": 13
+          }
+        }
+      ]
     }
   ]
 }

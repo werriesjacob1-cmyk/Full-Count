@@ -579,6 +579,96 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-23",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 40.8,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Athletics",
+          "game_pk": 824951,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 54.0,
+            "same_hand_ratio": 88.8889,
+            "l14_k_pct": 89.4118,
+            "env_neutral": 50.0,
+            "ump_accuracy": 43.327,
+            "ump_k_pct": -0.156,
+            "ump_bb_pct": 0.156
+          },
+          "hit_probability": 0.6037,
+          "raw_hit_probability": 0.6487,
+          "lift": 0.0762,
+          "reliability": "A",
+          "sample_n": 26,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 45.0,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Athletics",
+          "game_pk": 824951,
+          "team": "Los Angeles Angels",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5838,
+            "avg_outs_per_start": 16.46
+          },
+          "hit_probability": 0.5825,
+          "raw_hit_probability": 0.5838,
+          "lift": -0.0309,
+          "reliability": "A",
+          "sample_n": 26,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 47.8,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Athletics",
+          "game_pk": 824951,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            700712,
+            605488
+          ],
+          "signals": {
+            "combined_k_edge": -0.0303
+          },
+          "hit_probability": 0.5232,
+          "raw_hit_probability": null,
+          "lift": -0.0303,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
+          }
+        }
+      ]
     }
   ]
 }

@@ -478,6 +478,68 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-20",
+      "evaluations": [
+        {
+          "prop": "Over 6.5 Strikeouts",
+          "type": "pitcher",
+          "score": 41.6,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Houston Astros",
+          "game_pk": 824139,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 46.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 100.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 79.6281,
+            "ump_k_pct": 0.744,
+            "ump_bb_pct": -0.132
+          },
+          "hit_probability": 0.3508,
+          "raw_hit_probability": 0.3508,
+          "lift": 0.1259,
+          "reliability": "A",
+          "sample_n": 18,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 6.5,
+            "needs": 7
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 32.5,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Houston Astros",
+          "game_pk": 824139,
+          "team": "Houston Astros",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.3852,
+            "avg_outs_per_start": 16.17
+          },
+          "hit_probability": 0.3852,
+          "raw_hit_probability": 0.3852,
+          "lift": 0.011,
+          "reliability": "A",
+          "sample_n": 18,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }

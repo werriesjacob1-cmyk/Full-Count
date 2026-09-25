@@ -481,6 +481,96 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-20",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 29.6,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Los Angeles Angels",
+          "game_pk": 823975,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 84.0,
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 32.3529,
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.5816,
+            "ump_k_pct": 0.024,
+            "ump_bb_pct": 0.408
+          },
+          "hit_probability": 0.3353,
+          "raw_hit_probability": 0.3353,
+          "lift": -0.0265,
+          "reliability": "B",
+          "sample_n": 15,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 29.2,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Los Angeles Angels",
+          "game_pk": 823975,
+          "team": "Minnesota Twins",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5041,
+            "avg_outs_per_start": 15.47
+          },
+          "hit_probability": 0.5176,
+          "raw_hit_probability": 0.5041,
+          "lift": -0.0801,
+          "reliability": "B",
+          "sample_n": 15,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 29.8,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Los Angeles Angels",
+          "game_pk": 823975,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            665152,
+            696270
+          ],
+          "signals": {
+            "combined_k_edge": -0.1211
+          },
+          "hit_probability": 0.4789,
+          "raw_hit_probability": null,
+          "lift": -0.1211,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
+          }
+        }
+      ]
     }
   ]
 }

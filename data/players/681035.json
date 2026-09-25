@@ -443,6 +443,68 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 38.3,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823571,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 48.0,
+            "same_hand_ratio": 33.3333,
+            "l14_k_pct": 100.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 60.8531,
+            "ump_k_pct": 0.36,
+            "ump_bb_pct": 0.216
+          },
+          "hit_probability": 0.4837,
+          "raw_hit_probability": 0.4837,
+          "lift": 0.1233,
+          "reliability": "A",
+          "sample_n": 22,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 2.8,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823571,
+          "team": "New York Mets",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.37,
+            "avg_outs_per_start": 14.36
+          },
+          "hit_probability": 0.37,
+          "raw_hit_probability": 0.37,
+          "lift": -0.1901,
+          "reliability": "A",
+          "sample_n": 22,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }

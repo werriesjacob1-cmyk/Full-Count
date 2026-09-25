@@ -1,0 +1,112 @@
+{
+  "elapsed_seconds": 98.40183544158936,
+  "games_csv_digest": {
+    "bytes": 2177838,
+    "sha256": "26332ae5d8d8d0481f0670cf5e3849497a415351d4026ae5bee15a5aab96d188"
+  },
+  "held_out_report": {
+    "DEPTH_CHART_NEXT_MAN": {
+      "mae": 0.07739678825309278,
+      "n": 441
+    },
+    "HIERARCHICAL_COMMITTEE_PROBABILITY_V1": {
+      "mae": 0.06196222908360095,
+      "n": 449
+    },
+    "NO_ADJUSTMENT": {
+      "mae": 0.06050387800295093,
+      "n": 441
+    },
+    "PROPORTIONAL_TEAMMATE_REDISTRIBUTION": {
+      "mae": 0.06396060775856668,
+      "n": 441
+    },
+    "RECENT_USAGE_NEXT_MAN": {
+      "mae": 0.08254290234546448,
+      "n": 441
+    }
+  },
+  "held_out_seasons": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "model": {
+    "dimension": "target_share",
+    "feature_names": [
+      "bias",
+      "prior_last5",
+      "has_prior",
+      "depth_inv",
+      "has_depth",
+      "games_n_norm"
+    ],
+    "iterations": 200,
+    "l2": 0.01,
+    "lr": 0.05,
+    "model_name": "HIERARCHICAL_COMMITTEE_PROBABILITY_V1",
+    "n_training_examples": 217,
+    "n_training_examples_by_bucket": {
+      "ESTABLISHED_REGIME": 199,
+      "NEW_REGIME_FIRST_30_DAYS": 18
+    },
+    "train_seasons": [
+      2012,
+      2013,
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021
+    ],
+    "weights": {
+      "ESTABLISHED_REGIME": [
+        -3.0316321514928766e-18,
+        0.08100139679398129,
+        -0.07132764729673349,
+        0.22785189738658024,
+        0.20329452991045843,
+        0.018117697234998568
+      ],
+      "NEW_REGIME_FIRST_30_DAYS": [
+        2.10292539029361e-17,
+        0.13424636023195094,
+        -0.4074911795367009,
+        0.541281225201379,
+        0.38738773891021194,
+        -0.4350491190923772
+      ],
+      "UNKNOWN_REGIME": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "n_candidates": 2299,
+  "n_events_total": 668,
+  "n_events_with_hc_resolved": 668,
+  "n_usage_rows": 53110,
+  "players_crosswalk_digest": {
+    "bytes": 7234131
+  },
+  "train_seasons": [
+    2012,
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021
+  ]
+}

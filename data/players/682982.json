@@ -44,8 +44,8 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 40.3,
-          "notable_signals": 0,
+          "score": 42.8,
+          "notable_signals": 1,
           "matchup": "Athletics @ Cleveland Guardians",
           "game_pk": 824383,
           "team": "Cleveland Guardians",
@@ -56,17 +56,56 @@
             "opp_team_k_pct": 55.0,
             "same_hand_ratio": 100.0,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 75.0742,
+            "ump_k_pct": -0.132,
+            "ump_bb_pct": -0.252
           },
-          "hit_probability": 0.6114,
-          "raw_hit_probability": 0.6868,
-          "lift": 0.0953,
+          "hit_probability": 0.6116,
+          "raw_hit_probability": 0.6877,
+          "lift": 0.0937,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
             "stat": "strikeouts",
             "value": 4.5,
             "needs": 5
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 47.3,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Boston Red Sox",
+          "game_pk": 824707,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 46.0,
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 58.8235,
+            "env_neutral": 50.0,
+            "ump_accuracy": 60.9016,
+            "ump_k_pct": 0.396,
+            "ump_bb_pct": 0.12
+          },
+          "hit_probability": 0.6045,
+          "raw_hit_probability": 0.6525,
+          "lift": -0.0988,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
           }
         }
       ]

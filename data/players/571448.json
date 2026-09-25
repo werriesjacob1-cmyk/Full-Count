@@ -2767,6 +2767,631 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 46.9,
+          "notable_signals": 3,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825032,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 33.4286,
+            "pitch_exploit": 2.8571,
+            "l7_avg_ev": 49.8333,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 5.175,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 22.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 18.5185,
+            "bvp_ops": 4.0,
+            "platoon_barrel_pct": -0.64,
+            "platoon_xwoba": -1.44,
+            "park_hand_index": -0.61,
+            "opp_catcher_framing": -2.4,
+            "days_rest": 2.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 47.2727,
+            "pull_park_synergy": -0.4975,
+            "hard_hit_105_rate": -0.42,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 1.72,
+            "vs_rp_ops": 2.1,
+            "ump_k_pct": 0.372,
+            "ump_bb_pct": -0.168
+          },
+          "hit_probability": 0.667,
+          "raw_hit_probability": 0.6663,
+          "lift": -0.0053,
+          "reliability": "A",
+          "sample_n": 143,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.3,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825032,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0298
+          },
+          "hit_probability": 0.0298,
+          "raw_hit_probability": null,
+          "lift": -0.0179,
+          "reliability": "A",
+          "sample_n": 143,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825032,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0085
+          },
+          "hit_probability": 0.0085,
+          "raw_hit_probability": null,
+          "lift": -0.0122,
+          "reliability": "A",
+          "sample_n": 143,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 38.1,
+          "notable_signals": 2,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825029,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 0.0,
+            "pitch_exploit": 2.8571,
+            "l7_avg_ev": 4.2969,
+            "l7_barrel_pct": 75.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 22.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 16.6667,
+            "platoon_barrel_pct": -0.72,
+            "platoon_xwoba": -1.5,
+            "park_hand_index": -0.61,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 50.0,
+            "woba_behind": 12.7273,
+            "pull_park_synergy": -0.4846,
+            "hard_hit_105_rate": -0.4225,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.84,
+            "vs_rp_ops": 2.22,
+            "ump_k_pct": 0.18,
+            "ump_bb_pct": -0.072
+          },
+          "hit_probability": 0.6675,
+          "raw_hit_probability": 0.6671,
+          "lift": -0.0007,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.3,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825029,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0297
+          },
+          "hit_probability": 0.0297,
+          "raw_hit_probability": null,
+          "lift": -0.018,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825029,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0085
+          },
+          "hit_probability": 0.0085,
+          "raw_hit_probability": null,
+          "lift": -0.0122,
+          "reliability": "A",
+          "sample_n": 144,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-20",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 43.5,
+          "notable_signals": 2,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825028,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 39.7143,
+            "pitch_exploit": 2.8571,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 60.7143,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 22.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -0.72,
+            "platoon_xwoba": -1.5,
+            "park_hand_index": -0.62,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 49.0909,
+            "woba_behind": 23.6364,
+            "pull_park_synergy": -0.4926,
+            "hard_hit_105_rate": -0.4275,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.88,
+            "vs_rp_ops": 2.268,
+            "ump_k_pct": -1.008,
+            "ump_bb_pct": -0.168
+          },
+          "hit_probability": 0.6681,
+          "raw_hit_probability": 0.6681,
+          "lift": 0.0023,
+          "reliability": "A",
+          "sample_n": 145,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.2,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825028,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0295
+          },
+          "hit_probability": 0.0295,
+          "raw_hit_probability": null,
+          "lift": -0.0181,
+          "reliability": "A",
+          "sample_n": 145,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825028,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0084
+          },
+          "hit_probability": 0.0084,
+          "raw_hit_probability": null,
+          "lift": -0.0122,
+          "reliability": "A",
+          "sample_n": 145,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 59.4,
+          "notable_signals": 3,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824302,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 100.0,
+            "pitch_exploit": 3.4286,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 70.0,
+            "park_hr_index": 33.5,
+            "season_barrel_pct": 22.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 18.5185,
+            "bvp_ops": 3.882,
+            "platoon_barrel_pct": 0.08,
+            "platoon_xwoba": -0.12,
+            "park_hand_index": 0.16,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 2.0,
+            "woba_ahead": 36.3636,
+            "woba_behind": 44.5455,
+            "pull_park_synergy": 0.1288,
+            "hard_hit_105_rate": -0.4325,
+            "team_total_move": -3.0,
+            "team_total_open": 6.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 2.024,
+            "vs_rp_ops": 2.448,
+            "ump_k_pct": 0.096,
+            "ump_bb_pct": -0.42
+          },
+          "hit_probability": 0.6125,
+          "raw_hit_probability": 0.6103,
+          "lift": 0.0508,
+          "reliability": "A",
+          "sample_n": 146,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.2,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824302,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0293
+          },
+          "hit_probability": 0.0293,
+          "raw_hit_probability": null,
+          "lift": -0.0182,
+          "reliability": "A",
+          "sample_n": 146,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824302,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0084
+          },
+          "hit_probability": 0.0084,
+          "raw_hit_probability": null,
+          "lift": -0.0123,
+          "reliability": "A",
+          "sample_n": 146,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 62.4,
+          "notable_signals": 3,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824301,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 74.0,
+            "pitch_exploit": 2.8571,
+            "l7_avg_ev": 29.0278,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 55.6,
+            "season_barrel_pct": 24.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": -0.56,
+            "platoon_xwoba": -1.44,
+            "park_hand_index": 0.13,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 49.0909,
+            "pull_park_synergy": 0.1042,
+            "hard_hit_105_rate": -0.29,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 2.024,
+            "vs_rp_ops": 2.58,
+            "ump_k_pct": -0.12,
+            "ump_bb_pct": 0.204
+          },
+          "hit_probability": 0.6053,
+          "raw_hit_probability": 0.605,
+          "lift": 0.0456,
+          "reliability": "A",
+          "sample_n": 147,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 1.6,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824301,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.035
+          },
+          "hit_probability": 0.035,
+          "raw_hit_probability": null,
+          "lift": -0.0124,
+          "reliability": "A",
+          "sample_n": 147,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.5,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824301,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0142
+          },
+          "hit_probability": 0.0142,
+          "raw_hit_probability": null,
+          "lift": -0.0064,
+          "reliability": "A",
+          "sample_n": 147,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 52.7,
+          "notable_signals": 2,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824298,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 100.0,
+            "pitch_exploit": 2.8571,
+            "l7_avg_ev": 38.0469,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 37.0,
+            "season_barrel_pct": 24.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 37.037,
+            "platoon_barrel_pct": -0.56,
+            "platoon_xwoba": -1.5,
+            "park_hand_index": 0.24,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 49.0909,
+            "pull_park_synergy": 0.194,
+            "hard_hit_105_rate": -0.295,
+            "team_total_move": 0.0,
+            "team_total_open": 4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.944,
+            "vs_rp_ops": 2.484,
+            "ump_k_pct": 0.36,
+            "ump_bb_pct": 0.468
+          },
+          "hit_probability": 0.6026,
+          "raw_hit_probability": 0.603,
+          "lift": 0.0449,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 1.6,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824298,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0348
+          },
+          "hit_probability": 0.0348,
+          "raw_hit_probability": null,
+          "lift": -0.0125,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.4,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824298,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0141
+          },
+          "hit_probability": 0.0141,
+          "raw_hit_probability": null,
+          "lift": -0.0064,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

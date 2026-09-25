@@ -1659,6 +1659,557 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 51.6,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825029,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 36.2857,
+            "l7_avg_ev": 66.8056,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 68.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 16.6667,
+            "bvp_ops": -0.462,
+            "platoon_barrel_pct": 3.76,
+            "platoon_xwoba": -0.6,
+            "park_hand_index": -0.61,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "woba_ahead": 66.3636,
+            "woba_behind": 1.8182,
+            "pull_park_synergy": -0.0982,
+            "hard_hit_105_rate": 0.3875,
+            "team_total_move": 6.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.264,
+            "vs_rp_ops": 1.224,
+            "ump_k_pct": 0.18,
+            "ump_bb_pct": -0.072
+          },
+          "hit_probability": 0.6061,
+          "raw_hit_probability": 0.6056,
+          "lift": 0.0443,
+          "reliability": "A",
+          "sample_n": 104,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 22.0,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825029,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 4.38,
+            "sprint_speed": 0.0,
+            "catcher_poptime": 0.0,
+            "on_base": 45.2975
+          },
+          "hit_probability": 0.0422,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 104,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 8.5,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825029,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0621
+          },
+          "hit_probability": 0.0621,
+          "raw_hit_probability": null,
+          "lift": 0.0144,
+          "reliability": "A",
+          "sample_n": 104,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.5,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825029,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0345
+          },
+          "hit_probability": 0.0345,
+          "raw_hit_probability": null,
+          "lift": 0.0138,
+          "reliability": "A",
+          "sample_n": 104,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-20",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 56.5,
+          "notable_signals": 2,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825028,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 96.2857,
+            "pitch_exploit": 5.1429,
+            "l7_avg_ev": 11.25,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 8.55,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 70.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 4.0,
+            "platoon_xwoba": -0.54,
+            "park_hand_index": -0.62,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "woba_ahead": 47.2727,
+            "woba_behind": 64.5455,
+            "pull_park_synergy": -0.089,
+            "hard_hit_105_rate": 0.375,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.264,
+            "vs_rp_ops": 1.224,
+            "ump_k_pct": -1.008,
+            "ump_bb_pct": -0.168
+          },
+          "hit_probability": 0.6109,
+          "raw_hit_probability": 0.6091,
+          "lift": 0.0476,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 8.4,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825028,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0616
+          },
+          "hit_probability": 0.0616,
+          "raw_hit_probability": null,
+          "lift": 0.014,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.5,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825028,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0342
+          },
+          "hit_probability": 0.0342,
+          "raw_hit_probability": null,
+          "lift": 0.0136,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 46.2,
+          "notable_signals": 3,
+          "matchup": "Tampa Bay Rays @ New York Yankees",
+          "game_pk": 823494,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 6.2857,
+            "l7_avg_ev": 24.1346,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 25.4,
+            "season_barrel_pct": 72.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 4.32,
+            "platoon_xwoba": -0.42,
+            "park_hand_index": 0.86,
+            "opp_catcher_framing": 0.84,
+            "days_rest": -2.0,
+            "woba_ahead": 46.3636,
+            "woba_behind": 63.6364,
+            "pull_park_synergy": 0.1415,
+            "hard_hit_105_rate": 0.5575,
+            "team_total_move": -6.0,
+            "team_total_open": -6.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.264,
+            "vs_rp_ops": 1.224,
+            "ump_k_pct": -0.192,
+            "ump_bb_pct": -0.42
+          },
+          "hit_probability": 0.6024,
+          "raw_hit_probability": 0.6029,
+          "lift": 0.0407,
+          "reliability": "A",
+          "sample_n": 107,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 10.2,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ New York Yankees",
+          "game_pk": 823494,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0689
+          },
+          "hit_probability": 0.0689,
+          "raw_hit_probability": null,
+          "lift": 0.0214,
+          "reliability": "A",
+          "sample_n": 107,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.4,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ New York Yankees",
+          "game_pk": 823494,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0339
+          },
+          "hit_probability": 0.0339,
+          "raw_hit_probability": null,
+          "lift": 0.0132,
+          "reliability": "A",
+          "sample_n": 107,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 44.2,
+          "notable_signals": 4,
+          "matchup": "Tampa Bay Rays @ New York Yankees",
+          "game_pk": 823492,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 58.2857,
+            "pitch_exploit": 5.1429,
+            "l7_avg_ev": 28.6607,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 25.3,
+            "season_barrel_pct": 72.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 4.48,
+            "platoon_xwoba": -0.6,
+            "park_hand_index": 0.6,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "woba_ahead": 59.0909,
+            "woba_behind": 33.6364,
+            "pull_park_synergy": 0.1008,
+            "hard_hit_105_rate": 0.53,
+            "getaway_day": 0.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.264,
+            "vs_rp_ops": 1.224,
+            "ump_k_pct": 0.12,
+            "ump_bb_pct": 0.396
+          },
+          "hit_probability": 0.5987,
+          "raw_hit_probability": 0.6002,
+          "lift": 0.039,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 9.9,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ New York Yankees",
+          "game_pk": 823492,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0678
+          },
+          "hit_probability": 0.0678,
+          "raw_hit_probability": null,
+          "lift": 0.0204,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.3,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ New York Yankees",
+          "game_pk": 823492,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0334
+          },
+          "hit_probability": 0.0334,
+          "raw_hit_probability": null,
+          "lift": 0.0128,
+          "reliability": "A",
+          "sample_n": 108,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 50.6,
+          "notable_signals": 3,
+          "matchup": "Tampa Bay Rays @ New York Yankees",
+          "game_pk": 823493,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 53.7143,
+            "l7_avg_ev": 74.9219,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 6.3,
+            "park_hr_index": 25.4,
+            "season_barrel_pct": 71.3333,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 5.0,
+            "park_hand_index": 0.61,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 46.3636,
+            "woba_behind": 86.3636,
+            "pull_park_synergy": 0.0897,
+            "hard_hit_105_rate": 0.5175,
+            "getaway_day": -2.0,
+            "series_game": 3.0,
+            "sp_rp_ops_gap": 1.264,
+            "vs_rp_ops": 1.224,
+            "ump_k_pct": -0.012,
+            "ump_bb_pct": -0.156
+          },
+          "hit_probability": 0.6039,
+          "raw_hit_probability": 0.604,
+          "lift": 0.0462,
+          "reliability": "A",
+          "sample_n": 109,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 9.8,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ New York Yankees",
+          "game_pk": 823493,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0673
+          },
+          "hit_probability": 0.0673,
+          "raw_hit_probability": null,
+          "lift": 0.02,
+          "reliability": "A",
+          "sample_n": 109,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.2,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ New York Yankees",
+          "game_pk": 823493,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0332
+          },
+          "hit_probability": 0.0332,
+          "raw_hit_probability": null,
+          "lift": 0.0127,
+          "reliability": "A",
+          "sample_n": 109,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

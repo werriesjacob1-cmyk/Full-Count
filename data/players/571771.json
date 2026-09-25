@@ -793,6 +793,156 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 47.4,
+          "notable_signals": 1,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823898,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 33.7143,
+            "l7_avg_ev": 40.9375,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 6.525,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 34.6667,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": 2.96,
+            "platoon_xwoba": -1.5,
+            "opp_catcher_framing": 1.2,
+            "days_rest": 0.0,
+            "woba_ahead": 26.3636,
+            "woba_behind": 12.7273,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.88,
+            "vs_rp_ops": -1.272,
+            "ump_k_pct": -0.156,
+            "ump_bb_pct": -0.048
+          },
+          "hit_probability": 0.626,
+          "raw_hit_probability": 0.5972,
+          "lift": -0.0463,
+          "reliability": "C",
+          "sample_n": 31,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-20",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 39.9,
+          "notable_signals": 2,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823896,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 59.4286,
+            "l7_avg_ev": 9.0278,
+            "l7_barrel_pct": 65.0,
+            "bat_speed_trend": 6.075,
+            "park_hr_index": 51.6,
+            "season_barrel_pct": 31.3333,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 2.4,
+            "platoon_xwoba": -2.4,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 0.0,
+            "woba_ahead": 100.0,
+            "woba_behind": 6.3636,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.92,
+            "vs_rp_ops": -1.704,
+            "ump_k_pct": 0.12,
+            "ump_bb_pct": -0.192
+          },
+          "hit_probability": 0.6245,
+          "raw_hit_probability": 0.5948,
+          "lift": -0.0413,
+          "reliability": "C",
+          "sample_n": 32,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823896,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.019
+          },
+          "hit_probability": 0.019,
+          "raw_hit_probability": null,
+          "lift": -0.0286,
+          "reliability": "C",
+          "sample_n": 32,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823896,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0083
+          },
+          "hit_probability": 0.0083,
+          "raw_hit_probability": null,
+          "lift": -0.0123,
+          "reliability": "C",
+          "sample_n": 32,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

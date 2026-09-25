@@ -3072,6 +3072,421 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 53.8,
+          "notable_signals": 3,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823572,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 16.0,
+            "pitch_exploit": 1.1429,
+            "l7_avg_ev": 65.1042,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 11.85,
+            "park_hr_index": 29.6,
+            "season_barrel_pct": 22.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 1.6,
+            "platoon_xwoba": 2.34,
+            "park_hand_index": 0.38,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 86.3636,
+            "woba_behind": 34.5455,
+            "pull_park_synergy": -0.0479,
+            "hard_hit_105_rate": -0.0425,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.328,
+            "vs_rp_ops": -0.516,
+            "ump_k_pct": -0.048,
+            "ump_bb_pct": -0.336
+          },
+          "hit_probability": 0.6354,
+          "raw_hit_probability": 0.6275,
+          "lift": 0.0749,
+          "reliability": "A",
+          "sample_n": 151,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 4.1,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823572,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0449
+          },
+          "hit_probability": 0.0449,
+          "raw_hit_probability": null,
+          "lift": -0.0028,
+          "reliability": "A",
+          "sample_n": 151,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823572,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.008
+          },
+          "hit_probability": 0.008,
+          "raw_hit_probability": null,
+          "lift": -0.0127,
+          "reliability": "A",
+          "sample_n": 151,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 65.4,
+          "notable_signals": 2,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823571,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 86.8571,
+            "pitch_exploit": 0.5714,
+            "l7_avg_ev": 51.65,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 0.975,
+            "park_hr_index": 50.8,
+            "season_barrel_pct": 22.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 27.7778,
+            "platoon_barrel_pct": -1.52,
+            "platoon_xwoba": 0.06,
+            "park_hand_index": 0.44,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 91.8182,
+            "woba_behind": 36.3636,
+            "pull_park_synergy": -0.057,
+            "hard_hit_105_rate": -0.0475,
+            "getaway_day": 0.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.44,
+            "vs_rp_ops": -0.648,
+            "ump_k_pct": -0.36,
+            "ump_bb_pct": -0.216
+          },
+          "hit_probability": 0.636,
+          "raw_hit_probability": 0.6279,
+          "lift": 0.0742,
+          "reliability": "A",
+          "sample_n": 152,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 4.0,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823571,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0447
+          },
+          "hit_probability": 0.0447,
+          "raw_hit_probability": null,
+          "lift": -0.003,
+          "reliability": "A",
+          "sample_n": 152,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823571,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0079
+          },
+          "hit_probability": 0.0079,
+          "raw_hit_probability": null,
+          "lift": -0.0128,
+          "reliability": "A",
+          "sample_n": 152,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 61.3,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Texas Rangers",
+          "game_pk": 822840,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 62.0,
+            "l7_avg_ev": 56.0625,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 22.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 60.6061,
+            "platoon_barrel_pct": 1.92,
+            "platoon_xwoba": 2.94,
+            "park_hand_index": 0.44,
+            "opp_catcher_framing": 1.44,
+            "days_rest": 2.0,
+            "consecutive_games": -0.6,
+            "woba_ahead": 88.1818,
+            "woba_behind": 1.8182,
+            "pull_park_synergy": -0.0601,
+            "hard_hit_105_rate": 0.0775,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.416,
+            "vs_rp_ops": -0.576,
+            "ump_k_pct": -0.408,
+            "ump_bb_pct": 0.048
+          },
+          "hit_probability": 0.6345,
+          "raw_hit_probability": 0.6268,
+          "lift": 0.0728,
+          "reliability": "A",
+          "sample_n": 154,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 5.3,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Texas Rangers",
+          "game_pk": 822840,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0497
+          },
+          "hit_probability": 0.0497,
+          "raw_hit_probability": null,
+          "lift": 0.0022,
+          "reliability": "A",
+          "sample_n": 154,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Texas Rangers",
+          "game_pk": 822840,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0079
+          },
+          "hit_probability": 0.0079,
+          "raw_hit_probability": null,
+          "lift": -0.0128,
+          "reliability": "A",
+          "sample_n": 154,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 58.6,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Texas Rangers",
+          "game_pk": 822841,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 48.2857,
+            "l7_avg_ev": 61.6176,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 22.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 41.6667,
+            "platoon_barrel_pct": 1.84,
+            "platoon_xwoba": 2.82,
+            "park_hand_index": 0.31,
+            "opp_catcher_framing": 1.32,
+            "days_rest": 0.0,
+            "woba_ahead": 88.1818,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -0.038,
+            "hard_hit_105_rate": 0.07,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.312,
+            "vs_rp_ops": -0.492,
+            "ump_k_pct": 0.504,
+            "ump_bb_pct": -0.276
+          },
+          "hit_probability": 0.634,
+          "raw_hit_probability": 0.6264,
+          "lift": 0.0743,
+          "reliability": "A",
+          "sample_n": 155,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 5.2,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Texas Rangers",
+          "game_pk": 822841,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0494
+          },
+          "hit_probability": 0.0494,
+          "raw_hit_probability": null,
+          "lift": 0.002,
+          "reliability": "A",
+          "sample_n": 155,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Texas Rangers",
+          "game_pk": 822841,
+          "team": "New York Mets",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0078
+          },
+          "hit_probability": 0.0078,
+          "raw_hit_probability": null,
+          "lift": -0.0128,
+          "reliability": "A",
+          "sample_n": 155,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

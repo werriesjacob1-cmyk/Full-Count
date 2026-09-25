@@ -1,0 +1,67 @@
+{
+  "player_id": 500779,
+  "name": "Jose Quintana",
+  "snapshots": [
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 23.7,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Colorado Rockies",
+          "game_pk": 824304,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 61.0,
+            "same_hand_ratio": 75.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 49.1595,
+            "ump_k_pct": -0.792,
+            "ump_bb_pct": 0.108
+          },
+          "hit_probability": 0.4784,
+          "raw_hit_probability": 0.4784,
+          "lift": -0.2259,
+          "reliability": "B",
+          "sample_n": 9,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 13.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 36.5,
+          "notable_signals": 0,
+          "matchup": "Seattle Mariners @ Colorado Rockies",
+          "game_pk": 824304,
+          "team": "Colorado Rockies",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6648,
+            "avg_outs_per_start": 13.67
+          },
+          "hit_probability": 0.652,
+          "raw_hit_probability": 0.6648,
+          "lift": -0.1766,
+          "reliability": "B",
+          "sample_n": 9,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 13.5,
+            "needs": 14
+          }
+        }
+      ]
+    }
+  ]
+}

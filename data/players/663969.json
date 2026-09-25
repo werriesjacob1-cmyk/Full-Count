@@ -464,7 +464,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 52.7,
+          "score": 44.8,
           "notable_signals": 1,
           "matchup": "Miami Marlins @ San Diego Padres",
           "game_pk": 823252,
@@ -474,14 +474,17 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 45.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 88.8889,
             "l14_k_pct": 10.0,
             "tto_penalty": 8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 41.4577,
+            "ump_k_pct": 0.564,
+            "ump_bb_pct": -0.012
           },
-          "hit_probability": 0.607,
-          "raw_hit_probability": 0.6651,
-          "lift": -0.0923,
+          "hit_probability": 0.6072,
+          "raw_hit_probability": 0.6657,
+          "lift": -0.0933,
           "reliability": "A",
           "sample_n": 18,
           "projection": {
@@ -491,9 +494,9 @@
           }
         },
         {
-          "prop": "Over 13.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 38.6,
+          "score": 32.4,
           "notable_signals": 0,
           "matchup": "Miami Marlins @ San Diego Padres",
           "game_pk": 823252,
@@ -502,14 +505,73 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6582,
+            "outs_rate": 0.605,
             "avg_outs_per_start": 13.72
           },
-          "hit_probability": 0.6468,
-          "raw_hit_probability": 0.6582,
-          "lift": -0.1528,
+          "hit_probability": 0.6036,
+          "raw_hit_probability": 0.605,
+          "lift": -0.1499,
           "reliability": "A",
           "sample_n": 18,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 49.7,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Chicago Cubs",
+          "game_pk": 824623,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 42.0,
+            "same_hand_ratio": 92.8571,
+            "l14_k_pct": 33.5294,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6029,
+          "raw_hit_probability": 0.6447,
+          "lift": -0.1058,
+          "reliability": "A",
+          "sample_n": 19,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 13.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 31.9,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Chicago Cubs",
+          "game_pk": 824623,
+          "team": "Miami Marlins",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.629,
+            "avg_outs_per_start": 13.58
+          },
+          "hit_probability": 0.6133,
+          "raw_hit_probability": 0.629,
+          "lift": -0.1741,
+          "reliability": "A",
+          "sample_n": 19,
           "projection": {
             "stat": "pitcher_outs",
             "value": 13.5,

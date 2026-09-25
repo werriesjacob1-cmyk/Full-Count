@@ -20,6 +20,12 @@ from typing import Any
 
 
 SCHEMA_VERSION = 1
+# Explicit per-market allow-list, not a free-form string: sealing a new
+# market here means its own capture pipeline (normalizer, binder, model,
+# fail-closed gates) has actually been reviewed and tested, not merely that
+# some caller decided to pass that market string through. Add a market only
+# alongside the workstream that built and tested its own capture path.
+ALLOWED_MARKETS = frozenset({"passing_yards", "receptions"})
 ALLOWED_DECISIONS = frozenset({"SHADOW_ONLY", "QUARANTINED"})
 FORBIDDEN_OUTCOME_KEYS = frozenset({
     "actual",
@@ -112,8 +118,10 @@ def _validate_record(record: Mapping[str, Any]) -> dict[str, Any]:
     ):
         _required_text(record, field)
 
-    if str(record.get("market")) != "passing_yards":
-        raise ValueError("shadow v1 supports passing_yards only")
+    if str(record.get("market")) not in ALLOWED_MARKETS:
+        raise ValueError(
+            f"shadow v1 supports {sorted(ALLOWED_MARKETS)} only"
+        )
 
     row = dict(record)
     row["decision_status"] = decision

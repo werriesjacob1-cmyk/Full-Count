@@ -3704,6 +3704,530 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 67.5,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Houston Astros",
+          "game_pk": 824138,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 40.2857,
+            "pitch_exploit": 2.8571,
+            "l7_avg_ev": 53.4167,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 25.3333,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 16.6667,
+            "platoon_barrel_pct": 0.08,
+            "platoon_xwoba": 0.72,
+            "park_hand_index": 1.82,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 0.0,
+            "woba_behind": 100.0,
+            "pull_park_synergy": 1.1721,
+            "hard_hit_105_rate": 0.465,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.288,
+            "vs_rp_ops": 0.756,
+            "ump_k_pct": 0.576,
+            "ump_bb_pct": -0.216
+          },
+          "hit_probability": 0.6597,
+          "raw_hit_probability": 0.6462,
+          "lift": 0.0992,
+          "reliability": "A",
+          "sample_n": 102,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 64.5,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Houston Astros",
+          "game_pk": 824138,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 59.375,
+            "catcher_poptime": 14.2857,
+            "on_base": 85.6046
+          },
+          "hit_probability": 0.0769,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 102,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 9.2,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Houston Astros",
+          "game_pk": 824138,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0652
+          },
+          "hit_probability": 0.0652,
+          "raw_hit_probability": null,
+          "lift": 0.0175,
+          "reliability": "A",
+          "sample_n": 102,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.9,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Houston Astros",
+          "game_pk": 824138,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0362
+          },
+          "hit_probability": 0.0362,
+          "raw_hit_probability": null,
+          "lift": 0.0155,
+          "reliability": "A",
+          "sample_n": 102,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 83.4,
+          "notable_signals": 2,
+          "matchup": "Atlanta Braves @ Houston Astros",
+          "game_pk": 824137,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 28.2857,
+            "pitch_exploit": 1.7143,
+            "l7_avg_ev": 60.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 25.3333,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": 0.0,
+            "platoon_xwoba": 0.48,
+            "park_hand_index": 1.79,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 0.0,
+            "woba_behind": 100.0,
+            "pull_park_synergy": 1.1528,
+            "hard_hit_105_rate": 0.4525,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.256,
+            "vs_rp_ops": 0.696,
+            "ump_k_pct": 0.036,
+            "ump_bb_pct": -0.048
+          },
+          "hit_probability": 0.6616,
+          "raw_hit_probability": 0.6477,
+          "lift": 0.0998,
+          "reliability": "A",
+          "sample_n": 103,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 63.9,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Houston Astros",
+          "game_pk": 824137,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 59.375,
+            "catcher_poptime": 14.2857,
+            "on_base": 82.7255
+          },
+          "hit_probability": 0.0767,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 103,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 9.1,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Houston Astros",
+          "game_pk": 824137,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0647
+          },
+          "hit_probability": 0.0647,
+          "raw_hit_probability": null,
+          "lift": 0.017,
+          "reliability": "A",
+          "sample_n": 103,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.9,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Houston Astros",
+          "game_pk": 824137,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0359
+          },
+          "hit_probability": 0.0359,
+          "raw_hit_probability": null,
+          "lift": 0.0152,
+          "reliability": "A",
+          "sample_n": 103,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-20",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 73.9,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Houston Astros",
+          "game_pk": 824139,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 16.2857,
+            "l7_avg_ev": 77.9687,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 27.3333,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 33.3333,
+            "bvp_ops": -2.112,
+            "platoon_barrel_pct": -0.96,
+            "platoon_xwoba": 1.68,
+            "park_hand_index": 1.82,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "woba_behind": 100.0,
+            "pull_park_synergy": 1.1466,
+            "hard_hit_105_rate": 0.4375,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.352,
+            "vs_rp_ops": 0.624,
+            "ump_k_pct": -0.744,
+            "ump_bb_pct": 0.132
+          },
+          "hit_probability": 0.662,
+          "raw_hit_probability": 0.648,
+          "lift": 0.0987,
+          "reliability": "A",
+          "sample_n": 104,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 62.3,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Houston Astros",
+          "game_pk": 824139,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 59.375,
+            "catcher_poptime": 8.5714,
+            "on_base": 82.7255
+          },
+          "hit_probability": 0.0757,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 104,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 9.0,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Houston Astros",
+          "game_pk": 824139,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0641
+          },
+          "hit_probability": 0.0641,
+          "raw_hit_probability": null,
+          "lift": 0.0165,
+          "reliability": "A",
+          "sample_n": 104,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.8,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Houston Astros",
+          "game_pk": 824139,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0356
+          },
+          "hit_probability": 0.0356,
+          "raw_hit_probability": null,
+          "lift": 0.015,
+          "reliability": "A",
+          "sample_n": 104,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 68.8,
+          "notable_signals": 2,
+          "matchup": "Houston Astros @ Seattle Mariners",
+          "game_pk": 823089,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 34.0,
+            "pitch_exploit": 1.7143,
+            "l7_avg_ev": 92.1528,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 2.4,
+            "park_hr_index": 50.3,
+            "season_barrel_pct": 26.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 0.0,
+            "bvp_ops": -3.528,
+            "platoon_barrel_pct": 0.32,
+            "platoon_xwoba": 0.54,
+            "park_hand_index": 0.78,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 2.0,
+            "woba_behind": 100.0,
+            "pull_park_synergy": 0.5023,
+            "hard_hit_105_rate": 0.425,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.424,
+            "vs_rp_ops": 0.504,
+            "ump_k_pct": -0.42,
+            "ump_bb_pct": -0.132
+          },
+          "hit_probability": 0.6564,
+          "raw_hit_probability": 0.6436,
+          "lift": 0.0947,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 69.0,
+          "notable_signals": 1,
+          "matchup": "Houston Astros @ Seattle Mariners",
+          "game_pk": 823089,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 2.58,
+            "sprint_speed": 62.5,
+            "catcher_poptime": 28.5714,
+            "on_base": 80.8061
+          },
+          "hit_probability": 0.0747,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 8.9,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ Seattle Mariners",
+          "game_pk": 823089,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0636
+          },
+          "hit_probability": 0.0636,
+          "raw_hit_probability": null,
+          "lift": 0.0161,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.7,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ Seattle Mariners",
+          "game_pk": 823089,
+          "team": "Houston Astros",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0353
+          },
+          "hit_probability": 0.0353,
+          "raw_hit_probability": null,
+          "lift": 0.0146,
+          "reliability": "A",
+          "sample_n": 105,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

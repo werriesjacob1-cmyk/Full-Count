@@ -3780,7 +3780,8 @@ def _build_and_score():
         # this fixes (recommending "Over 11.5 Outs" for a pitcher FanDuel
         # actually lines at 17.5). Reused below at the later attach_market_prices
         # call instead of fetching the same market twice.
-        ("pitcher_outs_prices", lambda: _fd_early.fetch_pitcher_outs()),
+        ("pitcher_outs_prices", lambda: _fd_early.fetch_slate_prices(
+            _fd_early.fetch_pitcher_outs, _fd_early.slate_games_from_meta(game_meta))),
         # SAME bug, SAME fix, for the standard strikeouts market. Found live
         # 2026-08-13: attach_market_prices' "strikeouts" branch only prices a
         # candidate when the model's chosen `needs` happens to equal
@@ -3791,12 +3792,15 @@ def _build_and_score():
         # starters, yet only 1 matched. Fetched here so
         # attach_hit_probabilities can prefer the real line's needs the same
         # way score_pitcher_outs already does for pitcher_outs.
-        ("strikeout_prices", lambda: _fd_early.fetch_pitcher_strikeouts()),
+        ("strikeout_prices", lambda: _fd_early.fetch_slate_prices(
+            _fd_early.fetch_pitcher_strikeouts, _fd_early.slate_games_from_meta(game_meta))),
         # Starting Pitcher Combined Alt Strikeouts -- see score_combined_
         # strikeouts's own docstring. A real, priced ladder market with no
         # scorer until now, found sitting next to Pitcher Outs Recorded on
         # the exact same tab.
-        ("combined_k_prices", lambda: _fd_early.fetch_combined_pitcher_strikeouts()),
+        ("combined_k_prices", lambda: _fd_early.fetch_slate_prices(
+            _fd_early.fetch_combined_pitcher_strikeouts,
+            _fd_early.slate_games_from_meta(game_meta))),
         # Second batch, each verified against its real structure before use.
         ("team_field", lambda: _src.team_fielding_table()),
         # Reuses the same call already made above for team_k_lookup's
@@ -4721,14 +4725,18 @@ def main() -> int:
         # chosen `projection` almost never does (see select_moonshots).
         # Fetching it twice would mean two full FanDuel sweeps of a 15-game
         # slate for the same data.
-        prices = _fd.fetch_prop_prices()
+        # Scoped to this slate's own FanDuel events: the flat feed also
+        # carries any other slate's still-open games, and prices are looked
+        # up by player name (see odds_fanduel.slate_scoped_values).
+        slate_games = _fd.slate_games_from_meta(game_meta)
+        prices = _fd.fetch_slate_prices(_fd.fetch_prop_prices, slate_games)
         # Already fetched earlier (before scoring, so attach_hit_probabilities'
         # strikeouts branch could price against the real line directly) --
         # reused here rather than sweeping FanDuel for the same market twice,
         # same pattern as po_prices/combined_k_prices below.
         k_prices = early_k_prices or {}
         try:
-            fi_prices = _fd.fetch_first_inning_totals()
+            fi_prices = _fd.fetch_slate_prices(_fd.fetch_first_inning_totals, slate_games)
         except Exception:
             fi_prices = {}
         # Already fetched earlier (before scoring, so score_pitcher_outs
@@ -4840,6 +4848,12 @@ def main() -> int:
                                         board_generated_at=_board_generated_at)
 
     gated = [c for c in candidates if c["score"] >= MIN_QUALITY_SCORE]
+    # Captured before the positive-read-floor reassignment below can replace
+    # `gated` with a fallback pool -- board_freeze.py needs the ORIGINAL
+    # quality-gate outcome for every candidate, independent of whether the
+    # floor check below ends up falling back to the full pool on a thin
+    # night. See board_freeze.freeze_board's own docstring.
+    _gated_pool_for_freeze = gated
 
     # POSITIVE-READ FLOOR. A pick has to beat the league base rate for its own
     # market before it can be recommended at all -- only then does
@@ -4919,6 +4933,42 @@ def main() -> int:
               recommendation_metadata=_rec_metadata)
     persist_player_snapshots(candidates)
     print(f"Wrote {len(top10)} picks to {PICKS_FILE} and {PICKS_JSON_FILE}")
+
+    # FULL-BOARD FREEZE. Instrumentation only -- see board_freeze.py's own
+    # module docstring for why this exists (PR #131's convergent finding
+    # that no frozen full-board snapshot exists at generation time, so every
+    # past calibration evaluation measured the wrong population). Captures
+    # the complete candidate universe (kept + QC-rejected + lineup-assumed
+    # holdout) computed above, at the exact boundary before write_json wrote
+    # the mutable board/grading-facing artifacts. Sealed before any game on
+    # the slate can start, so no outcome can contaminate it. Never fatal to
+    # the pipeline itself: a freeze failure is a real problem worth seeing,
+    # but it must not block tonight's actual picks from shipping.
+    try:
+        import board_freeze
+        _sealed_at = datetime.now(timezone.utc).isoformat()
+        _game_start_times = {str(gm["game_pk"]): gm["game_start_utc"]
+                             for gm in game_meta if gm.get("game_start_utc")}
+        _frozen_records = board_freeze.freeze_board(
+            date=m.TODAY, board_generated_at=_board_generated_at,
+            candidates=candidates, qc_rejected=_qc_rejected,
+            assumed_lineup=assumed_lineup, gated=_gated_pool_for_freeze,
+            with_read=with_read, no_read=no_read, ranked=ranked, top10=top10,
+            by_category=by_category, moonshots=moonshots,
+            deep_moonshots=deep_moonshots, shadow_tracking=shadow_tracking,
+            provenance=_rec_metadata,
+        )
+        _frozen_board = board_freeze.seal_board(
+            date=m.TODAY, board_generated_at=_board_generated_at,
+            sealed_at=_sealed_at, game_start_times=_game_start_times,
+            records=_frozen_records, provenance=_rec_metadata,
+        )
+        _frozen_path = os.path.join(OUTPUT_DIR, f"board_freeze_{m.TODAY}.json")
+        board_freeze.write_frozen_board(_frozen_board, _frozen_path)
+        print(f"Sealed full-board freeze ({_frozen_board['record_count']} candidates) "
+              f"to {_frozen_path}")
+    except Exception as e:
+        m.warn(f"Full-board freeze failed ({e}) — picks JSON/markdown are unaffected")
 
     # Readable board + a couple of real example parlays, generated every run
     # instead of left as a manual step someone has to remember. Never fatal:

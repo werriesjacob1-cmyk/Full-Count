@@ -361,6 +361,68 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 31.7,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Kansas City Royals",
+          "game_pk": 824061,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 72.0,
+            "same_hand_ratio": 43.75,
+            "l14_k_pct": 4.7059,
+            "env_neutral": 50.0,
+            "ump_accuracy": 61.3349,
+            "ump_k_pct": -0.6,
+            "ump_bb_pct": -0.168
+          },
+          "hit_probability": 0.4966,
+          "raw_hit_probability": 0.4966,
+          "lift": -0.2114,
+          "reliability": "C",
+          "sample_n": 8,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 16.5,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Kansas City Royals",
+          "game_pk": 824061,
+          "team": "Kansas City Royals",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.529,
+            "avg_outs_per_start": 11.5
+          },
+          "hit_probability": 0.5444,
+          "raw_hit_probability": 0.529,
+          "lift": -0.1899,
+          "reliability": "C",
+          "sample_n": 8,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        }
+      ]
     }
   ]
 }

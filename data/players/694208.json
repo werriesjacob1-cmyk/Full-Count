@@ -2900,6 +2900,313 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-20",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 70.0,
+          "notable_signals": 3,
+          "matchup": "Minnesota Twins @ Los Angeles Angels",
+          "game_pk": 823975,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 81.4286,
+            "l7_avg_ev": 83.75,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 11.175,
+            "park_hr_index": 51.3,
+            "season_barrel_pct": 39.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 83.3333,
+            "platoon_barrel_pct": 3.04,
+            "platoon_xwoba": -0.66,
+            "park_hand_index": -3.06,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 12.7273,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -0.8461,
+            "getaway_day": -2.0,
+            "series_game": 3.0,
+            "sp_rp_ops_gap": -0.848,
+            "vs_rp_ops": -0.936,
+            "ump_k_pct": -0.024,
+            "ump_bb_pct": -0.408
+          },
+          "hit_probability": 0.6274,
+          "raw_hit_probability": 0.5996,
+          "lift": -0.0384,
+          "reliability": "A",
+          "sample_n": 98,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Los Angeles Angels",
+          "game_pk": 823975,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0238
+          },
+          "hit_probability": 0.0238,
+          "raw_hit_probability": null,
+          "lift": -0.0238,
+          "reliability": "A",
+          "sample_n": 98,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.8,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Los Angeles Angels",
+          "game_pk": 823975,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0195
+          },
+          "hit_probability": 0.0195,
+          "raw_hit_probability": null,
+          "lift": -0.0011,
+          "reliability": "A",
+          "sample_n": 98,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 47.0,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Angels @ Athletics",
+          "game_pk": 824953,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 57.1429,
+            "l7_avg_ev": 66.8382,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 50.9,
+            "season_barrel_pct": 38.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 0.08,
+            "platoon_xwoba": -2.64,
+            "park_hand_index": 2.95,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 2.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 10.0,
+            "pull_park_synergy": 0.795,
+            "team_total_move": 0.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.0,
+            "vs_rp_ops": -1.164,
+            "ump_k_pct": 0.312,
+            "ump_bb_pct": 0.84
+          },
+          "hit_probability": 0.6213,
+          "raw_hit_probability": 0.5896,
+          "lift": -0.0441,
+          "reliability": "A",
+          "sample_n": 99,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Athletics",
+          "game_pk": 824953,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0236
+          },
+          "hit_probability": 0.0236,
+          "raw_hit_probability": null,
+          "lift": -0.0239,
+          "reliability": "A",
+          "sample_n": 99,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.7,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Athletics",
+          "game_pk": 824953,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0193
+          },
+          "hit_probability": 0.0193,
+          "raw_hit_probability": null,
+          "lift": -0.0014,
+          "reliability": "A",
+          "sample_n": 99,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 37.6,
+          "notable_signals": 1,
+          "matchup": "Los Angeles Angels @ Seattle Mariners",
+          "game_pk": 823087,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 40.5714,
+            "l7_avg_ev": 42.2656,
+            "l7_barrel_pct": 75.0,
+            "park_hr_index": 38.0,
+            "season_barrel_pct": 37.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 2.8,
+            "platoon_xwoba": -0.84,
+            "park_hand_index": 1.8,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 19.0909,
+            "woba_behind": 0.0,
+            "pull_park_synergy": 0.504,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -1.128,
+            "vs_rp_ops": -1.356,
+            "ump_k_pct": -0.3,
+            "ump_bb_pct": -0.372
+          },
+          "hit_probability": 0.6237,
+          "raw_hit_probability": 0.5935,
+          "lift": -0.049,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Seattle Mariners",
+          "game_pk": 823087,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0232
+          },
+          "hit_probability": 0.0232,
+          "raw_hit_probability": null,
+          "lift": -0.0241,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.7,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Seattle Mariners",
+          "game_pk": 823087,
+          "team": "Los Angeles Angels",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.019
+          },
+          "hit_probability": 0.019,
+          "raw_hit_probability": null,
+          "lift": -0.0015,
+          "reliability": "A",
+          "sample_n": 101,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

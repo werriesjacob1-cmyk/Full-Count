@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Picks Board — 2026-09-22</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root {
+  --bg: #f2f5ef; --surface: #ffffff; --surface-2: #e9ede4;
+  --text: #16201a; --text-dim: #5b685e; --line: rgba(22,32,26,0.12);
+  --accent: #2f8f52; --accent-bg: rgba(47,143,82,0.10);
+  --gold: #a9761e; --gold-bg: rgba(169,118,30,0.12);
+  --low: #78877e; --low-bg: rgba(120,135,126,0.12);
+  --bad: #a1432b;
+  --font-display: "Roboto Condensed", "Arial Narrow", "Noto Sans Condensed", sans-serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1613; --surface: #161e19; --surface-2: #1d2620;
+    --text: #edf1e8; --text-dim: #93a196; --line: rgba(255,255,255,0.10);
+    --accent: #5fbf77; --accent-bg: rgba(95,191,119,0.14);
+    --gold: #e0ac4c; --gold-bg: rgba(224,172,76,0.14);
+    --low: #6f7d73; --low-bg: rgba(111,125,115,0.16);
+    --bad: #d97a5c;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1613; --surface: #161e19; --surface-2: #1d2620;
+  --text: #edf1e8; --text-dim: #93a196; --line: rgba(255,255,255,0.10);
+  --accent: #5fbf77; --accent-bg: rgba(95,191,119,0.14);
+  --gold: #e0ac4c; --gold-bg: rgba(224,172,76,0.14);
+  --low: #6f7d73; --low-bg: rgba(111,125,115,0.16);
+  --bad: #d97a5c;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: var(--font-body); line-height: 1.45;
+}
+header {
+  position: sticky; top: 0; z-index: 5;
+  background: var(--surface); border-bottom: 1px solid var(--line);
+  padding: 14px clamp(16px, 4vw, 40px);
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+header h1 {
+  font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.04em;
+  font-size: clamp(20px, 3vw, 26px); margin: 0; font-weight: 700;
+}
+header .stats {
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  color: var(--text-dim); font-size: 13px;
+}
+main { max-width: 1180px; margin: 0 auto; padding: 28px clamp(16px, 4vw, 40px) 60px; }
+h2 {
+  font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em;
+  font-size: 15px; font-weight: 700; color: var(--text-dim); margin: 0 0 10px;
+}
+section.stack { margin-bottom: 40px; }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
+.section-note { font-size: 12.5px; color: var(--text-dim); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px 12px; }
+.cat-block h2 { margin-bottom: 6px; }
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+  padding: 14px; display: flex; flex-direction: column; gap: 6px;
+}
+.card.hi { border-left: 3px solid var(--accent); }
+.card.md { border-left: 3px solid var(--gold); }
+.card.lo { border-left: 3px solid var(--low); }
+.card.big { background: var(--surface-2); }
+.card-top { display: flex; align-items: center; justify-content: space-between; }
+.pill {
+  font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.04em;
+  font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 100px;
+}
+.pill.hi { background: var(--accent-bg); color: var(--accent); }
+.pill.md { background: var(--gold-bg); color: var(--gold); }
+.pill.lo { background: var(--low-bg); color: var(--low); }
+.pct {
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  font-size: 22px; font-weight: 600;
+}
+.player { margin: 2px 0 0; font-size: 16.5px; font-weight: 700; text-wrap: balance; }
+.prop { margin: 0; color: var(--text); font-size: 14px; }
+.matchup { margin: 0; color: var(--text-dim); font-size: 12.5px; }
+.meta {
+  display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 4px;
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 12px; color: var(--text-dim);
+}
+.tag { font-family: var(--font-body); font-size: 11px; padding: 1px 6px; border-radius: 4px; margin-left: 4px; }
+.tag.good { background: var(--accent-bg); color: var(--accent); }
+.tag.bad { background: rgba(161,67,43,0.12); color: var(--bad); }
+.lift.pos { color: var(--accent); }
+.lift.neg { color: var(--bad); }
+details.reason { margin-top: 4px; font-size: 13px; }
+details.reason summary {
+  cursor: pointer; color: var(--text-dim); font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.04em; font-family: var(--font-display); font-weight: 700;
+}
+details.reason summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+ul.why, ul.watch { margin: 6px 0 0; padding-left: 18px; }
+ul.why li { margin-bottom: 3px; }
+ul.watch { color: var(--bad); }
+p.fallback-reason { margin: 6px 0 0; color: var(--text-dim); font-size: 12.5px; }
+p.empty { color: var(--text-dim); font-style: italic; }
+footer { max-width: 1180px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px) 40px; color: var(--text-dim); font-size: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Picks Board — 2026-09-22</h1>
+  <div class="stats">10 games · generated 11:01 PM · 10 top board · 15 categories · 5 moonshots</div>
+</header>
+<main>
+  <section class="stack">
+    <div class="section-head"><h2>Best pick in every category</h2><span class="section-note">ranked high → low confidence</span></div>
+    <div class="cat-grid">
+      <section class="cat-block"><h2>Pitcher Outs Recorded</h2>
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">84.4%</span>
+      </div>
+      <h3 class="player">Sean Manaea</h3>
+      <p class="prop">Over 14.5 Outs Recorded</p>
+      <p class="matchup">New York Mets · New York Mets @ Texas Rangers</p>
+      <div class="meta">
+        <span>Market -186 (implied 60.6%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+10.9 pts vs base rate</span>
+        <span class="sample">17 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Recorded 15+ outs (5.0 IP) in 84.4% of his last 17 real starts (league 73.4%, avg 16.88 outs/start)</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Hits+Runs+RBIs</h2>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">72.7%</span>
+      </div>
+      <h3 class="player">Jake McCarthy</h3>
+      <p class="prop">Over 0.5 Hits+Runs+RBIs</p>
+      <p class="matchup">Colorado Rockies · Arizona Diamondbacks @ Colorado Rockies</p>
+      <div class="meta">
+        <span>Market -390 (implied 79.6%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+6.1 pts vs base rate</span>
+        <span class="sample">137 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.53 PA (batting slot 1) — a favorable lineup slot</li><li>Team implied for 4.48 runs (league avg 4.245; line 4.5, game total 11)</li><li>Platoon: L bat vs RHP (favorable)</li><li>Pitch-type exploit: RV/100 +1.7 vs FF (opposing SP throws it 32.1% of the time)</li><li>L7 barrel% 19.0 — hot recent contact</li><li>Bat speed trending up L14 (+5.3mph 2nd-half vs 1st-half)</li></ul><ul class="watch"><li>Public heavy on Colorado Rockies (money% trails tickets% by 21 pts) — sharp money is fading this side</li><li>wOBA vs xwOBA: 0.357 vs 0.325 (+0.032) — outperforming his contact quality, regression risk</li><li>Opposing SP ERA 3.45 — elite pitcher, tough matchup</li><li>L7 avg EV 79.4mph (league ~88.5) — cold recent contact</li><li>Season barrel% 5.6 — below-average barrel rate</li><li>Hitter batting behind him: 0.323 wOBA (league ~.320) — little lineup protection, an easier batter to pitch around</li><li>Wind blowing IN (9mph) — power suppressed</li><li>Opposing bullpen fatigue: 1/9 relievers over 60 pitches in L7 (fresh pen — tougher matchup late)</li><li>Sharp money fading Colorado Rockies (money% -21 pts vs ticket%) — smart money moving away from this side</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Hits</h2>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">71.8%</span>
+      </div>
+      <h3 class="player">Joshua Kuroda-Grauer</h3>
+      <p class="prop">Over 0.5 Hits</p>
+      <p class="matchup">Athletics · Los Angeles Angels @ Athletics</p>
+      <div class="meta">
+        <span>Market -280 (implied 73.7%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+15.6 pts vs base rate</span>
+        
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.02 PA (batting slot 6)</li><li>Team implied for 4.64 runs (league avg 4.245; line 4.5, game total 9.5)</li><li>Platoon: R bat vs LHP (favorable)</li><li>Opposing SP ERA 5.02 — shaky matchup for the pitcher</li></ul><ul class="watch"><li>L7 sample is thin (0 PA) — treat recent-form read with caution</li><li>Activated from the 60-day injured list 0 day(s) ago — early performance back can be inconsistent</li><li>Season barrel% 1.9 — below-average barrel rate</li><li>Hitters batting ahead of him: 0.259 wOBA (league ~.320) — a weak on-base group ahead of him, fewer runners to drive in</li><li>Hitter batting behind him: 0.276 wOBA (league ~.320) — little lineup protection, an easier batter to pitch around</li><li>Opposing bullpen fatigue: 2/9 relievers over 60 pitches in L7 (fresh pen — tougher matchup late)</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Combined Starter Strikeouts</h2>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">69.0%</span>
+      </div>
+      <h3 class="player">Taj Bradley &amp; Anthony Molina</h3>
+      <p class="prop">Over 11.5 Combined Strikeouts</p>
+      <p class="matchup"> · Minnesota Twins @ San Francisco Giants</p>
+      <div class="meta">
+        <span>Market +172 (implied 36.8%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+32.2 pts vs base rate</span>
+        
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Model: 69.0% chance of 12+ combined Ks (Taj Bradley + Anthony Molina), priced at +172 (36.8% implied)</li><li>Taj Bradley: proj. 6.9 Ks, 23.7 exp. BF, K rate 29.1%, opp K% 48.0, L14 K% 91.8</li><li>Anthony Molina: proj. 6.0 Ks, 21.8 exp. BF, K rate 27.7%, opp K% 42.0, L14 K% 58.8</li><li>HP umpire strikeout rate 0.4% for tonight&#x27;s game</li></ul><ul class="watch"><li>This is a newer market on the board -- not enough graded combined-strikeout picks yet for a reliability grade. Treat it as unproven until more results come in.</li><li>Thin evidence behind Taj Bradley and Anthony Molina&#x27;s own strikeout projection -- capping how much this pick can be trusted</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Strikeouts</h2>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">63.4%</span>
+      </div>
+      <h3 class="player">Anthony Molina</h3>
+      <p class="prop">Over 3.5 Strikeouts</p>
+      <p class="matchup">San Francisco Giants · Minnesota Twins @ San Francisco Giants</p>
+      <div class="meta">
+        <span>Market -148 (implied 56.3%) <span class="tag good">clears</span></span>
+        <span class="lift neg">-7.4 pts vs base rate</span>
+        
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Opposing team K% 21.2</li><li>Expected workload 21.8 batters faced (his own 20.0/start over 2 real starts, shrunk toward the 23.1 league mean)</li><li>Platoon advantage: 3 of 6 projected hitters bat right-handed against this RHP</li><li>L14 K% 25.0 (40 PA)</li><li>Recency-weighted K rate 27.7% (exp. decay, halflife 30d, 4 real starts / 79 BF) — drives a favorable strikeout-probability read</li><li>HP ump accuracy 94.6% — tight, accurate zone favors called strikes</li></ul><ul class="watch"><li>Workload estimate rests on only 2 starts in the L14 window — most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Singles</h2>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">56.9%</span>
+      </div>
+      <h3 class="player">Joshua Kuroda-Grauer</h3>
+      <p class="prop">Over 0.5 Singles</p>
+      <p class="matchup">Athletics · Los Angeles Angels @ Athletics</p>
+      <div class="meta">
+        <span>Market -160 (implied 61.5%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+15.5 pts vs base rate</span>
+        
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.02 PA (batting slot 6)</li><li>Team implied for 4.64 runs (league avg 4.245; line 4.5, game total 9.5)</li><li>Platoon: R bat vs LHP (favorable)</li><li>Opposing SP ERA 5.02 — shaky matchup for the pitcher</li></ul><ul class="watch"><li>L7 sample is thin (0 PA) — treat recent-form read with caution</li><li>Activated from the 60-day injured list 0 day(s) ago — early performance back can be inconsistent</li><li>Season barrel% 1.9 — below-average barrel rate</li><li>Hitters batting ahead of him: 0.259 wOBA (league ~.320) — a weak on-base group ahead of him, fewer runners to drive in</li><li>Hitter batting behind him: 0.276 wOBA (league ~.320) — little lineup protection, an easier batter to pitch around</li><li>Opposing bullpen fatigue: 2/9 relievers over 60 pitches in L7 (fresh pen — tougher matchup late)</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>NRFI/YRFI (Both Teams)</h2>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">56.0%</span>
+      </div>
+      <h3 class="player">Tampa Bay Rays @ New York Yankees — 1st Inning (Both Teams)</h3>
+      <p class="prop">No runs in the 1st (both teams)</p>
+      <p class="matchup"> · Tampa Bay Rays @ New York Yankees</p>
+      <div class="meta">
+        <span>Market -174 (implied 60.0%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+6.2 pts vs base rate</span>
+        <span class="sample">20 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>New York Yankees scores off Drew Rasmussen (away SP) in the bottom 1st: 23.5% (shrunk, 30 starts)</li><li>Tampa Bay Rays scores off Max Fried (home SP) in the top 1st: 26.8% (shrunk, 20 starts)</li><li>This is the real both-teams NRFI/YRFI market -- combines both starters&#x27; halves of the 1st, not a one-sided team read.</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Total Bases</h2>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">48.1%</span>
+      </div>
+      <h3 class="player">Joshua Kuroda-Grauer</h3>
+      <p class="prop">Over 1.5 Total Bases</p>
+      <p class="matchup">Athletics · Los Angeles Angels @ Athletics</p>
+      <div class="meta">
+        <span>Market +105 (implied 48.8%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+16.1 pts vs base rate</span>
+        
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.02 PA (batting slot 6)</li><li>Team implied for 4.64 runs (league avg 4.245; line 4.5, game total 9.5)</li><li>Platoon: R bat vs LHP (favorable)</li><li>Opposing SP ERA 5.02 — shaky matchup for the pitcher</li></ul><ul class="watch"><li>L7 sample is thin (0 PA) — treat recent-form read with caution</li><li>Activated from the 60-day injured list 0 day(s) ago — early performance back can be inconsistent</li><li>Season barrel% 1.9 — below-average barrel rate</li><li>Hitters batting ahead of him: 0.259 wOBA (league ~.320) — a weak on-base group ahead of him, fewer runners to drive in</li><li>Hitter batting behind him: 0.276 wOBA (league ~.320) — little lineup protection, an easier batter to pitch around</li><li>Opposing bullpen fatigue: 2/9 relievers over 60 pitches in L7 (fresh pen — tougher matchup late)</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Runs</h2>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">47.8%</span>
+      </div>
+      <h3 class="player">Elly De La Cruz</h3>
+      <p class="prop">Over 0.5 Runs</p>
+      <p class="matchup">Cincinnati Reds · Cincinnati Reds @ Atlanta Braves</p>
+      <div class="meta">
+        <span>Market -105 (implied 51.2%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+10.2 pts vs base rate</span>
+        <span class="sample">137 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.4 PA (batting slot 2) — a favorable lineup slot</li><li>Platoon: S bat vs RHP (handedness unknown)</li><li>Pitch-type exploit: RV/100 +2.8 vs CH (opposing SP throws it 17.8% of the time)</li><li>Opposing SP ERA 5.03 — shaky matchup for the pitcher</li><li>L7 avg EV 93.3mph (league ~88.5) — hot recent contact</li><li>L7 barrel% 41.7 — hot recent contact</li><li>Season barrel% 15.9 — well above-average barrel rate</li><li>Hitter batting behind him: 0.346 wOBA (league ~.320)</li></ul><ul class="watch"><li>Public heavy on Cincinnati Reds (money% trails tickets% by 22 pts) — sharp money is fading this side</li><li>Team implied for 3.9 runs (league avg 4.245; line 3.5, game total 9.5) — a weak offensive environment</li><li>Hitters batting ahead of him: 0.177 wOBA (league ~.320) — a weak on-base group ahead of him, fewer runners to drive in</li><li>Wind blowing IN (5mph) — power suppressed</li><li>Opposing bullpen fatigue: 1/9 relievers over 60 pitches in L7 (fresh pen — tougher matchup late)</li><li>Sharp money fading Cincinnati Reds (money% -22 pts vs ticket%) — smart money moving away from this side</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>RBIs</h2>
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">37.8%</span>
+      </div>
+      <h3 class="player">Gabriel Moreno</h3>
+      <p class="prop">Over 0.5 RBIs</p>
+      <p class="matchup">Arizona Diamondbacks · Arizona Diamondbacks @ Colorado Rockies</p>
+      <div class="meta">
+        <span>Market +105 (implied 48.8%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+8.0 pts vs base rate</span>
+        <span class="sample">125 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.55 PA (batting slot 3) — a favorable lineup slot</li><li>Team implied for 6.52 runs (league avg 4.245; line 6, game total 11) — a strong offensive environment</li><li>Platoon: R bat vs LHP (favorable)</li><li>Opposing SP ERA 6.38 — shaky matchup for the pitcher</li><li>L7 avg EV 90.4mph (league ~88.5) — hot recent contact</li><li>L7 barrel% 31.2 — hot recent contact</li><li>Hitter batting behind him: 0.330 wOBA (league ~.320)</li><li>Sharp money backing Arizona Diamondbacks (money% +21 pts vs ticket%)</li></ul><ul class="watch"><li>Season barrel% 7.8 — below-average barrel rate</li><li>Hitters batting ahead of him: 0.324 wOBA (league ~.320) — a weak on-base group ahead of him, fewer runners to drive in</li><li>Wind blowing IN (9mph) — power suppressed</li><li>Opposing bullpen fatigue: 1/9 relievers over 60 pitches in L7 (fresh pen — tougher matchup late)</li><li>BvP: 3-for-12 vs Kyle Freeland (standard error ±12 pts on a 12-AB career sample -- weighted lightly on that basis, not just because the count looks small)</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Stolen Base</h2>
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">33.3%</span>
+      </div>
+      <h3 class="player">Esteury Ruiz</h3>
+      <p class="prop">To Steal a Base</p>
+      <p class="matchup">Miami Marlins · Miami Marlins @ Chicago Cubs</p>
+      <div class="meta">
+        <span>Market +250 (implied 28.6%) <span class="tag good">clears</span></span>
+        
+        <span class="sample">88 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Sprint speed 29.9ft/s (league ~27.0) — plus speed</li><li>On-base ability: wOBA 0.325 (league ~0.313) — gates how often he&#x27;s on first to run at all</li></ul><ul class="watch"><li>Opposing catcher pop time 1.96s to 2B (league ~2.0s) — a fast, hard-to-run-on arm</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Home Runs</h2>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">20.8%</span>
+      </div>
+      <h3 class="player">Lazaro Montes</h3>
+      <p class="prop">Over 0.5 Home Runs</p>
+      <p class="matchup">Seattle Mariners · Houston Astros @ Seattle Mariners</p>
+      <div class="meta">
+        <span>Market +520 (implied 16.1%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+10.2 pts vs base rate</span>
+        
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Team implied for 3.99 runs (league avg 4.245; line 3.5, game total 7.5)</li><li>Platoon: L bat vs RHP (favorable)</li><li>Opposing SP ERA 5.31 — shaky matchup for the pitcher</li><li>L7 avg EV 92.4mph (league ~88.5) — hot recent contact</li><li>L7 barrel% 50.0 — hot recent contact</li><li>Season barrel% nan</li></ul><ul class="watch"><li>L7 sample is thin (6 PA) — treat recent-form read with caution</li><li>Projected 3.72 PA (batting slot 8) — a tough lineup slot for plate appearances</li><li>Hitters batting ahead of him: 0.307 wOBA (league ~.320) — a weak on-base group ahead of him, fewer runners to drive in</li><li>Hitter batting behind him: 0.274 wOBA (league ~.320) — little lineup protection, an easier batter to pitch around</li><li>Opposing bullpen fatigue: 1/10 relievers over 60 pitches in L7 (fresh pen — tougher matchup late)</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Doubles</h2>
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">17.1%</span>
+      </div>
+      <h3 class="player">Gabriel Moreno</h3>
+      <p class="prop">Over 0.5 Doubles</p>
+      <p class="matchup">Arizona Diamondbacks · Arizona Diamondbacks @ Colorado Rockies</p>
+      <div class="meta">
+        <span>Market +230 (implied 30.3%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+3.4 pts vs base rate</span>
+        <span class="sample">125 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.55 PA (batting slot 3) — a favorable lineup slot</li><li>Team implied for 6.52 runs (league avg 4.245; line 6, game total 11) — a strong offensive environment</li><li>Platoon: R bat vs LHP (favorable)</li><li>Opposing SP ERA 6.38 — shaky matchup for the pitcher</li><li>L7 avg EV 90.4mph (league ~88.5) — hot recent contact</li><li>L7 barrel% 31.2 — hot recent contact</li><li>Hitter batting behind him: 0.330 wOBA (league ~.320)</li><li>Sharp money backing Arizona Diamondbacks (money% +21 pts vs ticket%)</li></ul><ul class="watch"><li>Season barrel% 7.8 — below-average barrel rate</li><li>Hitters batting ahead of him: 0.324 wOBA (league ~.320) — a weak on-base group ahead of him, fewer runners to drive in</li><li>Wind blowing IN (9mph) — power suppressed</li><li>Opposing bullpen fatigue: 1/9 relievers over 60 pitches in L7 (fresh pen — tougher matchup late)</li><li>BvP: 3-for-12 vs Kyle Freeland (standard error ±12 pts on a 12-AB career sample -- weighted lightly on that basis, not just because the count looks small)</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Laser (105+ MPH)</h2>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">15.0%</span>
+      </div>
+      <h3 class="player">Junior Caminero</h3>
+      <p class="prop">To Hit a Laser (105+ MPH)</p>
+      <p class="matchup">Tampa Bay Rays · Tampa Bay Rays @ New York Yankees</p>
+      <div class="meta">
+        <span>Market +600 (implied 14.3%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+10.2 pts vs base rate</span>
+        <span class="sample">156 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Hit a home run at 105+ MPH exit velocity in 15.0% of his last 160 games with a batted ball (league 4.8%)</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Triples</h2>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">6.4%</span>
+      </div>
+      <h3 class="player">Corbin Carroll</h3>
+      <p class="prop">Over 0.5 Triples</p>
+      <p class="matchup">Arizona Diamondbacks · Arizona Diamondbacks @ Colorado Rockies</p>
+      <div class="meta">
+        <span>Market +900 (implied 10.0%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+5.1 pts vs base rate</span>
+        <span class="sample">150 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Team implied for 6.52 runs (league avg 4.245; line 6, game total 11) — a strong offensive environment</li><li>Pitch-type exploit: RV/100 +2.4 vs FC (opposing SP throws it 21.5% of the time)</li><li>Opposing SP ERA 6.38 — shaky matchup for the pitcher</li><li>L7 avg EV 91.3mph (league ~88.5) — hot recent contact</li><li>L7 barrel% 38.5 — hot recent contact</li><li>Season barrel% 12.2</li><li>Hitters batting ahead of him: 0.339 wOBA (league ~.320)</li><li>Sharp money backing Arizona Diamondbacks (money% +21 pts vs ticket%)</li></ul><ul class="watch"><li>Projected 4.09 PA (batting slot 7) — a tough lineup slot for plate appearances</li><li>Platoon: L bat vs LHP (unfavorable)</li><li>Hitter batting behind him: 0.297 wOBA (league ~.320) — little lineup protection, an easier batter to pitch around</li><li>Wind blowing IN (9mph) — power suppressed</li><li>Opposing bullpen fatigue: 1/9 relievers over 60 pitches in L7 (fresh pen — tougher matchup late)</li><li>BvP: 5-for-12 vs Kyle Freeland (standard error ±14 pts on a 12-AB career sample -- weighted lightly on that basis, not just because the count looks small)</li></ul></details>
+    </article></section>
+    </div>
+  </section>
+
+  <section class="stack">
+    <div class="section-head"><h2>Top board</h2><span class="section-note">ranked high → low confidence</span></div>
+    <div class="grid">
+      
+    <article class="card hi big">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">84.4%</span>
+      </div>
+      <h3 class="player">Sean Manaea</h3>
+      <p class="prop">Over 14.5 Outs Recorded</p>
+      <p class="matchup">New York Mets · New York Mets @ Texas Rangers</p>
+      <div class="meta">
+        <span>Market -186 (implied 60.6%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+10.9 pts vs base rate</span>
+        <span class="sample">17 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Recorded 15+ outs (5.0 IP) in 84.4% of his last 17 real starts (league 73.4%, avg 16.88 outs/start)</li></ul></details>
+    </article>
+
+    <article class="card md big">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">71.1%</span>
+      </div>
+      <h3 class="player">Randy Arozarena</h3>
+      <p class="prop">Over 0.5 Hits+Runs+RBIs</p>
+      <p class="matchup">Seattle Mariners · Houston Astros @ Seattle Mariners</p>
+      <div class="meta">
+        <span>Market -240 (implied 70.6%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+4.6 pts vs base rate</span>
+        <span class="sample">148 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.41 PA (batting slot 2) — a favorable lineup slot</li><li>Team implied for 3.99 runs (league avg 4.245; line 3.5, game total 7.5)</li><li>Pitch-type exploit: RV/100 +2.4 vs CH (opposing SP throws it 16.0% of the time)</li><li>Opposing SP ERA 5.31 — shaky matchup for the pitcher</li><li>L7 avg EV 94.0mph (league ~88.5) — hot recent contact</li><li>L7 barrel% 42.9 — hot recent contact</li><li>Bat speed trending up L14 (+3.3mph 2nd-half vs 1st-half)</li><li>Hitter batting behind him: 0.352 wOBA (league ~.320)</li></ul><ul class="watch"><li>wOBA vs xwOBA: 0.375 vs 0.348 (+0.027) — outperforming his contact quality, regression risk</li><li>Platoon: R bat vs RHP (unfavorable)</li><li>Season barrel% 7.9 — below-average barrel rate</li><li>Hitters batting ahead of him: 0.313 wOBA (league ~.320) — a weak on-base group ahead of him, fewer runners to drive in</li><li>Opposing bullpen fatigue: 1/10 relievers over 60 pitches in L7 (fresh pen — tougher matchup late)</li></ul></details>
+    </article>
+
+    <article class="card md big">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">67.1%</span>
+      </div>
+      <h3 class="player">Dustin Harris</h3>
+      <p class="prop">Over 0.5 Hits</p>
+      <p class="matchup">San Diego Padres · San Diego Padres @ Los Angeles Dodgers</p>
+      <div class="meta">
+        <span>Market -175 (implied 63.6%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+10.9 pts vs base rate</span>
+        <span class="sample">37 sample · grade C</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.42 PA (batting slot 2) — a favorable lineup slot</li><li>Team implied for 4.12 runs (league avg 4.245; line 3.5, game total 8.5)</li><li>Platoon: L bat vs RHP (favorable)</li><li>L7 barrel% 14.3 — hot recent contact</li><li>Hitters batting ahead of him: 0.356 wOBA (league ~.320)</li></ul><ul class="watch"><li>Public heavy on San Diego Padres (money% trails tickets% by 11 pts) — sharp money is fading this side</li><li>AVG vs xBA: 0.306 vs 0.276 (+0.030) — outperforming his contact quality, regression risk</li><li>Opposing SP ERA 2.55 — elite pitcher, tough matchup</li><li>L7 avg EV 85.8mph (league ~88.5) — cold recent contact</li><li>Season barrel% 2.0 — below-average barrel rate</li><li>Hitter batting behind him: 0.311 wOBA (league ~.320) — little lineup protection, an easier batter to pitch around</li><li>Opposing bullpen fatigue: 2/12 relievers over 60 pitches in L7 (fresh pen — tougher matchup late)</li><li>Sharp money fading San Diego Padres (money% -11 pts vs ticket%) — smart money moving away from this side</li></ul></details>
+    </article>
+
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">66.3%</span>
+      </div>
+      <h3 class="player">Randal Grichuk</h3>
+      <p class="prop">Over 0.5 Hits</p>
+      <p class="matchup">Chicago White Sox · Chicago White Sox @ Kansas City Royals</p>
+      <div class="meta">
+        <span>Market -180 (implied 64.3%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+10.2 pts vs base rate</span>
+        <span class="sample">107 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.32 PA (batting slot 3) — a favorable lineup slot</li><li>Team implied for 4.21 runs (league avg 4.245; line 3.5, game total 8)</li><li>Platoon: R bat vs LHP (favorable)</li><li>Pitch-type exploit: RV/100 +2.9 vs CH (opposing SP throws it 25.0% of the time)</li><li>L7 avg EV 90.0mph (league ~88.5)</li><li>L7 barrel% 31.6 — hot recent contact</li><li>Bat speed trending up L14 (+2.0mph 2nd-half vs 1st-half)</li><li>Season barrel% 10.4</li><li>Hitter batting behind him: 0.350 wOBA (league ~.320)</li><li>Sharp money backing Chicago White Sox (money% +13 pts vs ticket%)</li></ul><ul class="watch"><li>wOBA vs xwOBA: 0.362 vs 0.331 (+0.031) — outperforming his contact quality, regression risk</li><li>Opposing SP ERA 3.29 — elite pitcher, tough matchup</li><li>Hitters batting ahead of him: 0.228 wOBA (league ~.320) — a weak on-base group ahead of him, fewer runners to drive in</li><li>Wind blowing IN (7mph) — power suppressed</li><li>Opposing bullpen fatigue: 2/9 relievers over 60 pitches in L7 (fresh pen — tougher matchup late)</li></ul></details>
+    </article>
+
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">65.4%</span>
+      </div>
+      <h3 class="player">Jac Caglianone</h3>
+      <p class="prop">Over 0.5 Hits</p>
+      <p class="matchup">Kansas City Royals · Chicago White Sox @ Kansas City Royals</p>
+      <div class="meta">
+        <span>Market -180 (implied 64.3%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+9.2 pts vs base rate</span>
+        <span class="sample">138 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.28 PA (batting slot 3) — a favorable lineup slot</li><li>Pitch-type exploit: RV/100 +1.6 vs FF (opposing SP throws it 22.1% of the time)</li><li>L7 avg EV 97.5mph (league ~88.5) — hot recent contact</li><li>L7 barrel% 37.5 — hot recent contact</li><li>Season barrel% 13.4 — well above-average barrel rate</li><li>Hitters batting ahead of him: 0.345 wOBA (league ~.320)</li></ul><ul class="watch"><li>Public heavy on Kansas City Royals (money% trails tickets% by 13 pts) — sharp money is fading this side</li><li>Team implied for 3.79 runs (league avg 4.245; line 3.5, game total 8) — a weak offensive environment</li><li>Platoon: L bat vs LHP (unfavorable)</li><li>Hitter batting behind him: 0.303 wOBA (league ~.320) — little lineup protection, an easier batter to pitch around</li><li>Wind blowing IN (7mph) — power suppressed</li><li>Opposing bullpen fatigue: 3/11 relievers over 60 pitches in L7 (fresh pen — tougher matchup late)</li><li>Sharp money fading Kansas City Royals (money% -13 pts vs ticket%) — smart money moving away from this side</li></ul></details>
+    </article>
+
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">64.7%</span>
+      </div>
+      <h3 class="player">Jonah Cox</h3>
+      <p class="prop">Over 0.5 Hits</p>
+      <p class="matchup">San Francisco Giants · Minnesota Twins @ San Francisco Giants</p>
+      <div class="meta">
+        <span>Market -175 (implied 63.6%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+8.6 pts vs base rate</span>
+        <span class="sample">47 sample · grade B</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.35 PA (batting slot 2) — a favorable lineup slot</li><li>L7 barrel% 30.0 — hot recent contact</li><li>Bat speed trending up L14 (+1.2mph 2nd-half vs 1st-half)</li></ul><ul class="watch"><li>Public heavy on San Francisco Giants (money% trails tickets% by 41 pts) — sharp money is fading this side</li><li>AVG vs xBA: 0.280 vs 0.216 (+0.064) — outperforming his contact quality, regression risk</li><li>wOBA vs xwOBA: 0.326 vs 0.264 (+0.062) — outperforming his contact quality, regression risk</li><li>Team implied for 3.4 runs (league avg 4.245; line 3.5, game total 7.5) — a weak offensive environment</li><li>Platoon: R bat vs RHP (unfavorable)</li><li>L7 avg EV 79.6mph (league ~88.5) — cold recent contact</li><li>Season barrel% 6.2 — below-average barrel rate</li><li>Hitters batting ahead of him: 0.320 wOBA (league ~.320) — a weak on-base group ahead of him, fewer runners to drive in</li><li>Hitter batting behind him: 0.310 wOBA (league ~.320) — little lineup protection, an easier batter to pitch around</li><li>Wind blowing IN (9mph) — power suppressed</li><li>Opposing bullpen fatigue: 2/9 relievers over 60 pitches in L7 (fresh pen — tougher matchup late)</li><li>Sharp money fading San Francisco Giants (money% -41 pts vs ticket%) — smart money moving away from this side</li></ul></details>
+    </article>
+
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">59.8%</span>
+      </div>
+      <h3 class="player">Drew Gilbert</h3>
+      <p class="prop">Over 0.5 Hits</p>
+      <p class="matchup">San Francisco Giants · Minnesota Twins @ San Francisco Giants</p>
+      <div class="meta">
+        <span>Market -145 (implied 59.2%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+3.6 pts vs base rate</span>
+        <span class="sample">126 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.43 PA (batting slot 1) — a favorable lineup slot</li><li>Platoon: L bat vs RHP (favorable)</li><li>L7 avg EV 90.4mph (league ~88.5) — hot recent contact</li><li>L7 barrel% 40.0 — hot recent contact</li><li>Bat speed trending up L14 (+1.5mph 2nd-half vs 1st-half)</li></ul><ul class="watch"><li>Public heavy on San Francisco Giants (money% trails tickets% by 41 pts) — sharp money is fading this side</li><li>Team implied for 3.4 runs (league avg 4.245; line 3.5, game total 7.5) — a weak offensive environment</li><li>Season barrel% 5.9 — below-average barrel rate</li><li>Hitter batting behind him: 0.326 wOBA (league ~.320) — little lineup protection, an easier batter to pitch around</li><li>Wind blowing IN (9mph) — power suppressed</li><li>Opposing bullpen fatigue: 2/9 relievers over 60 pitches in L7 (fresh pen — tougher matchup late)</li><li>Sharp money fading San Francisco Giants (money% -41 pts vs ticket%) — smart money moving away from this side</li></ul></details>
+    </article>
+
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">33.3%</span>
+      </div>
+      <h3 class="player">Esteury Ruiz</h3>
+      <p class="prop">To Steal a Base</p>
+      <p class="matchup">Miami Marlins · Miami Marlins @ Chicago Cubs</p>
+      <div class="meta">
+        <span>Market +250 (implied 28.6%) <span class="tag good">clears</span></span>
+        
+        <span class="sample">88 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Sprint speed 29.9ft/s (league ~27.0) — plus speed</li><li>On-base ability: wOBA 0.325 (league ~0.313) — gates how often he&#x27;s on first to run at all</li></ul><ul class="watch"><li>Opposing catcher pop time 1.96s to 2B (league ~2.0s) — a fast, hard-to-run-on arm</li></ul></details>
+    </article>
+
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">27.7%</span>
+      </div>
+      <h3 class="player">Bobby Witt Jr.</h3>
+      <p class="prop">To Steal a Base</p>
+      <p class="matchup">Kansas City Royals · Chicago White Sox @ Kansas City Royals</p>
+      <div class="meta">
+        <span>Market +280 (implied 26.3%) <span class="tag good">clears</span></span>
+        
+        <span class="sample">137 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Sprint speed 30.1ft/s (league ~27.0) — plus speed</li><li>On-base ability: wOBA 0.345 (league ~0.313) — gates how often he&#x27;s on first to run at all (favorable)</li></ul><ul class="watch"><li>Opposing catcher pop time 1.96s to 2B (league ~2.0s) — a fast, hard-to-run-on arm</li></ul></details>
+    </article>
+
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">17.7%</span>
+      </div>
+      <h3 class="player">A.J. Ewing</h3>
+      <p class="prop">To Steal a Base</p>
+      <p class="matchup">New York Mets · New York Mets @ Texas Rangers</p>
+      <div class="meta">
+        <span>Market +550 (implied 15.4%) <span class="tag good">clears</span></span>
+        
+        <span class="sample">114 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Sprint speed 29.4ft/s (league ~27.0) — plus speed</li><li>On-base ability: wOBA 0.312 (league ~0.313) — gates how often he&#x27;s on first to run at all</li></ul><ul class="watch"><li>Opposing catcher pop time 2.00s to 2B (league ~2.0s) — a fast, hard-to-run-on arm</li></ul></details>
+    </article>
+    </div>
+  </section>
+
+  <section class="stack">
+    <div class="section-head"><h2>Moonshots</h2><span class="section-note">home-run bets, ranked high → low confidence</span></div>
+    <div class="grid">
+      
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">18.1%</span>
+      </div>
+      <h3 class="player">Pete Crow-Armstrong</h3>
+      <p class="prop">Home Run</p>
+      <p class="matchup">Chicago Cubs · Miami Marlins @ Chicago Cubs</p>
+      <div class="meta">
+        <span>Market +480 (implied 17.2%) <span class="tag good">clears</span></span>
+        <span class="lift pos">+7.5 pts vs base rate</span>
+        <span class="sample">156 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.47 PA (batting slot 1) — a favorable lineup slot</li><li>Platoon: L bat vs RHP (favorable)</li><li>Pitch-type exploit: RV/100 +2.4 vs SL (opposing SP throws it 19.9% of the time)</li><li>L7 avg EV 92.3mph (league ~88.5) — hot recent contact</li><li>L7 barrel% 38.9 — hot recent contact</li><li>Bat speed trending up L14 (+1.0mph 2nd-half vs 1st-half)</li><li>Season barrel% 13.7 — well above-average barrel rate</li><li>Hitter batting behind him: 0.364 wOBA (league ~.320) — real lineup protection, pitchers can&#x27;t just pitch around him</li><li>Sharp money backing Chicago Cubs (money% +15 pts vs ticket%)</li></ul><ul class="watch"><li>wOBA vs xwOBA: 0.402 vs 0.377 (+0.025) — outperforming his contact quality, regression risk</li><li>Team implied for 3.85 runs (league avg 4.245; line 3.5, game total 6.5) — a weak offensive environment</li><li>Wind blowing IN (13mph) — power suppressed</li><li>Opposing bullpen fatigue: 0/10 relievers over 60 pitches in L7 (fresh pen — tougher matchup late)</li></ul></details>
+    </article>
+
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">17.2%</span>
+      </div>
+      <h3 class="player">Ben Rice</h3>
+      <p class="prop">Home Run</p>
+      <p class="matchup">New York Yankees · Tampa Bay Rays @ New York Yankees</p>
+      <div class="meta">
+        <span>Market +400 (implied 20.0%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+6.7 pts vs base rate</span>
+        <span class="sample">149 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.4 PA (batting slot 1) — a favorable lineup slot</li><li>Platoon: L bat vs RHP (favorable)</li><li>Pitch-type exploit: RV/100 +4.4 vs FF (opposing SP throws it 28.1% of the time)</li><li>L7 avg EV 91.0mph (league ~88.5) — hot recent contact</li><li>L7 barrel% 31.2 — hot recent contact</li><li>Bat speed trending up L14 (+1.1mph 2nd-half vs 1st-half)</li><li>Season barrel% 14.0 — well above-average barrel rate</li><li>Hitter batting behind him: 0.341 wOBA (league ~.320)</li></ul><ul class="watch"><li>Public heavy on New York Yankees (money% trails tickets% by 28 pts) — sharp money is fading this side</li><li>Team implied for 3.11 runs (league avg 4.245; line 2.5, game total 6) — a weak offensive environment</li><li>Opposing SP ERA 2.72 — elite pitcher, tough matchup</li><li>Wind blowing IN (12mph) — power suppressed</li><li>Opposing bullpen fatigue: 0/9 relievers over 60 pitches in L7 (fresh pen — tougher matchup late)</li><li>Sharp money fading New York Yankees (money% -28 pts vs ticket%) — smart money moving away from this side</li><li>BvP: 1-for-13 vs Drew Rasmussen (standard error ±7 pts on a 13-AB career sample -- weighted lightly on that basis, not just because the count looks small)</li></ul></details>
+    </article>
+
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">17.2%</span>
+      </div>
+      <h3 class="player">Matt Olson</h3>
+      <p class="prop">Home Run</p>
+      <p class="matchup">Atlanta Braves · Cincinnati Reds @ Atlanta Braves</p>
+      <div class="meta">
+        <span>Market +310 (implied 24.4%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+6.7 pts vs base rate</span>
+        <span class="sample">156 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.46 PA (batting slot 3) — a favorable lineup slot</li><li>Team implied for 5.6 runs (league avg 4.245; line 5.5, game total 9.5) — a strong offensive environment</li><li>Pitch-type exploit: RV/100 +2.3 vs FC (opposing SP throws it 32.1% of the time)</li><li>Opposing SP ERA 5.57 — shaky matchup for the pitcher</li><li>L7 barrel% 35.3 — hot recent contact</li><li>Season barrel% 14.5 — well above-average barrel rate</li><li>Hitters batting ahead of him: 0.356 wOBA (league ~.320)</li><li>Sharp money backing Atlanta Braves (money% +22 pts vs ticket%)</li></ul><ul class="watch"><li>Platoon: L bat vs LHP (unfavorable)</li><li>L7 avg EV 82.2mph (league ~88.5) — cold recent contact</li><li>Hitter batting behind him: 0.305 wOBA (league ~.320) — little lineup protection, an easier batter to pitch around</li><li>Wind blowing IN (5mph) — power suppressed</li><li>Opposing bullpen fatigue: 1/12 relievers over 60 pitches in L7 (fresh pen — tougher matchup late)</li></ul></details>
+    </article>
+
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">17.1%</span>
+      </div>
+      <h3 class="player">Yordan Alvarez</h3>
+      <p class="prop">Home Run</p>
+      <p class="matchup">Houston Astros · Houston Astros @ Seattle Mariners</p>
+      <div class="meta">
+        <span>Market +285 (implied 26.0%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+6.6 pts vs base rate</span>
+        <span class="sample">152 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.36 PA (batting slot 2) — a favorable lineup slot</li><li>Platoon: L bat vs RHP (favorable)</li><li>Pitch-type exploit: RV/100 +2.1 vs FF (opposing SP throws it 40.1% of the time)</li><li>L7 avg EV 93.7mph (league ~88.5) — hot recent contact</li><li>L7 barrel% 47.4 — hot recent contact</li><li>Season barrel% 15.9 — well above-average barrel rate</li><li>Hitters batting ahead of him: 0.345 wOBA (league ~.320)</li><li>Hitter batting behind him: 0.350 wOBA (league ~.320)</li></ul><ul class="watch"><li>Team implied for 3.51 runs (league avg 4.245; line 3.5, game total 7.5) — a weak offensive environment</li><li>Opposing SP ERA 3.69 — elite pitcher, tough matchup</li><li>Opposing bullpen fatigue: 0/7 relievers over 60 pitches in L7 (fresh pen — tougher matchup late)</li><li>BvP: 7-for-28 vs Logan Gilbert (standard error ±8 pts on a 28-AB career sample -- weighted lightly on that basis, not just because the count looks small)</li></ul></details>
+    </article>
+
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">16.9%</span>
+      </div>
+      <h3 class="player">Munetaka Murakami</h3>
+      <p class="prop">Home Run</p>
+      <p class="matchup">Chicago White Sox · Chicago White Sox @ Kansas City Royals</p>
+      <div class="meta">
+        <span>Market +470 (implied 17.5%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+6.4 pts vs base rate</span>
+        <span class="sample">121 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Projected 4.23 PA (batting slot 4)</li><li>Team implied for 4.21 runs (league avg 4.245; line 3.5, game total 8)</li><li>Pitch-type exploit: RV/100 +2.9 vs CH (opposing SP throws it 25.0% of the time)</li><li>L7 barrel% 12.5 — hot recent contact</li><li>Bat speed trending up L14 (+3.0mph 2nd-half vs 1st-half)</li><li>Season barrel% 18.5 — well above-average barrel rate</li><li>Hitters batting ahead of him: 0.362 wOBA (league ~.320) — real RBI opportunity on base ahead of him</li><li>Hitter batting behind him: 0.331 wOBA (league ~.320)</li><li>Sharp money backing Chicago White Sox (money% +13 pts vs ticket%)</li></ul><ul class="watch"><li>Platoon: L bat vs LHP (unfavorable)</li><li>Opposing SP ERA 3.29 — elite pitcher, tough matchup</li><li>L7 avg EV 85.0mph (league ~88.5) — cold recent contact</li><li>Wind blowing IN (7mph) — power suppressed</li><li>Opposing bullpen fatigue: 2/9 relievers over 60 pitches in L7 (fresh pen — tougher matchup late)</li></ul></details>
+    </article>
+    </div>
+  </section>
+</main>
+<footer>No sportsbook odds were used to generate these probabilities where no market price is shown. Verify current lines and availability before betting.</footer>
+</body>
+</html>

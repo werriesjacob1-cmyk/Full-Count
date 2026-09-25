@@ -3517,6 +3517,661 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 32.4,
+          "notable_signals": 1,
+          "matchup": "Toronto Blue Jays @ Texas Rangers",
+          "game_pk": 822847,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 1.5833,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 60.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 27.7778,
+            "platoon_barrel_pct": 2.16,
+            "platoon_xwoba": -0.96,
+            "park_hand_index": 0.56,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 40.0,
+            "woba_behind": 0.0,
+            "pull_park_synergy": 0.3214,
+            "hard_hit_105_rate": 0.73,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.56,
+            "vs_rp_ops": 0.612,
+            "ump_k_pct": 0.492,
+            "ump_bb_pct": 0.132
+          },
+          "hit_probability": 0.661,
+          "raw_hit_probability": 0.6559,
+          "lift": -0.0113,
+          "reliability": "A",
+          "sample_n": 146,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 32.3,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Texas Rangers",
+          "game_pk": 822847,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.84,
+            "sprint_speed": 0.0,
+            "catcher_poptime": 28.5714,
+            "on_base": 55.8541
+          },
+          "hit_probability": 0.0297,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 146,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 11.9,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Texas Rangers",
+          "game_pk": 822847,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0758
+          },
+          "hit_probability": 0.0758,
+          "raw_hit_probability": null,
+          "lift": 0.0281,
+          "reliability": "A",
+          "sample_n": 146,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 6.3,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Texas Rangers",
+          "game_pk": 822847,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0375
+          },
+          "hit_probability": 0.0375,
+          "raw_hit_probability": null,
+          "lift": 0.0168,
+          "reliability": "A",
+          "sample_n": 146,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 47.5,
+          "notable_signals": 2,
+          "matchup": "Toronto Blue Jays @ Texas Rangers",
+          "game_pk": 822843,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 30.2857,
+            "pitch_exploit": 7.4286,
+            "l7_avg_ev": 47.8906,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 5.325,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 62.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 38.4615,
+            "platoon_barrel_pct": 2.08,
+            "platoon_xwoba": -0.84,
+            "park_hand_index": 0.42,
+            "opp_catcher_framing": -0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 44.5455,
+            "woba_behind": 0.0,
+            "pull_park_synergy": 0.2411,
+            "hard_hit_105_rate": 0.7175,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.576,
+            "vs_rp_ops": 0.684,
+            "ump_k_pct": -0.504,
+            "ump_bb_pct": -0.24
+          },
+          "hit_probability": 0.6614,
+          "raw_hit_probability": 0.6567,
+          "lift": -0.0068,
+          "reliability": "A",
+          "sample_n": 147,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 32.7,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Texas Rangers",
+          "game_pk": 822843,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.96,
+            "sprint_speed": 0.0,
+            "catcher_poptime": 28.5714,
+            "on_base": 57.7735
+          },
+          "hit_probability": 0.0298,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 147,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 11.8,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Texas Rangers",
+          "game_pk": 822843,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0753
+          },
+          "hit_probability": 0.0753,
+          "raw_hit_probability": null,
+          "lift": 0.0276,
+          "reliability": "A",
+          "sample_n": 147,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 6.2,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Texas Rangers",
+          "game_pk": 822843,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0373
+          },
+          "hit_probability": 0.0373,
+          "raw_hit_probability": null,
+          "lift": 0.0166,
+          "reliability": "A",
+          "sample_n": 147,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-20",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 40.2,
+          "notable_signals": 1,
+          "matchup": "Toronto Blue Jays @ Texas Rangers",
+          "game_pk": 822844,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 4.2857,
+            "pitch_exploit": 6.8571,
+            "l7_avg_ev": 93.3036,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 62.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 12.8205,
+            "platoon_barrel_pct": 2.08,
+            "platoon_xwoba": -1.02,
+            "park_hand_index": 0.48,
+            "opp_catcher_framing": -1.92,
+            "days_rest": 0.0,
+            "woba_ahead": 8.1818,
+            "woba_behind": 0.0,
+            "pull_park_synergy": 0.2772,
+            "hard_hit_105_rate": 0.7075,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.544,
+            "vs_rp_ops": 0.588,
+            "ump_k_pct": 0.828,
+            "ump_bb_pct": 0.144
+          },
+          "hit_probability": 0.6598,
+          "raw_hit_probability": 0.6538,
+          "lift": -0.0068,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 24.3,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Texas Rangers",
+          "game_pk": 822844,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 1.08,
+            "sprint_speed": 0.0,
+            "catcher_poptime": 0.0,
+            "on_base": 55.8541
+          },
+          "hit_probability": 0.0294,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 11.7,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Texas Rangers",
+          "game_pk": 822844,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0749
+          },
+          "hit_probability": 0.0749,
+          "raw_hit_probability": null,
+          "lift": 0.0273,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 6.2,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Texas Rangers",
+          "game_pk": 822844,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0371
+          },
+          "hit_probability": 0.0371,
+          "raw_hit_probability": null,
+          "lift": 0.0165,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 61.4,
+          "notable_signals": 1,
+          "matchup": "New York Mets @ Texas Rangers",
+          "game_pk": 822840,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 64.0,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 63.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 3.72,
+            "park_hand_index": 0.44,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 2.0,
+            "woba_ahead": 59.0909,
+            "woba_behind": 28.1818,
+            "pull_park_synergy": 0.251,
+            "hard_hit_105_rate": 0.84,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.712,
+            "vs_rp_ops": 0.816,
+            "ump_k_pct": -0.408,
+            "ump_bb_pct": 0.048
+          },
+          "hit_probability": 0.66,
+          "raw_hit_probability": 0.6543,
+          "lift": -0.0054,
+          "reliability": "A",
+          "sample_n": 149,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 24.7,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Texas Rangers",
+          "game_pk": 822840,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -3.78,
+            "sprint_speed": 0.0,
+            "catcher_poptime": 0.0,
+            "on_base": 57.7735
+          },
+          "hit_probability": 0.0296,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 149,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 13.0,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Texas Rangers",
+          "game_pk": 822840,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0802
+          },
+          "hit_probability": 0.0802,
+          "raw_hit_probability": null,
+          "lift": 0.0327,
+          "reliability": "A",
+          "sample_n": 149,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 6.1,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Texas Rangers",
+          "game_pk": 822840,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0369
+          },
+          "hit_probability": 0.0369,
+          "raw_hit_probability": null,
+          "lift": 0.0162,
+          "reliability": "A",
+          "sample_n": 149,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 48.5,
+          "notable_signals": 1,
+          "matchup": "New York Mets @ Texas Rangers",
+          "game_pk": 822841,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 19.4286,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 62.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 37.037,
+            "platoon_barrel_pct": 2.32,
+            "platoon_xwoba": -0.9,
+            "park_hand_index": 0.31,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 0.0,
+            "woba_ahead": 35.4545,
+            "woba_behind": 0.0,
+            "pull_park_synergy": 0.1779,
+            "hard_hit_105_rate": 0.8275,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.744,
+            "vs_rp_ops": 0.78,
+            "ump_k_pct": 0.504,
+            "ump_bb_pct": -0.276
+          },
+          "hit_probability": 0.6585,
+          "raw_hit_probability": 0.6516,
+          "lift": -0.0092,
+          "reliability": "A",
+          "sample_n": 150,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 25.9,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Texas Rangers",
+          "game_pk": 822841,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -3.78,
+            "sprint_speed": 0.0,
+            "catcher_poptime": 5.7143,
+            "on_base": 55.8541
+          },
+          "hit_probability": 0.0291,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 150,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 12.9,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Texas Rangers",
+          "game_pk": 822841,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0797
+          },
+          "hit_probability": 0.0797,
+          "raw_hit_probability": null,
+          "lift": 0.0323,
+          "reliability": "A",
+          "sample_n": 150,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 6.1,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Texas Rangers",
+          "game_pk": 822841,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0366
+          },
+          "hit_probability": 0.0366,
+          "raw_hit_probability": null,
+          "lift": 0.016,
+          "reliability": "A",
+          "sample_n": 150,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

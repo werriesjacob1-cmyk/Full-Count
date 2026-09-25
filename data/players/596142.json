@@ -1055,6 +1055,213 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 42.2,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ Baltimore Orioles",
+          "game_pk": 824788,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 49.1429,
+            "pitch_exploit": 18.8571,
+            "l7_avg_ev": 15.5,
+            "l7_barrel_pct": 0.0,
+            "park_hr_index": 51.2,
+            "season_barrel_pct": 34.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 50.0,
+            "platoon_barrel_pct": 1.68,
+            "platoon_xwoba": 2.34,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 2.0,
+            "woba_ahead": 29.0909,
+            "woba_behind": 26.3636,
+            "hard_hit_105_rate": 0.5225,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.248,
+            "vs_rp_ops": 1.62,
+            "ump_k_pct": -0.984,
+            "ump_bb_pct": 0.216
+          },
+          "hit_probability": 0.6217,
+          "raw_hit_probability": 0.5902,
+          "lift": -0.0523,
+          "reliability": "A",
+          "sample_n": 81,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 9.8,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ Baltimore Orioles",
+          "game_pk": 824788,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0675
+          },
+          "hit_probability": 0.0675,
+          "raw_hit_probability": null,
+          "lift": 0.0198,
+          "reliability": "A",
+          "sample_n": 81,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.3,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ Baltimore Orioles",
+          "game_pk": 824788,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0137
+          },
+          "hit_probability": 0.0137,
+          "raw_hit_probability": null,
+          "lift": -0.007,
+          "reliability": "A",
+          "sample_n": 81,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 45.1,
+          "notable_signals": 3,
+          "matchup": "Milwaukee Brewers @ Philadelphia Phillies",
+          "game_pk": 823411,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 88.2857,
+            "pitch_exploit": 18.8571,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 25.4,
+            "season_barrel_pct": 34.0,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 30.303,
+            "platoon_barrel_pct": 0.56,
+            "platoon_xwoba": 1.14,
+            "park_hand_index": 0.49,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 4.0,
+            "woba_ahead": 86.3636,
+            "woba_behind": 1.8182,
+            "pull_park_synergy": 0.247,
+            "hard_hit_105_rate": 0.505,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.256,
+            "vs_rp_ops": 1.62,
+            "ump_k_pct": -0.06,
+            "ump_bb_pct": -0.012
+          },
+          "hit_probability": 0.6199,
+          "raw_hit_probability": 0.5873,
+          "lift": -0.0539,
+          "reliability": "A",
+          "sample_n": 82,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 9.7,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ Philadelphia Phillies",
+          "game_pk": 823411,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0668
+          },
+          "hit_probability": 0.0668,
+          "raw_hit_probability": null,
+          "lift": 0.0195,
+          "reliability": "A",
+          "sample_n": 82,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.3,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ Philadelphia Phillies",
+          "game_pk": 823411,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0136
+          },
+          "hit_probability": 0.0136,
+          "raw_hit_probability": null,
+          "lift": -0.0069,
+          "reliability": "A",
+          "sample_n": 82,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

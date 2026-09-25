@@ -134,6 +134,20 @@ jobs:
         if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
         run: python3 grade_results.py
 
+      - name: Grade yesterday's frozen full board
+        # The other half of PR #131/#132/#138's winner's-curse calibration
+        # instrumentation: board_freeze.py seals the complete candidate
+        # universe (kept + QC-rejected + lineup-holdout) at generation time;
+        # this grades that sealed snapshot against real outcomes, the direct
+        # prerequisite for comparing calibration on the full pool against
+        # calibration on the argmax-selected/published subset. No-op if
+        # yesterday's output/board_freeze_{date}.json doesn't exist (freeze
+        # failed that day, or no prior frozen board exists yet) — never
+        # blocks the rest of the pipeline, same convention as the picks
+        # grading step above.
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
+        run: python3 grade_board_freeze.py
+
       - name: Measure signals against outcomes
         # The other half of the feedback loop. grade_results.py above settles
         # the ten published picks; this settles EVERY candidate that was
@@ -249,7 +263,21 @@ jobs:
           # visit would read. These are exactly "what gets read before
           # betting", the same standard as the JSON/markdown already here,
           # so they belong in this step, not the secondary report commit.
-          git add output/top10_picks_*.md output/picks_*.json output/scratches_*.json output/value_board_*.json output/early_look_*.md output/board_*.html output/full_board_*.html output/parlay_example_*.html results/*.json data/players/*.json
+          # output/board_freeze_*.json and output/board_freeze_graded_*.json
+          # were MISSING FROM THIS LIST ENTIRELY -- the exact same failure
+          # mode the comment above already documented for board_*.html/
+          # full_board_*.html/parlay_example_*.html. generate_picks.py has
+          # been successfully sealing a real frozen board every scheduled
+          # run since PR #132/#138 merged (confirmed via this workflow's own
+          # job logs: "Sealed full-board freeze (670 candidates) to
+          # output/board_freeze_2026-09-19.json") but every one was silently
+          # discarded at the end of the job -- zero board_freeze_*.json
+          # files exist anywhere in this repo's git history despite the
+          # freeze never failing. This is the reason the winner's-curse
+          # calibration analysis PR #131/#132/#138 were built to enable has
+          # never been runnable: the artifact it depends on never reached
+          # the repo.
+          git add output/top10_picks_*.md output/picks_*.json output/scratches_*.json output/value_board_*.json output/early_look_*.md output/board_*.html output/full_board_*.html output/parlay_example_*.html output/board_freeze_*.json results/*.json data/players/*.json
           if git diff --cached --quiet; then
             echo "No picks to commit."
             echo "committed=false" >> "$GITHUB_OUTPUT"

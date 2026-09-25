@@ -2545,6 +2545,523 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 50.6,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Cincinnati Reds",
+          "game_pk": 824463,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 10.0,
+            "pitch_exploit": 5.7143,
+            "l7_avg_ev": 86.7188,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.8,
+            "season_barrel_pct": 62.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 4.8,
+            "platoon_xwoba": 1.2,
+            "park_hand_index": 1.61,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 54.5455,
+            "woba_behind": 30.9091,
+            "pull_park_synergy": 0.3212,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 1.0,
+            "vs_rp_ops": 1.14,
+            "ump_k_pct": 0.372,
+            "ump_bb_pct": 0.48
+          },
+          "hit_probability": 0.6624,
+          "raw_hit_probability": 0.6583,
+          "lift": -0.0099,
+          "reliability": "A",
+          "sample_n": 121,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Cincinnati Reds",
+          "game_pk": 824463,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0271
+          },
+          "hit_probability": 0.0271,
+          "raw_hit_probability": null,
+          "lift": -0.0206,
+          "reliability": "A",
+          "sample_n": 121,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.0,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Cincinnati Reds",
+          "game_pk": 824463,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0165
+          },
+          "hit_probability": 0.0165,
+          "raw_hit_probability": null,
+          "lift": -0.0042,
+          "reliability": "A",
+          "sample_n": 121,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 54.2,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ Cincinnati Reds",
+          "game_pk": 824461,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 47.4286,
+            "l7_avg_ev": 81.1667,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 73.1,
+            "season_barrel_pct": 62.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 41.6667,
+            "platoon_barrel_pct": 3.84,
+            "platoon_xwoba": 0.9,
+            "park_hand_index": 1.48,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 54.5455,
+            "woba_behind": 27.2727,
+            "pull_park_synergy": 0.2849,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.912,
+            "vs_rp_ops": 1.08,
+            "ump_k_pct": -0.252,
+            "ump_bb_pct": -0.408
+          },
+          "hit_probability": 0.6011,
+          "raw_hit_probability": 0.6019,
+          "lift": 0.0393,
+          "reliability": "A",
+          "sample_n": 122,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Cincinnati Reds",
+          "game_pk": 824461,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0269
+          },
+          "hit_probability": 0.0269,
+          "raw_hit_probability": null,
+          "lift": -0.0208,
+          "reliability": "A",
+          "sample_n": 122,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.0,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Cincinnati Reds",
+          "game_pk": 824461,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0164
+          },
+          "hit_probability": 0.0164,
+          "raw_hit_probability": null,
+          "lift": -0.0043,
+          "reliability": "A",
+          "sample_n": 122,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-20",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 67.0,
+          "notable_signals": 2,
+          "matchup": "Chicago Cubs @ Cincinnati Reds",
+          "game_pk": 824462,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 74.5714,
+            "pitch_exploit": 6.2857,
+            "l7_avg_ev": 65.5882,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 7.65,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 61.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 62.5,
+            "bvp_ops": 2.28,
+            "platoon_barrel_pct": 3.52,
+            "platoon_xwoba": 0.72,
+            "park_hand_index": 1.38,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 52.7273,
+            "woba_behind": 30.9091,
+            "pull_park_synergy": 0.285,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.984,
+            "vs_rp_ops": 1.104,
+            "ump_k_pct": -0.456,
+            "ump_bb_pct": -0.396
+          },
+          "hit_probability": 0.6031,
+          "raw_hit_probability": 0.6034,
+          "lift": 0.0398,
+          "reliability": "A",
+          "sample_n": 123,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Cincinnati Reds",
+          "game_pk": 824462,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0267
+          },
+          "hit_probability": 0.0267,
+          "raw_hit_probability": null,
+          "lift": -0.0209,
+          "reliability": "A",
+          "sample_n": 123,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.0,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ Cincinnati Reds",
+          "game_pk": 824462,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0163
+          },
+          "hit_probability": 0.0163,
+          "raw_hit_probability": null,
+          "lift": -0.0043,
+          "reliability": "A",
+          "sample_n": 123,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 50.5,
+          "notable_signals": 2,
+          "matchup": "Cincinnati Reds @ Atlanta Braves",
+          "game_pk": 824867,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 72.2857,
+            "pitch_exploit": 6.2857,
+            "l7_avg_ev": 47.7679,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 10.8,
+            "park_hr_index": 40.5,
+            "season_barrel_pct": 60.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 4.64,
+            "platoon_xwoba": 1.08,
+            "park_hand_index": -1.02,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 2.0,
+            "consecutive_games": -0.6,
+            "woba_ahead": 50.9091,
+            "woba_behind": 33.6364,
+            "pull_park_synergy": -0.2142,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 1.024,
+            "vs_rp_ops": 1.068,
+            "ump_k_pct": 0.408,
+            "ump_bb_pct": -0.18
+          },
+          "hit_probability": 0.6613,
+          "raw_hit_probability": 0.6564,
+          "lift": -0.0041,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Atlanta Braves",
+          "game_pk": 824867,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0265
+          },
+          "hit_probability": 0.0265,
+          "raw_hit_probability": null,
+          "lift": -0.021,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.9,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Atlanta Braves",
+          "game_pk": 824867,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0162
+          },
+          "hit_probability": 0.0162,
+          "raw_hit_probability": null,
+          "lift": -0.0045,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 48.2,
+          "notable_signals": 2,
+          "matchup": "Cincinnati Reds @ Atlanta Braves",
+          "game_pk": 824866,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 37.4286,
+            "l7_avg_ev": 63.4615,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 1.425,
+            "park_hr_index": 36.8,
+            "season_barrel_pct": 60.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 4.56,
+            "platoon_xwoba": 0.96,
+            "park_hand_index": -0.84,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 48.1818,
+            "woba_behind": 33.6364,
+            "pull_park_synergy": -0.1911,
+            "team_total_move": -6.0,
+            "team_total_open": -6.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.152,
+            "vs_rp_ops": 1.152,
+            "ump_k_pct": 0.096,
+            "ump_bb_pct": 0.348
+          },
+          "hit_probability": 0.6617,
+          "raw_hit_probability": 0.6572,
+          "lift": -0.0121,
+          "reliability": "A",
+          "sample_n": 126,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Atlanta Braves",
+          "game_pk": 824866,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0261
+          },
+          "hit_probability": 0.0261,
+          "raw_hit_probability": null,
+          "lift": -0.0212,
+          "reliability": "A",
+          "sample_n": 126,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.9,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Atlanta Braves",
+          "game_pk": 824866,
+          "team": "Cincinnati Reds",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.016
+          },
+          "hit_probability": 0.016,
+          "raw_hit_probability": null,
+          "lift": -0.0045,
+          "reliability": "A",
+          "sample_n": 126,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

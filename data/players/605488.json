@@ -426,6 +426,68 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-23",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 29.8,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Athletics",
+          "game_pk": 824951,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 84.0,
+            "same_hand_ratio": 0.0,
+            "l14_k_pct": 0.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 43.327,
+            "ump_k_pct": -0.156,
+            "ump_bb_pct": 0.156
+          },
+          "hit_probability": 0.3951,
+          "raw_hit_probability": 0.3951,
+          "lift": -0.1324,
+          "reliability": "A",
+          "sample_n": 28,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 42.4,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Angels @ Athletics",
+          "game_pk": 824951,
+          "team": "Athletics",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6663,
+            "avg_outs_per_start": 14.82
+          },
+          "hit_probability": 0.638,
+          "raw_hit_probability": 0.6663,
+          "lift": -0.1375,
+          "reliability": "A",
+          "sample_n": 28,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        }
+      ]
     }
   ]
 }

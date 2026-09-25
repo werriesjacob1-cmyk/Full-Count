@@ -164,6 +164,126 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 6.5 Strikeouts",
+          "type": "pitcher",
+          "score": 47.3,
+          "notable_signals": 1,
+          "matchup": "Minnesota Twins @ Los Angeles Angels",
+          "game_pk": 823976,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 85.0,
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 26.4706,
+            "tto_penalty": 8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.2005,
+          "raw_hit_probability": 0.2005,
+          "lift": -0.0251,
+          "reliability": "A",
+          "sample_n": 25,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 6.5,
+            "needs": 7
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 62.4,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ Los Angeles Angels",
+          "game_pk": 823976,
+          "team": "Minnesota Twins",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6306,
+            "avg_outs_per_start": 16.04
+          },
+          "hit_probability": 0.6246,
+          "raw_hit_probability": 0.6306,
+          "lift": 0.0331,
+          "reliability": "A",
+          "sample_n": 25,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-25",
+      "evaluations": [
+        {
+          "prop": "Over 6.5 Strikeouts",
+          "type": "pitcher",
+          "score": 55.4,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Minnesota Twins",
+          "game_pk": 823652,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 60.0,
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 0.0,
+            "tto_penalty": 8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.2239,
+          "raw_hit_probability": 0.2239,
+          "lift": -0.0178,
+          "reliability": "A",
+          "sample_n": 26,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 6.5,
+            "needs": 7
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 57.2,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Minnesota Twins",
+          "game_pk": 823652,
+          "team": "Minnesota Twins",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6097,
+            "avg_outs_per_start": 16.0
+          },
+          "hit_probability": 0.6003,
+          "raw_hit_probability": 0.6097,
+          "lift": 0.0154,
+          "reliability": "A",
+          "sample_n": 26,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }

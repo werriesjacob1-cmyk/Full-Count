@@ -512,6 +512,155 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 32.6,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Cleveland Guardians",
+          "game_pk": 824380,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 40.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 0.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 23.3805,
+            "ump_k_pct": 0.516,
+            "ump_bb_pct": 0.324
+          },
+          "hit_probability": 0.5882,
+          "raw_hit_probability": 0.5719,
+          "lift": 0.0765,
+          "reliability": "A",
+          "sample_n": 22,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 13.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 50.4,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Cleveland Guardians",
+          "game_pk": 824380,
+          "team": "Athletics",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.709,
+            "avg_outs_per_start": 14.45
+          },
+          "hit_probability": 0.6859,
+          "raw_hit_probability": 0.709,
+          "lift": -0.123,
+          "reliability": "A",
+          "sample_n": 22,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 13.5,
+            "needs": 14
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Athletics @ Cleveland Guardians",
+          "game_pk": 824380,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            682052,
+            676440
+          ],
+          "signals": {
+            "combined_k_edge": 0.0232
+          },
+          "hit_probability": 0.6445,
+          "raw_hit_probability": null,
+          "lift": 0.0232,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-25",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 28.2,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ Athletics",
+          "game_pk": 824947,
+          "team": "Athletics",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 49.0,
+            "same_hand_ratio": 5.5556,
+            "l14_k_pct": 0.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6112,
+          "raw_hit_probability": 0.6857,
+          "lift": -0.0863,
+          "reliability": "A",
+          "sample_n": 23,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 13.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 41.5,
+          "notable_signals": 0,
+          "matchup": "Houston Astros @ Athletics",
+          "game_pk": 824947,
+          "team": "Athletics",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6883,
+            "avg_outs_per_start": 14.17
+          },
+          "hit_probability": 0.6523,
+          "raw_hit_probability": 0.6883,
+          "lift": -0.1746,
+          "reliability": "A",
+          "sample_n": 23,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 13.5,
+            "needs": 14
+          }
+        }
+      ]
     }
   ]
 }

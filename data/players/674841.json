@@ -458,6 +458,155 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 39.0,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ St. Louis Cardinals",
+          "game_pk": 823003,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 37.0,
+            "same_hand_ratio": 12.5,
+            "l14_k_pct": 81.7647,
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.6389,
+            "ump_k_pct": 0.012,
+            "ump_bb_pct": 0.3
+          },
+          "hit_probability": 0.6274,
+          "raw_hit_probability": 0.7672,
+          "lift": -0.0769,
+          "reliability": "B",
+          "sample_n": 15,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 16.6,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ St. Louis Cardinals",
+          "game_pk": 823003,
+          "team": "Washington Nationals",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.554,
+            "avg_outs_per_start": 15.07
+          },
+          "hit_probability": 0.5606,
+          "raw_hit_probability": 0.554,
+          "lift": -0.2117,
+          "reliability": "B",
+          "sample_n": 15,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.8,
+          "notable_signals": 1,
+          "matchup": "Washington Nationals @ St. Louis Cardinals",
+          "game_pk": 823003,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            674841,
+            700241
+          ],
+          "signals": {
+            "combined_k_edge": 0.2527
+          },
+          "hit_probability": 0.6693,
+          "raw_hit_probability": null,
+          "lift": 0.2527,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-25",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 39.1,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Washington Nationals",
+          "game_pk": 822681,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 52.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 100.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6029,
+          "raw_hit_probability": 0.6445,
+          "lift": 0.079,
+          "reliability": "A",
+          "sample_n": 16,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 20.0,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Washington Nationals",
+          "game_pk": 822681,
+          "team": "Washington Nationals",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5759,
+            "avg_outs_per_start": 15.25
+          },
+          "hit_probability": 0.5771,
+          "raw_hit_probability": 0.5759,
+          "lift": -0.2011,
+          "reliability": "A",
+          "sample_n": 16,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        }
+      ]
     }
   ]
 }

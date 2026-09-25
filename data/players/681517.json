@@ -525,8 +525,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 37.3,
-          "notable_signals": 0,
+          "score": 41.6,
+          "notable_signals": 1,
           "matchup": "Washington Nationals @ St. Louis Cardinals",
           "game_pk": 823005,
           "team": "St. Louis Cardinals",
@@ -535,13 +535,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 49.0,
-            "same_hand_ratio": 33.3333,
+            "same_hand_ratio": 88.8889,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 71.7419,
+            "ump_k_pct": 0.108,
+            "ump_bb_pct": 0.036
           },
-          "hit_probability": 0.6247,
-          "raw_hit_probability": 0.7535,
-          "lift": -0.0746,
+          "hit_probability": 0.6248,
+          "raw_hit_probability": 0.7541,
+          "lift": -0.0757,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
@@ -553,7 +556,7 @@
         {
           "prop": "Over 13.5 Outs Recorded",
           "type": "pitcher",
-          "score": 56.1,
+          "score": 57.7,
           "notable_signals": 0,
           "matchup": "Washington Nationals @ St. Louis Cardinals",
           "game_pk": 823005,
@@ -562,14 +565,74 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7293,
+            "outs_rate": 0.7272,
             "avg_outs_per_start": 14.46
           },
-          "hit_probability": 0.7009,
-          "raw_hit_probability": 0.7293,
-          "lift": -0.0987,
+          "hit_probability": 0.6993,
+          "raw_hit_probability": 0.7272,
+          "lift": -0.088,
           "reliability": "A",
           "sample_n": 28,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 13.5,
+            "needs": 14
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 55.9,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Pittsburgh Pirates",
+          "game_pk": 823326,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 70.0,
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 17.0588,
+            "tto_penalty": -8.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5385,
+          "raw_hit_probability": 0.5385,
+          "lift": 0.011,
+          "reliability": "A",
+          "sample_n": 29,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 13.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 50.9,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Pittsburgh Pirates",
+          "game_pk": 823326,
+          "team": "St. Louis Cardinals",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7064,
+            "avg_outs_per_start": 14.28
+          },
+          "hit_probability": 0.6638,
+          "raw_hit_probability": 0.7064,
+          "lift": -0.1236,
+          "reliability": "A",
+          "sample_n": 29,
           "projection": {
             "stat": "pitcher_outs",
             "value": 13.5,

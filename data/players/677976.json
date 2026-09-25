@@ -513,7 +513,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 56.2,
+          "score": 30.3,
           "notable_signals": 0,
           "matchup": "Kansas City Royals @ Pittsburgh Pirates",
           "game_pk": 823331,
@@ -523,13 +523,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 71.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 57.1429,
             "l14_k_pct": 7.6471,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 46.9814,
+            "ump_k_pct": -0.048,
+            "ump_bb_pct": 0.264
           },
-          "hit_probability": 0.6037,
-          "raw_hit_probability": 0.6485,
-          "lift": -0.0956,
+          "hit_probability": 0.6038,
+          "raw_hit_probability": 0.6491,
+          "lift": -0.0967,
           "reliability": "B",
           "sample_n": 11,
           "projection": {
@@ -541,7 +544,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 47.4,
+          "score": 48.2,
           "notable_signals": 0,
           "matchup": "Kansas City Royals @ Pittsburgh Pirates",
           "game_pk": 823331,
@@ -550,14 +553,101 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5446,
+            "outs_rate": 0.5417,
             "avg_outs_per_start": 16.27
           },
-          "hit_probability": 0.5525,
-          "raw_hit_probability": 0.5446,
-          "lift": 0.0094,
+          "hit_probability": 0.55,
+          "raw_hit_probability": 0.5417,
+          "lift": 0.0152,
           "reliability": "B",
           "sample_n": 11,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Pittsburgh Pirates",
+          "game_pk": 823331,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            677976,
+            694973
+          ],
+          "signals": {
+            "combined_k_edge": 0.0142
+          },
+          "hit_probability": 0.5975,
+          "raw_hit_probability": null,
+          "lift": 0.0142,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 30.1,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Kansas City Royals",
+          "game_pk": 824059,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 72.0,
+            "same_hand_ratio": 12.5,
+            "l14_k_pct": 0.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5944,
+          "raw_hit_probability": 0.6024,
+          "lift": -0.1143,
+          "reliability": "B",
+          "sample_n": 12,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 39.2,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Kansas City Royals",
+          "game_pk": 824059,
+          "team": "Kansas City Royals",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5113,
+            "avg_outs_per_start": 15.83
+          },
+          "hit_probability": 0.532,
+          "raw_hit_probability": 0.5113,
+          "lift": -0.0018,
+          "reliability": "B",
+          "sample_n": 12,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,

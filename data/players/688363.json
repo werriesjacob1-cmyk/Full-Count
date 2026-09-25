@@ -817,6 +817,208 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-20",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 41.5,
+          "notable_signals": 1,
+          "matchup": "Miami Marlins @ San Diego Padres",
+          "game_pk": 823247,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 59.4286,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 36.1,
+            "season_barrel_pct": 26.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 37.037,
+            "platoon_barrel_pct": 0.24,
+            "platoon_xwoba": -3.3,
+            "park_hand_index": -1.49,
+            "opp_catcher_framing": 2.28,
+            "days_rest": 0.0,
+            "woba_ahead": 43.6364,
+            "woba_behind": 2.7273,
+            "pull_park_synergy": -1.4081,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -1.76,
+            "vs_rp_ops": -2.556,
+            "ump_k_pct": -0.18,
+            "ump_bb_pct": 0.24
+          },
+          "hit_probability": 0.6296,
+          "raw_hit_probability": 0.6032,
+          "lift": -0.0362,
+          "reliability": "B",
+          "sample_n": 49,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ San Diego Padres",
+          "game_pk": 823247,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0271
+          },
+          "hit_probability": 0.0271,
+          "raw_hit_probability": null,
+          "lift": -0.0205,
+          "reliability": "B",
+          "sample_n": 49,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.8,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ San Diego Padres",
+          "game_pk": 823247,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0196
+          },
+          "hit_probability": 0.0196,
+          "raw_hit_probability": null,
+          "lift": -0.001,
+          "reliability": "B",
+          "sample_n": 49,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 22.1,
+          "notable_signals": 2,
+          "matchup": "Miami Marlins @ Chicago Cubs",
+          "game_pk": 824625,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 58.5714,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 0.0,
+            "park_hr_index": 25.8,
+            "season_barrel_pct": 25.3333,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": 0.16,
+            "platoon_xwoba": -3.36,
+            "park_hand_index": 4.22,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 16.3636,
+            "woba_behind": 6.3636,
+            "pull_park_synergy": 4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -1.704,
+            "vs_rp_ops": -2.676,
+            "ump_k_pct": 0.456,
+            "ump_bb_pct": -0.168
+          },
+          "hit_probability": 0.6183,
+          "raw_hit_probability": 0.5847,
+          "lift": -0.0494,
+          "reliability": "B",
+          "sample_n": 51,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Chicago Cubs",
+          "game_pk": 824625,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0263
+          },
+          "hit_probability": 0.0263,
+          "raw_hit_probability": null,
+          "lift": -0.0211,
+          "reliability": "B",
+          "sample_n": 51,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.7,
+          "notable_signals": 0,
+          "matchup": "Miami Marlins @ Chicago Cubs",
+          "game_pk": 824625,
+          "team": "Miami Marlins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0191
+          },
+          "hit_probability": 0.0191,
+          "raw_hit_probability": null,
+          "lift": -0.0015,
+          "reliability": "B",
+          "sample_n": 51,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

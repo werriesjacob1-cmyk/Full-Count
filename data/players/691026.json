@@ -2097,6 +2097,526 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 30.1,
+          "notable_signals": 1,
+          "matchup": "Washington Nationals @ St. Louis Cardinals",
+          "game_pk": 823005,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 17.7143,
+            "l7_avg_ev": 53.75,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 0.225,
+            "park_hr_index": 60.2,
+            "season_barrel_pct": 2.6667,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 50.0,
+            "platoon_barrel_pct": -2.64,
+            "platoon_xwoba": -1.14,
+            "park_hand_index": -2.65,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 2.0,
+            "woba_ahead": 15.4545,
+            "woba_behind": 3.6364,
+            "pull_park_synergy": -0.2968,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.232,
+            "vs_rp_ops": -0.84,
+            "ump_k_pct": -0.108,
+            "ump_bb_pct": -0.036
+          },
+          "hit_probability": 0.6781,
+          "raw_hit_probability": 0.6856,
+          "lift": 0.0058,
+          "reliability": "A",
+          "sample_n": 126,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 37.9,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ St. Louis Cardinals",
+          "game_pk": 823005,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 1.56,
+            "sprint_speed": 34.375,
+            "catcher_poptime": 11.4286,
+            "on_base": 25.144
+          },
+          "hit_probability": 0.0715,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 126,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ St. Louis Cardinals",
+          "game_pk": 823005,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0131
+          },
+          "hit_probability": 0.0131,
+          "raw_hit_probability": null,
+          "lift": -0.0346,
+          "reliability": "A",
+          "sample_n": 126,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ St. Louis Cardinals",
+          "game_pk": 823005,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0028
+          },
+          "hit_probability": 0.0028,
+          "raw_hit_probability": null,
+          "lift": -0.0179,
+          "reliability": "A",
+          "sample_n": 126,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 46.4,
+          "notable_signals": 1,
+          "matchup": "Washington Nationals @ St. Louis Cardinals",
+          "game_pk": 823003,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 24.2857,
+            "l7_avg_ev": 40.2083,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 0.75,
+            "park_hr_index": 60.4,
+            "season_barrel_pct": 2.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": -3.84,
+            "platoon_xwoba": -0.12,
+            "park_hand_index": -2.62,
+            "opp_catcher_framing": -0.0,
+            "days_rest": 0.0,
+            "woba_ahead": 19.0909,
+            "woba_behind": 4.5455,
+            "pull_park_synergy": -0.2659,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.272,
+            "vs_rp_ops": -0.84,
+            "ump_k_pct": -0.012,
+            "ump_bb_pct": -0.3
+          },
+          "hit_probability": 0.6752,
+          "raw_hit_probability": 0.6805,
+          "lift": 0.007,
+          "reliability": "A",
+          "sample_n": 127,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 46.3,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ St. Louis Cardinals",
+          "game_pk": 823003,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 1.56,
+            "sprint_speed": 34.375,
+            "catcher_poptime": 42.8571,
+            "on_base": 23.2246
+          },
+          "hit_probability": 0.0732,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 127,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ St. Louis Cardinals",
+          "game_pk": 823003,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.013
+          },
+          "hit_probability": 0.013,
+          "raw_hit_probability": null,
+          "lift": -0.0347,
+          "reliability": "A",
+          "sample_n": 127,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Washington Nationals @ St. Louis Cardinals",
+          "game_pk": 823003,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0028
+          },
+          "hit_probability": 0.0028,
+          "raw_hit_probability": null,
+          "lift": -0.0179,
+          "reliability": "A",
+          "sample_n": 127,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 36.8,
+          "notable_signals": 3,
+          "matchup": "St. Louis Cardinals @ Pittsburgh Pirates",
+          "game_pk": 823328,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 47.7143,
+            "l7_avg_ev": 31.9444,
+            "l7_barrel_pct": 65.0,
+            "park_hr_index": 25.9,
+            "season_barrel_pct": 2.6667,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 60.6061,
+            "platoon_barrel_pct": -2.64,
+            "platoon_xwoba": -1.14,
+            "park_hand_index": -3.42,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 2.0,
+            "woba_ahead": 3.6364,
+            "woba_behind": 27.2727,
+            "pull_park_synergy": -0.3591,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.304,
+            "vs_rp_ops": -0.84,
+            "ump_k_pct": -0.072,
+            "ump_bb_pct": 0.312
+          },
+          "hit_probability": 0.6769,
+          "raw_hit_probability": 0.6835,
+          "lift": 0.0043,
+          "reliability": "A",
+          "sample_n": 128,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 38.8,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Pittsburgh Pirates",
+          "game_pk": 823328,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.6,
+            "sprint_speed": 37.5,
+            "catcher_poptime": 11.4286,
+            "on_base": 22.2649
+          },
+          "hit_probability": 0.0697,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 128,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Pittsburgh Pirates",
+          "game_pk": 823328,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0129
+          },
+          "hit_probability": 0.0129,
+          "raw_hit_probability": null,
+          "lift": -0.0346,
+          "reliability": "A",
+          "sample_n": 128,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Pittsburgh Pirates",
+          "game_pk": 823328,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0027
+          },
+          "hit_probability": 0.0027,
+          "raw_hit_probability": null,
+          "lift": -0.018,
+          "reliability": "A",
+          "sample_n": 128,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 29.1,
+          "notable_signals": 2,
+          "matchup": "St. Louis Cardinals @ Pittsburgh Pirates",
+          "game_pk": 823327,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 30.2857,
+            "l7_avg_ev": 31.6071,
+            "l7_barrel_pct": 87.8571,
+            "park_hr_index": 26.0,
+            "season_barrel_pct": 2.6667,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 66.6667,
+            "platoon_barrel_pct": -2.64,
+            "platoon_xwoba": -1.2,
+            "park_hand_index": -3.44,
+            "opp_catcher_framing": -0.24,
+            "days_rest": 0.0,
+            "woba_ahead": 4.5455,
+            "woba_behind": 24.5455,
+            "pull_park_synergy": -0.3492,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.368,
+            "vs_rp_ops": -0.804,
+            "ump_k_pct": 0.012,
+            "ump_bb_pct": -0.744
+          },
+          "hit_probability": 0.6752,
+          "raw_hit_probability": 0.6806,
+          "lift": -0.0016,
+          "reliability": "A",
+          "sample_n": 129,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 38.8,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Pittsburgh Pirates",
+          "game_pk": 823327,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.6,
+            "sprint_speed": 37.5,
+            "catcher_poptime": 11.4286,
+            "on_base": 22.2649
+          },
+          "hit_probability": 0.0693,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 129,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Pittsburgh Pirates",
+          "game_pk": 823327,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0128
+          },
+          "hit_probability": 0.0128,
+          "raw_hit_probability": null,
+          "lift": -0.0346,
+          "reliability": "A",
+          "sample_n": 129,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Pittsburgh Pirates",
+          "game_pk": 823327,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0027
+          },
+          "hit_probability": 0.0027,
+          "raw_hit_probability": null,
+          "lift": -0.0179,
+          "reliability": "A",
+          "sample_n": 129,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

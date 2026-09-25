@@ -1,0 +1,713 @@
+{
+  "code_sha": "adf9398a132b8c4ca706e2fc202ec6f4813e1787",
+  "evidence_class": "PROSPECTIVE_SHADOW",
+  "record_count": 10,
+  "records": [
+    {
+      "availability_status": "UNKNOWN_GAME_COVERAGE",
+      "b0_score": {
+        "decision_status": "SHADOW_ONLY",
+        "line": 4.5,
+        "line_gap": -0.8999999999999999,
+        "market_fair_over_probability": 0.4718423169750604,
+        "market_fair_under_probability": 0.5281576830249397,
+        "market_hold": 0.07016788635385263,
+        "model_over_probability": 0.26563687009369463,
+        "model_under_probability": 0.7343631299063054,
+        "probability_method": "pooled_B0_empirical_residuals_laplace",
+        "projection": 3.6,
+        "research_direction": "UNDER",
+        "research_edge": 0.20620544688136566,
+        "residual_n": 7896
+      },
+      "captured_at": "2026-09-20T02:53:59Z",
+      "challenger_comparison": {
+        "absolute_over_probability_gap": 0.036764992718919975,
+        "b0": {
+          "over": 0.26563687009369463,
+          "under": 0.7343631299063054
+        },
+        "challenger": {
+          "alpha_used": 0.09323867966867905,
+          "distribution_family": "NEGATIVE_BINOMIAL_POOLED",
+          "over": 0.3024018628126146,
+          "over_ev": {
+            "breakeven_probability": 0.504950495049505,
+            "edge_vs_breakeven": -0.20254863223689035,
+            "evidence_status": "UNVALIDATED_RESEARCH",
+            "expected_value_is_provisional": true,
+            "expected_value_units_per_unit_staked": -0.4011257226652142,
+            "probability": 0.3024018628126146
+          },
+          "push": 0.0,
+          "status": "RESEARCH_ONLY_NOT_PROMOTED",
+          "under": 0.6975981371873854,
+          "under_ev": {
+            "breakeven_probability": 0.5652173913043478,
+            "edge_vs_breakeven": 0.1323807458830376,
+            "evidence_status": "UNVALIDATED_RESEARCH",
+            "expected_value_is_provisional": true,
+            "expected_value_units_per_unit_staked": 0.23421208886998945,
+            "probability": 0.6975981371873854
+          }
+        },
+        "line": 4.5,
+        "projection": 3.6,
+        "status": "RESEARCH_ONLY_NOT_PROMOTED"
+      },
+      "challenger_model_version": "NEGATIVE_BINOMIAL_POOLED_V1_alpha_0.09323867966867905",
+      "decision_status": "QUARANTINED",
+      "event_id": "36048239",
+      "event_open_date": "2026-09-20T17:01:00.000Z",
+      "evidence_status": "RESEARCH_ONLY_NOT_PROMOTED",
+      "feature_cutoff": "2025_REG_final_week",
+      "gsis_id": "00-0040124",
+      "line": 4.5,
+      "market": "receptions",
+      "market_id": "734.186651175",
+      "observation_id": "fcnfl-shadow1:07b512d7694173c6f746def6",
+      "over_odds": -102,
+      "player_name": "Tetairoa McMillan",
+      "prediction_source": "B0_VS_NEGATIVE_BINOMIAL_POOLED_CHALLENGER_V1",
+      "source_vintage": "nflverse_2023_2024_2025_weekly_stats_verified",
+      "team": "CAR",
+      "under_odds": -130
+    },
+    {
+      "availability_status": "UNKNOWN_GAME_COVERAGE",
+      "b0_score": {
+        "decision_status": "SHADOW_ONLY",
+        "line": 1.5,
+        "line_gap": 0.10000000000000009,
+        "market_fair_over_probability": 0.5060689431946916,
+        "market_fair_under_probability": 0.4939310568053083,
+        "market_hold": 0.06958629046217757,
+        "model_over_probability": 0.4837933654089643,
+        "model_under_probability": 0.5162066345910357,
+        "probability_method": "pooled_B0_empirical_residuals_laplace",
+        "projection": 1.6,
+        "research_direction": "UNDER",
+        "research_edge": 0.022275577785727363,
+        "residual_n": 7896
+      },
+      "captured_at": "2026-09-20T02:53:59Z",
+      "challenger_comparison": {
+        "absolute_over_probability_gap": 0.02223086516401035,
+        "b0": {
+          "over": 0.4837933654089643,
+          "under": 0.5162066345910357
+        },
+        "challenger": {
+          "alpha_used": 0.09323867966867905,
+          "distribution_family": "NEGATIVE_BINOMIAL_POOLED",
+          "over": 0.46156250024495393,
+          "over_ev": {
+            "breakeven_probability": 0.5412844036697247,
+            "edge_vs_breakeven": -0.07972190342477081,
+            "evidence_status": "UNVALIDATED_RESEARCH",
+            "expected_value_is_provisional": true,
+            "expected_value_units_per_unit_staked": -0.14728283853050883,
+            "probability": 0.46156250024495393
+          },
+          "push": 0.0,
+          "status": "RESEARCH_ONLY_NOT_PROMOTED",
+          "under": 0.5384374997550461,
+          "under_ev": {
+            "breakeven_probability": 0.5283018867924528,
+            "edge_vs_breakeven": 0.010135612962593243,
+            "evidence_status": "UNVALIDATED_RESEARCH",
+            "expected_value_is_provisional": true,
+            "expected_value_units_per_unit_staked": 0.019185267393480032,
+            "probability": 0.5384374997550461
+          }
+        },
+        "line": 1.5,
+        "projection": 1.6,
+        "status": "RESEARCH_ONLY_NOT_PROMOTED"
+      },
+      "challenger_model_version": "NEGATIVE_BINOMIAL_POOLED_V1_alpha_0.09323867966867905",
+      "decision_status": "QUARANTINED",
+      "event_id": "36048239",
+      "event_open_date": "2026-09-20T17:01:00.000Z",
+      "evidence_status": "RESEARCH_ONLY_NOT_PROMOTED",
+      "feature_cutoff": "2025_REG_final_week",
+      "gsis_id": "00-0039342",
+      "line": 1.5,
+      "market": "receptions",
+      "market_id": "734.187117985",
+      "observation_id": "fcnfl-shadow1:0eeadd1678d2df2239639754",
+      "over_odds": -118,
+      "player_name": "Xavier Legette",
+      "prediction_source": "B0_VS_NEGATIVE_BINOMIAL_POOLED_CHALLENGER_V1",
+      "source_vintage": "nflverse_2023_2024_2025_weekly_stats_verified",
+      "team": "CAR",
+      "under_odds": -112
+    },
+    {
+      "availability_status": "UNKNOWN_GAME_COVERAGE",
+      "b0_score": {
+        "decision_status": "SHADOW_ONLY",
+        "line": 4.5,
+        "line_gap": 0.5,
+        "market_fair_over_probability": 0.5670257738988136,
+        "market_fair_under_probability": 0.4329742261011864,
+        "market_hold": 0.06926217556138825,
+        "model_over_probability": 0.5875538110914156,
+        "model_under_probability": 0.4124461889085844,
+        "probability_method": "pooled_B0_empirical_residuals_laplace",
+        "projection": 5.0,
+        "research_direction": "OVER",
+        "research_edge": 0.02052803719260199,
+        "residual_n": 7896
+      },
+      "captured_at": "2026-09-20T02:53:59Z",
+      "challenger_comparison": {
+        "absolute_over_probability_gap": 0.06110800115042858,
+        "b0": {
+          "over": 0.5875538110914156,
+          "under": 0.4124461889085844
+        },
+        "challenger": {
+          "alpha_used": 0.09323867966867905,
+          "distribution_family": "NEGATIVE_BINOMIAL_POOLED",
+          "over": 0.526445809940987,
+          "over_ev": {
+            "breakeven_probability": 0.6062992125984252,
+            "edge_vs_breakeven": -0.07985340265743823,
+            "evidence_status": "UNVALIDATED_RESEARCH",
+            "expected_value_is_provisional": true,
+            "expected_value_units_per_unit_staked": -0.1317062615259046,
+            "probability": 0.526445809940987
+          },
+          "push": 0.0,
+          "status": "RESEARCH_ONLY_NOT_PROMOTED",
+          "under": 0.473554190059013,
+          "under_ev": {
+            "breakeven_probability": 0.46296296296296297,
+            "edge_vs_breakeven": 0.010591227096050038,
+            "evidence_status": "UNVALIDATED_RESEARCH",
+            "expected_value_is_provisional": true,
+            "expected_value_units_per_unit_staked": 0.022877050527468135,
+            "probability": 0.473554190059013
+          }
+        },
+        "line": 4.5,
+        "projection": 5.0,
+        "status": "RESEARCH_ONLY_NOT_PROMOTED"
+      },
+      "challenger_model_version": "NEGATIVE_BINOMIAL_POOLED_V1_alpha_0.09323867966867905",
+      "decision_status": "QUARANTINED",
+      "event_id": "36048239",
+      "event_open_date": "2026-09-20T17:01:00.000Z",
+      "evidence_status": "RESEARCH_ONLY_NOT_PROMOTED",
+      "feature_cutoff": "2025_REG_final_week",
+      "gsis_id": "00-0038542",
+      "line": 4.5,
+      "market": "receptions",
+      "market_id": "734.186650377",
+      "observation_id": "fcnfl-shadow1:283a3df2343c6bba8ab7395a",
+      "over_odds": -154,
+      "player_name": "Bijan Robinson",
+      "prediction_source": "B0_VS_NEGATIVE_BINOMIAL_POOLED_CHALLENGER_V1",
+      "source_vintage": "nflverse_2023_2024_2025_weekly_stats_verified",
+      "team": "ATL",
+      "under_odds": 116
+    },
+    {
+      "availability_status": "UNKNOWN_GAME_COVERAGE",
+      "b0_score": {
+        "decision_status": "SHADOW_ONLY",
+        "line": 1.5,
+        "line_gap": -0.30000000000000004,
+        "market_fair_over_probability": 0.4581151832460733,
+        "market_fair_under_probability": 0.5418848167539267,
+        "market_hold": 0.07002801120448177,
+        "model_over_probability": 0.3774373259052925,
+        "model_under_probability": 0.6225626740947074,
+        "probability_method": "pooled_B0_empirical_residuals_laplace",
+        "projection": 1.2,
+        "research_direction": "UNDER",
+        "research_edge": 0.0806778573407807,
+        "residual_n": 7896
+      },
+      "captured_at": "2026-09-20T02:53:59Z",
+      "challenger_comparison": {
+        "absolute_over_probability_gap": 0.044091386599108884,
+        "b0": {
+          "over": 0.3774373259052925,
+          "under": 0.6225626740947074
+        },
+        "challenger": {
+          "alpha_used": 0.09323867966867905,
+          "distribution_family": "NEGATIVE_BINOMIAL_POOLED",
+          "over": 0.3333459393061836,
+          "over_ev": {
+            "breakeven_probability": 0.49019607843137253,
+            "edge_vs_breakeven": -0.15685013912518891,
+            "evidence_status": "UNVALIDATED_RESEARCH",
+            "expected_value_is_provisional": true,
+            "expected_value_units_per_unit_staked": -0.3199742838153854,
+            "probability": 0.3333459393061836
+          },
+          "push": 0.0,
+          "status": "RESEARCH_ONLY_NOT_PROMOTED",
+          "under": 0.6666540606938164,
+          "under_ev": {
+            "breakeven_probability": 0.5798319327731093,
+            "edge_vs_breakeven": 0.08682212792070709,
+            "evidence_status": "UNVALIDATED_RESEARCH",
+            "expected_value_is_provisional": true,
+            "expected_value_units_per_unit_staked": 0.149736713370495,
+            "probability": 0.6666540606938164
+          }
+        },
+        "line": 1.5,
+        "projection": 1.2,
+        "status": "RESEARCH_ONLY_NOT_PROMOTED"
+      },
+      "challenger_model_version": "NEGATIVE_BINOMIAL_POOLED_V1_alpha_0.09323867966867905",
+      "decision_status": "QUARANTINED",
+      "event_id": "36048239",
+      "event_open_date": "2026-09-20T17:01:00.000Z",
+      "evidence_status": "RESEARCH_ONLY_NOT_PROMOTED",
+      "feature_cutoff": "2025_REG_final_week",
+      "gsis_id": "00-0035208",
+      "line": 1.5,
+      "market": "receptions",
+      "market_id": "734.187235389",
+      "observation_id": "fcnfl-shadow1:2fa795f4d635309de4db99b4",
+      "over_odds": 104,
+      "player_name": "Olamide Zaccheaus",
+      "prediction_source": "B0_VS_NEGATIVE_BINOMIAL_POOLED_CHALLENGER_V1",
+      "source_vintage": "nflverse_2023_2024_2025_weekly_stats_verified",
+      "team": "ATL",
+      "under_odds": -138
+    },
+    {
+      "availability_status": "UNKNOWN_GAME_COVERAGE",
+      "b0_score": {
+        "decision_status": "SHADOW_ONLY",
+        "line": 4.5,
+        "line_gap": -0.2999999999999998,
+        "market_fair_over_probability": 0.532258064516129,
+        "market_fair_under_probability": 0.4677419354838709,
+        "market_hold": 0.06896551724137945,
+        "model_over_probability": 0.3774373259052925,
+        "model_under_probability": 0.6225626740947074,
+        "probability_method": "pooled_B0_empirical_residuals_laplace",
+        "projection": 4.2,
+        "research_direction": "UNDER",
+        "research_edge": 0.15482073861083656,
+        "residual_n": 7896
+      },
+      "captured_at": "2026-09-20T02:53:59Z",
+      "challenger_comparison": {
+        "absolute_over_probability_gap": 0.025101116874054197,
+        "b0": {
+          "over": 0.3774373259052925,
+          "under": 0.6225626740947074
+        },
+        "challenger": {
+          "alpha_used": 0.09323867966867905,
+          "distribution_family": "NEGATIVE_BINOMIAL_POOLED",
+          "over": 0.4025384427793467,
+          "over_ev": {
+            "breakeven_probability": 0.5689655172413793,
+            "edge_vs_breakeven": -0.16642707446203264,
+            "evidence_status": "UNVALIDATED_RESEARCH",
+            "expected_value_is_provisional": true,
+            "expected_value_units_per_unit_staked": -0.292508191478724,
+            "probability": 0.4025384427793467
+          },
+          "push": 0.0,
+          "status": "RESEARCH_ONLY_NOT_PROMOTED",
+          "under": 0.5974615572206533,
+          "under_ev": {
+            "breakeven_probability": 0.5,
+            "edge_vs_breakeven": 0.0974615572206533,
+            "evidence_status": "UNVALIDATED_RESEARCH",
+            "expected_value_is_provisional": true,
+            "expected_value_units_per_unit_staked": 0.1949231144413066,
+            "probability": 0.5974615572206533
+          }
+        },
+        "line": 4.5,
+        "projection": 4.2,
+        "status": "RESEARCH_ONLY_NOT_PROMOTED"
+      },
+      "challenger_model_version": "NEGATIVE_BINOMIAL_POOLED_V1_alpha_0.09323867966867905",
+      "decision_status": "QUARANTINED",
+      "event_id": "36048239",
+      "event_open_date": "2026-09-20T17:01:00.000Z",
+      "evidence_status": "RESEARCH_ONLY_NOT_PROMOTED",
+      "feature_cutoff": "2025_REG_final_week",
+      "gsis_id": "00-0037238",
+      "line": 4.5,
+      "market": "receptions",
+      "market_id": "734.186650607",
+      "observation_id": "fcnfl-shadow1:4dfb22ac397aeca3d3ae9549",
+      "over_odds": -132,
+      "player_name": "Drake London",
+      "prediction_source": "B0_VS_NEGATIVE_BINOMIAL_POOLED_CHALLENGER_V1",
+      "source_vintage": "nflverse_2023_2024_2025_weekly_stats_verified",
+      "team": "ATL",
+      "under_odds": 100
+    },
+    {
+      "availability_status": "UNKNOWN_GAME_COVERAGE",
+      "b0_score": {
+        "decision_status": "SHADOW_ONLY",
+        "line": 2.5,
+        "line_gap": -0.7,
+        "market_fair_over_probability": 0.3831317764804004,
+        "market_fair_under_probability": 0.6168682235195997,
+        "market_hold": 0.06970001115200164,
+        "model_over_probability": 0.2970372246138263,
+        "model_under_probability": 0.7029627753861737,
+        "probability_method": "pooled_B0_empirical_residuals_laplace",
+        "projection": 1.8,
+        "research_direction": "UNDER",
+        "research_edge": 0.086094551866574,
+        "residual_n": 7896
+      },
+      "captured_at": "2026-09-20T02:53:59Z",
+      "challenger_comparison": {
+        "absolute_over_probability_gap": 0.0242555623103603,
+        "b0": {
+          "over": 0.2970372246138263,
+          "under": 0.7029627753861737
+        },
+        "challenger": {
+          "alpha_used": 0.09323867966867905,
+          "distribution_family": "NEGATIVE_BINOMIAL_POOLED",
+          "over": 0.272781662303466,
+          "over_ev": {
+            "breakeven_probability": 0.4098360655737705,
+            "edge_vs_breakeven": -0.1370544032703045,
+            "evidence_status": "UNVALIDATED_RESEARCH",
+            "expected_value_is_provisional": true,
+            "expected_value_units_per_unit_staked": -0.33441274397954296,
+            "probability": 0.272781662303466
+          },
+          "push": 0.0,
+          "status": "RESEARCH_ONLY_NOT_PROMOTED",
+          "under": 0.727218337696534,
+          "under_ev": {
+            "breakeven_probability": 0.6598639455782312,
+            "edge_vs_breakeven": 0.06735439211830274,
+            "evidence_status": "UNVALIDATED_RESEARCH",
+            "expected_value_is_provisional": true,
+            "expected_value_units_per_unit_staked": 0.10207315094217001,
+            "probability": 0.727218337696534
+          }
+        },
+        "line": 2.5,
+        "projection": 1.8,
+        "status": "RESEARCH_ONLY_NOT_PROMOTED"
+      },
+      "challenger_model_version": "NEGATIVE_BINOMIAL_POOLED_V1_alpha_0.09323867966867905",
+      "decision_status": "QUARANTINED",
+      "event_id": "36048239",
+      "event_open_date": "2026-09-20T17:01:00.000Z",
+      "evidence_status": "RESEARCH_ONLY_NOT_PROMOTED",
+      "feature_cutoff": "2025_REG_final_week",
+      "gsis_id": "00-0036555",
+      "line": 2.5,
+      "market": "receptions",
+      "market_id": "734.187117963",
+      "observation_id": "fcnfl-shadow1:6041531c0252cb7eb77fede2",
+      "over_odds": 144,
+      "player_name": "Chuba Hubbard",
+      "prediction_source": "B0_VS_NEGATIVE_BINOMIAL_POOLED_CHALLENGER_V1",
+      "source_vintage": "nflverse_2023_2024_2025_weekly_stats_verified",
+      "team": "CAR",
+      "under_odds": -194
+    },
+    {
+      "availability_status": "UNKNOWN_GAME_COVERAGE",
+      "b0_score": {
+        "decision_status": "SHADOW_ONLY",
+        "line": 4.5,
+        "line_gap": 0.2999999999999998,
+        "market_fair_over_probability": 0.4808467741935484,
+        "market_fair_under_probability": 0.5191532258064516,
+        "market_hold": 0.07011866235167208,
+        "model_over_probability": 0.5355786275006331,
+        "model_under_probability": 0.4644213724993669,
+        "probability_method": "pooled_B0_empirical_residuals_laplace",
+        "projection": 4.8,
+        "research_direction": "OVER",
+        "research_edge": 0.054731853307084743,
+        "residual_n": 7896
+      },
+      "captured_at": "2026-09-20T02:53:59Z",
+      "challenger_comparison": {
+        "absolute_over_probability_gap": 0.03860980139218395,
+        "b0": {
+          "over": 0.5355786275006331,
+          "under": 0.4644213724993669
+        },
+        "challenger": {
+          "alpha_used": 0.09323867966867905,
+          "distribution_family": "NEGATIVE_BINOMIAL_POOLED",
+          "over": 0.49696882610844917,
+          "over_ev": {
+            "breakeven_probability": 0.5145631067961165,
+            "edge_vs_breakeven": -0.01759428068766733,
+            "evidence_status": "UNVALIDATED_RESEARCH",
+            "expected_value_is_provisional": true,
+            "expected_value_units_per_unit_staked": -0.03419265869490068,
+            "probability": 0.49696882610844917
+          },
+          "push": 0.0,
+          "status": "RESEARCH_ONLY_NOT_PROMOTED",
+          "under": 0.5030311738915508,
+          "under_ev": {
+            "breakeven_probability": 0.5555555555555556,
+            "edge_vs_breakeven": -0.05252438166400475,
+            "evidence_status": "UNVALIDATED_RESEARCH",
+            "expected_value_is_provisional": true,
+            "expected_value_units_per_unit_staked": -0.09454388699520849,
+            "probability": 0.5030311738915508
+          }
+        },
+        "line": 4.5,
+        "projection": 4.8,
+        "status": "RESEARCH_ONLY_NOT_PROMOTED"
+      },
+      "challenger_model_version": "NEGATIVE_BINOMIAL_POOLED_V1_alpha_0.09323867966867905",
+      "decision_status": "QUARANTINED",
+      "event_id": "36048239",
+      "event_open_date": "2026-09-20T17:01:00.000Z",
+      "evidence_status": "RESEARCH_ONLY_NOT_PROMOTED",
+      "feature_cutoff": "2025_REG_final_week",
+      "gsis_id": "00-0039491",
+      "line": 4.5,
+      "market": "receptions",
+      "market_id": "734.186651167",
+      "observation_id": "fcnfl-shadow1:75d5ada67c2585edd335c19b",
+      "over_odds": -106,
+      "player_name": "Jalen Coker",
+      "prediction_source": "B0_VS_NEGATIVE_BINOMIAL_POOLED_CHALLENGER_V1",
+      "source_vintage": "nflverse_2023_2024_2025_weekly_stats_verified",
+      "team": "CAR",
+      "under_odds": -125
+    },
+    {
+      "availability_status": "UNKNOWN_GAME_COVERAGE",
+      "b0_score": {
+        "decision_status": "SHADOW_ONLY",
+        "line": 2.5,
+        "line_gap": -0.2999999999999998,
+        "market_fair_over_probability": 0.38961038961038963,
+        "market_fair_under_probability": 0.6103896103896104,
+        "market_hold": 0.06944444444444442,
+        "model_over_probability": 0.3774373259052925,
+        "model_under_probability": 0.6225626740947074,
+        "probability_method": "pooled_B0_empirical_residuals_laplace",
+        "projection": 2.2,
+        "research_direction": "UNDER",
+        "research_edge": 0.012173063705097076,
+        "residual_n": 7896
+      },
+      "captured_at": "2026-09-20T02:53:59Z",
+      "challenger_comparison": {
+        "absolute_over_probability_gap": 0.005651592234615921,
+        "b0": {
+          "over": 0.3774373259052925,
+          "under": 0.6225626740947074
+        },
+        "challenger": {
+          "alpha_used": 0.09323867966867905,
+          "distribution_family": "NEGATIVE_BINOMIAL_POOLED",
+          "over": 0.3717857336706766,
+          "over_ev": {
+            "breakeven_probability": 0.4166666666666667,
+            "edge_vs_breakeven": -0.04488093299599011,
+            "evidence_status": "UNVALIDATED_RESEARCH",
+            "expected_value_is_provisional": true,
+            "expected_value_units_per_unit_staked": -0.10771423919037626,
+            "probability": 0.3717857336706766
+          },
+          "push": 0.0,
+          "status": "RESEARCH_ONLY_NOT_PROMOTED",
+          "under": 0.6282142663293234,
+          "under_ev": {
+            "breakeven_probability": 0.6527777777777778,
+            "edge_vs_breakeven": -0.024563511448454367,
+            "evidence_status": "UNVALIDATED_RESEARCH",
+            "expected_value_is_provisional": true,
+            "expected_value_units_per_unit_staked": -0.03762920902741945,
+            "probability": 0.6282142663293234
+          }
+        },
+        "line": 2.5,
+        "projection": 2.2,
+        "status": "RESEARCH_ONLY_NOT_PROMOTED"
+      },
+      "challenger_model_version": "NEGATIVE_BINOMIAL_POOLED_V1_alpha_0.09323867966867905",
+      "decision_status": "QUARANTINED",
+      "event_id": "36048240",
+      "event_open_date": "2026-09-20T17:01:00.000Z",
+      "evidence_status": "RESEARCH_ONLY_NOT_PROMOTED",
+      "feature_cutoff": "2025_REG_final_week",
+      "gsis_id": "00-0033906",
+      "line": 2.5,
+      "market": "receptions",
+      "market_id": "734.186974480",
+      "observation_id": "fcnfl-shadow1:a7c99fa086caa7dfa103c323",
+      "over_odds": 140,
+      "player_name": "Alvin Kamara",
+      "prediction_source": "B0_VS_NEGATIVE_BINOMIAL_POOLED_CHALLENGER_V1",
+      "source_vintage": "nflverse_2023_2024_2025_weekly_stats_verified",
+      "team": "NO",
+      "under_odds": -188
+    },
+    {
+      "availability_status": "UNKNOWN_GAME_COVERAGE",
+      "b0_score": {
+        "decision_status": "SHADOW_ONLY",
+        "line": 1.5,
+        "line_gap": -0.10000000000000009,
+        "market_fair_over_probability": 0.563470066518847,
+        "market_fair_under_probability": 0.43652993348115304,
+        "market_hold": 0.0704643228007713,
+        "model_over_probability": 0.42631045834388454,
+        "model_under_probability": 0.5736895416561154,
+        "probability_method": "pooled_B0_empirical_residuals_laplace",
+        "projection": 1.4,
+        "research_direction": "UNDER",
+        "research_edge": 0.13715960817496237,
+        "residual_n": 7896
+      },
+      "captured_at": "2026-09-20T02:53:59Z",
+      "challenger_comparison": {
+        "absolute_over_probability_gap": 0.026726543391818625,
+        "b0": {
+          "over": 0.42631045834388454,
+          "under": 0.5736895416561154
+        },
+        "challenger": {
+          "alpha_used": 0.09323867966867905,
+          "distribution_family": "NEGATIVE_BINOMIAL_POOLED",
+          "over": 0.3995839149520659,
+          "over_ev": {
+            "breakeven_probability": 0.6031746031746031,
+            "edge_vs_breakeven": -0.20359068822253723,
+            "evidence_status": "UNVALIDATED_RESEARCH",
+            "expected_value_is_provisional": true,
+            "expected_value_units_per_unit_staked": -0.3375319304742065,
+            "probability": 0.3995839149520659
+          },
+          "push": 0.0,
+          "status": "RESEARCH_ONLY_NOT_PROMOTED",
+          "under": 0.6004160850479341,
+          "under_ev": {
+            "breakeven_probability": 0.4672897196261682,
+            "edge_vs_breakeven": 0.13312636542176587,
+            "evidence_status": "UNVALIDATED_RESEARCH",
+            "expected_value_is_provisional": true,
+            "expected_value_units_per_unit_staked": 0.28489042200257875,
+            "probability": 0.6004160850479341
+          }
+        },
+        "line": 1.5,
+        "projection": 1.4,
+        "status": "RESEARCH_ONLY_NOT_PROMOTED"
+      },
+      "challenger_model_version": "NEGATIVE_BINOMIAL_POOLED_V1_alpha_0.09323867966867905",
+      "decision_status": "QUARANTINED",
+      "event_id": "36048239",
+      "event_open_date": "2026-09-20T17:01:00.000Z",
+      "evidence_status": "RESEARCH_ONLY_NOT_PROMOTED",
+      "feature_cutoff": "2025_REG_final_week",
+      "gsis_id": "00-0037741",
+      "line": 1.5,
+      "market": "receptions",
+      "market_id": "734.187085642",
+      "observation_id": "fcnfl-shadow1:ddadb2956911273160614b62",
+      "over_odds": -152,
+      "player_name": "Jahan Dotson",
+      "prediction_source": "B0_VS_NEGATIVE_BINOMIAL_POOLED_CHALLENGER_V1",
+      "source_vintage": "nflverse_2023_2024_2025_weekly_stats_verified",
+      "team": "ATL",
+      "under_odds": 114
+    },
+    {
+      "availability_status": "UNKNOWN_GAME_COVERAGE",
+      "b0_score": {
+        "decision_status": "SHADOW_ONLY",
+        "line": 1.5,
+        "line_gap": 0.5,
+        "market_fair_over_probability": 0.5418848167539267,
+        "market_fair_under_probability": 0.4581151832460733,
+        "market_hold": 0.07002801120448177,
+        "model_over_probability": 0.5875538110914156,
+        "model_under_probability": 0.4124461889085844,
+        "probability_method": "pooled_B0_empirical_residuals_laplace",
+        "projection": 2.0,
+        "research_direction": "OVER",
+        "research_edge": 0.04566899433748883,
+        "residual_n": 7896
+      },
+      "captured_at": "2026-09-20T02:53:59Z",
+      "challenger_comparison": {
+        "absolute_over_probability_gap": 0.01670137242701375,
+        "b0": {
+          "over": 0.5875538110914156,
+          "under": 0.4124461889085844
+        },
+        "challenger": {
+          "alpha_used": 0.09323867966867905,
+          "distribution_family": "NEGATIVE_BINOMIAL_POOLED",
+          "over": 0.5708524386644018,
+          "over_ev": {
+            "breakeven_probability": 0.5798319327731093,
+            "edge_vs_breakeven": -0.008979494108707464,
+            "evidence_status": "UNVALIDATED_RESEARCH",
+            "expected_value_is_provisional": true,
+            "expected_value_units_per_unit_staked": -0.01548637389762575,
+            "probability": 0.5708524386644018
+          },
+          "push": 0.0,
+          "status": "RESEARCH_ONLY_NOT_PROMOTED",
+          "under": 0.4291475613355982,
+          "under_ev": {
+            "breakeven_probability": 0.49019607843137253,
+            "edge_vs_breakeven": -0.0610485170957743,
+            "evidence_status": "UNVALIDATED_RESEARCH",
+            "expected_value_is_provisional": true,
+            "expected_value_units_per_unit_staked": -0.12453897487537968,
+            "probability": 0.4291475613355982
+          }
+        },
+        "line": 1.5,
+        "projection": 2.0,
+        "status": "RESEARCH_ONLY_NOT_PROMOTED"
+      },
+      "challenger_model_version": "NEGATIVE_BINOMIAL_POOLED_V1_alpha_0.09323867966867905",
+      "decision_status": "QUARANTINED",
+      "event_id": "36048239",
+      "event_open_date": "2026-09-20T17:01:00.000Z",
+      "evidence_status": "RESEARCH_ONLY_NOT_PROMOTED",
+      "feature_cutoff": "2025_REG_final_week",
+      "gsis_id": "00-0037005",
+      "line": 1.5,
+      "market": "receptions",
+      "market_id": "734.187117955",
+      "observation_id": "fcnfl-shadow1:e7c422bc5a44a435fca7a71b",
+      "over_odds": -138,
+      "player_name": "Tommy Tremble",
+      "prediction_source": "B0_VS_NEGATIVE_BINOMIAL_POOLED_CHALLENGER_V1",
+      "source_vintage": "nflverse_2023_2024_2025_weekly_stats_verified",
+      "team": "CAR",
+      "under_odds": 104
+    }
+  ],
+  "schema_version": 1,
+  "sealed_at": "2026-09-20T02:53:59Z",
+  "slate_date": "2026-09-20",
+  "snapshot_sha256": "0468cabdbf2c22df4050f0887a6819a9d56abd01dbc913575729632b66d4ec32",
+  "source_vintage": "nflverse_2023_2024_2025_weekly_stats_verified",
+  "sport": "NFL"
+}

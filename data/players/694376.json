@@ -1254,6 +1254,624 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 44.4,
+          "notable_signals": 2,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823898,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 28.5714,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 66.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 13.8889,
+            "platoon_barrel_pct": 2.8,
+            "platoon_xwoba": -1.68,
+            "opp_catcher_framing": 1.2,
+            "days_rest": 2.0,
+            "woba_ahead": 20.9091,
+            "woba_behind": 20.9091,
+            "team_total_move": 0.0,
+            "team_total_open": -6.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 1.2,
+            "vs_rp_ops": -0.612,
+            "ump_k_pct": -0.156,
+            "ump_bb_pct": -0.048
+          },
+          "hit_probability": 0.6038,
+          "raw_hit_probability": 0.5612,
+          "lift": -0.0685,
+          "reliability": "C",
+          "sample_n": 36,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 19.2,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823898,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 2.4,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 20.0,
+            "on_base": 0.0
+          },
+          "hit_probability": 0.0127,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 36,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 5.7,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823898,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0509
+          },
+          "hit_probability": 0.0509,
+          "raw_hit_probability": null,
+          "lift": 0.0032,
+          "reliability": "C",
+          "sample_n": 36,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823898,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0071
+          },
+          "hit_probability": 0.0071,
+          "raw_hit_probability": null,
+          "lift": -0.0136,
+          "reliability": "C",
+          "sample_n": 36,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 39.6,
+          "notable_signals": 2,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823899,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 5.7143,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 51.4,
+            "season_barrel_pct": 66.6667,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 13.8889,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": -4.68,
+            "opp_catcher_framing": 1.08,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 14.5455,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.472,
+            "vs_rp_ops": -0.612,
+            "ump_k_pct": 0.264,
+            "ump_bb_pct": -0.324
+          },
+          "hit_probability": 0.5984,
+          "raw_hit_probability": 0.5525,
+          "lift": -0.0698,
+          "reliability": "C",
+          "sample_n": 37,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 19.2,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823899,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 2.52,
+            "sprint_speed": 3.125,
+            "catcher_poptime": 20.0,
+            "on_base": 0.0
+          },
+          "hit_probability": 0.0131,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 37,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 5.5,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823899,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0501
+          },
+          "hit_probability": 0.0501,
+          "raw_hit_probability": null,
+          "lift": 0.0024,
+          "reliability": "C",
+          "sample_n": 37,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823899,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.007
+          },
+          "hit_probability": 0.007,
+          "raw_hit_probability": null,
+          "lift": -0.0137,
+          "reliability": "C",
+          "sample_n": 37,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-20",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 35.6,
+          "notable_signals": 2,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823896,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 19.7143,
+            "l7_avg_ev": 23.4821,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 1.875,
+            "park_hr_index": 51.6,
+            "season_barrel_pct": 63.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 15.1515,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": -4.92,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.528,
+            "vs_rp_ops": -0.888,
+            "ump_k_pct": 0.12,
+            "ump_bb_pct": -0.192
+          },
+          "hit_probability": 0.6012,
+          "raw_hit_probability": 0.5571,
+          "lift": -0.0646,
+          "reliability": "C",
+          "sample_n": 38,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 20.8,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823896,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 2.7,
+            "sprint_speed": 0.0,
+            "catcher_poptime": 31.4286,
+            "on_base": 0.0
+          },
+          "hit_probability": 0.0125,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 38,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 5.2,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823896,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0492
+          },
+          "hit_probability": 0.0492,
+          "raw_hit_probability": null,
+          "lift": 0.0016,
+          "reliability": "C",
+          "sample_n": 38,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823896,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0069
+          },
+          "hit_probability": 0.0069,
+          "raw_hit_probability": null,
+          "lift": -0.0137,
+          "reliability": "C",
+          "sample_n": 38,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 40.4,
+          "notable_signals": 2,
+          "matchup": "Minnesota Twins @ San Francisco Giants",
+          "game_pk": 823166,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 37.4286,
+            "l7_avg_ev": 62.75,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 27.4,
+            "season_barrel_pct": 61.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 37.037,
+            "platoon_barrel_pct": 2.64,
+            "platoon_xwoba": -3.0,
+            "park_hand_index": -1.52,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -0.3724,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.048,
+            "vs_rp_ops": -1.608,
+            "ump_k_pct": -0.408,
+            "ump_bb_pct": -0.096
+          },
+          "hit_probability": 0.5344,
+          "raw_hit_probability": 0.5344,
+          "lift": -0.0273,
+          "reliability": "C",
+          "sample_n": 39,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 23.2,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ San Francisco Giants",
+          "game_pk": 823166,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 6.0,
+            "sprint_speed": 0.0,
+            "catcher_poptime": 40.0,
+            "on_base": 0.0
+          },
+          "hit_probability": 0.0112,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 39,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 5.0,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ San Francisco Giants",
+          "game_pk": 823166,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0484
+          },
+          "hit_probability": 0.0484,
+          "raw_hit_probability": null,
+          "lift": 0.0009,
+          "reliability": "C",
+          "sample_n": 39,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ San Francisco Giants",
+          "game_pk": 823166,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0068
+          },
+          "hit_probability": 0.0068,
+          "raw_hit_probability": null,
+          "lift": -0.0139,
+          "reliability": "C",
+          "sample_n": 39,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 33.4,
+          "notable_signals": 2,
+          "matchup": "Minnesota Twins @ San Francisco Giants",
+          "game_pk": 823168,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 69.7143,
+            "l7_avg_ev": 88.2292,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.6,
+            "season_barrel_pct": 58.6667,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": -5.0,
+            "park_hand_index": -1.58,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -0.3926,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.608,
+            "vs_rp_ops": -1.824,
+            "ump_k_pct": -0.744,
+            "ump_bb_pct": -0.132
+          },
+          "hit_probability": 0.6016,
+          "raw_hit_probability": 0.5576,
+          "lift": -0.0756,
+          "reliability": "C",
+          "sample_n": 40,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 4.8,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ San Francisco Giants",
+          "game_pk": 823168,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0476
+          },
+          "hit_probability": 0.0476,
+          "raw_hit_probability": null,
+          "lift": 0.0002,
+          "reliability": "C",
+          "sample_n": 40,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Minnesota Twins @ San Francisco Giants",
+          "game_pk": 823168,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0066
+          },
+          "hit_probability": 0.0066,
+          "raw_hit_probability": null,
+          "lift": -0.014,
+          "reliability": "C",
+          "sample_n": 40,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

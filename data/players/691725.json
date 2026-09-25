@@ -501,6 +501,158 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 29.2,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823571,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 54.0,
+            "same_hand_ratio": 57.1429,
+            "l14_k_pct": 15.2941,
+            "env_neutral": 50.0,
+            "ump_accuracy": 60.8531,
+            "ump_k_pct": 0.36,
+            "ump_bb_pct": 0.216
+          },
+          "hit_probability": 0.5859,
+          "raw_hit_probability": 0.5607,
+          "lift": 0.0742,
+          "reliability": "A",
+          "sample_n": 21,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 24.5,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823571,
+          "team": "Philadelphia Phillies",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.4578,
+            "avg_outs_per_start": 15.05
+          },
+          "hit_probability": 0.4775,
+          "raw_hit_probability": 0.4578,
+          "lift": -0.0826,
+          "reliability": "A",
+          "sample_n": 21,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823571,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            691725,
+            681035
+          ],
+          "signals": {
+            "combined_k_edge": 0.1573
+          },
+          "hit_probability": 0.7226,
+          "raw_hit_probability": null,
+          "lift": 0.1573,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 50.4,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ Philadelphia Phillies",
+          "game_pk": 823411,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 50.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 42.3529,
+            "env_neutral": 50.0,
+            "ump_accuracy": 71.8194,
+            "ump_k_pct": 0.06,
+            "ump_bb_pct": 0.012
+          },
+          "hit_probability": 0.405,
+          "raw_hit_probability": 0.405,
+          "lift": 0.029,
+          "reliability": "A",
+          "sample_n": 22,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 54.8,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ Philadelphia Phillies",
+          "game_pk": 823411,
+          "team": "Philadelphia Phillies",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6942,
+            "avg_outs_per_start": 15.09
+          },
+          "hit_probability": 0.6561,
+          "raw_hit_probability": 0.6942,
+          "lift": -0.0837,
+          "reliability": "A",
+          "sample_n": 22,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        }
+      ]
     }
   ]
 }

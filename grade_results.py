@@ -43,9 +43,24 @@ PUBLIC_REGISTRY_FILE = os.environ.get("PUBLIC_TOP_PICK_REGISTRY") or os.path.joi
 CATCHUP_WINDOW_DAYS = 14
 PUBLIC_CORRECTION_RECHECK_DAYS = 3
 
+# Populated only for the current process.  The durable grade files remain the
+# source of truth; this list lets the command-line entry point fail loudly
+# after it has safely written every recoverable result.
+_OVERDUE_PUBLIC_GRADE_ALERTS = []
+_GRADING_FAILURES = []
+
 
 def picks_path(date):  return os.path.join(OUTPUT_DIR, f"picks_{date}.json")
 def grades_path(date): return os.path.join(RESULTS_DIR, f"grades_{date}.json")
+
+
+def valid_grade_date(value):
+    """Accept only one exact calendar date; never let input shape a path."""
+    try:
+        parsed = datetime.strptime(str(value), "%Y-%m-%d")
+    except (TypeError, ValueError):
+        return False
+    return parsed.strftime("%Y-%m-%d") == value
 
 
 def dates_needing_grading():
@@ -833,6 +848,43 @@ def merge_durable_public_result(previous, incoming):
     return incoming
 
 
+def overdue_public_grade_alerts(date, public_results, game_contexts):
+    """Return public picks still unresolved after an authoritative Final.
+
+    Source outages and postponed/suspended/cancelled games are deliberately
+    quiet here: they remain retryable, but are not proof that grading is late.
+    Once MLB's direct game feed says Final, every immutable public pick must
+    have a terminal hit/miss/void settlement or produce an actionable alert.
+    """
+    from dashboard.live_state import game_state
+
+    alerts = []
+    seen = set()
+    for result in public_results or ():
+        try:
+            game_pk = int(result.get("game_pk"))
+        except (TypeError, ValueError):
+            continue
+        context = (game_contexts or {}).get(game_pk) or {}
+        if game_state(context.get("status") or {}) != "final":
+            continue
+        settlement = result.get("settlement_state") or result.get("grade")
+        if settlement in ("hit", "miss", "void"):
+            continue
+        identity = result.get("id") or f"game:{game_pk}:player:{result.get('player_id')}"
+        key = (date, identity)
+        if key in seen:
+            continue
+        seen.add(key)
+        alerts.append({
+            "date": date,
+            "id": identity,
+            "game_pk": game_pk,
+            "reason": result.get("reason") or "unresolved_after_official_final",
+        })
+    return alerts
+
+
 def grade_day(date) -> bool:
     """Grade one date. Returns True if it wrote grades, False if it no-opped."""
     PICKS_JSON = picks_path(date)
@@ -949,6 +1001,14 @@ def grade_day(date) -> bool:
         public_graded.append(merge_durable_public_result(
             prior_public.get(pick.get("id")), result,
         ))
+    overdue = overdue_public_grade_alerts(YESTERDAY, public_graded, public_contexts)
+    _OVERDUE_PUBLIC_GRADE_ALERTS.extend(overdue)
+    for alert in overdue:
+        print(
+            "::error title=Overdue MLB public grade::"
+            f"{alert['date']} {alert['id']} (game_pk={alert['game_pk']}) remains "
+            f"ungraded after official Final: {alert['reason']}"
+        )
     hits = sum(1 for g in graded if g["grade"] == "hit")
     misses = sum(1 for g in graded if g["grade"] == "miss")
     ungraded = sum(1 for g in graded if g["grade"] == "ungraded")
@@ -1219,9 +1279,15 @@ def main() -> int:
     """Grades yesterday plus any earlier day left ungraded (see
     dates_needing_grading). An explicit GRADE_DATE env var still forces a
     single specific day, which is what manual re-grades use."""
-    if os.environ.get("GRADE_DATE"):
-        grade_day(os.environ["GRADE_DATE"])
-        return 0
+    _OVERDUE_PUBLIC_GRADE_ALERTS.clear()
+    _GRADING_FAILURES.clear()
+    forced_date = os.environ.get("GRADE_DATE")
+    if forced_date:
+        if not valid_grade_date(forced_date):
+            print("::error::GRADE_DATE must be an exact YYYY-MM-DD calendar date.")
+            return 64
+        grade_day(forced_date)
+        return 2 if _OVERDUE_PUBLIC_GRADE_ALERTS else 0
     # Report gaps BEFORE grading, so a missed day is the first thing seen in
     # the log rather than something to be inferred from its absence.
     gaps = days_with_no_board()
@@ -1246,8 +1312,19 @@ def main() -> int:
             grade_day(d)
         except Exception as e:
             # One bad day must not stop the others, and must never fail the
-            # workflow step -- same contract as the rest of this module.
+            # remaining days. Record it so the workflow can publish any safe
+            # partial progress and still finish red instead of claiming all
+            # grading succeeded.
             m.warn(f"Grading {d} failed: {e}")
+            _GRADING_FAILURES.append({"date": d, "error": str(e)})
+    if _GRADING_FAILURES:
+        print(f"Grading failure alert: {len(_GRADING_FAILURES)} date(s) failed "
+              "after the remaining catch-up dates were attempted.")
+        return 1
+    if _OVERDUE_PUBLIC_GRADE_ALERTS:
+        print(f"Overdue grading alert: {len(_OVERDUE_PUBLIC_GRADE_ALERTS)} "
+              "deployment-proven public Top Pick(s) remain unresolved after official Final.")
+        return 2
     return 0
 
 

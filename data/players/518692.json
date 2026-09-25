@@ -2608,6 +2608,615 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 63.1,
+          "notable_signals": 1,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823898,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 33.7143,
+            "l7_avg_ev": 40.3472,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 1.2,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 34.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 55.5556,
+            "platoon_barrel_pct": -0.8,
+            "platoon_xwoba": 1.44,
+            "opp_catcher_framing": 1.2,
+            "days_rest": 0.0,
+            "woba_ahead": 38.1818,
+            "woba_behind": 16.3636,
+            "hard_hit_105_rate": -0.155,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.52,
+            "vs_rp_ops": 1.656,
+            "ump_k_pct": -0.156,
+            "ump_bb_pct": -0.048
+          },
+          "hit_probability": 0.7152,
+          "raw_hit_probability": 0.7532,
+          "lift": 0.0429,
+          "reliability": "A",
+          "sample_n": 145,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 2.9,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823898,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0404
+          },
+          "hit_probability": 0.0404,
+          "raw_hit_probability": null,
+          "lift": -0.0073,
+          "reliability": "A",
+          "sample_n": 145,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.8,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823898,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0198
+          },
+          "hit_probability": 0.0198,
+          "raw_hit_probability": null,
+          "lift": -0.0009,
+          "reliability": "A",
+          "sample_n": 145,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 72.4,
+          "notable_signals": 1,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823899,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 43.1875,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 0.825,
+            "park_hr_index": 51.4,
+            "season_barrel_pct": 33.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 41.6667,
+            "platoon_barrel_pct": 1.6,
+            "platoon_xwoba": 4.14,
+            "opp_catcher_framing": 0.84,
+            "days_rest": 0.0,
+            "woba_ahead": 39.0909,
+            "woba_behind": 32.7273,
+            "hard_hit_105_rate": -0.16,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.536,
+            "vs_rp_ops": 1.596,
+            "ump_k_pct": 0.264,
+            "ump_bb_pct": -0.324
+          },
+          "hit_probability": 0.6625,
+          "raw_hit_probability": 0.6484,
+          "lift": 0.1007,
+          "reliability": "A",
+          "sample_n": 146,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 2.9,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823899,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0402
+          },
+          "hit_probability": 0.0402,
+          "raw_hit_probability": null,
+          "lift": -0.0075,
+          "reliability": "A",
+          "sample_n": 146,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.8,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823899,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0197
+          },
+          "hit_probability": 0.0197,
+          "raw_hit_probability": null,
+          "lift": -0.001,
+          "reliability": "A",
+          "sample_n": 146,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-20",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 62.5,
+          "notable_signals": 2,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823896,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 59.4286,
+            "l7_avg_ev": 60.875,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 2.1,
+            "park_hr_index": 51.6,
+            "season_barrel_pct": 34.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": -0.88,
+            "platoon_xwoba": 1.2,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 0.0,
+            "woba_ahead": 37.2727,
+            "woba_behind": 15.4545,
+            "hard_hit_105_rate": -0.165,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.536,
+            "vs_rp_ops": 1.512,
+            "ump_k_pct": 0.12,
+            "ump_bb_pct": -0.192
+          },
+          "hit_probability": 0.6523,
+          "raw_hit_probability": 0.6404,
+          "lift": 0.089,
+          "reliability": "A",
+          "sample_n": 147,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 2.9,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823896,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.04
+          },
+          "hit_probability": 0.04,
+          "raw_hit_probability": null,
+          "lift": -0.0076,
+          "reliability": "A",
+          "sample_n": 147,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.8,
+          "notable_signals": 0,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823896,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0196
+          },
+          "hit_probability": 0.0196,
+          "raw_hit_probability": null,
+          "lift": -0.001,
+          "reliability": "A",
+          "sample_n": 147,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 72.3,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ Los Angeles Dodgers",
+          "game_pk": 823897,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 15.1429,
+            "l7_avg_ev": 47.3125,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.2,
+            "season_barrel_pct": 34.0,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 37.037,
+            "bvp_ops": -1.464,
+            "platoon_barrel_pct": 1.68,
+            "platoon_xwoba": 4.2,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 2.0,
+            "woba_ahead": 43.6364,
+            "woba_behind": 39.0909,
+            "hard_hit_105_rate": -0.1725,
+            "team_total_move": 6.0,
+            "team_total_open": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.528,
+            "vs_rp_ops": 1.524,
+            "ump_k_pct": -0.012,
+            "ump_bb_pct": 0.54
+          },
+          "hit_probability": 0.6584,
+          "raw_hit_probability": 0.6452,
+          "lift": 0.0967,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 2.8,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Los Angeles Dodgers",
+          "game_pk": 823897,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0397
+          },
+          "hit_probability": 0.0397,
+          "raw_hit_probability": null,
+          "lift": -0.0078,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.8,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Los Angeles Dodgers",
+          "game_pk": 823897,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0195
+          },
+          "hit_probability": 0.0195,
+          "raw_hit_probability": null,
+          "lift": -0.0012,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 58.5,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Los Angeles Dodgers",
+          "game_pk": 823894,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 31.4286,
+            "l7_avg_ev": 50.8088,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 39.6,
+            "season_barrel_pct": 34.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 37.037,
+            "bvp_ops": 0.54,
+            "platoon_barrel_pct": -0.96,
+            "platoon_xwoba": 1.08,
+            "opp_catcher_framing": 1.32,
+            "days_rest": 0.0,
+            "woba_ahead": 41.8182,
+            "woba_behind": 37.2727,
+            "hard_hit_105_rate": -0.1775,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.464,
+            "vs_rp_ops": 1.476,
+            "ump_k_pct": -0.708,
+            "ump_bb_pct": -0.072
+          },
+          "hit_probability": 0.6521,
+          "raw_hit_probability": 0.6403,
+          "lift": 0.0924,
+          "reliability": "A",
+          "sample_n": 149,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 2.8,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Los Angeles Dodgers",
+          "game_pk": 823894,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0395
+          },
+          "hit_probability": 0.0395,
+          "raw_hit_probability": null,
+          "lift": -0.0079,
+          "reliability": "A",
+          "sample_n": 149,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.8,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Los Angeles Dodgers",
+          "game_pk": 823894,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0194
+          },
+          "hit_probability": 0.0194,
+          "raw_hit_probability": null,
+          "lift": -0.0012,
+          "reliability": "A",
+          "sample_n": 149,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 57.8,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ Los Angeles Dodgers",
+          "game_pk": 823895,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 22.8571,
+            "pitch_exploit": 5.7143,
+            "l7_avg_ev": 61.1842,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 38.0,
+            "season_barrel_pct": 34.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 18.5185,
+            "bvp_ops": 2.442,
+            "platoon_barrel_pct": 1.84,
+            "platoon_xwoba": 4.14,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "woba_ahead": 41.8182,
+            "woba_behind": 40.0,
+            "hard_hit_105_rate": -0.185,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.424,
+            "vs_rp_ops": 1.356,
+            "ump_k_pct": -0.132,
+            "ump_bb_pct": 0.12
+          },
+          "hit_probability": 0.6483,
+          "raw_hit_probability": 0.6373,
+          "lift": 0.0906,
+          "reliability": "A",
+          "sample_n": 150,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 2.7,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Los Angeles Dodgers",
+          "game_pk": 823895,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0392
+          },
+          "hit_probability": 0.0392,
+          "raw_hit_probability": null,
+          "lift": -0.0081,
+          "reliability": "A",
+          "sample_n": 150,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 1.8,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Los Angeles Dodgers",
+          "game_pk": 823895,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0193
+          },
+          "hit_probability": 0.0193,
+          "raw_hit_probability": null,
+          "lift": -0.0012,
+          "reliability": "A",
+          "sample_n": 150,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

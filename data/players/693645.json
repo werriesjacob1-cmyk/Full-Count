@@ -432,6 +432,158 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 6.5 Strikeouts",
+          "type": "pitcher",
+          "score": 40.9,
+          "notable_signals": 1,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825029,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 25.0,
+            "same_hand_ratio": 92.8571,
+            "l14_k_pct": 100.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 80.7146,
+            "ump_k_pct": -0.18,
+            "ump_bb_pct": 0.072
+          },
+          "hit_probability": 0.4653,
+          "raw_hit_probability": 0.4653,
+          "lift": 0.2397,
+          "reliability": "A",
+          "sample_n": 31,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 6.5,
+            "needs": 7
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 71.7,
+          "notable_signals": 1,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825029,
+          "team": "New York Yankees",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5866,
+            "avg_outs_per_start": 17.87
+          },
+          "hit_probability": 0.5882,
+          "raw_hit_probability": 0.5866,
+          "lift": 0.1375,
+          "reliability": "A",
+          "sample_n": 31,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "New York Yankees @ Arizona Diamondbacks",
+          "game_pk": 825029,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            693645,
+            694297
+          ],
+          "signals": {
+            "combined_k_edge": 0.1179
+          },
+          "hit_probability": 0.6906,
+          "raw_hit_probability": null,
+          "lift": 0.1179,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "evaluations": [
+        {
+          "prop": "Over 6.5 Strikeouts",
+          "type": "pitcher",
+          "score": 38.6,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ New York Yankees",
+          "game_pk": 823493,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 16.0,
+            "same_hand_ratio": 12.5,
+            "l14_k_pct": 90.5882,
+            "env_neutral": 50.0,
+            "ump_accuracy": 80.0586,
+            "ump_k_pct": 0.012,
+            "ump_bb_pct": 0.156
+          },
+          "hit_probability": 0.4566,
+          "raw_hit_probability": 0.4566,
+          "lift": 0.2115,
+          "reliability": "A",
+          "sample_n": 32,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 6.5,
+            "needs": 7
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 90.7,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ New York Yankees",
+          "game_pk": 823493,
+          "team": "New York Yankees",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7436,
+            "avg_outs_per_start": 17.88
+          },
+          "hit_probability": 0.6869,
+          "raw_hit_probability": 0.7436,
+          "lift": 0.1441,
+          "reliability": "A",
+          "sample_n": 32,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }

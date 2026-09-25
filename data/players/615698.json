@@ -462,6 +462,68 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 40.1,
+          "notable_signals": 0,
+          "matchup": "Toronto Blue Jays @ Texas Rangers",
+          "game_pk": 822843,
+          "team": "Texas Rangers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 21.0,
+            "same_hand_ratio": 88.8889,
+            "l14_k_pct": 14.1176,
+            "env_neutral": 50.0,
+            "ump_accuracy": 52.1684,
+            "ump_k_pct": 0.504,
+            "ump_bb_pct": 0.24
+          },
+          "hit_probability": 0.621,
+          "raw_hit_probability": 0.7349,
+          "lift": -0.0833,
+          "reliability": "B",
+          "sample_n": 14,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 59.6,
+          "notable_signals": 1,
+          "matchup": "Toronto Blue Jays @ Texas Rangers",
+          "game_pk": 822843,
+          "team": "Texas Rangers",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5352,
+            "avg_outs_per_start": 16.14
+          },
+          "hit_probability": 0.5444,
+          "raw_hit_probability": 0.5352,
+          "lift": 0.0937,
+          "reliability": "B",
+          "sample_n": 14,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }

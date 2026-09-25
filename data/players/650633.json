@@ -637,6 +637,68 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 41.1,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Los Angeles Dodgers",
+          "game_pk": 823897,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 33.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 29.4118,
+            "env_neutral": 50.0,
+            "ump_accuracy": 61.0517,
+            "ump_k_pct": 0.012,
+            "ump_bb_pct": -0.54
+          },
+          "hit_probability": 0.5341,
+          "raw_hit_probability": 0.5341,
+          "lift": 0.0136,
+          "reliability": "A",
+          "sample_n": 31,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 91.3,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ Los Angeles Dodgers",
+          "game_pk": 823897,
+          "team": "San Diego Padres",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6584,
+            "avg_outs_per_start": 17.52
+          },
+          "hit_probability": 0.6328,
+          "raw_hit_probability": 0.6584,
+          "lift": 0.2393,
+          "reliability": "A",
+          "sample_n": 31,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }

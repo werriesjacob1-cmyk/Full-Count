@@ -1860,6 +1860,399 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 42.9,
+          "notable_signals": 1,
+          "matchup": "Kansas City Royals @ Pittsburgh Pirates",
+          "game_pk": 823331,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 36.5714,
+            "l7_avg_ev": 88.375,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 38.0,
+            "season_barrel_pct": 47.3333,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 66.6667,
+            "platoon_barrel_pct": 2.4,
+            "platoon_xwoba": 1.86,
+            "park_hand_index": 1.55,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 15.4545,
+            "pull_park_synergy": 1.047,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.336,
+            "vs_rp_ops": 0.78,
+            "ump_k_pct": 0.048,
+            "ump_bb_pct": -0.264
+          },
+          "hit_probability": 0.6357,
+          "raw_hit_probability": 0.6133,
+          "lift": -0.0366,
+          "reliability": "C",
+          "sample_n": 42,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 50.5,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Pittsburgh Pirates",
+          "game_pk": 823331,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.12,
+            "sprint_speed": 46.875,
+            "catcher_poptime": 0.0,
+            "on_base": 68.3301
+          },
+          "hit_probability": 0.1519,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 42,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.8,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Pittsburgh Pirates",
+          "game_pk": 823331,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.032
+          },
+          "hit_probability": 0.032,
+          "raw_hit_probability": null,
+          "lift": -0.0157,
+          "reliability": "C",
+          "sample_n": 42,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Pittsburgh Pirates",
+          "game_pk": 823331,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0068
+          },
+          "hit_probability": 0.0068,
+          "raw_hit_probability": null,
+          "lift": -0.0139,
+          "reliability": "C",
+          "sample_n": 42,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 41.4,
+          "notable_signals": 1,
+          "matchup": "Kansas City Royals @ Pittsburgh Pirates",
+          "game_pk": 823330,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 50.8571,
+            "l7_avg_ev": 31.3889,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 44.3,
+            "season_barrel_pct": 46.6667,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 50.0,
+            "platoon_barrel_pct": 2.4,
+            "platoon_xwoba": 1.86,
+            "park_hand_index": 1.68,
+            "opp_catcher_framing": -0.72,
+            "days_rest": 0.0,
+            "woba_ahead": 17.2727,
+            "woba_behind": 0.0,
+            "pull_park_synergy": 1.0996,
+            "team_total_move": -6.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.512,
+            "vs_rp_ops": 1.02,
+            "ump_k_pct": 0.228,
+            "ump_bb_pct": -0.156
+          },
+          "hit_probability": 0.6371,
+          "raw_hit_probability": 0.6156,
+          "lift": -0.0311,
+          "reliability": "C",
+          "sample_n": 43,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 54.7,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Pittsburgh Pirates",
+          "game_pk": 823330,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 0.12,
+            "sprint_speed": 46.875,
+            "catcher_poptime": 11.4286,
+            "on_base": 73.1286
+          },
+          "hit_probability": 0.1501,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 43,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.7,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Pittsburgh Pirates",
+          "game_pk": 823330,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0315
+          },
+          "hit_probability": 0.0315,
+          "raw_hit_probability": null,
+          "lift": -0.0162,
+          "reliability": "C",
+          "sample_n": 43,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Kansas City Royals @ Pittsburgh Pirates",
+          "game_pk": 823330,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0067
+          },
+          "hit_probability": 0.0067,
+          "raw_hit_probability": null,
+          "lift": -0.014,
+          "reliability": "C",
+          "sample_n": 43,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 28.3,
+          "notable_signals": 1,
+          "matchup": "Chicago White Sox @ Kansas City Royals",
+          "game_pk": 824060,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 15.1429,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 30.7,
+            "season_barrel_pct": 44.0,
+            "lineup_slot": 12.5,
+            "bullpen_fatigue": 50.0,
+            "platoon_barrel_pct": 0.8,
+            "platoon_xwoba": -5.0,
+            "park_hand_index": -0.78,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 4.0,
+            "woba_ahead": 28.1818,
+            "woba_behind": 7.2727,
+            "pull_park_synergy": -0.4996,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.112,
+            "vs_rp_ops": 0.504,
+            "ump_k_pct": 0.084,
+            "ump_bb_pct": -0.312
+          },
+          "hit_probability": 0.6417,
+          "raw_hit_probability": 0.6233,
+          "lift": -0.026,
+          "reliability": "B",
+          "sample_n": 45,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 54.8,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Kansas City Royals",
+          "game_pk": 824060,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.36,
+            "sprint_speed": 46.875,
+            "catcher_poptime": 17.1429,
+            "on_base": 66.4107
+          },
+          "hit_probability": 0.1413,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "B",
+          "sample_n": 45,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.5,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Kansas City Royals",
+          "game_pk": 824060,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0305
+          },
+          "hit_probability": 0.0305,
+          "raw_hit_probability": null,
+          "lift": -0.0169,
+          "reliability": "B",
+          "sample_n": 45,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Kansas City Royals",
+          "game_pk": 824060,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0064
+          },
+          "hit_probability": 0.0064,
+          "raw_hit_probability": null,
+          "lift": -0.0142,
+          "reliability": "B",
+          "sample_n": 45,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

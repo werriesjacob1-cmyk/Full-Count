@@ -623,6 +623,158 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 34.8,
+          "notable_signals": 2,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823899,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 5.7143,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 3.975,
+            "park_hr_index": 51.4,
+            "season_barrel_pct": 26.6667,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 13.8889,
+            "platoon_barrel_pct": -2.64,
+            "platoon_xwoba": -4.38,
+            "opp_catcher_framing": 1.08,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 0.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.504,
+            "vs_rp_ops": -0.864,
+            "ump_k_pct": 0.264,
+            "ump_bb_pct": -0.324
+          },
+          "hit_probability": 0.5423,
+          "raw_hit_probability": 0.5597,
+          "lift": -0.0195,
+          "reliability": "D",
+          "sample_n": 21,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-20",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 53.8,
+          "notable_signals": 2,
+          "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+          "game_pk": 823896,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 19.7143,
+            "l7_avg_ev": 15.4464,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 51.6,
+            "season_barrel_pct": 22.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 15.1515,
+            "platoon_barrel_pct": -2.96,
+            "platoon_xwoba": -4.2,
+            "opp_catcher_framing": 0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 20.9091,
+            "woba_behind": 0.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.704,
+            "vs_rp_ops": -1.212,
+            "ump_k_pct": 0.12,
+            "ump_bb_pct": -0.192
+          },
+          "hit_probability": 0.5789,
+          "raw_hit_probability": 0.5858,
+          "lift": 0.0156,
+          "reliability": "D",
+          "sample_n": 22,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 47.4,
+          "notable_signals": 2,
+          "matchup": "Minnesota Twins @ San Francisco Giants",
+          "game_pk": 823168,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 69.7143,
+            "l7_avg_ev": 43.4167,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 15.0,
+            "park_hr_index": 50.6,
+            "season_barrel_pct": 18.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -3.2,
+            "platoon_xwoba": -4.5,
+            "park_hand_index": -1.58,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "woba_ahead": 18.1818,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -0.1327,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.304,
+            "vs_rp_ops": -0.828,
+            "ump_k_pct": -0.744,
+            "ump_bb_pct": -0.132
+          },
+          "hit_probability": 0.6203,
+          "raw_hit_probability": 0.588,
+          "lift": -0.0569,
+          "reliability": "C",
+          "sample_n": 25,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

@@ -3170,6 +3170,523 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-18",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 74.2,
+          "notable_signals": 4,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823572,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 26.8571,
+            "pitch_exploit": 3.4286,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 2.775,
+            "park_hr_index": 29.6,
+            "season_barrel_pct": 88.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 4.62,
+            "park_hand_index": -0.57,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "woba_behind": 5.4545,
+            "pull_park_synergy": -0.5387,
+            "hard_hit_105_rate": 3.1175,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.032,
+            "vs_rp_ops": 1.704,
+            "ump_k_pct": -0.048,
+            "ump_bb_pct": -0.336
+          },
+          "hit_probability": 0.671,
+          "raw_hit_probability": 0.6732,
+          "lift": -0.0013,
+          "reliability": "A",
+          "sample_n": 147,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 35.9,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823572,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1713
+          },
+          "hit_probability": 0.1713,
+          "raw_hit_probability": null,
+          "lift": 0.1236,
+          "reliability": "A",
+          "sample_n": 147,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 10.9,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823572,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0557
+          },
+          "hit_probability": 0.0557,
+          "raw_hit_probability": null,
+          "lift": 0.035,
+          "reliability": "A",
+          "sample_n": 147,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-19",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 70.0,
+          "notable_signals": 2,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823571,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 36.0,
+            "pitch_exploit": 4.0,
+            "l7_avg_ev": 85.4167,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 8.025,
+            "park_hr_index": 50.8,
+            "season_barrel_pct": 88.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 2.1,
+            "park_hand_index": -0.58,
+            "opp_catcher_framing": -0.48,
+            "days_rest": 0.0,
+            "woba_behind": 5.4545,
+            "pull_park_synergy": -0.5461,
+            "hard_hit_105_rate": 3.0925,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.072,
+            "vs_rp_ops": 1.656,
+            "ump_k_pct": -0.36,
+            "ump_bb_pct": -0.216
+          },
+          "hit_probability": 0.6693,
+          "raw_hit_probability": 0.6703,
+          "lift": -0.0047,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 35.6,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823571,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1703
+          },
+          "hit_probability": 0.1703,
+          "raw_hit_probability": null,
+          "lift": 0.1226,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 10.8,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ New York Mets",
+          "game_pk": 823571,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0554
+          },
+          "hit_probability": 0.0554,
+          "raw_hit_probability": null,
+          "lift": 0.0347,
+          "reliability": "A",
+          "sample_n": 148,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-22",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 73.6,
+          "notable_signals": 3,
+          "matchup": "Milwaukee Brewers @ Philadelphia Phillies",
+          "game_pk": 823412,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 60.2857,
+            "pitch_exploit": 11.4286,
+            "l7_avg_ev": 51.9792,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 6.9,
+            "park_hr_index": 28.3,
+            "season_barrel_pct": 86.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 2.28,
+            "park_hand_index": 1.33,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 2.0,
+            "woba_behind": 9.0909,
+            "pull_park_synergy": 1.2382,
+            "hard_hit_105_rate": 3.0425,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.144,
+            "vs_rp_ops": 1.62,
+            "ump_k_pct": -0.072,
+            "ump_bb_pct": 0.048
+          },
+          "hit_probability": 0.671,
+          "raw_hit_probability": 0.6732,
+          "lift": -0.0016,
+          "reliability": "A",
+          "sample_n": 150,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 35.2,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ Philadelphia Phillies",
+          "game_pk": 823412,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1683
+          },
+          "hit_probability": 0.1683,
+          "raw_hit_probability": null,
+          "lift": 0.1208,
+          "reliability": "A",
+          "sample_n": 150,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 10.7,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ Philadelphia Phillies",
+          "game_pk": 823412,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0547
+          },
+          "hit_probability": 0.0547,
+          "raw_hit_probability": null,
+          "lift": 0.034,
+          "reliability": "A",
+          "sample_n": 150,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-23",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 61.6,
+          "notable_signals": 3,
+          "matchup": "Milwaukee Brewers @ Philadelphia Phillies",
+          "game_pk": 823410,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.2857,
+            "pitch_exploit": 2.8571,
+            "l7_avg_ev": 53.8542,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 25.5,
+            "season_barrel_pct": 86.0,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 15.1515,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 2.28,
+            "park_hand_index": 1.29,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_behind": 8.1818,
+            "pull_park_synergy": 1.201,
+            "hard_hit_105_rate": 3.0175,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.208,
+            "vs_rp_ops": 1.488,
+            "ump_k_pct": 0.012,
+            "ump_bb_pct": -0.36
+          },
+          "hit_probability": 0.6697,
+          "raw_hit_probability": 0.6709,
+          "lift": -0.0071,
+          "reliability": "A",
+          "sample_n": 151,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 34.9,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ Philadelphia Phillies",
+          "game_pk": 823410,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1673
+          },
+          "hit_probability": 0.1673,
+          "raw_hit_probability": null,
+          "lift": 0.1199,
+          "reliability": "A",
+          "sample_n": 151,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 10.6,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ Philadelphia Phillies",
+          "game_pk": 823410,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0544
+          },
+          "hit_probability": 0.0544,
+          "raw_hit_probability": null,
+          "lift": 0.0338,
+          "reliability": "A",
+          "sample_n": 151,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 77.1,
+          "notable_signals": 3,
+          "matchup": "Milwaukee Brewers @ Philadelphia Phillies",
+          "game_pk": 823411,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 50.2857,
+            "pitch_exploit": 12.0,
+            "l7_avg_ev": 34.5833,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 25.4,
+            "season_barrel_pct": 85.3333,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 30.303,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 4.44,
+            "park_hand_index": 1.37,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_behind": 8.1818,
+            "pull_park_synergy": 1.2707,
+            "hard_hit_105_rate": 2.995,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.192,
+            "vs_rp_ops": 1.476,
+            "ump_k_pct": -0.06,
+            "ump_bb_pct": -0.012
+          },
+          "hit_probability": 0.6672,
+          "raw_hit_probability": 0.6667,
+          "lift": -0.0066,
+          "reliability": "A",
+          "sample_n": 152,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 34.7,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ Philadelphia Phillies",
+          "game_pk": 823411,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1664
+          },
+          "hit_probability": 0.1664,
+          "raw_hit_probability": null,
+          "lift": 0.1191,
+          "reliability": "A",
+          "sample_n": 152,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 10.5,
+          "notable_signals": 1,
+          "matchup": "Milwaukee Brewers @ Philadelphia Phillies",
+          "game_pk": 823411,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0541
+          },
+          "hit_probability": 0.0541,
+          "raw_hit_probability": null,
+          "lift": 0.0336,
+          "reliability": "A",
+          "sample_n": 152,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
