@@ -23,3 +23,17 @@ python3 restore.py --root /
 It exits 0 only when every pinned file matches.
 
 **Guarantees:** a mismatching upstream file is never accepted; it is renamed `*.MISMATCH`. Derived coverage caches are rebuilt from the verified inputs.
+
+**Fresh-container recovery (the Saturday trigger's step 0):**
+```
+git clone --depth 1 --branch claude/nfl-seal-inputs-20260925 https://github.com/werriesjacob1-cmyk/Full-Count /tmp/claude-0/seal_inputs
+/tmp/claude-0/seal_inputs/recover_environment.sh
+```
+
+**Drill evidence:** `drill_20260925/` documents a full isolated drill run on 2026-09-25 from 16:41 to 16:46Z. It started from an empty `/tmp/claude-0` and used only this branch plus nflverse:
+- restore passed;
+- both negative tests fail closed (a missing input, and the current upstream week-3 stats file);
+- the real entry point completed;
+- all 1,441 primary predictions were identical to the original-container run.
+
+The rehearsal predictions are not committed.

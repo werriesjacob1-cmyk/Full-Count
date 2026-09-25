@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/tmp/claude-0/full-count-worktrees/tier1/engineering/nfl_tier1_status_20260924/seal/build_week_seal.py", line 176, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/tmp/claude-0/full-count-worktrees/tier1/engineering/nfl_tier1_status_20260924/seal/build_week_seal.py", line 110, in main
+    if sha(path) != want:
+       ^^^^^^^^^
+  File "/tmp/claude-0/full-count-worktrees/tier1/engineering/nfl_tier1_status_20260924/seal/build_week_seal.py", line 46, in sha
+    with Path(path).open("rb") as fh:
+         ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/claude-0/nfl_tier1_shared/stats_player_week_2026.csv'

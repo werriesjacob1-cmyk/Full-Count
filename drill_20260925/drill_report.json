@@ -1,0 +1,39 @@
+{
+ "label": "REHEARSAL_NOT_PROSPECTIVE_EVIDENCE",
+ "isolation": "private mount namespace; /tmp/claude-0 bind-mounted to an EMPTY directory (drill.log shows empty listing); inputs only from the remote recovery branch 189534a88e and nflverse URLs; code from fresh partial clones at e05e02c592 / f4fb17aa0b",
+ "restore": "ok: 1840 bundled + 50 downloaded files all matched pregame SHA-256; 1 unpinned (injuries_2026)",
+ "negative_tests": {
+  "missing_pinned_stats_file": "builder rc=1 (FileNotFoundError)",
+  "current_upstream_stats_file_sha_315cfb8d_(contains week 3)": "builder rc=1 'pinned input changed'"
+ },
+ "builder": {
+  "entry_point": "build_week_seal.py --week 3 --label sun_mon_REHEARSAL --exclude 2026_03_ATL_GB --refresh-injuries --dry-run",
+  "rc": 0,
+  "row_counts": {
+   "H1": 290,
+   "H1_SECONDARY_receptions": 290,
+   "H2": 237,
+   "H2_SECONDARY_passing_yards": 36,
+   "H2_SECONDARY_receptions": 237,
+   "H3": 351
+  },
+  "b0_mismatches_ws_c": 15,
+  "games": 15,
+  "first_kickoff_utc": "2026-09-27T17:00:00+00:00",
+  "frozen_commits": {
+   "B": "8aa8067fbc71416e4f541b9fd3610e59331f11c4",
+   "B0": "c128fc6b605f5b70a078d56d8518ef4b16220753",
+   "C": "40d842c9a967e6692c63a0b0a1730f36f304f2a8",
+   "D": "76b42547c39357c27ebd15ec9c3bbd492b2de6a2"
+  },
+  "fanduel_capture": "FANDUEL_CAPTURED",
+  "files_rehashed_ok": 27
+ },
+ "equivalence": "all 1441 primary challenger/comparator predictions identical to the same builder run on the original container inputs",
+ "h3_non_numeric": 0,
+ "h2_f6_fallback_TEAM_VOLUME_UNKNOWN": 191,
+ "weather_note": "Sunday games' Saturday 12Z MOS not yet issued at rehearsal time (rerun_after 2026-09-26T17:00Z); Monday PHI@CHI cannot have its day-before run at the Saturday seal",
+ "exploratory_coverage_rows": 594,
+ "rehearsal_seal_json_sha256": "d8345c0598e20b364ecb1931e3a566edc1cf060ad30348e70021d3f92f57f4ee",
+ "note": "Rehearsal predictions are deliberately NOT committed anywhere; they are not prospective evidence."
+}

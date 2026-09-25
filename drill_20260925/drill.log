@@ -1,0 +1,40 @@
+== isolation: contents of /tmp/claude-0 before restore:
+(end)
+start 2026-09-25T16:41:22Z
+189534a Recovery bundle: complete strace-verified seal input set, manifest and fail-closed restore.py
+pinned_inputs.tar.gz: OK
+MANIFEST.json: OK
+restore.py: OK
+{
+ "ok": true,
+ "counts": {
+  "BUNDLE_OK": 1840,
+  "DOWNLOADED_OK": 50,
+  "UNPINNED_PRESENT": 1
+ },
+ "failures": []
+}
+restore rc=0
+tier1 at e05e02c5
+cov at f4fb17aa
+neg missing rc=1
+current upstream stats sha 315cfb8d5abb
+neg upstream rc=1
+restored stats sha 736bdddef477
+{
+ "out": "/tmp/claude-0/seal_dry/2026_w03_sun_mon_REHEARSAL",
+ "games": 15,
+ "row_counts": {
+  "H1_SECONDARY_receptions": 290,
+  "H1": 290,
+  "H2_SECONDARY_passing_yards": 36,
+  "H2_SECONDARY_receptions": 237,
+  "H2": 237,
+  "H3": 351
+ },
+ "b0_mismatches": 15
+}
+builder rc=0
+rows 594
+coverage rc=0
+end 2026-09-25T16:45:53Z
