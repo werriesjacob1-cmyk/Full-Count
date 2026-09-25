@@ -2,7 +2,18 @@
 
 Research only. Nothing here changes authoritative B0, a workflow, a public pick or any Codex PR. The work builds on the Tier 1 contract and harness (`claude/nfl-tier1-foundation-20260924`).
 
-## Verdict
+## Verdict (updated 2026-09-25 with the coverage-family formulation)
+**The man/zone and coverage-family formulations both reject F11. F12 is not supported.**
+- **F11, receiver-specific coverage splits:** rejected in both formulations. DEV gives zero weight (α = 0) to the receiver's own man/zone *and* coverage-family splits, in both markets.
+- **F12, opponent coverage tendencies:**
+  - The man/zone mix gets α = 0.3.
+  - The coverage-family mix gets α = 0.8 for receptions and 0.9 for receiving yards.
+  - Across the 6 DEV, HOLDOUT and FRESH × market cells, the family-mix point estimates are all slightly negative, meaning slightly better than the scale control.
+  - Every interval spans 0.
+  - The size is negligible: HOLDOUT receptions −0.0003 per player-game, receiving yards −0.003.
+  - Status: **NOT SUPPORTED, sign-consistent but negligible.** It is kept only as exploratory prospective tracking.
+
+### Original man/zone verdict (unchanged)
 **F11 and F12 are REJECTED for receptions and receiving yards under this formulation.**
 - The pre-declared DEV fit (target seasons 2019–2022) gave the receiver-specific man/zone split zero weight (α = 0) in both markets. F12 alone got a small weight (α = 0.3).
 - Every holdout and 2026 interval spans 0, including the pre-declared full-strength (α = 1) sensitivity.
@@ -136,3 +147,57 @@ One independent review was run (opus) at `2a639bcf57`. **Verdict: REJECTED is co
 - **Reproducibility:** re-running the final stage was byte-identical.
 - **Corrections applied:** the review's README corrections (HOLDOUT vs FRESH magnitudes, F12 "borderline", ratio SDs, the receiving-yards-by-season sign pattern, and disclosure of the post-freeze split change) are applied above.
 - **Documented, not changed:** the baseline mismatch and the position-mapping leak.
+
+
+## Coverage-family formulation (pre-declared at `ee7fb59e23`, DEV fit frozen at `827df8984d`, scored once)
+This keeps the source-supported distinctions between specific coverage families instead of collapsing everything to man/zone. Families:
+- shared by NGS and FTN: COVER_0, COVER_1, 2_MAN, COVER_2, COVER_3, COVER_4, COVER_6;
+- OTHER, for source-specific labels such as FTN COMBO, COVER_9 and BLOWN;
+- UNKNOWN is excluded.
+
+The pathway, per receiver and opponent:
+1. **F11 by family.** The receiver's strictly prior per-family target rate per on-field dropback (K_FAM = 60) is shrunk toward his own shrunk man/zone rate for that family's structure. OTHER shrinks toward his exposure-pooled rate. Catch rate and yards per target are conditional on a target and shrunk with K_EFF = 30.
+2. **F12 by family.** The opponent's projected family mix (K_MIX = 200 toward the league mix of the same window, same head-coach rule) sets the expected per-dropback quantity.
+3. **Research prediction.** `k·B0·clip(ratio)^α`, where the ratio compares that expectation against the family mix the receiver actually faced (FAMILY_COMBINED). FAMILY_F11_ONLY and FAMILY_F12_ONLY isolate each side.
+
+Results are in `coverage_family_report.json`: the same matched population (n = 12,094 HOLDOUT, 436 FRESH), game-clustered 95% CI, Δ = challenger − scale control. Negative means better.
+
+| Market | Mode | α (DEV) | HOLDOUT Δ [CI] | FRESH 2026 Δ [CI] |
+|---|---|---|---|---|
+| receptions | FAMILY_COMBINED | 0.0 | 0 (inactive) | 0 |
+| receptions | FAMILY_COMBINED α=1 sens. | — | −0.00027 [−0.00161, +0.00107] | −0.0022 [−0.0075, +0.0030] |
+| receptions | FAMILY_F11_ONLY α=1 sens. | — | +0.00024 [−0.00070, +0.00116] | +0.0015 [−0.0024, +0.0054] |
+| receptions | FAMILY_F12_ONLY | 0.8 | −0.00033 [−0.00097, +0.00030] | −0.0021 [−0.0043, +0.0002] |
+| receiving_yards | FAMILY_COMBINED | 0.0 | 0 (inactive) | 0 |
+| receiving_yards | FAMILY_COMBINED α=1 sens. | — | +0.0028 [−0.0106, +0.0175] | −0.0025 [−0.0651, +0.0663] |
+| receiving_yards | FAMILY_F11_ONLY α=1 sens. | — | +0.0012 [−0.0073, +0.0096] | −0.0227 [−0.0854, +0.0275] |
+| receiving_yards | FAMILY_F12_ONLY | 0.9 | −0.0026 [−0.0088, +0.0029] | −0.0063 [−0.0301, +0.0208] |
+
+Standard deviation of the activated ratios on HOLDOUT/FRESH: FAMILY_COMBINED 0.031, FAMILY_F11_ONLY 0.022, FAMILY_F12_ONLY 0.016–0.018. As with man/zone, coverage-family tendencies barely move a receiver's expectation once B0 and the scale control are in place.
+
+**Evidence status.** HOLDOUT 2023–2025 was previously inspected, so it is exploratory. FRESH 2026 weeks 1–2 is out-of-sample but small. There is **no prospective validation yet**. `live_coverage.py` produces frozen-parameter predictions for upcoming games, which the Saturday protocol seal stores as exploratory rows (see below). Nothing is graded before the protocol's week-8 analysis.
+
+## Cross-check with PR #174 (Codex tactical source, read-only reuse)
+- **Same inputs.** PR #174's 2024 evidence uses the same participation file (sha `b1f436a9…`) and the same play-by-play file (sha `23370d5d…`) as this pipeline.
+- **Coverage-unknown count matches.** #174 binds 17,848 targeted legal passes, with 21 lacking a man/zone label. This join has 17,748 targeted dropbacks, also with exactly **21** unlabelled.
+- **Unexplained 100-row gap.** The 100-row difference (0.56%) is a population-filter difference: this pipeline excludes sacks, spikes and 2-point tries and requires `pass_attempt`. It is not reconciled row by row.
+- **No in-season coverage.** #174 confirms that the 2026 in-season FTN charting has **no coverage or route fields**. No in-season coverage refresh is possible, which supports the prior-season-only design.
+- **Not used for F11 opportunity.** #174's target-bound cells are target-conditioned, so this pipeline does not use them for opportunity; it uses on-field participation as the denominator.
+
+## Coordinator identity (F12 "coordinator intelligence")
+DC identity remains **UNKNOWN**, and cross-team coordinator tendencies are not modelled:
+- The repo's regime registry (`nfl/research/coach_regime_data/hc_regime_registry_v1.json`) reports `DC` and `DEFENSIVE_PLAYCALLER` as `NO_INTERVALS_INGESTED_FOR_THIS_ROLE_IN_PHASE_1`.
+- nflverse has no staff dataset.
+- Pro-Football-Reference staff pages return a Cloudflare bot challenge (HTTP 403) to this environment. That is a source-access restriction and is not bypassed; see `coach_regime_registry.py` "Negative research results".
+
+F12 is therefore defense-team tendency with a verified head-coach regime rule, not coordinator identity.
+
+## Live exploratory predictions
+```
+PYTHONPATH=.:engineering/nfl_tier2_coverage_20260925 python3 engineering/nfl_tier2_coverage_20260925/live_coverage.py \
+    --season 2026 --week 3 --games <comma list from the Tier 1 seal.json> \
+    --out engineering/nfl_tier1_status_20260924/seal/2026_w03_sun_mon/coverage_exploratory.json
+```
+Run this from a checkout of this branch. It writes rows labelled `EXPLORATORY_RESEARCH_ONLY_NOT_A_PICK`, with params SHA-256, the feature window (2025 weight 1.0, 2024 weight 0.5) and every mode's ratio, reason, frozen-α prediction and α=1 sensitivity.
+
+Friday dry run: 297 receptions and 297 receiving-yards rows across 15 games, with 234 of 297 receiving a COMBINED profile. **READY for the Saturday seal.**
