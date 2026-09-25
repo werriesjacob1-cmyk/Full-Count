@@ -177,8 +177,10 @@ def main():
                     for r in scored if r["b0"] is not None}
             mk["modes"][m + "_ALPHA1_SENSITIVITY"] = H.evaluate_against_controls(scored, full, market)
         mk["combined_fallback_reasons"] = dict(reasons)
-        # descriptive splits for COMBINED on HOLDOUT: by opponent man-share tercile and by receiver sample size
-        a = params[market]["modes"]["COMBINED"]["alpha"]
+        # descriptive splits on HOLDOUT, at the pre-declared alpha=1 sensitivity
+        # (the frozen COMBINED alpha is 0, so frozen splits are identically 0)
+        a = 1.0
+        mk["splits_basis"] = "COMBINED at alpha=1.0 sensitivity, delta vs scale control"
         hold = [r for r in scored if 2023 <= r["season"] <= 2025 and r["b0"] is not None
                 and rat.get(H.row_key(r), {}).get("COMBINED", (None,))[0] is not None]
         def delta(rs):
