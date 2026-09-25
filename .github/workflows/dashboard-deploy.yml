@@ -36,7 +36,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
-          fetch-depth: 0
+          # Shallow on purpose (2026-09-24). A full-history clone of this
+          # ~4.6 GiB repository (bot data commits every few minutes) grew
+          # from ~4 to 10+ minutes and began hitting this job's 10-minute
+          # timeout inside the checkout step itself (runs 9018-9021), so no
+          # deploy completed after 14:07Z. Nothing in this job reads history:
+          # prepare_pages_artifact/verify_* read the working tree and public
+          # URLs, and the registry step only fetches main, commits and
+          # pushes, all of which work from a depth-1 clone.
+          fetch-depth: 1
 
       - name: Verify publication registry
         run: python3 dashboard/verify_publication_registry.py

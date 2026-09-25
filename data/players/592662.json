@@ -585,7 +585,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 44.6,
+          "score": 46.9,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ Los Angeles Dodgers",
           "game_pk": 823894,
@@ -595,9 +595,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 33.0,
-            "same_hand_ratio": 43.75,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 49.4118,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 60.5798,
+            "ump_k_pct": 0.708,
+            "ump_bb_pct": 0.072
           },
           "hit_probability": 0.6125,
           "raw_hit_probability": 0.6923,
@@ -613,7 +616,7 @@
         {
           "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 44.3,
+          "score": 39.9,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ Los Angeles Dodgers",
           "game_pk": 823894,
@@ -622,18 +625,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5558,
+            "outs_rate": 0.5623,
             "avg_outs_per_start": 16.14
           },
-          "hit_probability": 0.5632,
-          "raw_hit_probability": 0.5558,
-          "lift": -0.0124,
+          "hit_probability": 0.5677,
+          "raw_hit_probability": 0.5623,
+          "lift": -0.0457,
           "reliability": "A",
           "sample_n": 29,
           "projection": {
             "stat": "pitcher_outs",
             "value": 15.5,
             "needs": 16
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ Los Angeles Dodgers",
+          "game_pk": 823894,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            592662,
+            808967
+          ],
+          "signals": {
+            "combined_k_edge": 0.0712
+          },
+          "hit_probability": 0.7088,
+          "raw_hit_probability": null,
+          "lift": 0.0712,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

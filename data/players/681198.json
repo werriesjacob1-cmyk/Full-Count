@@ -3169,8 +3169,8 @@
         {
           "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 56.2,
-          "notable_signals": 3,
+          "score": 47.8,
+          "notable_signals": 1,
           "matchup": "Arizona Diamondbacks @ Colorado Rockies",
           "game_pk": 824301,
           "team": "Colorado Rockies",
@@ -3183,7 +3183,7 @@
             "pitch_exploit": 0.5714,
             "l7_avg_ev": 36.3462,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 75.9,
+            "park_hr_index": 55.6,
             "season_barrel_pct": 12.6667,
             "lineup_slot": 62.5,
             "bullpen_fatigue": 18.5185,
@@ -3203,9 +3203,9 @@
             "ump_k_pct": -0.12,
             "ump_bb_pct": 0.204
           },
-          "hit_probability": 0.6534,
-          "raw_hit_probability": 0.6413,
-          "lift": 0.0937,
+          "hit_probability": 0.6515,
+          "raw_hit_probability": 0.6398,
+          "lift": 0.0918,
           "reliability": "A",
           "sample_n": 151,
           "projection": {
@@ -3258,6 +3258,109 @@
           "lift": 0.0208,
           "reliability": "A",
           "sample_n": 151,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 46.9,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824298,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 11.1429,
+            "pitch_exploit": 0.5714,
+            "l7_avg_ev": 16.6176,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 37.0,
+            "season_barrel_pct": 12.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 20.8333,
+            "platoon_barrel_pct": -2.8,
+            "platoon_xwoba": 0.36,
+            "park_hand_index": 0.54,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 0.0,
+            "woba_ahead": 59.0909,
+            "woba_behind": 45.4545,
+            "pull_park_synergy": 0.2457,
+            "hard_hit_105_rate": -0.0625,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.84,
+            "vs_rp_ops": 2.976,
+            "ump_k_pct": 0.36,
+            "ump_bb_pct": 0.468
+          },
+          "hit_probability": 0.6449,
+          "raw_hit_probability": 0.6347,
+          "lift": 0.0872,
+          "reliability": "A",
+          "sample_n": 152,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 3.9,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824298,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0441
+          },
+          "hit_probability": 0.0441,
+          "raw_hit_probability": null,
+          "lift": -0.0032,
+          "reliability": "A",
+          "sample_n": 152,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.2,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+          "game_pk": 824298,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0412
+          },
+          "hit_probability": 0.0412,
+          "raw_hit_probability": null,
+          "lift": 0.0207,
+          "reliability": "A",
+          "sample_n": 152,
           "projection": {
             "stat": "moonshot_420",
             "value": 1,

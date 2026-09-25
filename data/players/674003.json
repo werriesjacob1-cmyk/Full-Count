@@ -316,7 +316,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.0,
+          "score": 29.2,
           "notable_signals": 0,
           "matchup": "New York Mets @ Texas Rangers",
           "game_pk": 822841,
@@ -328,7 +328,10 @@
             "opp_team_k_pct": 53.0,
             "same_hand_ratio": 43.75,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 42.6317,
+            "ump_k_pct": -0.504,
+            "ump_bb_pct": 0.276
           },
           "hit_probability": 0.4429,
           "raw_hit_probability": 0.4429,
@@ -344,7 +347,7 @@
         {
           "prop": "Over 12.5 Outs Recorded",
           "type": "pitcher",
-          "score": 40.3,
+          "score": 39.7,
           "notable_signals": 0,
           "matchup": "New York Mets @ Texas Rangers",
           "game_pk": 822841,
@@ -353,12 +356,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6977,
+            "outs_rate": 0.6998,
             "avg_outs_per_start": 14.71
           },
-          "hit_probability": 0.6583,
-          "raw_hit_probability": 0.6977,
-          "lift": -0.1867,
+          "hit_probability": 0.6596,
+          "raw_hit_probability": 0.6998,
+          "lift": -0.1899,
           "reliability": "C",
           "sample_n": 7,
           "projection": {
