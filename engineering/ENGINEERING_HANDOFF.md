@@ -6378,3 +6378,13 @@ Alligator
 - **Bridge:** #91 comment 5836087551.
 
 Alligator
+
+## 2026-09-25 17:25Z -- PR closure checkpoint (continued from Codex)
+- **Report:** `codex/pr-closure-readiness-20260925` @ `ce75bc16e1`, `engineering/pr_closure_20260925/INTEGRATION_MATRIX.md`. It gives a disposition for all 44 open PRs.
+- **Full-sequence tree:** `claude/merge-sequence-integration-20260925` @ `9abf854193` (#208 → #210 → #177 → Tier 1 stack → #186 → #212) is green on the root suite (36165557380) and the NFL suite (36165557531).
+- **Certified:** #208, #210 and #177 (via its integration tree) are READY FOR APPROVAL. The Tier 1 stack and #186/#212 are READY as research-only.
+- **Bridge:** #91 comment 5836495926.
+- **Seal:** untouched.
+- **Merges:** none.
+
+Alligator
