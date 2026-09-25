@@ -1,0 +1,479 @@
+{
+  "generated_by": "engineering/mlb_fullboard_calibration_20260923/analyze_fullboard_calibration.py",
+  "workstream_id": "MLB-FULLBOARD-CALIBRATION-20260923",
+  "evidence_class": "RESEARCH_ONLY_POST_HOC_ANALYSIS",
+  "inputs": {
+    "output_dir": "/home/user/Full-Count/output",
+    "dates_with_board_and_graded_file": [
+      "2026-09-20",
+      "2026-09-21",
+      "2026-09-22"
+    ],
+    "dates_with_board_only_no_graded_file_yet": [
+      "2026-09-23"
+    ],
+    "board_metadata": [
+      {
+        "date": "2026-09-20",
+        "schema_version": 1,
+        "board_freeze_version": "1.0.0",
+        "sport": "MLB",
+        "evidence_class": "PROSPECTIVE_FULL_BOARD",
+        "board_generated_at": "2026-09-20T22:33:02.858591+00:00",
+        "sealed_at": "2026-09-20T22:33:02.943735+00:00",
+        "n_games": 1,
+        "record_count": 72,
+        "research_only": true,
+        "public_eligible": false,
+        "board_sha256": "1ba259091b94c5cfd98010418f390e178bf841a4ad0a4c31d2b0536754136cc8"
+      },
+      {
+        "date": "2026-09-21",
+        "schema_version": 1,
+        "board_freeze_version": "1.0.0",
+        "sport": "MLB",
+        "evidence_class": "PROSPECTIVE_FULL_BOARD",
+        "board_generated_at": "2026-09-21T20:54:56.375916+00:00",
+        "sealed_at": "2026-09-21T20:54:56.600147+00:00",
+        "n_games": 3,
+        "record_count": 186,
+        "research_only": true,
+        "public_eligible": false,
+        "board_sha256": "55b31b802036c0d9a4bf491b1cf6525e25bb96a230371eba174117bffb33b130"
+      },
+      {
+        "date": "2026-09-22",
+        "schema_version": 1,
+        "board_freeze_version": "1.0.0",
+        "sport": "MLB",
+        "evidence_class": "PROSPECTIVE_FULL_BOARD",
+        "board_generated_at": "2026-09-22T20:15:13.694608+00:00",
+        "sealed_at": "2026-09-22T20:15:14.270366+00:00",
+        "n_games": 15,
+        "record_count": 985,
+        "research_only": true,
+        "public_eligible": false,
+        "board_sha256": "6302f68c1e018abd6ce8447da18fccb6fd3f258cc2fb89ea1c6caf183645ffe7"
+      }
+    ],
+    "graded_metadata": [
+      {
+        "date": "2026-09-20",
+        "schema_version": 1,
+        "evidence_class": "PROSPECTIVE_FULL_BOARD_GRADED",
+        "source_board_sha256": "1ba259091b94c5cfd98010418f390e178bf841a4ad0a4c31d2b0536754136cc8",
+        "graded_at": "2026-09-21T23:11:53.715904+00:00",
+        "record_count": 72
+      },
+      {
+        "date": "2026-09-21",
+        "schema_version": 1,
+        "evidence_class": "PROSPECTIVE_FULL_BOARD_GRADED",
+        "source_board_sha256": "55b31b802036c0d9a4bf491b1cf6525e25bb96a230371eba174117bffb33b130",
+        "graded_at": "2026-09-22T22:53:37.334821+00:00",
+        "record_count": 186
+      },
+      {
+        "date": "2026-09-22",
+        "schema_version": 1,
+        "evidence_class": "PROSPECTIVE_FULL_BOARD_GRADED",
+        "source_board_sha256": "6302f68c1e018abd6ce8447da18fccb6fd3f258cc2fb89ea1c6caf183645ffe7",
+        "graded_at": "2026-09-23T19:59:09.847907+00:00",
+        "record_count": 985
+      }
+    ],
+    "board_to_graded_sha256_linkage_verified": {
+      "2026-09-20": true,
+      "2026-09-21": true,
+      "2026-09-22": true
+    }
+  },
+  "population_definition": {
+    "note": "The core analysis population is every real candidate across the paired dates whose grade_board_freeze.py 'grade' is 'hit' or 'miss' (game was final at grading run time), whose 'fair_test' is True (the same fairness gate results/grades_*.py already uses for its own fair_test_hit_rate), and whose prediction.hit_probability is not null. 'ungraded' candidates (game not yet final when the grader ran) and fair_test=False/None candidates (no genuine opportunity, e.g. early substitution/pulled starter) are excluded from the calibration claim on purpose, not silently folded in as misses.",
+    "per_date_summary": [
+      {
+        "date": "2026-09-20",
+        "record_count": 72,
+        "grade_breakdown": {
+          "hit": 15,
+          "miss": 40,
+          "ungraded": 17
+        },
+        "fair_test_breakdown": {
+          "False": 5,
+          "True": 50,
+          "None": 17
+        },
+        "qc_status_breakdown": {
+          "kept": 72
+        },
+        "n_graded_any_fair_test": 55,
+        "n_fair_graded_with_probability": 50
+      },
+      {
+        "date": "2026-09-21",
+        "record_count": 186,
+        "grade_breakdown": {
+          "hit": 33,
+          "ungraded": 49,
+          "miss": 104
+        },
+        "fair_test_breakdown": {
+          "True": 115,
+          "None": 41,
+          "False": 30
+        },
+        "qc_status_breakdown": {
+          "kept": 132,
+          "lineup_assumed_holdout": 54
+        },
+        "n_graded_any_fair_test": 135,
+        "n_fair_graded_with_probability": 113
+      },
+      {
+        "date": "2026-09-22",
+        "record_count": 985,
+        "grade_breakdown": {
+          "miss": 467,
+          "hit": 217,
+          "ungraded": 301
+        },
+        "fair_test_breakdown": {
+          "True": 629,
+          "None": 281,
+          "False": 75
+        },
+        "qc_status_breakdown": {
+          "kept": 566,
+          "lineup_assumed_holdout": 355,
+          "qc_rejected": 64
+        },
+        "n_graded_any_fair_test": 682,
+        "n_fair_graded_with_probability": 627
+      }
+    ],
+    "excluded_missing_probability": 4,
+    "total_fair_graded_with_probability_n": 790
+  },
+  "calibration_curve": {
+    "requested_n_buckets": 5,
+    "actual_n_buckets": 5,
+    "total_n": 790,
+    "buckets": [
+      {
+        "n": 158,
+        "n_games": 18,
+        "mean_predicted": 0.018571518987341773,
+        "realized_hit_rate": 0.04430379746835443,
+        "calibration_gap": 0.025732278481012658,
+        "predicted_range": [
+          0.0023,
+          0.0362
+        ],
+        "bucket_index": 0,
+        "realized_hit_rate_cluster_bootstrap_ci": {
+          "ci_low": 0.013157894736842105,
+          "ci_high": 0.07878787878787878,
+          "n_clusters": 18,
+          "note": null
+        }
+      },
+      {
+        "n": 158,
+        "n_games": 18,
+        "mean_predicted": 0.06014177215189873,
+        "realized_hit_rate": 0.05063291139240506,
+        "calibration_gap": -0.00950886075949367,
+        "predicted_range": [
+          0.0365,
+          0.0852
+        ],
+        "bucket_index": 1,
+        "realized_hit_rate_cluster_bootstrap_ci": {
+          "ci_low": 0.020689655172413793,
+          "ci_high": 0.08333333333333333,
+          "n_clusters": 18,
+          "note": null
+        }
+      },
+      {
+        "n": 158,
+        "n_games": 18,
+        "mean_predicted": 0.20374367088607592,
+        "realized_hit_rate": 0.22151898734177214,
+        "calibration_gap": 0.017775316455696216,
+        "predicted_range": [
+          0.0854,
+          0.5188
+        ],
+        "bucket_index": 2,
+        "realized_hit_rate_cluster_bootstrap_ci": {
+          "ci_low": 0.16326530612244897,
+          "ci_high": 0.2781456953642384,
+          "n_clusters": 18,
+          "note": null
+        }
+      },
+      {
+        "n": 158,
+        "n_games": 18,
+        "mean_predicted": 0.6032177215189873,
+        "realized_hit_rate": 0.6012658227848101,
+        "calibration_gap": -0.0019518987341772265,
+        "predicted_range": [
+          0.5262,
+          0.6423
+        ],
+        "bucket_index": 3,
+        "realized_hit_rate_cluster_bootstrap_ci": {
+          "ci_low": 0.5394736842105263,
+          "ci_high": 0.6585365853658537,
+          "n_clusters": 18,
+          "note": null
+        }
+      },
+      {
+        "n": 158,
+        "n_games": 18,
+        "mean_predicted": 0.6743677215189874,
+        "realized_hit_rate": 0.689873417721519,
+        "calibration_gap": 0.015505696202531616,
+        "predicted_range": [
+          0.6434,
+          0.8475
+        ],
+        "bucket_index": 4,
+        "realized_hit_rate_cluster_bootstrap_ci": {
+          "ci_low": 0.6033519553072626,
+          "ci_high": 0.7640449438202247,
+          "n_clusters": 18,
+          "note": null
+        }
+      }
+    ],
+    "overall_gap_realized_minus_predicted": {
+      "point_estimate": 0.009510506329113877,
+      "ci_low": -0.0182912117177097,
+      "ci_high": 0.03324165588615785,
+      "n_clusters": 18,
+      "note": null
+    }
+  },
+  "winners_curse_test": {
+    "definition": "selected == selector.recommendation_status == 'top_pick' (the real production Top Pick classification owned by recommendation.py); non_selected == every other real graded, fair-test candidate in the same frozen boards, regardless of qc_status",
+    "top_pick": {
+      "n": 10,
+      "n_games": 4,
+      "mean_predicted": 0.6553,
+      "realized_hit_rate": 0.5,
+      "gap_realized_minus_predicted": -0.1553,
+      "gap_cluster_bootstrap_ci": {
+        "ci_low": -0.33683846153846153,
+        "ci_high": 0.10850000000000004,
+        "n_clusters": 4,
+        "note": null
+      }
+    },
+    "non_top_pick": {
+      "n": 780,
+      "n_games": 18,
+      "mean_predicted": 0.30760730769230765,
+      "realized_hit_rate": 0.3192307692307692,
+      "gap_realized_minus_predicted": 0.011623461538461555,
+      "gap_cluster_bootstrap_ci": {
+        "ci_low": -0.016892197659297836,
+        "ci_high": 0.034613405797101426,
+        "n_clusters": 18,
+        "note": null
+      }
+    },
+    "gap_difference_top_pick_minus_non_top_pick": {
+      "point_estimate": -0.16692346153846155,
+      "ci_low": -0.3916565088757396,
+      "ci_high": 0.24810317460317455,
+      "n_boot": 1978,
+      "n_group_a": 10,
+      "n_group_b": 780,
+      "n_clusters_group_a": 4,
+      "n_clusters_group_b": 18,
+      "note": null
+    }
+  },
+  "qc_status_breakdown": {
+    "kept": {
+      "n": 552,
+      "n_games": 18,
+      "mean_predicted": 0.3204375,
+      "realized_hit_rate": 0.32065217391304346,
+      "gap_realized_minus_predicted": 0.00021467391304347272,
+      "gap_cluster_bootstrap_ci": {
+        "ci_low": -0.03977860360360358,
+        "ci_high": 0.031190254237288162,
+        "n_clusters": 18,
+        "note": null
+      }
+    },
+    "lineup_assumed_holdout": {
+      "n": 238,
+      "n_games": 8,
+      "mean_predicted": 0.29245882352941177,
+      "realized_hit_rate": 0.3235294117647059,
+      "gap_realized_minus_predicted": 0.031070588235294128,
+      "gap_cluster_bootstrap_ci": {
+        "ci_low": -0.0058523622047244594,
+        "ci_high": 0.0787080188679245,
+        "n_clusters": 8,
+        "note": null
+      }
+    }
+  },
+  "market_breakdown": {
+    "hard_hit_105": {
+      "n": 258,
+      "n_games": 18,
+      "mean_predicted": 0.052176744186046516,
+      "realized_hit_rate": 0.050387596899224806,
+      "gap_realized_minus_predicted": -0.00178914728682171,
+      "gap_cluster_bootstrap_ci": {
+        "ci_low": -0.02709224806201551,
+        "ci_high": 0.02603576923076923,
+        "n_clusters": 18,
+        "note": null
+      },
+      "sample_size_note": "n=258 meets the min_n=15 threshold for this breakdown"
+    },
+    "hits": {
+      "n": 132,
+      "n_games": 18,
+      "mean_predicted": 0.6162128787878788,
+      "realized_hit_rate": 0.6060606060606061,
+      "gap_realized_minus_predicted": -0.010152272727272704,
+      "gap_cluster_bootstrap_ci": {
+        "ci_low": -0.09447518796992482,
+        "ci_high": 0.06302992125984253,
+        "n_clusters": 18,
+        "note": null
+      },
+      "sample_size_note": "n=132 meets the min_n=15 threshold for this breakdown"
+    },
+    "hits_runs_rbis": {
+      "n": 148,
+      "n_games": 18,
+      "mean_predicted": 0.6655527027027027,
+      "realized_hit_rate": 0.6554054054054054,
+      "gap_realized_minus_predicted": -0.010147297297297353,
+      "gap_cluster_bootstrap_ci": {
+        "ci_low": -0.08894137931034485,
+        "ci_high": 0.05949790209790218,
+        "n_clusters": 18,
+        "note": null
+      },
+      "sample_size_note": "n=148 meets the min_n=15 threshold for this breakdown"
+    },
+    "moonshot_420": {
+      "n": 29,
+      "n_games": 13,
+      "mean_predicted": 0.023444827586206897,
+      "realized_hit_rate": 0.10344827586206896,
+      "gap_realized_minus_predicted": 0.08000344827586206,
+      "gap_cluster_bootstrap_ci": {
+        "ci_low": -0.024496296296296297,
+        "ci_high": 0.24172272727272726,
+        "n_clusters": 13,
+        "note": null
+      },
+      "sample_size_note": "n=29 meets the min_n=15 threshold for this breakdown"
+    },
+    "nrfi_combined": {
+      "n": 16,
+      "n_games": 16,
+      "mean_predicted": 0.52324375,
+      "realized_hit_rate": 0.75,
+      "gap_realized_minus_predicted": 0.22675625,
+      "gap_cluster_bootstrap_ci": {
+        "ci_low": 0.031681249999999994,
+        "ci_high": 0.41484374999999996,
+        "n_clusters": 16,
+        "note": null
+      },
+      "sample_size_note": "n=16 meets the min_n=15 threshold for this breakdown"
+    },
+    "pitcher_outs": {
+      "n": 24,
+      "n_games": 17,
+      "mean_predicted": 0.6043999999999999,
+      "realized_hit_rate": 0.6666666666666666,
+      "gap_realized_minus_predicted": 0.06226666666666669,
+      "gap_cluster_bootstrap_ci": {
+        "ci_low": -0.1396857142857143,
+        "ci_high": 0.2359730769230769,
+        "n_clusters": 17,
+        "note": null
+      },
+      "sample_size_note": "n=24 meets the min_n=15 threshold for this breakdown"
+    },
+    "stolen_base": {
+      "n": 157,
+      "n_games": 18,
+      "mean_predicted": 0.10283184713375797,
+      "realized_hit_rate": 0.12101910828025478,
+      "gap_realized_minus_predicted": 0.01818726114649681,
+      "gap_cluster_bootstrap_ci": {
+        "ci_low": -0.02493664596273293,
+        "ci_high": 0.0626284722222222,
+        "n_clusters": 18,
+        "note": null
+      },
+      "sample_size_note": "n=157 meets the min_n=15 threshold for this breakdown"
+    },
+    "strikeouts": {
+      "n": 26,
+      "n_games": 18,
+      "mean_predicted": 0.5185076923076923,
+      "realized_hit_rate": 0.5384615384615384,
+      "gap_realized_minus_predicted": 0.0199538461538461,
+      "gap_cluster_bootstrap_ci": {
+        "ci_low": -0.14632692307692302,
+        "ci_high": 0.1987458333333334,
+        "n_clusters": 18,
+        "note": null
+      },
+      "sample_size_note": "n=26 meets the min_n=15 threshold for this breakdown"
+    }
+  },
+  "known_population_blockers": [
+    {
+      "population": "eligibility.qc_status == 'qc_rejected'",
+      "real_counts_at_run_time": {
+        "total_qc_rejected_across_paired_dates": 64,
+        "total_graded_any": 2,
+        "total_fair_graded_with_probability": 0,
+        "per_date": {
+          "2026-09-22": {
+            "n_qc_rejected": 64,
+            "n_graded_any": 2,
+            "n_fair_graded_with_probability": 0
+          }
+        }
+      },
+      "blocker": "Across the 3 paired dates, 64 real qc_rejected candidates exist, of which 2 have a real hit/miss grade so far, but only 0 also pass fair_test and carry a usable predicted probability -- the same bar every other group in this report must clear. This is a genuine, currently-unavoidable population gap (most qc_rejected candidates were still 'ungraded' when this run's grading files were captured, and the few real graded ones so far were pulled/substituted before a fair opportunity), not a missing field or a bug in this script. A QC-rejected-vs-kept calibration comparison is therefore not yet answerable from the real data on disk; re-run this script once more real qc_rejected candidates clear both gates."
+    }
+  ],
+  "next_falsifiable_hypothesis": {
+    "hypothesis": "The MLB general-formula probability pipeline (attach_hit_probabilities' empirical/modeled blend feeding recommendation.py's Top Pick gate) is subject to a real, measurable winner's-curse effect: candidates selected as recommendation_status == 'top_pick' realize a hit rate below their own mean predicted probability by a larger margin than the full frozen candidate pool does, because argmax-style selection over many correlated candidate probabilities preferentially surfaces candidates whose probability estimate is noisiest on the high side.",
+    "population": "All real board_freeze_graded_<date>.json records with grade in {hit, miss}, fair_test == True, and a non-null prediction.hit_probability, drawn only from dates with both a sealed board_freeze and a graded file (the same population this report used), accumulated going forward from 2026-09-20.",
+    "comparison": "cluster_bootstrap_group_gap_diff_ci(rows, '_is_top_pick', True, False) from calibration_lib.py, i.e. (realized_hit_rate - mean_predicted) for recommendation_status == 'top_pick' minus that same gap for every other real graded, fair-test candidate, with games as the resampling cluster.",
+    "falsification_rule": "The hypothesis is REJECTED if the cluster-bootstrap 95 percent CI for the gap difference (top_pick minus non-top_pick) includes 0, or if it is centered at/above 0 (i.e. Top Picks are not worse-calibrated than the rest of the board). It is SUPPORTED only if that CI excludes 0 on the negative side (Top Picks show a real, larger over-confidence gap) AND the top_pick sample has reached a predeclared minimum of at least 30 real fair-test-graded Top Pick candidates spanning at least 10 distinct real games -- this report's current n=10 Top Pick candidates across 4 real games is explicitly too small to run this test with any power; this hypothesis is recorded for a FUTURE workstream to execute once more real graded days accumulate, not resolved here.",
+    "what_would_falsify_the_overall_full_board_calibration_claim": "If, once n is large enough to bucket into true deciles (roughly 300-500+ fair-test-graded candidates per bucket), any bucket's realized hit rate cluster-bootstrap CI excludes that bucket's own mean predicted probability, the current probability pipeline is measurably miscalibrated in that probability range and recalibration (not merely a different selector policy) would be the falsified target."
+  },
+  "honest_limitations": [
+    "Real evidence spans only 3 paired day(s) with both a sealed board and a graded file (2026-09-20, 2026-09-21, 2026-09-22); the snapshot program began 2026-09-20 and cannot have more real history than that as of this run.",
+    "2026-09-20: board sealed at 2026-09-20T22:33:02.943735+00:00 with 1 real scheduled game(s) and 72 candidates; grading last ran at 2026-09-21T23:11:53.715904+00:00. Any game not yet final at that grading timestamp contributes zero real hit/miss evidence here regardless of how many candidates it produced -- re-running this script after a later grading pass can change these numbers, as already happened once during this investigation.",
+    "2026-09-21: board sealed at 2026-09-21T20:54:56.600147+00:00 with 3 real scheduled game(s) and 186 candidates; grading last ran at 2026-09-22T22:53:37.334821+00:00. Any game not yet final at that grading timestamp contributes zero real hit/miss evidence here regardless of how many candidates it produced -- re-running this script after a later grading pass can change these numbers, as already happened once during this investigation.",
+    "2026-09-22: board sealed at 2026-09-22T20:15:14.270366+00:00 with 15 real scheduled game(s) and 985 candidates; grading last ran at 2026-09-23T19:59:09.847907+00:00. Any game not yet final at that grading timestamp contributes zero real hit/miss evidence here regardless of how many candidates it produced -- re-running this script after a later grading pass can change these numbers, as already happened once during this investigation.",
+    "Real fair-test-graded evidence in this report comes from 18 distinct real games out of 19 real games scheduled across the paired dates; day-of-week, park, and weather effects are not separable from date/game effects at this n.",
+    "No real qc_rejected candidate currently has a real fair-test-graded outcome with a usable probability (see known_population_blockers).",
+    "The winner's-curse top_pick sample (n=10 across 4 real games) is below this report's own predeclared minimum (n>=30 across >=10 games) for any confident claim in either direction; this report deliberately does not assert one.",
+    "Real board(s) exist for 2026-09-23 with no graded file yet (games not final / grading not yet run) -- this script does not and must not treat those as analyzed evidence; they are listed only under dates_with_board_only_no_graded_file_yet."
+  ]
+}
