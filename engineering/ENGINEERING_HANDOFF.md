@@ -6202,3 +6202,108 @@ Jacob approved `POLICY_PROPOSAL.md` §1 with three decisions, recorded in
 
 This authorizes this display policy only. The selection algorithm and the
 grading rules are unchanged.
+
+## 2026-09-23 -- MLB full-board snapshot (Mission 8, Workstream C): the
+## instrumentation already exists and is already live -- closed the real
+## remaining integration-test gap instead of duplicating it
+
+Workstream `MLB-FULLBOARD-SNAPSHOT-20260923` (Issue #91 AGENT CLAIM comment
+`5800776915`, Workstream C of `NFL-MISSION8-PARALLEL-20260923`), branch
+`claude/mlb-fullboard-snapshot-20260923`, base `origin/main`
+`bd6186878d82030016a520865bb2a41f54275f4a`.
+
+**The mission brief for this workstream (and a same-day Mission-7 status
+comment, Issue #91 id `5800080267`, 2026-09-23T17:55:49Z) both described
+PR #131's "no frozen full-board snapshot at generation time" gap as still
+open and mandatory to build this cycle. It is not open.** Repository
+evidence contradicts both: `board_freeze.py` (workstream
+`MLB-BOARD-FREEZE-INSTRUMENTATION-20260918`, PR #132/#138/#139, merged
+2026-09-18) already freezes the complete candidate universe -- kept,
+QC-rejected, and lineup-assumed-holdout alike -- at the generation/
+selection boundary inside `generate_picks.py`'s `main()`, sealed with a
+SHA-256 and chronology/tamper checks, wrapped in a non-fatal
+`try/except Exception` positioned strictly after `write_json`/
+`write_markdown` have already written the night's real picks.
+`board_freeze_grader.py`/`grade_board_freeze.py` (PR #138/#163, merged
+2026-09-19/20 under Jacob's explicit authorization, which also added the
+`output/board_freeze_*.json`/`output/board_freeze_graded_*.json` glob to
+`mlb-daily.yml`'s commit step) grade the complete frozen universe against
+real outcomes. This is not proposed, not inert, and not merely committed:
+it has been running in production and generating real artifacts every
+night since 2026-09-20 -- confirmed by reading, not assuming,
+`output/board_freeze_2026-09-23.json` on this branch's own base commit:
+1,027 real candidates (968 `lineup_assumed_holdout`, 59 `kept` -- 37
+`neutral`, 21 `lean`, 1 `top_pick`), sealed 2026-09-23T01:55:16Z.
+
+**Root cause of the contradiction, traced rather than asserted**: the
+2026-09-23T17:55:49Z status comment says it "grep'd `mlb_daily.py` for any
+full-board freeze/snapshot logic added since -- none exists." That is
+literally true and also the wrong file -- `board_freeze.py`'s call site
+lives inside `generate_picks.py`'s `main()`, which that grep never
+touched. Per this project's own evidence discipline (`CLAUDE.md`:
+"surface contradictions instead of silently resolving them"), that
+comment's negative finding is preserved here rather than quietly
+corrected in place, alongside this dated repository evidence that
+contradicts it.
+
+**What this workstream actually did, given the above**: did not rebuild,
+duplicate, or touch `board_freeze.py`/`board_freeze_grader.py`/
+`grade_board_freeze.py`/`generate_picks.py` -- none of those files are
+modified by this branch. Instead, audited the already-merged mechanism
+against this mission's specific adversarial acceptance criteria and found
+one real, narrow, genuine gap: `test_board_freeze.py`'s 12 tests prove
+`board_freeze.py`'s own functions are internally correct using hand-built
+`ranked`/`top10` pools, but nothing in the existing suite (a) calls the
+real selector functions `generate_picks.rank_for_board`/
+`select_main_board` and diffs their output with the freeze step present
+vs. absent, (b) forces a real exception out of
+`freeze_board`/`seal_board`/`write_frozen_board` and proves it cannot
+reach the caller, or (c) inspects the actual `generate_picks.py` call site
+to confirm it is still positioned after picks are written and still
+wrapped fail-closed, rather than trusting the docstring/handoff
+description of it.
+
+New file (additive only): `test_mlb_fullboard_snapshot_wiring.py`, 7
+tests, closing exactly those three gaps plus a fourth (identity stability
+across two independently-constructed dicts for the same real-world
+candidate whose only difference is which prediction/score values were
+computed for it -- proving identity depends only on stable game/player/
+market/side fields, never on the model's mutable output) and a concrete
+six-candidate adversarial slate (selected top pick, a priced-but-rejected
+runner-up, a second no-edge reject, an unpriced candidate, a QC-rejected
+candidate with a real rain-risk reason, and a lineup-assumed-holdout
+candidate) run through the real `rank_for_board`/`select_main_board`
+functions, proving every non-selected candidate survives with an honest,
+distinct reason and no price is ever fabricated for the unpriced one.
+`CallSiteWiringTests` uses `inspect.getsource(generate_picks.main)` to
+structurally verify the real wiring (ordering + try/except shape) so the
+monkeypatch-based failure-injection tests cannot silently drift from
+production if that call site ever changes shape. All 7 pass; the full
+existing `test_board_freeze.py` (12), `test_board_freeze_grader.py` (23),
+and `test_grade_board_freeze.py` (6) suites were re-run in full on this
+branch's base and still pass unchanged (48/48 total across the four
+files). Did not run the complete 141-file root suite in this environment
+(no network/Playwright access here and several files independently cost
+30+ seconds just to import `generate_picks`); ran the directly relevant
+suites above plus `test_rank_for_board.py` (10/10) as an independent spot
+check that the unmodified selector logic itself is unaffected. Documented
+as an exception to AGENTS.md rule 20 rather than silently skipped, since
+this branch modifies zero production files and adds exactly one new,
+self-contained test file.
+
+**What remains genuinely open, not done here, not claimed as done**: the
+actual rank/argmax winner's-curse calibration analysis this instrumentation
+was built to enable (compare calibration measured on the full frozen pool
+against calibration measured on the argmax-selected/published subset) has
+still not been run -- real frozen+graded boards have been accumulating
+since 2026-09-20 (currently four nights: 09-20 through 09-23) but no
+analysis script has consumed them yet. That is the real next MLB milestone
+for a future workstream, not this one.
+
+No model, selector, scoring, calibration, grading, or publication behavior
+is touched by this branch. `board_freeze.py`, `board_freeze_grader.py`,
+`grade_board_freeze.py`, `generate_picks.py`, and `.github/workflows/*`
+are all untouched. Draft PR opened against `main`, not merged -- this
+workstream does not merge its own PR.
+
+Alligator
