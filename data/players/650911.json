@@ -512,6 +512,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-25",
+      "evaluations": [
+        {
+          "prop": "Over 5.5 Strikeouts",
+          "type": "pitcher",
+          "score": 46.8,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Philadelphia Phillies",
+          "game_pk": 823409,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 17.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 36.4706,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.4575,
+          "raw_hit_probability": 0.4575,
+          "lift": 0.0812,
+          "reliability": "A",
+          "sample_n": 32,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 5.5,
+            "needs": 6
+          }
+        },
+        {
+          "prop": "Over 18.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 60.2,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ Philadelphia Phillies",
+          "game_pk": 823409,
+          "team": "Philadelphia Phillies",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.401,
+            "avg_outs_per_start": 18.75
+          },
+          "hit_probability": 0.401,
+          "raw_hit_probability": 0.401,
+          "lift": 0.1947,
+          "reliability": "A",
+          "sample_n": 32,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 18.5,
+            "needs": 19
+          }
+        }
+      ]
     }
   ]
 }

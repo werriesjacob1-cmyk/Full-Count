@@ -548,6 +548,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-25",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 39.1,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Washington Nationals",
+          "game_pk": 822681,
+          "team": "Washington Nationals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 52.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 100.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6029,
+          "raw_hit_probability": 0.6445,
+          "lift": 0.079,
+          "reliability": "A",
+          "sample_n": 16,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 19.7,
+          "notable_signals": 0,
+          "matchup": "New York Mets @ Washington Nationals",
+          "game_pk": 822681,
+          "team": "Washington Nationals",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5772,
+            "avg_outs_per_start": 15.25
+          },
+          "hit_probability": 0.578,
+          "raw_hit_probability": 0.5772,
+          "lift": -0.2052,
+          "reliability": "A",
+          "sample_n": 16,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        }
+      ]
     }
   ]
 }
