@@ -572,8 +572,8 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 55.7,
-          "notable_signals": 0,
+          "score": 33.4,
+          "notable_signals": 1,
           "matchup": "Cincinnati Reds @ Atlanta Braves",
           "game_pk": 824866,
           "team": "Cincinnati Reds",
@@ -582,13 +582,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 47.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 75.0601,
+            "ump_k_pct": -0.096,
+            "ump_bb_pct": -0.348
           },
-          "hit_probability": 0.5971,
-          "raw_hit_probability": 0.6161,
-          "lift": -0.1116,
+          "hit_probability": 0.5966,
+          "raw_hit_probability": 0.6134,
+          "lift": -0.1067,
           "reliability": "A",
           "sample_n": 30,
           "projection": {
@@ -600,7 +603,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 43.0,
+          "score": 43.8,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Atlanta Braves",
           "game_pk": 824866,
@@ -609,18 +612,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.652,
+            "outs_rate": 0.6511,
             "avg_outs_per_start": 15.4
           },
-          "hit_probability": 0.6286,
-          "raw_hit_probability": 0.652,
-          "lift": -0.1169,
+          "hit_probability": 0.628,
+          "raw_hit_probability": 0.6511,
+          "lift": -0.1118,
           "reliability": "A",
           "sample_n": 30,
           "projection": {
             "stat": "pitcher_outs",
             "value": 14.5,
             "needs": 15
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 15.6,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Atlanta Braves",
+          "game_pk": 824866,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            663903,
+            641816
+          ],
+          "signals": {
+            "combined_k_edge": -0.158
+          },
+          "hit_probability": 0.3916,
+          "raw_hit_probability": null,
+          "lift": -0.158,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]

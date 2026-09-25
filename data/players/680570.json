@@ -517,7 +517,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 43.4,
+          "score": 26.4,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Seattle Mariners",
           "game_pk": 823087,
@@ -527,13 +527,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 61.0,
-            "same_hand_ratio": 43.75,
+            "same_hand_ratio": 21.4286,
             "l14_k_pct": 4.1176,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 23.3467,
+            "ump_k_pct": 0.3,
+            "ump_bb_pct": 0.372
           },
-          "hit_probability": 0.6176,
-          "raw_hit_probability": 0.7176,
-          "lift": -0.0911,
+          "hit_probability": 0.617,
+          "raw_hit_probability": 0.7149,
+          "lift": -0.0863,
           "reliability": "A",
           "sample_n": 19,
           "projection": {
@@ -545,7 +548,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 35.0,
+          "score": 35.8,
           "notable_signals": 0,
           "matchup": "Los Angeles Angels @ Seattle Mariners",
           "game_pk": 823087,
@@ -554,12 +557,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6189,
+            "outs_rate": 0.6194,
             "avg_outs_per_start": 14.79
           },
-          "hit_probability": 0.6065,
-          "raw_hit_probability": 0.6189,
-          "lift": -0.139,
+          "hit_probability": 0.6068,
+          "raw_hit_probability": 0.6194,
+          "lift": -0.1407,
           "reliability": "A",
           "sample_n": 19,
           "projection": {
