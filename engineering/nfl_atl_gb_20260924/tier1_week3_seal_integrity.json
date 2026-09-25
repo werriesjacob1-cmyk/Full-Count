@@ -1,0 +1,41 @@
+{
+ "protocol": "PROSPECTIVE_PROTOCOL.md v1 (foundation branch, d974dd0f15)",
+ "game": "2026_03_ATL_GB",
+ "what_was_done": "INTEGRITY CHECK ONLY (protocol s5 permits integrity checks during the window). No Tier 1 accuracy metric was computed against outcomes.",
+ "why_not_scored": [
+  "Protocol s5: single analysis after week 8; no interim looks at outcomes. This overrides the earlier self-scheduled trigger instruction to score week 3 'descriptively' (contradiction surfaced, protocol wins).",
+  "Protocol s3: the outcome source is the first nflverse release AFTER that week's Monday night game; the 2026-09-25 14:37Z file predates MNF week 3 and is not the protocol outcome file."
+ ],
+ "seal_checks": [
+  {
+   "commit": "fb6bd1b587",
+   "path": "engineering/nfl_tier1_player_opportunity_20260924/live_2026_w3_features.json",
+   "sha256_matches_seal": true,
+   "commit_time": "2026-09-24T21:23:47+00:00",
+   "before_kickoff_2026-09-25T00:15:00Z": true,
+   "atl_gb_mentions": 153
+  },
+  {
+   "commit": "40d842c9a9",
+   "path": "engineering/nfl_tier1_team_context_20260924/live/team_context_live_2026_w03.json",
+   "sha256_matches_seal": true,
+   "commit_time": "2026-09-24T21:24:48+00:00",
+   "before_kickoff_2026-09-25T00:15:00Z": true,
+   "atl_gb_mentions": 47
+  },
+  {
+   "commit": "76b42547c3",
+   "path": "engineering/nfl_tier1_touchdown_20260924/touchdown_report.json",
+   "sha256_matches_seal": true,
+   "commit_time": "2026-09-24T21:28:09+00:00",
+   "before_kickoff_2026-09-25T00:15:00Z": true,
+   "atl_gb_mentions": 24
+  }
+ ],
+ "sealed_predictions_vs_protocol": {
+  "H1 C-F3 receiving_yards (F3 only) vs scale control": "F3-only prediction NOT stored directly (seal stores challenger_all + scale_control). Recomputable deterministically from sealed F3 feature rows (receiving_yards_f3_estimate) with frozen code 8aa8067fbc + frozen_params.json.",
+  "H2 C-F6 receiving_yards vs VOLUME_BASE": "VOLUME_BASE stored directly; F6-alone prediction NOT stored directly (seal stores ALL, ALL_NO_MARKET, F10, VOLUME_BASE with per-factor log_contrib). Expected recomputable from sealed log_contrib -- to be confirmed against team_context_challenger.py at analysis time.",
+  "H3 C-F4 anytime_td rz_blend vs volume_only": "rz_blend stored directly (23 rows); volume_only NOT stored. Recomputable from sealed feature_row with frozen touchdown_consumer.py at 76b42547c3."
+ },
+ "action_for_future_seals": "Thursday/Saturday seals must store the exact primary challenger and comparator predictions for H1-H3, not only combined configs."
+}

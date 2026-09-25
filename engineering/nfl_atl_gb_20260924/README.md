@@ -36,3 +36,66 @@ Kickoff was 2026-09-25T00:15Z (7:15 pm CDT). This folder is research evidence on
 - **Nothing is graded from any other source.**
 - **What will be graded once outcomes exist:** the frozen research predictions, meaning the receptions SHADOW_ONLY B0 plus challengers, and the passing-yards SHADOW_ONLY B0.
 - **What is not graded:** eligible selections. There were 0 bettable offers.
+
+## Grading (15:00Z 2026-09-25 trigger)
+
+**Outcome source.** The source is the nflverse `stats_player_week_2026.csv` release from 2026-09-25 14:37:31Z. Its SHA-256 is `315cfb8d…3b2b` and it has 69 rows for `2026_03_ATL_GB`. The full pin is in `outcomes_source.json`; the CSV itself is not committed. Grading used the repo's unmodified path: `box_score_outcomes.build_player_outcomes`, `receptions_paired_grader`, and `player_prop_grader.grade_player_prop_market`. Results are in `grading_20260925.json`.
+
+**What was graded.** Only research predictions frozen before kickoff were graded, and none of them was an eligible selection: there were 0 bettable offers. Nothing is P&L. Nothing is published.
+
+### Receptions
+These are the 9 SHADOW_ONLY paired records from the pre-lock seal (run 36074758237). The source comparison file is now copied into `run_36074758237_*/`.
+
+| Player | Line | Actual | B0 P(over) | NB challenger P(over) |
+|---|---|---|---|---|
+| Christian Watson | 4.5 | 7 | 0.23 | 0.27 |
+| Matthew Golden | 4.5 | 5 | 0.08 | 0.05 |
+| Drake London | 5.5 | 9 | 0.20 | 0.27 |
+| Skyy Moore | 1.5 | 3 | 0.20 | 0.02 |
+| Austin Hooper | 0.5 | 2 | 0.63 | 0.68 |
+| Jonnu Smith | 1.5 | 2 | 0.59 | 0.57 |
+| Olamide Zaccheaus | 1.5 | 2 | 0.38 | 0.33 |
+| Chris Brooks | 1.5 | 1 | 0.27 | 0.13 |
+| Jahan Dotson | 1.5 | 1 | 0.43 | 0.40 |
+
+**Mean scores:**
+
+| Model | Brier | Log loss |
+|---|---|---|
+| B0 | 0.4055 | 1.1128 |
+| Challenger | 0.4276 | 1.3696 |
+
+**Better Brier, record by record:** B0 on 4 records, challenger on 5.
+
+**Direction.** 7 of the 9 went OVER, while B0 had P(over) < 0.5 on 7 of the 9. That is consistent with the known under-projection bias of the scale. It is one game with n=9, so it is anecdotal: no conclusion is drawn.
+
+### Passing yards
+These are the 2 SHADOW_ONLY rows from the cycle-02 seal. The direction shown is the research direction only; neither was a bet.
+
+| Player | Line | B0 projection | Direction | Actual | Result |
+|---|---|---|---|---|---|
+| Jordan Love | 231.5 | 228.8 | UNDER | 312 | MISS |
+| Michael Penix Jr. | 204.5 | 212.8 | OVER | 256 | HIT |
+
+### Tier 1 prospective protocol: integrity check only
+See `tier1_week3_seal_integrity.json`.
+
+**Seal checks.** All 3 week-3 seal files re-hash to their sealed SHA-256, and all 3 were committed between 21:23Z and 21:28Z, before the 00:15Z kickoff.
+
+**Not scored.** No Tier 1 accuracy was computed. The earlier self-scheduled trigger said to score week 3 "descriptively", but that contradicts the frozen protocol:
+- Section 5 allows no interim looks at outcomes.
+- Section 3 sets the outcome source as the first nflverse release *after* Monday night. This file predates Monday night.
+
+The protocol wins.
+
+**Gap found.** The seals do not store the exact primary H1/H2/H3 predictions:
+- F3-only is not stored.
+- F6-alone is not stored.
+- volume_only is not stored.
+
+They are expected to be recomputable from the sealed features and frozen code. Future Thursday/Saturday seals must store them directly.
+
+### Capability classification after grading
+- **Receptions:** PARTIAL. Capture, B0 seal, exact join and grading are all exercised end to end. Eligibility stays blocked by three gates: `BOOK_ACTION_RULES_NOT_CERTIFIED`, `CURRENT_ROLE_NOT_VERIFIED` and `QUOTE_TIMESTAMP_NOT_PROVIDED`.
+- **Passing yards:** PARTIAL. B0 seal and grading are exercised. There is no Codex join path, and the pre-lock run failed on a FanDuel 403.
+- **Authentic pricing:** PARTIAL. Offers were captured and joined exactly, but 0 were eligible because of the same three gates.

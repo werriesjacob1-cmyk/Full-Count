@@ -1,0 +1,13 @@
+{
+  "analysis": "NFL_RECEPTIONS_B0_VS_ROLE_ADJUSTED_HIERARCHICAL_COMMITTEE_V1",
+  "build_failures": [],
+  "code_sha": "11c038aadb2b05ec47ee98967238660657432079",
+  "created_at": "2026-09-24T23:51:55Z",
+  "model_held_out_finding": "HIERARCHICAL_COMMITTEE_PROBABILITY_V1 did NOT beat NO_ADJUSTMENT's MAE on this held-out set (0.06196, n=449 vs 0.06050, n=441) -- a real, disclosed negative finding, not accuracy evidence for this challenger. It DOES beat the other three real baselines tested (PROPORTIONAL_TEAMMATE_REDISTRIBUTION 0.06396, DEPTH_CHART_NEXT_MAN 0.07740, RECENT_USAGE_NEXT_MAN 0.08254). CONFIRMED under a strictly matched (event, player) population (n=441 for all five predictors, closing the n=449-vs-n=441 gap an independent review flagged): committee MAE=0.062416 vs NO_ADJUSTMENT MAE=0.060504 -- the negative finding holds, and is not an artifact of the committee model's own predicted population being a superset of the baselines' (see engineering/nfl_role_opponent_connector_20260923/matched_population_report.json and matched_population_eval.py).",
+  "model_name": "HIERARCHICAL_COMMITTEE_PROBABILITY_V1",
+  "real_absence_events_detected": {},
+  "record_count": 0,
+  "records": [],
+  "status": "RESEARCH_ONLY_NOT_PROMOTED",
+  "target_local_date": "2026-09-24"
+}
