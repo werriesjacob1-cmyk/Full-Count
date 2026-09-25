@@ -32,6 +32,7 @@ Each row also records:
 
 ## Known, recorded differences
 - **WS-C B0 differs on some rows.** WS-C's frozen live builder loads history from `season − 1` only, so its B0 differs from the authoritative rule on some rows (15 in the Friday dry run). H2 pairs are still internally consistent, because challenger and comparator share that B0. The analysis restricts rows to the protocol population, where the authoritative B0 is present.
+- **H3 fallback.** When a `rz_blend` or `volume_only` lambda has UNKNOWN inputs, the stored prediction falls back to the authoritative-rule B0, with the reason `FALLBACK_B0 (...)`. This mirrors the frozen `touchdown_consumer.predict`, which falls back to B0. The one difference: that frozen code's harness B0 is unsmoothed, while this fallback uses the smoothed champion rule. The Friday dry run had 0 such rows. This was found by independent review.
 - **F6 needs the 12Z MOS run.** F6 requires the 12Z day-before MOS run. Before it is issued, rows fall back with `TEAM_VOLUME_UNKNOWN`, which the protocol counts as a fallback. Monday games cannot have it at the Saturday seal.
 
 ## Command (Saturday, after 18:00Z)

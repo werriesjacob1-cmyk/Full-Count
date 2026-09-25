@@ -141,6 +141,14 @@ def main() -> int:
                  "b0_authoritative_rule": auth,
                  "b0_matches_authoritative": (None if auth is None or "b0" not in r
                                               else abs(r["b0"] - auth) < 1e-9)}
+            if ws == "D":
+                # frozen touchdown_consumer.predict falls back to B0 when a lambda's
+                # inputs are UNKNOWN (counted as fallback_b0); mirror that here with
+                # the authoritative-rule (smoothed) B0 and keep the raw reason.
+                for field in ("challenger", "comparator"):
+                    if not isinstance(r.get(field + "_prediction"), (int, float)):
+                        r[field + "_prediction"] = auth
+                        r[field + "_fallback"] = "FALLBACK_B0 (" + str(r.get(field + "_fallback")) + ")"
             primary.append(r)
     (out / "primary_predictions.json").write_text(json.dumps(primary, indent=1, sort_keys=True, default=str) + "\n")
     counts = {}
