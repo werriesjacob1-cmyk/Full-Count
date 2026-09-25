@@ -4064,6 +4064,131 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-24",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 23.1,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Los Angeles Dodgers",
+          "game_pk": 823895,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 22.8571,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 38.0,
+            "season_barrel_pct": 16.6667,
+            "lineup_slot": 0.0,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": -1.92,
+            "platoon_xwoba": -1.2,
+            "opp_catcher_framing": 0.36,
+            "days_rest": 0.0,
+            "woba_ahead": 4.5455,
+            "woba_behind": 82.7273,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.024,
+            "vs_rp_ops": -0.168,
+            "ump_k_pct": -0.132,
+            "ump_bb_pct": 0.12
+          },
+          "hit_probability": 0.6536,
+          "raw_hit_probability": 0.6433,
+          "lift": -0.0191,
+          "reliability": "A",
+          "sample_n": 80,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 44.4,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Los Angeles Dodgers",
+          "game_pk": 823895,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -4.38,
+            "sprint_speed": 25.0,
+            "on_base": 53.9347
+          },
+          "hit_probability": 0.0711,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 80,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 3.1,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Los Angeles Dodgers",
+          "game_pk": 823895,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0407
+          },
+          "hit_probability": 0.0407,
+          "raw_hit_probability": null,
+          "lift": -0.0066,
+          "reliability": "A",
+          "sample_n": 80,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.6,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Los Angeles Dodgers",
+          "game_pk": 823895,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0145
+          },
+          "hit_probability": 0.0145,
+          "raw_hit_probability": null,
+          "lift": -0.006,
+          "reliability": "A",
+          "sample_n": 80,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

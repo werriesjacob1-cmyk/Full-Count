@@ -412,7 +412,19 @@ function freezePublishedSnapshot(p) {
   for (const [field, value] of Object.entries(p.publication_snapshot)) {
     if (FROZEN_PUBLICATION_FIELDS.has(field)) p[field] = value;
   }
+  // Jacob's approved policy (2026-09-24): a pick downgraded/withdrawn before
+  // first pitch keeps that display status after its game starts -- it stays
+  // in "Published earlier — no longer a Top Pick" and is still graded as
+  // published (from the registry). The build carries the last pregame
+  // status as `demoted_before_start`; the frozen odds/probability above stay.
+  const m = p.demoted_before_start;
+  if (m && DEMOTED_STATES.has(m.status)) {
+    p.recommendation_status = m.status;
+    p.status_reasons = Array.isArray(m.status_reasons) ? m.status_reasons.slice() : [];
+    if (m.withdrawn) p.withdrawn_since_publication = true;
+  }
 }
+const DEMOTED_STATES = new Set(["lean", "value", "neutral"]);
 function refreshSummary() {
   const props = publicProps();
   DATA.summary = DATA.summary || {};
@@ -424,8 +436,13 @@ function refreshSummary() {
   DATA.summary.n_top_pick = today ? today.picks.length : 0;
   DATA.summary.n_top_pick_other = topPickGroups(props.filter(p => p.recommendation_status === "top_pick"))
     .filter(g => g.kind !== "today").reduce((n, g) => n + g.picks.length, 0);
-  DATA.summary.n_lean = props.filter(p => p.recommendation_status === "lean").length;
-  DATA.summary.n_value = props.filter(p => p.recommendation_status === "value").length;
+  DATA.summary.n_lean = props.filter(p => p.recommendation_status === "lean" && !isDowngradedPublished(p)).length;
+  DATA.summary.n_value = props.filter(p => p.recommendation_status === "value" && !isDowngradedPublished(p)).length;
+  // Published as a Top Pick, currently something else -- see
+  // isDowngradedPublished's own docstring. Optional, separate count (never
+  // folded into n_top_pick above); the Today page's own sub-group heading
+  // is the primary surface for this population.
+  DATA.summary.n_published_downgraded = props.filter(isDowngradedPublished).length;
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -858,10 +875,56 @@ function publishedStartedNote(p) {
   if (STARTED_NOTE_STATES.has(p.game_state)) {
     return `<div class="pc-published-note">Published pick · game started — original pregame odds shown, not a current offer</div>`;
   }
-  if (isCarriedPublished(p)) {
+  if (isCarriedPublished(p) || p.withdrawn_since_publication) {
     return `<div class="pc-published-note">Published pick — odds as of publication, not a current quote</div>`;
   }
   return "";
+}
+// 2026-09-24 published-downgrade-display (Mission 12 Workstream C). A Top
+// Pick can be reclassified before first pitch -- a price refresh, a lineup
+// change, or simply falling out of the current scoring pass entirely
+// (dashboard/build_dashboard.py's reconcile_public_lifecycle then carries it
+// as `withdrawn_since_publication`). Jacob's requirement: never hide a
+// previously published pick just because it became less attractive, and
+// never let it look like a current, actionable Top Pick either. Derived
+// from data already on the row -- no second source of truth: the immutable
+// publication_snapshot (see dashboard/build_dashboard.py's
+// _publication_snapshot) always carries the ORIGINAL recommendation_status,
+// price, and probability at publication time; the row's own top-level
+// fields are always the CURRENT truth.
+function wasPublishedTopPick(p) {
+  return !!(p.publication_snapshot && p.publication_snapshot.recommendation_status === "top_pick");
+}
+function isDowngradedPublished(p) {
+  return wasPublishedTopPick(p) && p.recommendation_status !== "top_pick";
+}
+// After first pitch a downgraded/withdrawn pick stays in its own group (see
+// freezePublishedSnapshot) and says it was demoted before first pitch; it is
+// graded as originally published (the registry is the grading truth).
+const STATUS_LABEL = { lean: "Lean", value: "Value", neutral: "no current recommendation" };
+function publishedDowngradedNote(p) {
+  if (!isDowngradedPublished(p)) return "";
+  const started = STARTED_NOTE_STATES.has(p.game_state);
+  const withdrawn = !!(p.withdrawn_since_publication
+                       || (p.demoted_before_start && p.demoted_before_start.withdrawn));
+  const snap = p.publication_snapshot || {};
+  const originalOdds = fmtOdds(snap.market_odds);
+  const originalProb = snap.hit_probability != null ? pctBig(snap.hit_probability) : "";
+  const label = started
+    ? (withdrawn ? "Withdrawn before first pitch"
+       : `Downgraded to ${STATUS_LABEL[p.recommendation_status] || "no current recommendation"} before first pitch`)
+    : (withdrawn ? "Withdrawn" : "Downgraded after publication");
+  const reason = esc((p.status_reasons || [])[0] || "");
+  const detail = [
+    "Published as a Top Pick" + (originalOdds ? ` at ${originalOdds}` : "")
+      + (originalProb ? ` (${originalProb} probability)` : "") + ".",
+    reason ? `${started ? "Before first pitch" : "Now"}: ${capSentence(humanizeReason(reason))}` : "",
+    started ? "Graded as originally published." : "",
+  ].filter(Boolean).join(" ");
+  return `<div class="pc-downgraded-note">
+    <span class="chip chip-downgraded">${label}</span>
+    <div class="pc-downgraded-detail">${detail}</div>
+  </div>`;
 }
 function pickCard(p) {
   // Evidence quality is deliberately NOT repeated here -- it's one tap away
@@ -920,6 +983,7 @@ function pickCard(p) {
     </div>
     ${marketBlock(p)}
     ${publishedStartedNote(p)}
+    ${publishedDowngradedNote(p)}
     <div class="pc-chips">${chips}</div>
     ${why}
   </button>`;
@@ -947,6 +1011,9 @@ function topPickGapSummary(props) {
   const counts = { lineupPending: 0, pricePending: 0, closeRead: 0, thinSample: 0, other: 0 };
   for (const p of props) {
     if (p.recommendation_status === "top_pick") continue;
+    // Already shown, already explained, in its own "Published earlier" card
+    // -- don't also fold it into the generic "why no Top Picks" gap count.
+    if (isDowngradedPublished(p)) continue;
     const reason = (p.status_reasons || [])[0] || "";
     if (reason.includes("lineup slot is still a projection")) counts.lineupPending++;
     else if (reason.includes("no market price is posted yet")) counts.pricePending++;
@@ -1023,11 +1090,21 @@ function renderToday() {
   const topPicks = props.filter(p => p.recommendation_status === "top_pick")
     .sort((a, b) => (a.rank != null && b.rank != null) ? a.rank - b.rank
                     : (b.market_edge || 0) - (a.market_edge || 0));
-  const valueAll = props.filter(p => p.recommendation_status === "value" && !isLongshot(p))
+  // Published earlier as a Top Pick, currently downgraded (a real
+  // reclassified status: lean/value/longshot) or withdrawn (fell out of the
+  // current scoring pass entirely -- always "neutral", see
+  // isDowngradedPublished's own docstring). Shown once, in its own labelled
+  // sub-group within the Top Picks area below -- excluded from
+  // valueAll/longshotsAll/leansAll/morePicks so it never also duplicates
+  // into "More Picks" under its current status alone.
+  const downgradedPublished = props.filter(isDowngradedPublished)
+    .sort((a, b) => (b.rank != null || a.rank != null) ? (a.rank ?? 1e9) - (b.rank ?? 1e9)
+                    : (b.market_edge || 0) - (a.market_edge || 0));
+  const valueAll = props.filter(p => p.recommendation_status === "value" && !isLongshot(p) && !isDowngradedPublished(p))
     .sort((a, b) => (b.market_edge || 0) - (a.market_edge || 0));
-  const longshotsAll = props.filter(isLongshot)
+  const longshotsAll = props.filter(p => isLongshot(p) && !isDowngradedPublished(p))
     .sort((a, b) => (b.market_edge || 0) - (a.market_edge || 0));
-  const leansAll = props.filter(p => p.recommendation_status === "lean")
+  const leansAll = props.filter(p => p.recommendation_status === "lean" && !isDowngradedPublished(p))
     .sort((a, b) => (b.lift || 0) - (a.lift || 0));
   // MORE PICKS: every real Lean/Value/Longshot read in one list, ranked by
   // whichever real number each one actually has (edge for Value/Longshot,
@@ -1087,6 +1164,18 @@ function renderToday() {
       <div class="card-grid">${g.picks.map(p => pickCard(p)).join("")}</div>`).join("");
   } else {
     html += topPickGapExplainer(props);
+  }
+  // Published earlier, no longer a current Top Pick -- its own clearly
+  // labelled sub-group within the Top Picks area, so a downgraded/withdrawn
+  // published pick is never simply hidden (Jacob's requirement), while
+  // never being mistaken for one of the actionable Top Picks above (no Top
+  // Pick chip on these cards -- see pickCard/statusChip). "Top Picks today"
+  // above counts only the actionable group; this is a separate, honestly
+  // labelled population.
+  for (const g of topPickGroups(downgradedPublished)) {
+    const when = g.kind === "today" ? "" : ` · ${slateDayLabel(g.date)}`;
+    html += `<h3 class="top-pick-group-head top-pick-group-downgraded">Published earlier — no longer a Top Pick${when}</h3>
+      <div class="card-grid">${g.picks.map(p => pickCard(p)).join("")}</div>`;
   }
   html += `</section>`;
 
@@ -1311,8 +1400,9 @@ function familyFilterValue(stat) {
 // is pulled out to a shared helper rather than duplicated per call site.
 function matchesStatusFilter(p, statusSet) {
   for (const s of statusSet) {
-    if (s === "longshot" ? isLongshot(p)
-      : s === "value" ? (p.recommendation_status === "value" && !isLongshot(p))
+    if (s === "longshot" ? (isLongshot(p) && !isDowngradedPublished(p))
+      : s === "value" ? (p.recommendation_status === "value" && !isLongshot(p) && !isDowngradedPublished(p))
+      : s === "lean" ? (p.recommendation_status === "lean" && !isDowngradedPublished(p))
       : p.recommendation_status === s) return true;
   }
   return false;
@@ -3283,7 +3373,7 @@ function applyCachedLive() {
       if (field === "_field_updated_at" || LIVE_SETTLEMENT_FIELDS.has(field) || LIVE_GAME_FIELDS.has(field)) continue;
       // A carried published pick (another build slate) is frozen before
       // first pitch too; the build and refresh never reprice it.
-      const frozenExposure = (gameHasStarted(p) || isCarriedPublished(p))
+      const frozenExposure = (gameHasStarted(p) || isCarriedPublished(p) || !!p.withdrawn_since_publication)
         && ((!!p.published_top_pick_at && !!p.publication_artifact_id)
           || !!p.publication_candidate_token);
       if (frozenExposure && LIVE_PRICE_FIELDS.has(field)) continue;
