@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-26T02:03:03.371264+00:00",
+  "updated_at": "2026-09-26T03:43:05.165430+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -49954,6 +49954,99 @@
         },
         "qualification_timestamp": "2026-09-26T01:56:59.898748+00:00",
         "board_timestamp": "2026-09-26T01:56:59.891667+00:00",
+        "slate_date": "2026-09-26"
+      }
+    },
+    "fc2:824057:player-676440:strikeouts:4:over": {
+      "canonical_id": "fc2:824057:player-676440:strikeouts:4:over",
+      "settlement_identity": [
+        "824057",
+        [
+          "player",
+          "676440"
+        ],
+        "strikeouts",
+        "4",
+        "over"
+      ],
+      "slate_date": "2026-09-26",
+      "first_published_at": "2026-09-26T03:43:05.165430+00:00",
+      "publication_provenance": {
+        "artifact_id": "4fd3ad28de6938f5876aae3d787499328498b5b561a314152f6aef6d11001b97",
+        "source_commit": "ecb69d7af6d668cab369c5845a4ab4322265f5cb",
+        "workflow_run_id": "36215599364",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-26T03:42:47.762236+00:00",
+        "data_hash": "8cefb890dd8afe31fe0ff54057bbf80adbeeb9c61b679c486bce7eb844d541d9",
+        "live_hash": "13cb318fdecf98fed3d40a2898a91320bcfc66bad846d66f386636788caf1d12"
+      },
+      "snapshot": {
+        "id": "fc2:824057:player-676440:strikeouts:4:over",
+        "identity_version": 2,
+        "game_pk": 824057,
+        "player_id": 676440,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Tanner Bibee",
+        "team": "Cleveland Guardians",
+        "matchup": "Cleveland Guardians @ Kansas City Royals",
+        "game_start": "2026-09-26T23:10:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 3.5,
+          "needs": 4
+        },
+        "prop": "Over 3.5 Strikeouts",
+        "hit_probability": 0.6059,
+        "market_odds": -132,
+        "market_implied": 0.5372,
+        "market_edge": 0.0687,
+        "market_hold": 0.0592,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.9 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Opposing team K% 20.9",
+          "Expected workload 24.1 batters faced (his own 25.5/start over 2 real starts, shrunk toward the 23.1 league mean)",
+          "Maintains K rate through the order (TTO1 0.0% -> TTO3 25.7%)"
+        ],
+        "watchouts": [
+          "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average",
+          "Platoon disadvantage: 3 of 9 projected hitters bat right-handed against this RHP (mostly opposite-handed lineup)",
+          "L14 K% 17.6 (51 PA) \u2014 cold recent form",
+          "Recency-weighted K rate 17.3% (exp. decay, halflife 30d, 32 real starts / 755 BF) \u2014 drives a below-average strikeout-probability read"
+        ],
+        "prob_ci": [
+          0.585,
+          0.705
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 32,
+        "lineup_assumed": null,
+        "base_rate": 0.6965,
+        "lift": -0.0906,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "be23ed1cb",
+          "prediction_timestamp": "2026-09-26T03:36:56.626689+00:00",
+          "odds_fetched_at": "2026-09-26T03:36:53.698372+00:00",
+          "board_generated_at": "2026-09-26T03:36:56.613508+00:00"
+        },
+        "qualification_timestamp": "2026-09-26T03:36:56.626689+00:00",
+        "board_timestamp": "2026-09-26T03:36:56.613508+00:00",
         "slate_date": "2026-09-26"
       }
     }
