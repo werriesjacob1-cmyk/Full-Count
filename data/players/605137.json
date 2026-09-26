@@ -3556,6 +3556,106 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-26",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 58.4,
+          "notable_signals": 2,
+          "matchup": "Texas Rangers @ Minnesota Twins",
+          "game_pk": 823653,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 50.5714,
+            "l7_avg_ev": 81.0937,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 6.225,
+            "park_hr_index": 75.1,
+            "season_barrel_pct": 43.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 15.1515,
+            "platoon_barrel_pct": 2.8,
+            "platoon_xwoba": 2.16,
+            "opp_catcher_framing": 1.32,
+            "days_rest": 0.0,
+            "woba_ahead": 34.5455,
+            "woba_behind": 19.0909,
+            "hard_hit_105_rate": 0.5125,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": -0.488,
+            "vs_rp_ops": -0.288,
+            "ump_k_pct": 0.156,
+            "ump_bb_pct": -0.456
+          },
+          "hit_probability": 0.6117,
+          "raw_hit_probability": 0.6097,
+          "lift": 0.0553,
+          "reliability": "A",
+          "sample_n": 152,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 9.8,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Minnesota Twins",
+          "game_pk": 823653,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0671
+          },
+          "hit_probability": 0.0671,
+          "raw_hit_probability": null,
+          "lift": 0.0196,
+          "reliability": "A",
+          "sample_n": 152,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 5.9,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Minnesota Twins",
+          "game_pk": 823653,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.036
+          },
+          "hit_probability": 0.036,
+          "raw_hit_probability": null,
+          "lift": 0.0155,
+          "reliability": "A",
+          "sample_n": 152,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
