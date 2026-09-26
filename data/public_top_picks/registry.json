@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-26T01:57:52.418047+00:00",
+  "updated_at": "2026-09-26T02:03:03.371264+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -49862,6 +49862,98 @@
         },
         "qualification_timestamp": "2026-09-26T01:11:55.356210+00:00",
         "board_timestamp": "2026-09-26T01:11:55.349013+00:00",
+        "slate_date": "2026-09-26"
+      }
+    },
+    "fc2:822678:player-813349:strikeouts:4:over": {
+      "canonical_id": "fc2:822678:player-813349:strikeouts:4:over",
+      "settlement_identity": [
+        "822678",
+        [
+          "player",
+          "813349"
+        ],
+        "strikeouts",
+        "4",
+        "over"
+      ],
+      "slate_date": "2026-09-26",
+      "first_published_at": "2026-09-26T02:03:03.371264+00:00",
+      "publication_provenance": {
+        "artifact_id": "6406a48ef54b6b6eb454eb666fe20f45a0b1176aeb1162a5d441e7fd09020c63",
+        "source_commit": "cf78ce5f643656fbb202ac00a4ba7c9de685027c",
+        "workflow_run_id": "36210376955",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-26T02:02:40.779040+00:00",
+        "data_hash": "4b6a1fca71b2f7583edf25b0b4a7d0d28427e2b16f36f4291cb9976b2ca02cba",
+        "live_hash": "1e7368ca5ba2537ad9b9fd3c234812e02591ba3e9372a2a7a0a77927db8e19c6"
+      },
+      "snapshot": {
+        "id": "fc2:822678:player-813349:strikeouts:4:over",
+        "identity_version": 2,
+        "game_pk": 822678,
+        "player_id": 813349,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Connelly Early",
+        "team": "Washington Nationals",
+        "matchup": "New York Mets @ Washington Nationals",
+        "game_start": "2026-09-26T16:35:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 3.5,
+          "needs": 4
+        },
+        "prop": "Over 3.5 Strikeouts",
+        "hit_probability": 0.6312,
+        "market_odds": -130,
+        "market_implied": 0.5331,
+        "market_edge": 0.0981,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Opposing team K% 22.3",
+          "Expected workload 23.1 batters faced (league average \u2014 no real start found for him in the L14 window)",
+          "3 of 8 projected hitters bat left-handed against this LHP",
+          "Recency-weighted K rate 25.5% (exp. decay, halflife 30d, 17 real starts / 390 BF) \u2014 drives the strikeout probability model"
+        ],
+        "watchouts": [
+          "L14 Statcast sample too thin \u2014 recent-form read falls back to season K%",
+          "No L14 start found for this pitcher \u2014 workload defaulted to the league average"
+        ],
+        "prob_ci": [
+          0.6102,
+          0.7304
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 17,
+        "lineup_assumed": null,
+        "base_rate": 0.6965,
+        "lift": -0.0653,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "c3123559e",
+          "prediction_timestamp": "2026-09-26T01:56:59.898748+00:00",
+          "odds_fetched_at": "2026-09-26T01:56:53.919898+00:00",
+          "board_generated_at": "2026-09-26T01:56:59.891667+00:00"
+        },
+        "qualification_timestamp": "2026-09-26T01:56:59.898748+00:00",
+        "board_timestamp": "2026-09-26T01:56:59.891667+00:00",
         "slate_date": "2026-09-26"
       }
     }
