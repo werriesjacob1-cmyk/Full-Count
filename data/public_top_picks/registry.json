@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-25T22:37:30.509280+00:00",
+  "updated_at": "2026-09-26T01:57:52.418047+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -49768,6 +49768,101 @@
         "qualification_timestamp": "2026-09-25T22:33:35.231809+00:00",
         "board_timestamp": "2026-09-25T22:33:35.220660+00:00",
         "slate_date": "2026-09-25"
+      }
+    },
+    "fc2:822759:player-702056:strikeouts:4:over": {
+      "canonical_id": "fc2:822759:player-702056:strikeouts:4:over",
+      "settlement_identity": [
+        "822759",
+        [
+          "player",
+          "702056"
+        ],
+        "strikeouts",
+        "4",
+        "over"
+      ],
+      "slate_date": "2026-09-26",
+      "first_published_at": "2026-09-26T01:57:52.418047+00:00",
+      "publication_provenance": {
+        "artifact_id": "2191a54dcdc02cdb74dd3eda32fca7fbf59126449e08612c7c445dde77fc1a8c",
+        "source_commit": "922f11652536103e6fb836e22853a1cdd5f8e68e",
+        "workflow_run_id": "36210095879",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-26T01:57:37.248995+00:00",
+        "data_hash": "95abfb99bb81bc203ac0f84fdbc34ed08ab0baa3947b2758f7920a346f4dac0f",
+        "live_hash": "b261b3b40589e12a2af6634936e58aee2e65f5cf62f68dd179bbb8ce30f973f8"
+      },
+      "snapshot": {
+        "id": "fc2:822759:player-702056:strikeouts:4:over",
+        "identity_version": 2,
+        "game_pk": 822759,
+        "player_id": 702056,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Trey Yesavage",
+        "team": "Toronto Blue Jays",
+        "matchup": "Cincinnati Reds @ Toronto Blue Jays",
+        "game_start": "2026-09-26T19:07:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 3.5,
+          "needs": 4
+        },
+        "prop": "Over 3.5 Strikeouts",
+        "hit_probability": 0.6189,
+        "market_odds": -142,
+        "market_implied": 0.5544,
+        "market_edge": 0.0645,
+        "market_hold": 0.0585,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.6 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Opposing team K% 25.5 \u2014 strikeout-prone lineup",
+          "Expected workload 18.7 batters faced (his own 7.0/start over 1 real start, shrunk toward the 23.1 league mean)",
+          "Platoon advantage: 3 of 6 projected hitters bat right-handed against this RHP",
+          "L14 K% 42.9 (7 PA)",
+          "Recency-weighted K rate 26.0% (exp. decay, halflife 30d, 19 real starts / 393 BF) \u2014 drives the strikeout probability model"
+        ],
+        "watchouts": [
+          "L14 Statcast sample too thin \u2014 recent-form read falls back to season K%",
+          "Activated from the 15-day injured list 5 day(s) ago \u2014 early performance back can be inconsistent",
+          "Workload estimate rests on only 1 start in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average",
+          "Short-outing profile (18.7 expected batters faced) \u2014 caps the realistic strikeout ceiling regardless of K rate"
+        ],
+        "prob_ci": [
+          0.5979,
+          0.7181
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 19,
+        "lineup_assumed": null,
+        "base_rate": 0.6965,
+        "lift": -0.0776,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "2711b0f62",
+          "prediction_timestamp": "2026-09-26T01:11:55.356210+00:00",
+          "odds_fetched_at": "2026-09-26T01:11:48.415141+00:00",
+          "board_generated_at": "2026-09-26T01:11:55.349013+00:00"
+        },
+        "qualification_timestamp": "2026-09-26T01:11:55.356210+00:00",
+        "board_timestamp": "2026-09-26T01:11:55.349013+00:00",
+        "slate_date": "2026-09-26"
       }
     }
   }
