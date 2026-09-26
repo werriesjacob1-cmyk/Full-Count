@@ -116,7 +116,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 36.4,
+          "score": 28.7,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Toronto Blue Jays",
           "game_pk": 822759,
@@ -126,12 +126,15 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 85.0,
-            "same_hand_ratio": 75.0,
-            "env_neutral": 50.0
+            "same_hand_ratio": 92.8571,
+            "env_neutral": 50.0,
+            "ump_accuracy": 66.0156,
+            "ump_k_pct": 0.036,
+            "ump_bb_pct": 0.468
           },
-          "hit_probability": 0.6189,
-          "raw_hit_probability": 0.7245,
-          "lift": -0.0776,
+          "hit_probability": 0.6191,
+          "raw_hit_probability": 0.7253,
+          "lift": -0.0789,
           "reliability": "A",
           "sample_n": 19,
           "projection": {
@@ -143,7 +146,7 @@
         {
           "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 59.0,
+          "score": 57.6,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Toronto Blue Jays",
           "game_pk": 822759,
@@ -152,12 +155,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.689,
+            "outs_rate": 0.6928,
             "avg_outs_per_start": 15.11
           },
-          "hit_probability": 0.6527,
-          "raw_hit_probability": 0.689,
-          "lift": -0.0516,
+          "hit_probability": 0.6552,
+          "raw_hit_probability": 0.6928,
+          "lift": -0.0649,
           "reliability": "A",
           "sample_n": 19,
           "projection": {

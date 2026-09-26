@@ -419,10 +419,10 @@
       "date": "2026-09-26",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 41.1,
-          "notable_signals": 0,
+          "score": 32.1,
+          "notable_signals": 1,
           "matchup": "Colorado Rockies @ Chicago White Sox",
           "game_pk": 824543,
           "team": "Chicago White Sox",
@@ -431,26 +431,29 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 58.0,
-            "same_hand_ratio": 43.75,
+            "same_hand_ratio": 57.1429,
             "l14_k_pct": 4.7059,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 69.8197,
+            "ump_k_pct": 0.132,
+            "ump_bb_pct": -0.024
           },
-          "hit_probability": 0.5974,
-          "raw_hit_probability": 0.6175,
-          "lift": -0.0991,
+          "hit_probability": 0.4246,
+          "raw_hit_probability": 0.4246,
+          "lift": -0.1007,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 60.0,
-          "notable_signals": 1,
+          "score": 68.4,
+          "notable_signals": 0,
           "matchup": "Colorado Rockies @ Chicago White Sox",
           "game_pk": 824543,
           "team": "Chicago White Sox",
@@ -458,18 +461,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5774,
+            "outs_rate": 0.737,
             "avg_outs_per_start": 15.56
           },
-          "hit_probability": 0.5781,
-          "raw_hit_probability": 0.5774,
-          "lift": 0.069,
+          "hit_probability": 0.6829,
+          "raw_hit_probability": 0.737,
+          "lift": -0.0372,
           "reliability": "A",
           "sample_n": 27,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]
