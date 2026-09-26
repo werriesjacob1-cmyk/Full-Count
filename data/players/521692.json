@@ -3283,6 +3283,110 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-26",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 68.8,
+          "notable_signals": 2,
+          "matchup": "Cleveland Guardians @ Kansas City Royals",
+          "game_pk": 824057,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 52.8571,
+            "pitch_exploit": 1.7143,
+            "l7_avg_ev": 97.5893,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.8,
+            "season_barrel_pct": 49.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 66.6667,
+            "bvp_ops": -2.712,
+            "platoon_barrel_pct": 2.72,
+            "platoon_xwoba": -0.36,
+            "park_hand_index": 0.29,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 60.9091,
+            "woba_behind": 31.8182,
+            "pull_park_synergy": 0.1238,
+            "hard_hit_105_rate": 1.285,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.152,
+            "vs_rp_ops": -0.636,
+            "ump_k_pct": -0.144,
+            "ump_bb_pct": 0.3
+          },
+          "hit_probability": 0.6681,
+          "raw_hit_probability": 0.6681,
+          "lift": -0.0041,
+          "reliability": "A",
+          "sample_n": 150,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 17.5,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Kansas City Royals",
+          "game_pk": 824057,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.098
+          },
+          "hit_probability": 0.098,
+          "raw_hit_probability": null,
+          "lift": 0.0505,
+          "reliability": "A",
+          "sample_n": 150,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 9.1,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Kansas City Royals",
+          "game_pk": 824057,
+          "team": "Kansas City Royals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0486
+          },
+          "hit_probability": 0.0486,
+          "raw_hit_probability": null,
+          "lift": 0.0281,
+          "reliability": "A",
+          "sample_n": 150,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
