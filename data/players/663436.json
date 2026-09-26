@@ -414,6 +414,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-26",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 42.5,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Chicago White Sox",
+          "game_pk": 824543,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 58.0,
+            "same_hand_ratio": 43.75,
+            "l14_k_pct": 4.7059,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.5974,
+          "raw_hit_probability": 0.6175,
+          "lift": -0.0991,
+          "reliability": "A",
+          "sample_n": 27,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 59.7,
+          "notable_signals": 1,
+          "matchup": "Colorado Rockies @ Chicago White Sox",
+          "game_pk": 824543,
+          "team": "Chicago White Sox",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5774,
+            "avg_outs_per_start": 15.56
+          },
+          "hit_probability": 0.5781,
+          "raw_hit_probability": 0.5774,
+          "lift": 0.069,
+          "reliability": "A",
+          "sample_n": 27,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        }
+      ]
     }
   ]
 }
