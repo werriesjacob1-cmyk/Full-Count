@@ -373,7 +373,7 @@
         {
           "prop": "Over 13.5 Outs Recorded",
           "type": "pitcher",
-          "score": 61.9,
+          "score": 61.1,
           "notable_signals": 0,
           "matchup": "Tampa Bay Rays @ Philadelphia Phillies",
           "game_pk": 823407,
@@ -382,18 +382,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7363,
+            "outs_rate": 0.7378,
             "avg_outs_per_start": 13.68
           },
-          "hit_probability": 0.6824,
-          "raw_hit_probability": 0.7363,
-          "lift": -0.0868,
+          "hit_probability": 0.6834,
+          "raw_hit_probability": 0.7378,
+          "lift": -0.0932,
           "reliability": "A",
           "sample_n": 22,
           "projection": {
             "stat": "pitcher_outs",
             "value": 13.5,
             "needs": 14
+          }
+        },
+        {
+          "prop": "Over 8.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.6,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ Philadelphia Phillies",
+          "game_pk": 823407,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            643377,
+            605400
+          ],
+          "signals": {
+            "combined_k_edge": 0.5053
+          },
+          "hit_probability": 0.8038,
+          "raw_hit_probability": null,
+          "lift": 0.5053,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 8.5,
+            "needs": 9
           }
         }
       ]
