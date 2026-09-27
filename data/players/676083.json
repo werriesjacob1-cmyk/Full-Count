@@ -548,7 +548,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 39.1,
+          "score": 42.7,
           "notable_signals": 0,
           "matchup": "Atlanta Braves @ Miami Marlins",
           "game_pk": 823814,
@@ -558,13 +558,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 46.0,
-            "same_hand_ratio": 43.75,
+            "same_hand_ratio": 100.0,
             "l14_k_pct": 90.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 64.9301,
+            "ump_k_pct": -0.936,
+            "ump_bb_pct": -0.204
           },
-          "hit_probability": 0.5903,
-          "raw_hit_probability": 0.5823,
-          "lift": -0.1078,
+          "hit_probability": 0.5902,
+          "raw_hit_probability": 0.5818,
+          "lift": -0.1069,
           "reliability": "A",
           "sample_n": 24,
           "projection": {
@@ -574,9 +577,9 @@
           }
         },
         {
-          "prop": "Over 14.5 Outs Recorded",
+          "prop": "Over 13.5 Outs Recorded",
           "type": "pitcher",
-          "score": 51.9,
+          "score": 72.7,
           "notable_signals": 0,
           "matchup": "Atlanta Braves @ Miami Marlins",
           "game_pk": 823814,
@@ -585,18 +588,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.682,
+            "outs_rate": 0.7922,
             "avg_outs_per_start": 14.75
           },
-          "hit_probability": 0.6482,
-          "raw_hit_probability": 0.682,
-          "lift": -0.0953,
+          "hit_probability": 0.7157,
+          "raw_hit_probability": 0.7922,
+          "lift": -0.0787,
           "reliability": "A",
           "sample_n": 24,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 14.5,
-            "needs": 15
+            "value": 13.5,
+            "needs": 14
           }
         }
       ]

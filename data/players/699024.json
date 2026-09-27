@@ -893,6 +893,56 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-27",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 57.5,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Milwaukee Brewers",
+          "game_pk": 823731,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 29.5833,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 37.0,
+            "season_barrel_pct": 38.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 50.0,
+            "platoon_barrel_pct": 4.0,
+            "platoon_xwoba": 1.86,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 36.3636,
+            "woba_behind": 0.0,
+            "team_total_move": 0.0,
+            "team_total_open": -6.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.264,
+            "vs_rp_ops": 0.66,
+            "ump_k_pct": 0.216,
+            "ump_bb_pct": 0.252
+          },
+          "hit_probability": 0.652,
+          "raw_hit_probability": 0.6402,
+          "lift": 0.0949,
+          "reliability": "D",
+          "sample_n": 23,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

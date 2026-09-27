@@ -37,6 +37,42 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-27",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 45.8,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ San Francisco Giants",
+          "game_pk": 823164,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 50.0,
+            "same_hand_ratio": 88.8889,
+            "l14_k_pct": 4.7059,
+            "env_neutral": 50.0,
+            "ump_accuracy": 55.0576,
+            "ump_k_pct": 0.372,
+            "ump_bb_pct": 0.072
+          },
+          "hit_probability": 0.5076,
+          "raw_hit_probability": 0.5076,
+          "lift": -0.1895,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        }
+      ]
     }
   ]
 }

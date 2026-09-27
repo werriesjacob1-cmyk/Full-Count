@@ -672,9 +672,9 @@
       "date": "2026-09-27",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 50.4,
+          "score": 50.7,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Toronto Blue Jays",
           "game_pk": 822761,
@@ -684,25 +684,28 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 86.0,
-            "same_hand_ratio": 92.8571,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 48.8235,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 59.58,
+            "ump_k_pct": 0.024,
+            "ump_bb_pct": 0.756
           },
-          "hit_probability": 0.6128,
-          "raw_hit_probability": 0.6936,
-          "lift": -0.0853,
+          "hit_probability": 0.3376,
+          "raw_hit_probability": 0.3376,
+          "lift": -0.0481,
           "reliability": "A",
           "sample_n": 17,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
           "prop": "Over 13.5 Outs Recorded",
           "type": "pitcher",
-          "score": 45.9,
+          "score": 46.4,
           "notable_signals": 0,
           "matchup": "Cincinnati Reds @ Toronto Blue Jays",
           "game_pk": 822761,
@@ -711,12 +714,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6845,
+            "outs_rate": 0.6855,
             "avg_outs_per_start": 13.71
           },
-          "hit_probability": 0.6498,
-          "raw_hit_probability": 0.6845,
-          "lift": -0.1408,
+          "hit_probability": 0.6505,
+          "raw_hit_probability": 0.6855,
+          "lift": -0.1439,
           "reliability": "A",
           "sample_n": 17,
           "projection": {

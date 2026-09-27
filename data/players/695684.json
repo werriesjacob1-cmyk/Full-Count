@@ -128,9 +128,9 @@
       "date": "2026-09-27",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 50.1,
+          "score": 30.6,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ New York Yankees",
           "game_pk": 823490,
@@ -140,24 +140,27 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 80.0,
-            "same_hand_ratio": 100.0,
-            "env_neutral": 50.0
+            "same_hand_ratio": 88.8889,
+            "env_neutral": 50.0,
+            "ump_accuracy": 56.4461,
+            "ump_k_pct": -0.384,
+            "ump_bb_pct": 0.204
           },
-          "hit_probability": 0.5951,
-          "raw_hit_probability": 0.6059,
-          "lift": 0.0701,
+          "hit_probability": 0.4411,
+          "raw_hit_probability": 0.4411,
+          "lift": 0.0554,
           "reliability": "C",
           "sample_n": 6,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
           "prop": "Over 12.5 Outs Recorded",
           "type": "pitcher",
-          "score": 35.5,
+          "score": 36.1,
           "notable_signals": 0,
           "matchup": "Baltimore Orioles @ New York Yankees",
           "game_pk": 823490,
@@ -166,12 +169,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6618,
+            "outs_rate": 0.6667,
             "avg_outs_per_start": 13.33
           },
-          "hit_probability": 0.6351,
-          "raw_hit_probability": 0.6618,
-          "lift": -0.1884,
+          "hit_probability": 0.6383,
+          "raw_hit_probability": 0.6667,
+          "lift": -0.195,
           "reliability": "C",
           "sample_n": 6,
           "projection": {

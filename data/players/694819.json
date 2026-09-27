@@ -581,10 +581,10 @@
       "date": "2026-09-27",
       "evaluations": [
         {
-          "prop": "Over 4.5 Strikeouts",
+          "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 37.3,
-          "notable_signals": 0,
+          "score": 43.2,
+          "notable_signals": 1,
           "matchup": "St. Louis Cardinals @ Milwaukee Brewers",
           "game_pk": 823731,
           "team": "Milwaukee Brewers",
@@ -593,25 +593,28 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 43.0,
-            "same_hand_ratio": 43.75,
+            "same_hand_ratio": 100.0,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 87.2625,
+            "ump_k_pct": -0.216,
+            "ump_bb_pct": -0.252
           },
-          "hit_probability": 0.6142,
-          "raw_hit_probability": 0.7009,
-          "lift": 0.0892,
+          "hit_probability": 0.4154,
+          "raw_hit_probability": 0.4154,
+          "lift": 0.1573,
           "reliability": "A",
           "sample_n": 29,
           "projection": {
             "stat": "strikeouts",
-            "value": 4.5,
-            "needs": 5
+            "value": 6.5,
+            "needs": 7
           }
         },
         {
           "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 78.0,
+          "score": 81.5,
           "notable_signals": 1,
           "matchup": "St. Louis Cardinals @ Milwaukee Brewers",
           "game_pk": 823731,
@@ -620,12 +623,12 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5812,
+            "outs_rate": 0.5774,
             "avg_outs_per_start": 17.52
           },
-          "hit_probability": 0.5808,
-          "raw_hit_probability": 0.5812,
-          "lift": 0.1902,
+          "hit_probability": 0.5781,
+          "raw_hit_probability": 0.5774,
+          "lift": 0.2101,
           "reliability": "A",
           "sample_n": 29,
           "projection": {

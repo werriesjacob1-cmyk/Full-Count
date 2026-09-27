@@ -1269,6 +1269,134 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-27",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 52.2,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Toronto Blue Jays",
+          "game_pk": 822761,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 68.2857,
+            "l7_avg_ev": 88.2143,
+            "l7_barrel_pct": 87.8571,
+            "park_hr_index": 51.1,
+            "season_barrel_pct": 8.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 18.5185,
+            "platoon_barrel_pct": -3.52,
+            "platoon_xwoba": -2.1,
+            "park_hand_index": -0.82,
+            "opp_catcher_framing": -0.36,
+            "days_rest": 2.0,
+            "woba_ahead": 38.1818,
+            "woba_behind": 3.6364,
+            "pull_park_synergy": 0.0459,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": -0.088,
+            "vs_rp_ops": -0.732,
+            "ump_k_pct": -0.024,
+            "ump_bb_pct": -0.756
+          },
+          "hit_probability": 0.6239,
+          "raw_hit_probability": 0.6188,
+          "lift": 0.0668,
+          "reliability": "C",
+          "sample_n": 33,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 52.2,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Toronto Blue Jays",
+          "game_pk": 822761,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 3.24,
+            "sprint_speed": 50.0,
+            "on_base": 32.8215
+          },
+          "hit_probability": 0.07,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "C",
+          "sample_n": 33,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Toronto Blue Jays",
+          "game_pk": 822761,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0176
+          },
+          "hit_probability": 0.0176,
+          "raw_hit_probability": null,
+          "lift": -0.0298,
+          "reliability": "C",
+          "sample_n": 33,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Cincinnati Reds @ Toronto Blue Jays",
+          "game_pk": 822761,
+          "team": "Toronto Blue Jays",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0076
+          },
+          "hit_probability": 0.0076,
+          "raw_hit_probability": null,
+          "lift": -0.0129,
+          "reliability": "C",
+          "sample_n": 33,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

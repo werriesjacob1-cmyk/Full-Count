@@ -1,0 +1,42 @@
+{
+  "player_id": 693313,
+  "name": "Carson Seymour",
+  "snapshots": [
+    {
+      "date": "2026-09-27",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 29.1,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ San Francisco Giants",
+          "game_pk": 823164,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 34.0,
+            "same_hand_ratio": 43.75,
+            "l14_k_pct": 0.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 55.0576,
+            "ump_k_pct": 0.372,
+            "ump_bb_pct": 0.072
+          },
+          "hit_probability": 0.586,
+          "raw_hit_probability": 0.5612,
+          "lift": -0.1111,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        }
+      ]
+    }
+  ]
+}

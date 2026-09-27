@@ -5002,6 +5002,136 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-27",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 46.2,
+          "notable_signals": 1,
+          "matchup": "Texas Rangers @ Minnesota Twins",
+          "game_pk": 823650,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 59.7143,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 50.7143,
+            "park_hr_index": 51.5,
+            "season_barrel_pct": 49.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 30.303,
+            "platoon_barrel_pct": 4.32,
+            "platoon_xwoba": 0.72,
+            "park_hand_index": -1.11,
+            "opp_catcher_framing": 1.44,
+            "days_rest": 0.0,
+            "woba_ahead": 33.6364,
+            "woba_behind": 24.5455,
+            "pull_park_synergy": -0.7226,
+            "hard_hit_105_rate": -0.015,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 0.08,
+            "vs_rp_ops": -0.684,
+            "ump_k_pct": -0.084,
+            "ump_bb_pct": 0.12
+          },
+          "hit_probability": 0.6846,
+          "raw_hit_probability": 0.6971,
+          "lift": 0.0305,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 32.2,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Minnesota Twins",
+          "game_pk": 823650,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 2.58,
+            "sprint_speed": 12.5,
+            "catcher_poptime": 28.5714,
+            "on_base": 27.0633
+          },
+          "hit_probability": 0.1104,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 4.4,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Minnesota Twins",
+          "game_pk": 823650,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.046
+          },
+          "hit_probability": 0.046,
+          "raw_hit_probability": null,
+          "lift": -0.0014,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.2,
+          "notable_signals": 0,
+          "matchup": "Texas Rangers @ Minnesota Twins",
+          "game_pk": 823650,
+          "team": "Minnesota Twins",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0292
+          },
+          "hit_probability": 0.0292,
+          "raw_hit_probability": null,
+          "lift": 0.0087,
+          "reliability": "A",
+          "sample_n": 124,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
