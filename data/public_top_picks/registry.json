@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-27T16:28:00.313219+00:00",
+  "updated_at": "2026-09-27T16:52:58.568199+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -52564,6 +52564,102 @@
         },
         "qualification_timestamp": "2026-09-27T16:22:25.446737+00:00",
         "board_timestamp": "2026-09-27T16:22:25.425998+00:00",
+        "slate_date": "2026-09-27"
+      }
+    },
+    "fc2:824705:player-655316:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:824705:player-655316:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "824705",
+        [
+          "player",
+          "655316"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-27",
+      "first_published_at": "2026-09-27T16:52:58.568199+00:00",
+      "publication_provenance": {
+        "artifact_id": "3cb7e73d14c56e078d495d65b37f9522a9f0c5b4523291719a998662d4c6ad3d",
+        "source_commit": "651c528fdbdf0f29674b17be25a37db8bad2f15f",
+        "workflow_run_id": "36334806645",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-27T16:52:45.815723+00:00",
+        "data_hash": "243f868b950df930124cb0b44b0e7416c47079b416d95a3f22646e589a76acf5",
+        "live_hash": "8012ca1c4e2961622eadc84f89373ed2ff78898e96b5052d285a587d963d5737"
+      },
+      "snapshot": {
+        "id": "fc2:824705:player-655316:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 824705,
+        "player_id": 655316,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Andruw Monasterio",
+        "team": "Boston Red Sox",
+        "matchup": "Chicago Cubs @ Boston Red Sox",
+        "game_start": "2026-09-27T19:05:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6474,
+        "market_odds": -155,
+        "market_implied": 0.6078,
+        "market_edge": 0.0396,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.5 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 10.0",
+          "Platoon: R bat vs LHP (favorable)",
+          "Hitter batting behind him: 0.329 wOBA (league ~.320)",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "L7 avg EV 82.0mph (league ~88.5) \u2014 cold recent contact",
+          "Projected 3.52 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.272 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Team implied for 3.49 runs (league avg 4.245; line 3.5, game total 7.5) \u2014 a weak offensive environment",
+          "Season barrel% 6.5 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 1/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6341,
+          0.679
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 103,
+        "lineup_assumed": null,
+        "base_rate": 0.6616,
+        "lift": -0.0142,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "6019dc954",
+          "prediction_timestamp": "2026-09-27T16:44:38.106036+00:00",
+          "odds_fetched_at": "2026-09-27T16:44:32.781952+00:00",
+          "board_generated_at": "2026-09-27T16:44:38.070005+00:00"
+        },
+        "qualification_timestamp": "2026-09-27T16:44:38.106036+00:00",
+        "board_timestamp": "2026-09-27T16:44:38.070005+00:00",
         "slate_date": "2026-09-27"
       }
     }
