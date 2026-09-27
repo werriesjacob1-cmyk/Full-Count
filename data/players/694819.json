@@ -576,6 +576,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-27",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 37.2,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Milwaukee Brewers",
+          "game_pk": 823731,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 42.0,
+            "same_hand_ratio": 43.75,
+            "l14_k_pct": 100.0,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6142,
+          "raw_hit_probability": 0.7009,
+          "lift": 0.0892,
+          "reliability": "A",
+          "sample_n": 29,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 77.3,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Milwaukee Brewers",
+          "game_pk": 823731,
+          "team": "Milwaukee Brewers",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5825,
+            "avg_outs_per_start": 17.52
+          },
+          "hit_probability": 0.5817,
+          "raw_hit_probability": 0.5825,
+          "lift": 0.1837,
+          "reliability": "A",
+          "sample_n": 29,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }

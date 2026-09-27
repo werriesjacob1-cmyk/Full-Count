@@ -1,0 +1,113 @@
+{
+  "date": "2026-09-27",
+  "hits": 0,
+  "misses": 0,
+  "ungraded": 0,
+  "fair_hits": 0,
+  "fair_misses": 0,
+  "by_category": {},
+  "by_recommendation_status": {
+    "top_pick": {
+      "hits": 0,
+      "misses": 0,
+      "voids": 0,
+      "ungraded": 1
+    }
+  },
+  "public_top_pick_counts": {
+    "hits": 0,
+    "misses": 0,
+    "voids": 0,
+    "ungraded": 1
+  },
+  "public_top_picks": [
+    {
+      "id": "fc2:823814:player-702275:strikeouts:5:over",
+      "identity_version": 2,
+      "game_pk": 823814,
+      "player_id": 702275,
+      "combo_player_ids": null,
+      "type": "pitcher",
+      "name": "JR Ritchie",
+      "team": "Atlanta Braves",
+      "matchup": "Atlanta Braves @ Miami Marlins",
+      "game_start": "2026-09-27T19:10:00Z",
+      "stat": "strikeouts",
+      "market_side": "over",
+      "lean": null,
+      "projection": {
+        "stat": "strikeouts",
+        "value": 4.5,
+        "needs": 5
+      },
+      "prop": "Over 4.5 Strikeouts",
+      "hit_probability": 0.6051,
+      "market_odds": 106,
+      "market_implied": 0.4572,
+      "market_edge": 0.1479,
+      "market_hold": 0.0617,
+      "price_clears": true,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (15.6 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "why": [
+        "Opposing team K% 21.8",
+        "Expected workload 22.6 batters faced (his own 22.0/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "Platoon advantage: 7 of 9 projected hitters bat right-handed against this RHP",
+        "L14 K% 29.5 (44 PA) \u2014 hot recent form",
+        "Recency-weighted K rate 27.5% (exp. decay, halflife 30d, 10 real starts / 224 BF) \u2014 drives a favorable strikeout-probability read"
+      ],
+      "watchouts": [
+        "Recalled from the minors 12 day(s) ago \u2014 thin or no MLB track record behind his season/rolling stats",
+        "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
+      ],
+      "prob_ci": [
+        0.5757,
+        0.6937
+      ],
+      "reliability": "B",
+      "reliability_note": null,
+      "sample_n": 10,
+      "lineup_assumed": null,
+      "base_rate": 0.525,
+      "lift": 0.0801,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "versions": {
+        "model_version": "2026.08.15",
+        "selection_policy_version": "1.0.0",
+        "calibration_version": "1.0.0",
+        "feature_version": "1.0.0",
+        "git_sha": "f9a3c2088",
+        "prediction_timestamp": "2026-09-27T00:04:38.881220+00:00",
+        "odds_fetched_at": "2026-09-27T00:04:32.777912+00:00",
+        "board_generated_at": "2026-09-27T00:04:38.875565+00:00"
+      },
+      "qualification_timestamp": "2026-09-27T00:04:38.881220+00:00",
+      "board_timestamp": "2026-09-27T00:04:38.875565+00:00",
+      "slate_date": "2026-09-27",
+      "published_top_pick_at": "2026-09-27T00:27:43.851227+00:00",
+      "publication_artifact_id": "95e2f677ee0a44d2c7ba30c84906355876e6561cf2a6aedbfeb1e9918f58e8c6",
+      "publication_source_commit": "6e519fb8f65ca11002579d15fb5824ad77caee10",
+      "publication_run_id": "36282511141",
+      "publication_deployment_id": null,
+      "grade": "ungraded",
+      "settlement_state": "ungraded",
+      "reason": "game_not_authoritatively_final",
+      "eligibility": {
+        "eligibility": "ungraded",
+        "reason_code": "game_not_authoritatively_final",
+        "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
+        "game_state": "pregame"
+      },
+      "settlement_authority": "none",
+      "settlement_observed_at": "2026-09-27T00:45:37.825544+00:00",
+      "settlement_source": "durable_morning_status_observation"
+    }
+  ],
+  "shadow_by_category": {},
+  "picks": [],
+  "shadow_tracking": []
+}
