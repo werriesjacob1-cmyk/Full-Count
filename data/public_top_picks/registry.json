@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-29T15:09:52.453738+00:00",
+  "updated_at": "2026-09-29T15:13:08.961480+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -53437,6 +53437,105 @@
         "lineup_assumed": null,
         "base_rate": 0.6749,
         "lift": -0.0513,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "a77a7ff32",
+          "prediction_timestamp": "2026-09-29T15:04:59.987147+00:00",
+          "odds_fetched_at": "2026-09-29T15:04:58.144304+00:00",
+          "board_generated_at": "2026-09-29T15:04:59.978149+00:00"
+        },
+        "qualification_timestamp": "2026-09-29T15:04:59.987147+00:00",
+        "board_timestamp": "2026-09-29T15:04:59.978149+00:00",
+        "slate_date": "2026-09-29"
+      }
+    },
+    "fc2:849845:player-547180:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:849845:player-547180:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "849845",
+        [
+          "player",
+          "547180"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-29",
+      "first_published_at": "2026-09-29T15:13:08.961480+00:00",
+      "publication_provenance": {
+        "artifact_id": "bbb4d759d53d572ad17c5fd5c25b92d84d8ce22a68ed1b5d7ecafcf0e0bda596",
+        "source_commit": "e3b906953f9f56ae18a6e6c07d5a91d95c6d98d3",
+        "workflow_run_id": "36588338099",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-29T15:12:50.101391+00:00",
+        "data_hash": "a79551c31ba8fc6a08573c74754c5779b6f033abc5d4f62bbefdfbe23f3a2fce",
+        "live_hash": "e0e55a9081c711b623167a322ef9f88a782b719cfd6bd00ba294cf489b72c6c5"
+      },
+      "snapshot": {
+        "id": "fc2:849845:player-547180:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 849845,
+        "player_id": 547180,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Bryce Harper",
+        "team": "Philadelphia Phillies",
+        "matchup": "Philadelphia Phillies @ Atlanta Braves",
+        "game_start": "2026-09-29T18:00:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6941,
+        "market_odds": -195,
+        "market_implied": 0.661,
+        "market_edge": 0.0331,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 11.1 \u2014 hot recent contact",
+          "Projected 4.18 PA (batting slot 3) \u2014 a favorable lineup slot",
+          "Hitters batting ahead of him: 0.368 wOBA (league ~.320) \u2014 real RBI opportunity on base ahead of him",
+          "Pitch-type exploit: RV/100 +3.6 vs FF (opposing SP throws it 41.4% of the time)",
+          "Season barrel% 10.3",
+          "Sharp money backing Philadelphia Phillies (money% +24 pts vs ticket%)"
+        ],
+        "watchouts": [
+          "L7 avg EV 86.2mph (league ~88.5) \u2014 cold recent contact",
+          "Platoon: L bat vs LHP (unfavorable)",
+          "Opposing SP ERA 2.16 \u2014 elite pitcher, tough matchup",
+          "Hitter batting behind him: 0.309 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 2.78 runs (league avg 4.245; line 2.5, game total 6.5) \u2014 a weak offensive environment",
+          "Opposing bullpen fatigue: 0/11 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "BvP: 2-for-21 vs Chris Sale (standard error \u00b16 pts on a 21-AB career sample -- weighted lightly on that basis, not just because the count looks small)"
+        ],
+        "prob_ci": [
+          0.6833,
+          0.7172
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 161,
+        "lineup_assumed": null,
+        "base_rate": 0.6749,
+        "lift": 0.0192,
         "lift_reference_rate": null,
         "stable_lift": null,
         "versions": {
