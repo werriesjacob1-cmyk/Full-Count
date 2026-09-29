@@ -113,13 +113,60 @@ footer { max-width: 1180px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px) 40
 <body>
 <header>
   <h1>Picks Board — 2026-09-29</h1>
-  <div class="stats">0 games · generated 12:37 AM · 0 top board · 0 categories · 0 moonshots</div>
+  <div class="stats">4 games · generated 2:19 AM · 0 top board · 3 categories · 0 moonshots</div>
 </header>
 <main>
   <section class="stack">
     <div class="section-head"><h2>Best pick in every category</h2><span class="section-note">ranked high → low confidence</span></div>
     <div class="cat-grid">
-      <p class="empty">No category picks cleared the quality floor today.</p>
+      <section class="cat-block"><h2>Pitcher Outs Recorded</h2>
+    <article class="card md">
+      <div class="card-top">
+        <span class="pill md">Medium</span>
+        <span class="pct">63.5%</span>
+      </div>
+      <h3 class="player">Michael King</h3>
+      <p class="prop">Over 16.5 Outs Recorded</p>
+      <p class="matchup">San Diego Padres · Chicago Cubs @ San Diego Padres</p>
+      <div class="meta">
+        <span>Fair value ~-203 (no market price found)</span>
+        <span class="lift neg">-8.7 pts vs base rate</span>
+        <span class="sample">32 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Recorded 17+ outs (5.2 IP) in 74.6% of his last 32 real starts (league 72.2%, avg 17.34 outs/start)</li></ul><ul class="watch"><li>No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>Strikeouts</h2>
+    <article class="card lo">
+      <div class="card-top">
+        <span class="pill lo">Low</span>
+        <span class="pct">61.8%</span>
+      </div>
+      <h3 class="player">Jesús Luzardo</h3>
+      <p class="prop">Over 4.5 Strikeouts</p>
+      <p class="matchup">Philadelphia Phillies · Philadelphia Phillies @ Atlanta Braves</p>
+      <div class="meta">
+        <span>Fair value ~-188 (no market price found)</span>
+        <span class="lift pos">+9.6 pts vs base rate</span>
+        <span class="sample">29 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Opposing team K% 21.6</li><li>Expected workload 23.1 batters faced (league average — no real start found for him in the L14 window)</li><li>L14 K% 0.0 (3 PA)</li><li>Recency-weighted K rate 32.6% (exp. decay, halflife 30d, 29 real starts / 727 BF) — drives a favorable strikeout-probability read</li></ul><ul class="watch"><li>L14 Statcast sample too thin — recent-form read falls back to season K%</li><li>Activated from the 15-day injured list 2 day(s) ago — early performance back can be inconsistent</li><li>No L14 start found for this pitcher — workload defaulted to the league average</li><li>Platoon disadvantage: 3 of 9 projected hitters bat left-handed against this LHP (mostly opposite-handed lineup)</li></ul></details>
+    </article></section>
+<section class="cat-block"><h2>NRFI/YRFI (Both Teams)</h2>
+    <article class="card hi">
+      <div class="card-top">
+        <span class="pill hi">High</span>
+        <span class="pct">60.3%</span>
+      </div>
+      <h3 class="player">Philadelphia Phillies @ Atlanta Braves — 1st Inning (Both Teams)</h3>
+      <p class="prop">No runs in the 1st (both teams)</p>
+      <p class="matchup"> · Philadelphia Phillies @ Atlanta Braves</p>
+      <div class="meta">
+        <span>Market -156 (implied 57.5%) <span class="tag bad">misses</span></span>
+        <span class="lift pos">+10.5 pts vs base rate</span>
+        <span class="sample">29 sample · grade A</span>
+      </div>
+      <details class="reason"><summary>Why</summary><ul class="why"><li>Atlanta Braves scores off Jesús Luzardo (away SP) in the bottom 1st: 20.9% (shrunk, 31 starts)</li><li>Philadelphia Phillies scores off Chris Sale (home SP) in the top 1st: 23.8% (shrunk, 29 starts)</li><li>This is the real both-teams NRFI/YRFI market -- combines both starters&#x27; halves of the 1st, not a one-sided team read.</li></ul></details>
+    </article></section>
     </div>
   </section>
 
