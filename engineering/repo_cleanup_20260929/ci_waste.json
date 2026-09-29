@@ -1,0 +1,101 @@
+{
+  "observed_main": "dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+  "sample_run_window": {
+    "latest": "2026-09-29T17:26:43Z",
+    "oldest": "2026-09-28T03:41:42Z",
+    "run_count": 1000,
+    "counts": {
+      "Dashboard Pages Deploy": 471,
+      "Dashboard Live Update": 462,
+      "Dashboard Refresh": 30,
+      "Lineup Watch": 7,
+      "Live Freshness Watchdog": 7,
+      "Odds Snapshot": 6,
+      "Public Ledger Integrity": 4,
+      "MLB Grading Catch-Up": 3,
+      "MLB Daily Pipeline": 6,
+      "Calibration Recheck": 1,
+      "NFL Live Game-Market Shadow Board": 1,
+      "NFL Live Receptions Shadow Board Audit": 1,
+      "NFL Live Passing-Yards Shadow Board Audit": 1
+    }
+  },
+  "provenance": "GitHub Actions repository runs filtered to main, 2026-09-28..29; newest 1000 of 1103 returned, so counts are lower bounds, not full-day totals.",
+  "findings": [
+    {
+      "id": "live_deploy_frequency",
+      "evidence": "462 Dashboard Live Update and 471 Dashboard Pages Deploy runs in newest 1000 main runs; deployment workflow already has one-pending coalescing and public convergence/durable exposure gates.",
+      "decision": "NO CHANGE",
+      "reason": "A wider batching interval would reduce customer freshness. No safely removable duplicate deploy was proven.",
+      "estimated_savings": "0 applied; hypothetical upper bound not asserted"
+    },
+    {
+      "id": "mlb_data_push_tests",
+      "evidence": "No root or NFL Test Suite in newest 1000 main runs despite frequent MLB bot data commits.",
+      "decision": "NO CHANGE",
+      "reason": "No observed daily root/NFL test waste from these bot commits; do not add risky broad path filters.",
+      "estimated_savings": "0"
+    },
+    {
+      "id": "same_head_push_pr_duplication",
+      "evidence": "PR #199 head 9c19be... had three root and three NFL runs at the same SHA around 16:32 UTC, across push and pull_request events and multiple branches.",
+      "decision": "REVIEW",
+      "reason": "Current concurrency keys use event refs, not commit SHA; same content reruns. Check branch-protection required checks and branch-only research coverage before changing triggers or cancellation.",
+      "estimated_savings": "Observed duplicate on this example: up to two root runs (~5-6 min each) and two NFL runs (~1.5 min each), not an extrapolated daily saving."
+    },
+    {
+      "id": "chromium_download",
+      "evidence": "Root test.yml installs Playwright Chromium every run; exact packet root run 36603293369 elapsed 5m19s, NFL run 36603293666 elapsed 1m29s.",
+      "decision": "REVIEW",
+      "reason": "Browser tests are a required safety gate. Cache tradeoffs/storage not measured; no test reduction authorized.",
+      "estimated_savings": "Unverified"
+    }
+  ],
+  "artifact_inventory": {
+    "scope": "Five sampled workflow runs; repository-wide artifact/cache listing or deletion not exposed by current GitHub connector.",
+    "samples": [
+      {
+        "run_id": 36381353140,
+        "name": "NFL full-game shadow",
+        "bytes": 705534,
+        "expires_at": "2026-10-28",
+        "classification": "EVIDENCE-CRITICAL",
+        "action": "KEEP"
+      },
+      {
+        "run_id": 36381180559,
+        "name": "NFL receptions shadow",
+        "bytes": 4391580,
+        "expires_at": "2026-12-27",
+        "classification": "EVIDENCE-CRITICAL",
+        "action": "KEEP"
+      },
+      {
+        "run_id": 36381121969,
+        "name": "NFL passing shadow",
+        "bytes": 4389984,
+        "expires_at": "2026-12-27",
+        "classification": "EVIDENCE-CRITICAL",
+        "action": "KEEP"
+      },
+      {
+        "run_id": 36604964169,
+        "name": "GitHub Pages artifact",
+        "bytes": 354831,
+        "expires_at": "2026-09-30",
+        "classification": "REPRODUCIBLE SHORT RETENTION",
+        "action": "NO CHANGE"
+      },
+      {
+        "run_id": 36513548652,
+        "name": "MLB Daily Pipeline",
+        "bytes": 0,
+        "classification": "NONE",
+        "action": "NO CHANGE"
+      }
+    ],
+    "cache_inventory": "UNAVAILABLE; no repository-wide cache endpoint exposed"
+  },
+  "applied_workflow_changes": [],
+  "measured_runtime_savings_minutes_per_run": 0
+}

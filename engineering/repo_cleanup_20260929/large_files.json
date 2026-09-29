@@ -1,0 +1,1033 @@
+{
+  "observed_main": "dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+  "tracked_file_count": 3060,
+  "tracked_blob_bytes": 2198713712,
+  "note": "Sum of current tree blob sizes, not compressed Git object storage or historical pack size.",
+  "classes": [
+    {
+      "class": "data/props daily sportsbook raw",
+      "files": 55,
+      "bytes": 1735570868,
+      "decision": "KEEP TRACKED",
+      "reason": "Dated actual source snapshots; unique raw evidence. No deletion."
+    },
+    {
+      "class": "data/odds daily",
+      "files": 55,
+      "bytes": 37400582,
+      "decision": "KEEP TRACKED",
+      "reason": "Dated odds/source evidence; do not equate with disposable generated cache."
+    },
+    {
+      "class": "data/players",
+      "files": 1342,
+      "bytes": 37892427,
+      "decision": "KEEP TRACKED",
+      "reason": "Player-source vintages used in public/research pipeline; verify per-file lifecycle before any migration."
+    },
+    {
+      "class": "output/mlb_daily text",
+      "files": 56,
+      "bytes": 156021803,
+      "decision": "ARCHIVE FIRST",
+      "reason": "Daily source collection transcript; referenced by project architecture, potentially unique PIT evidence."
+    },
+    {
+      "class": "output picks JSON",
+      "files": 398,
+      "bytes": 89740045,
+      "decision": "KEEP TRACKED",
+      "reason": "Public/prospective prediction history; even byte-identical alternate path can be a provenance reference."
+    },
+    {
+      "class": "output board freeze",
+      "files": 17,
+      "bytes": 15108227,
+      "decision": "KEEP TRACKED",
+      "reason": "Pregame and graded full-candidate evidence."
+    },
+    {
+      "class": "results",
+      "files": 60,
+      "bytes": 20435758,
+      "decision": "KEEP TRACKED",
+      "reason": "Grades/history and immutable public record."
+    },
+    {
+      "class": "docs JSON",
+      "files": 4,
+      "bytes": 11505581,
+      "decision": "KEEP LATEST ONLY",
+      "reason": "Existing latest-only website payload paths; preserve history via Git and public ledger, no architecture change."
+    },
+    {
+      "class": "accidental caches/temp/screenshots",
+      "files": 0,
+      "bytes": 0,
+      "decision": "NO CHANGE",
+      "reason": "No tracked matches on observed main tree."
+    }
+  ],
+  "top_100_files": [
+    {
+      "path": "data/props/props_2026-08-22.json",
+      "size": 81823821,
+      "sha": "2cea0dca0e66ec5ef1671244b53cc11c2a9774a3"
+    },
+    {
+      "path": "data/props/props_2026-08-25.json",
+      "size": 80438590,
+      "sha": "8ac1a4d56bf2cfbfc1253c7340ab4095b63e53e9"
+    },
+    {
+      "path": "data/props/props_2026-08-08.json",
+      "size": 79039607,
+      "sha": "f2db7af0a15cdbf66dddf04b87476e64289e6f92"
+    },
+    {
+      "path": "data/props/props_2026-08-18.json",
+      "size": 76680153,
+      "sha": "1ab2cce7b40dcc2732efe7eb6488a0a8e3f959a8"
+    },
+    {
+      "path": "data/props/props_2026-08-15.json",
+      "size": 76128805,
+      "sha": "3473650b666f465585f5870fa8f0510a7865f006"
+    },
+    {
+      "path": "data/props/props_2026-08-21.json",
+      "size": 71401387,
+      "sha": "bcadd55321c3923d6e5daaccd743b08cd06424ec"
+    },
+    {
+      "path": "data/props/props_2026-08-19.json",
+      "size": 69421894,
+      "sha": "0b64b7b9caa81e2383a89269cea415c5f7e015b7"
+    },
+    {
+      "path": "data/props/props_2026-08-16.json",
+      "size": 65941427,
+      "sha": "3b9b59e7236f55c86d85462864061d69477d7005"
+    },
+    {
+      "path": "data/props/props_2026-08-07.json",
+      "size": 62382220,
+      "sha": "81a5f6f37fcf27a65888ef544b8128caea43fb27"
+    },
+    {
+      "path": "data/props/props_2026-08-23.json",
+      "size": 62205949,
+      "sha": "a6aad8d60a5214cd15a005e2cdcdcd19928b9bfc"
+    },
+    {
+      "path": "data/props/props_2026-08-11.json",
+      "size": 59056873,
+      "sha": "638857228e16f1c158449a064908a24c0a6bbf29"
+    },
+    {
+      "path": "data/props/props_2026-08-26.json",
+      "size": 56142804,
+      "sha": "c801c823114b0577e8594fafe17e3455ff6e9e15"
+    },
+    {
+      "path": "data/props/props_2026-08-14.json",
+      "size": 55797542,
+      "sha": "945aa2bdc5257c38479bbd3e3e66eb15b7a6c529"
+    },
+    {
+      "path": "data/props/props_2026-08-17.json",
+      "size": 54853135,
+      "sha": "064f2781cd75f96f9223eadc94323dd6242b17b2"
+    },
+    {
+      "path": "data/props/props_2026-08-09.json",
+      "size": 53198449,
+      "sha": "de84dc2b6643cef1c17ad3d0f7f85e580e90594a"
+    },
+    {
+      "path": "data/props/props_2026-08-24.json",
+      "size": 49325908,
+      "sha": "8f2dcceddae29a25d80a3366d5e530d12346a9bd"
+    },
+    {
+      "path": "data/props/props_2026-08-12.json",
+      "size": 47593139,
+      "sha": "78d6380f047416e87cbc782d57b13d8d06e6e610"
+    },
+    {
+      "path": "data/props/props_2026-08-10.json",
+      "size": 41312315,
+      "sha": "aa3a15b3a5cbcc4617313160b84e1b57689541be"
+    },
+    {
+      "path": "data/props/props_2026-08-20.json",
+      "size": 39581817,
+      "sha": "1fa18a989c957cde0722d4207863913b9b2865c0"
+    },
+    {
+      "path": "data/props/props_2026-08-13.json",
+      "size": 26544899,
+      "sha": "ef3c89e984bbd20d7e9da4bd34f24653b233ff28"
+    },
+    {
+      "path": "data/props/props_2026-09-05.json",
+      "size": 25659859,
+      "sha": "39492e6aa5465a5f97a1ecd9c1560f2edcac5537"
+    },
+    {
+      "path": "data/props/props_2026-09-04.json",
+      "size": 25286601,
+      "sha": "f5b4ce7746edf4752b204e2f563c01c50db4b183"
+    },
+    {
+      "path": "data/props/props_2026-09-08.json",
+      "size": 24852505,
+      "sha": "2c268c81c81c522d3099b2f75ca2d4e6752f170d"
+    },
+    {
+      "path": "data/props/props_2026-09-19.json",
+      "size": 21428004,
+      "sha": "ead225122d88d215f6811533f3f7d873944d1b8f"
+    },
+    {
+      "path": "data/props/props_2026-09-11.json",
+      "size": 21384562,
+      "sha": "1e071043f1e3a930b719e8d575d0076ca654b545"
+    },
+    {
+      "path": "data/props/props_2026-09-18.json",
+      "size": 21243369,
+      "sha": "e66d67e1e0d02cd7c1de422e5fcbf50e800ad2d5"
+    },
+    {
+      "path": "data/props/props_2026-09-23.json",
+      "size": 21026065,
+      "sha": "f5747658e3e593706e607976ce6eee6171d2b6c5"
+    },
+    {
+      "path": "data/props/props_2026-09-06.json",
+      "size": 20845513,
+      "sha": "aeeb7e6f24739f75f764df3c4f5643f068dc4086"
+    },
+    {
+      "path": "data/props/props_2026-09-01.json",
+      "size": 19902270,
+      "sha": "584f1f5a317d62c27beb4aa21a523f74b095a894"
+    },
+    {
+      "path": "data/props/props_2026-09-15.json",
+      "size": 19887377,
+      "sha": "fe186fb23b0f4ddb37a7508a6d62a3d343a37672"
+    },
+    {
+      "path": "data/props/props_2026-09-25.json",
+      "size": 19803801,
+      "sha": "0577a8afe58a20a9dc327c9b42463f18deb94c0c"
+    },
+    {
+      "path": "data/props/props_2026-09-09.json",
+      "size": 19553373,
+      "sha": "f4a32985c216a48d881a116f43acea6ed97abe0b"
+    },
+    {
+      "path": "data/props/props_2026-09-12.json",
+      "size": 19435415,
+      "sha": "d6b013822de52a1768d9f8ff5a9f39493a3be4ac"
+    },
+    {
+      "path": "data/props/props_2026-09-26.json",
+      "size": 19108982,
+      "sha": "beb2267bb47a385407f95ea5004bc235c00c237a"
+    },
+    {
+      "path": "data/props/props_2026-09-22.json",
+      "size": 17950114,
+      "sha": "e4fa7dcc4914d72f79ad747afe542b443ba5cdb2"
+    },
+    {
+      "path": "data/props/props_2026-09-02.json",
+      "size": 17793638,
+      "sha": "4740021fbff547dee4e428c0e1cddf4db54f6909"
+    },
+    {
+      "path": "data/props/props_2026-09-20.json",
+      "size": 17295608,
+      "sha": "5d2ba24a69bab086ae676697d187a7830fa18697"
+    },
+    {
+      "path": "data/props/props_2026-08-29.json",
+      "size": 17068859,
+      "sha": "97cdca2af8b15c15fa7eecf69c9e7a8282b77f19"
+    },
+    {
+      "path": "data/props/props_2026-09-16.json",
+      "size": 16914898,
+      "sha": "baa2b89a517ff77d3e450158d42bb5257218c0ff"
+    },
+    {
+      "path": "data/props/props_2026-09-24.json",
+      "size": 14964250,
+      "sha": "7a684a12b4f04d5806682a0bfc2a4d5adbefb05c"
+    },
+    {
+      "path": "data/props/props_2026-09-27.json",
+      "size": 14645724,
+      "sha": "ff6c652dae69941f00285801d2fd8a439958da06"
+    },
+    {
+      "path": "data/props/props_2026-08-30.json",
+      "size": 14205849,
+      "sha": "433f1d84d439f2f2bc6addf3326cd3a42364068d"
+    },
+    {
+      "path": "data/props/props_2026-09-13.json",
+      "size": 13845353,
+      "sha": "679719734ac823097a6f6fd0f40226053d2c5663"
+    },
+    {
+      "path": "data/props/props_2026-09-14.json",
+      "size": 12503180,
+      "sha": "d8140e7d093af46b4c10815627857c2bce68044b"
+    },
+    {
+      "path": "data/props/props_2026-09-17.json",
+      "size": 11981765,
+      "sha": "540488b48e3845e7aff1ea36ade51df37f02ce03"
+    },
+    {
+      "path": "data/props/props_2026-09-03.json",
+      "size": 10998486,
+      "sha": "78b34a0b5a07ee0ccaa13ec6c4b02000c504d618"
+    },
+    {
+      "path": "data/props/props_2026-08-31.json",
+      "size": 10821527,
+      "sha": "ebd3f7ae99249fe750a5c019d329a27fc6548ef1"
+    },
+    {
+      "path": "data/props/props_2026-09-07.json",
+      "size": 9168160,
+      "sha": "5755d13b8fc31af93e9a6a44002b7b486514b4eb"
+    },
+    {
+      "path": "docs/live.json",
+      "size": 9083811,
+      "sha": "05b1f1481aeec5d3e8093891dc4822c0e21f29da"
+    },
+    {
+      "path": "data/props/props_2026-08-28.json",
+      "size": 7949960,
+      "sha": "1741eeff7a1cce82f0251e19b35cda06e49e4767"
+    },
+    {
+      "path": "data/props/props_2026-09-10.json",
+      "size": 7081887,
+      "sha": "001fbf5d6f8ec4117afb78a1871253edc62e524d"
+    },
+    {
+      "path": "data/props/props_2026-09-21.json",
+      "size": 3682996,
+      "sha": "9b8213285f99aeaa9a42828cc562655400ff8e4b"
+    },
+    {
+      "path": "data/props/props_2026-09-29.json",
+      "size": 3581576,
+      "sha": "432815b565238413ef4b88f8e4c80fe6cd30b1f2"
+    },
+    {
+      "path": "data/props/props_2026-08-27.json",
+      "size": 2924386,
+      "sha": "d4b6a084ae3be0eb70924f0f8ff0057439b980ff"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-22.txt",
+      "size": 2892967,
+      "sha": "6f055680610d35e64044cdc8e39de01e3415bdf4"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-23.txt",
+      "size": 2884463,
+      "sha": "ade8401464d2c9f9c475c035c7694772ba229e7d"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-27.txt",
+      "size": 2882401,
+      "sha": "54441530ff1f3b9b6ddaf5e193ffc3381d7edac3"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-19.txt",
+      "size": 2878991,
+      "sha": "49f137acf65f9962af463e2ffe4c57e34bd7fc33"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-20.txt",
+      "size": 2876722,
+      "sha": "de69f292af3648fa746a2075e772a887c2af1547"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-06.txt",
+      "size": 2876684,
+      "sha": "bd794e767107da55ab3c58068b85cffe6d1d1fa0"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-05.txt",
+      "size": 2874173,
+      "sha": "8b45d4947c671667d4efb3af2cce626692590358"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-12.txt",
+      "size": 2872384,
+      "sha": "58feb6cd100307b87913faff63c16cd5484e6d7b"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-13.txt",
+      "size": 2871309,
+      "sha": "2c50faeb822f515c5f9b343221bc5835354f390d"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-04.txt",
+      "size": 2867590,
+      "sha": "c6eebd49b4c475dc14e0f348c4e17467b9cf0684"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-16.txt",
+      "size": 2866639,
+      "sha": "c63911f6948ca7a1571d2b80da24012d688bb27f"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-15.txt",
+      "size": 2866446,
+      "sha": "db9d00cd21522f962655dfbcdf5a315d7466e2ad"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-09.txt",
+      "size": 2862152,
+      "sha": "426a01d95c031057ad777fdfb779f071a45c06df"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-29.txt",
+      "size": 2859457,
+      "sha": "a1ac0eb681db76ce9bc892df6299ff7f7b4e9fd0"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-08.txt",
+      "size": 2859275,
+      "sha": "fe4abc1fec070ae1757fd5f122fe27d76c009b13"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-11.txt",
+      "size": 2856635,
+      "sha": "ebf17b464272da5cd0f08a26d44fe9f5e01c643b"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-18.txt",
+      "size": 2853498,
+      "sha": "76b94f1f2686a5950520bf239740a3b455321915"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-28.txt",
+      "size": 2843440,
+      "sha": "dd7c412a375c23314454778b7fed3b396cd45d57"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-22.txt",
+      "size": 2840153,
+      "sha": "3ec2e1e733347460dc345d710562ddec0497b9c3"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-23.txt",
+      "size": 2839436,
+      "sha": "2a88d297f55c56601e84c9c703eafec4b67c2051"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-01.txt",
+      "size": 2838497,
+      "sha": "900a2b88848cce2153341d94010234484adba68e"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-21.txt",
+      "size": 2837534,
+      "sha": "843ba6a719726b72fd0d2092230a8b6a5bc58ee6"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-02.txt",
+      "size": 2835684,
+      "sha": "70101e6476a8e0a2e932a6d6278ee916ee2e46a8"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-30.txt",
+      "size": 2832099,
+      "sha": "3b9e574c3e504a60e252244807b44485606a244a"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-26.txt",
+      "size": 2829922,
+      "sha": "ba11d9ea1188f7f7b742d78522ac95c8fdc2a384"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-25.txt",
+      "size": 2828160,
+      "sha": "d9565903603fe4596f080e4e1b457852209eb667"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-26.txt",
+      "size": 2821421,
+      "sha": "c142b57a71d11a653e4e615b8652ccb48d4d32a3"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-12.txt",
+      "size": 2815361,
+      "sha": "30453ae8e6a335fb052eeac3925299611fdd67df"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-24.txt",
+      "size": 2807501,
+      "sha": "64892477d339859e241b131c9db328bec7e2a39a"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-09.txt",
+      "size": 2799832,
+      "sha": "cf280baf52cea1dbd0d2ebca7d9f347e2e1e16b1"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-08.txt",
+      "size": 2796732,
+      "sha": "136b5ba640c0c44c5230941f1e9ef2e3a6cb6717"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-11.txt",
+      "size": 2791230,
+      "sha": "fb541616fd4d4eeb426fba709c67c085f8adcefd"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-16.txt",
+      "size": 2783755,
+      "sha": "e24b731fff43c5052e2338d87651b9974ff6b8e1"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-07.txt",
+      "size": 2781707,
+      "sha": "f095820e53ccdb60c78ff25f68810f8d66e6f712"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-19.txt",
+      "size": 2780696,
+      "sha": "3cfc49a6592f08826dcca531064b10f860cdae0e"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-18.txt",
+      "size": 2779900,
+      "sha": "f3e5f577e6f5b2bcb058f36c04a490a07e1db0d7"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-15.txt",
+      "size": 2779534,
+      "sha": "c2e5150dc29c8e714de3ae465d0d3e5adc160fb8"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-05.txt",
+      "size": 2774443,
+      "sha": "73c465ac7f8e3d07ec8a00648628984b58e96f6e"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-31.txt",
+      "size": 2773120,
+      "sha": "e5e69b93f3c13e8946d2609f59d66bea27880fc2"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-07.txt",
+      "size": 2763628,
+      "sha": "cbc1ea773ffc0ccf43ed5e5440ba0193ffcfa6dc"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-14.txt",
+      "size": 2760600,
+      "sha": "83be16046731f2077aad9b009f70a1b9b5ca3214"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-14.txt",
+      "size": 2744808,
+      "sha": "e86802c0cda37d2f06e748166656abb7208af29f"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-17.txt",
+      "size": 2733847,
+      "sha": "c7b203deb31bbc755710e926dc8060b60eae54a3"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-24.txt",
+      "size": 2722013,
+      "sha": "9106ac813d83076129a79859d4cba3bf91a40f40"
+    },
+    {
+      "path": "output/mlb_daily_2026-09-03.txt",
+      "size": 2718637,
+      "sha": "a7b9a31d4419da8effa4dbe3cde232fa0826f704"
+    },
+    {
+      "path": "output/mlb_daily_2026-08-06.txt",
+      "size": 2707389,
+      "sha": "dd7f423877819857a9faa3a5c286e88988e9e487"
+    }
+  ],
+  "exact_blob_duplicate_groups": [
+    {
+      "sha": "cbade7af314ee12bef718bb11030b87eb05f10bd",
+      "size_each": 47619,
+      "paths": [
+        "dashboard/static/app.css",
+        "docs/app.css"
+      ]
+    },
+    {
+      "sha": "e6f1cc537c97dddcaaf8e0832a2b00352ab9ff03",
+      "size_each": 204123,
+      "paths": [
+        "dashboard/static/app.js",
+        "docs/app.js"
+      ]
+    },
+    {
+      "sha": "0dc4e749410df9a51e7be9236312b93ff338f238",
+      "size_each": 6109,
+      "paths": [
+        "dashboard/static/index.html",
+        "docs/index.html"
+      ]
+    },
+    {
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size_each": 0,
+      "paths": [
+        "data/players/.gitkeep",
+        "output/.gitkeep",
+        "results/.gitkeep"
+      ]
+    },
+    {
+      "sha": "ffa805f2295205a5ed6770eecc1ed7ba45e152c3",
+      "size_each": 4293,
+      "paths": [
+        "docs/nfl/app.css",
+        "nfl/web/static/app.css"
+      ]
+    },
+    {
+      "sha": "dc840f725e77f2a804f11074621b4f04e980305f",
+      "size_each": 5114,
+      "paths": [
+        "docs/nfl/app.js",
+        "nfl/web/static/app.js"
+      ]
+    },
+    {
+      "sha": "e2d86bffc96f1ec4d71ca3fe7787417be4622e02",
+      "size_each": 1766,
+      "paths": [
+        "docs/nfl/index.html",
+        "nfl/web/static/index.html"
+      ]
+    },
+    {
+      "sha": "dcecb241db4831f82292e2547008eb535cf9f7a9",
+      "size_each": 56223,
+      "paths": [
+        "output/picks_2026-08-07.json",
+        "output/picks_2026-08-07_2026-08-07T235837.json"
+      ]
+    },
+    {
+      "sha": "1d1b46f9c392314bc9d7196f91fcca146e25100c",
+      "size_each": 56744,
+      "paths": [
+        "output/picks_2026-08-08.json",
+        "output/picks_2026-08-08_2026-08-08T235522.json"
+      ]
+    },
+    {
+      "sha": "ae77f6ac1218c1821ed9765feb06dce1e43e4c2b",
+      "size_each": 43305,
+      "paths": [
+        "output/picks_2026-08-09.json",
+        "output/picks_2026-08-09_2026-08-09T235914.json"
+      ]
+    },
+    {
+      "sha": "8f43b886230861ffb7ffd808b7d15e6775ab09be",
+      "size_each": 56176,
+      "paths": [
+        "output/picks_2026-08-10.json",
+        "output/picks_2026-08-10_2026-08-10T230451.json"
+      ]
+    },
+    {
+      "sha": "a9936af039678dd544d0d131c5dafd404ae120e8",
+      "size_each": 55957,
+      "paths": [
+        "output/picks_2026-08-11.json",
+        "output/picks_2026-08-11_2026-08-11T231221.json"
+      ]
+    },
+    {
+      "sha": "635f9c90ab40cdfd827a413f9e13532167657528",
+      "size_each": 83422,
+      "paths": [
+        "output/picks_2026-08-12.json",
+        "output/picks_2026-08-12_2026-08-12T231011.json"
+      ]
+    },
+    {
+      "sha": "7cc4d0934644b54b395e852c3c92b867bfecda9e",
+      "size_each": 265158,
+      "paths": [
+        "output/picks_2026-08-14.json",
+        "output/picks_2026-08-14_2026-08-14T234909.json"
+      ]
+    },
+    {
+      "sha": "cebcbe8e8a0d57e87d29a74359c0e144638985de",
+      "size_each": 235384,
+      "paths": [
+        "output/picks_2026-08-15.json",
+        "output/picks_2026-08-15_2026-08-15T234604.json"
+      ]
+    },
+    {
+      "sha": "b5e09ece5a34ffc55b2115b94d5657c5a179b1fa",
+      "size_each": 213071,
+      "paths": [
+        "output/picks_2026-08-16.json",
+        "output/picks_2026-08-16_2026-08-16T224608.json"
+      ]
+    },
+    {
+      "sha": "38e619b7b62c3e0b7385c824342df97c89765bbe",
+      "size_each": 308173,
+      "paths": [
+        "output/picks_2026-08-17.json",
+        "output/picks_2026-08-17_2026-08-17T235000.json"
+      ]
+    },
+    {
+      "sha": "fd5d82e29711051d9bff67ddf6a7463f7b36c673",
+      "size_each": 310794,
+      "paths": [
+        "output/picks_2026-08-18.json",
+        "output/picks_2026-08-18_2026-08-18T234850.json"
+      ]
+    },
+    {
+      "sha": "5fbc54112d16bddd0a8e592691b77d63345f7d70",
+      "size_each": 317430,
+      "paths": [
+        "output/picks_2026-08-19.json",
+        "output/picks_2026-08-19_2026-08-19T234948.json"
+      ]
+    },
+    {
+      "sha": "af289fb5307cdc91e5bd91fd144ec907459e4b39",
+      "size_each": 366868,
+      "paths": [
+        "output/picks_2026-08-21.json",
+        "output/picks_2026-08-21_2026-08-21T235127.json"
+      ]
+    },
+    {
+      "sha": "73c4bf51b3bb950a545e0ff862ed75c0b88cfb1e",
+      "size_each": 321492,
+      "paths": [
+        "output/picks_2026-08-22.json",
+        "output/picks_2026-08-22_2026-08-22T234815.json"
+      ]
+    },
+    {
+      "sha": "c8b08f02c812fd0303553dad1e40c67939b365ff",
+      "size_each": 284497,
+      "paths": [
+        "output/picks_2026-08-23.json",
+        "output/picks_2026-08-23_2026-08-23T224819.json"
+      ]
+    },
+    {
+      "sha": "c9585375b7b3f037228e440d0832a7da09e85487",
+      "size_each": 362336,
+      "paths": [
+        "output/picks_2026-08-24.json",
+        "output/picks_2026-08-24_2026-08-24T234942.json"
+      ]
+    },
+    {
+      "sha": "b28e5015b1a494f208838996411b59e947aa534d",
+      "size_each": 385068,
+      "paths": [
+        "output/picks_2026-08-25.json",
+        "output/picks_2026-08-25_2026-08-25T235340.json"
+      ]
+    },
+    {
+      "sha": "fac5d3498324402a294e9e98b2f88f8b2794fa9f",
+      "size_each": 387916,
+      "paths": [
+        "output/picks_2026-08-26.json",
+        "output/picks_2026-08-26_2026-08-26T232206.json"
+      ]
+    },
+    {
+      "sha": "23d91aca89b76bd53b6f5631ce8082b32ed85f43",
+      "size_each": 327683,
+      "paths": [
+        "output/picks_2026-08-27.json",
+        "output/picks_2026-08-27_2026-08-27T235649.json"
+      ]
+    },
+    {
+      "sha": "beddf7b8bd116b42b9c07338e6003a6af3aaf305",
+      "size_each": 394770,
+      "paths": [
+        "output/picks_2026-08-28.json",
+        "output/picks_2026-08-28_2026-08-28T234344.json"
+      ]
+    },
+    {
+      "sha": "d568fae1d3c1fd6adc68f18890ea6aa2749f313a",
+      "size_each": 328034,
+      "paths": [
+        "output/picks_2026-08-30.json",
+        "output/picks_2026-08-30_2026-08-30T224536.json"
+      ]
+    },
+    {
+      "sha": "1cc80bdb2198e7fa1b9c24e0f0eb570191d14791",
+      "size_each": 390457,
+      "paths": [
+        "output/picks_2026-08-31.json",
+        "output/picks_2026-08-31_2026-08-31T234912.json"
+      ]
+    },
+    {
+      "sha": "d47b455f2a8c0269069a3fae0f9272bb32cebd53",
+      "size_each": 413456,
+      "paths": [
+        "output/picks_2026-09-01.json",
+        "output/picks_2026-09-01_2026-09-01T223820.json"
+      ]
+    },
+    {
+      "sha": "a2f6398d2054cba6aa76b20d683bff7124445d04",
+      "size_each": 417203,
+      "paths": [
+        "output/picks_2026-09-02.json",
+        "output/picks_2026-09-02_2026-09-02T223858.json"
+      ]
+    },
+    {
+      "sha": "ced11484d024fd4443c1e5850f50f1bd3e72587f",
+      "size_each": 407481,
+      "paths": [
+        "output/picks_2026-09-03.json",
+        "output/picks_2026-09-03_2026-09-03T223827.json"
+      ]
+    },
+    {
+      "sha": "6f1b4f655d4b9bd262332e93f25ca25b4af6bf25",
+      "size_each": 416872,
+      "paths": [
+        "output/picks_2026-09-04.json",
+        "output/picks_2026-09-04_2026-09-04T222540.json"
+      ]
+    },
+    {
+      "sha": "c29e0b8c19e54932522ef81fba50514fb3f954a4",
+      "size_each": 411664,
+      "paths": [
+        "output/picks_2026-09-05.json",
+        "output/picks_2026-09-05_2026-09-05T220921.json"
+      ]
+    },
+    {
+      "sha": "6a6d3aca08e23ef47f036f9710ce3c419739b4ad",
+      "size_each": 316249,
+      "paths": [
+        "output/picks_2026-09-06.json",
+        "output/picks_2026-09-06_2026-09-06T221108.json"
+      ]
+    },
+    {
+      "sha": "1b1a7e35881b7a68fe9027ea40c0f73210363853",
+      "size_each": 382530,
+      "paths": [
+        "output/picks_2026-09-07.json",
+        "output/picks_2026-09-07_2026-09-07T225211.json"
+      ]
+    },
+    {
+      "sha": "ab0d21f687783ad27a2a10ed413d652732cb0af3",
+      "size_each": 429866,
+      "paths": [
+        "output/picks_2026-09-08.json",
+        "output/picks_2026-09-08_2026-09-08T224346.json"
+      ]
+    },
+    {
+      "sha": "7595c8c3519c88ed85af005c38aa15177402b850",
+      "size_each": 409416,
+      "paths": [
+        "output/picks_2026-09-09.json",
+        "output/picks_2026-09-09_2026-09-09T223459.json"
+      ]
+    },
+    {
+      "sha": "6e36651975284f719d5ca6d420f992b90e716898",
+      "size_each": 343705,
+      "paths": [
+        "output/picks_2026-09-10.json",
+        "output/picks_2026-09-10_2026-09-10T223231.json"
+      ]
+    },
+    {
+      "sha": "3a055fd01d89a3b0cbade6f1ecef4e9915dfdaf9",
+      "size_each": 415223,
+      "paths": [
+        "output/picks_2026-09-11.json",
+        "output/picks_2026-09-11_2026-09-11T223917.json"
+      ]
+    },
+    {
+      "sha": "4024b8f5089d4f4a229f2eb22365b3559dfd8841",
+      "size_each": 367673,
+      "paths": [
+        "output/picks_2026-09-12.json",
+        "output/picks_2026-09-12_2026-09-12T221741.json"
+      ]
+    },
+    {
+      "sha": "d1e94443a2e56930f97c3fd88ba7e877ea6d16a7",
+      "size_each": 334866,
+      "paths": [
+        "output/picks_2026-09-13.json",
+        "output/picks_2026-09-13_2026-09-13T222606.json"
+      ]
+    },
+    {
+      "sha": "7c20abb33d936f302e7407fc5719afc31a4cb141",
+      "size_each": 399384,
+      "paths": [
+        "output/picks_2026-09-14.json",
+        "output/picks_2026-09-14_2026-09-14T231257.json"
+      ]
+    },
+    {
+      "sha": "106240c8648eef342193a0f88c0253481228d428",
+      "size_each": 414236,
+      "paths": [
+        "output/picks_2026-09-15.json",
+        "output/picks_2026-09-15_2026-09-15T225732.json"
+      ]
+    },
+    {
+      "sha": "7ca43ba9a706035e78e4e991654cd24fc8e36eb2",
+      "size_each": 403770,
+      "paths": [
+        "output/picks_2026-09-16.json",
+        "output/picks_2026-09-16_2026-09-16T230250.json"
+      ]
+    },
+    {
+      "sha": "68a892e6dfe335415cf6c63103a2ef507dd8ec76",
+      "size_each": 397882,
+      "paths": [
+        "output/picks_2026-09-17.json",
+        "output/picks_2026-09-17_2026-09-17T225938.json"
+      ]
+    },
+    {
+      "sha": "aa7471f5bc2faf84c9ab89b4b21c8f4738733a89",
+      "size_each": 409400,
+      "paths": [
+        "output/picks_2026-09-18.json",
+        "output/picks_2026-09-18_2026-09-18T223846.json"
+      ]
+    },
+    {
+      "sha": "3c02d33446ecdcf8d635075c77d233104a8c94d3",
+      "size_each": 414133,
+      "paths": [
+        "output/picks_2026-09-19.json",
+        "output/picks_2026-09-19_2026-09-19T222808.json"
+      ]
+    },
+    {
+      "sha": "9a7e8d4d857a40c2405034f50d351dc7728fc246",
+      "size_each": 325241,
+      "paths": [
+        "output/picks_2026-09-20.json",
+        "output/picks_2026-09-20_2026-09-20T223302.json"
+      ]
+    },
+    {
+      "sha": "2dbd979a06ca5694071cc94e191e23a3db2d5887",
+      "size_each": 357894,
+      "paths": [
+        "output/picks_2026-09-21.json",
+        "output/picks_2026-09-21_2026-09-21T231921.json"
+      ]
+    },
+    {
+      "sha": "8900c63f01db7902edd034dbd5396395925b1c63",
+      "size_each": 435354,
+      "paths": [
+        "output/picks_2026-09-22.json",
+        "output/picks_2026-09-22_2026-09-22T230143.json"
+      ]
+    },
+    {
+      "sha": "bd16e5e50ae102dfd9573349200d5e989277d0cc",
+      "size_each": 417996,
+      "paths": [
+        "output/picks_2026-09-23.json",
+        "output/picks_2026-09-23_2026-09-23T230347.json"
+      ]
+    },
+    {
+      "sha": "734d0b167daa134d4c93136b0c64ad7bf31cb36e",
+      "size_each": 370226,
+      "paths": [
+        "output/picks_2026-09-24.json",
+        "output/picks_2026-09-24_2026-09-24T232059.json"
+      ]
+    },
+    {
+      "sha": "954e52b5a649f81c534cb306f7edf68a388e6a55",
+      "size_each": 395616,
+      "paths": [
+        "output/picks_2026-09-25.json",
+        "output/picks_2026-09-25_2026-09-25T232341.json"
+      ]
+    },
+    {
+      "sha": "d103a6a51c645506e655f7257a232d7c72a599d5",
+      "size_each": 375671,
+      "paths": [
+        "output/picks_2026-09-26.json",
+        "output/picks_2026-09-26_2026-09-26T224710.json"
+      ]
+    },
+    {
+      "sha": "c8c0acaa824129b3af69d3e1b9e1099268d99e1c",
+      "size_each": 305401,
+      "paths": [
+        "output/picks_2026-09-27.json",
+        "output/picks_2026-09-27_2026-09-27T200801.json"
+      ]
+    },
+    {
+      "sha": "96ce675a6bcf89e5316b92a9ac50105fa08d2b9b",
+      "size_each": 65469,
+      "paths": [
+        "output/picks_2026-09-29.json",
+        "output/picks_2026-09-29_2026-09-29T025227.json"
+      ]
+    }
+  ],
+  "duplicate_blob_bytes_if_one_copy_per_group": 16373859
+}

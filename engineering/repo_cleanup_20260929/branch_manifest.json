@@ -1,0 +1,4178 @@
+[
+  {
+    "branch": "accuracy/ci-eligibility-and-lineup-timing",
+    "tip_sha": "25feb77b95d566e9f67117b68fccb79568d4df8d",
+    "tip_commit_date_utc": "2026-08-24T22:14:44Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15211,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "accuracy/combined-strikeouts-settlement-fix",
+    "tip_sha": "8d4ff7a364eadafad60d73064a3784194b738a3c",
+    "tip_commit_date_utc": "2026-08-24T23:37:11Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15175,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "accuracy/hr-execution-prereg-01",
+    "tip_sha": "0ae4535d5a417bbe8f58e2efac9eed4f995c1495",
+    "tip_commit_date_utc": "2026-09-01T19:19:50Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 14180,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        74
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #74",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "accuracy/hr-rare-event-prereg",
+    "tip_sha": "8057bcd08b6b13d7662a91370ad791568355ef14",
+    "tip_commit_date_utc": "2026-08-28T16:20:49Z",
+    "unique_commits_vs_main": 30,
+    "behind_main": 14814,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "accuracy/league-rate-rolling-window",
+    "tip_sha": "19d79367c1865b81f15393bc7fc966fd605dad83",
+    "tip_commit_date_utc": "2026-08-20T06:18:24Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15594,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "accuracy/pitcher-outs-investigation",
+    "tip_sha": "f3adbe463c1f0886c03b992efd499c84c1560991",
+    "tip_commit_date_utc": "2026-08-26T20:24:21Z",
+    "unique_commits_vs_main": 3,
+    "behind_main": 15532,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "accuracy/second-ci-path-fix",
+    "tip_sha": "acbb865d98bd3b2652e5777e6e049b92bc1b37a6",
+    "tip_commit_date_utc": "2026-08-24T22:58:47Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15190,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "accuracy/selection-quality-investigation",
+    "tip_sha": "9bf1d59cb94465abdbc260beed21d1d04c4bb06b",
+    "tip_commit_date_utc": "2026-08-20T19:05:00Z",
+    "unique_commits_vs_main": 5,
+    "behind_main": 15525,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "accuracy/short-window-sweep",
+    "tip_sha": "3cf947293d9c69d12a9acda455a64c20ddffed45",
+    "tip_commit_date_utc": "2026-08-24T22:01:57Z",
+    "unique_commits_vs_main": 3,
+    "behind_main": 15207,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "accuracy/singles-modelled-probability",
+    "tip_sha": "1a866a3a00ac97b142bdbb65dd82019b1ad1e1b5",
+    "tip_commit_date_utc": "2026-08-19T23:56:18Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15596,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "archive/gridiron-continuation-dvaljm-pre-recovery-502c5f4f",
+    "tip_sha": "502c5f4f67542e285c753ddcfe1af139f887a478",
+    "tip_commit_date_utc": "2026-08-25T17:45:15Z",
+    "unique_commits_vs_main": 35,
+    "behind_main": 15067,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "autosave/test-autosave-durability",
+    "tip_sha": "18c1f3ada3b863babc96b3db0d11274159a209dc",
+    "tip_commit_date_utc": "2026-08-26T21:03:52Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 14925,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "autosave/test-autosave-guard-A",
+    "tip_sha": "b6286e7e9cd7d6043072a4c66630a1d991ffbe7d",
+    "tip_commit_date_utc": "2026-08-26T20:54:32Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 14925,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "canonical/2025-source-boundary-blocker",
+    "tip_sha": "5416860b9a82769299cb0324053f356a2dcecb2d",
+    "tip_commit_date_utc": "2026-09-01T19:16:56Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 12460,
+    "protected": true,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "protected",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "KEEP",
+    "reason": "GitHub reports protected"
+  },
+  {
+    "branch": "canonical-durable-checkpoints",
+    "tip_sha": "cf214dd0d25b3ccf7db79ca0c05462e03675a5a5",
+    "tip_commit_date_utc": "2026-08-29T02:20:06Z",
+    "unique_commits_vs_main": null,
+    "behind_main": null,
+    "protected": true,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "protected",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "KEEP",
+    "reason": "GitHub reports protected"
+  },
+  {
+    "branch": "canonical-run-manifests",
+    "tip_sha": "d53e3ebfece4bd8b0eed541dece05e66dbc7fdb4",
+    "tip_commit_date_utc": "2026-08-27T03:35:48Z",
+    "unique_commits_vs_main": 3,
+    "behind_main": 14814,
+    "protected": true,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "protected",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "KEEP",
+    "reason": "GitHub reports protected"
+  },
+  {
+    "branch": "carnow-auto-claimer-standalone",
+    "tip_sha": "bd4510d2ca054962ef6f9b53aa01d15e36a0efa7",
+    "tip_commit_date_utc": "2026-09-19T21:15:44Z",
+    "unique_commits_vs_main": 88,
+    "behind_main": 7849,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/board-freeze-line-field-fix-20260918",
+    "tip_sha": "98f4e41f805f81dbefaa9016e9743e9e1dc1953b",
+    "tip_commit_date_utc": "2026-09-18T21:16:39Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4437,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/canonical-rebuild-and-accuracy-foundation-01",
+    "tip_sha": "a3017bce8a9dd41919f546a9e011818c3bf68c15",
+    "tip_commit_date_utc": "2026-08-27T15:16:56Z",
+    "unique_commits_vs_main": 16,
+    "behind_main": 14814,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/canonical-source-identity-01",
+    "tip_sha": "fc589447ec157bff9a96071edc3ceb6c7dc734eb",
+    "tip_commit_date_utc": "2026-08-28T15:18:51Z",
+    "unique_commits_vs_main": 29,
+    "behind_main": 14814,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/central-slate-contract-20260924",
+    "tip_sha": "d21ba2f5fce59c8dd735a2e7731478184445c29c",
+    "tip_commit_date_utc": "2026-09-25T17:23:58Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 1470,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        198
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #198",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/champion-baseline-and-supply-frontier-01",
+    "tip_sha": "04209ee071602bdb7c43208076be4356abb4c841",
+    "tip_commit_date_utc": "2026-09-03T04:50:32Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 11853,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/deploy-shallow-checkout-20260924",
+    "tip_sha": "ad7b516f1b5729f289913cc4fba857c0fd51ca7b",
+    "tip_commit_date_utc": "2026-09-24T14:26:15Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 1890,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/dustin-may-commencement-invariant-01",
+    "tip_sha": "9e28e3eb5d2f4a0ef78333196025c388a1777836",
+    "tip_commit_date_utc": "2026-08-27T02:49:14Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 14822,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/dustin-may-lifecycle-fix-01",
+    "tip_sha": "06ac7c3a846565dff0ba90a36bbaeeec14ffc09e",
+    "tip_commit_date_utc": "2026-08-26T23:43:53Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 14866,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/e2e-deterministic-today-fixture-20260925",
+    "tip_sha": "57f764491acc4a5d24b38e437d703a3829cf4c30",
+    "tip_commit_date_utc": "2026-09-25T18:10:54Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 1464,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        215
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #215",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/e2e-fixture-integration-20260925",
+    "tip_sha": "08155801a9e0b2a8ec9cd9d6e978d1844181a715",
+    "tip_commit_date_utc": "2026-09-25T18:10:56Z",
+    "unique_commits_vs_main": 7,
+    "behind_main": 1463,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/full-count-superhero-tooling-01",
+    "tip_sha": "2c8e466febefa531052015548eaa86c7c61b40d5",
+    "tip_commit_date_utc": "2026-08-26T23:19:38Z",
+    "unique_commits_vs_main": 14,
+    "behind_main": 14890,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/gitignore-agent-worktrees-20260918",
+    "tip_sha": "342f69e71ea0711bb38ab594f165ad93f0626d33",
+    "tip_commit_date_utc": "2026-09-18T15:51:59Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 4562,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        130
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #130",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/gridiron-continuation-dvaljm",
+    "tip_sha": "502c5f4f67542e285c753ddcfe1af139f887a478",
+    "tip_commit_date_utc": "2026-08-25T17:45:15Z",
+    "unique_commits_vs_main": 35,
+    "behind_main": 15067,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/hits-runs-rbis-mechanism-20260918",
+    "tip_sha": "c7dc7fdfd12f65edb6d2b753ce4c5a83aeb6718f",
+    "tip_commit_date_utc": "2026-09-25T17:24:08Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 1470,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        131
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #131",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/integrity-and-ux-repair-86567",
+    "tip_sha": "fc130f532929fc273928fa0cb97a6450e3579d26",
+    "tip_commit_date_utc": "2026-08-26T11:43:52Z",
+    "unique_commits_vs_main": 40,
+    "behind_main": 15060,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/laughing-albattani-sxdj1d",
+    "tip_sha": "5a5ff6764d478201efae0ac8ce96fbaf9b8ea7c1",
+    "tip_commit_date_utc": "2026-09-11T21:03:03Z",
+    "unique_commits_vs_main": 6,
+    "behind_main": 7849,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/legacy-prereg-port-20260925",
+    "tip_sha": "1fa6c6031ddbf02fb783e1d01ec39dace6d65500",
+    "tip_commit_date_utc": "2026-09-25T18:00:29Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 1460,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        216
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #216",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/live-brain-foundation-01",
+    "tip_sha": "1f88762207f9763d33c3f4d4a8abce639ee20525",
+    "tip_commit_date_utc": "2026-08-26T22:09:27Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 14888,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/live-heartbeat-infra-01",
+    "tip_sha": "2fcffe6b3ae2b4c49c30352c13247a0e73a79785",
+    "tip_commit_date_utc": "2026-08-26T22:00:30Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 14887,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/live-lifecycle-p0-01",
+    "tip_sha": "27b4e996df678ab872085c9ad524339a62ce83d6",
+    "tip_commit_date_utc": "2026-08-26T19:47:00Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 14889,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/merge-sequence-integration-20260925",
+    "tip_sha": "ace4cec2f46e3c8fc500ddfead88192ef2339755",
+    "tip_commit_date_utc": "2026-09-25T18:12:02Z",
+    "unique_commits_vs_main": 59,
+    "behind_main": 1456,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/mission0-independent-reproduction-01",
+    "tip_sha": "b969f010f9d63195f943db8e3bad06f00d3a98c0",
+    "tip_commit_date_utc": "2026-09-01T20:10:03Z",
+    "unique_commits_vs_main": 3,
+    "behind_main": 12452,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/mlb-board-freeze-20260918",
+    "tip_sha": "633c642c8c4fa9090572a95158a430d2c4461aa8",
+    "tip_commit_date_utc": "2026-09-18T16:26:38Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4554,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/mlb-board-freeze-grader-20260918",
+    "tip_sha": "8067b045de9cb4176e92243a9371dc70d4c8e8b2",
+    "tip_commit_date_utc": "2026-09-18T17:56:39Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4506,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/mlb-board-freeze-grader-push-20260918",
+    "tip_sha": "c176d1ff221cb3982e237a5b609f1623acc30b97",
+    "tip_commit_date_utc": "2026-09-18T21:42:44Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4420,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/mlb-board-freeze-grading-gap-20260920",
+    "tip_sha": "078dbebdb3f7727848281b8b23e7c1085617039a",
+    "tip_commit_date_utc": "2026-09-19T23:43:51Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 3862,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/mlb-fullboard-calibration-analysis-20260923",
+    "tip_sha": "9266b789805d50b3d22c9f39a0065b84b24bc3f4",
+    "tip_commit_date_utc": "2026-09-23T22:21:55Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 2152,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        188
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #188",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/mlb-fullboard-snapshot-20260923",
+    "tip_sha": "8e413cc072db59204559ce33fcd6124fa77309b8",
+    "tip_commit_date_utc": "2026-09-25T17:24:04Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 1470,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        187
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #187",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/mlb-grading-catchup-heredoc-body-indent-fix-20260922",
+    "tip_sha": "a8ea3c0365c77c46aec2ce48c8341ff2e5ec00fd",
+    "tip_commit_date_utc": "2026-09-23T03:45:55Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 2473,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/mlb-grading-catchup-heredoc-fix-20260922",
+    "tip_sha": "50010d12d7812e8172ac372ba1580036e9c51913",
+    "tip_commit_date_utc": "2026-09-22T19:34:59Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 2629,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/mlb-grading-recovery-20260920",
+    "tip_sha": "98252288cca20b01dcd5c57991432dba54dfee4b",
+    "tip_commit_date_utc": "2026-09-20T17:22:06Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 3563,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/mlb-history-dashboard-20260917",
+    "tip_sha": "5dc2129210434ad2bf0c4619502c39d5883840c7",
+    "tip_commit_date_utc": "2026-09-17T21:33:43Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4982,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/mlb-market-anchor-prereg-20260924",
+    "tip_sha": "063aea6bb53709983b1cc4bff975456386c9c142",
+    "tip_commit_date_utc": "2026-09-24T20:24:42Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 1790,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/mlb-mission10-toppick-calibration-holdout-20260924",
+    "tip_sha": "c30c1c3a37311f607d9c2980450bdec49520968b",
+    "tip_commit_date_utc": "2026-09-25T17:24:00Z",
+    "unique_commits_vs_main": 4,
+    "behind_main": 1470,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        192
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #192",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/mlb-pitcher-outs-shrinkage-prior-research-20260920",
+    "tip_sha": "ec6821486093542801546b5226aa1222bd83eedd",
+    "tip_commit_date_utc": "2026-09-20T17:31:17Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 3560,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/mlb-selection-overconfidence-20260924",
+    "tip_sha": "025fdf63eda25d9d0112d3920f2144e14baa1277",
+    "tip_commit_date_utc": "2026-09-25T17:23:56Z",
+    "unique_commits_vs_main": 6,
+    "behind_main": 1470,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        201
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #201",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/new-session-hzlb2f",
+    "tip_sha": "ab2688d5085162c546787e5774f94cd67b424952",
+    "tip_commit_date_utc": "2026-08-04T20:42:43Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 16800,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-atl-gb-evidence-20260924",
+    "tip_sha": "49db0772787019a8b10f688fb8d20f6538c32e33",
+    "tip_commit_date_utc": "2026-09-25T15:04:46Z",
+    "unique_commits_vs_main": 4,
+    "behind_main": 1737,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/nfl-box-score-outcomes-20260917",
+    "tip_sha": "91ee9c6e4e093e13cf0a5d1c188433411610e0fe",
+    "tip_commit_date_utc": "2026-09-17T17:55:36Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 5066,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-c2-totals-only-20260918",
+    "tip_sha": "8067b045de9cb4176e92243a9371dc70d4c8e8b2",
+    "tip_commit_date_utc": "2026-09-18T17:56:39Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4506,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-c2-totals-only-push-20260918",
+    "tip_sha": "f2eb59cbf06cc6e1cad68aec9652dbb1d3b33198",
+    "tip_commit_date_utc": "2026-09-19T01:53:19Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4324,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-c3-margin-availability-20260918",
+    "tip_sha": "6fbff17efe64e0cac0721292f614bdd05c6842c8",
+    "tip_commit_date_utc": "2026-09-18T21:47:42Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4416,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-coach-regime-substrate-20260919",
+    "tip_sha": "6202cc5f8595bbafa0271b498e812d4d87d71767",
+    "tip_commit_date_utc": "2026-09-19T14:16:02Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4136,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-coaching-consumer-and-ablation-20260923",
+    "tip_sha": "bc0cb52ffdd8b81dd7cac7ed5018484f47eb0675",
+    "tip_commit_date_utc": "2026-09-23T16:00:37Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 2286,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-game-market-c2-push-20260918",
+    "tip_sha": "e000083350d797ea16c1c12c14d6d9cdca3cd2df",
+    "tip_commit_date_utc": "2026-09-18T17:36:17Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4517,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-genius-market-registry-20260919",
+    "tip_sha": "0aab4d5f233adc1cb1b2ab6ff552cd3a833ad544",
+    "tip_commit_date_utc": "2026-09-19T14:59:10Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4086,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-grade-player-prop-board-20260917",
+    "tip_sha": "9cdb2167f77ad6868cc0d5c649d77bb9aaec0c96",
+    "tip_commit_date_utc": "2026-09-17T20:08:34Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 5013,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-housekeeping-20260924",
+    "tip_sha": "de9f053208638b5d5092a68dc0b1eaa4597dc32c",
+    "tip_commit_date_utc": "2026-09-25T18:20:14Z",
+    "unique_commits_vs_main": 7,
+    "behind_main": 1770,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/nfl-injury-qb-continuity-push-20260918",
+    "tip_sha": "6d3b4b7761ec1d8d6cd94df59cd340dc82ddc9b2",
+    "tip_commit_date_utc": "2026-09-18T17:24:13Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4525,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-live-player-prop-board-20260917",
+    "tip_sha": "d969022fa026d6e1b87b88ec482c3ca99a2071e3",
+    "tip_commit_date_utc": "2026-09-17T17:45:39Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 5072,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-news-brain-audit-20260919",
+    "tip_sha": "e2b83986e75a0367f623888855906f190656d7fa",
+    "tip_commit_date_utc": "2026-09-19T17:15:14Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 4042,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/nfl-news-brain-final-integration-20260919",
+    "tip_sha": "d93b4c37423c9a2ced5f78a1df51b9b9e7b57d0e",
+    "tip_commit_date_utc": "2026-09-19T22:44:12Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 3904,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-news-brain-identity-temporal-repair-20260919",
+    "tip_sha": "a602d7649e44396c21e995b1db14c20f54243008",
+    "tip_commit_date_utc": "2026-09-19T21:02:33Z",
+    "unique_commits_vs_main": 3,
+    "behind_main": 4042,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/nfl-news-brain-parallel-eligibility-check-20260920",
+    "tip_sha": "85cb969fede8cef273915cac129b56fe33a1aade",
+    "tip_commit_date_utc": "2026-09-19T23:13:17Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 3873,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-news-practice-pipeline-20260919",
+    "tip_sha": "c54c0f177cf41924405bd3b986ac328c12a750fa",
+    "tip_commit_date_utc": "2026-09-19T15:32:52Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 4069,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/nfl-news-source-coverage-matrix-20260919",
+    "tip_sha": "7a005eeef0d1e229f89d3a181b3b317ce0d92971",
+    "tip_commit_date_utc": "2026-09-19T17:37:09Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4026,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-non-sunday-target-date-override-20260923",
+    "tip_sha": "00c3081642a4b4718c3ab69b399946a16cfe81fb",
+    "tip_commit_date_utc": "2026-09-23T15:49:31Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 2286,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-opportunity-ablation-2024-holdout-20260923",
+    "tip_sha": "ba757f1fdfcaf69dc91b1a59497b4cf896870667",
+    "tip_commit_date_utc": "2026-09-25T17:24:06Z",
+    "unique_commits_vs_main": 3,
+    "behind_main": 1470,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        184
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #184",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/nfl-opportunity-error-decomposition-20260923",
+    "tip_sha": "0d85251d7e919a92be2508c99e4d39420214ac63",
+    "tip_commit_date_utc": "2026-09-25T17:24:02Z",
+    "unique_commits_vs_main": 3,
+    "behind_main": 1470,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        191
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #191",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/nfl-outcome-distribution-audit-20260919",
+    "tip_sha": "f6e4d716ab3ebdfa3396f8200682417be515f241",
+    "tip_commit_date_utc": "2026-09-19T17:04:53Z",
+    "unique_commits_vs_main": 4,
+    "behind_main": 4042,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/nfl-outcome-distribution-experiment-20260919",
+    "tip_sha": "eeb8618f275995ea37fd1c2af8f767799bb4c652",
+    "tip_commit_date_utc": "2026-09-19T15:45:09Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 4069,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/nfl-passing-yards-alt-ladder-20260923",
+    "tip_sha": "fddbed763adbd0ec7fe0719888473c18acb143f3",
+    "tip_commit_date_utc": "2026-09-23T22:42:06Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 2153,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        190
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #190",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/nfl-passing-yards-roster-schema-fix-20260923",
+    "tip_sha": "300c237d146d0cac03a4ecbee6e36d46db835e6e",
+    "tip_commit_date_utc": "2026-09-23T16:44:38Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 2269,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-player-prop-normalizer-20260917",
+    "tip_sha": "cc3575b11d162fb4cee1d6f13c044a540d4aa34a",
+    "tip_commit_date_utc": "2026-09-17T16:35:36Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 5103,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-player-prop-settlement-spec-20260917",
+    "tip_sha": "e8de2e0286a775c9d770c7156d9c93783943c103",
+    "tip_commit_date_utc": "2026-09-17T16:36:26Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 5103,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-pregame-target-share-20260923",
+    "tip_sha": "675d84f087c81a3ef9bd343907afad3b00e508ed",
+    "tip_commit_date_utc": "2026-09-24T01:36:34Z",
+    "unique_commits_vs_main": 9,
+    "behind_main": 2111,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        193
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #193",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/nfl-publish-manual-gate-20260917",
+    "tip_sha": "49e6a18b878dc56fa4a83a4aaf14a11282749a79",
+    "tip_commit_date_utc": "2026-09-17T16:11:23Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 5110,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-qb-availability-gate-20260923",
+    "tip_sha": "bc7b48d62d81811b04fda4d70cfcc6a7537b073f",
+    "tip_commit_date_utc": "2026-09-23T22:34:22Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 2227,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-qb-change-opportunity-20260923",
+    "tip_sha": "865da57a11369e3eb381cae5b174677342753dd1",
+    "tip_commit_date_utc": "2026-09-23T18:52:53Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 2229,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-receptions-b0-20260918",
+    "tip_sha": "8067b045de9cb4176e92243a9371dc70d4c8e8b2",
+    "tip_commit_date_utc": "2026-09-18T17:56:39Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4506,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-receptions-b0-v2-20260918",
+    "tip_sha": "409ec0ff0629198da833d26ed6b08e256e73c429",
+    "tip_commit_date_utc": "2026-09-18T21:33:41Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4424,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-receptions-challenger-sealed-snapshot-20260920",
+    "tip_sha": "007c070f77993a196d8dda16d623621e7e6d0c3f",
+    "tip_commit_date_utc": "2026-09-20T03:14:21Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 3798,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-receptions-distribution-final-candidate-20260919",
+    "tip_sha": "9bc42a5cb0be719a0a81f03e543717d29bf12fec",
+    "tip_commit_date_utc": "2026-09-19T22:43:48Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 3903,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-receptions-frozen-challenger-20260920",
+    "tip_sha": "4f7118a4a15e7e52264e54d7d22ed27ef851635d",
+    "tip_commit_date_utc": "2026-09-20T00:04:25Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 3845,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-receptions-live-shadow-20260919",
+    "tip_sha": "6110403f7d55d1b6002d91f6f05739f7dc455481",
+    "tip_commit_date_utc": "2026-09-19T15:01:44Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4084,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-receptions-paired-prospective-20260922",
+    "tip_sha": "8c3a1d9ce8e15adb7f45520aabfd6b1fe8dbb3d5",
+    "tip_commit_date_utc": "2026-09-22T22:26:49Z",
+    "unique_commits_vs_main": 4,
+    "behind_main": 2624,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/nfl-receptions-pmf-ladder-coherence-repair-20260919",
+    "tip_sha": "f3a3a0662ebb855796954e50417a8f4bad414a80",
+    "tip_commit_date_utc": "2026-09-19T21:02:44Z",
+    "unique_commits_vs_main": 4,
+    "behind_main": 3953,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/nfl-receptions-roster-repin-20260922",
+    "tip_sha": "1e3404b332e80f0cb344fb1185f3fdad4d392bf2",
+    "tip_commit_date_utc": "2026-09-22T22:35:14Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 2560,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/nfl-receptions-team-opportunity-engine-20260923",
+    "tip_sha": "8febda985ee1f49d1301abad5531d1265df9713b",
+    "tip_commit_date_utc": "2026-09-23T15:13:30Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 2434,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-role-adjusted-live-wiring-20260923",
+    "tip_sha": "4af31a89de0f0bc0ec8412d835200a54d6443a76",
+    "tip_commit_date_utc": "2026-09-23T05:41:11Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 2443,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-role-builder-determinism-repair-20260919",
+    "tip_sha": "dba5a119563c83ce89aa217208b0df1d93df68b3",
+    "tip_commit_date_utc": "2026-09-19T17:40:23Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 4029,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/nfl-role-builder-downstream-training-certification-20260919",
+    "tip_sha": "c448c7bdd740dd5d2a744efb40c328330dca68a7",
+    "tip_commit_date_utc": "2026-09-19T21:53:09Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 3955,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/nfl-role-data-final-integration-candidate-20260919",
+    "tip_sha": "04e871e917bfb7f81faddb5260d7f4d0d44367a0",
+    "tip_commit_date_utc": "2026-09-19T22:36:25Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 3906,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-role-intelligence-substrate-20260919",
+    "tip_sha": "5f56f645a96c31f90143a95e823e877ce7d1b8fc",
+    "tip_commit_date_utc": "2026-09-19T14:39:13Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4127,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-role-opponent-intelligence-connector-20260923",
+    "tip_sha": "fa259ddda36d338df1a58ac90bc580d8859ec3d9",
+    "tip_commit_date_utc": "2026-09-23T02:46:09Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 2489,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/nfl-role-redistribution-audit-20260919",
+    "tip_sha": "cb02d246994c5dcef1d6947841453ee2b2e5cb96",
+    "tip_commit_date_utc": "2026-09-19T17:14:14Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 4036,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/nfl-role-redistribution-experiment-20260919",
+    "tip_sha": "0c87e4a74afb3d64a91e714a80650f9909a6a97b",
+    "tip_commit_date_utc": "2026-09-19T15:41:20Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 4069,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/nfl-role-redistribution-research-final-candidate-20260920",
+    "tip_sha": "99bb8cf45509987cc2078d03d1b1d88528a6bcf0",
+    "tip_commit_date_utc": "2026-09-19T23:15:30Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 3871,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-rushing-yards-baseline-20260923",
+    "tip_sha": "efb40423ffef7d1234d759790a47544f726108cd",
+    "tip_commit_date_utc": "2026-09-25T17:25:17Z",
+    "unique_commits_vs_main": 4,
+    "behind_main": 1470,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        186
+      ],
+      "base_prs": [
+        212
+      ]
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #186",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/nfl-seal-inputs-20260925",
+    "tip_sha": "4b7fd4babe27a532af02aeaa0dd4a9ba341f7b4b",
+    "tip_commit_date_utc": "2026-09-25T16:47:00Z",
+    "unique_commits_vs_main": null,
+    "behind_main": null,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "active_or_prospective_protected_by_mission",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "KEEP",
+    "reason": "Explicit protected/current workstream"
+  },
+  {
+    "branch": "claude/nfl-snap-share-role-change-20260923",
+    "tip_sha": "1f8a1987ed92f930510308092c5b0affe4f0587d",
+    "tip_commit_date_utc": "2026-09-23T17:15:27Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 2261,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-sunday-roster-pin-repair-20260920",
+    "tip_sha": "ea0b4d483793bf18b5a47a3f0913c55fa358b97a",
+    "tip_commit_date_utc": "2026-09-20T17:09:17Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 3571,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/nfl-tier1-foundation-20260924",
+    "tip_sha": "e05e02c592a87df0b4878b6df3c544396990ea5f",
+    "tip_commit_date_utc": "2026-09-25T15:51:47Z",
+    "unique_commits_vs_main": 5,
+    "behind_main": 1774,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        202
+      ],
+      "base_prs": [
+        213,
+        207,
+        205,
+        204,
+        203
+      ]
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #202",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/nfl-tier1-player-opportunity-20260924",
+    "tip_sha": "8aa8067fbc71416e4f541b9fd3610e59331f11c4",
+    "tip_commit_date_utc": "2026-09-24T21:25:37Z",
+    "unique_commits_vs_main": 4,
+    "behind_main": 1774,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        203
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #203",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/nfl-tier1-seal-2026w03",
+    "tip_sha": "e05e02c592a87df0b4878b6df3c544396990ea5f",
+    "tip_commit_date_utc": "2026-09-25T15:51:47Z",
+    "unique_commits_vs_main": 5,
+    "behind_main": 1774,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "active_or_prospective_protected_by_mission",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "KEEP",
+    "reason": "Explicit protected/current workstream"
+  },
+  {
+    "branch": "claude/nfl-tier1-team-context-20260924",
+    "tip_sha": "40d842c9a967e6692c63a0b0a1730f36f304f2a8",
+    "tip_commit_date_utc": "2026-09-24T21:24:48Z",
+    "unique_commits_vs_main": 4,
+    "behind_main": 1774,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        204
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #204",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/nfl-tier1-touchdown-20260924",
+    "tip_sha": "76b42547c39357c27ebd15ec9c3bbd492b2de6a2",
+    "tip_commit_date_utc": "2026-09-24T21:28:09Z",
+    "unique_commits_vs_main": 3,
+    "behind_main": 1774,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        205
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #205",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/nfl-tier2-coverage-20260925",
+    "tip_sha": "f4fb17aa0b12ac5acd54cbdfe3a02716400f7a0c",
+    "tip_commit_date_utc": "2026-09-25T15:51:49Z",
+    "unique_commits_vs_main": 10,
+    "behind_main": 1774,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        207
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #207",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/nfl-tier2-player-efficiency-f17-20260925",
+    "tip_sha": "edddb9ab2bd0f8078f3151552be8d0c473a6448e",
+    "tip_commit_date_utc": "2026-09-25T16:13:37Z",
+    "unique_commits_vs_main": 9,
+    "behind_main": 1774,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        213
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #213",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/pr186-integration-20260925",
+    "tip_sha": "6f549c9d0a1c7c4784c866c270d7dd182a65fc9f",
+    "tip_commit_date_utc": "2026-09-25T17:06:11Z",
+    "unique_commits_vs_main": 13,
+    "behind_main": 1474,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/practical-maxwell-wgs4l6",
+    "tip_sha": "7f21e77ea1376f2ab321178c880aafd977dd0542",
+    "tip_commit_date_utc": "2026-09-11T14:07:49Z",
+    "unique_commits_vs_main": 13,
+    "behind_main": 8183,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/pre-merge-certification-doctrine-20260919",
+    "tip_sha": "7e0e649738d503317cae276c9c89db396ae038aa",
+    "tip_commit_date_utc": "2026-09-19T17:33:48Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4027,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/product-history-live-games-pricing-20260924",
+    "tip_sha": "b7772124d532a7df2f3fc80e118c62d6b42eda35",
+    "tip_commit_date_utc": "2026-09-24T06:22:39Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 2076,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/product-published-today-ct-20260924",
+    "tip_sha": "175bf7ce1a477b0110abfcf16976e9219fb08969",
+    "tip_commit_date_utc": "2026-09-24T14:07:22Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 1893,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/prospective-hits-pa-lifecycle-closure-01",
+    "tip_sha": "4744ad2fc737d1805fa8b6271388a38014ae1d1e",
+    "tip_commit_date_utc": "2026-09-02T18:25:59Z",
+    "unique_commits_vs_main": 39,
+    "behind_main": 12429,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        85
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #85",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "claude/prospective-hits-pa-shadow-v1-01",
+    "tip_sha": "41369064aedd4b81ac36f0f05cda2bc0fa587c46",
+    "tip_commit_date_utc": "2026-09-02T00:20:00Z",
+    "unique_commits_vs_main": 14,
+    "behind_main": 12429,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/published-downgrade-display-20260924",
+    "tip_sha": "c586833e57469bf9110d382a922e6c2c44d3d5dd",
+    "tip_commit_date_utc": "2026-09-24T20:28:32Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 1785,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/realized-hit-rate-sprint-01",
+    "tip_sha": "2ce95fe903526c62640d23659d84d37bbaf1d6d2",
+    "tip_commit_date_utc": "2026-08-26T16:33:33Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 14925,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/recovery-canonical-durability-01",
+    "tip_sha": "c1f2645686b89f1c4e4a01dcee40707b05da65a1",
+    "tip_commit_date_utc": "2026-08-27T15:15:00Z",
+    "unique_commits_vs_main": 11,
+    "behind_main": 14680,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/review-pr164-frozen-nb-receptions-20260920",
+    "tip_sha": "2576511970107ab673f2b653d970d386999e8668",
+    "tip_commit_date_utc": "2026-09-19T23:44:25Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 3866,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/superclaude-activation-prep-01",
+    "tip_sha": "b50f2c78a3a1468a8b5fd2af5277ca5dbd754674",
+    "tip_commit_date_utc": "2026-09-03T05:08:00Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 11985,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/tier1-research-integration-20260925",
+    "tip_sha": "59492822f8e012477d76f5aed8ec2d7149bf6f1b",
+    "tip_commit_date_utc": "2026-09-25T17:04:34Z",
+    "unique_commits_vs_main": 35,
+    "behind_main": 1474,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "claude/top-pick-calibration-audit-20260918",
+    "tip_sha": "9044a470494db858bf7a85d97990a10171baf667",
+    "tip_commit_date_utc": "2026-09-18T15:28:32Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4571,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "claude/ux-experience-revamp-01",
+    "tip_sha": "ac5641d579c6b4deeba970886728d81bd2479e61",
+    "tip_commit_date_utc": "2026-08-26T20:00:10Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 14899,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "codex/agent-bridge-claude-code-20260917",
+    "tip_sha": "12d83332b3e02d175db218a8a2edc72d4b8dc576",
+    "tip_commit_date_utc": "2026-09-17T15:57:57Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 5112,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "codex/audit-pr90-worker-dry-run-20260912",
+    "tip_sha": "3f1958b00cece95af6e2a53c0847c02031780476",
+    "tip_commit_date_utc": "2026-09-12T22:52:16Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 7490,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "codex/mlb-grading-catchup-20260921",
+    "tip_sha": "41f3e0b5eb6ee3c1dd44aedb67239b93996120cb",
+    "tip_commit_date_utc": "2026-09-22T16:49:27Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 2678,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "codex/nfl-film-intelligence-prototype-20260922",
+    "tip_sha": "a898e3660d9093a0b75f03b6477cd65e8672e3bd",
+    "tip_commit_date_utc": "2026-09-22T17:51:55Z",
+    "unique_commits_vs_main": 13,
+    "behind_main": 2662,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        170
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #170",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "codex/nfl-game-lines-normalizer-20260915",
+    "tip_sha": "3cb537417588fdba52a954fd6a6324b2f341a16c",
+    "tip_commit_date_utc": "2026-09-18T14:05:29Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4642,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "codex/nfl-game-market-b0-reconciled-20260917",
+    "tip_sha": "d8dff48c42a69d888c23cde739854ba37d649ad4",
+    "tip_commit_date_utc": "2026-09-18T14:22:28Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4616,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "codex/nfl-game-market-c1-reconciled-20260917",
+    "tip_sha": "4e68f635ad55ee2f6b5a93a0a3f97c1797d2beba",
+    "tip_commit_date_utc": "2026-09-18T14:22:35Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4615,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "codex/nfl-game-market-consolidation-20260917",
+    "tip_sha": "409ccb2d3e0705ffedf37812ecf5595892c5c060",
+    "tip_commit_date_utc": "2026-09-18T14:47:46Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4586,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "codex/nfl-mnf-execution-20260914",
+    "tip_sha": "4c7289e9bb9a019f290a4be76c42efdb8ecefcb3",
+    "tip_commit_date_utc": "2026-09-14T22:21:39Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 6326,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "codex/nfl-mnf-trigger-20260914",
+    "tip_sha": "4c7289e9bb9a019f290a4be76c42efdb8ecefcb3",
+    "tip_commit_date_utc": "2026-09-14T22:21:39Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 6326,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "codex/nfl-passing-baseline-research-20260914",
+    "tip_sha": "b40208015b0213947ed7c850cef7e0a1e3c25183",
+    "tip_commit_date_utc": "2026-09-18T14:32:55Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4605,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "codex/nfl-player-prop-board-integrity-20260918",
+    "tip_sha": "2d8ae40fe8eb23bc594a8790fa4c2c40b189b83e",
+    "tip_commit_date_utc": "2026-09-18T14:41:38Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4590,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "codex/nfl-price-aware-offers-20260923",
+    "tip_sha": "7626a0424f5f2dbf7aebb9d8383ce70381453c3c",
+    "tip_commit_date_utc": "2026-09-24T14:28:15Z",
+    "unique_commits_vs_main": 6,
+    "behind_main": 1897,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        196
+      ],
+      "base_prs": [
+        199
+      ]
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #196",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "codex/nfl-price-b0-join-20260924",
+    "tip_sha": "9c19be01729f0a61371d3d4e49e0e6724ec1b4e9",
+    "tip_commit_date_utc": "2026-09-29T16:32:05Z",
+    "unique_commits_vs_main": 13,
+    "behind_main": 1897,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        199
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #199",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "codex/nfl-pricing-eligibility-20260925",
+    "tip_sha": "9c19be01729f0a61371d3d4e49e0e6724ec1b4e9",
+    "tip_commit_date_utc": "2026-09-29T16:32:05Z",
+    "unique_commits_vs_main": 13,
+    "behind_main": 1897,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "active_or_prospective_protected_by_mission",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "KEEP",
+    "reason": "Explicit protected/current workstream"
+  },
+  {
+    "branch": "codex/nfl-pricing-integration-20260925",
+    "tip_sha": "6ba684fd0947e1b76707c25f441322187f0ef301",
+    "tip_commit_date_utc": "2026-09-25T19:53:16Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 1425,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "codex/nfl-pricing-integration-20260929-final",
+    "tip_sha": "a3c6b79c694893b05d2dea4b96e1753399c775cc",
+    "tip_commit_date_utc": "2026-09-29T16:32:49Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 13,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "active_or_prospective_protected_by_mission",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "KEEP",
+    "reason": "Explicit protected/current workstream"
+  },
+  {
+    "branch": "codex/nfl-pricing-integration-20260929",
+    "tip_sha": "61453918f276b0a9bc9f0a1b9ff60b7b99604542",
+    "tip_commit_date_utc": "2026-09-29T16:29:54Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 17,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "codex/nfl-real-tactical-source-20260922",
+    "tip_sha": "db54f1f6dc1ad0176dba6cd99a2e556362234d09",
+    "tip_commit_date_utc": "2026-09-23T16:28:57Z",
+    "unique_commits_vs_main": 5,
+    "behind_main": 2564,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        174
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #174",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "codex/nfl-reboot-intelligence-20260929",
+    "tip_sha": "d854d065676abe21202a2ed08f19c3af2c06aa64",
+    "tip_commit_date_utc": "2026-09-29T17:12:23Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 5,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "active_or_prospective_protected_by_mission",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "KEEP",
+    "reason": "Explicit protected/current workstream"
+  },
+  {
+    "branch": "codex/nfl-source-quarantine-20260914",
+    "tip_sha": "2b4b776d08bce7b0ae86119e94a0f48506a888e2",
+    "tip_commit_date_utc": "2026-09-18T14:05:22Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4643,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "codex/nfl-tier2-concepts-f14-20260925",
+    "tip_sha": "c5403efa9af65d853645dbd18868596f3ea631d4",
+    "tip_commit_date_utc": "2026-09-25T15:29:39Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 1497,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        209
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #209",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "codex/nfl-tier2-defender-coverage-f18-20260925",
+    "tip_sha": "0d324fd96113e79f7a6bc014d7af75577290660d",
+    "tip_commit_date_utc": "2026-09-25T16:20:34Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 1487,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        214
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #214",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "codex/nfl-tier2-personnel-f15-20260925",
+    "tip_sha": "2930030da41897dc073939289d2ebc36aa596eb6",
+    "tip_commit_date_utc": "2026-09-25T15:47:33Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 1495,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        211
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #211",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "codex/nfl-tier2-pressure-f13-20260925",
+    "tip_sha": "556bc26e6e476392cc135685bcbca6ba25804f5e",
+    "tip_commit_date_utc": "2026-09-25T14:32:15Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 1511,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        206
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #206",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "codex/nfl-tier2-rushing-box-f16-20260925",
+    "tip_sha": "0a303be0876da49a162966df752da68b4371581f",
+    "tip_commit_date_utc": "2026-09-25T16:03:33Z",
+    "unique_commits_vs_main": 5,
+    "behind_main": 2228,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        212
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #212",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "codex/nfl-tonight-player-prop-ingest-20260917",
+    "tip_sha": "43591db5a835c3ae3a95363fbbb7a323e1dfe7d1",
+    "tip_commit_date_utc": "2026-09-17T20:01:15Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 5110,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "codex/nflverse-game-lines-audit-20260915",
+    "tip_sha": "2c446be15c7a404b5b34024c49adbcfe011dedaa",
+    "tip_commit_date_utc": "2026-09-18T14:22:15Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4618,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "codex/nflverse-game-lines-normalize-20260915",
+    "tip_sha": "c3833f7b6da90153258d2fa159828f0f387ede0b",
+    "tip_commit_date_utc": "2026-09-18T14:22:21Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4617,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "codex/pr177-integration-20260925",
+    "tip_sha": "8dfbac39ce82bed4db3eb6cec2e98c459aaef20e",
+    "tip_commit_date_utc": "2026-09-25T17:11:27Z",
+    "unique_commits_vs_main": 7,
+    "behind_main": 1475,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "codex/pr208-integration-20260925",
+    "tip_sha": "270997f821d053412ceb246eac4720b859973719",
+    "tip_commit_date_utc": "2026-09-25T19:36:47Z",
+    "unique_commits_vs_main": 3,
+    "behind_main": 1432,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "codex/pr210-integration-20260925",
+    "tip_sha": "0933a89b3ae19eb195a1faae1e1186cf99766dc4",
+    "tip_commit_date_utc": "2026-09-25T17:02:26Z",
+    "unique_commits_vs_main": 5,
+    "behind_main": 1474,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "codex/pr-closure-readiness-20260925",
+    "tip_sha": "319ef92c1483b8b05bd50489fce6607f134e7b0d",
+    "tip_commit_date_utc": "2026-09-25T18:19:40Z",
+    "unique_commits_vs_main": 6,
+    "behind_main": 1473,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "codex/total-sports-foundations-20260912",
+    "tip_sha": "9b115b16147a52894192929d88e9bebbc9e52f85",
+    "tip_commit_date_utc": "2026-09-18T14:05:17Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4644,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "evidence/band-clustered-signal",
+    "tip_sha": "3e36e66da976d54c2349c3da2d91985f056febdc",
+    "tip_commit_date_utc": "2026-09-10T14:57:25Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 11668,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "evidence/model-skill-audit",
+    "tip_sha": "a37e8ba9ab7940f48ac43bd7c20965177888a47f",
+    "tip_commit_date_utc": "2026-09-10T20:31:08Z",
+    "unique_commits_vs_main": 4,
+    "behind_main": 8311,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "fc-autosave/claude/recovery-canonical-durability-01",
+    "tip_sha": "2d4e7ef4067deb2adf1ca5e6b6f1404ebff82cf1",
+    "tip_commit_date_utc": "2026-08-27T13:41:31Z",
+    "unique_commits_vs_main": 3,
+    "behind_main": 14680,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "fc-autosave/superclaude",
+    "tip_sha": "3cb2897b42559f7def814a77027757e1bdd78548",
+    "tip_commit_date_utc": "2026-09-02T21:51:20Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 11992,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "fc-e2e-source-test",
+    "tip_sha": "6c446bde0985dd91cd5a6af51eaa8758886aca8b",
+    "tip_commit_date_utc": "2026-08-28T14:22:59Z",
+    "unique_commits_vs_main": null,
+    "behind_main": null,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unrelated_history_or_api_unknown",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "GitHub API error 404: {\"message\":\"No common ancestor between dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f"
+  },
+  {
+    "branch": "fc-preflight-probe",
+    "tip_sha": "41e99b1ccf79d8cbec7e6cf793a299fff7bf02a8",
+    "tip_commit_date_utc": "2026-08-28T15:31:24Z",
+    "unique_commits_vs_main": null,
+    "behind_main": null,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unrelated_history_or_api_unknown",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "GitHub API error 404: {\"message\":\"No common ancestor between dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f"
+  },
+  {
+    "branch": "feat/empty-board-transparency",
+    "tip_sha": "476da0fccffe92f9f10a2873d11c81795c754ffc",
+    "tip_commit_date_utc": "2026-08-24T19:16:49Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15224,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "fix/home-runs-filter",
+    "tip_sha": "aa746d9606a21515961fb24e9a8b94c05cc275b2",
+    "tip_commit_date_utc": "2026-08-21T14:59:57Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15458,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "fix/streak-chip-clarity",
+    "tip_sha": "5a50629987ad5e7f321af50cf34cd1ae25eb481c",
+    "tip_commit_date_utc": "2026-08-24T19:02:46Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15224,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "fix/strikeout-alternatives-missing-stat",
+    "tip_sha": "585a16505cebe662d47119fed48f736413136219",
+    "tip_commit_date_utc": "2026-08-19T05:39:33Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15696,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "incident/2026-09-03-broken-main",
+    "tip_sha": "9686a49e8df98e2b08ac91e4cc7c805434e13476",
+    "tip_commit_date_utc": "2026-09-03T05:25:52Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 11979,
+    "protected": true,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "protected",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "KEEP",
+    "reason": "GitHub reports protected"
+  },
+  {
+    "branch": "incident/2026-09-03-pre-rewrite",
+    "tip_sha": "c3875b523b34b96a14adca477d74e9d7f621311a",
+    "tip_commit_date_utc": "2026-09-03T05:10:54Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 11840,
+    "protected": true,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "protected",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "KEEP",
+    "reason": "GitHub reports protected"
+  },
+  {
+    "branch": "incident/2026-09-03-superclaude-head",
+    "tip_sha": "b50f2c78a3a1468a8b5fd2af5277ca5dbd754674",
+    "tip_commit_date_utc": "2026-09-03T05:08:00Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 11985,
+    "protected": true,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "protected",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "KEEP",
+    "reason": "GitHub reports protected"
+  },
+  {
+    "branch": "live-integrity/freshness-contract-and-scheduling",
+    "tip_sha": "12605390bf4492615d7c5a2fb7eab341c49a0a8c",
+    "tip_commit_date_utc": "2026-08-19T06:11:48Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15693,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "live-integrity/pitcher-role-terminal-settlement",
+    "tip_sha": "f841ba887a194b678ff2a6428e1ad36500f97c0d",
+    "tip_commit_date_utc": "2026-08-19T06:36:45Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15691,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "main",
+    "tip_sha": "dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "tip_commit_date_utc": "2026-09-29T17:21:41Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 0,
+    "protected": true,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": [
+        216,
+        215,
+        214,
+        211,
+        210,
+        209,
+        206,
+        202,
+        201,
+        198,
+        196,
+        193,
+        192,
+        191,
+        190,
+        188,
+        187,
+        186,
+        184,
+        177,
+        174,
+        170,
+        131,
+        130,
+        110,
+        85,
+        78,
+        77,
+        75,
+        74,
+        73
+      ]
+    },
+    "evidence_category": "protected",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "KEEP",
+    "reason": "GitHub reports protected"
+  },
+  {
+    "branch": "mlb-grading-recovery-push-20260920",
+    "tip_sha": "ec11f2b162091a3638f746c70e77e6f5833cf74c",
+    "tip_commit_date_utc": "2026-09-20T17:41:48Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 3555,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "p0/live-board-integrity",
+    "tip_sha": "d83a4f665fe9a4e045523a746ebb23fb10c08a04",
+    "tip_commit_date_utc": "2026-08-28T22:35:46Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 14234,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "pre-phase-v/alternate-line-calibration-parity",
+    "tip_sha": "db029890d8b4d6a021bd84a904dc32e5e68d4d42",
+    "tip_commit_date_utc": "2026-08-18T22:02:11Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15728,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "pre-phase-v/calibrator-support-boundary",
+    "tip_sha": "a052e79aae98e000751bf026261ca5ff37dd245a",
+    "tip_commit_date_utc": "2026-08-19T01:49:08Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15708,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "pre-phase-v/engineering-memory",
+    "tip_sha": "e448773338ed9fc644b9029b72bb4b9fef4cbdb9",
+    "tip_commit_date_utc": "2026-08-17T18:58:33Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15837,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "pre-phase-v/h1-ci-calibration-scale-integrity",
+    "tip_sha": "88dcec5ef2c21e45981d3f3b053bf230307063c9",
+    "tip_commit_date_utc": "2026-08-19T00:25:18Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15714,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "pre-phase-v/incident-recovery-rollout-docs",
+    "tip_sha": "c647205b687aa2a1195e1dd3934c094436d38f4e",
+    "tip_commit_date_utc": "2026-08-18T20:53:13Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15745,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "pre-phase-v/live-artifact-orphan-migration-fix",
+    "tip_sha": "7700a2a7a69b706d44b4e3ff252ab43e2a0c5dad",
+    "tip_commit_date_utc": "2026-08-18T20:04:16Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15758,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "pre-phase-v/live-lifecycle-hardening",
+    "tip_sha": "87db8cd7a340caf6dfeb0d431746f437ee40f4a3",
+    "tip_commit_date_utc": "2026-08-18T00:30:41Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15801,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "pre-phase-v/recommendation-classification-integrity",
+    "tip_sha": "b353df5f67d435ddc2adc544a43fee34869f5914",
+    "tip_commit_date_utc": "2026-08-18T21:22:10Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15740,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "pre-phase-v-engineering-memory",
+    "tip_sha": "42296727536126cc6e6c99670a1892db9a322cf5",
+    "tip_commit_date_utc": "2026-08-17T18:38:40Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15840,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "prediction-ledger/publication-events",
+    "tip_sha": "b220bc5a544b5e0c829d16c4120ec9c8bdaf6a3f",
+    "tip_commit_date_utc": "2026-08-19T15:16:45Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15666,
+    "protected": true,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "protected",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "KEEP",
+    "reason": "GitHub reports protected"
+  },
+  {
+    "branch": "release/integrity-and-ux-repair",
+    "tip_sha": "e88eecbd15513368b49291d11a416f9703f24d6b",
+    "tip_commit_date_utc": "2026-08-26T11:43:43Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 14952,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "superchad/canonical-certification-readiness-01",
+    "tip_sha": "926cf3f81465df83292d8066e7aa17c7b72d577b",
+    "tip_commit_date_utc": "2026-08-29T15:54:12Z",
+    "unique_commits_vs_main": 10,
+    "behind_main": 13927,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        82
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #82",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "superchad/canonical-integrity-safe-01",
+    "tip_sha": "ce854b192a90a67d78924498566ebc586162188b",
+    "tip_commit_date_utc": "2026-08-27T17:21:20Z",
+    "unique_commits_vs_main": 44,
+    "behind_main": 14814,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "superchad/canonical-v2-provenance-runner-01",
+    "tip_sha": "40d933ca78c6f55a633f230d2141d529efff19b5",
+    "tip_commit_date_utc": "2026-08-31T21:06:38Z",
+    "unique_commits_vs_main": 153,
+    "behind_main": 14814,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "superchad/ci-today-fixture-stability-20260925",
+    "tip_sha": "d68b2d60737e0634bc52ba28faa655ea18004e06",
+    "tip_commit_date_utc": "2026-09-25T15:24:22Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 1496,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "superchad/control-plane-20260911",
+    "tip_sha": "dcfe36bbb2d464d6ee62ab3170deceeb8fa2e90e",
+    "tip_commit_date_utc": "2026-09-11T15:11:06Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 7904,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "superchad/experiment-primitives-01",
+    "tip_sha": "7794220733cb479fbd3bd14764288ece7eb9aae0",
+    "tip_commit_date_utc": "2026-08-29T15:22:01Z",
+    "unique_commits_vs_main": 7,
+    "behind_main": 13927,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        79
+      ],
+      "base_prs": [
+        84,
+        81
+      ]
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #79",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "superchad/fix-board-first-paint-clock-fixture-01",
+    "tip_sha": "26d37fd4753f3755c43ed3cf2c10f1aa60d8d424",
+    "tip_commit_date_utc": "2026-08-29T14:34:57Z",
+    "unique_commits_vs_main": 3,
+    "behind_main": 13927,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        75
+      ],
+      "base_prs": [
+        82,
+        79
+      ]
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #75",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "superchad/hr-contact-state-feature-scaffold-01",
+    "tip_sha": "77442dabfe325ceed9bfe54344486d060fda791f",
+    "tip_commit_date_utc": "2026-08-29T15:07:10Z",
+    "unique_commits_vs_main": 9,
+    "behind_main": 13929,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        80
+      ],
+      "base_prs": [
+        83
+      ]
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #80",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "superchad/hr-contact-state-integration-01",
+    "tip_sha": "d9d40fa175413c2eaccf6937c311920314633370",
+    "tip_commit_date_utc": "2026-08-29T15:51:05Z",
+    "unique_commits_vs_main": 44,
+    "behind_main": 13927,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        84
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #84",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "superchad/hr-execution-prereg-v2-01",
+    "tip_sha": "5869216a73e16abaf683f973c747544120aaa77b",
+    "tip_commit_date_utc": "2026-08-29T15:06:04Z",
+    "unique_commits_vs_main": 7,
+    "behind_main": 13929,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        77
+      ],
+      "base_prs": [
+        80
+      ]
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #77",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "superchad/hr-offset-estimator-scaffold-01",
+    "tip_sha": "d9e6021b7bc389369924c95098a28d477dfb8534",
+    "tip_commit_date_utc": "2026-08-29T15:19:25Z",
+    "unique_commits_vs_main": 12,
+    "behind_main": 13929,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        83
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #83",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "superchad/mlb-plus-money-evidence-20260911",
+    "tip_sha": "ed88f3e123c281b6f415d732a643e36551cb3363",
+    "tip_commit_date_utc": "2026-09-11T15:14:30Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 7907,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "superchad/mlb-top-pick-market-hit-rate-20260911",
+    "tip_sha": "aaaed8f04e19aa1e8b93f1abd9e0a858ca0be39d",
+    "tip_commit_date_utc": "2026-09-11T14:43:02Z",
+    "unique_commits_vs_main": 5,
+    "behind_main": 7917,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "superchad/nfl-authoritative-outcome-bind-20260914",
+    "tip_sha": "32c95a5d19dae2195696e609179f1fd18dd9588f",
+    "tip_commit_date_utc": "2026-09-18T14:06:58Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4638,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "superchad/nfl-ci-numpy-dependency-20260925",
+    "tip_sha": "3f5368d924f411d2cbb6052916fbbc6e0a8ec8ce",
+    "tip_commit_date_utc": "2026-09-25T15:36:10Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 1495,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        210
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #210",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "superchad/nfl-closing-market-controls-20260914",
+    "tip_sha": "b93e863f42ef0736c7f46e8438ed247e2ff71a24",
+    "tip_commit_date_utc": "2026-09-14T23:42:19Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 6289,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "superchad/nfl-defense-prior-features-20260914",
+    "tip_sha": "559ecdba95a455af54f54440157d11a413a8985e",
+    "tip_commit_date_utc": "2026-09-18T14:33:30Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4604,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "superchad/nfl-espn-final-outcome-20260914",
+    "tip_sha": "322d1cdd745452087b84ed0659dea8a4429869f9",
+    "tip_commit_date_utc": "2026-09-18T14:07:02Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4637,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "superchad/nfl-foundation-continuation-20260911",
+    "tip_sha": "a46ed1b72e96cb8aa17da72730968b8783cbba2a",
+    "tip_commit_date_utc": "2026-09-12T14:12:55Z",
+    "unique_commits_vs_main": 147,
+    "behind_main": 8183,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "superchad/nfl-game-market-b0-20260914",
+    "tip_sha": "744863c0cd28276c09a9bf0d5617f8b4f1c5d8e8",
+    "tip_commit_date_utc": "2026-09-18T14:12:32Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 4645,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "superchad/nfl-game-market-c1-dev-bias-20260914",
+    "tip_sha": "ce50e68d487853f77f5889469bf2764c514056aa",
+    "tip_commit_date_utc": "2026-09-18T14:12:35Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 4645,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "superchad/nfl-game-market-grader-20260914",
+    "tip_sha": "b2a050401c8a0242ccfe00924b1c1a30d10ecb4c",
+    "tip_commit_date_utc": "2026-09-14T23:22:44Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 6299,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "superchad/nfl-game-market-grader-current-20260914",
+    "tip_sha": "1d48567943ed979814904f23d977a956cba95c20",
+    "tip_commit_date_utc": "2026-09-18T14:06:51Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4640,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "superchad/nfl-game-market-normalizer-20260914",
+    "tip_sha": "705dc5d209100a49258b98347561206fcb98e897",
+    "tip_commit_date_utc": "2026-09-18T14:06:48Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4641,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "superchad/nfl-game-market-postgame-prep-20260918",
+    "tip_sha": "f44910de38f3dd8ca8588a25d37a048770395916",
+    "tip_commit_date_utc": "2026-09-18T18:03:34Z",
+    "unique_commits_vs_main": 3,
+    "behind_main": 4497,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "superchad/nfl-game-market-snapshot-20260914",
+    "tip_sha": "ed76c887317f4d461e896ec8f307099c294c79fc",
+    "tip_commit_date_utc": "2026-09-18T14:06:54Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4639,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "superchad/nfl-game-matchup-features-20260914",
+    "tip_sha": "5bbc785d45c92be46b4192188eec1be61edb8212",
+    "tip_commit_date_utc": "2026-09-18T14:33:33Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4603,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "superchad/nfl-genius-implementation-prep-20260918",
+    "tip_sha": "b6e8441d56085b78e2638bcad3892435692b70c4",
+    "tip_commit_date_utc": "2026-09-19T14:30:26Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4099,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "superchad/nfl-intelligence-completeness-20260923",
+    "tip_sha": "fcd9094dba723d8ae832d8bcb4b97e5face5804a",
+    "tip_commit_date_utc": "2026-09-23T18:51:46Z",
+    "unique_commits_vs_main": 3,
+    "behind_main": 2449,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        177
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #177",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "superchad/nfl-live-game-market-shadow-20260918",
+    "tip_sha": "4f0c77f9feb672464492e1017ecf1db53aa948c2",
+    "tip_commit_date_utc": "2026-09-19T04:25:26Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4277,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "superchad/nfl-mnf-execution-packet-20260914",
+    "tip_sha": "d0b014d0888c17f9685ba6d30df81e382f1b09dc",
+    "tip_commit_date_utc": "2026-09-14T20:17:30Z",
+    "unique_commits_vs_main": 11,
+    "behind_main": 6416,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "superchad/nfl-ol-continuity-prior-20260914",
+    "tip_sha": "fb103b00711dae3cf8338f66365de358b44ad99b",
+    "tip_commit_date_utc": "2026-09-18T14:33:39Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4605,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "superchad/nfl-pbp-prior-tendencies-20260914",
+    "tip_sha": "ea7376a33531036566dd570fcc64304886e65c90",
+    "tip_commit_date_utc": "2026-09-18T14:33:36Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4605,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "superchad/nfl-scoring-prior-features-20260914",
+    "tip_sha": "390e04d3fdb73925ec15ac79ad6f4369bf595653",
+    "tip_commit_date_utc": "2026-09-15T00:03:11Z",
+    "unique_commits_vs_main": 2,
+    "behind_main": 6281,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        110
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #110",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "superchad/nfl-shadow-grading-20260912",
+    "tip_sha": "66e981f593e8fc347c41aff94e0c353ded00cd97",
+    "tip_commit_date_utc": "2026-09-12T15:35:56Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 7531,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "superchad/nfl-shadow-grading-rebase-20260914",
+    "tip_sha": "86a713f04f9764f4ab8b76484f9670bcaf5ee055",
+    "tip_commit_date_utc": "2026-09-14T23:06:15Z",
+    "unique_commits_vs_main": 4,
+    "behind_main": 6305,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "superchad/nfl-sunday-shadow-launch-20260912",
+    "tip_sha": "6a689cc167c7e04f8c536a4a36ba34a601d04762",
+    "tip_commit_date_utc": "2026-09-12T19:57:53Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 7529,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "superchad/nfl-team-prior-features-20260914",
+    "tip_sha": "4e842a87c33eb6138c38ece01d2417b4a71403d7",
+    "tip_commit_date_utc": "2026-09-18T14:33:27Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4605,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "superchad/nfl-web-launch-20260912",
+    "tip_sha": "9bb800fe27e8fdf6949ef08ee353536f2e350f16",
+    "tip_commit_date_utc": "2026-09-12T23:06:23Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 7328,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "superchad/nfl-week2-live-history-20260914",
+    "tip_sha": "f254a6ddcce6ffc158993151ba9db6f2875e583f",
+    "tip_commit_date_utc": "2026-09-18T14:09:10Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 4644,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "superchad/overnight-equal-volume-integrity-01",
+    "tip_sha": "9ca918617bea4f816bf42302e4a4713543067e8e",
+    "tip_commit_date_utc": "2026-08-27T15:14:32Z",
+    "unique_commits_vs_main": 25,
+    "behind_main": 14814,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "superchad/overnight-equal-volume-integrity-02",
+    "tip_sha": "44f1051ce473a63a5a6eb05659079c4deaa4a34b",
+    "tip_commit_date_utc": "2026-08-27T15:01:01Z",
+    "unique_commits_vs_main": 15,
+    "behind_main": 14814,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "superchad/overnight-integrity-safe-02",
+    "tip_sha": "b8e510e0716c8bd2174df6b63bd733b7158625a2",
+    "tip_commit_date_utc": "2026-08-27T15:58:05Z",
+    "unique_commits_vs_main": 47,
+    "behind_main": 14814,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "superchad/pa-opportunity-decisive-prereg-01",
+    "tip_sha": "b019e4998127cac8c1c542e89ae70de4e914f5c0",
+    "tip_commit_date_utc": "2026-08-29T14:44:13Z",
+    "unique_commits_vs_main": 3,
+    "behind_main": 13924,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        78
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #78",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "superchad/pa-opportunity-runner-scaffold-01",
+    "tip_sha": "95a4b805214936dbc8d9a922b81ceeb7f4b99d68",
+    "tip_commit_date_utc": "2026-08-29T15:09:19Z",
+    "unique_commits_vs_main": 7,
+    "behind_main": 13927,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        81
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #81",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "superchad/pr210-post208-cert-20260925",
+    "tip_sha": "e9f165bf80dd32353bed236a9244582fccd35f8a",
+    "tip_commit_date_utc": "2026-09-25T22:54:11Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 1364,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "superchad/pr215-post208-cert-20260925",
+    "tip_sha": "f783596fe384fe2d987e7852b152d6536c6b273b",
+    "tip_commit_date_utc": "2026-09-25T22:51:13Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 1366,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "superchad/prospective-truth-safe-01",
+    "tip_sha": "17382524ffa82f92fa229466891ca9102026b080",
+    "tip_commit_date_utc": "2026-08-27T17:22:34Z",
+    "unique_commits_vs_main": 59,
+    "behind_main": 14814,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "superchad/superclaude-activation-corrections-01",
+    "tip_sha": "26dbe367145c9e395ce592bdc22078e2f6db25e9",
+    "tip_commit_date_utc": "2026-08-29T14:08:18Z",
+    "unique_commits_vs_main": 7,
+    "behind_main": 14180,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        76
+      ],
+      "base_prs": []
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #76",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "superchad/uge-foundation-v2-deep-01",
+    "tip_sha": "81eb1ddc43b8050aa0cfd68adc3d363a7e203a12",
+    "tip_commit_date_utc": "2026-09-02T00:41:10Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 12351,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "superchad/validate-superclaude-integration-01",
+    "tip_sha": "744b12e97ecf565afa74f65ba1139bf450feb4f9",
+    "tip_commit_date_utc": "2026-08-29T14:44:38Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 13913,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "tooling/superclaude-activation-01",
+    "tip_sha": "79f1109fc15fea8c0165fc504919f2e22936fe4c",
+    "tip_commit_date_utc": "2026-09-01T19:12:26Z",
+    "unique_commits_vs_main": 4,
+    "behind_main": 14180,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [
+        73
+      ],
+      "base_prs": [
+        76
+      ]
+    },
+    "evidence_category": "open_pr_dependency",
+    "preservation_location": "PR #73",
+    "recommended_action": "KEEP",
+    "reason": "Open PR head/base dependency"
+  },
+  {
+    "branch": "ui/polish-and-differentiation",
+    "tip_sha": "1e0639a014679fed25a25d4e3bfaae4ca033a9ef",
+    "tip_commit_date_utc": "2026-08-21T14:44:55Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 15459,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "fully_reachable_from_main",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "REVIEW REQUIRED",
+    "reason": "No unique commits; confirm no external trigger/active use before deletion"
+  },
+  {
+    "branch": "worktree-agent-a48e77b68534638b6",
+    "tip_sha": "41d448cdd946b8adba64fd27f00069b1ff64d5d8",
+    "tip_commit_date_utc": "2026-08-06T03:46:19Z",
+    "unique_commits_vs_main": 1,
+    "behind_main": 16720,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "unique_commits_unreviewed",
+    "preservation_location": "branch tip / review before removal",
+    "recommended_action": "ARCHIVE FIRST",
+    "reason": "Unique commits require evidence review/preservation"
+  },
+  {
+    "branch": "worktree-agent-a86ae4110b03c7f17",
+    "tip_sha": "fda7111c6593ad912d62fe9ef475df1a776aa549",
+    "tip_commit_date_utc": "2026-08-06T03:55:34Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 16696,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "merged_ephemeral_worktree_ref",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "DELETE SAFE",
+    "reason": "Tip is ancestor of main; no open PR, workflow reference, or local worktree"
+  },
+  {
+    "branch": "worktree-agent-ae0bbf867acdfd4a2",
+    "tip_sha": "fe815c49a0b6da2ee4c16650d524e690dc7738a5",
+    "tip_commit_date_utc": "2026-08-05T16:03:43Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 16764,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "merged_ephemeral_worktree_ref",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "DELETE SAFE",
+    "reason": "Tip is ancestor of main; no open PR, workflow reference, or local worktree"
+  },
+  {
+    "branch": "worktree-agent-ae81d329067af391a",
+    "tip_sha": "c91471b9a99ee018bf15ec641e07322f664a7a59",
+    "tip_commit_date_utc": "2026-08-05T16:10:37Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 16765,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "merged_ephemeral_worktree_ref",
+    "preservation_location": "main ancestor at dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "recommended_action": "DELETE SAFE",
+    "reason": "Tip is ancestor of main; no open PR, workflow reference, or local worktree"
+  },
+  {
+    "branch": "codex/repo-cleanup-20260929",
+    "tip_sha": "dd252867f8b2fe74a7bfcfaa902c8ebd152ff0f7",
+    "tip_commit_date_utc": "2026-09-29T17:21:00Z",
+    "unique_commits_vs_main": 0,
+    "behind_main": 0,
+    "protected": false,
+    "open_pr_dependency": {
+      "head_prs": [],
+      "base_prs": []
+    },
+    "evidence_category": "active_cleanup_workstream",
+    "preservation_location": "current cleanup branch",
+    "recommended_action": "KEEP",
+    "reason": "Active claimed cleanup deliverable; tip date is base commit date, not branch creation time"
+  }
+]
