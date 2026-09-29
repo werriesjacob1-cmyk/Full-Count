@@ -597,8 +597,8 @@
             "l14_k_pct": 17.0588,
             "env_neutral": 50.0,
             "ump_accuracy": 76.5429,
-            "ump_k_pct": -0.984,
-            "ump_bb_pct": -0.216
+            "ump_k_pct": -0.78,
+            "ump_bb_pct": -0.168
           },
           "hit_probability": 0.4383,
           "raw_hit_probability": 0.4383,
@@ -635,6 +635,34 @@
             "stat": "pitcher_outs",
             "value": 16.5,
             "needs": 17
+          }
+        },
+        {
+          "prop": "Over 13.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ New York Yankees",
+          "game_pk": 849851,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            801139,
+            693645
+          ],
+          "signals": {
+            "combined_k_edge": -0.0194
+          },
+          "hit_probability": 0.6018,
+          "raw_hit_probability": null,
+          "lift": -0.0194,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 13.5,
+            "needs": 14
           }
         }
       ]
