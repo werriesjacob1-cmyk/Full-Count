@@ -16,6 +16,7 @@ from pathlib import Path
 
 from nfl.archive.provenance import utcnow
 from nfl.normalize.player_prop_markets import normalize_payload
+from nfl.normalize.player_prop_roster_binding import _event_teams
 from nfl.prospective.shadow_snapshot import seal_snapshot, validate_pregame_timing
 from nfl.research.price_aware_offer_capture import (
     GAME, read_authoritative_b0, match_authoritative_b0,
@@ -43,7 +44,11 @@ def validate_b0(snapshot: dict) -> None:
 
 def raw_offer_matches(folder: Path, manifest: list[dict], candidate: dict,
                       raw_sha: str) -> bool:
-    """Independently match frozen quote/selection fields to raw book bytes."""
+    """Match book fields and observation time; roster binding is separate.
+
+    Raw sportsbook data does not carry GSIS identity. Missing archived roster
+    bytes must not be described as independently reconstructed identity proof.
+    """
     entries = [e for e in manifest if e.get("sha256") == raw_sha and e.get("raw_file")]
     if len(entries) != 1:
         return False
@@ -79,11 +84,13 @@ def raw_offer_matches(folder: Path, manifest: list[dict], candidate: dict,
     if not strict_observed_prices(candidate, market):
         return False
     normalized = normalize_payload(payload, captured_at=entry["observed_at"])
-    keys = ("event_id", "market_id", "player_name", "market", "shape")
+    keys = ("event_id", "market_id", "player_name", "market", "shape",
+            "captured_at", "event_name", "event_open_date")
     price_keys = (("line", "over_odds", "under_odds", "over_selection_id", "under_selection_id")
                   if candidate["shape"] == "primary" else
                   ("threshold", "yes_odds", "selection_id"))
     return any(all(c.get(k) == candidate.get(k) for k in keys+price_keys)
+               and candidate.get("team") in (_event_teams(c["event_name"]) or ())
                for c in normalized["candidates"])
 
 

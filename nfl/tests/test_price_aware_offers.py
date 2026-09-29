@@ -133,6 +133,16 @@ class PriceTests(unittest.TestCase):
         self.assertIn("CURRENT_ROLE_EVIDENCE_MISSING",result["reasons"])
         self.assertIn("BOOK_ACTION_RULES_EVIDENCE_MISSING_OR_MISMATCHED",result["reasons"])
 
+    def test_wrong_jurisdiction_and_unverified_rule_source_are_quarantined(self):
+        for changes in ({"jurisdiction": "IL"}, {"url": "https://example.com/rules"},
+                        {"source_sha256": "0" * 64}):
+            c,d=inputs(); c["sportsbook_rule"].update(changes)
+            with self.subTest(changes=changes):
+                result=run(c,d)
+                self.assertEqual(result["decision_status"],"QUARANTINED")
+                self.assertFalse(result["bettable"])
+                self.assertIn("BOOK_ACTION_RULES_EVIDENCE_MISSING_OR_MISMATCHED",result["reasons"])
+
     def test_atomic_create_only_and_failed_write(self):
         td=Path.cwd()/"engineering"/"nfl_price_aware_20260923"
         path=td/"atomic_writer_test.json"

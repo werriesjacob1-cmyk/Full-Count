@@ -177,6 +177,31 @@ class PriceToB0Tests(unittest.TestCase):
         self.assertFalse(raw_offer_matches(CAPTURE, frozen["sources"], candidate,
                                            original["source_sha256"]))
 
+    def test_observation_and_event_fields_must_match_source(self):
+        frozen, original, _ = sample()
+        for changes in ({"captured_at": "2026-09-24T18:00:00Z"},
+                        {"event_name": "Kansas City Chiefs @ Green Bay Packers"},
+                        {"event_open_date": "2026-09-26T00:15:00Z"},
+                        {"team": "KC"}, {"player_name": "Wrong Person"},
+                        {"event_id": "wrong"}, {"market": "passing_yards"}):
+            with self.subTest(changes=changes):
+                candidate = {**original["candidate"], **changes}
+                self.assertFalse(raw_offer_matches(CAPTURE, frozen["sources"], candidate,
+                                                   original["source_sha256"]))
+        self.assertFalse(raw_offer_matches(CAPTURE, frozen["sources"],
+                                           original["candidate"], "0" * 64))
+
+    def test_fake_quote_timestamp_has_no_raw_source_field(self):
+        frozen, original, _ = sample()
+        candidate = copy.deepcopy(original["candidate"])
+        candidate.update(quote_timestamp=candidate["captured_at"],
+                         quote_timestamp_status="SOURCE_FIELD_VERIFIED")
+        candidate["quote_evidence"] = dict(timestamp=candidate["captured_at"],
+            source_sha256=original["source_sha256"], market_id=candidate["market_id"],
+            source_field="market.priceUpdatedAt")
+        self.assertFalse(raw_offer_matches(CAPTURE, frozen["sources"], candidate,
+                                           original["source_sha256"]))
+
     def test_invalid_probability_is_rejected(self):
         _, original, row = sample()
         with self.assertRaisesRegex(ValueError, "probabilities invalid"):

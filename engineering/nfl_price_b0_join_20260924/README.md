@@ -127,11 +127,55 @@ offers with a compatible probability, action rule, eligibility and grade.
 
 `price_to_b0_integration.integrate` still writes `research_only=true` and
 `bettable=false` for every row. The NFL website publication guard requires
-`public_selector_validated=false`. A contract-level synthetic fixture can
-exercise all positive and negative gate branches, but it cannot establish a
-current, jurisdiction-compatible offer or authorize a customer pick. A
+`public_selector_validated=false`. Synthetic fixtures exercise arithmetic,
+exact-match joins and rejection branches; the positive role/rule branches are
+intentionally unreachable. They cannot establish a current,
+jurisdiction-compatible offer or authorize a customer pick. A
 legitimate future capture needs source quote-vintage evidence or an explicitly
 approved observation-freshness policy, a separately sourced current role, and
 book/market/jurisdiction action-rule certification before selection policy can
 be separately reviewed by Jacob. Neither archived ATL–GB capture can be
 upgraded into such evidence.
+
+## September 29 closure audit
+
+The independent re-review found that raw quote matching did not compare
+`captured_at` against the source manifest's `observed_at`. Re-sealing a record
+could therefore make old bytes appear newly observed. The verifier now compares
+that time plus the event name/open date, and rejects a team outside the actual
+book event. Regression tests use the original authentic archive. No original
+snapshot, response or prediction was changed.
+
+The book payload has no GSIS ID. Archive replay verifies book fields, response
+bytes, observation time and the exact B0 join; it does **not** independently
+reconstruct the original GSIS/roster binding when archived roster bytes are
+absent. `capture_source_verification.external_sources_missing` exposes that
+limitation. A content seal is integrity evidence, not authentication of every
+caller-supplied fact. Role and rule gates remain permanently closed in this
+adapter until an independently verified source interface is implemented.
+
+### Source feasibility at the September 29 cutoff
+
+| Required fact | Disposition | Existing evidence and next action |
+|---|---|---|
+| When FULL COUNT observed a displayed offer | AVAILABLE NOW | Existing FanDuel adapter archives raw bytes, response digest, acquisition identity and `observed_at`; integration now binds the candidate to that exact observation. This is not source quote origin or accepted-ticket execution. |
+| Book's quote-origin/update time | EXTERNAL SOURCE REQUIRED | Neither authentic ATL–GB archive includes a supported price-update field. `marketTime` is kickoff. A different documented source field/feed would be needed, or Jacob would need to separately approve an observation-freshness policy; no such policy change is made here. |
+| Official availability, team and player identity | IMPLEMENTABLE WITH EXISTING SOURCES | The repository already has official inactive ingestion and GSIS roster binding. Fresh source bytes must be retained and independently bound to game/player/team/cutoff; old Week 3 missing inputs cannot be backfilled into predictions. |
+| Current projected snaps/routes/limited role | EXTERNAL SOURCE REQUIRED for an exact authoritative fact | Official injuries, roster/depth state, team statements and prior snap counts supply distinct observations, not guaranteed future usage. A source-backed role claim can be implemented using existing claim-ledger contracts when a qualifying statement exists; absent one, the exact role gate remains unknown. Historical snap-share is a weak proxy, not certification. |
+| FanDuel full-game receptions action/void text | AVAILABLE NOW; verification IMPLEMENTABLE WITH EXISTING SOURCES | Public [NJ house rules](https://www.fanduel.com/fanduel-sportsbook-house-rules-nj) were read September 29, effective July 30, 2026. They specify NFL prop participation and market exceptions. Capture the complete applicable version, digest, effective/observed times and exact market-rule mapping before certification. A URL or invented digest is insufficient. |
+| Applicable customer jurisdiction/product and market exceptions | RIGHTS/JURISDICTION BLOCKED | Neither pricing capture establishes the intended audience's jurisdiction/product. The NJ page cannot be generalized to every customer. Product scope must be explicitly supplied and independently validated; this is not a claim that all public rule text is inaccessible. No purchase or access change is needed to read public rules. |
+
+The current official [NFL injury page](https://www.nfl.com/injuries/) still
+exposes Week 3 at this observation; it cannot certify upcoming-game workload.
+[nflverse snap-count fields](https://nflreadr.nflverse.com/articles/dictionary_snap_counts.html)
+measure snaps already played, not projected playing time. Public accessibility
+does not itself establish redistribution rights or the exact fact required by
+an eligibility gate.
+
+Disposition: historical receptions research checkpoint only. The capture runner
+and B0 slate/cutoff are intentionally pinned to ATL–GB; they are not a generic
+current-game production adapter. A new game/source interface requires a scoped
+follow-up, not post-outcome reuse of this demonstration. No authentic currently
+actionable offer is demonstrated. No public/customer selector or positive
+role/rule gate branch exists; synthetic arithmetic/identity tests cannot prove
+operational eligibility.
