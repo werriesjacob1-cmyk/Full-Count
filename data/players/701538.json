@@ -5293,6 +5293,138 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-29",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 42.5,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ San Diego Padres",
+          "game_pk": 849843,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 40.2857,
+            "l7_avg_ev": 41.3462,
+            "l7_barrel_pct": 95.7143,
+            "park_hr_index": 42.0,
+            "season_barrel_pct": 62.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 30.303,
+            "platoon_barrel_pct": 1.76,
+            "platoon_xwoba": 0.24,
+            "park_hand_index": -1.44,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 4.0,
+            "woba_ahead": 75.4545,
+            "woba_behind": 12.7273,
+            "pull_park_synergy": -0.6502,
+            "hard_hit_105_rate": 1.2875,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.4,
+            "vs_rp_ops": 0.648,
+            "ump_k_pct": -0.048,
+            "ump_bb_pct": 0.396
+          },
+          "hit_probability": 0.6136,
+          "raw_hit_probability": 0.6111,
+          "lift": 0.0552,
+          "reliability": "A",
+          "sample_n": 157,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 55.9,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ San Diego Padres",
+          "game_pk": 849843,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.48,
+            "sprint_speed": 53.125,
+            "catcher_poptime": 17.1429,
+            "on_base": 56.8138
+          },
+          "hit_probability": 0.1605,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 157,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 17.5,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ San Diego Padres",
+          "game_pk": 849843,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0981
+          },
+          "hit_probability": 0.0981,
+          "raw_hit_probability": null,
+          "lift": 0.0507,
+          "reliability": "A",
+          "sample_n": 157,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 11.2,
+          "notable_signals": 1,
+          "matchup": "Chicago Cubs @ San Diego Padres",
+          "game_pk": 849843,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0569
+          },
+          "hit_probability": 0.0569,
+          "raw_hit_probability": null,
+          "lift": 0.0364,
+          "reliability": "A",
+          "sample_n": 157,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
