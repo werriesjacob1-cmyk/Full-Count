@@ -1,5 +1,6 @@
 """Adversarial boundary tests using the authentic September 24 book archive."""
 import copy
+import hashlib
 import json
 import unittest
 from pathlib import Path
@@ -72,6 +73,9 @@ class PriceToB0Tests(unittest.TestCase):
         self.assertIsNotNone(match_authoritative_b0(candidate, shadow))
         b0_path = CAPTURE.parent / "test_b0_temporary.json"
         target = CAPTURE.parent / "test_joined_temporary.json"
+        public_paths = (ROOT / "docs/data.json",
+                        ROOT / "data/public_top_picks/registry.json")
+        public_before = {p: hashlib.sha256(p.read_bytes()).hexdigest() for p in public_paths}
         b0_path.unlink(missing_ok=True)
         target.unlink(missing_ok=True)
         try:
@@ -82,6 +86,11 @@ class PriceToB0Tests(unittest.TestCase):
             b0_path.unlink(missing_ok=True)
             target.unlink(missing_ok=True)
         joined = [r for r in result["records"] if r["b0_observation_id"]]
+        self.assertTrue(result["research_only"])
+        self.assertFalse(result["bettable"])
+        self.assertTrue(all(not r["bettable"] for r in result["records"]))
+        self.assertEqual(public_before,
+                         {p: hashlib.sha256(p.read_bytes()).hexdigest() for p in public_paths})
         self.assertEqual(len(joined), 1)
         self.assertEqual(joined[0]["candidate"]["market_id"], candidate["market_id"])
         self.assertEqual(joined[0]["authoritative_b0_record"], shadow["records"][0])
