@@ -1,0 +1,346 @@
+{
+  "graded_at_utc": "2026-09-30T15:11:44Z",
+  "artifact_sha256": "357c27f5e0e86872c8d2be8afaeda178eb8d3e4ab4e39b6ca747caf63197e988",
+  "outcome_source": {
+    "source_url": "https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_2026.csv",
+    "fetched_at_utc": "2026-09-30T15:11:44Z",
+    "rows_sha256": "b5962ae1768e318c9992122fedb8f653696d2a2665a07702184a8c07b9462daf"
+  },
+  "n_frozen": 293,
+  "n_graded": 239,
+  "n_void": 54,
+  "ungraded_games_no_final_rows": [],
+  "evidence_class": "PROSPECTIVE_FORWARD_SHADOW_ONE_WEEK_NOT_CONFIRMATORY",
+  "models": {
+    "b0": {
+      "mae": 1.4315899581589957,
+      "bias": -0.1717573221757322,
+      "poisson_brier": 0.13280426975955237
+    },
+    "existing_unadjusted": {
+      "mae": 1.4365136945606696,
+      "bias": 0.1155309079497908,
+      "poisson_brier": 0.13186050598861684
+    },
+    "c1": {
+      "mae": 1.3978692761506275,
+      "bias": -0.20687462343096236,
+      "poisson_brier": 0.12967341321666842
+    }
+  },
+  "c1_minus_b0_mae": {
+    "point": -0.033720682008368204,
+    "ci95": [
+      -0.10974846861924681,
+      0.04260747698744768
+    ],
+    "n_rows": 239,
+    "n_clusters": 239,
+    "n_resamples": 2000,
+    "seed": 20260924
+  },
+  "secondary_chain_x_constant": {
+    "constant": 0.8277,
+    "graded_rows": {
+      "b0": {
+        "n": 239,
+        "mae": 1.4315899581589957
+      },
+      "c1": {
+        "n": 239,
+        "mae": 1.3978692761506275
+      },
+      "chain_x_constant": {
+        "n": 239,
+        "mae": 1.3935328113150627
+      },
+      "c1_minus_chain_x_constant_mae": {
+        "point": 0.00433646483556486,
+        "ci95": [
+          -0.020498441756903758,
+          0.029150217728870272
+        ],
+        "n_rows": 239,
+        "n_clusters": 239,
+        "n_resamples": 2000,
+        "seed": 20260924
+      }
+    }
+  },
+  "secondary_including_zero_stat_actives": {
+    "status": "NOT_COMPUTED",
+    "reason": "RoleIntelligenceDataPrepError('asset digest drift for https://github.com/nflverse/nflverse-data/releases/download/players/players.csv: expected bytes=7234131 sha256=4dd70f328f31b0bb7cbf043412298d5a325863e27b8f2eeea22c9e925c808dee, got bytes=7295097 sha256=5b6f22c2d1c23fa5bc7da4cc51b3108629ec7f1c4b7f54f7d2d9a274501cd426')"
+  },
+  "void_players": [
+    {
+      "player_id": "00-0037157",
+      "player_name": "Bam Knight",
+      "game_id": "2026_03_ARI_SF"
+    },
+    {
+      "player_id": "00-0032775",
+      "player_name": "Demarcus Robinson",
+      "game_id": "2026_03_ARI_SF"
+    },
+    {
+      "player_id": "00-0036429",
+      "player_name": "Charlie Woerner",
+      "game_id": "2026_03_ATL_GB"
+    },
+    {
+      "player_id": "00-0039146",
+      "player_name": "Jayden Reed",
+      "game_id": "2026_03_ATL_GB"
+    },
+    {
+      "player_id": "00-0034798",
+      "player_name": "Durham Smythe",
+      "game_id": "2026_03_BAL_DAL"
+    },
+    {
+      "player_id": "00-0038738",
+      "player_name": "Hunter Luepke",
+      "game_id": "2026_03_BAL_DAL"
+    },
+    {
+      "player_id": "00-0038705",
+      "player_name": "Emari Demercado",
+      "game_id": "2026_03_BAL_DAL"
+    },
+    {
+      "player_id": "00-0039062",
+      "player_name": "Jonathan Mingo",
+      "game_id": "2026_03_BAL_DAL"
+    },
+    {
+      "player_id": "00-0039342",
+      "player_name": "Xavier Legette",
+      "game_id": "2026_03_CAR_CLE"
+    },
+    {
+      "player_id": "00-0040218",
+      "player_name": "Jimmy Horn Jr.",
+      "game_id": "2026_03_CAR_CLE"
+    },
+    {
+      "player_id": "00-0036407",
+      "player_name": "Jerry Jeudy",
+      "game_id": "2026_03_CAR_CLE"
+    },
+    {
+      "player_id": "00-0040162",
+      "player_name": "Dylan Sampson",
+      "game_id": "2026_03_CAR_CLE"
+    },
+    {
+      "player_id": "00-0040782",
+      "player_name": "Isaiah Bond",
+      "game_id": "2026_03_CAR_CLE"
+    },
+    {
+      "player_id": "00-0038710",
+      "player_name": "Blake Whiteheart",
+      "game_id": "2026_03_CAR_CLE"
+    },
+    {
+      "player_id": "00-0038794",
+      "player_name": "Jaleel McLaughlin",
+      "game_id": "2026_03_CAR_CLE"
+    },
+    {
+      "player_id": "00-0038619",
+      "player_name": "Andrei Iosivas",
+      "game_id": "2026_03_CIN_PIT"
+    },
+    {
+      "player_id": "00-0036139",
+      "player_name": "Rico Dowdle",
+      "game_id": "2026_03_CIN_PIT"
+    },
+    {
+      "player_id": "00-0036554",
+      "player_name": "Nico Collins",
+      "game_id": "2026_03_HOU_IND"
+    },
+    {
+      "player_id": "00-0039359",
+      "player_name": "Cade Stover",
+      "game_id": "2026_03_HOU_IND"
+    },
+    {
+      "player_id": "00-0037664",
+      "player_name": "Alec Pierce",
+      "game_id": "2026_03_HOU_IND"
+    },
+    {
+      "player_id": "00-0035021",
+      "player_name": "Ashton Dulin",
+      "game_id": "2026_03_HOU_IND"
+    },
+    {
+      "player_id": "00-0037292",
+      "player_name": "Andrew Ogletree",
+      "game_id": "2026_03_HOU_IND"
+    },
+    {
+      "player_id": "00-0039874",
+      "player_name": "Jaylen Wright",
+      "game_id": "2026_03_KC_MIA"
+    },
+    {
+      "player_id": "00-0036988",
+      "player_name": "Josh Palmer",
+      "game_id": "2026_03_LAC_BUF"
+    },
+    {
+      "player_id": "00-0040363",
+      "player_name": "Keleki Latu",
+      "game_id": "2026_03_LAC_BUF"
+    },
+    {
+      "player_id": "00-0039875",
+      "player_name": "Ray Davis",
+      "game_id": "2026_03_LAC_BUF"
+    },
+    {
+      "player_id": "00-0033885",
+      "player_name": "David Njoku",
+      "game_id": "2026_03_LAC_BUF"
+    },
+    {
+      "player_id": "00-0038046",
+      "player_name": "Charlie Kolar",
+      "game_id": "2026_03_LAC_BUF"
+    },
+    {
+      "player_id": "00-0036422",
+      "player_name": "Adam Trautman",
+      "game_id": "2026_03_LA_DEN"
+    },
+    {
+      "player_id": "00-0038976",
+      "player_name": "Marvin Mims Jr.",
+      "game_id": "2026_03_LA_DEN"
+    },
+    {
+      "player_id": "00-0035406",
+      "player_name": "Lil'Jordan Humphrey",
+      "game_id": "2026_03_LA_DEN"
+    },
+    {
+      "player_id": "00-0039075",
+      "player_name": "Puka Nacua",
+      "game_id": "2026_03_LA_DEN"
+    },
+    {
+      "player_id": "00-0039751",
+      "player_name": "Jordan Whittington",
+      "game_id": "2026_03_LA_DEN"
+    },
+    {
+      "player_id": "00-0036849",
+      "player_name": "Tutu Atwell",
+      "game_id": "2026_03_LA_DEN"
+    },
+    {
+      "player_id": "00-0037557",
+      "player_name": "Ronnie Rivers",
+      "game_id": "2026_03_LA_DEN"
+    },
+    {
+      "player_id": "00-0040729",
+      "player_name": "Jack Bech",
+      "game_id": "2026_03_LV_NO"
+    },
+    {
+      "player_id": "00-0034365",
+      "player_name": "Ian Thomas",
+      "game_id": "2026_03_LV_NO"
+    },
+    {
+      "player_id": "00-0037231",
+      "player_name": "Kevin Austin Jr.",
+      "game_id": "2026_03_LV_NO"
+    },
+    {
+      "player_id": "00-0037525",
+      "player_name": "Jordan Mason",
+      "game_id": "2026_03_MIN_TB"
+    },
+    {
+      "player_id": "00-0036590",
+      "player_name": "Quintin Morris",
+      "game_id": "2026_03_NE_JAX"
+    },
+    {
+      "player_id": "00-0035676",
+      "player_name": "A.J. Brown",
+      "game_id": "2026_03_NE_JAX"
+    },
+    {
+      "player_id": "00-0036187",
+      "player_name": "Reggie Gilliam",
+      "game_id": "2026_03_NE_JAX"
+    },
+    {
+      "player_id": "00-0037524",
+      "player_name": "Tay Martin",
+      "game_id": "2026_03_NYJ_DET"
+    },
+    {
+      "player_id": "00-0040736",
+      "player_name": "Mason Taylor",
+      "game_id": "2026_03_NYJ_DET"
+    },
+    {
+      "player_id": "00-0039890",
+      "player_name": "Adonai Mitchell",
+      "game_id": "2026_03_NYJ_DET"
+    },
+    {
+      "player_id": "00-0040582",
+      "player_name": "Arian Smith",
+      "game_id": "2026_03_NYJ_DET"
+    },
+    {
+      "player_id": "00-0040277",
+      "player_name": "Jahdae Walker",
+      "game_id": "2026_03_PHI_CHI"
+    },
+    {
+      "player_id": "00-0034351",
+      "player_name": "Dallas Goedert",
+      "game_id": "2026_03_PHI_CHI"
+    },
+    {
+      "player_id": "00-0035662",
+      "player_name": "Marquise Brown",
+      "game_id": "2026_03_PHI_CHI"
+    },
+    {
+      "player_id": "00-0040739",
+      "player_name": "Elijah Arroyo",
+      "game_id": "2026_03_SEA_WAS"
+    },
+    {
+      "player_id": "00-0037809",
+      "player_name": "Chig Okonkwo",
+      "game_id": "2026_03_SEA_WAS"
+    },
+    {
+      "player_id": "00-0039847",
+      "player_name": "Theo Johnson",
+      "game_id": "2026_03_TEN_NYG"
+    },
+    {
+      "player_id": "00-0035250",
+      "player_name": "Devin Singletary",
+      "game_id": "2026_03_TEN_NYG"
+    },
+    {
+      "player_id": "00-0033376",
+      "player_name": "Patrick Ricard",
+      "game_id": "2026_03_TEN_NYG"
+    }
+  ]
+}
