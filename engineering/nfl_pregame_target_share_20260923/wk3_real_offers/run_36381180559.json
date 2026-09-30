@@ -1,0 +1,62 @@
+{
+  "analysis": "NFL_LIVE_RECEPTIONS_SHADOW_BOARD_AUDIT",
+  "availability": {
+    "bound_inactive_reports": 1,
+    "official_records": 7,
+    "quarantine_reason_counts": {},
+    "report_failures": [
+      {
+        "artifact": "inactive_report_8b91ba64cee86f17",
+        "failure_reason": "ValueError: inactive report contains no parsed player rows",
+        "outcome": "PARSE_OR_BIND_FAILED"
+      }
+    ]
+  },
+  "code_sha": "2cb60e3c0e1a94541577f8356bfbab905aa2d45b",
+  "created_at": "2026-09-28T05:17:16Z",
+  "fan_duel": {
+    "events_discovered_total": 16,
+    "market_failures": [],
+    "normalized_primary_candidates": 0,
+    "pregame_target_events": 13,
+    "root_observed_at": "2026-09-28T05:17:15Z",
+    "target_sunday_events": 13
+  },
+  "identity": {
+    "binding_status_counts": {},
+    "excluded_unbound": [],
+    "excluded_unbound_count": 0,
+    "roster_sha256": "4a8b88026a4916f70912b23923cd5536ddf4456250dbf1c94697a4874aca89e3"
+  },
+  "model": {
+    "current_history_status_counts": {},
+    "decision_surface": "SHADOW_ONLY_OR_QUARANTINED",
+    "historical_benchmark_check": {
+      "2024": {
+        "mae": 1.4570009380063103,
+        "n": 3909
+      },
+      "2025": {
+        "mae": 1.408703285678455,
+        "n": 3987
+      }
+    },
+    "name": "NFL_B0_ROLLING_RECEPTIONS_V0",
+    "pooled_residual_n": 7896,
+    "public_selector_validated": false
+  },
+  "snapshot": {
+    "code_sha": "2cb60e3c0e1a94541577f8356bfbab905aa2d45b",
+    "evidence_class": "PROSPECTIVE_SHADOW",
+    "record_count": 0,
+    "records": [],
+    "schema_version": 1,
+    "sealed_at": "2026-09-28T05:17:16Z",
+    "slate_date": "2026-10-04",
+    "snapshot_sha256": "919a3c65678f8050423e2c80279a45fb1cb0d5fec5917335acc9f6b76d9acd67",
+    "source_vintage": "2026-09-28T05:17:16Z",
+    "sport": "NFL"
+  },
+  "status": "RESEARCH_ONLY_NO_PUBLICATION",
+  "target_local_date": "2026-10-04"
+}
