@@ -1,0 +1,1049 @@
+{
+  "evidence_class": "EXPLORATORY_DESCRIPTIVE_REAL_LINE_JOIN_NOT_PREREGISTERED",
+  "offer_archive": [
+    "c46d0fa5a8e9dc5be018c7afb5c38d93c5d694b70f5125bdc47b7def17fbbb09  run_36069701429.json",
+    "be91977b643a9394b102df994530301c693bee320411a2493f820b4a9be3ea9a  run_36070067349.json",
+    "b3b6ed5d820adb871a9927e5dfde1d28e530c7f3bc671e986ce0f99ae4675c9a  run_36074758237.json",
+    "deb8ea60fb0206e8a84a93b076e0a9ae594b58928f7b2b83eb0b33f0656fee42  run_36343734227.json",
+    "f8bcd13e270ed14e17961bc9971d8d5f3669a65a9acdc18dfa8c7abe58f1879c  run_36345953094.json",
+    "991c350ac3adcc445bd67f03a4c81aea73261604bf5463bf70e431eb0ea583ed  run_36353670927.json",
+    "b3171a2d317c3048ad1253ef047dcb0d33529983aea39e99ebb2649ee82cd043  run_36355830668.json",
+    "f6413039d3c97053e7e1a72e7ac8db842284d8b89cc94449af34e22496c6e166  run_36357231369.json",
+    "b3b7d643c3cf88b5807d432c843814fe715dc75d2b84193e68bbaa28a3770e12  run_36381180559.json"
+  ],
+  "n_pregame_offers": 46,
+  "n_joined_graded": 39,
+  "unjoined": [
+    {
+      "gsis_id": "00-0039811",
+      "player_name": "MarShawn Lloyd",
+      "reason": "not a frozen candidate"
+    },
+    {
+      "gsis_id": "00-0036422",
+      "player_name": "Adam Trautman",
+      "reason": "VOID"
+    },
+    {
+      "gsis_id": "00-0041027",
+      "player_name": "Jeremiyah Love",
+      "reason": "not a frozen candidate"
+    },
+    {
+      "gsis_id": "00-0029892",
+      "player_name": "Kyle Juszczyk",
+      "reason": "not a frozen candidate"
+    },
+    {
+      "gsis_id": "00-0039855",
+      "player_name": "Jalen McMillan",
+      "reason": "not a frozen candidate"
+    },
+    {
+      "gsis_id": "00-0041067",
+      "player_name": "Bryce Lance",
+      "reason": "not a frozen candidate"
+    },
+    {
+      "gsis_id": "00-0040729",
+      "player_name": "Jack Bech",
+      "reason": "VOID"
+    }
+  ],
+  "summary": {
+    "c1": {
+      "n": 39,
+      "wins": 24,
+      "units": 4.478221777870985,
+      "roi": 0.11482619943258936
+    },
+    "b0": {
+      "n": 39,
+      "wins": 22,
+      "units": 0.31995574074952693,
+      "roi": 0.008203993352551972
+    }
+  },
+  "disagreements": {
+    "n": 10,
+    "c1_wins": 6,
+    "b0_wins": 4
+  },
+  "rows": [
+    {
+      "gsis_id": "00-0037238",
+      "player_name": "Drake London",
+      "game_id": "2026_03_ATL_GB",
+      "captured_at": "2026-09-24T23:51:53Z",
+      "kickoff": "2026-09-25T00:16:00.000Z",
+      "artifact": "run_36074758237.json",
+      "observation_id": "fcnfl-shadow1:52131c4de8f5a8b677268582",
+      "line": 5.5,
+      "over_odds": 106,
+      "under_odds": -140,
+      "realized_receptions": 9.0,
+      "c1": {
+        "projection": 4.338326,
+        "side": "UNDER",
+        "won": false,
+        "units": -1.0
+      },
+      "b0": {
+        "projection": 2.8,
+        "side": "UNDER",
+        "won": false,
+        "units": -1.0
+      }
+    },
+    {
+      "gsis_id": "00-0038090",
+      "player_name": "Skyy Moore",
+      "game_id": "2026_03_ATL_GB",
+      "captured_at": "2026-09-24T23:51:53Z",
+      "kickoff": "2026-09-25T00:16:00.000Z",
+      "artifact": "run_36074758237.json",
+      "observation_id": "fcnfl-shadow1:576278b06fa5ed5ab0f6e303",
+      "line": 1.5,
+      "over_odds": 120,
+      "under_odds": -160,
+      "realized_receptions": 3.0,
+      "c1": {
+        "projection": 0.611429,
+        "side": "UNDER",
+        "won": false,
+        "units": -1.0
+      },
+      "b0": {
+        "projection": 0.6,
+        "side": "UNDER",
+        "won": false,
+        "units": -1.0
+      }
+    },
+    {
+      "gsis_id": "00-0038124",
+      "player_name": "Christian Watson",
+      "game_id": "2026_03_ATL_GB",
+      "captured_at": "2026-09-24T23:51:53Z",
+      "kickoff": "2026-09-25T00:16:00.000Z",
+      "artifact": "run_36074758237.json",
+      "observation_id": "fcnfl-shadow1:02dabb643be174fb90022a25",
+      "line": 4.5,
+      "over_odds": -148,
+      "under_odds": 112,
+      "realized_receptions": 7.0,
+      "c1": {
+        "projection": 4.533895,
+        "side": "OVER",
+        "won": true,
+        "units": 0.6756756756756757
+      },
+      "b0": {
+        "projection": 4.0,
+        "side": "UNDER",
+        "won": false,
+        "units": -1.0
+      }
+    },
+    {
+      "gsis_id": "00-0037741",
+      "player_name": "Jahan Dotson",
+      "game_id": "2026_03_ATL_GB",
+      "captured_at": "2026-09-24T23:51:53Z",
+      "kickoff": "2026-09-25T00:16:00.000Z",
+      "artifact": "run_36074758237.json",
+      "observation_id": "fcnfl-shadow1:f0c3be3ceface008d69200bd",
+      "line": 1.5,
+      "over_odds": -138,
+      "under_odds": 104,
+      "realized_receptions": 1.0,
+      "c1": {
+        "projection": 1.374173,
+        "side": "UNDER",
+        "won": true,
+        "units": 1.04
+      },
+      "b0": {
+        "projection": 1.8,
+        "side": "OVER",
+        "won": false,
+        "units": -1.0
+      }
+    },
+    {
+      "gsis_id": "00-0038685",
+      "player_name": "Chris Brooks",
+      "game_id": "2026_03_ATL_GB",
+      "captured_at": "2026-09-24T23:51:53Z",
+      "kickoff": "2026-09-25T00:16:00.000Z",
+      "artifact": "run_36074758237.json",
+      "observation_id": "fcnfl-shadow1:a0445c77e2120e7170409406",
+      "line": 1.5,
+      "over_odds": 130,
+      "under_odds": -174,
+      "realized_receptions": 1.0,
+      "c1": {
+        "projection": 0.755335,
+        "side": "UNDER",
+        "won": true,
+        "units": 0.5747126436781609
+      },
+      "b0": {
+        "projection": 0.4,
+        "side": "UNDER",
+        "won": true,
+        "units": 0.5747126436781609
+      }
+    },
+    {
+      "gsis_id": "00-0032392",
+      "player_name": "Austin Hooper",
+      "game_id": "2026_03_ATL_GB",
+      "captured_at": "2026-09-24T23:51:53Z",
+      "kickoff": "2026-09-25T00:16:00.000Z",
+      "artifact": "run_36074758237.json",
+      "observation_id": "fcnfl-shadow1:64c3b4cd5eb2a188a3145358",
+      "line": 0.5,
+      "over_odds": -122,
+      "under_odds": -106,
+      "realized_receptions": 2.0,
+      "c1": {
+        "projection": 1.858291,
+        "side": "OVER",
+        "won": true,
+        "units": 0.819672131147541
+      },
+      "b0": {
+        "projection": 2.0,
+        "side": "OVER",
+        "won": true,
+        "units": 0.819672131147541
+      }
+    },
+    {
+      "gsis_id": "00-0033858",
+      "player_name": "Jonnu Smith",
+      "game_id": "2026_03_ATL_GB",
+      "captured_at": "2026-09-24T23:51:53Z",
+      "kickoff": "2026-09-25T00:16:00.000Z",
+      "artifact": "run_36074758237.json",
+      "observation_id": "fcnfl-shadow1:9596cbc60b0a18cd16b857fd",
+      "line": 1.5,
+      "over_odds": 154,
+      "under_odds": -210,
+      "realized_receptions": 2.0,
+      "c1": {
+        "projection": 1.847462,
+        "side": "OVER",
+        "won": true,
+        "units": 1.54
+      },
+      "b0": {
+        "projection": 2.0,
+        "side": "OVER",
+        "won": true,
+        "units": 1.54
+      }
+    },
+    {
+      "gsis_id": "00-0035208",
+      "player_name": "Olamide Zaccheaus",
+      "game_id": "2026_03_ATL_GB",
+      "captured_at": "2026-09-24T23:51:53Z",
+      "kickoff": "2026-09-25T00:16:00.000Z",
+      "artifact": "run_36074758237.json",
+      "observation_id": "fcnfl-shadow1:9b87cafb652f5a7c46045440",
+      "line": 1.5,
+      "over_odds": 136,
+      "under_odds": -182,
+      "realized_receptions": 2.0,
+      "c1": {
+        "projection": 2.009245,
+        "side": "OVER",
+        "won": true,
+        "units": 1.36
+      },
+      "b0": {
+        "projection": 1.2,
+        "side": "UNDER",
+        "won": false,
+        "units": -1.0
+      }
+    },
+    {
+      "gsis_id": "00-0040667",
+      "player_name": "Matthew Golden",
+      "game_id": "2026_03_ATL_GB",
+      "captured_at": "2026-09-24T23:51:53Z",
+      "kickoff": "2026-09-25T00:16:00.000Z",
+      "artifact": "run_36074758237.json",
+      "observation_id": "fcnfl-shadow1:35062e1a3af53678b766ac88",
+      "line": 4.5,
+      "over_odds": 102,
+      "under_odds": -136,
+      "realized_receptions": 5.0,
+      "c1": {
+        "projection": 2.987404,
+        "side": "UNDER",
+        "won": false,
+        "units": -1.0
+      },
+      "b0": {
+        "projection": 2.4,
+        "side": "UNDER",
+        "won": false,
+        "units": -1.0
+      }
+    },
+    {
+      "gsis_id": "00-0036973",
+      "player_name": "Travis Etienne",
+      "game_id": "2026_03_LV_NO",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:25:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:c9814d9a27d0a31cb7595305",
+      "line": 1.5,
+      "over_odds": -148,
+      "under_odds": 112,
+      "realized_receptions": 2.0,
+      "c1": {
+        "projection": 2.596375,
+        "side": "OVER",
+        "won": true,
+        "units": 0.6756756756756757
+      },
+      "b0": {
+        "projection": 3.2,
+        "side": "OVER",
+        "won": true,
+        "units": 0.6756756756756757
+      }
+    },
+    {
+      "gsis_id": "00-0037291",
+      "player_name": "Jalen Nailor",
+      "game_id": "2026_03_LV_NO",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:25:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:7ec198f58890717ec64d0ed6",
+      "line": 2.5,
+      "over_odds": 114,
+      "under_odds": -152,
+      "realized_receptions": 1.0,
+      "c1": {
+        "projection": 1.708383,
+        "side": "UNDER",
+        "won": true,
+        "units": 0.6578947368421053
+      },
+      "b0": {
+        "projection": 1.4,
+        "side": "UNDER",
+        "won": true,
+        "units": 0.6578947368421053
+      }
+    },
+    {
+      "gsis_id": "00-0033307",
+      "player_name": "Kendrick Bourne",
+      "game_id": "2026_03_ARI_SF",
+      "captured_at": "2026-09-27T19:53:44Z",
+      "kickoff": "2026-09-27T20:06:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:f6a83b88f50b45b0752b3d86",
+      "line": 2.5,
+      "over_odds": -112,
+      "under_odds": -118,
+      "realized_receptions": 2.0,
+      "c1": {
+        "projection": 2.843139,
+        "side": "OVER",
+        "won": false,
+        "units": -1.0
+      },
+      "b0": {
+        "projection": 2.8,
+        "side": "OVER",
+        "won": false,
+        "units": -1.0
+      }
+    },
+    {
+      "gsis_id": "00-0039064",
+      "player_name": "Zay Flowers",
+      "game_id": "2026_03_BAL_DAL",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:25:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:a9d79c68630b8e74dd6b30e8",
+      "line": 3.5,
+      "over_odds": 116,
+      "under_odds": -154,
+      "realized_receptions": 5.0,
+      "c1": {
+        "projection": 5.287121,
+        "side": "OVER",
+        "won": true,
+        "units": 1.16
+      },
+      "b0": {
+        "projection": 4.6,
+        "side": "OVER",
+        "won": true,
+        "units": 1.16
+      }
+    },
+    {
+      "gsis_id": "00-0040075",
+      "player_name": "LaJohntay Wester",
+      "game_id": "2026_03_BAL_DAL",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:25:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:e91086c4ecacde44e8ec2985",
+      "line": 1.5,
+      "over_odds": 120,
+      "under_odds": -160,
+      "realized_receptions": 0.0,
+      "c1": {
+        "projection": 0.560183,
+        "side": "UNDER",
+        "won": true,
+        "units": 0.625
+      },
+      "b0": {
+        "projection": 0.6,
+        "side": "UNDER",
+        "won": true,
+        "units": 0.625
+      }
+    },
+    {
+      "gsis_id": "00-0034348",
+      "player_name": "Courtland Sutton",
+      "game_id": "2026_03_LA_DEN",
+      "captured_at": "2026-09-27T23:01:43Z",
+      "kickoff": "2026-09-28T00:21:00.000Z",
+      "artifact": "run_36357231369.json",
+      "observation_id": "fcnfl-shadow1:02952ea3bf978204bb411c1f",
+      "line": 3.5,
+      "over_odds": 102,
+      "under_odds": -136,
+      "realized_receptions": 3.0,
+      "c1": {
+        "projection": 3.450165,
+        "side": "UNDER",
+        "won": true,
+        "units": 0.7352941176470589
+      },
+      "b0": {
+        "projection": 3.2,
+        "side": "UNDER",
+        "won": true,
+        "units": 0.7352941176470589
+      }
+    },
+    {
+      "gsis_id": "00-0033288",
+      "player_name": "George Kittle",
+      "game_id": "2026_03_ARI_SF",
+      "captured_at": "2026-09-27T19:53:44Z",
+      "kickoff": "2026-09-27T20:06:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:80a81b06c537b4394be3a2c6",
+      "line": 3.5,
+      "over_odds": -188,
+      "under_odds": 140,
+      "realized_receptions": 6.0,
+      "c1": {
+        "projection": 4.540823,
+        "side": "OVER",
+        "won": true,
+        "units": 0.5319148936170213
+      },
+      "b0": {
+        "projection": 5.2,
+        "side": "OVER",
+        "won": true,
+        "units": 0.5319148936170213
+      }
+    },
+    {
+      "gsis_id": "00-0032764",
+      "player_name": "Derrick Henry",
+      "game_id": "2026_03_BAL_DAL",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:25:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:5bad8ef1cf53aac99f6389d2",
+      "line": 1.5,
+      "over_odds": 116,
+      "under_odds": -154,
+      "realized_receptions": 1.0,
+      "c1": {
+        "projection": 1.089321,
+        "side": "UNDER",
+        "won": true,
+        "units": 0.6493506493506493
+      },
+      "b0": {
+        "projection": 0.8,
+        "side": "UNDER",
+        "won": true,
+        "units": 0.6493506493506493
+      }
+    },
+    {
+      "gsis_id": "00-0040122",
+      "player_name": "Ashton Jeanty",
+      "game_id": "2026_03_LV_NO",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:25:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:a6c80d8ed137a5600977b638",
+      "line": 3.5,
+      "over_odds": -144,
+      "under_odds": 108,
+      "realized_receptions": 3.0,
+      "c1": {
+        "projection": 4.121907,
+        "side": "OVER",
+        "won": false,
+        "units": -1.0
+      },
+      "b0": {
+        "projection": 3.2,
+        "side": "UNDER",
+        "won": true,
+        "units": 1.08
+      }
+    },
+    {
+      "gsis_id": "00-0032398",
+      "player_name": "Chris Moore",
+      "game_id": "2026_03_BAL_DAL",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:25:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:385b142f88f2ea2606add739",
+      "line": 1.5,
+      "over_odds": 144,
+      "under_odds": -194,
+      "realized_receptions": 1.0,
+      "c1": {
+        "projection": 1.149561,
+        "side": "UNDER",
+        "won": true,
+        "units": 0.5154639175257731
+      },
+      "b0": {
+        "projection": 1.0,
+        "side": "UNDER",
+        "won": true,
+        "units": 0.5154639175257731
+      }
+    },
+    {
+      "gsis_id": "00-0039424",
+      "player_name": "Devaughn Vele",
+      "game_id": "2026_03_LV_NO",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:25:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:79f870d986823c2fa5df674c",
+      "line": 4.5,
+      "over_odds": 120,
+      "under_odds": -160,
+      "realized_receptions": 3.0,
+      "c1": {
+        "projection": 3.590129,
+        "side": "UNDER",
+        "won": true,
+        "units": 0.625
+      },
+      "b0": {
+        "projection": 5.6,
+        "side": "OVER",
+        "won": false,
+        "units": -1.0
+      }
+    },
+    {
+      "gsis_id": "00-0036358",
+      "player_name": "CeeDee Lamb",
+      "game_id": "2026_03_BAL_DAL",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:25:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:c9e66a57f4780b429eb30f2d",
+      "line": 6.5,
+      "over_odds": -114,
+      "under_odds": -114,
+      "realized_receptions": 7.0,
+      "c1": {
+        "projection": 6.032564,
+        "side": "UNDER",
+        "won": false,
+        "units": -1.0
+      },
+      "b0": {
+        "projection": 5.0,
+        "side": "UNDER",
+        "won": false,
+        "units": -1.0
+      }
+    },
+    {
+      "gsis_id": "00-0036613",
+      "player_name": "Jaylen Waddle",
+      "game_id": "2026_03_LA_DEN",
+      "captured_at": "2026-09-27T23:01:43Z",
+      "kickoff": "2026-09-28T00:21:00.000Z",
+      "artifact": "run_36357231369.json",
+      "observation_id": "fcnfl-shadow1:fc3ac0d3939d9b8d3f6c656b",
+      "line": 4.5,
+      "over_odds": -154,
+      "under_odds": 116,
+      "realized_receptions": 2.0,
+      "c1": {
+        "projection": 4.242798,
+        "side": "UNDER",
+        "won": true,
+        "units": 1.16
+      },
+      "b0": {
+        "projection": 3.2,
+        "side": "UNDER",
+        "won": true,
+        "units": 1.16
+      }
+    },
+    {
+      "gsis_id": "00-0034975",
+      "player_name": "Justice Hill",
+      "game_id": "2026_03_BAL_DAL",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:25:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:13c39682c69242658b84f01f",
+      "line": 2.5,
+      "over_odds": 140,
+      "under_odds": -188,
+      "realized_receptions": 0.0,
+      "c1": {
+        "projection": 1.640618,
+        "side": "UNDER",
+        "won": true,
+        "units": 0.5319148936170213
+      },
+      "b0": {
+        "projection": 1.2,
+        "side": "UNDER",
+        "won": true,
+        "units": 0.5319148936170213
+      }
+    },
+    {
+      "gsis_id": "00-0040730",
+      "player_name": "RJ Harvey",
+      "game_id": "2026_03_LA_DEN",
+      "captured_at": "2026-09-27T23:01:43Z",
+      "kickoff": "2026-09-28T00:21:00.000Z",
+      "artifact": "run_36357231369.json",
+      "observation_id": "fcnfl-shadow1:3e2962c087e3fa886fed6151",
+      "line": 2.5,
+      "over_odds": -130,
+      "under_odds": -102,
+      "realized_receptions": 6.0,
+      "c1": {
+        "projection": 2.870332,
+        "side": "OVER",
+        "won": true,
+        "units": 0.7692307692307693
+      },
+      "b0": {
+        "projection": 2.8,
+        "side": "OVER",
+        "won": true,
+        "units": 0.7692307692307693
+      }
+    },
+    {
+      "gsis_id": "00-0038559",
+      "player_name": "Michael Wilson",
+      "game_id": "2026_03_ARI_SF",
+      "captured_at": "2026-09-27T19:53:44Z",
+      "kickoff": "2026-09-27T20:06:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:f7f822b3a7b3b762f5c86b21",
+      "line": 3.5,
+      "over_odds": -148,
+      "under_odds": 112,
+      "realized_receptions": 11.0,
+      "c1": {
+        "projection": 3.517883,
+        "side": "OVER",
+        "won": true,
+        "units": 0.6756756756756757
+      },
+      "b0": {
+        "projection": 3.8,
+        "side": "OVER",
+        "won": true,
+        "units": 0.6756756756756757
+      }
+    },
+    {
+      "gsis_id": "00-0036259",
+      "player_name": "Jauan Jennings",
+      "game_id": "2026_03_MIN_TB",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:06:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:33905df82754967ac8787c78",
+      "line": 1.5,
+      "over_odds": -102,
+      "under_odds": -130,
+      "realized_receptions": 1.0,
+      "c1": {
+        "projection": 1.997511,
+        "side": "OVER",
+        "won": false,
+        "units": -1.0
+      },
+      "b0": {
+        "projection": 2.8,
+        "side": "OVER",
+        "won": false,
+        "units": -1.0
+      }
+    },
+    {
+      "gsis_id": "00-0037239",
+      "player_name": "Chris Olave",
+      "game_id": "2026_03_LV_NO",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:25:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:5fb54fe6f7d7d84eda9dd03e",
+      "line": 5.5,
+      "over_odds": -172,
+      "under_odds": 128,
+      "realized_receptions": 9.0,
+      "c1": {
+        "projection": 6.517568,
+        "side": "OVER",
+        "won": true,
+        "units": 0.5813953488372093
+      },
+      "b0": {
+        "projection": 8.4,
+        "side": "OVER",
+        "won": true,
+        "units": 0.5813953488372093
+      }
+    },
+    {
+      "gsis_id": "00-0036997",
+      "player_name": "Javonte Williams",
+      "game_id": "2026_03_BAL_DAL",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:25:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:fe630c33738ad64bb3301f9e",
+      "line": 2.5,
+      "over_odds": -138,
+      "under_odds": 104,
+      "realized_receptions": 2.0,
+      "c1": {
+        "projection": 2.679837,
+        "side": "OVER",
+        "won": false,
+        "units": -1.0
+      },
+      "b0": {
+        "projection": 2.0,
+        "side": "UNDER",
+        "won": true,
+        "units": 1.04
+      }
+    },
+    {
+      "gsis_id": "00-0037744",
+      "player_name": "Trey McBride",
+      "game_id": "2026_03_ARI_SF",
+      "captured_at": "2026-09-27T19:53:44Z",
+      "kickoff": "2026-09-27T20:06:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:dd0b2bb46d7832a63f28d45f",
+      "line": 7.5,
+      "over_odds": 112,
+      "under_odds": -148,
+      "realized_receptions": 9.0,
+      "c1": {
+        "projection": 7.04395,
+        "side": "UNDER",
+        "won": false,
+        "units": -1.0
+      },
+      "b0": {
+        "projection": 7.6,
+        "side": "OVER",
+        "won": true,
+        "units": 1.12
+      }
+    },
+    {
+      "gsis_id": "00-0039361",
+      "player_name": "Bucky Irving",
+      "game_id": "2026_03_MIN_TB",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:06:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:aab4a36afc21812f39417ce6",
+      "line": 2.5,
+      "over_odds": -130,
+      "under_odds": -102,
+      "realized_receptions": 2.0,
+      "c1": {
+        "projection": 3.459684,
+        "side": "OVER",
+        "won": false,
+        "units": -1.0
+      },
+      "b0": {
+        "projection": 3.4,
+        "side": "OVER",
+        "won": false,
+        "units": -1.0
+      }
+    },
+    {
+      "gsis_id": "00-0035249",
+      "player_name": "Josh Oliver",
+      "game_id": "2026_03_MIN_TB",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:06:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:a2da2ddaeacbe657d5825604",
+      "line": 1.5,
+      "over_odds": 114,
+      "under_odds": -148,
+      "realized_receptions": 0.0,
+      "c1": {
+        "projection": 1.686029,
+        "side": "OVER",
+        "won": false,
+        "units": -1.0
+      },
+      "b0": {
+        "projection": 1.6,
+        "side": "OVER",
+        "won": false,
+        "units": -1.0
+      }
+    },
+    {
+      "gsis_id": "00-0035644",
+      "player_name": "Noah Fant",
+      "game_id": "2026_03_LV_NO",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:25:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:83cf2a96d7f9bd08daac229a",
+      "line": 1.5,
+      "over_odds": 112,
+      "under_odds": -148,
+      "realized_receptions": 4.0,
+      "c1": {
+        "projection": 2.075703,
+        "side": "OVER",
+        "won": true,
+        "units": 1.12
+      },
+      "b0": {
+        "projection": 1.2,
+        "side": "UNDER",
+        "won": false,
+        "units": -1.0
+      }
+    },
+    {
+      "gsis_id": "00-0033906",
+      "player_name": "Alvin Kamara",
+      "game_id": "2026_03_LV_NO",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:25:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:efdb815a09af23d954ff14b0",
+      "line": 2.5,
+      "over_odds": -122,
+      "under_odds": -108,
+      "realized_receptions": 1.0,
+      "c1": {
+        "projection": 3.773585,
+        "side": "OVER",
+        "won": false,
+        "units": -1.0
+      },
+      "b0": {
+        "projection": 2.6,
+        "side": "OVER",
+        "won": false,
+        "units": -1.0
+      }
+    },
+    {
+      "gsis_id": "00-0033280",
+      "player_name": "Christian McCaffrey",
+      "game_id": "2026_03_ARI_SF",
+      "captured_at": "2026-09-27T19:53:44Z",
+      "kickoff": "2026-09-27T20:06:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:0dfe4fac41f049c8be146ce0",
+      "line": 4.5,
+      "over_odds": -130,
+      "under_odds": -102,
+      "realized_receptions": 4.0,
+      "c1": {
+        "projection": 5.557694,
+        "side": "OVER",
+        "won": false,
+        "units": -1.0
+      },
+      "b0": {
+        "projection": 5.0,
+        "side": "OVER",
+        "won": false,
+        "units": -1.0
+      }
+    },
+    {
+      "gsis_id": "00-0036322",
+      "player_name": "Justin Jefferson",
+      "game_id": "2026_03_MIN_TB",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:06:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:f11c0d63800a4e9a2c394e0e",
+      "line": 5.5,
+      "over_odds": -158,
+      "under_odds": 118,
+      "realized_receptions": 2.0,
+      "c1": {
+        "projection": 5.039739,
+        "side": "UNDER",
+        "won": true,
+        "units": 1.18
+      },
+      "b0": {
+        "projection": 5.8,
+        "side": "OVER",
+        "won": false,
+        "units": -1.0
+      }
+    },
+    {
+      "gsis_id": "00-0034753",
+      "player_name": "Mark Andrews",
+      "game_id": "2026_03_BAL_DAL",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:25:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:506c0e85f6b47a241df6cc5f",
+      "line": 4.5,
+      "over_odds": 116,
+      "under_odds": -154,
+      "realized_receptions": 3.0,
+      "c1": {
+        "projection": 3.471456,
+        "side": "UNDER",
+        "won": true,
+        "units": 0.6493506493506493
+      },
+      "b0": {
+        "projection": 3.6,
+        "side": "UNDER",
+        "won": true,
+        "units": 0.6493506493506493
+      }
+    },
+    {
+      "gsis_id": "00-0031408",
+      "player_name": "Mike Evans",
+      "game_id": "2026_03_ARI_SF",
+      "captured_at": "2026-09-27T19:53:44Z",
+      "kickoff": "2026-09-27T20:06:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:d25a62d2b935df0de2cedb7a",
+      "line": 4.5,
+      "over_odds": 120,
+      "under_odds": -160,
+      "realized_receptions": 3.0,
+      "c1": {
+        "projection": 4.07603,
+        "side": "UNDER",
+        "won": true,
+        "units": 0.625
+      },
+      "b0": {
+        "projection": 3.8,
+        "side": "UNDER",
+        "won": true,
+        "units": 0.625
+      }
+    },
+    {
+      "gsis_id": "00-0037247",
+      "player_name": "George Pickens",
+      "game_id": "2026_03_BAL_DAL",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:25:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:eb35ae79eca4eec247770a0a",
+      "line": 5.5,
+      "over_odds": 110,
+      "under_odds": -146,
+      "realized_receptions": 7.0,
+      "c1": {
+        "projection": 4.851405,
+        "side": "UNDER",
+        "won": false,
+        "units": -1.0
+      },
+      "b0": {
+        "projection": 4.2,
+        "side": "UNDER",
+        "won": false,
+        "units": -1.0
+      }
+    },
+    {
+      "gsis_id": "00-0033293",
+      "player_name": "Aaron Jones",
+      "game_id": "2026_03_MIN_TB",
+      "captured_at": "2026-09-27T19:53:45Z",
+      "kickoff": "2026-09-27T20:06:00.000Z",
+      "artifact": "run_36345953094.json",
+      "observation_id": "fcnfl-shadow1:afe367d41b60626d638c08dc",
+      "line": 1.5,
+      "over_odds": -166,
+      "under_odds": 124,
+      "realized_receptions": 5.0,
+      "c1": {
+        "projection": 1.242285,
+        "side": "UNDER",
+        "won": false,
+        "units": -1.0
+      },
+      "b0": {
+        "projection": 1.6,
+        "side": "OVER",
+        "won": true,
+        "units": 0.6024096385542169
+      }
+    }
+  ]
+}
