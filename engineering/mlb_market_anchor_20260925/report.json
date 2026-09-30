@@ -1,0 +1,481 @@
+{
+  "B": 2000,
+  "clip": 0.0001,
+  "clv": "NOT AVAILABLE (no closing line captured for frozen records)",
+  "descriptive": {
+    "by_family": {
+      "hits": {
+        "base_rate": 0.6666666666666666,
+        "n": 48,
+        "p0": {
+          "brier": 0.22703284208333332,
+          "log_loss": 0.6462896082270547
+        },
+        "p1": {
+          "brier": 0.234370936421722,
+          "log_loss": 0.6614293140895794
+        },
+        "p2": {
+          "brier": 0.23468434247656278,
+          "log_loss": 0.6620511081591163
+        }
+      },
+      "hits_runs_rbis": {
+        "base_rate": 0.7666666666666667,
+        "n": 60,
+        "p0": {
+          "brier": 0.18057067066666666,
+          "log_loss": 0.5486270918112124
+        },
+        "p1": {
+          "brier": 0.19952585105350434,
+          "log_loss": 0.5885246699973615
+        },
+        "p2": {
+          "brier": 0.1973548398157751,
+          "log_loss": 0.5840446876035402
+        }
+      },
+      "other": {
+        "base_rate": 0.11801242236024845,
+        "n": 161,
+        "p0": {
+          "brier": 0.09560334062111801,
+          "log_loss": 0.32591310028242165
+        },
+        "p1": {
+          "brier": 0.09647789786951695,
+          "log_loss": 0.32897385638804183
+        },
+        "p2": {
+          "brier": 0.09692185556601274,
+          "log_loss": 0.3307469879047722
+        }
+      },
+      "pitcher_outs": {
+        "base_rate": 0.6,
+        "n": 10,
+        "p0": {
+          "brier": 0.20888672700000002,
+          "log_loss": 0.608065099427267
+        },
+        "p1": {
+          "brier": 0.24890036102534313,
+          "log_loss": 0.6906217511124858
+        },
+        "p2": {
+          "brier": 0.23980741291655344,
+          "log_loss": 0.6746577743010578
+        }
+      },
+      "strikeouts": {
+        "base_rate": 0.45,
+        "n": 20,
+        "p0": {
+          "brier": 0.2530137625,
+          "log_loss": 0.7016632807895965
+        },
+        "p1": {
+          "brier": 0.22579168112375925,
+          "log_loss": 0.6440116250636202
+        },
+        "p2": {
+          "brier": 0.2257302716990078,
+          "log_loss": 0.6443298336093986
+        }
+      }
+    },
+    "pooled": {
+      "base_rate": 0.3745819397993311,
+      "n": 299,
+      "p0": {
+        "brier": 0.1480705585953177,
+        "log_loss": 0.45660686441172527
+      },
+      "p1": {
+        "brier": 0.15304058461931025,
+        "log_loss": 0.46759641527429263
+      },
+      "p2": {
+        "brier": 0.1525860773815895,
+        "log_loss": 0.46723937764453805
+      }
+    },
+    "reliability_pooled": {
+      "p0": [
+        {
+          "band": [
+            0.0,
+            0.2
+          ],
+          "mean_stated": 0.061265714285714284,
+          "n": 140,
+          "realized": 0.07857142857142857
+        },
+        {
+          "band": [
+            0.2,
+            0.4
+          ],
+          "mean_stated": 0.2589666666666666,
+          "n": 9,
+          "realized": 0.4444444444444444
+        },
+        {
+          "band": [
+            0.4,
+            0.5
+          ],
+          "mean_stated": 0.46251111111111115,
+          "n": 9,
+          "realized": 0.3333333333333333
+        },
+        {
+          "band": [
+            0.5,
+            0.6
+          ],
+          "mean_stated": 0.5483466666666668,
+          "n": 30,
+          "realized": 0.43333333333333335
+        },
+        {
+          "band": [
+            0.6,
+            0.7
+          ],
+          "mean_stated": 0.6424212121212121,
+          "n": 99,
+          "realized": 0.7171717171717171
+        },
+        {
+          "band": [
+            0.7,
+            0.8
+          ],
+          "mean_stated": 0.7133818181818182,
+          "n": 11,
+          "realized": 0.9090909090909091
+        },
+        {
+          "band": [
+            0.8,
+            1.0
+          ],
+          "mean_stated": 0.8038,
+          "n": 1,
+          "realized": 0.0
+        }
+      ],
+      "p1": [
+        {
+          "band": [
+            0.0,
+            0.2
+          ],
+          "mean_stated": 0.0795971068531293,
+          "n": 142,
+          "realized": 0.08450704225352113
+        },
+        {
+          "band": [
+            0.2,
+            0.4
+          ],
+          "mean_stated": 0.30024590198216156,
+          "n": 9,
+          "realized": 0.3333333333333333
+        },
+        {
+          "band": [
+            0.4,
+            0.5
+          ],
+          "mean_stated": 0.45410500035211476,
+          "n": 25,
+          "realized": 0.64
+        },
+        {
+          "band": [
+            0.5,
+            0.6
+          ],
+          "mean_stated": 0.5534262853705553,
+          "n": 64,
+          "realized": 0.5625
+        },
+        {
+          "band": [
+            0.6,
+            0.7
+          ],
+          "mean_stated": 0.6408489121494182,
+          "n": 55,
+          "realized": 0.7454545454545455
+        },
+        {
+          "band": [
+            0.7,
+            0.8
+          ],
+          "mean_stated": 0.7245231703560866,
+          "n": 4,
+          "realized": 1.0
+        },
+        {
+          "band": [
+            0.8,
+            1.0
+          ],
+          "mean_stated": null,
+          "n": 0,
+          "realized": null
+        }
+      ],
+      "p2": [
+        {
+          "band": [
+            0.0,
+            0.2
+          ],
+          "mean_stated": 0.08104009937689485,
+          "n": 142,
+          "realized": 0.08450704225352113
+        },
+        {
+          "band": [
+            0.2,
+            0.4
+          ],
+          "mean_stated": 0.302459678819649,
+          "n": 14,
+          "realized": 0.35714285714285715
+        },
+        {
+          "band": [
+            0.4,
+            0.5
+          ],
+          "mean_stated": 0.44960456884810185,
+          "n": 22,
+          "realized": 0.5454545454545454
+        },
+        {
+          "band": [
+            0.5,
+            0.6
+          ],
+          "mean_stated": 0.5537703846813987,
+          "n": 64,
+          "realized": 0.59375
+        },
+        {
+          "band": [
+            0.6,
+            0.7
+          ],
+          "mean_stated": 0.6414120196766774,
+          "n": 53,
+          "realized": 0.7735849056603774
+        },
+        {
+          "band": [
+            0.7,
+            0.8
+          ],
+          "mean_stated": 0.729598673804103,
+          "n": 4,
+          "realized": 1.0
+        },
+        {
+          "band": [
+            0.8,
+            1.0
+          ],
+          "mean_stated": null,
+          "n": 0,
+          "realized": null
+        }
+      ]
+    }
+  },
+  "eval_dates": [
+    "2026-09-25",
+    "2026-09-26",
+    "2026-09-27"
+  ],
+  "eval_sha": "d50281cedb01dc85d0e44c2100bec3919af226f7",
+  "fb_e": {
+    "family_counts": {
+      "hits": 48,
+      "hits_runs_rbis": 60,
+      "other": 161,
+      "pitcher_outs": 10,
+      "strikeouts": 20
+    },
+    "n_games": 16,
+    "n_p0_ge_0_60": 111,
+    "n_settled": 299
+  },
+  "fit_commit": "063aea6bb5",
+  "minimums": {
+    "met": false,
+    "min_p0_ge_0_60": 150,
+    "min_settled": 1000
+  },
+  "postseason": "not analyzed here; separately labelled regime, never pooled",
+  "prereg": "PREREGISTRATION.md",
+  "primary": {
+    "ci95": [
+      -0.00505303070185685,
+      0.00400964200520573
+    ],
+    "fit_families_with_b_ci_above_0": [
+      "pitcher_outs"
+    ],
+    "mean_diff": -0.00035703762975467136,
+    "n": 299,
+    "n_clusters": 16,
+    "share_bootstrap_below_0": 0.562,
+    "statistic": "mean LL(p2) - LL(p1)",
+    "verdict": "insufficient n"
+  },
+  "secondary_a": {
+    "ci95": [
+      -0.007384732064593863,
+      0.03376675868722819
+    ],
+    "mean_diff": 0.01063251323281274,
+    "n": 299,
+    "n_clusters": 16,
+    "share_bootstrap_below_0": 0.156,
+    "statistic": "mean LL(p2) - LL(p0)"
+  },
+  "secondary_b_equal_volume": {
+    "added": {
+      "hits": 6,
+      "ids": [
+        "fc2:823245:player-665487:hits_runs_rbis:1:over",
+        "fc2:823816:player-691587:strikeouts:5:over",
+        "fc2:824057:player-608379:strikeouts:4:over",
+        "fc2:824057:player-676440:pitcher_outs:15:over",
+        "fc2:824220:player-805808:hits_runs_rbis:1:over",
+        "fc2:824949:player-669713:strikeouts:4:over"
+      ],
+      "n": 6
+    },
+    "challenger": {
+      "hit_rate": 1.0,
+      "hits": 6,
+      "mean_stated": 0.6522823868395077,
+      "n": 6,
+      "roi": 0.5149138528805465,
+      "stated_minus_realized": -0.3477176131604923,
+      "units": 3.0894831172832786
+    },
+    "champion": {
+      "hit_rate": 0.8333333333333334,
+      "hits": 5,
+      "mean_stated": 0.63365,
+      "n": 6,
+      "roi": 0.4275035278031929,
+      "stated_minus_realized": -0.19968333333333332,
+      "units": 2.5650211668191574
+    },
+    "more_winners_at_equal_volume": "NOT YET PROVEN",
+    "overlap": 0,
+    "per_slate": {
+      "2026-09-25": {
+        "N_d": 2,
+        "challenger_n": 2,
+        "challenger_qualifying_pool": 21,
+        "overlap": 0
+      },
+      "2026-09-26": {
+        "N_d": 4,
+        "challenger_n": 4,
+        "challenger_qualifying_pool": 36,
+        "overlap": 0
+      },
+      "2026-09-27": {
+        "N_d": 0,
+        "challenger_n": 0,
+        "challenger_qualifying_pool": 0,
+        "overlap": 0
+      }
+    },
+    "removed": {
+      "hits": 5,
+      "ids": [
+        "fc2:823245:player-621111:strikeouts:4:over",
+        "fc2:823407:player-656775:hits_runs_rbis:1:over",
+        "fc2:823407:player-670764:hits_runs_rbis:1:over",
+        "fc2:824057:player-676440:strikeouts:4:over",
+        "fc2:824058:player-664728:hits_runs_rbis:1:over",
+        "fc2:824058:player-670231:hits_runs_rbis:1:over"
+      ],
+      "n": 6
+    },
+    "significance_claim_allowed": false
+  },
+  "seed": 20260925,
+  "slate_audit": {
+    "2026-09-25": {
+      "board_records": 1066,
+      "board_sha256": "433872661cc01b34fd5ba380dec65af8894697c7a44275b7d3013a5304487197",
+      "excluded": {
+        "missing_odds_or_probability": 108,
+        "not_hit_or_miss:no batted-ball Statcast data for this game": 36,
+        "qc_status_not_kept": 785
+      },
+      "fb_e_rows": 137,
+      "graded_at": "2026-09-26T22:39:32.858024+00:00",
+      "graded_grade_counts": {
+        "hit": 236,
+        "miss": 498,
+        "ungraded": 332
+      },
+      "graded_records": 1066,
+      "graded_source_board_sha256": "433872661cc01b34fd5ba380dec65af8894697c7a44275b7d3013a5304487197",
+      "recomputed_board_sha256": "433872661cc01b34fd5ba380dec65af8894697c7a44275b7d3013a5304487197"
+    },
+    "2026-09-26": {
+      "board_records": 468,
+      "board_sha256": "274d148bf2271baa8fc908c2f61a023a2fea107be880811e8d582c9e5b3d3036",
+      "excluded": {
+        "missing_odds_or_probability": 199,
+        "not_hit_or_miss:no batted-ball Statcast data for this game": 53,
+        "qc_status_not_kept": 58
+      },
+      "fb_e_rows": 158,
+      "graded_at": "2026-09-27T22:58:30.854822+00:00",
+      "graded_grade_counts": {
+        "hit": 128,
+        "miss": 232,
+        "ungraded": 108
+      },
+      "graded_records": 468,
+      "graded_source_board_sha256": "274d148bf2271baa8fc908c2f61a023a2fea107be880811e8d582c9e5b3d3036",
+      "recomputed_board_sha256": "274d148bf2271baa8fc908c2f61a023a2fea107be880811e8d582c9e5b3d3036"
+    },
+    "2026-09-27": {
+      "board_records": 969,
+      "board_sha256": "cf4baded851c551a87371516df9748d9ac7b0e8e4b913379af67c562469b1ca2",
+      "excluded": {
+        "missing_odds_or_probability": 46,
+        "not_hit_or_miss:game not final yet (status: Cancelled)": 1,
+        "qc_status_not_kept": 918
+      },
+      "fb_e_rows": 4,
+      "graded_at": "2026-09-28T22:26:20.830310+00:00",
+      "graded_grade_counts": {
+        "hit": 158,
+        "miss": 401,
+        "ungraded": 410
+      },
+      "graded_records": 969,
+      "graded_source_board_sha256": "cf4baded851c551a87371516df9748d9ac7b0e8e4b913379af67c562469b1ca2",
+      "recomputed_board_sha256": "cf4baded851c551a87371516df9748d9ac7b0e8e4b913379af67c562469b1ca2"
+    }
+  }
+}
