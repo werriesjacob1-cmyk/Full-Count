@@ -6398,3 +6398,21 @@ Alligator
 - **Merges:** none. **Seal:** untouched.
 
 Alligator
+
+## 2026-09-30 15:30Z -- Week-3 seal missed; #208 merged; MLB anchor analysis; Mission 10 graded; #218
+- **Week-3 Sun/Mon Tier 1 seal: NOT PRODUCED.**
+  - `trig_01FiiD9MknrMxbB1zbeS4d5N` fired 09-26 18:30Z into this persistent session. The session did not process the prompt until 09-30 ~15:00Z.
+  - The seal branch is still `e05e02c592`, and no local artifact exists.
+  - The rows are excluded, never back-filled.
+  - **Blocker:** `build_week_seal.py` pins week-3 pre-week inputs, so Week 4 cannot be sealed without an authorized pin change. No Week 4 trigger exists.
+  - Recommendation: fresh-session triggers. See #91 5913976107.
+- **#208 MERGED** at `e46c82755a` (only `test_browser_today_central.py`). Root, NFL and Ledger CI are all green. Seal, recovery and ATL@GB refs are unchanged.
+- **#218** (`claude/history-games-deterministic-fixture-20260930` @ `1cfb698452`, test-only) fixes the live-data dependency in `test_browser_history_games.py` that turned the #215/#210 post-#208 integration trees red. Both suites are green.
+- **#215 is READY FOR JACOB'S APPROVAL.** Integration main + #218 + #215 `43cdde6d4a` is green on both suites. Local results: 0, 1 and 7 real Top Picks all pass, and the mutant is killed.
+- **MLB market-anchor** (#217 @ `ddcbabe4bb`): verdict `insufficient n` (299 of the 1,000 required; 111 of the 150 required). Equal volume is NOT YET PROVEN (6 vs 6 picks). One cancelled game is disclosed.
+- **Mission 10** (#193 @ `05b188d33f`): 239 graded, 54 void. C1−B0 MAE is −0.034, CI [−0.110, +0.043]. The real-line join (exploratory, n=39) gives C1 +4.48u and B0 +0.32u.
+- **Matrix:** `codex/pr-closure-readiness-20260925` @ `3c677408ca`, §00.
+- **Bridge:** #91 comments 5913976107, 5914091735, 5914150902, 5914345332.
+- **Merges:** only #208, which was authorized.
+
+Alligator
