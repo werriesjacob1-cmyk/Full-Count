@@ -632,6 +632,34 @@
             "value": 14.5,
             "needs": 15
           }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Chicago White Sox @ Houston Astros",
+          "game_pk": 849846,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            680732,
+            686613
+          ],
+          "signals": {
+            "combined_k_edge": 0.1241
+          },
+          "hit_probability": 0.6363,
+          "raw_hit_probability": null,
+          "lift": 0.1241,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 11.5,
+            "needs": 12
+          }
         }
       ]
     }
