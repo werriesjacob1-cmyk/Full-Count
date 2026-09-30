@@ -1,4 +1,4 @@
-# PR closure and merge readiness: final integration matrix (2026-09-25)
+# PR closure and merge readiness: final integration matrix (2026-09-25, updated 2026-09-30)
 
 - **Workstream:** PR-CLOSURE-MERGE-READINESS-20260925. Codex started it, then ran out of usage; Claude Code completed it (#91 claim 5836256690).
 - **Main:** `800596c78d` at the final collection. The certified integration trees were built on `e48bb2ac21`; since then main has only received automated dashboard-data commits, which don't trigger CI.
@@ -26,6 +26,68 @@ Every number below comes from the scripts and JSON in this directory:
 | `fail_files.py` | `ci_failure_attribution.json` (failing test and message, parsed from each failed job's log) |
 | `old_prs.py` | `rerooted_pr_unique_files.json` |
 | `gen_matrix.py` | the table below |
+
+## 00. Update (2026-09-30): #208 merged; new shared root-CI cause found and repaired (#218)
+
+**#208 is MERGED.**
+- Merge commit `e46c82755a16b6ea67b2dca2dbd448820a331f5f`, merged 2026-09-25T19:43:36Z. Its parents are main `3a0c983845` and PR head `d68b2d6073`.
+- It changes only `test_browser_today_central.py` (+21/−7), with no workflow, `docs/`, production or data change.
+- CI on the merge commit is green on all three suites: Test Suite 36181431407, NFL 36181431638, Public Ledger Integrity 36181431503.
+- Main is now `078fc7b232`. Since the merge, main has received only automated dashboard-data commits, which do not trigger CI.
+
+**A second shared live-data root failure was found: `test_browser_history_games.py`.**
+- Its NOT_POSTED Games check used whichever live schedule highlight came first.
+- On main `f031c395` (09-25) that highlight's id was no longer in `props`, so the check rendered "No longer on the board". That failed both post-#208 integration trees:
+  - #215 `f783596fe3` (run 36198621973);
+  - #210 `e9f165bf80` (run 36198830026).
+- The failure reproduced locally at `f031c395`, scoring 15/16.
+- It passes on today's main (16/16), so it is intermittent on data, the same class as #208.
+- **The repair is #218** `1cfb698452`, test-only. It targets one synthetic pregame game and prop in the in-memory served board, and every assertion is unchanged.
+  - Local results: 16/16 on current main, 16/16 on the failing 09-25 data, and 16/16 on an empty board.
+  - 2 of 2 mutants are killed.
+  - Exact-head CI: root ✅ 36735747191, NFL ✅ 36735747173.
+
+**#215 re-certification on current main.**
+- The integration branch `claude/pr215-post208-integration-20260930` = main `078fc7b232` + #218 + #215 is at **`43cdde6d4a`**.
+- Its `test_browser_e2e.py` blob `2fa2a7038e` is byte-identical to the #215 head `57f764491a`.
+- Exact-tree CI: root ✅ 36735719403, NFL ✅ 36735719437.
+- Local `test_browser_e2e.py` results:
+  - 140/140 on the live board (1 real Top Pick);
+  - 139/139 on the 09-25 board (7 real Top Picks);
+  - 140/140 with 0 Top Picks.
+- The `publicProps → []` mutant is killed, at 104/111.
+- **#215 is READY FOR JACOB'S APPROVAL.** It is best merged together with or after #218. Without #218, its own root CI can go red on live data that is unrelated to #215.
+
+**Does #208 resolve each PR head's root-CI failure?**
+- Every head failure listed below was recorded on a pre-#208 base.
+- GitHub runs CI on the PR head, so the head stays red until that branch is refreshed onto the new main.
+
+| PR | Head | Root failure recorded on its head | Resolved by #208 on current main? |
+|---|---|---|---|
+| #215 | `57f764491a` | #208 fixture | Yes. Integration `43cdde6d4a` is green, with #218. |
+| #216 | `1fa6c6031d` | #208 fixture | Yes. It is docs-only, and the cause is removed on main. |
+| #210 | `3f5368d924` | #208 fixture | Yes for the #208 cause. The one remaining post-#208 failure (history-games) is repaired by #218. |
+| #202 | `e05e02c592` | #208 fixture plus the stale `docs/` e2e snapshot | #208 cause yes; the e2e cause needs #215. |
+| #207, #213 | `f4fb17aa0b`, `edddb9ab2b` | #208 fixture plus the stale e2e snapshot | Same as #202. |
+| #204, #205 | `40d842c9a9`, `76b42547c3` | NFL: numpy missing | No; needs #210. Root is green. |
+| #186 | `efb40423ff` | #208 fixture | Yes. |
+| #212 | `0a303be087` | green | n/a |
+| #177 | `fcd9094dba` | green | n/a. **Propose content `8dfbac39ce`** (blob `208d604f93`, with §15/§16), not the stale head blob `fd975f0787`. |
+
+**Next PRs needing Jacob's authorization, in order:**
+1. **#218**
+2. **#215**
+3. **#216**
+4. **#210**
+5. **#177**: only after its branch carries `8dfbac39ce`. That is an update to the PR's own branch, which its owner or Jacob must approve.
+6. The Tier 1 stack, #202 → #213.
+7. #186 → #212.
+
+**New research PRs (drafts, not merge candidates):**
+- #217: the MLB market-anchor analysis. Verdict `insufficient n`; both suites green.
+- #193: Mission 10 grade `05b188d33f`. Both suites green.
+
+**The Week 3 Sunday/Monday Tier 1 seal was NOT produced.** See #91 comment 5913976107. Those rows are excluded, not back-filled.
 
 ## 0. Update (2026-09-25, later): e2e repair, legacy preregistration port, re-certified sequence
 
