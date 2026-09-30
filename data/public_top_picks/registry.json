@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-30T17:53:19.747830+00:00",
+  "updated_at": "2026-09-30T19:52:58.237433+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -55214,6 +55214,108 @@
         },
         "qualification_timestamp": "2026-09-30T17:47:54.778418+00:00",
         "board_timestamp": "2026-09-30T17:47:54.769837+00:00",
+        "slate_date": "2026-09-30"
+      }
+    },
+    "fc2:849848:player-665862:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:849848:player-665862:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "849848",
+        [
+          "player",
+          "665862"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-30",
+      "first_published_at": "2026-09-30T19:52:58.237433+00:00",
+      "publication_provenance": {
+        "artifact_id": "d0ea4c956613a82a79284bb0b646076860158abc77373e099394beae64a6afa7",
+        "source_commit": "3a25a4d8e4692a485585855897969950a74e2697",
+        "workflow_run_id": "36768590818",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-30T19:52:45.437353+00:00",
+        "data_hash": "232f37ad444d80f1d35ca31d0687f5e998e19779bdd57a9b99e68a4f31f09371",
+        "live_hash": "7d5289216b7b7236e46ca98b16cf3c3fe4555a9e13ba38f77c125d74940addcc"
+      },
+      "snapshot": {
+        "id": "fc2:849848:player-665862:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 849848,
+        "player_id": 665862,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Jazz Chisholm Jr.",
+        "team": "New York Yankees",
+        "matchup": "Boston Red Sox @ New York Yankees",
+        "game_start": "2026-10-01T00:00:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.675,
+        "market_odds": -180,
+        "market_implied": 0.6429,
+        "market_edge": 0.0321,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.0 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 95.3mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 50.0 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+2.3mph 2nd-half vs 1st-half)",
+          "Platoon: L bat vs RHP (favorable)",
+          "Projected 3.89 PA (batting slot 6)",
+          "Pitch-type exploit: RV/100 +1.8 vs SI (opposing SP throws it 21.7% of the time)"
+        ],
+        "watchouts": [
+          "Opposing SP ERA 2.72 \u2014 elite pitcher, tough matchup",
+          "Hitters batting ahead of him: 0.303 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.311 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.39 runs (league avg 4.245; line 3.5, game total 6.5) \u2014 a weak offensive environment",
+          "L7 sample is thin (4 PA) \u2014 treat recent-form read with caution",
+          "Activated from the 10-day injured list 8 day(s) ago \u2014 early performance back can be inconsistent",
+          "Season barrel% 8.2 \u2014 below-average barrel rate",
+          "Wind blowing IN (4mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 4/13 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "BvP: 3-for-13 vs Sonny Gray (standard error \u00b112 pts on a 13-AB career sample -- weighted lightly on that basis, not just because the count looks small)"
+        ],
+        "prob_ci": [
+          0.6642,
+          0.6982
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 136,
+        "lineup_assumed": null,
+        "base_rate": 0.6668,
+        "lift": 0.0082,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "5846a9dd7",
+          "prediction_timestamp": "2026-09-30T19:49:28.882378+00:00",
+          "odds_fetched_at": "2026-09-30T19:49:27.063895+00:00",
+          "board_generated_at": "2026-09-30T19:49:28.872947+00:00"
+        },
+        "qualification_timestamp": "2026-09-30T19:49:28.882378+00:00",
+        "board_timestamp": "2026-09-30T19:49:28.872947+00:00",
         "slate_date": "2026-09-30"
       }
     }
