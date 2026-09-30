@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-30T15:18:04.831115+00:00",
+  "updated_at": "2026-09-30T16:07:55.458503+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -54822,6 +54822,198 @@
         },
         "qualification_timestamp": "2026-09-30T15:07:32.070105+00:00",
         "board_timestamp": "2026-09-30T15:07:32.060282+00:00",
+        "slate_date": "2026-09-30"
+      }
+    },
+    "fc2:849841:player-669016:hits:1:over": {
+      "canonical_id": "fc2:849841:player-669016:hits:1:over",
+      "settlement_identity": [
+        "849841",
+        [
+          "player",
+          "669016"
+        ],
+        "hits",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-30",
+      "first_published_at": "2026-09-30T16:07:55.458503+00:00",
+      "publication_provenance": {
+        "artifact_id": "2ebafe75e2ec65acc16329dea32f265da01a4c108494621d890336aa3b5829e4",
+        "source_commit": "34bd216ff14c1c19050b20b5e5ddd89887e20f2c",
+        "workflow_run_id": "36741792170",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-30T16:07:40.855883+00:00",
+        "data_hash": "60817d49824add6de94616a530f3cac4d042bf48590e6c97e3e6778da508437d",
+        "live_hash": "f43ef1e043ce350031743964da81b05d1e17a8b0310196a6445f7f6f55322148"
+      },
+      "snapshot": {
+        "id": "fc2:849841:player-669016:hits:1:over",
+        "identity_version": 2,
+        "game_pk": 849841,
+        "player_id": 669016,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Brandon Marsh",
+        "team": "Philadelphia Phillies",
+        "matchup": "Philadelphia Phillies @ Atlanta Braves",
+        "game_start": "2026-09-30T18:00:00Z",
+        "stat": "hits",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits",
+        "hit_probability": 0.6079,
+        "market_odds": -125,
+        "market_implied": 0.5556,
+        "market_edge": 0.0523,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (9.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 22.2 \u2014 hot recent contact",
+          "Platoon: L bat vs RHP (favorable)",
+          "Projected 3.91 PA (batting slot 6)"
+        ],
+        "watchouts": [
+          "L7 avg EV 82.3mph (league ~88.5) \u2014 cold recent contact",
+          "Team implied for 3.61 runs (league avg 4.245; line 3.5, game total 7) \u2014 a weak offensive environment",
+          "Season barrel% 7.9 \u2014 below-average barrel rate",
+          "Hitters batting ahead of him: 0.326 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.307 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Wind blowing IN (5mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 0/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.5992,
+          0.6364
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 153,
+        "lineup_assumed": null,
+        "base_rate": 0.5579,
+        "lift": 0.05,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "691a9325d",
+          "prediction_timestamp": "2026-09-30T15:37:10.739380+00:00",
+          "odds_fetched_at": "2026-09-30T15:37:08.645292+00:00",
+          "board_generated_at": "2026-09-30T15:37:10.728114+00:00"
+        },
+        "qualification_timestamp": "2026-09-30T15:37:10.739380+00:00",
+        "board_timestamp": "2026-09-30T15:37:10.728114+00:00",
+        "slate_date": "2026-09-30"
+      }
+    },
+    "fc2:849841:player-669016:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:849841:player-669016:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "849841",
+        [
+          "player",
+          "669016"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-30",
+      "first_published_at": "2026-09-30T16:07:55.458503+00:00",
+      "publication_provenance": {
+        "artifact_id": "2ebafe75e2ec65acc16329dea32f265da01a4c108494621d890336aa3b5829e4",
+        "source_commit": "34bd216ff14c1c19050b20b5e5ddd89887e20f2c",
+        "workflow_run_id": "36741792170",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-30T16:07:40.855883+00:00",
+        "data_hash": "60817d49824add6de94616a530f3cac4d042bf48590e6c97e3e6778da508437d",
+        "live_hash": "f43ef1e043ce350031743964da81b05d1e17a8b0310196a6445f7f6f55322148"
+      },
+      "snapshot": {
+        "id": "fc2:849841:player-669016:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 849841,
+        "player_id": 669016,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Brandon Marsh",
+        "team": "Philadelphia Phillies",
+        "matchup": "Philadelphia Phillies @ Atlanta Braves",
+        "game_start": "2026-09-30T18:00:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6709,
+        "market_odds": -175,
+        "market_implied": 0.6364,
+        "market_edge": 0.0345,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 22.2 \u2014 hot recent contact",
+          "Platoon: L bat vs RHP (favorable)",
+          "Projected 3.91 PA (batting slot 6)"
+        ],
+        "watchouts": [
+          "L7 avg EV 82.3mph (league ~88.5) \u2014 cold recent contact",
+          "Hitters batting ahead of him: 0.326 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.307 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.61 runs (league avg 4.245; line 3.5, game total 7) \u2014 a weak offensive environment",
+          "Season barrel% 7.9 \u2014 below-average barrel rate",
+          "Wind blowing IN (5mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 0/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6601,
+          0.6941
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 153,
+        "lineup_assumed": null,
+        "base_rate": 0.6727,
+        "lift": -0.0018,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "691a9325d",
+          "prediction_timestamp": "2026-09-30T15:37:10.739380+00:00",
+          "odds_fetched_at": "2026-09-30T15:37:08.645292+00:00",
+          "board_generated_at": "2026-09-30T15:37:10.728114+00:00"
+        },
+        "qualification_timestamp": "2026-09-30T15:37:10.739380+00:00",
+        "board_timestamp": "2026-09-30T15:37:10.728114+00:00",
         "slate_date": "2026-09-30"
       }
     }
