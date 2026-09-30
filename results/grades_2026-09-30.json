@@ -27,16 +27,280 @@
       "hits": 0,
       "misses": 0,
       "voids": 0,
-      "ungraded": 1
+      "ungraded": 6
     }
   },
   "public_top_pick_counts": {
     "hits": 0,
     "misses": 0,
     "voids": 0,
-    "ungraded": 1
+    "ungraded": 6
   },
   "public_top_picks": [
+    {
+      "id": "fc2:849841:player-669016:hits:1:over",
+      "identity_version": 2,
+      "game_pk": 849841,
+      "player_id": 669016,
+      "combo_player_ids": null,
+      "type": "batter",
+      "name": "Brandon Marsh",
+      "team": "Philadelphia Phillies",
+      "matchup": "Philadelphia Phillies @ Atlanta Braves",
+      "game_start": "2026-09-30T18:00:00Z",
+      "stat": "hits",
+      "market_side": "over",
+      "lean": null,
+      "projection": {
+        "stat": "hits",
+        "value": 0.5,
+        "needs": 1
+      },
+      "prop": "Over 0.5 Hits",
+      "hit_probability": 0.6079,
+      "market_odds": -125,
+      "market_implied": 0.5556,
+      "market_edge": 0.0523,
+      "market_hold": null,
+      "price_clears": true,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (9.3 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "why": [
+        "L7 barrel% 22.2 \u2014 hot recent contact",
+        "Platoon: L bat vs RHP (favorable)",
+        "Projected 3.91 PA (batting slot 6)"
+      ],
+      "watchouts": [
+        "L7 avg EV 82.3mph (league ~88.5) \u2014 cold recent contact",
+        "Team implied for 3.61 runs (league avg 4.245; line 3.5, game total 7) \u2014 a weak offensive environment",
+        "Season barrel% 7.9 \u2014 below-average barrel rate",
+        "Hitters batting ahead of him: 0.326 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+        "Hitter batting behind him: 0.307 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+        "Wind blowing IN (5mph) \u2014 power suppressed",
+        "Opposing bullpen fatigue: 0/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+      ],
+      "prob_ci": [
+        0.5992,
+        0.6364
+      ],
+      "reliability": "A",
+      "reliability_note": null,
+      "sample_n": 153,
+      "lineup_assumed": null,
+      "base_rate": 0.5579,
+      "lift": 0.05,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "versions": {
+        "model_version": "2026.08.15",
+        "selection_policy_version": "1.0.0",
+        "calibration_version": "1.0.0",
+        "feature_version": "1.0.0",
+        "git_sha": "691a9325d",
+        "prediction_timestamp": "2026-09-30T15:37:10.739380+00:00",
+        "odds_fetched_at": "2026-09-30T15:37:08.645292+00:00",
+        "board_generated_at": "2026-09-30T15:37:10.728114+00:00"
+      },
+      "qualification_timestamp": "2026-09-30T15:37:10.739380+00:00",
+      "board_timestamp": "2026-09-30T15:37:10.728114+00:00",
+      "slate_date": "2026-09-30",
+      "published_top_pick_at": "2026-09-30T16:07:55.458503+00:00",
+      "publication_artifact_id": "2ebafe75e2ec65acc16329dea32f265da01a4c108494621d890336aa3b5829e4",
+      "publication_source_commit": "34bd216ff14c1c19050b20b5e5ddd89887e20f2c",
+      "publication_run_id": "36741792170",
+      "publication_deployment_id": null,
+      "grade": "ungraded",
+      "settlement_state": "ungraded",
+      "reason": "game_not_authoritatively_final",
+      "eligibility": {
+        "eligibility": "ungraded",
+        "reason_code": "game_not_authoritatively_final",
+        "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
+        "game_state": "live"
+      },
+      "settlement_authority": "none",
+      "settlement_observed_at": "2026-09-30T18:03:25.470567+00:00",
+      "settlement_source": "durable_morning_status_observation"
+    },
+    {
+      "id": "fc2:849841:player-669016:hits_runs_rbis:1:over",
+      "identity_version": 2,
+      "game_pk": 849841,
+      "player_id": 669016,
+      "combo_player_ids": null,
+      "type": "batter",
+      "name": "Brandon Marsh",
+      "team": "Philadelphia Phillies",
+      "matchup": "Philadelphia Phillies @ Atlanta Braves",
+      "game_start": "2026-09-30T18:00:00Z",
+      "stat": "hits_runs_rbis",
+      "market_side": "over",
+      "lean": null,
+      "projection": {
+        "stat": "hits_runs_rbis",
+        "value": 0.5,
+        "needs": 1
+      },
+      "prop": "Over 0.5 Hits+Runs+RBIs",
+      "hit_probability": 0.6709,
+      "market_odds": -175,
+      "market_implied": 0.6364,
+      "market_edge": 0.0345,
+      "market_hold": null,
+      "price_clears": true,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (8.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "why": [
+        "L7 barrel% 22.2 \u2014 hot recent contact",
+        "Platoon: L bat vs RHP (favorable)",
+        "Projected 3.91 PA (batting slot 6)"
+      ],
+      "watchouts": [
+        "L7 avg EV 82.3mph (league ~88.5) \u2014 cold recent contact",
+        "Hitters batting ahead of him: 0.326 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+        "Hitter batting behind him: 0.307 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+        "Team implied for 3.61 runs (league avg 4.245; line 3.5, game total 7) \u2014 a weak offensive environment",
+        "Season barrel% 7.9 \u2014 below-average barrel rate",
+        "Wind blowing IN (5mph) \u2014 power suppressed",
+        "Opposing bullpen fatigue: 0/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+      ],
+      "prob_ci": [
+        0.6601,
+        0.6941
+      ],
+      "reliability": "A",
+      "reliability_note": null,
+      "sample_n": 153,
+      "lineup_assumed": null,
+      "base_rate": 0.6727,
+      "lift": -0.0018,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "versions": {
+        "model_version": "2026.08.15",
+        "selection_policy_version": "1.0.0",
+        "calibration_version": "1.0.0",
+        "feature_version": "1.0.0",
+        "git_sha": "691a9325d",
+        "prediction_timestamp": "2026-09-30T15:37:10.739380+00:00",
+        "odds_fetched_at": "2026-09-30T15:37:08.645292+00:00",
+        "board_generated_at": "2026-09-30T15:37:10.728114+00:00"
+      },
+      "qualification_timestamp": "2026-09-30T15:37:10.739380+00:00",
+      "board_timestamp": "2026-09-30T15:37:10.728114+00:00",
+      "slate_date": "2026-09-30",
+      "published_top_pick_at": "2026-09-30T16:07:55.458503+00:00",
+      "publication_artifact_id": "2ebafe75e2ec65acc16329dea32f265da01a4c108494621d890336aa3b5829e4",
+      "publication_source_commit": "34bd216ff14c1c19050b20b5e5ddd89887e20f2c",
+      "publication_run_id": "36741792170",
+      "publication_deployment_id": null,
+      "grade": "ungraded",
+      "settlement_state": "ungraded",
+      "reason": "game_not_authoritatively_final",
+      "eligibility": {
+        "eligibility": "ungraded",
+        "reason_code": "game_not_authoritatively_final",
+        "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
+        "game_state": "live"
+      },
+      "settlement_authority": "none",
+      "settlement_observed_at": "2026-09-30T18:03:25.470567+00:00",
+      "settlement_source": "durable_morning_status_observation"
+    },
+    {
+      "id": "fc2:849841:player-702222:hits_runs_rbis:1:over",
+      "identity_version": 2,
+      "game_pk": 849841,
+      "player_id": 702222,
+      "combo_player_ids": null,
+      "type": "batter",
+      "name": "Justin Crawford",
+      "team": "Philadelphia Phillies",
+      "matchup": "Philadelphia Phillies @ Atlanta Braves",
+      "game_start": "2026-09-30T18:00:00Z",
+      "stat": "hits_runs_rbis",
+      "market_side": "over",
+      "lean": null,
+      "projection": {
+        "stat": "hits_runs_rbis",
+        "value": 0.5,
+        "needs": 1
+      },
+      "prop": "Over 0.5 Hits+Runs+RBIs",
+      "hit_probability": 0.6649,
+      "market_odds": -170,
+      "market_implied": 0.6296,
+      "market_edge": 0.0353,
+      "market_hold": null,
+      "price_clears": true,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (8.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "why": [
+        "L7 avg EV 88.8mph (league ~88.5)",
+        "L7 barrel% 16.7 \u2014 hot recent contact",
+        "Platoon: L bat vs RHP (favorable)"
+      ],
+      "watchouts": [
+        "Projected 3.69 PA (batting slot 8) \u2014 a tough lineup slot for plate appearances",
+        "Hitters batting ahead of him: 0.307 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+        "Hitter batting behind him: 0.275 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+        "Team implied for 3.68 runs (league avg 4.245; line 3.5, game total 7) \u2014 a weak offensive environment",
+        "Season barrel% 2.0 \u2014 below-average barrel rate",
+        "Wind blowing IN (5mph) \u2014 power suppressed",
+        "Opposing bullpen fatigue: 0/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+      ],
+      "prob_ci": [
+        0.6541,
+        0.6881
+      ],
+      "reliability": "A",
+      "reliability_note": null,
+      "sample_n": 144,
+      "lineup_assumed": null,
+      "base_rate": 0.6727,
+      "lift": -0.0078,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "versions": {
+        "model_version": "2026.08.15",
+        "selection_policy_version": "1.0.0",
+        "calibration_version": "1.0.0",
+        "feature_version": "1.0.0",
+        "git_sha": "77929d9bf",
+        "prediction_timestamp": "2026-09-30T15:07:32.070105+00:00",
+        "odds_fetched_at": "2026-09-30T15:07:30.584313+00:00",
+        "board_generated_at": "2026-09-30T15:07:32.060282+00:00"
+      },
+      "qualification_timestamp": "2026-09-30T15:07:32.070105+00:00",
+      "board_timestamp": "2026-09-30T15:07:32.060282+00:00",
+      "slate_date": "2026-09-30",
+      "published_top_pick_at": "2026-09-30T15:18:04.831115+00:00",
+      "publication_artifact_id": "1206a903f429de3420f549d135502625beaebee9d81af23feb4d60ff4101a5e9",
+      "publication_source_commit": "a5d3d7d2913aadbbd8400555aa85f4e0f764422e",
+      "publication_run_id": "36735509635",
+      "publication_deployment_id": null,
+      "grade": "ungraded",
+      "settlement_state": "ungraded",
+      "reason": "game_not_authoritatively_final",
+      "eligibility": {
+        "eligibility": "ungraded",
+        "reason_code": "game_not_authoritatively_final",
+        "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
+        "game_state": "live"
+      },
+      "settlement_authority": "none",
+      "settlement_observed_at": "2026-09-30T18:03:25.470567+00:00",
+      "settlement_source": "durable_morning_status_observation"
+    },
     {
       "id": "fc2:849842:player-592332:strikeouts:5:over",
       "identity_version": 2,
@@ -118,7 +382,191 @@
         "game_state": "pregame"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-09-30T10:32:53.074626+00:00",
+      "settlement_observed_at": "2026-09-30T18:03:25.470567+00:00",
+      "settlement_source": "durable_morning_status_observation"
+    },
+    {
+      "id": "fc2:849846:player-695657:hits_runs_rbis:1:over",
+      "identity_version": 2,
+      "game_pk": 849846,
+      "player_id": 695657,
+      "combo_player_ids": null,
+      "type": "batter",
+      "name": "Colson Montgomery",
+      "team": "Chicago White Sox",
+      "matchup": "Chicago White Sox @ Houston Astros",
+      "game_start": "2026-09-30T21:00:00Z",
+      "stat": "hits_runs_rbis",
+      "market_side": "over",
+      "lean": null,
+      "projection": {
+        "stat": "hits_runs_rbis",
+        "value": 0.5,
+        "needs": 1
+      },
+      "prop": "Over 0.5 Hits+Runs+RBIs",
+      "hit_probability": 0.6317,
+      "market_odds": -135,
+      "market_implied": 0.5745,
+      "market_edge": 0.0572,
+      "market_hold": null,
+      "price_clears": true,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (10.0 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "why": [
+        "L7 barrel% 18.2 \u2014 hot recent contact",
+        "Bat speed trending up L14 (+1.8mph 2nd-half vs 1st-half)",
+        "Platoon: L bat vs RHP (favorable)",
+        "Hitter batting behind him: 0.345 wOBA (league ~.320)",
+        "Season barrel% 12.0",
+        "Dome \u2014 weather neutral"
+      ],
+      "watchouts": [
+        "L7 avg EV 86.6mph (league ~88.5) \u2014 cold recent contact",
+        "Opposing SP ERA 3.19 \u2014 elite pitcher, tough matchup",
+        "Projected 3.52 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+        "Hitters batting ahead of him: 0.298 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+        "Team implied for 3.47 runs (league avg 4.245; line 3.5, game total 7.5) \u2014 a weak offensive environment",
+        "Public heavy on Chicago White Sox (money% trails tickets% by 12 pts) \u2014 sharp money is fading this side",
+        "Opposing bullpen fatigue: 3/11 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+        "Sharp money fading Chicago White Sox (money% -12 pts vs ticket%) \u2014 smart money moving away from this side"
+      ],
+      "prob_ci": [
+        0.6184,
+        0.6633
+      ],
+      "reliability": "A",
+      "reliability_note": null,
+      "sample_n": 153,
+      "lineup_assumed": null,
+      "base_rate": 0.6727,
+      "lift": -0.041,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "versions": {
+        "model_version": "2026.08.15",
+        "selection_policy_version": "1.0.0",
+        "calibration_version": "1.0.0",
+        "feature_version": "1.0.0",
+        "git_sha": "684d678ec",
+        "prediction_timestamp": "2026-09-30T17:47:54.778418+00:00",
+        "odds_fetched_at": "2026-09-30T17:47:53.695404+00:00",
+        "board_generated_at": "2026-09-30T17:47:54.769837+00:00"
+      },
+      "qualification_timestamp": "2026-09-30T17:47:54.778418+00:00",
+      "board_timestamp": "2026-09-30T17:47:54.769837+00:00",
+      "slate_date": "2026-09-30",
+      "published_top_pick_at": "2026-09-30T17:53:19.747830+00:00",
+      "publication_artifact_id": "7ec9f0b1790be5f554ad01f81b5b9732fcc1fa2d93037e7097b9fb0aef1d762b",
+      "publication_source_commit": "7675ad199a350e068a93f8765bb5e855e46ab32f",
+      "publication_run_id": "36754438405",
+      "publication_deployment_id": null,
+      "grade": "ungraded",
+      "settlement_state": "ungraded",
+      "reason": "game_not_authoritatively_final",
+      "eligibility": {
+        "eligibility": "ungraded",
+        "reason_code": "game_not_authoritatively_final",
+        "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
+        "game_state": "pregame"
+      },
+      "settlement_authority": "none",
+      "settlement_observed_at": "2026-09-30T18:03:25.470567+00:00",
+      "settlement_source": "durable_morning_status_observation"
+    },
+    {
+      "id": "fc2:849846:player-808959:hits_runs_rbis:1:over",
+      "identity_version": 2,
+      "game_pk": 849846,
+      "player_id": 808959,
+      "combo_player_ids": null,
+      "type": "batter",
+      "name": "Munetaka Murakami",
+      "team": "Chicago White Sox",
+      "matchup": "Chicago White Sox @ Houston Astros",
+      "game_start": "2026-09-30T21:00:00Z",
+      "stat": "hits_runs_rbis",
+      "market_side": "over",
+      "lean": null,
+      "projection": {
+        "stat": "hits_runs_rbis",
+        "value": 0.5,
+        "needs": 1
+      },
+      "prop": "Over 0.5 Hits+Runs+RBIs",
+      "hit_probability": 0.6893,
+      "market_odds": -180,
+      "market_implied": 0.6429,
+      "market_edge": 0.0464,
+      "market_hold": null,
+      "price_clears": true,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (9.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "why": [
+        "L7 avg EV 95.3mph (league ~88.5) \u2014 hot recent contact",
+        "L7 barrel% 56.2 \u2014 hot recent contact",
+        "Platoon: L bat vs RHP (favorable)",
+        "Projected 4.16 PA (batting slot 4)",
+        "Hitters batting ahead of him: 0.363 wOBA (league ~.320) \u2014 real RBI opportunity on base ahead of him",
+        "Pitch-type exploit: RV/100 +3.2 vs CU (opposing SP throws it 18.0% of the time)",
+        "Season barrel% 20.5 \u2014 well above-average barrel rate",
+        "Dome \u2014 weather neutral"
+      ],
+      "watchouts": [
+        "Opposing SP ERA 3.19 \u2014 elite pitcher, tough matchup",
+        "Hitter batting behind him: 0.311 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+        "Team implied for 3.47 runs (league avg 4.245; line 3.5, game total 7.5) \u2014 a weak offensive environment",
+        "Public heavy on Chicago White Sox (money% trails tickets% by 12 pts) \u2014 sharp money is fading this side",
+        "Opposing bullpen fatigue: 3/11 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+        "Sharp money fading Chicago White Sox (money% -12 pts vs ticket%) \u2014 smart money moving away from this side"
+      ],
+      "prob_ci": [
+        0.6784,
+        0.7125
+      ],
+      "reliability": "A",
+      "reliability_note": null,
+      "sample_n": 127,
+      "lineup_assumed": null,
+      "base_rate": 0.6727,
+      "lift": 0.0166,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "versions": {
+        "model_version": "2026.08.15",
+        "selection_policy_version": "1.0.0",
+        "calibration_version": "1.0.0",
+        "feature_version": "1.0.0",
+        "git_sha": "684d678ec",
+        "prediction_timestamp": "2026-09-30T17:47:54.778418+00:00",
+        "odds_fetched_at": "2026-09-30T17:47:53.695404+00:00",
+        "board_generated_at": "2026-09-30T17:47:54.769837+00:00"
+      },
+      "qualification_timestamp": "2026-09-30T17:47:54.778418+00:00",
+      "board_timestamp": "2026-09-30T17:47:54.769837+00:00",
+      "slate_date": "2026-09-30",
+      "published_top_pick_at": "2026-09-30T17:53:19.747830+00:00",
+      "publication_artifact_id": "7ec9f0b1790be5f554ad01f81b5b9732fcc1fa2d93037e7097b9fb0aef1d762b",
+      "publication_source_commit": "7675ad199a350e068a93f8765bb5e855e46ab32f",
+      "publication_run_id": "36754438405",
+      "publication_deployment_id": null,
+      "grade": "ungraded",
+      "settlement_state": "ungraded",
+      "reason": "game_not_authoritatively_final",
+      "eligibility": {
+        "eligibility": "ungraded",
+        "reason_code": "game_not_authoritatively_final",
+        "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
+        "game_state": "pregame"
+      },
+      "settlement_authority": "none",
+      "settlement_observed_at": "2026-09-30T18:03:25.470567+00:00",
       "settlement_source": "durable_morning_status_observation"
     }
   ],
@@ -685,7 +1133,7 @@
       "odds_timestamp": "2026-09-30T02:28:57.264417+00:00",
       "lineup_checked_at": "2026-09-30T02:28:57.264417+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 5,
@@ -813,7 +1261,7 @@
       "odds_timestamp": "2026-09-30T02:28:57.264417+00:00",
       "lineup_checked_at": "2026-09-30T02:28:57.264417+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 6,
@@ -1152,7 +1600,7 @@
       "odds_timestamp": "2026-09-30T02:28:57.264417+00:00",
       "lineup_checked_at": "2026-09-30T02:28:57.264417+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 9,
@@ -1264,7 +1712,7 @@
       "odds_timestamp": "2026-09-30T02:28:57.264417+00:00",
       "lineup_checked_at": "2026-09-30T02:28:57.264417+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 10,
@@ -1453,7 +1901,7 @@
       "odds_timestamp": "2026-09-30T02:28:57.264417+00:00",
       "lineup_checked_at": "2026-09-30T02:28:57.264417+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 12,
@@ -1607,7 +2055,7 @@
       "odds_timestamp": "2026-09-30T02:28:57.264417+00:00",
       "lineup_checked_at": "2026-09-30T02:28:57.264417+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Warmup)"
     }
   ],
   "shadow_tracking": [
@@ -1683,7 +2131,7 @@
       "odds_timestamp": "2026-09-30T02:28:57.264417+00:00",
       "lineup_checked_at": "2026-09-30T02:28:57.264417+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 2,
@@ -1757,7 +2205,7 @@
       "odds_timestamp": "2026-09-30T02:28:57.264417+00:00",
       "lineup_checked_at": "2026-09-30T02:28:57.264417+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 3,
@@ -1831,7 +2279,7 @@
       "odds_timestamp": "2026-09-30T02:28:57.264417+00:00",
       "lineup_checked_at": "2026-09-30T02:28:57.264417+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 4,
@@ -1903,7 +2351,7 @@
       "odds_timestamp": "2026-09-30T02:28:57.264417+00:00",
       "lineup_checked_at": "2026-09-30T02:28:57.264417+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 5,
@@ -1975,7 +2423,7 @@
       "odds_timestamp": "2026-09-30T02:28:57.264417+00:00",
       "lineup_checked_at": "2026-09-30T02:28:57.264417+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 6,
@@ -2047,7 +2495,7 @@
       "odds_timestamp": "2026-09-30T02:28:57.264417+00:00",
       "lineup_checked_at": "2026-09-30T02:28:57.264417+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Warmup)"
     },
     {
       "rank": 7,
@@ -2270,7 +2718,7 @@
       "odds_timestamp": "2026-09-30T02:28:57.264417+00:00",
       "lineup_checked_at": "2026-09-30T02:28:57.264417+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     }
   ]
 }
