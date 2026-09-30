@@ -574,6 +574,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-30",
+      "evaluations": [
+        {
+          "prop": "Over 6.5 Strikeouts",
+          "type": "pitcher",
+          "score": 39.8,
+          "notable_signals": 0,
+          "matchup": "Philadelphia Phillies @ Atlanta Braves",
+          "game_pk": 849841,
+          "team": "Philadelphia Phillies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 46.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 92.9412,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.3438,
+          "raw_hit_probability": 0.3438,
+          "lift": 0.0876,
+          "reliability": "A",
+          "sample_n": 33,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 6.5,
+            "needs": 7
+          }
+        },
+        {
+          "prop": "Over 18.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 56.1,
+          "notable_signals": 1,
+          "matchup": "Philadelphia Phillies @ Atlanta Braves",
+          "game_pk": 849841,
+          "team": "Philadelphia Phillies",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.4259,
+            "avg_outs_per_start": 18.82
+          },
+          "hit_probability": 0.4259,
+          "raw_hit_probability": 0.4259,
+          "lift": 0.1576,
+          "reliability": "A",
+          "sample_n": 33,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 18.5,
+            "needs": 19
+          }
+        }
+      ]
     }
   ]
 }
