@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-09-30T20:04:16.448154+00:00",
+  "updated_at": "2026-09-30T22:22:56.665350+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -55615,6 +55615,106 @@
         },
         "qualification_timestamp": "2026-09-30T19:57:25.367811+00:00",
         "board_timestamp": "2026-09-30T19:57:25.358702+00:00",
+        "slate_date": "2026-09-30"
+      }
+    },
+    "fc2:849842:player-630105:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:849842:player-630105:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "849842",
+        [
+          "player",
+          "630105"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-09-30",
+      "first_published_at": "2026-09-30T22:22:56.665350+00:00",
+      "publication_provenance": {
+        "artifact_id": "4fc03bebaafb6432cc35e53ee9c9e0c267a31ca743cbbc856bb3e87b72ee8633",
+        "source_commit": "627945d1637588deb4ac56c6604bc07ddd435d1d",
+        "workflow_run_id": "36785126414",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-09-30T22:22:44.857332+00:00",
+        "data_hash": "7d7c42d4f1b28b06377079c02de77233691771e68cf5d38ec0f769c3bced5424",
+        "live_hash": "0c46d2dcf7d26404197af1572cdf62653d27524d36c23a2e6845bc5285fb9d89"
+      },
+      "snapshot": {
+        "id": "fc2:849842:player-630105:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 849842,
+        "player_id": 630105,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Jake Cronenworth",
+        "team": "San Diego Padres",
+        "matchup": "Chicago Cubs @ San Diego Padres",
+        "game_start": "2026-10-01T02:00:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6466,
+        "market_odds": -160,
+        "market_implied": 0.6154,
+        "market_edge": 0.0312,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 89.0mph (league ~88.5)",
+          "L7 barrel% 7.7",
+          "Bat speed trending up L14 (+2.4mph 2nd-half vs 1st-half)",
+          "Platoon: L bat vs RHP (favorable)",
+          "Hitter batting behind him: 0.358 wOBA (league ~.320)",
+          "Team implied for 4.02 runs (league avg 4.245; line 3.5, game total 7.5)"
+        ],
+        "watchouts": [
+          "Projected 3.58 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.304 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Public heavy on San Diego Padres (money% trails tickets% by 33 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 3.9 \u2014 below-average barrel rate",
+          "Wind blowing IN (1mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 2/10 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading San Diego Padres (money% -33 pts vs ticket%) \u2014 smart money moving away from this side",
+          "BvP: 2-for-19 vs Kevin Gausman (standard error \u00b17 pts on a 19-AB career sample -- weighted lightly on that basis, not just because the count looks small)"
+        ],
+        "prob_ci": [
+          0.6333,
+          0.6782
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 108,
+        "lineup_assumed": null,
+        "base_rate": 0.6641,
+        "lift": -0.0175,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "fabfad35b",
+          "prediction_timestamp": "2026-09-30T22:17:15.635614+00:00",
+          "odds_fetched_at": "2026-09-30T22:17:14.568145+00:00",
+          "board_generated_at": "2026-09-30T22:17:15.628623+00:00"
+        },
+        "qualification_timestamp": "2026-09-30T22:17:15.635614+00:00",
+        "board_timestamp": "2026-09-30T22:17:15.628623+00:00",
         "slate_date": "2026-09-30"
       }
     }
