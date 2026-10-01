@@ -6579,3 +6579,32 @@ The prereg v1 boundary commit was `0ebd6152c2`. Codex's audit (#91 comment 59357
 2. Optionally, make the `data/props` capture reliable, or capture at board seal. This is a production change.
 
 Nothing merged or deployed. No production, pick, ledger or #219 change.
+
+## 2026-10-01 19:30Z -- MLB accuracy challenger V3 (v1/v2 superseded; not activated)
+
+Codex's audit of v2 at `9265935966` (#91 comment 5938236903) returned "CREATE V3 BEFORE FIRST PROSPECTIVE SLATE". Jacob directed V3.
+
+**v2 seal routines.** `trig_01NJyVApkdSbMBK1ojRp9WY6` and `trig_019HwkqAnwzySnTBmYnhVJU7` were **disabled at 18:51Z, before their first firing**. The runner `session_019i5ReaXMnSDN3ZRBdYthZs` pushed nothing. v1 and v2 are SUPERSEDED — NONCONFIRMATORY (`research/mlb_accuracy_challenger_SUPERSEDED.md`); their files are untouched.
+
+**V3 lock:**
+- Prereg `research/mlb_accuracy_challenger_prereg_v3_20261001.md`, commit `15fb1d539c16d368bd8835254d93bb8f0ccd4609`, sha256 `5eb56f28…3442`.
+- Anchored by #91 comment 5938897098 (server 19:23:54Z) and FreeTSA + DigiCert tokens (`v3/PREREG_ANCHOR.json`, commit `97484154b4`).
+- Boundary 2026-10-02T06:00:00Z.
+- Evidence ref `claude/mlb-challenger-v3-evidence`, genesis `d777d72d95`.
+- Status checkpoint: #91 comment 5938924132.
+
+**Code** (`research/mlb_accuracy_challenger_20261001/v3/`):
+- `capture.py`: dedicated FanDuel capture with start and completion times plus raw offer identity.
+- `manifest_v3.py`: one-to-one event mapping, exact quote identity, and per-record pass/fail for 20 gates.
+- `shadow.py`: frozen shadow champion pinned at `7d3ebacd55`, tree `02526a74`.
+- `seal.py`: hash chain; valid only with a #91 receipt plus RFC 3161 tokens before first pitch.
+- `regimes.py`: postseason/regular separation enforced in code.
+- `evaluate_v3.py`: practical threshold of 5 pp; C3 secondary.
+- `runner.py`: prospective mode refuses without `ACTIVATION.json` and `MLB_V3_ACTIVATION`.
+- `test_v3.py`: 34 tests; 29 integrity mutants killed.
+
+**Drills (nonconfirmatory):**
+- Pinned pipeline trace: 164 s; the only live overlay is `data/odds`.
+- End-to-end runner on the 2026-10-01 NIGHT unit (`v3/DRILL_2026-10-01_NIGHT.json`).
+
+**Open decision for Jacob:** activate prospective V3 collection, after Codex/SUPERCHAD review. That needs scheduling, an activation record, and a GitHub token for the receipts. Nothing is merged, deployed or activated.
