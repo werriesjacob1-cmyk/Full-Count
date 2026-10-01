@@ -6531,3 +6531,51 @@ Alligator
 - Jacob decision needed: hold production MLB model at version 2026.08.15 through the 2027 window.
 
 Alligator
+
+## 2026-10-01 18:40Z -- MLB accuracy challenger: preregistration v2 (Codex audit incorporated)
+
+The prereg v1 boundary commit was `0ebd6152c2`. Codex's audit (#91 comment 5935759204) required changes, so v1 is withdrawn.
+- It was never evaluated, and no slate was scored under it.
+- No graded file after 2026-09-30 has been read.
+- Its files are kept unchanged.
+
+**v2** = `research/mlb_accuracy_challenger_prereg_v2_20261001.md`.
+- Boundary commit: `9265935966c9d2150d2bccb1086b585bdd105169` (18:34:51Z).
+- Evaluable slates: cutoff strictly after 2026-10-02T05:00:00Z.
+- Draft PR #220 updated. #91 status: comment 5938053561.
+
+**New files** (`research/mlb_accuracy_challenger_20261001/`):
+- `manifest.py`: the same-cutoff hashed manifest. It uses the published-path gates and requires an exact captured FanDuel quote from `data/props` that is at or before the cutoff, no older than 45 min, and not in play. It has no outcome input.
+- `harness_v2.py`: equal-volume evaluation, with probability quality and picking performance reported separately and game, player and week clustering.
+- `seal_manifests.py`: builds manifests; refuses a date if its graded file exists or its board is not final.
+- `run_eval_v2.py`: admits a slate only if its manifest commit precedes the graded file's.
+- `test_v2.py`: 16 tests; 15 rule mutants killed.
+
+**Lock checklist:**
+
+| Question | Answer |
+|---|---|
+| Historical confirmatory holdout | NONE |
+| Primary confirmatory path | PROSPECTIVE ONLY |
+| Common operational candidate universe | YES |
+| Same cutoff across all arms | YES |
+| Actual player-prop quote provenance required | YES |
+| Equal eligible volume rule locked | YES |
+| Outcomes unseen at lock | YES |
+
+**Supply risk** (non-outcome fields, boards 09-20..09-30):
+- 22 of 48 champion picks pass the v2 universe.
+- On 6 of 10 slates the latest capture was more than 45 minutes old at cutoff. The prop snapshot runs about 4–6 times a day, not hourly.
+- INSUFFICIENT_N is a live outcome for 2027.
+
+**Manifest sealing runner:**
+- Session `session_019i5ReaXMnSDN3ZRBdYthZs`.
+- Routines `trig_01NJyVApkdSbMBK1ojRp9WY6` (23:23Z) and `trig_019HwkqAnwzySnTBmYnhVJU7` (01:13Z), both daily.
+- It commits only new `manifests/*.json` to the challenger branch.
+- Verify that it is still alive before 2027 Opening Day.
+
+**Open decisions for Jacob:**
+1. Keep the production MLB model at 2026.08.15 through 2027?
+2. Optionally, make the `data/props` capture reliable, or capture at board seal. This is a production change.
+
+Nothing merged or deployed. No production, pick, ledger or #219 change.
