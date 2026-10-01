@@ -155,10 +155,15 @@ try:
       DATA.prices_updated_at = new Date().toISOString();
       DATA.freshness = null; DATA.reconciliation = null;
       LIVE_OVERLAY_STATE = "applied";
-      const id = [...PROPS_BY_ID.keys()].find(k => {
-        const v = PROPS_BY_ID.get(k);
-        return v.market_odds != null && !v.lineup_assumed;
-      });
+      // One synthetic priced, confirmed-lineup prop registered in the page's
+      // live map only (never written to docs/), so this check never depends on
+      // whether today's real board happens to carry one (2026-10-01: the
+      // postseason board had none and the test crashed on data alone).
+      const id = "fc2:900003:player-6:hits:1:over";
+      PROPS_BY_ID.set(id, { id, name: "Fixture Foxtrot", prop: "Over 0.5 Hits", stat: "hits",
+        type: "batter", market_odds: -150, lineup_assumed: false, hit_probability: 0.7,
+        game_pk: 900003, matchup: "Fixture Away @ Fixture Home", game_state: "pregame",
+        game_start: new Date(Date.now() + 6 * 3600 * 1000).toISOString() });
       const live = PROPS_BY_ID.get(id);
       const frozen = { legs: [{ id, name: live.name, prop: live.prop,
                                 market_odds: -999 }],
