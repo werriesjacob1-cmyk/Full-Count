@@ -6522,3 +6522,12 @@ Alligator
 - #177 @ `dc78425d50` -> merge `04403c95cf`, CI green. Six convergence merges total (#218, #215, #216, #187, #210, #177); #74/#77/#78 closed after preservation. Main `f3d4419a61`, 18 open PRs. 5 branch deletions still BLOCKED by proxy. Week 4 seal/recovery and #219 untouched. Next: #219 preregistered accuracy program, awaiting Jacob. Bridge: #91 final report.
 
 Alligator
+
+## 2026-10-01 16:30Z -- MLB accuracy challenger Phase 1 (draft PR #220)
+- #219 reproduced: scripts byte-identical; an independent reimplementation matches exactly.
+- Diagnosis: the price beats the model; at equal volume, hit rate tracks implied probability (chalk wins raw hit rate). The champion edge rule is a winner's curse; strikeouts are the worst family and pitcher outs the best.
+- No clean historical holdout exists. Preregistration `0ebd6152c2` (boundary: boards sealed after 2026-10-01T18:00Z): C2 residual selector vs champion, equal volume in band [0.40, 0.70], chalk guard, 2027 confirmatory, postseason shadow descriptive. Amendment 1 `96884cb968` (pre-boundary, empty-input fix).
+- Harness has 17 tests. No evaluation yet; none is legitimate before post-boundary boards exist.
+- Jacob decision needed: hold production MLB model at version 2026.08.15 through the 2027 window.
+
+Alligator
