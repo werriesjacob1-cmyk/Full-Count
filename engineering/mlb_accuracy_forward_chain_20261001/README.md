@@ -101,8 +101,8 @@ This uses final-board rows only (n≈2,990, regular season). "Model" and "price"
   - That ignores early exits and game-level correlation, so the distribution is too narrow.
   - `_pick_line` then picks the rung where model − price is largest, which amplifies the error.
 - **`pitcher_outs`** (`empirical_shrunk`, n=196): the model said 0.627, the price 0.560, real 0.495 (ΔLL +0.024).
-  - Rows passing through the per-family **calibration layer are worse** than raw ones: +0.054 versus +0.008. That calibration likely needs refitting, or should be removed for this family.
-- **`strikeouts`** (`modelled_shrunk`): ΔLL +0.010. The calibrated rows are worse than raw (+0.013 vs +0.001).
+  - Calibrated rows score worse against the price than raw rows (+0.054 vs +0.008), but those are *different* rows. **This was a confounded comparison; see the calibration-layer test below, which overturns it.**
+- **`strikeouts`** (`modelled_shrunk`): ΔLL +0.010. The same confounded calibrated-versus-raw split applies (+0.013 vs +0.001).
 - **Thin samples:** rows in the "other" family with `sample_n` < 20 (n=301; mostly `combined_strikeouts` and `nrfi_combined`): model 0.523, real 0.445.
 - **`hits_runs_rbis`** (`empirical`): ties with the price (ΔLL +0.000). **`other|combined_shrunk`** is the only basis that beats the price (−0.004).
 
@@ -113,7 +113,7 @@ This uses final-board rows only (n≈2,990, regular season). "Model" and "price"
 2. **Stop treating model − price as edge when choosing Top Picks.**
    - At minimum, require positive edge only where a family has shown out-of-sample value beyond the price; today that is no family with confidence, and only `pitcher_outs` with weak evidence.
 3. **`combined_strikeouts`.** Either pause it, or replace the fixed-BF binomial with a mixture over batters faced (an overdispersed count model). Then validate the replacement against graded rungs before it is shown again.
-4. **Calibration layer.** Refit or remove the per-family calibration for `pitcher_outs` and `strikeouts`, where it makes accuracy worse.
+4. **Calibration layer.** Keep it, but strengthen it. The same-row test below shows it helps, especially for strikeouts, but it still leaves `pitcher_outs` and `strikeouts` overconfident.
 
 ## Combined strikeouts: distribution test (`cs_dispersion.py` → `cs_dispersion_report.json`)
 - **Method:** the method was committed before the run.
@@ -133,3 +133,20 @@ This uses final-board rows only (n≈2,990, regular season). "Model" and "price"
   - The fixed batters-faced independent-binomial assumption is measurably wrong. Its mean is too high and its spread too narrow, consistent with ignoring early exits.
   - Repairing it removes the overconfidence but does not create an edge over the price.
   - The defensible options are to anchor this market's displayed probability to the price, or to stop surfacing it. A model fix alone is not enough.
+
+## Production calibration layer (`calib_layer.py` → `calib_layer_report.json`)
+- **Method:** the method was committed before the run. It compares, **on the same rows**, the pipeline's calibrated `hit_probability` with its own `raw_hit_probability`. No fitting is involved. n=670.
+
+| Family | n | Raw | Calibrated | Real | ΔLL cal − raw (95% CI) |
+|---|---|---|---|---|---|
+| strikeouts | 143 | 0.665 | 0.607 | 0.517 | **−0.041** [−0.072, −0.014] |
+| hits_runs_rbis | 204 | 0.746 | 0.711 | 0.696 | −0.004 [−0.017, +0.008] |
+| pitcher_outs | 86 | 0.664 | 0.644 | 0.500 | −0.002 [−0.019, +0.014] |
+| hits | 237 | 0.648 | 0.662 | 0.641 | +0.000 [−0.004, +0.004] |
+| **Pooled** | 670 | | | | **−0.010** [−0.018, −0.003] |
+
+- **Correction:** the calibration layer **improves** accuracy, which contradicts my inference in the mechanism section. That inference came from comparing different rows, and is retracted. Both readings are preserved here.
+- **It under-corrects,** though:
+  - `pitcher_outs` still states 64% against 50% realized;
+  - `strikeouts` states 61% against 52% realized.
+- A stronger, market-anchored calibration (fix 1) is the indicated next step.
