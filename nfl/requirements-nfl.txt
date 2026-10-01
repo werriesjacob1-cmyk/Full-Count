@@ -27,3 +27,8 @@
 # installs its own isolated environment from this file, so this does not
 # create the shared-resolver risk the header above warns about.
 PyYAML~=6.0.2
+
+# Tier 1 team-context and touchdown research use NumPy in their evaluated
+# consumers. Install it in NFL CI only; keep MLB's resolver independent.
+# Match the existing verified root pin without editing root requirements.txt.
+numpy~=2.4.6
