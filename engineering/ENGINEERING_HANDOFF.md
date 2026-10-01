@@ -6464,3 +6464,25 @@ Alligator
 - **Lesson for Week 5 onward:** routines that create fresh sessions need a repository source. Use a runner session with the repository attached, run a drill first, and keep a backstop.
 
 Alligator
+
+## 2026-10-01 14:50Z -- Repository convergence sprint (REPO-CONVERGENCE-20261001)
+- **Codex pass reconciled:** #186 and #190 closed; 27 open PRs.
+- **Decision-ready, all green in combined tree `6f19073aa0`** (root 36878038081, NFL 36878038303):
+
+  | PR | Head | State |
+  |---|---|---|
+  | #218 | `139e4b529b` | Also fixes the live-data dependency in `test_fail_closed_surfaces.py` that had main's root CI red |
+  | #215 | `57f764491a` | Integration `e0dfa6598a` green |
+  | #216 | `70038b5aa7` | Provenance proven; #85's locked protocol added |
+  | #177 | `d852f5a88e` | Certified §15/§16 plus present-tense §17 |
+  | #187 | `55bb60cff3` | — |
+  | #210 | `3f5368d924` | Merge with #204/#205 |
+
+- **Legacy:**
+  - #74, #77 and #78 are closable once #216 merges.
+  - Unique: #79, #82, #84; #85 is code-only now.
+  - Dependency-blocked: #75, #81.
+- **Scratch branches:** `claude/convergence-verify-20261001` and `claude/pr215-post208-integration-20260930` are verification-only.
+- **Bridge:** #91 claim 5933308011; final report 5933949783.
+
+Alligator
