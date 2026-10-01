@@ -4492,6 +4492,404 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 59.6,
+          "notable_signals": 2,
+          "matchup": "St. Louis Cardinals @ Milwaukee Brewers",
+          "game_pk": 823735,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 43.1429,
+            "pitch_exploit": 11.4286,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 68.0,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 5.0,
+            "park_hand_index": 0.69,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 37.2727,
+            "woba_behind": 45.4545,
+            "pull_park_synergy": 0.2632,
+            "hard_hit_105_rate": 2.32,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 1.28,
+            "vs_rp_ops": 2.076,
+            "ump_k_pct": -0.42,
+            "ump_bb_pct": 0.18
+          },
+          "hit_probability": 0.6344,
+          "raw_hit_probability": 0.6267,
+          "lift": 0.0776,
+          "reliability": "A",
+          "sample_n": 155,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 61.3,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Milwaukee Brewers",
+          "game_pk": 823735,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -3.42,
+            "sprint_speed": 59.375,
+            "catcher_poptime": 5.7143,
+            "on_base": 81.7658
+          },
+          "hit_probability": 0.131,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 155,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 27.8,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Milwaukee Brewers",
+          "game_pk": 823735,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1394
+          },
+          "hit_probability": 0.1394,
+          "raw_hit_probability": null,
+          "lift": 0.092,
+          "reliability": "A",
+          "sample_n": 155,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.3,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Milwaukee Brewers",
+          "game_pk": 823735,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0414
+          },
+          "hit_probability": 0.0414,
+          "raw_hit_probability": null,
+          "lift": 0.0209,
+          "reliability": "A",
+          "sample_n": 155,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-26",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 59.4,
+          "notable_signals": 3,
+          "matchup": "St. Louis Cardinals @ Milwaukee Brewers",
+          "game_pk": 823733,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 62.0,
+            "pitch_exploit": 14.2857,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 69.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 16.6667,
+            "platoon_barrel_pct": 4.64,
+            "platoon_xwoba": 0.36,
+            "park_hand_index": 0.8,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 56.3636,
+            "woba_behind": 50.0,
+            "pull_park_synergy": 0.2996,
+            "hard_hit_105_rate": 2.44,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.424,
+            "vs_rp_ops": 2.232,
+            "ump_k_pct": 0.408,
+            "ump_bb_pct": -0.192
+          },
+          "hit_probability": 0.6304,
+          "raw_hit_probability": 0.6237,
+          "lift": 0.074,
+          "reliability": "A",
+          "sample_n": 156,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 59.9,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Milwaukee Brewers",
+          "game_pk": 823733,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -3.42,
+            "sprint_speed": 56.25,
+            "catcher_poptime": 5.7143,
+            "on_base": 82.7255
+          },
+          "hit_probability": 0.1302,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 156,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 29.0,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Milwaukee Brewers",
+          "game_pk": 823733,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1442
+          },
+          "hit_probability": 0.1442,
+          "raw_hit_probability": null,
+          "lift": 0.0967,
+          "reliability": "A",
+          "sample_n": 156,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.2,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Milwaukee Brewers",
+          "game_pk": 823733,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0412
+          },
+          "hit_probability": 0.0412,
+          "raw_hit_probability": null,
+          "lift": 0.0207,
+          "reliability": "A",
+          "sample_n": 156,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-27",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 73.5,
+          "notable_signals": 2,
+          "matchup": "St. Louis Cardinals @ Milwaukee Brewers",
+          "game_pk": 823731,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 3.675,
+            "park_hr_index": 37.0,
+            "season_barrel_pct": 68.6667,
+            "lineup_slot": 100.0,
+            "bullpen_fatigue": 50.0,
+            "platoon_barrel_pct": 4.64,
+            "platoon_xwoba": 0.3,
+            "park_hand_index": 0.67,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_behind": 36.3636,
+            "pull_park_synergy": 0.2486,
+            "hard_hit_105_rate": 2.42,
+            "team_total_move": 0.0,
+            "team_total_open": -6.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.352,
+            "vs_rp_ops": 2.148,
+            "ump_k_pct": 0.216,
+            "ump_bb_pct": 0.252
+          },
+          "hit_probability": 0.7074,
+          "raw_hit_probability": 0.7385,
+          "lift": 0.0533,
+          "reliability": "A",
+          "sample_n": 157,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 62.1,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Milwaukee Brewers",
+          "game_pk": 823731,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -3.24,
+            "sprint_speed": 56.25,
+            "catcher_poptime": 14.2857,
+            "on_base": 81.7658
+          },
+          "hit_probability": 0.1369,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 157,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 28.8,
+          "notable_signals": 1,
+          "matchup": "St. Louis Cardinals @ Milwaukee Brewers",
+          "game_pk": 823731,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1434
+          },
+          "hit_probability": 0.1434,
+          "raw_hit_probability": null,
+          "lift": 0.096,
+          "reliability": "A",
+          "sample_n": 157,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 7.2,
+          "notable_signals": 0,
+          "matchup": "St. Louis Cardinals @ Milwaukee Brewers",
+          "game_pk": 823731,
+          "team": "St. Louis Cardinals",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0409
+          },
+          "hit_probability": 0.0409,
+          "raw_hit_probability": null,
+          "lift": 0.0204,
+          "reliability": "A",
+          "sample_n": 157,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

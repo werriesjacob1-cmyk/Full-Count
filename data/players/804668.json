@@ -1878,6 +1878,214 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 37.0,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Detroit Tigers",
+          "game_pk": 824220,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 42.2857,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 35.0,
+            "season_barrel_pct": 76.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 37.037,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 4.08,
+            "park_hand_index": 0.46,
+            "opp_catcher_framing": -1.08,
+            "days_rest": 2.0,
+            "woba_ahead": 44.5455,
+            "woba_behind": 28.1818,
+            "pull_park_synergy": 0.3123,
+            "hard_hit_105_rate": 1.55,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 4.528,
+            "vs_rp_ops": 5.0,
+            "ump_k_pct": 0.132,
+            "ump_bb_pct": 0.72
+          },
+          "hit_probability": 0.6088,
+          "raw_hit_probability": 0.6076,
+          "lift": 0.052,
+          "reliability": "C",
+          "sample_n": 43,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 20.1,
+          "notable_signals": 1,
+          "matchup": "Pittsburgh Pirates @ Detroit Tigers",
+          "game_pk": 824220,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1086
+          },
+          "hit_probability": 0.1086,
+          "raw_hit_probability": null,
+          "lift": 0.0612,
+          "reliability": "C",
+          "sample_n": 43,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 14.3,
+          "notable_signals": 1,
+          "matchup": "Pittsburgh Pirates @ Detroit Tigers",
+          "game_pk": 824220,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0689
+          },
+          "hit_probability": 0.0689,
+          "raw_hit_probability": null,
+          "lift": 0.0484,
+          "reliability": "C",
+          "sample_n": 43,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-27",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 50.7,
+          "notable_signals": 0,
+          "matchup": "Pittsburgh Pirates @ Detroit Tigers",
+          "game_pk": 824217,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.5,
+            "season_barrel_pct": 80.0,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 16.6667,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 3.66,
+            "park_hand_index": 0.51,
+            "opp_catcher_framing": -1.32,
+            "days_rest": 2.0,
+            "woba_ahead": 53.6364,
+            "woba_behind": 28.1818,
+            "pull_park_synergy": 0.3338,
+            "hard_hit_105_rate": 1.8925,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 4.968,
+            "vs_rp_ops": 5.0,
+            "ump_k_pct": 0.216,
+            "ump_bb_pct": 0.252
+          },
+          "hit_probability": 0.6323,
+          "raw_hit_probability": 0.6251,
+          "lift": 0.0752,
+          "reliability": "C",
+          "sample_n": 44,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 23.6,
+          "notable_signals": 1,
+          "matchup": "Pittsburgh Pirates @ Detroit Tigers",
+          "game_pk": 824217,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.1223
+          },
+          "hit_probability": 0.1223,
+          "raw_hit_probability": null,
+          "lift": 0.0749,
+          "reliability": "C",
+          "sample_n": 44,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 17.8,
+          "notable_signals": 1,
+          "matchup": "Pittsburgh Pirates @ Detroit Tigers",
+          "game_pk": 824217,
+          "team": "Pittsburgh Pirates",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0832
+          },
+          "hit_probability": 0.0832,
+          "raw_hit_probability": null,
+          "lift": 0.0627,
+          "reliability": "C",
+          "sample_n": 44,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

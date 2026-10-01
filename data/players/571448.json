@@ -3392,6 +3392,316 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-25",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 45.5,
+          "notable_signals": 2,
+          "matchup": "Arizona Diamondbacks @ San Diego Padres",
+          "game_pk": 823248,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 41.7143,
+            "pitch_exploit": 3.4286,
+            "l7_avg_ev": 20.125,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 35.2,
+            "season_barrel_pct": 26.0,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": -0.32,
+            "platoon_xwoba": -1.38,
+            "park_hand_index": 0.54,
+            "opp_catcher_framing": 0.48,
+            "days_rest": 0.0,
+            "woba_ahead": 50.0,
+            "woba_behind": 7.2727,
+            "pull_park_synergy": 0.4423,
+            "hard_hit_105_rate": -0.3,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 1.808,
+            "vs_rp_ops": 2.484,
+            "ump_k_pct": 0.024,
+            "ump_bb_pct": -0.228
+          },
+          "hit_probability": 0.6721,
+          "raw_hit_probability": 0.6751,
+          "lift": 0.0055,
+          "reliability": "A",
+          "sample_n": 149,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 1.5,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ San Diego Padres",
+          "game_pk": 823248,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0346
+          },
+          "hit_probability": 0.0346,
+          "raw_hit_probability": null,
+          "lift": -0.0128,
+          "reliability": "A",
+          "sample_n": 149,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.4,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ San Diego Padres",
+          "game_pk": 823248,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.014
+          },
+          "hit_probability": 0.014,
+          "raw_hit_probability": null,
+          "lift": -0.0065,
+          "reliability": "A",
+          "sample_n": 149,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-26",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 47.1,
+          "notable_signals": 2,
+          "matchup": "Arizona Diamondbacks @ San Diego Padres",
+          "game_pk": 823245,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 58.8571,
+            "pitch_exploit": 3.4286,
+            "l7_avg_ev": 36.8421,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 44.8,
+            "season_barrel_pct": 27.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 33.3333,
+            "bvp_ops": -0.72,
+            "platoon_barrel_pct": -0.16,
+            "platoon_xwoba": -1.2,
+            "park_hand_index": 0.57,
+            "opp_catcher_framing": 0.6,
+            "days_rest": 0.0,
+            "woba_ahead": 47.2727,
+            "woba_behind": 0.0,
+            "pull_park_synergy": 0.4668,
+            "hard_hit_105_rate": -0.305,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.648,
+            "vs_rp_ops": 2.424,
+            "ump_k_pct": 0.456,
+            "ump_bb_pct": 0.816
+          },
+          "hit_probability": 0.6741,
+          "raw_hit_probability": 0.6786,
+          "lift": -0.0007,
+          "reliability": "A",
+          "sample_n": 150,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 1.5,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ San Diego Padres",
+          "game_pk": 823245,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0344
+          },
+          "hit_probability": 0.0344,
+          "raw_hit_probability": null,
+          "lift": -0.0131,
+          "reliability": "A",
+          "sample_n": 150,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.4,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ San Diego Padres",
+          "game_pk": 823245,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0139
+          },
+          "hit_probability": 0.0139,
+          "raw_hit_probability": null,
+          "lift": -0.0066,
+          "reliability": "A",
+          "sample_n": 150,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-27",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 46.8,
+          "notable_signals": 1,
+          "matchup": "Arizona Diamondbacks @ San Diego Padres",
+          "game_pk": 823246,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 43.1429,
+            "pitch_exploit": 3.4286,
+            "l7_avg_ev": 56.4583,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 35.0,
+            "season_barrel_pct": 26.6667,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 37.037,
+            "platoon_barrel_pct": -0.16,
+            "platoon_xwoba": -1.2,
+            "park_hand_index": 0.73,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 41.8182,
+            "woba_behind": 46.3636,
+            "pull_park_synergy": 0.5979,
+            "hard_hit_105_rate": -0.31,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.672,
+            "vs_rp_ops": 2.46,
+            "ump_k_pct": 0.204,
+            "ump_bb_pct": -0.324
+          },
+          "hit_probability": 0.6122,
+          "raw_hit_probability": 0.6101,
+          "lift": 0.0551,
+          "reliability": "A",
+          "sample_n": 151,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 1.4,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ San Diego Padres",
+          "game_pk": 823246,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0342
+          },
+          "hit_probability": 0.0342,
+          "raw_hit_probability": null,
+          "lift": -0.0132,
+          "reliability": "A",
+          "sample_n": 151,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.4,
+          "notable_signals": 0,
+          "matchup": "Arizona Diamondbacks @ San Diego Padres",
+          "game_pk": 823246,
+          "team": "Arizona Diamondbacks",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0138
+          },
+          "hit_probability": 0.0138,
+          "raw_hit_probability": null,
+          "lift": -0.0067,
+          "reliability": "A",
+          "sample_n": 151,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

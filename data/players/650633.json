@@ -699,6 +699,68 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-29",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 47.4,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ San Diego Padres",
+          "game_pk": 849843,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 41.0,
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 52.3529,
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.908,
+            "ump_k_pct": 0.048,
+            "ump_bb_pct": -0.396
+          },
+          "hit_probability": 0.5262,
+          "raw_hit_probability": 0.5262,
+          "lift": 0.0046,
+          "reliability": "A",
+          "sample_n": 32,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 14.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 81.4,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ San Diego Padres",
+          "game_pk": 849843,
+          "team": "San Diego Padres",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.871,
+            "avg_outs_per_start": 17.34
+          },
+          "hit_probability": 0.871,
+          "raw_hit_probability": 0.871,
+          "lift": 0.0214,
+          "reliability": "A",
+          "sample_n": 32,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 14.5,
+            "needs": 15
+          }
+        }
+      ]
     }
   ]
 }
