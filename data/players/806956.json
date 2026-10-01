@@ -507,6 +507,54 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-30",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 34.8,
+          "notable_signals": 0,
+          "matchup": "Chicago Cubs @ San Diego Padres",
+          "game_pk": 849842,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 57.4286,
+            "l7_avg_ev": 63.2812,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.7,
+            "season_barrel_pct": 2.0,
+            "lineup_slot": 25.0,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": -2.56,
+            "platoon_xwoba": -5.0,
+            "park_hand_index": -1.52,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 4.0,
+            "woba_ahead": 14.5455,
+            "woba_behind": 12.7273,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "ump_k_pct": 0.312,
+            "ump_bb_pct": 0.144
+          },
+          "hit_probability": 0.6145,
+          "raw_hit_probability": 0.6118,
+          "lift": 0.0566,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

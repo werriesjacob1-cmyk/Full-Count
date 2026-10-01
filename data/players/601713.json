@@ -285,7 +285,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 43.5,
+          "score": 45.1,
           "notable_signals": 0,
           "matchup": "Chicago Cubs @ San Diego Padres",
           "game_pk": 849842,
@@ -297,11 +297,14 @@
             "opp_team_k_pct": 41.0,
             "same_hand_ratio": 100.0,
             "l14_k_pct": 73.5294,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 65.7895,
+            "ump_k_pct": -0.312,
+            "ump_bb_pct": -0.144
           },
-          "hit_probability": 0.5942,
-          "raw_hit_probability": 0.6017,
-          "lift": 0.0771,
+          "hit_probability": 0.5944,
+          "raw_hit_probability": 0.6024,
+          "lift": 0.0759,
           "reliability": "C",
           "sample_n": 8,
           "projection": {
@@ -311,9 +314,9 @@
           }
         },
         {
-          "prop": "Over 12.5 Outs Recorded",
+          "prop": "Over 13.5 Outs Recorded",
           "type": "pitcher",
-          "score": 45.1,
+          "score": 47.5,
           "notable_signals": 0,
           "matchup": "Chicago Cubs @ San Diego Padres",
           "game_pk": 849842,
@@ -322,18 +325,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7334,
+            "outs_rate": 0.7135,
             "avg_outs_per_start": 13.0
           },
-          "hit_probability": 0.629,
-          "raw_hit_probability": 0.7334,
-          "lift": -0.249,
+          "hit_probability": 0.6194,
+          "raw_hit_probability": 0.7135,
+          "lift": -0.2121,
           "reliability": "C",
           "sample_n": 8,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 12.5,
-            "needs": 13
+            "value": 13.5,
+            "needs": 14
           }
         }
       ]
