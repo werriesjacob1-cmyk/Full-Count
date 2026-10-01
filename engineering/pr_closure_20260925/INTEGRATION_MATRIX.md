@@ -27,6 +27,17 @@ Every number below comes from the scripts and JSON in this directory:
 | `old_prs.py` | `rerooted_pr_unique_files.json` |
 | `gen_matrix.py` | the table below |
 
+## 000. Current state (2026-10-01): Issue #91 is now the source of truth
+
+This matrix is a dated history. The current open-PR picture and Jacob decisions are in the REPO-CONVERGENCE-20261001 report on Issue #91.
+
+**Changes since §00:**
+- Codex closed #186 and #190 as preserved history on 10-01 (29 → 27 open).
+- #216 now also preserves #85's locked PA-v1 protocol (head `70038b5aa7`).
+- #177 carries the certified §15/§16 plus a present-tense §17 (head `d852f5a88e`).
+- #187 was refreshed onto main (head `55bb60cff3`).
+- §4's sequence item "#186 then #212" is void; both are closed.
+
 ## 00. Update (2026-09-30): #208 merged; new shared root-CI cause found and repaired (#218)
 
 **#208 is MERGED.**
