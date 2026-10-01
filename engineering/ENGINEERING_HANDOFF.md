@@ -6416,3 +6416,24 @@ Alligator
 - **Merges:** only #208, which was authorized.
 
 Alligator
+
+## 2026-10-01 overnight -- MLB accuracy study (#219); Week 4 seal blocked on authorization
+- **#219** (`claude/mlb-accuracy-forward-chain-20261001` @ `68fa5d0638`): research only.
+  - Forward-chained across the 2026 regular season (3,141 out-of-sample rows), the posted price beats the model's probability: LL −0.0082 [−0.0152, −0.0019]. The model adds nothing beyond the price: +0.0006 [−0.0008, +0.0020].
+  - Model − price disagreement is model error, which makes the Top Pick ranking a built-in winner's curse (64.2% stated vs 53.3% realized).
+  - `combined_strikeouts` runs +0.7 K high and is too narrow (var z 1.63).
+  - The production calibration layer helps (−0.010 pooled) but under-corrects. An earlier confounded inference that it hurts is retracted in the README.
+  - Four proposed fixes, all needing Jacob's approval.
+- **Week 4 Tier 1 seal: NOT built.** The auto-mode classifier denied editing the frozen builder. Jacob must specifically authorize editing `build_week_seal.py`/`drivers.py` on `claude/nfl-tier1-seal-2026w04`.
+  - Pre-week-4 inputs are verified in scratch `/tmp/claude-0/w04_inputs`:
+
+    | File | SHA-256 prefix | Coverage |
+    |---|---|---|
+    | stats | `e293e213…` | weeks 1–3 complete, no week-4 rows |
+    | pbp | `321433f8…` | weeks 1–3 complete, no week-4 rows |
+    | snaps | `c5868527…` | weeks 1–3 complete, no week-4 rows |
+
+  - Upstream `players.csv` has drifted, so the week-3 `restore.py` would fail on a fresh container.
+- **Bridge:** #91 comments 5925113614 (claim) and 5925201210 (status).
+
+Alligator
