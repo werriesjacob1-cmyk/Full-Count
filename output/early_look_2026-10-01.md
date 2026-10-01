@@ -3,6 +3,7 @@
 Every player below is projected into last night's/his last game's batting slot for his team, because no real lineup — not MLB's own API, not MLB.com, not Rotowire — has been posted for tonight yet. These are NOT picks: the batting order can and does change (a day off, a platoon swap, a late scratch), and none of this is graded or fed back into the accuracy record. Read it as "who to watch once real lineups post," not as a board to bet.
 
 - **Fernando Tatis** (San Diego Padres) — Over 0.5 Hits+Runs+RBIs — 72.7% [Chicago Cubs @ San Diego Padres]
+- **Ceddanne Rafaela** (Boston Red Sox) — Over 0.5 Hits+Runs+RBIs — 71.8% [Boston Red Sox @ New York Yankees]
 - **Matt Olson** (Atlanta Braves) — Over 0.5 Hits+Runs+RBIs — 70.3% [Philadelphia Phillies @ Atlanta Braves]
 - **Trevor Story** (Boston Red Sox) — Over 0.5 Hits+Runs+RBIs — 69.7% [Boston Red Sox @ New York Yankees]
 - **Wilyer Abreu** (Boston Red Sox) — Over 0.5 Hits+Runs+RBIs — 68.9% [Boston Red Sox @ New York Yankees]
@@ -23,7 +24,6 @@ Every player below is projected into last night's/his last game's batting slot f
 - **J.T. Realmuto** (Philadelphia Phillies) — Over 0.5 Hits+Runs+RBIs — 65.0% [Philadelphia Phillies @ Atlanta Braves]
 - **Jake Cronenworth** (San Diego Padres) — Over 0.5 Hits+Runs+RBIs — 65.0% [Chicago Cubs @ San Diego Padres]
 - **Ty France** (San Diego Padres) — Over 0.5 Hits — 64.8% [Chicago Cubs @ San Diego Padres]
-- **Ceddanne Rafaela** (Boston Red Sox) — Over 0.5 Hits — 64.8% [Boston Red Sox @ New York Yankees]
 - **Sean Murphy** (Atlanta Braves) — Over 0.5 Hits+Runs+RBIs — 64.8% [Philadelphia Phillies @ Atlanta Braves]
 - **Trent Grisham** (New York Yankees) — Over 0.5 Hits+Runs+RBIs — 64.7% [Boston Red Sox @ New York Yankees]
 - **Michael Harris** (Atlanta Braves) — Over 0.5 Hits — 64.7% [Philadelphia Phillies @ Atlanta Braves]
