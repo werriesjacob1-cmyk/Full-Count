@@ -80,8 +80,13 @@ Every number below comes from the scripts and JSON in this directory:
 3. **#216**
 4. **#210**
 5. **#177**: only after its branch carries `8dfbac39ce`. That is an update to the PR's own branch, which its owner or Jacob must approve.
-6. The Tier 1 stack, #202 → #213.
-7. #186 → #212.
+6. The Tier 1 stack, #202 → #207. (#213, the F17 result, was closed unmerged as PRESERVED HISTORICAL on 09-30.)
+7. #186. (#212, the F16 negative result, was closed unmerged as PRESERVED HISTORICAL on 09-30.)
+
+**Backlog cleanup on 2026-09-30 by Codex and SUPERCHAD** (#91 comments 5915821801, 5915862811, 5916016416 and 5916138276):
+- Open PRs went from 46 to 28.
+- Every closure was unmerged, and every branch was kept.
+- Closed: #73, #76, #80, #83, #110, #131, #170, #184, #188, #191, #192, #201, #206, #209, #211, #212, #213, #214.
 
 **New research PRs (drafts, not merge candidates):**
 - #217: the MLB market-anchor analysis. Verdict `insufficient n`; both suites green.
