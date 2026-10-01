@@ -1,0 +1,63 @@
+{
+  "data_sha": "58abe9f2e5a2b69d0f8bc98c22c8bafe7b00a224",
+  "evidence_class": "EXPLORATORY_DESCRIPTIVE",
+  "forward_chain": {
+    "folds": [
+      {
+        "bias": -1.2999999999999985,
+        "n_test": 33,
+        "n_train": 21,
+        "spread": 1.4000000000000006,
+        "week_of": "2026-08-31"
+      },
+      {
+        "bias": -0.699999999999998,
+        "n_test": 21,
+        "n_train": 54,
+        "spread": 1.2000000000000004,
+        "week_of": "2026-09-07"
+      },
+      {
+        "bias": -0.699999999999998,
+        "n_test": 31,
+        "n_train": 75,
+        "spread": 1.2000000000000004,
+        "week_of": "2026-09-14"
+      },
+      {
+        "bias": -0.699999999999998,
+        "n_test": 17,
+        "n_train": 106,
+        "spread": 1.2000000000000004,
+        "week_of": "2026-09-21"
+      }
+    ],
+    "log_loss": {
+      "fixed_p_fix": 0.7302322633181871,
+      "model_p0": 0.7721981070649928,
+      "price_q": 0.6523397557741921
+    },
+    "mean_stated": {
+      "p0": 0.6147382352941176,
+      "p_fix": 0.4961155277073422,
+      "q": 0.5330516728395547
+    },
+    "n_tested": 102,
+    "realized": 0.5
+  },
+  "full_sample_bias_spread": {
+    "bias": -0.699999999999998,
+    "spread": 1.2500000000000004
+  },
+  "mean_actual": 9.674796747967479,
+  "mean_model_mu": 10.35693706002032,
+  "mean_model_sigma": 2.833745751048475,
+  "n_dropped_fewer_than_2_rungs": 0,
+  "n_rows": 123,
+  "realized_sd_of_actual_minus_mu": 3.622905687803647,
+  "z": {
+    "mean": -0.24236055119272087,
+    "share_abs_gt_2": 0.11382113821138211,
+    "variance": 1.625764634983059
+  }
+}

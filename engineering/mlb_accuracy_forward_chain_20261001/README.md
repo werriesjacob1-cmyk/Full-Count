@@ -114,3 +114,22 @@ This uses final-board rows only (n≈2,990, regular season). "Model" and "price"
    - At minimum, require positive edge only where a family has shown out-of-sample value beyond the price; today that is no family with confidence, and only `pitcher_outs` with weak evidence.
 3. **`combined_strikeouts`.** Either pause it, or replace the fixed-BF binomial with a mixture over batters faced (an overdispersed count model). Then validate the replacement against graded rungs before it is shown again.
 4. **Calibration layer.** Refit or remove the per-family calibration for `pitcher_outs` and `strikeouts`, where it makes accuracy worse.
+
+## Combined strikeouts: distribution test (`cs_dispersion.py` → `cs_dispersion_report.json`)
+- **Method:** the method was committed before the run.
+  - Each graded row's own ladder (the posted rung plus its stored alternatives) gives back the model's mean and SD, using a normal approximation with continuity correction. On a synthetic two-binomial case it recovers the mean within 0.08 and the SD within 0.002.
+  - z is (actual − model mean) / model SD.
+- **Sample:** 123 regular-season rows.
+
+| Quantity | Model | Realized | Reading |
+|---|---|---|---|
+| Mean combined strikeouts | 10.36 | 9.67 | **Biased about 0.7 strikeouts high** |
+| SD around the model mean | 2.83 | 3.62 | **Too narrow** (var(z) = 1.63; 11% of rows have \|z\| > 2) |
+
+- **Forward-chained fix:** shift the mean by b and multiply the SD by s, fitted on earlier weeks only. The fitted values settle at b = −0.7 and s = 1.2.
+  - On 102 out-of-sample rows, the stated probability moves from 0.615 to 0.496, against 0.500 realized, so **the fix restores calibration**.
+  - Log loss improves from 0.772 to 0.730. **The posted price is still better, at 0.652.**
+- **Reading:**
+  - The fixed batters-faced independent-binomial assumption is measurably wrong. Its mean is too high and its spread too narrow, consistent with ignoring early exits.
+  - Repairing it removes the overconfidence but does not create an edge over the price.
+  - The defensible options are to anchor this market's displayed probability to the price, or to stop surfacing it. A model fix alone is not enough.
