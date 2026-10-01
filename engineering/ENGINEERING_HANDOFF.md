@@ -6502,3 +6502,18 @@ Alligator
 - Main is now `1607693190`; 21 PRs are open.
 
 Alligator
+
+## 2026-10-01 15:47Z -- Convergence continuation: #187 and #210 merged; #177 corrected (unmerged); branch deletes blocked
+- **Merged:**
+
+  | PR | Head | Merge commit |
+  |---|---|---|
+  | #187 | `55bb60cff3` | `138dd344b6` |
+  | #210 | `3f5368d924` | `41740dbc55` |
+
+  CI is green on both. Main is now `8ff405303b`; 19 open PRs.
+- **#177 corrected** at new head `dc78425d50eda7de1013e2288125e716c7523eb6`: §17.2 item 1 separates the permanent rule from the Week 4 fact, plus an erratum for the seal README and builder comment. Not merged; it needs Jacob's authorization of the new SHA. The sealed branch is untouched.
+- **Five authorized branch deletions are BLOCKED** by the proxy (git push: hung up; REST: 403 "not permitted through this proxy"). The branches still exist at their verified SHAs.
+- **Bridge:** #91 comment 5935025682.
+
+Alligator
