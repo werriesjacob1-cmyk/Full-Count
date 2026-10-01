@@ -33,10 +33,23 @@ SHARED = Path("/tmp/claude-0/nfl_tier1_shared")
 WT_ROOT = Path("/tmp/claude-0/seal_wt")
 # Frozen versions (PROSPECTIVE_PROTOCOL.md s1). B0 uses the champion harness.
 FROZEN = {"B": "8aa8067fbc", "C": "40d842c9a9", "D": "76b42547c3", "B0": "c128fc6b60"}
-# Pre-target-week inputs the Thursday seal used; a later file would contain
-# target-week rows (the WS-C builder refuses those) -- keep them pinned.
-PINNED = {SHARED / "stats_player_week_2026.csv": "736bdddef4779023f7eb1831a1f2c8627181aee60cc280d5f0464cf5f41a8e67",
-          SHARED / "pbp" / "play_by_play_2026.csv.gz": "6643f82adb1158c8367fb806cfc531a079ce321ca8e2e21012d196dc1a51ece8"}
+# Pre-target-week current-season inputs, pinned PER WEEK: each is the first
+# nflverse release after the previous week's Monday game, holding every row
+# through week-1 and none of the target week (the WS-C builder refuses those).
+# Week 3 is unchanged from the original builder. Week 4 (authorized by Jacob,
+# 2026-10-01) also pins snap counts, which week 3 left unpinned. Stage a
+# week's files into SHARED before building (see README).
+PINNED_BY_WEEK = {
+    3: {SHARED / "stats_player_week_2026.csv": "736bdddef4779023f7eb1831a1f2c8627181aee60cc280d5f0464cf5f41a8e67",
+        SHARED / "pbp" / "play_by_play_2026.csv.gz": "6643f82adb1158c8367fb806cfc531a079ce321ca8e2e21012d196dc1a51ece8"},
+    4: {SHARED / "stats_player_week_2026.csv": "e293e213908f746db982cd9112f5016125a42eeeec16c4773b35c6cc5edf6327",
+        SHARED / "pbp" / "play_by_play_2026.csv.gz": "321433f8c3cab61e7577f49dc2f22f8216de8a5eb84baa432f1cf3d60d0b705a",
+        SHARED / "snap_counts" / "snap_counts_2026.csv": "c5868527b1052ae572b2d8f34a7bb777675a5e762ceaeb25f72f10d1c59846d5"},
+}
+# WS-D stamps its feature rows with an information cutoff. Week 3 keeps the
+# frozen constant (touchdown_evaluate.LIVE_INFORMATION_CUTOFF); later weeks use
+# the max upstream Last-Modified of that week's pinned stats and PBP files.
+D_INFORMATION_CUTOFF = {4: "2026-09-30T16:25:46Z"}
 INJURY_URL = "https://github.com/nflverse/nflverse-data/releases/download/injuries/injuries_2026.csv"
 MIN_LEAD = timedelta(minutes=45)
 
@@ -106,7 +119,10 @@ def main() -> int:
     ap.add_argument("--dry-run", action="store_true", help="write under /tmp; not a seal")
     a = ap.parse_args()
     now = datetime.now(timezone.utc)
-    for path, want in PINNED.items():
+    if a.week not in PINNED_BY_WEEK:
+        raise SystemExit(f"week {a.week} has no pinned inputs; pinning a new week needs authorization")
+    pinned = PINNED_BY_WEEK[a.week]
+    for path, want in pinned.items():
         if sha(path) != want:
             raise SystemExit(f"pinned input changed: {path}")
     kick = kickoffs(a.season, a.week)
@@ -124,6 +140,9 @@ def main() -> int:
         wt, full = worktree(ws)
         cmd = [sys.executable, str(DRIVERS), ws, "--season", str(a.season), "--week", str(a.week),
                "--games", ",".join(games), "--out-dir", str(out)] + (["--no-capture"] if a.no_capture else [])
+        if ws == "D" and a.week in D_INFORMATION_CUTOFF:
+            cmd += ["--information-cutoff", D_INFORMATION_CUTOFF[a.week],
+                    "--pinned-sources", json.dumps({p.name: h for p, h in pinned.items()})]
         log = out / f"driver_{ws}.log"
         with log.open("w") as fh:
             rc = subprocess.run(cmd, cwd=wt, env={**os.environ, "PYTHONPATH": str(wt)},
@@ -162,7 +181,7 @@ def main() -> int:
             "first_kickoff_utc": min(kick[g] for g in games).isoformat(),
             "rule": "A row counts only if this directory is committed before its game's kickoff. Nothing is back-filled.",
             "frozen_commits": {ws: meta[ws]["frozen_commit"] for ws in meta},
-            "pinned_inputs": {str(p): h for p, h in PINNED.items()}, "injuries": injuries,
+            "pinned_inputs": {str(p): h for p, h in pinned.items()}, "injuries": injuries,
             "drivers": {ws: {k: v for k, v in m.items() if k not in ("rows", "b0")} for ws, m in meta.items()},
             "row_counts": counts, "b0_mismatches": sum(1 for r in primary if r["b0_matches_authoritative"] is False),
             "files_sha256": files}

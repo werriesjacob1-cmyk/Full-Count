@@ -41,3 +41,23 @@ PYTHONPATH=. python3 engineering/nfl_tier1_status_20260924/seal/build_week_seal.
     --week 3 --label sun_mon --exclude 2026_03_ATL_GB --refresh-injuries
 ```
 Then commit the output directory and push before the first kickoff.
+
+## Per-week pinned inputs (week 4 onward; authorized by Jacob 2026-10-01)
+- `PINNED_BY_WEEK` pins each target week's current-season files: the first nflverse release after the previous week's Monday game, with every row through week−1 and none from the target week.
+  - Week 3's pins are unchanged.
+  - Week 4 pins:
+
+    | File | SHA-256 | Upstream Last-Modified |
+    |---|---|---|
+    | `stats_player_week_2026.csv` | `e293e213…` | 2026-09-30 16:25:46Z |
+    | `play_by_play_2026.csv.gz` | `321433f8…` | 16:15:15Z |
+    | `snap_counts_2026.csv` | `c5868527…` | 2026-09-29 11:01:26Z |
+
+    Each was verified to contain weeks 1–3 (all 16 week-3 games) and no week-4 rows.
+  - `schedules/games.csv` stays `7fdc123e…`. Its week-4 kickoffs equal current upstream.
+  - `players.csv` stays `4dd70f32…`.
+- **Staging.** Copy the week's files into `/tmp/claude-0/nfl_tier1_shared` before building. The builder refuses to build if any pin mismatches.
+- **WS-D cutoff.** The WS-D rows carry that week's true information cutoff (`D_INFORMATION_CUTOFF`). Week 3 keeps the frozen constant.
+- **WS-C cache.** WS-C builds a missing PBP summary cache with the frozen `summarize_pbp`.
+- **Unchanged.** No frozen model code, parameter, hypothesis or B0 rule changes.
+- **Seal precedence when a game has more than one seal.** A Thursday all-games seal plus a Saturday Sunday/Monday seal is the protocol §3 pattern. The analysis uses, for each game, the latest seal committed before that game's kickoff. Every seal is kept.

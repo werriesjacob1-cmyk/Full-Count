@@ -53,8 +53,30 @@ def drive_b(season, week, games, out_dir):
             "source_sha256": body["source_sha256"], "rows": rows}
 
 
+def _ensure_pbp_summary_cache(season):
+    """Build the WS-C PBP summary cache for a pinned PBP file that has none yet,
+    exactly as the frozen evaluate_team_context.load_everything does (frozen
+    summarize_pbp, positions from the frozen harness rows). Existing cache
+    files are never rewritten."""
+    from nfl.research.tier1 import harness
+    from nfl.research.tier1.team_context_data import player_positions, summarize_pbp, write_csv
+    shared, work = Path("/tmp/claude-0/nfl_tier1_shared"), Path("/tmp/claude-0/nfl_tier1_c")
+    src = shared / f"pbp/play_by_play_{season}.csv.gz"
+    tag = harness.sha256_file(src)[:16]
+    tpath, ppath = work / f"cache/team_{season}_{tag}.csv", work / f"cache/pos_{season}_{tag}.csv"
+    if tpath.exists() and ppath.exists():
+        return
+    rows, _prov = harness.load_player_weeks(Path("/tmp/claude-0/nflverse_cache"),
+                                            Path("engineering/evidence/nflverse_weekly_stats_full_audit_2026-09-14.json"),
+                                            first_season=2015, current_season_csv=shared / "stats_player_week_2026.csv")
+    t, p = summarize_pbp(src, player_positions(rows))
+    write_csv(tpath, t)
+    write_csv(ppath, p)
+
+
 def drive_c(season, week, games, out_dir, capture):
     from nfl.research.tier1 import team_context_live as L
+    _ensure_pbp_summary_cache(season)
     L.LIVE_CONFIGS = tuple(L.LIVE_CONFIGS) + ("F6",)   # store F6-alone directly (frozen exponents)
     try:
         body = L.build(season, week, out_dir / "ws_c", capture=capture)
@@ -99,13 +121,14 @@ def _kickoffs(games_csv: Path, season: int, week: int) -> dict[str, str]:
     return out
 
 
-def drive_d(season, week, games, out_dir):
+def drive_d(season, week, games, out_dir, information_cutoff=None, pinned_sources=None):
     from nfl.research.tier1 import contract as C
     from nfl.research.tier1 import touchdown_consumer as TC
     from nfl.research.tier1 import touchdown_evaluate as TE
     from nfl.research.tier1 import touchdown_features as TF
     data = TE.load(argparse.Namespace(**TE.DEFAULTS))
     kick = _kickoffs(Path(TE.DEFAULTS["games"]), season, week)
+    cutoff = information_cutoff or TE.LIVE_INFORMATION_CUTOFF
     names = {r["player_id"]: r["player_name"] for r in data["hist_rows"]}
     rows = []
     for gid in sorted(games):
@@ -113,7 +136,7 @@ def drive_d(season, week, games, out_dir):
         reqs = TF.live_requests(data["hist_rows"], target_season=season, target_week=week,
                                 game_id=gid, teams=(away, home))
         feats, _diag = TF.build_features(reqs, data["hist_rows"], data["parsed"],
-                                         information_cutoff=TE.LIVE_INFORMATION_CUTOFF)
+                                         information_cutoff=cutoff)
         for key, row in sorted(feats.items(), key=lambda kv: (kv[1]["team"], kv[0][3])):
             C.validate_feature_row(row, prediction_cutoff=kick[gid])
             out = {"hypothesis": "H3", "game_id": gid, "gsis_id": key[3], "player_name": names.get(key[3], ""),
@@ -128,8 +151,8 @@ def drive_d(season, week, games, out_dir):
                     out[field + "_lambda"], out[field + "_prediction"] = lam, TC.p_anytime(lam)
             rows.append(out)
     consumer = Path("nfl/research/tier1/touchdown_consumer.py")
-    return {"consumer_sha256": _sha(consumer), "information_cutoff": TE.LIVE_INFORMATION_CUTOFF,
-            "sources": TE.LIVE_SOURCE_AVAILABILITY, "pbp_sha256": data["pbp_hashes"], "rows": rows}
+    return {"consumer_sha256": _sha(consumer), "information_cutoff": cutoff,
+            "sources": pinned_sources or TE.LIVE_SOURCE_AVAILABILITY, "pbp_sha256": data["pbp_hashes"], "rows": rows}
 
 
 def drive_b0(season, week, games, out_dir):
@@ -180,12 +203,15 @@ def main():
     ap.add_argument("--games", required=True)
     ap.add_argument("--out-dir", type=Path, required=True)
     ap.add_argument("--no-capture", action="store_true")
+    ap.add_argument("--information-cutoff", help="WS-D only; default is the frozen week-3 constant")
+    ap.add_argument("--pinned-sources", help="WS-D only; JSON of this week's pinned source hashes")
     a = ap.parse_args()
     games = set(a.games.split(","))
     a.out_dir.mkdir(parents=True, exist_ok=True)
     fn = {"B": lambda: drive_b(a.season, a.week, games, a.out_dir),
           "C": lambda: drive_c(a.season, a.week, games, a.out_dir, not a.no_capture),
-          "D": lambda: drive_d(a.season, a.week, games, a.out_dir),
+          "D": lambda: drive_d(a.season, a.week, games, a.out_dir, a.information_cutoff,
+                               json.loads(a.pinned_sources) if a.pinned_sources else None),
           "B0": lambda: drive_b0(a.season, a.week, games, a.out_dir)}[a.which]
     res = fn()
     (a.out_dir / f"driver_{a.which}.json").write_text(json.dumps(res, indent=1, sort_keys=True, default=str) + "\n")
