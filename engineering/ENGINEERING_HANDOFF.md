@@ -6437,3 +6437,19 @@ Alligator
 - **Bridge:** #91 comments 5925113614 (claim) and 5925201210 (status).
 
 Alligator
+
+## 2026-10-01 05:30Z -- Week 4 Tier 1 seal SEALED; durable Saturday routine
+- **Authorization:** Jacob authorized the builder change and the Week 4 seal.
+- **Seal:** `claude/nfl-tier1-seal-2026w04` @ `693526aa5f`, pushed 05:22:30Z.
+  - It has two commits: the builder change, then `2026_w04_thu_all`.
+  - Coverage: 16/16 games; rows H1 344, H2 300, H3 412.
+  - From a fresh clone, 28/28 files re-hash.
+  - #91 proof: comment 5925292654.
+- **Recovery overlay:** `claude/nfl-seal-inputs-2026w04` @ `4461b0421d` holds the pinned week-4 inputs, the pinned `players.csv` (upstream drifted) and `w04/recover_w04.sh`. The week-3 recovery branch is unchanged.
+- **Saturday routine:** `trig_01D3Vqnvv8u4RdUhuFe6YKMx`, a **fresh-session** routine at 2026-10-03T18:30Z with push and email notifications. It runs `build_week_seal.py --week 4 --label sun_mon --exclude 2026_04_PIT_CLE --refresh-injuries`.
+  - It stores no MCP connectors, so it reaches GitHub through the proxy API.
+- **Drill:** fresh-container drill session `session_01WUnFhKHhkXB671dZDW8KUb`, reporting to branch `claude/nfl-seal-drill-2026w04`.
+- **Precedence rule** (recorded in the seal README before any outcome): for each game, the analysis uses the latest seal committed before kickoff.
+- **Week 5 onward** needs new per-week pins, which means a builder change. That requires Jacob's authorization each week, or a standing one.
+
+Alligator
