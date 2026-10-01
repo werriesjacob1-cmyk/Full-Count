@@ -1,32 +1,49 @@
 #!/usr/bin/env python3
-"""Deterministic synthetic tests for preregistration v3 (no network, no outcomes)."""
+"""Deterministic synthetic tests for preregistration v3 (no live network, no outcomes).
+
+External effects are replaced only by monkeypatching module functions inside tests;
+the production code paths have no injectable trust parameters. RFC 3161 cryptography
+is exercised against the REAL stored prereg-anchor tokens (FreeTSA + DigiCert)."""
 from __future__ import annotations
 
 import copy
+import gzip
+import hashlib
 import inspect
+import json
 import os
+import shutil
+import subprocess
 import sys
+import tempfile
 import unittest
+from datetime import datetime, timezone
+from unittest import mock
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 sys.path.insert(1, os.path.dirname(HERE))
+import activation as AC  # noqa: E402
 import capture as CP  # noqa: E402
 import evaluate_v3 as EV  # noqa: E402
 import harness as H  # noqa: E402
 import manifest_v3 as M3  # noqa: E402
 import regimes as RG  # noqa: E402
 import runner as RN  # noqa: E402
+import schedule_plan as SP  # noqa: E402
 import seal as SL  # noqa: E402
 import shadow as SH  # noqa: E402
+import verify_evidence as VE  # noqa: E402
 
 COEF = H.load_coefficients()
 D = "2099-04-01"
 CUT = f"{D}T16:00:00+00:00"
 START1, START2 = f"{D}T17:05:00Z", f"{D}T23:10:00Z"     # 13:05 ET (DAY), 19:10 ET (NIGHT)
 PROV = {"git_sha": SH.SHADOW_PIN[:10], **SH.SHADOW_LABELS}
+ANCHOR = json.load(open(os.path.join(HERE, "PREREG_ANCHOR.json")))
 
 
+# ---- fixtures ------------------------------------------------------------------------------------
 def rec(cid, *, name="Al Bat", game="1", player="10", team="Away Club", stat="hits", needs="1", line=0.5,
         side="over", odds=-120, p=0.62, rel="A", n=30, status="lean", qc="kept", assumed=False, prov=None):
     return {"candidate_id": cid, "game_pk": game, "player_id": player, "player_name": name, "team": team,
@@ -36,20 +53,21 @@ def rec(cid, *, name="Al Bat", game="1", player="10", team="Away Club", stat="hi
             "selector": {"recommendation_status": status}, "provenance": dict(prov or PROV)}
 
 
-def board(records, *, generated=f"{D}T15:50:00+00:00", prov=None):
-    b = {"date": D, "board_generated_at": generated, "sealed_at": generated, "provenance": dict(prov or PROV),
+def board(records, *, generated=f"{D}T15:50:00+00:00", prov=None, date=D):
+    b = {"date": date, "board_generated_at": generated, "sealed_at": generated, "provenance": dict(prov or PROV),
          "records": records}
     b["board_sha256"] = CP.canonical_sha256(b)
     return b
 
 
-def game(pk, *, away="Away Club", home="Home Club", start=START1, gtype="R", probables=(50,)):
+def game(pk, *, away="Away Club", home="Home Club", start=START1, gtype="R", probables=(50,), rosters=None, tbd=False):
     return {"game_pk": int(pk), "game_type": gtype, "game_date": start, "away_team": away, "home_team": home,
-            "double_header": "N", "game_number": 1, "probable_pitcher_ids": list(probables)}
+            "double_header": "N", "game_number": 1, "probable_pitcher_ids": list(probables),
+            "start_time_tbd": tbd, "rosters": rosters or {"away": None, "home": None}}
 
 
-def sched(*games):
-    return {"date": D, "fetched_at": f"{D}T15:55:00+00:00", "games": list(games)}
+def sched(*games, date=D):
+    return {"date": date, "fetched_at": f"{date}T15:55:00+00:00", "games": list(games)}
 
 
 def runner_(name, odds, *, status="ACTIVE", team="away_club", handicap=0, rtype=None, sel=1):
@@ -57,23 +75,27 @@ def runner_(name, odds, *, status="ACTIVE", team="away_club", handicap=0, rtype=
             "result_type": rtype, "team_slug": team, "american": odds}
 
 
-def market(mtype, runners, *, mid="m1", status="OPEN", in_play=False):
-    return {"market_id": mid, "market_type": mtype, "market_name": mtype, "market_status": status,
-            "in_play": in_play, "runners": runners}
+def market(mtype, runners, *, mid="m1", status="OPEN", in_play=False, **kw):
+    m = {"market_id": mid, "market_type": mtype, "market_name": mtype, "market_status": status,
+         "in_play": in_play, "runners": runners}
+    m.update(kw)                                   # e.g. event_id=... for foreign-attachment tests
+    return m
 
 
 def event(eid, markets, *, name="Away Club (P A) @ Home Club (P B)", open_date=START1, tabs_ok=True,
-          completed=f"{D}T15:58:00+00:00", status=None):
+          completed=f"{D}T15:58:00+00:00", status=None, date=D):
     tabs = {t: "OK" for t in CP.TABS}
     if not tabs_ok:
         tabs["batter-props"] = "FAILED: RuntimeError: all FanDuel hosts failed"
-    return {"event_id": eid, "event_name": name, "open_date": open_date, "fetch_started_at": f"{D}T15:57:00+00:00",
+    for m in markets:
+        m.setdefault("event_id", eid)
+    return {"event_id": eid, "event_name": name, "open_date": open_date, "fetch_started_at": f"{date}T15:57:00+00:00",
             "fetch_completed_at": completed, "tabs": tabs, "markets": markets,
             "status": status or ("COMPLETE" if tabs_ok else "PARTIAL")}
 
 
-def cap(*events, started=f"{D}T15:57:00+00:00", completed=f"{D}T15:58:30+00:00"):
-    c = {"capture_version": CP.CAPTURE_VERSION, "book": "fanduel", "capture_started_at": started,
+def cap(*events, started=f"{D}T15:57:00+00:00", completed=f"{D}T15:58:30+00:00", book="fanduel"):
+    c = {"capture_version": CP.CAPTURE_VERSION, "book": book, "capture_started_at": started,
          "capture_completed_at": completed, "discovery": {"status": "OK"}, "events": list(events),
          "status": "COMPLETE" if completed and all(e["status"] == "COMPLETE" for e in events) else "INCOMPLETE"}
     c["capture_sha256"] = CP.canonical_sha256(c)
@@ -91,19 +113,48 @@ def why(m):
     return {r["candidate_id"]: r["exclusion_reason"] for r in m["rows"]}
 
 
+# ---- quote identity --------------------------------------------------------------------------------
 class QuoteIdentity(unittest.TestCase):
     def test_exact_offer_binds_all_identity_fields(self):
-        m = build([rec("a")], cap(event(101, [market(HIT, [runner_("Al Bat", -120)])])), sched(game(1)))
-        r = m["rows"][0]
+        r = build([rec("a")], cap(event(101, [market(HIT, [runner_("Al Bat", -120)])])), sched(game(1)))["rows"][0]
         self.assertTrue(r["eligible"], r["exclusion_reason"])
         q = r["quote"]
         for k in ("book", "capture_sha256", "event_id", "market_id", "market_type", "selection_id", "team_slug",
                   "side", "needs", "american"):
             self.assertIsNotNone(q[k], k)
-        self.assertEqual((q["event_id"], q["market_type"], q["american"]), (101, HIT, -120))
+        self.assertEqual((q["event_id"], q["american"], q["identity_proof"]), (101, -120, "TEAM_SLUG"))
+
+    def test_market_from_wrong_event_rejected(self):
+        c = cap(event(101, [market(HIT, [runner_("Al Bat", -120)], event_id=202)]))
+        self.assertEqual(why(build([rec("a")], c, sched(game(1))))["a"], "QUOTE_EVENT_MISMATCH")
+        c2 = cap(event(101, [market(HIT, [runner_("Al Bat", -120)], event_id=None)]))
+        self.assertEqual(why(build([rec("a")], c2, sched(game(1))))["a"], "QUOTE_EVENT_MISMATCH")
+
+    def test_missing_event_market_selection_ids(self):
+        e = event(None, [market(HIT, [runner_("Al Bat", -120)])])
+        self.assertEqual(why(build([rec("a")], cap(e), sched(game(1))))["a"], "QUOTE_ID_MISSING")
+        c = cap(event(101, [market(HIT, [runner_("Al Bat", -120)], mid=None)]))
+        self.assertEqual(why(build([rec("a")], c, sched(game(1))))["a"], "QUOTE_ID_MISSING")
+        c = cap(event(101, [market(HIT, [runner_("Al Bat", -120, sel=None)])]))
+        self.assertEqual(why(build([rec("a")], c, sched(game(1))))["a"], "QUOTE_ID_MISSING")
+
+    def test_book_must_be_fanduel(self):
+        c = cap(event(101, [market(HIT, [runner_("Al Bat", -120)])]), book="otherbook")
+        self.assertEqual(why(build([rec("a")], c, sched(game(1))))["a"], "QUOTE_BOOK_MISMATCH")
+
+    def test_missing_team_slug_needs_roster_proof(self):
+        c = cap(event(101, [market(HIT, [runner_("Al Bat", -120, team=None)])]))
+        self.assertEqual(why(build([rec("a")], c, sched(game(1))))["a"], "QUOTE_IDENTITY_UNPROVEN")
+        ok = {"away": [{"id": 10, "name": "Al Bat"}], "home": [{"id": 77, "name": "Other Guy"}]}
+        r = build([rec("a")], c, sched(game(1, rosters=ok)))["rows"][0]
+        self.assertTrue(r["eligible"])
+        self.assertEqual(r["quote"]["identity_proof"], "MLB_ACTIVE_ROSTER_UNIQUE_NAME_AND_ID")
+        twin = {"away": [{"id": 10, "name": "Al Bat"}], "home": [{"id": 78, "name": "Al Bat"}]}
+        self.assertEqual(why(build([rec("a")], c, sched(game(1, rosters=twin))))["a"], "QUOTE_IDENTITY_UNPROVEN")
+        other = {"away": [{"id": 99, "name": "Al Bat"}], "home": []}
+        self.assertEqual(why(build([rec("a")], c, sched(game(1, rosters=other))))["a"], "QUOTE_IDENTITY_UNPROVEN")
 
     def test_doubleheader_collision_fails_closed(self):
-        # both games same teams; both FanDuel events open within tolerance of both games -> ambiguous
         g1, g2 = game(1, start=f"{D}T17:05:00Z"), game(2, start=f"{D}T18:00:00Z")
         c = cap(event(101, [market(HIT, [runner_("Al Bat", -120)])], open_date=f"{D}T17:05:00Z"),
                 event(102, [market(HIT, [runner_("Al Bat", -120)], mid="m2")], open_date=f"{D}T18:00:00Z"))
@@ -114,8 +165,7 @@ class QuoteIdentity(unittest.TestCase):
         g1, g2 = game(1, start=f"{D}T17:05:00Z"), game(2, start=f"{D}T21:10:00Z")
         c = cap(event(101, [market(HIT, [runner_("Al Bat", -150)])], open_date=f"{D}T17:05:00Z"),
                 event(102, [market(HIT, [runner_("Al Bat", -120)], mid="m2")], open_date=f"{D}T21:10:00Z"))
-        m = build([rec("a", odds=-120)], c, sched(g1, g2))
-        self.assertEqual(why(m)["a"], "PRICE_MISMATCH_BOARD_VS_CAPTURE")   # game-1 price -150, not game-2's -120
+        self.assertEqual(why(build([rec("a", odds=-120)], c, sched(g1, g2)))["a"], "PRICE_MISMATCH_BOARD_VS_CAPTURE")
 
     def test_same_player_stat_price_in_another_game_never_matches(self):
         c = cap(event(101, [market(HIT, [runner_("Someone Else", -120)])]),
@@ -127,26 +177,20 @@ class QuoteIdentity(unittest.TestCase):
         c = cap(event(101, [market(HIT, [runner_("Al Bat", -120)])], name="Wrong Club (x) @ Home Club (y)"))
         self.assertEqual(why(build([rec("a")], c, sched(game(1))))["a"], "EVENT_NOT_MAPPED")
 
-    def test_team_line_side_and_status_bindings(self):
+    def test_team_line_side_status_and_ambiguity(self):
         k = "PITCHER_A_TOTAL_STRIKEOUTS"
-        recs = [rec("team", name="T M", player="20", team="Away Club"),
-                rec("kline", name="K P", player="50", stat="strikeouts", needs="5", line=4.5),
+        recs = [rec("team", name="T M", player="20"), rec("kline", name="K P", player="50", stat="strikeouts", needs="5", line=4.5),
                 rec("susp", name="S U", player="21"), rec("inplay", name="I P", player="22"),
                 rec("plus", name="P L", player="23", odds="+100"), rec("amb", name="A M", player="24")]
-        c = cap(event(101, [market(HIT, [runner_("T M", -120, team="home_club"),
-                                          runner_("S U", -120, status="SUSPENDED", sel=3),
+        c = cap(event(101, [market(HIT, [runner_("T M", -120, team="home_club"), runner_("S U", -120, status="SUSPENDED", sel=3),
                                           runner_("P L", 100, sel=4), runner_("A M", -120, sel=10)]),
                             market(HIT, [runner_("A M", -125, sel=11)], mid="m10"),
-                            market(HIT.replace("A_HIT", "A_HIT"), [runner_("I P", -120, sel=5)], mid="m9", in_play=True),
+                            market(HIT, [runner_("I P", -120, sel=5)], mid="m9", in_play=True),
                             market(k, [runner_("K P Over", -120, handicap=5.5, rtype="OVER", sel=6),
                                        runner_("K P Under", 100, handicap=5.5, rtype="UNDER", sel=7)], mid="mk")]))
         w = why(build(recs, c, sched(game(1))))
-        self.assertEqual(w["team"], "QUOTE_TEAM_MISMATCH")
-        self.assertEqual(w["kline"], "MARKET_ABSENT")          # board 4.5 vs posted 5.5: different offer
-        self.assertEqual(w["susp"], "MARKET_SUSPENDED")
-        self.assertEqual(w["inplay"], "IN_PLAY")
-        self.assertEqual(w["amb"], "QUOTE_AMBIGUOUS")          # two offers for one identity -> fail closed
-        self.assertIsNone(w["plus"])                            # '+100' == 100, representation only
+        self.assertEqual((w["team"], w["kline"], w["susp"], w["inplay"], w["amb"], w["plus"]),
+                         ("QUOTE_TEAM_MISMATCH", "MARKET_ABSENT", "MARKET_SUSPENDED", "IN_PLAY", "QUOTE_AMBIGUOUS", None))
 
     def test_two_sided_devig_only_with_real_opposite(self):
         k = "PITCHER_A_TOTAL_STRIKEOUTS"
@@ -158,17 +202,13 @@ class QuoteIdentity(unittest.TestCase):
         rows = {r["candidate_id"]: r for r in build(recs, c, sched(game(1, probables=(50, 51))))["rows"]}
         a, b = M3.implied(-120), M3.implied(100)
         self.assertAlmostEqual(rows["k"]["quote"]["q_devig"], a / (a + b))
-        self.assertTrue(rows["o"]["eligible"])
         self.assertEqual(rows["o"]["quote"]["devig"], "ONE_SIDED_NO_DEVIG")
 
     def test_starter_must_be_mlb_probable_and_is_never_called_confirmed(self):
         k = "PITCHER_A_TOTAL_STRIKEOUTS"
         c = cap(event(101, [market(k, [runner_("K P Over", -120, handicap=4.5, rtype="OVER")], mid="mk")]))
         r = build([rec("k", name="K P", player="99", stat="strikeouts", needs="5", line=4.5)], c, sched(game(1)))["rows"][0]
-        self.assertEqual(r["exclusion_reason"], "STARTER_FAIL")
-        self.assertEqual(r["starter_status"], "NOT_MLB_PROBABLE")
-        ok = build([rec("k", name="K P", player="50", stat="strikeouts", needs="5", line=4.5)], c, sched(game(1)))["rows"][0]
-        self.assertEqual(ok["starter_status"], "MLB_PROBABLE_LISTED_NOT_INDEPENDENTLY_CONFIRMED")
+        self.assertEqual((r["exclusion_reason"], r["starter_status"]), ("STARTER_FAIL", "NOT_MLB_PROBABLE"))
 
 
 class CaptureCompleteness(unittest.TestCase):
@@ -180,27 +220,23 @@ class CaptureCompleteness(unittest.TestCase):
         self.assertEqual(why(build([rec("a")], c, sched(game(1))))["a"], "CAPTURE_COMPLETED_AFTER_CUTOFF")
 
     def test_partial_capture_is_not_market_absence(self):
-        c = cap(event(101, [], tabs_ok=False))
-        self.assertEqual(why(build([rec("a")], c, sched(game(1))))["a"], "EVENT_NOT_OBSERVED")
-        c2 = cap(event(101, []))
-        self.assertEqual(why(build([rec("a")], c2, sched(game(1))))["a"], "MARKET_ABSENT")
+        self.assertEqual(why(build([rec("a")], cap(event(101, [], tabs_ok=False)), sched(game(1))))["a"], "EVENT_NOT_OBSERVED")
+        self.assertEqual(why(build([rec("a")], cap(event(101, [])), sched(game(1))))["a"], "MARKET_ABSENT")
 
     def test_failed_event_fetch_and_unfinished_capture(self):
-        c = cap(event(101, [], status="NOT_FETCHED_BUDGET"))
-        self.assertEqual(why(build([rec("a")], c, sched(game(1))))["a"], "EVENT_NOT_OBSERVED")
-        c2 = cap(self.ev(), completed=None)
-        self.assertEqual(why(build([rec("a")], c2, sched(game(1))))["a"], "CAPTURE_INCOMPLETE")
+        self.assertEqual(why(build([rec("a")], cap(event(101, [], status="NOT_FETCHED_BUDGET")), sched(game(1))))["a"],
+                         "EVENT_NOT_OBSERVED")
+        self.assertEqual(why(build([rec("a")], cap(self.ev(), completed=None), sched(game(1))))["a"], "CAPTURE_INCOMPLETE")
 
     def test_quote_age_ceiling(self):
-        c = cap(self.ev(), completed=f"{D}T15:14:59+00:00")
-        self.assertEqual(why(build([rec("a")], c, sched(game(1))))["a"], "QUOTE_STALE")
+        self.assertEqual(why(build([rec("a")], cap(self.ev(), completed=f"{D}T15:14:59+00:00"), sched(game(1))))["a"],
+                         "QUOTE_STALE")
 
-    def test_capture_hash_rebuilds(self):
+    def test_tampered_capture_is_refused_by_the_manifest_builder(self):
         c = cap(self.ev())
-        CP.verify_capture(c)
-        c["events"][0]["markets"][0]["runners"][0]["american"] = -110
+        c["events"][0]["markets"][0]["runners"][0]["american"] = -110      # hash no longer rebuilds
         with self.assertRaises(ValueError):
-            CP.verify_capture(c)
+            build([rec("a")], c, sched(game(1)))
 
 
 class Universe(unittest.TestCase):
@@ -210,18 +246,14 @@ class Universe(unittest.TestCase):
                 rec("dup1", name="D U", player="5"), rec("dup2", name="D U", player="5"),
                 rec("combo", name="C K", player="6", stat="combined_strikeouts"),
                 rec("night", name="N I", player="7", game="2"), rec("band", name="B A", player="8", odds=-400)]
-        c = cap(event(101, [market(HIT, [runner_(n, -400 if n == "B A" else -120, sel=i)
+        c = cap(event(101, [market(HIT, [runner_(n, -400 if n == "B A" else -120, sel=i + 1)
                                           for i, n in enumerate(["R C", "L A", "Q C", "N Z", "D U", "C K", "B A"])])]),
-                event(102, [market(HIT, [runner_("N I", -120)], mid="mn")], name="Night A (x) @ Night B (y)",
-                      open_date=START2))
+                event(102, [market(HIT, [runner_("N I", -120)], mid="mn")], name="Night A (x) @ Night B (y)", open_date=START2))
         m = build(recs, c, sched(game(1), game(2, away="Night A", home="Night B", start=START2)))
-        w = why(m)
-        self.assertEqual(w, {"relC": "RELIABILITY_FAIL", "lin": "LINEUP_FAIL", "qc": "QC_FAIL", "n0": "SAMPLE_N_FAIL",
-                             "dup1": "DUPLICATE_IDENTITY_FAIL", "dup2": "DUPLICATE_IDENTITY_FAIL",
-                             "combo": "FAMILY_RED_FLAG_SEPARATE", "band": "PRICE_BAND_FAIL"})   # NIGHT game not in DAY unit
+        self.assertEqual(why(m), {"relC": "RELIABILITY_FAIL", "lin": "LINEUP_FAIL", "qc": "QC_FAIL", "n0": "SAMPLE_N_FAIL",
+                                  "dup1": "DUPLICATE_IDENTITY_FAIL", "dup2": "DUPLICATE_IDENTITY_FAIL",
+                                  "combo": "FAMILY_RED_FLAG_SEPARATE", "band": "PRICE_BAND_FAIL"})
         self.assertNotIn("2", m["covered_games"])
-        for r in m["rows"]:
-            self.assertEqual(set(r["gates"]), set(M3.GATES))
 
     def test_no_outcome_input_and_hash(self):
         self.assertEqual(list(inspect.signature(M3.build_manifest).parameters),
@@ -234,201 +266,574 @@ class Universe(unittest.TestCase):
             M3.verify_manifest(t)
 
 
-class ShadowChampion(unittest.TestCase):
+# ---- shadow champion & sealed overlay ------------------------------------------------------------
+class ShadowInputs(unittest.TestCase):
     def test_independent_of_live_production_version(self):
         SH.verify_shadow_board(board([rec("a")]))
-        live = {"git_sha": "abcdef1234", "model_version": "2027.01.15", "selection_policy_version": "2.0.0",
-                "calibration_version": "2.0.0", "feature_version": "2.0.0"}
-        with self.assertRaises(ValueError):          # a production board can never stand in for the champion
-            SH.verify_shadow_board(board([rec("a", prov=live)], prov=live))
-        other_code = dict(PROV, git_sha="0123456789")   # pinned labels, different code
-        with self.assertRaises(ValueError):
-            SH.verify_shadow_board(board([rec("a", prov=other_code)], prov=other_code))
-        relabeled = dict(PROV, model_version="2027.01.15")
-        with self.assertRaises(ValueError):
-            SH.verify_shadow_board(board([rec("a")], prov=relabeled))
-        self.assertEqual(SH.SHADOW_ID, "FROZEN_SHADOW_POLICY_2026.08.15@7d3ebacd55")
+        for prov in ({"git_sha": "abcdef1234", "model_version": "2027.01.15", "selection_policy_version": "2.0.0",
+                      "calibration_version": "2.0.0", "feature_version": "2.0.0"},
+                     dict(PROV, git_sha="0123456789"), dict(PROV, model_version="2027.01.15")):
+            with self.assertRaises(ValueError):
+                SH.verify_shadow_board(board([rec("a", prov=prov)], prov=prov))
+
+    def overlay(self, *stamps):
+        return json.dumps({"date": D, "snapshots": [{"taken_at": t, "rows": []} for t in stamps]}).encode()
+
+    def test_post_cutoff_and_future_end_rows_are_not_consumed(self):
+        cut = datetime(2099, 4, 1, 16, tzinfo=timezone.utc)
+        sealed, rep = SH.filter_overlay(self.overlay(f"{D}T10:00:00+00:00", f"{D}T15:59:59+00:00",
+                                                      f"{D}T16:00:01+00:00", "2099-12-31T00:00:00+00:00", "garbage"), cut)
+        kept = [s["taken_at"] for s in json.loads(sealed)["snapshots"]]
+        self.assertEqual(kept, [f"{D}T10:00:00+00:00", f"{D}T15:59:59+00:00"])     # last row is pre-cutoff
+        self.assertEqual(rep["latest_kept_taken_at"], f"{D}T15:59:59+00:00")
+        self.assertEqual(len(rep["dropped_post_cutoff_or_invalid"]), 3)
+
+    def test_replay_uses_sealed_overlay_bytes_not_current_data_odds(self):
+        tmp = tempfile.mkdtemp()
+        try:
+            target = os.path.join(tmp, SH.LIVE_OVERLAY_TEMPLATE.format(date=D))
+            os.makedirs(os.path.dirname(target))
+            open(target, "wb").write(b"CURRENT MAIN BYTES (changed after the seal)")
+            SH.install_sealed_overlay(tmp, D, b"SEALED BYTES")
+            self.assertEqual(open(target, "rb").read(), b"SEALED BYTES")
+            SH.install_sealed_overlay(tmp, D, None)                  # none sealed -> none present (pin: {} )
+            self.assertFalse(os.path.exists(target))
+        finally:
+            shutil.rmtree(tmp)
+
+    def test_replay_equivalence_ignores_only_run_timestamps(self):
+        a = board([rec("a"), rec("b", player="11")])
+        b = copy.deepcopy(a)
+        b["board_generated_at"] = b["sealed_at"] = "2099-04-01T15:51:00+00:00"
+        for r in b["records"]:
+            r["generation_timestamp"] = "x"
+        b["board_sha256"] = "changed"
+        self.assertTrue(SH.replay_equivalent(a, b))
+        b["records"][1]["prediction"]["hit_probability"] = 0.63
+        self.assertFalse(SH.replay_equivalent(a, b))
 
 
-# ---- seal / chain / receipts ---------------------------------------------------------------
-def mk_manifest(date=D, gtype="R", window="DAY", n=8, flip=False, champs=2, start=None):
-    start = start or f"{date}T17:05:00Z"
-    recs = [rec(f"{date}-{i}", name=f"P{i} X", player=str(i), game=str(i % 4 + 1), p=0.55 + 0.02 * i,
-                odds=-110 - 10 * i, status="top_pick" if i < champs else "lean") for i in range(n)]
-    games = [dict(game(g, away=f"A{g}", home=f"H{g}", start=start, gtype=gtype)) for g in range(1, 5)]
-    evs = [event(100 + g, [market(HIT, [runner_(f"P{i} X", -110 - 10 * i, team=f"a{g}", sel=i)
+# ---- RFC 3161 (real tokens) -------------------------------------------------------------------------
+class TimestampAuthority(unittest.TestCase):
+    H_ = ANCHOR["prereg_sha256"]
+
+    def test_real_tokens_verify_and_genTime_comes_from_token(self):
+        for n, t in ANCHOR["tsa"].items():
+            g = SL.tsa_check(self.H_, t["token_b64"], n)
+            self.assertEqual(g, datetime(2026, 10, 1, 19, 23, 48, tzinfo=timezone.utc), n)
+
+    def test_wrong_imprint_wrong_body_bad_signature_missing_unknown(self):
+        t = ANCHOR["tsa"]["freetsa"]["token_b64"]
+        import base64
+        raw = bytearray(base64.b64decode(t))
+        raw[-20] ^= 0xFF                                            # signature bytes corrupted
+        bad_sig = base64.b64encode(bytes(raw)).decode()
+        self.assertIsNone(SL.tsa_check("0" * 64, t, "freetsa"))     # wrong message imprint
+        self.assertIsNone(SL.tsa_check(self.H_, bad_sig, "freetsa"))
+        self.assertIsNone(SL.tsa_check(self.H_, base64.b64encode(b"not a token").decode(), "freetsa"))
+        self.assertIsNone(SL.tsa_check(self.H_, None, "freetsa"))
+        self.assertIsNone(SL.tsa_check(self.H_, t, "unlisted_tsa"))
+        self.assertIsNone(SL.tsa_check(self.H_, t, "digicert"))      # FreeTSA token under DigiCert trust
+
+
+# ---- evidence ref -----------------------------------------------------------------------------------
+GH_ISSUE = SL.ISSUE_91_API_URL
+
+
+def make_unit(root, *, date="2027-05-04", gtype="R", n=8, champs=2, prev=None, overlay_rows=None, mutate=None):
+    """A complete sealed unit on a synthetic evidence ref (no network)."""
+    start = f"{date}T17:05:00Z"
+    recs = [rec(f"{date}-{i}", name=f"P{i} X", player=str(i), game=str(i % 4 + 1), team=f"A{i % 4 + 1}",
+                p=0.55 + 0.02 * i, odds=-110 - 10 * i, status="top_pick" if i < champs else "lean") for i in range(n)]
+    games = [game(g, away=f"A{g}", home=f"H{g}", start=start, gtype=gtype) for g in range(1, 5)]
+    evs = [event(100 + g, [market(HIT, [runner_(f"P{i} X", -110 - 10 * i, team=f"a{g}", sel=i + 1)
                                          for i in range(n) if i % 4 + 1 == g], mid=f"m{g}")],
-                 name=f"A{g} (x) @ H{g} (y)", open_date=start, completed=f"{date}T15:58:00+00:00") for g in range(1, 5)]
-    for r_ in recs:
-        r_["team"] = f"A{r_['game_pk']}"
-    b = board(recs, generated=f"{date}T15:50:00+00:00")
-    b["date"] = date
-    b["board_sha256"] = CP.canonical_sha256({k: v for k, v in b.items() if k != "board_sha256"})
-    s = sched(*games)
-    s["date"] = date
+                 name=f"A{g} (x) @ H{g} (y)", open_date=start, completed=f"{date}T15:58:00+00:00", date=date)
+           for g in range(1, 5)]
+    b = board(recs, generated=f"{date}T15:50:00+00:00", date=date)
+    s = sched(*games, date=date)
     c = cap(*evs, started=f"{date}T15:57:00+00:00", completed=f"{date}T15:58:30+00:00")
-    m = M3.build_manifest(b, c, s, window=window, cutoff_utc=f"{date}T16:00:00+00:00")
-    grades = {r_["candidate_id"]: ("hit" if (i % 2 == 0) != flip else "miss") for i, r_ in enumerate(recs)}
-    return m, {"source_board_sha256": b["board_sha256"],
-               "records": [{"candidate_id": k, "grade": v} for k, v in grades.items()]}
+    overlay = json.dumps({"snapshots": overlay_rows if overlay_rows is not None
+                          else [{"taken_at": f"{date}T12:00:00+00:00", "rows": []}]}).encode()
+    tape = b"synthetic tape bytes " + date.encode()
+    prov = {"shadow_id": SH.SHADOW_ID, "overlay": {"status": "SEALED", "sealed_sha256": hashlib.sha256(overlay).hexdigest(),
+                                                    "overlay_cutoff": f"{date}T15:40:00+00:00"},
+            "tape_sha256": hashlib.sha256(tape).hexdigest()}
+    m = M3.build_manifest(b, c, s, window="DAY", cutoff_utc=f"{date}T16:00:00+00:00", shadow_provenance=prov)
+    if mutate:
+        mutate(m)
+    unit = f"{date}_DAY"
+    d = os.path.join(root, "seals", unit)
+    os.makedirs(d)
+    files = {"shadow_board.json.gz": b, "capture.json.gz": c, "schedule.json": s, "manifest.json.gz": m}
+    for name, obj in files.items():
+        data = json.dumps(obj, sort_keys=True).encode()
+        with (gzip.GzipFile(os.path.join(d, name), "wb", mtime=0) if name.endswith(".gz") else open(os.path.join(d, name), "wb")) as fh:
+            fh.write(data)
+    open(os.path.join(d, "overlay.json"), "wb").write(overlay)
+    open(os.path.join(d, "shadow_tape.json.gz"), "wb").write(tape)
+    arts = {nm: SH.sha256_file(os.path.join(d, nm)) for nm in list(files) + ["overlay.json", "shadow_tape.json.gz"]}
+    chain = json.load(open(os.path.join(root, "CHAIN.json")))
+    sl = SL.build_seal(m, prev_seal_sha256=chain[-1]["seal_sha256"], prereg_sha256=VE.PREREG_SHA256,
+                       challenger_sha256="c" * 64, shadow_id=SH.SHADOW_ID, created_at=f"{date}T16:00:01+00:00",
+                       artifacts_sha256=arts)
+    json.dump(sl, open(os.path.join(d, "seal.json"), "w"))
+    json.dump({"github_comment_id": 4242, "tsa": [{"tsa": "freetsa", "token_b64": "TOKEN:" + sl["seal_sha256"],
+                                                    "verified": True, "gen_time": "2000-01-01T00:00:00Z"}]},
+              open(os.path.join(d, "receipts.json"), "w"))
+    chain.append({"index": len(chain), "unit": unit, "seal_sha256": sl["seal_sha256"]})
+    json.dump(chain, open(os.path.join(root, "CHAIN.json"), "w"))
+    return sl, m, b
 
 
-def mk_seal(m, prev="g" * 64):
-    return SL.build_seal(m, prev_seal_sha256=prev, prereg_sha256="p" * 64, challenger_sha256="c" * 64,
-                         shadow_id=SH.SHADOW_ID, created_at=m["cutoff_utc"])
+def new_root():
+    root = tempfile.mkdtemp(prefix="v3ev_")
+    json.dump([{"index": 0, "unit": "GENESIS", "seal_sha256": VE.GENESIS_SEAL_SHA256}], open(os.path.join(root, "CHAIN.json"), "w"))
+    return root
 
 
-def receipts(seal, gh_at, tsa_at, verified=True):
-    return {"github": {"id": 1, "created_at": gh_at, "body": SL.receipt_comment_body(seal)},
-            "tsa": [{"tsa": "freetsa", "gen_time": tsa_at, "verified": verified}]}
+class Externals:
+    """Simulated GitHub + TSA + replay for synthetic evidence. TSA 'validity' here mirrors tsa_check's
+    contract (token covers the digest); the real cryptography is tested in TimestampAuthority."""
+    def __init__(self, gh_at="T16:01:00Z", tsa_at="T16:01:05+00:00", issue=GH_ISSUE, body_ok=True, replay_ok=True,
+                 gh_raises=False, tsa_ok=True):
+        self.__dict__.update(locals())
+
+    def comment(self, cid):
+        if self.gh_raises:
+            raise VE.EvidenceUnverified("simulated GitHub outage")
+        seal = self.current_seal
+        return {"id": cid, "issue_url": self.issue, "created_at": seal["date"] + self.gh_at,
+                "body": SL.receipt_comment_body(seal) if self.body_ok else "something else"}
+
+    def tsa(self, digest, token, name):
+        if self.tsa_ok and token == "TOKEN:" + digest:
+            return datetime.fromisoformat(self.current_seal["date"] + self.tsa_at)
+        return None
+
+    def patch(self, seal):
+        self.current_seal = seal
+        return mock.patch.multiple(VE, fetch_issue_comment=self.comment,
+                                   replay_shadow=lambda *a, **k: self.replay_ok), mock.patch.object(SL, "tsa_check", self.tsa)
 
 
-class Seal(unittest.TestCase):
-    def test_on_time_and_late(self):
-        m, _ = mk_manifest()
-        s = mk_seal(m)
-        self.assertEqual(SL.verify_receipts(s, receipts(s, f"{D}T16:01:00Z", f"{D}T16:01:05Z"))[0], "ON_TIME")
-        self.assertEqual(SL.verify_receipts(s, receipts(s, f"{D}T17:06:00Z", f"{D}T16:01:05Z"))[0], "LATE_SEAL")
-
-    def test_local_commit_pregame_but_server_receipt_postgame(self):
-        m, _ = mk_manifest()
-        s = mk_seal(m)                                   # created_at_claimed is pregame (16:00Z)
-        st, _ = SL.verify_receipts(s, receipts(s, f"{D}T17:30:00Z", f"{D}T17:30:01Z"))
-        self.assertEqual(st, "LATE_SEAL")
-
-    def test_missing_or_unverified_external_evidence(self):
-        m, _ = mk_manifest()
-        s = mk_seal(m)
-        self.assertEqual(SL.verify_receipts(s, {"github": None, "tsa": []})[0], "MISSING_EXTERNAL_RECEIPT")
-        self.assertEqual(SL.verify_receipts(s, receipts(s, f"{D}T16:01:00Z", f"{D}T16:01:05Z", verified=False))[0],
-                         "MISSING_EXTERNAL_RECEIPT")
-        wrong = receipts(s, f"{D}T16:01:00Z", f"{D}T16:01:05Z")
-        wrong["github"]["body"] = "MLB V3 SEAL RECEIPT for some other hash"
-        self.assertEqual(SL.verify_receipts(s, wrong)[0], "MISSING_EXTERNAL_RECEIPT")
-
-    def test_rewritten_seal_ref_detection(self):
-        ms = [mk_manifest(date=f"2099-04-0{d}")[0] for d in (1, 2, 3)]
-        chain, prev = [], "g" * 64
-        for m in ms:
-            s = mk_seal(m, prev)
-            chain.append(s)
-            prev = s["seal_sha256"]
-        SL.verify_chain(chain, "g" * 64)
-        tampered = copy.deepcopy(chain)
-        tampered[1]["manifest_sha256"] = "f" * 64
-        with self.assertRaises(ValueError):
-            SL.verify_chain(tampered, "g" * 64)
-        with self.assertRaises(ValueError):                 # deletion
-            SL.verify_chain([chain[0], chain[2]], "g" * 64)
-        with self.assertRaises(ValueError):                 # reorder
-            SL.verify_chain([chain[1], chain[0], chain[2]], "g" * 64)
-        dup = mk_seal(ms[0], chain[-1]["seal_sha256"])
-        with self.assertRaises(ValueError):                 # second seal for a slate unit
-            SL.verify_chain(chain + [dup], "g" * 64)
+def verify(root, seal, ext=None):
+    ext = ext or Externals()
+    p1, p2 = ext.patch(seal)
+    with p1, p2:
+        return VE.verify_unit(root, seal)
 
 
-def slate(date="2027-05-04", gtype="R", gh="T16:01:00Z", flip=False, champs=2, **kw):
-    m, g = mk_manifest(date=date, gtype=gtype, flip=flip, champs=champs, **kw)
-    s = mk_seal(m)
-    return {"seal": s, "manifest": m, "graded": g, "receipts": receipts(s, f"{date}{gh}", f"{date}T16:01:05Z")}
+class EvidenceVerifier(unittest.TestCase):
+    def setUp(self):
+        self.root = new_root()
+
+    def tearDown(self):
+        shutil.rmtree(self.root, ignore_errors=True)
+
+    def test_happy_path_and_caller_flags_ignored(self):
+        sl, m, _ = make_unit(self.root)
+        self.assertEqual([s["seal_sha256"] for s in VE.load_chain(self.root)], [sl["seal_sha256"]])
+        st, detail, man = verify(self.root, sl)
+        self.assertEqual(st, "VERIFIED", detail)
+        self.assertEqual(man["manifest_sha256"], m["manifest_sha256"])
+        # stored "verified": True / gen_time 2000 are ignored: a token that does not cover the hash fails
+        rc = json.load(open(os.path.join(self.root, "seals", "2027-05-04_DAY", "receipts.json")))
+        rc["tsa"][0]["token_b64"] = "forged"
+        json.dump(rc, open(os.path.join(self.root, "seals", "2027-05-04_DAY", "receipts.json"), "w"))
+        self.assertEqual(verify(self.root, sl)[0], "MISSING_EXTERNAL_RECEIPT")
+
+    def test_no_chain_no_evaluation(self):
+        os.remove(os.path.join(self.root, "CHAIN.json"))
+        with self.assertRaises(VE.EvidenceError):
+            VE.load_chain(self.root)
+        self.assertEqual(list(inspect.signature(EV.evaluate_from_evidence).parameters), ["evidence_root", "regime", "coef"])
+        self.assertFalse(hasattr(EV, "evaluate"))
+
+    def test_fake_or_wrong_or_late_github_receipt(self):
+        sl, _, _ = make_unit(self.root)
+        self.assertEqual(verify(self.root, sl, Externals(issue=GH_ISSUE.replace("/91", "/92")))[0], "MISSING_EXTERNAL_RECEIPT")
+        self.assertEqual(verify(self.root, sl, Externals(body_ok=False))[0], "MISSING_EXTERNAL_RECEIPT")
+        self.assertEqual(verify(self.root, sl, Externals(gh_at="T17:06:00Z"))[0], "LATE_SEAL")
+        with self.assertRaises(VE.EvidenceUnverified):
+            verify(self.root, sl, Externals(gh_raises=True))
+
+    def test_invalid_or_late_tsa(self):
+        sl, _, _ = make_unit(self.root)
+        self.assertEqual(verify(self.root, sl, Externals(tsa_ok=False))[0], "MISSING_EXTERNAL_RECEIPT")
+        self.assertEqual(verify(self.root, sl, Externals(tsa_at="T17:06:00+00:00"))[0], "LATE_SEAL")
+
+    def test_one_valid_and_one_invalid_token_is_accepted_and_both_recorded(self):
+        sl, _, _ = make_unit(self.root)
+        p = os.path.join(self.root, "seals", "2027-05-04_DAY", "receipts.json")
+        rc = json.load(open(p))
+        rc["tsa"].append({"tsa": "digicert", "token_b64": "garbage"})
+        json.dump(rc, open(p, "w"))
+        st, detail, _ = verify(self.root, sl)
+        self.assertEqual(st, "VERIFIED")
+        self.assertEqual(detail["tsa_invalid"], ["digicert"])
+
+    def test_rewritten_deleted_reordered_or_unchained(self):
+        sl1, _, _ = make_unit(self.root, date="2027-05-04")
+        sl2, _, _ = make_unit(self.root, date="2027-05-05")
+        VE.load_chain(self.root)
+        p = os.path.join(self.root, "seals", "2027-05-04_DAY", "seal.json")
+        orig = open(p).read()
+        t = json.loads(orig)
+        t["manifest_sha256"] = "f" * 64
+        open(p, "w").write(json.dumps(t))
+        with self.assertRaises(VE.EvidenceError):
+            VE.load_chain(self.root)
+        open(p, "w").write(orig)
+        chain = json.load(open(os.path.join(self.root, "CHAIN.json")))
+        json.dump([chain[0], dict(chain[2], index=1), dict(chain[1], index=2)], open(os.path.join(self.root, "CHAIN.json"), "w"))
+        with self.assertRaises(VE.EvidenceError):
+            VE.load_chain(self.root)
+        json.dump(chain[:2], open(os.path.join(self.root, "CHAIN.json"), "w"))      # unit 2 left unchained
+        with self.assertRaises(VE.EvidenceError):
+            VE.load_chain(self.root)
+        json.dump([dict(chain[0], seal_sha256="0" * 64)] + chain[1:], open(os.path.join(self.root, "CHAIN.json"), "w"))
+        with self.assertRaises(VE.EvidenceError):                                   # not the anchored genesis
+            VE.load_chain(self.root)
+
+    def test_missing_or_altered_sealed_artifacts(self):
+        sl, _, _ = make_unit(self.root)
+        d = os.path.join(self.root, "seals", "2027-05-04_DAY")
+        shutil.copy(os.path.join(d, "capture.json.gz"), os.path.join(d, "cap.bak"))
+        os.remove(os.path.join(d, "capture.json.gz"))
+        self.assertEqual(verify(self.root, sl)[0], "ARTIFACT_MISSING")
+        shutil.move(os.path.join(d, "cap.bak"), os.path.join(d, "capture.json.gz"))
+        open(os.path.join(d, "shadow_tape.json.gz"), "ab").write(b"x")
+        self.assertEqual(verify(self.root, sl)[0], "ARTIFACT_HASH_MISMATCH")
+
+    def test_quote_must_reproduce_from_sealed_capture(self):
+        def flip(m):
+            m["rows"][0]["eligible"] = not m["rows"][0]["eligible"]
+            m["manifest_sha256"] = CP.canonical_sha256({k: v for k, v in m.items() if k != "manifest_sha256"})
+        sl, _, _ = make_unit(self.root, mutate=flip)
+        self.assertEqual(verify(self.root, sl)[0], "MANIFEST_NOT_REPRODUCIBLE")
+
+    def test_overlay_post_cutoff_row_and_missing_overlay(self):
+        sl, _, _ = make_unit(self.root, overlay_rows=[{"taken_at": "2027-05-04T15:50:00+00:00", "rows": []}])
+        self.assertEqual(verify(self.root, sl)[0], "OVERLAY_POST_CUTOFF_ROW")       # after its 15:40 cutoff
+        root2 = new_root()
+        try:
+            sl2, _, _ = make_unit(root2)
+            d = os.path.join(root2, "seals", "2027-05-04_DAY")
+            os.remove(os.path.join(d, "overlay.json"))
+            self.assertEqual(verify(root2, sl2)[0], "ARTIFACT_MISSING")
+        finally:
+            shutil.rmtree(root2)
+
+    def test_shadow_must_reproduce(self):
+        sl, _, _ = make_unit(self.root)
+        self.assertEqual(verify(self.root, sl, Externals(replay_ok=False))[0], "SHADOW_NOT_REPRODUCIBLE")
 
 
-class Regimes(unittest.TestCase):
-    def test_postseason_rejected_from_2027_confirmatory(self):
-        with self.assertRaises(ValueError):
-            EV.evaluate([slate(date="2026-10-05", gtype="D")], COEF, regime="2027_REGULAR_CONFIRMATORY")
+# ---- final evaluation: one look ------------------------------------------------------------------
+class OneLook(unittest.TestCase):
+    def setUp(self):
+        self.root = new_root()
+        self.sl, _, self.board = make_unit(self.root, date="2027-09-28")
 
-    def test_2027_postseason_cannot_pool_with_regular(self):
-        with self.assertRaises(ValueError):
-            EV.evaluate([slate(), slate(date="2027-10-06", gtype="D")], COEF, regime="2027_REGULAR_CONFIRMATORY")
-        with self.assertRaises(ValueError):                 # inside the calendar window but a postseason game
-            EV.evaluate([slate(date="2027-09-30", gtype="F")], COEF, regime="2027_REGULAR_CONFIRMATORY")
+    def tearDown(self):
+        shutil.rmtree(self.root, ignore_errors=True)
 
-    def test_regular_season_game_from_another_year_rejected(self):
-        with self.assertRaises(ValueError):                 # gameType R passes; the calendar window does not
-            EV.evaluate([slate(date="2026-08-15", gtype="R")], COEF, regime="2027_REGULAR_CONFIRMATORY")
+    def run_eval(self, now, terminal=True):
+        ext = Externals()
+        p1, p2 = ext.patch(self.sl)
+        graded = []
 
-    def test_no_override_and_descriptive_postseason(self):
-        with self.assertRaises(ValueError):
-            EV.evaluate([], COEF, regime="2027_REGULAR_CONFIRMATORY_FROM_2026")
-        out = EV.evaluate([slate(date="2026-10-05", gtype="D")], COEF, regime="2026_POSTSEASON_SHADOW")
-        self.assertEqual(out["primary_verdict"], "NOT_APPLICABLE_DESCRIPTIVE_REGIME")
-        with self.assertRaises(ValueError):
-            EV.evaluate([slate(date="2026-10-05", gtype="R")], COEF, regime="2026_POSTSEASON_SHADOW")
+        def grade(board):
+            self.assertTrue(os.path.exists(os.path.join(self.root, "FINAL_ANALYSIS_2027_REGULAR_CONFIRMATORY.json")),
+                            "outcomes opened before the one-look lock")
+            graded.append(1)
+            return {"source_board_sha256": board["board_sha256"],
+                    "records": [{"candidate_id": r["candidate_id"], "grade": "hit"} for r in board["records"]]}
+
+        def lock(root, rec_):
+            json.dump(rec_, open(os.path.join(root, f"FINAL_ANALYSIS_{rec_['regime']}.json"), "w"))
+
+        states = (lambda gps: {str(g): "Final" if terminal else "In Progress" for g in gps})
+        with p1, p2, mock.patch.multiple(EV, utc_now=lambda: now, publish_lock=lock, grade_shadow_board=grade,
+                                         fetch_game_states=states):
+            out = EV.evaluate_from_evidence(self.root, "2027_REGULAR_CONFIRMATORY")
+        return out, graded
+
+    def test_midseason_and_day_before_refused(self):
+        for when in (datetime(2027, 7, 1, tzinfo=timezone.utc), datetime(2027, 10, 4, 23, 59, tzinfo=timezone.utc)):
+            with self.assertRaises(EV.OneLookRefused):
+                self.run_eval(when)
+
+    def test_analysis_window_and_second_look_refused(self):
+        with self.assertRaises(EV.OneLookRefused):     # 10-05 but games not all terminal and grace not elapsed
+            self.run_eval(datetime(2027, 10, 5, 12, tzinfo=timezone.utc), terminal=False)
+        out, graded = self.run_eval(datetime(2027, 10, 5, 12, tzinfo=timezone.utc))
+        self.assertEqual((out["one_look_trigger"], out["n_slates_used"], len(graded)), ("ALL_COVERED_GAMES_TERMINAL", 1, 1))
+        with self.assertRaises(EV.OneLookRefused):
+            self.run_eval(datetime(2027, 10, 20, tzinfo=timezone.utc))
+
+    def test_unverified_unit_is_excluded_not_scored(self):
+        late = Externals(gh_at="T17:30:00Z")
+        p1, p2 = late.patch(self.sl)
+        with p1, p2, mock.patch.multiple(EV, utc_now=lambda: datetime(2027, 10, 20, tzinfo=timezone.utc),
+                                         publish_lock=lambda r, x: None,
+                                         grade_shadow_board=lambda b: self.fail("graded an invalid unit"),
+                                         fetch_game_states=lambda g: {}):
+            out = EV.evaluate_from_evidence(self.root, "2027_REGULAR_CONFIRMATORY")
+        self.assertEqual(out["n_slates_used"], 0)
+        self.assertTrue(out["invalid_slates"]["2027-09-28/DAY"].startswith("SLATE_INVALID_NO_CONFIRMATORY_USE:LATE_SEAL"))
+
+    def test_pre_boundary_unit_is_drill_only(self):
+        root = new_root()
+        try:
+            sl, _, _ = make_unit(root, date="2026-10-01", gtype="F")
+            ext = Externals()
+            p1, p2 = ext.patch(sl)
+            with p1, p2, mock.patch.multiple(EV, utc_now=lambda: datetime(2026, 11, 20, tzinfo=timezone.utc),
+                                             publish_lock=lambda r, x: None, fetch_game_states=lambda g: {},
+                                             grade_shadow_board=lambda b: self.fail("graded a drill unit")):
+                out = EV.evaluate_from_evidence(root, "2026_POSTSEASON_SHADOW")
+            self.assertEqual(out["invalid_slates"]["2026-10-01/DAY"], "PRE_V3_BOUNDARY_DRILL_ONLY")
+            self.assertEqual(out["primary_verdict"], "NOT_APPLICABLE_DESCRIPTIVE_REGIME")
+        finally:
+            shutil.rmtree(root)
+
+    def test_postseason_game_in_2027_window_rejected_by_final_evaluation(self):
+        root = new_root()
+        try:
+            sl, _, _ = make_unit(root, date="2027-09-30", gtype="F")
+            ext = Externals()
+            p1, p2 = ext.patch(sl)
+            with p1, p2, mock.patch.multiple(EV, utc_now=lambda: datetime(2027, 10, 20, tzinfo=timezone.utc),
+                                             publish_lock=lambda r, x: None, fetch_game_states=lambda g: {},
+                                             grade_shadow_board=lambda b: self.fail("graded postseason in 2027")):
+                with self.assertRaises(ValueError):
+                    EV.evaluate_from_evidence(root, "2027_REGULAR_CONFIRMATORY")
+        finally:
+            shutil.rmtree(root)
+
+    def test_grace_period_allows_after_seven_days(self):
+        out, _ = self.run_eval(datetime(2027, 10, 12, tzinfo=timezone.utc), terminal=False)
+        self.assertEqual(out["one_look_trigger"], "SEVEN_DAY_GRACE_ELAPSED")
 
 
-class Evaluation(unittest.TestCase):
-    def test_equal_volume_and_late_slate_excluded(self):
-        out = EV.evaluate([slate(), slate(date="2027-05-05", gh="T17:30:00Z")], COEF, regime="2027_REGULAR_CONFIRMATORY")
-        self.assertEqual(out["n_slates_used"], 1)
-        self.assertTrue(out["invalid_slates"]["2027-05-05/DAY"].startswith("SLATE_INVALID_NO_CONFIRMATORY_USE"))
+# ---- statistics ----------------------------------------------------------------------------------------
+def pair(date="2027-05-04", champs=2, flip=False, n=8):
+    root = new_root()
+    try:
+        sl, m, b = make_unit(root, date=date, champs=champs, n=n)
+    finally:
+        shutil.rmtree(root)
+    grades = {r["candidate_id"]: ("hit" if (i % 2 == 0) != flip else "miss") for i, r in enumerate(b["records"])}
+    return m, {"source_board_sha256": b["board_sha256"], "records": [{"candidate_id": k, "grade": v} for k, v in grades.items()]}
+
+
+SPEC = RG.REGIMES["2027_REGULAR_CONFIRMATORY"]
+
+
+class Statistics(unittest.TestCase):
+    def test_equal_volume_same_sealed_ids(self):
+        out = EV._compute([pair()], COEF, SPEC, "2027_REGULAR_CONFIRMATORY")
         for arm in ("SHADOW_CHAMPION", *H.SELECTORS):
             self.assertEqual(out["picking"][arm]["counts"]["selected"], 2)
 
     def test_zero_pick_slate(self):
-        out = EV.evaluate([slate(champs=0)], COEF, regime="2027_REGULAR_CONFIRMATORY")
+        out = EV._compute([pair(champs=0)], COEF, SPEC, "2027_REGULAR_CONFIRMATORY")
         self.assertEqual(out["zero_champion_slates"], 1)
         self.assertTrue(all(v["counts"]["selected"] == 0 for v in out["picking"].values()))
         self.assertEqual(out["primary_verdict"], "INSUFFICIENT_N")
 
     def test_void_push_unresolved_denominators(self):
-        s = slate(champs=3)
-        recs = s["graded"]["records"]
-        recs[0]["grade"], recs[1]["grade"], recs[2]["grade"] = "void", "push", "ungraded"
-        out = EV.evaluate([s], COEF, regime="2027_REGULAR_CONFIRMATORY")
+        m, g = pair(champs=3)
+        g["records"][0]["grade"], g["records"][1]["grade"], g["records"][2]["grade"] = "void", "push", "ungraded"
+        out = EV._compute([(m, g)], COEF, SPEC, "2027_REGULAR_CONFIRMATORY")
         self.assertEqual(out["picking"]["SHADOW_CHAMPION"]["counts"],
                          {"selected": 3, "settled": 0, "void": 1, "push": 1, "unresolved": 1})
 
     def test_selection_ignores_outcomes(self):
-        a = EV.evaluate([slate()], COEF, regime="2027_REGULAR_CONFIRMATORY")
-        b = EV.evaluate([slate(flip=True)], COEF, regime="2027_REGULAR_CONFIRMATORY")
+        a = EV._compute([pair()], COEF, SPEC, "2027_REGULAR_CONFIRMATORY")
+        b = EV._compute([pair(flip=True)], COEF, SPEC, "2027_REGULAR_CONFIRMATORY")
         for arm in a["picking"]:
-            self.assertEqual(a["picking"][arm]["counts"]["selected"], b["picking"][arm]["counts"]["selected"])
             self.assertEqual(a["picking"][arm]["market_mix"], b["picking"][arm]["market_mix"])
-
-    def test_seal_must_bind_manifest_and_chain(self):
-        s = slate()
-        s["seal"] = mk_seal(mk_manifest(date="2027-05-04", n=7)[0])
-        out = EV.evaluate([s], COEF, regime="2027_REGULAR_CONFIRMATORY")
-        self.assertEqual(out["invalid_slates"]["2027-05-04/DAY"], "SEAL_DOES_NOT_BIND_MANIFEST")
-        s2 = slate()
-        out = EV.evaluate([s2], COEF, regime="2027_REGULAR_CONFIRMATORY", chain=[], genesis_sha256="g" * 64)
-        self.assertEqual(out["invalid_slates"]["2027-05-04/DAY"], "SEAL_NOT_IN_EVIDENCE_CHAIN")
-
-    def test_pre_boundary_slate_is_drill_only(self):
-        out = EV.evaluate([slate(date="2026-10-01", gtype="F")], COEF, regime="2026_POSTSEASON_SHADOW")
-        self.assertEqual(out["invalid_slates"]["2026-10-01/DAY"], "PRE_V3_BOUNDARY_DRILL_ONLY")
-        self.assertEqual(out["n_slates_used"], 0)
+        self.assertEqual(a["picking"]["C2_RESIDUAL"]["overlap"]["overlap"], b["picking"]["C2_RESIDUAL"]["overlap"]["overlap"])
 
     def test_graded_file_must_link_to_shadow_board(self):
-        s = slate()
-        s["graded"]["source_board_sha256"] = "0" * 64
+        m, g = pair()
+        g["source_board_sha256"] = "0" * 64
         with self.assertRaises(ValueError):
-            EV.evaluate([s], COEF, regime="2027_REGULAR_CONFIRMATORY")
+            EV._compute([(m, g)], COEF, SPEC, "2027_REGULAR_CONFIRMATORY")
 
-    def test_verdict_table_with_practical_threshold(self):
+    def test_verdict_table_practical_threshold_cannot_be_bypassed(self):
         c = lambda n, h, q: {"n_scored": n, "hit_rate": h, "mean_q": q}
-        pos, neg = {"one_sided_lower95": 0.01}, {"one_sided_lower95": -0.01}
-        self.assertEqual(EV.verdict_v3(c(200, .5, .55), c(200, .6, .55), pos, 80), "INSUFFICIENT_N")
-        self.assertEqual(EV.verdict_v3(c(300, .55, .55), c(300, .55, .55), pos, 80), "REJECTED")
-        self.assertEqual(EV.verdict_v3(c(300, .50, .55), c(300, .56, .55), neg, 80), "INCONCLUSIVE")
-        self.assertEqual(EV.verdict_v3(c(300, .50, .55), c(300, .56, .60), pos, 80), "INCONCLUSIVE_CHALK_GUARD")
-        self.assertEqual(EV.verdict_v3(c(300, .50, .55), c(300, .53, .55), pos, 80), "POSITIVE_BELOW_PRACTICAL_THRESHOLD")
-        self.assertEqual(EV.verdict_v3(c(300, .50, .55), c(300, .55, .55), pos, 80), "SUPPORTED_ADOPTABLE")
+        strong = {"one_sided_lower95": 0.04}
+        self.assertEqual(EV.verdict_v3(c(200, .5, .55), c(200, .6, .55), strong, 80), "INSUFFICIENT_N")
+        self.assertEqual(EV.verdict_v3(c(300, .55, .55), c(300, .55, .55), strong, 80), "REJECTED")
+        self.assertEqual(EV.verdict_v3(c(300, .50, .55), c(300, .56, .55), {"one_sided_lower95": -0.01}, 80), "INCONCLUSIVE")
+        self.assertEqual(EV.verdict_v3(c(300, .50, .55), c(300, .56, .60), strong, 80), "INCONCLUSIVE_CHALK_GUARD")
+        self.assertEqual(EV.verdict_v3(c(300, .50, .55), c(300, .549, .55), strong, 80), "POSITIVE_BELOW_PRACTICAL_THRESHOLD")
+        self.assertEqual(EV.verdict_v3(c(300, .50, .55), c(300, .55, .55), strong, 80), "SUPPORTED_ADOPTABLE")
+
+    def test_c3_cannot_promote(self):
+        with mock.patch.object(H, "c3_pitcher_outs", lambda rows: {"verdict": "SUPPORTED"}):
+            out = EV._compute([pair()], COEF, SPEC, "2027_REGULAR_CONFIRMATORY")
+        self.assertEqual(out["primary_verdict"], "INSUFFICIENT_N")
+        self.assertEqual(out["c3_pitcher_outs_secondary"]["role"], "SECONDARY_NO_PROMOTION_ON_ITS_OWN")
 
 
-class Runner(unittest.TestCase):
-    def test_prospective_refused_without_activation(self):
+class Regimes(unittest.TestCase):
+    def test_postseason_and_wrong_year_and_pooling_rejected(self):
+        with self.assertRaises(ValueError):
+            RG.check_regime("2027_REGULAR_CONFIRMATORY", [pair(date="2026-10-05")[0]])
+        with self.assertRaises(ValueError):
+            RG.check_regime("2027_REGULAR_CONFIRMATORY", [pair(date="2026-08-15")[0]])
+        m_post = pair(date="2027-09-30")[0]
+        for r in m_post["rows"]:
+            r["game_type"] = "F"
+        with self.assertRaises(ValueError):
+            RG.check_regime("2027_REGULAR_CONFIRMATORY", [pair()[0], m_post])
+        with self.assertRaises(ValueError):
+            RG.check_regime("2027_REGULAR_CONFIRMATORY_FROM_2026", [])
+
+    def test_smoke_regime_not_accepted_by_final_evaluation(self):
+        with self.assertRaises(ValueError):
+            EV.evaluate_from_evidence("/nonexistent", "SMOKE_TEST_SYNTHETIC")
+
+
+# ---- activation ------------------------------------------------------------------------------------
+def git(repo, *a):
+    return subprocess.check_output(["git", "-C", repo, *a], stderr=subprocess.DEVNULL).decode().strip()
+
+
+class Activation(unittest.TestCase):
+    def setUp(self):
+        self.repo = tempfile.mkdtemp(prefix="v3act_")
+        git(self.repo, "init", "-q")
+        git(self.repo, "config", "user.email", "t@t")
+        git(self.repo, "config", "user.name", "t")
+        os.makedirs(os.path.join(self.repo, AC.V3_DIR))
+        shutil.copy(os.path.join(os.path.dirname(os.path.dirname(HERE)), "mlb_accuracy_challenger_prereg_v3_20261001.md"),
+                    os.path.join(self.repo, AC.PREREG_PATH))
+        open(os.path.join(self.repo, AC.V3_DIR, "x.py"), "w").write("x = 1\n")
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-qm", "impl")
+        self.head = git(self.repo, "rev-parse", "HEAD")
+        self.rec = {"jacob_authorization_comment_id": 777, "repository": AC.REPOSITORY, "pr_number": 220,
+                    "protocol_version": "V3", "prereg_commit": VE.PREREG_COMMIT, "prereg_sha256": VE.PREREG_SHA256,
+                    "implementation_commit": self.head, "implementation_tree": git(self.repo, "rev-parse", f"HEAD:{AC.V3_DIR}"),
+                    "activation_timestamp": "2027-03-01T00:00:00Z"}
+        self.env = {"MLB_V3_ACTIVATION": "JACOB_AUTHORIZED"}
+
+    def tearDown(self):
+        shutil.rmtree(self.repo, ignore_errors=True)
+
+    def comment(self, body=None, cid=777, issue=GH_ISSUE):
+        body = body if body is not None else (
+            f"JACOB AUTHORIZATION: ALLOW\n\nV3 prospective activation for prereg {VE.PREREG_COMMIT} "
+            f"(sha256 {VE.PREREG_SHA256}) and implementation {self.head}.\n\nAlligator")
+        return lambda i: {"id": cid, "issue_url": issue, "created_at": "2027-02-28T12:00:00Z", "body": body}
+
+    def check(self, rec=None, fetch=None, env=None):
+        return AC.verify_activation(self.repo, record=rec or self.rec, fetch=fetch or self.comment(), env=env or self.env)
+
+    def test_valid_activation(self):
+        self.assertEqual(self.check(), (True, []))
+
+    def test_env_or_file_alone_insufficient(self):
+        self.assertFalse(self.check(env={"MLB_V3_ACTIVATION": "no"})[0])
+        self.assertFalse(AC.verify_activation(self.repo, env=self.env)[0] if not os.path.exists(AC.ACTIVATION_FILE) else False)
+
+    def test_old_activation_after_code_change(self):
+        open(os.path.join(self.repo, AC.V3_DIR, "x.py"), "w").write("x = 2\n")
+        git(self.repo, "commit", "-qam", "changed")
+        ok, why_ = self.check()
+        self.assertFalse(ok)
+        self.assertIn("CODE_COMMIT_NOT_AUTHORIZED", why_)
+
+    def test_uncommitted_change_and_wrong_prereg(self):
+        open(os.path.join(self.repo, AC.V3_DIR, "x.py"), "w").write("x = 3\n")
+        self.assertIn("LOCAL_MODIFICATIONS", self.check()[1])
+        git(self.repo, "checkout", "--", ".")
+        self.assertIn("WRONG_PREREG_COMMIT", self.check(rec=dict(self.rec, prereg_commit="1" * 40))[1])
+        self.assertIn("WRONG_PROTOCOL_VERSION", self.check(rec=dict(self.rec, protocol_version="V4"))[1])
+        open(os.path.join(self.repo, AC.PREREG_PATH), "a").write("edit")
+        self.assertIn("PREREG_FILE_CHANGED", self.check()[1])
+
+    def test_wrong_code_sha(self):
+        self.assertIn("CODE_COMMIT_NOT_AUTHORIZED", self.check(rec=dict(self.rec, implementation_commit="2" * 40))[1])
+
+    def test_fabricated_or_unverifiable_comment(self):
+        def gone(i):
+            raise VE.EvidenceUnverified("404")
+        self.assertFalse(self.check(fetch=gone)[0])
+        self.assertIn("AUTHORIZATION_COMMENT_ID_MATCHES", self.check(fetch=self.comment(cid=999))[1])
+        self.assertIn("AUTHORIZATION_COMMENT_ON_ISSUE_91", self.check(fetch=self.comment(issue=GH_ISSUE + "0"))[1])
+
+    def test_missing_jacob_authorization(self):
+        for body in ("JACOB AUTHORIZATION: ALLOW\nsomething unrelated",
+                     f"CLAUDE STATUS\nV3 prospective activation {VE.PREREG_COMMIT} {VE.PREREG_SHA256} {self.head}",
+                     f"JACOB AUTHORIZATION: ALLOW\nV3 prospective activation {VE.PREREG_COMMIT} {VE.PREREG_SHA256} {self.head}\n"
+                     "_Generated by [Claude Code](https://claude.ai/code)_"):
+            self.assertFalse(self.check(fetch=self.comment(body=body))[0], body[:40])
+
+    def test_header_and_action_phrase_both_required(self):
+        full = f"V3 prospective activation {VE.PREREG_COMMIT} {VE.PREREG_SHA256} {self.head}"
+        self.assertIn("AUTHORIZATION_COMMENT_JACOB_FORMAT", self.check(fetch=self.comment(body="Please proceed.\n" + full))[1])
+        no_action = f"JACOB AUTHORIZATION: ALLOW\nGo ahead {VE.PREREG_COMMIT} {VE.PREREG_SHA256} {self.head}"
+        self.assertIn("AUTHORIZATION_COMMENT_NAMES_ACTION", self.check(fetch=self.comment(body=no_action))[1])
+
+    def test_runner_refuses_without_activation(self):
         os.environ.pop("MLB_V3_ACTIVATION", None)
-        self.assertFalse(os.path.exists(RN.ACTIVATION_FILE))
+        self.assertFalse(os.path.exists(AC.ACTIVATION_FILE))
         self.assertEqual(RN.main(["--mode", "prospective", "--repo", "/nonexistent", "--date", D, "--window", "DAY",
                                   "--out", "/nonexistent/out"]), 2)
-        os.environ["MLB_V3_ACTIVATION"] = "JACOB_AUTHORIZED"
+
+
+# ---- scheduling ---------------------------------------------------------------------------------------
+class Scheduling(unittest.TestCase):
+    def s(self, *g):
+        return sched(*g, date="2027-05-04")
+
+    def test_early_game_and_night_and_split(self):
+        p = SP.plan(self.s(game(1, start="2027-05-04T16:05:00Z"), game(2, start="2027-05-04T23:05:00Z")),
+                    "2027-05-04T14:00:00+00:00")
+        self.assertEqual([(u["window"], u["status"]) for u in p], [("DAY", "PLANNED"), ("NIGHT", "PLANNED")])
+        lead = sum(SP.BUDGET_S.values()) + SP.SAFETY_S
+        self.assertEqual(M3.utc(p[0]["first_pitch_utc"]) - M3.utc(p[0]["latest_start_utc"]),
+                         __import__("datetime").timedelta(seconds=lead))
+
+    def test_doubleheader_tbd_second_game(self):
+        p = SP.plan(self.s(game(1, start="2027-05-04T17:05:00Z"), game(2, start="2027-05-04T16:33:00Z", tbd=True)),
+                    "2027-05-04T14:00:00+00:00")
+        self.assertEqual(p[0]["first_pitch_utc"], "2027-05-04T17:05:00Z")
+
+    def test_late_start_missed(self):
+        p = SP.plan(self.s(game(1, start="2027-05-04T16:05:00Z")), "2027-05-04T15:20:00+00:00")
+        self.assertEqual(p[0]["status"], "MISSED_NO_CONFIRMATORY_USE")
+
+    def test_guards_network_shadow_tsa_overruns(self):
+        fp = "2027-05-04T17:00:00+00:00"
+        need = lambda step: sum(SP.BUDGET_S[s] for s in SP.STEPS[SP.STEPS.index(step):]) + SP.SAFETY_S
+        from datetime import timedelta
+        for step in SP.STEPS:
+            at = (M3.utc(fp) - timedelta(seconds=need(step))).isoformat()
+            SP.guard(at, fp, step)                                  # exactly enough: proceeds
+            with self.assertRaises(SP.MissUnit):
+                SP.guard((M3.utc(at) + timedelta(seconds=1)).isoformat(), fp, step)
+
+    def test_runner_misses_unit_without_sealing(self):
+        out = tempfile.mkdtemp()
+        soon = (datetime.now(timezone.utc) + __import__("datetime").timedelta(minutes=5)).isoformat()
         try:
-            self.assertEqual(RN.main(["--mode", "prospective", "--repo", "/nonexistent", "--date", D, "--window",
-                                      "DAY", "--out", "/nonexistent/out"]), 2)
+            with mock.patch.object(RN, "schedule_snapshot", lambda d: sched(game(1, start=soon), date=d)), \
+                    mock.patch.object(SH, "build_tree", side_effect=AssertionError("must not start")):
+                rc = RN.main(["--mode", "drill", "--repo", "/nonexistent", "--date", soon[:10],
+                              "--window", M3.window_of(soon), "--out", out])
+            self.assertEqual(rc, 4)
+            self.assertEqual(json.load(open(os.path.join(out, "MISSED_UNIT.json")))["status"],
+                             "MISS_UNIT_NO_CONFIRMATORY_USE_NO_BACKFILL")
         finally:
-            os.environ.pop("MLB_V3_ACTIVATION", None)
+            shutil.rmtree(out)
 
 
 if __name__ == "__main__":

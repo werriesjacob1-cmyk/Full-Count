@@ -198,8 +198,24 @@ def _opposite(rec, market, pn, line):
     return _runner_matches(rec, market, pn, other, line)
 
 
-def resolve_quote(rec, event, capture, cutoff):
+def roster_proof(rec, game):
+    """When FanDuel shows no team slug: the board player's normalized name must occur exactly once
+    across both teams' MLB active rosters (pregame schedule snapshot) and that entry must be the
+    board's player_id. Anything else cannot exclude a same-name collision -> not proven."""
+    rosters = (game or {}).get("rosters") or {}
+    if not rosters.get("away") or not rosters.get("home"):
+        return False
+    pn = norm_name(rec.get("player_name"))
+    hits = [p for side in ("away", "home") for p in rosters[side] if norm_name(p.get("name")) == pn]
+    return len(hits) == 1 and str(hits[0].get("id")) == str(rec.get("player_id"))
+
+
+def resolve_quote(rec, event, capture, cutoff, game=None):
     """(quote, None) or (None, reason). Exact-offer identity; fails closed."""
+    if capture.get("book") != BOOK:
+        return None, "QUOTE_BOOK_MISMATCH"
+    if event.get("event_id") in (None, ""):
+        return None, "QUOTE_ID_MISSING"
     done = capture.get("capture_completed_at")
     if not done:
         return None, "CAPTURE_INCOMPLETE"
@@ -224,13 +240,23 @@ def resolve_quote(rec, event, capture, cutoff):
             return None, "MARKET_TYPE_UNSUPPORTED"
         markets = [m for m in event["markets"] if m.get("market_type") == want]
     hits = [(m, rn) for m in markets for rn in _runner_matches(rec, m, pn, side, rec.get("line"))]
+    if any(str(m.get("event_id")) != str(event["event_id"]) or m.get("event_id") in (None, "") for m, _ in hits):
+        return None, "QUOTE_EVENT_MISMATCH"            # an attachment of another (or unknown) event
     if not hits:
         return None, "MARKET_ABSENT"                   # event fully observed, offer not posted
     if len(hits) > 1:
         return None, "QUOTE_AMBIGUOUS"
     m, rn = hits[0]
-    if rn.get("team_slug") and rn["team_slug"] != team_slug_of(rec.get("team")):
-        return None, "QUOTE_TEAM_MISMATCH"
+    if m.get("market_id") in (None, "") or rn.get("selection_id") in (None, ""):
+        return None, "QUOTE_ID_MISSING"
+    if rn.get("team_slug"):
+        if rn["team_slug"] != team_slug_of(rec.get("team")):
+            return None, "QUOTE_TEAM_MISMATCH"
+        identity_proof = "TEAM_SLUG"
+    elif roster_proof(rec, game):
+        identity_proof = "MLB_ACTIVE_ROSTER_UNIQUE_NAME_AND_ID"
+    else:
+        return None, "QUOTE_IDENTITY_UNPROVEN"
     if m.get("in_play"):
         return None, "IN_PLAY"
     if m.get("market_status") != "OPEN" or rn.get("runner_status") != "ACTIVE":
@@ -240,7 +266,8 @@ def resolve_quote(rec, event, capture, cutoff):
     q = {"book": BOOK, "capture_sha256": capture["capture_sha256"], "capture_completed_at": done,
          "quote_age_s": round(age, 3), "event_id": event["event_id"], "event_name": event["event_name"],
          "market_id": m["market_id"], "market_type": m["market_type"], "selection_id": rn["selection_id"],
-         "runner_name": rn["runner_name"], "team_slug": rn.get("team_slug"), "side": side,
+         "runner_name": rn["runner_name"], "team_slug": rn.get("team_slug"), "identity_proof": identity_proof,
+         "side": side,
          "line": rec.get("line"), "needs": needs, "american": odds_int(rn["american"]), "q_devig": None,
          "devig": "ONE_SIDED_NO_DEVIG"}
     if stat in PITCHER_FAMILIES:
@@ -260,8 +287,10 @@ GATES = ("family", "schedule", "window", "duplicate_identity", "settlement", "qc
 
 def build_manifest(shadow_board, capture, schedule, *, window, cutoff_utc, shadow_provenance=None):
     """No outcome input exists in this signature (tested)."""
+    from capture import verify_capture
     from shadow import verify_shadow_board
     verify_shadow_board(shadow_board)
+    verify_capture(capture)                       # never trust capture fields that do not rebuild
     cutoff = utc(cutoff_utc)
     games = {str(g["game_pk"]): g for g in schedule["games"]}
     mapped, map_why = map_events(capture, schedule["games"])
@@ -306,7 +335,7 @@ def build_manifest(shadow_board, capture, schedule, *, window, cutoff_utc, shado
         }
         quote, qreason = None, None
         if all(checks.values()):
-            quote, qreason = resolve_quote(r, mapped[gp], capture, cutoff)
+            quote, qreason = resolve_quote(r, mapped[gp], capture, cutoff, g)
         checks["quote"] = quote is not None if all(checks.values()) else None
         checks["price_match"] = (quote is not None and odds_int(mkt["market_odds"]) == quote["american"]) if quote else None
         checks["price_band"] = (PRICE_BAND[0] <= implied(quote["american"]) <= PRICE_BAND[1]) if checks["price_match"] else None

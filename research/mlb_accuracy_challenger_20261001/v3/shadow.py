@@ -28,10 +28,13 @@ post-freeze parlay/HTML renderers).
 """
 from __future__ import annotations
 
+import glob
 import hashlib
+import json
 import os
 import shutil
 import subprocess
+from datetime import datetime, timezone
 
 SHADOW_PIN = "7d3ebacd55c34c6ec78030bdeca70799e56d4764"
 SHADOW_TREE = "02526a74f6669069127d5a72d771a437cb5561bf"
@@ -47,6 +50,11 @@ PINNED_ARTIFACT_SHA256 = {
     "board_freeze.py": "5c060007a827c2f28bffc9668f8373b1d0500e60a48c3d55166078cbd87dc9c0",
 }
 LIVE_OVERLAY_TEMPLATE = "data/odds/odds_{date}.json"
+# Board fields that legitimately differ between the live run and its replay: wall-clock
+# stamps of the run itself and the board hash computed over them. Nothing else may differ.
+REPLAY_TIMESTAMP_FIELDS = ("board_generated_at", "sealed_at", "board_sha256")
+REPLAY_RECORD_TIMESTAMP_FIELDS = ("generation_timestamp",)
+NETRECORD = os.path.join(os.path.dirname(os.path.abspath(__file__)), "netrecord.py")
 
 
 def sha256_file(path):
@@ -61,37 +69,98 @@ def _git(repo, *args):
     return subprocess.check_output(["git", "-C", repo, *args], stderr=subprocess.STDOUT).decode().strip()
 
 
-def build_tree(repo, workdir, date, live_ref="origin/main"):
-    """Fresh detached worktree at SHADOW_PIN plus the one live overlay file. Returns provenance."""
+def _utc(s):
+    t = datetime.fromisoformat(str(s).replace("Z", "+00:00"))
+    if t.tzinfo is None:
+        raise ValueError("naive timestamp")
+    return t.astimezone(timezone.utc)
+
+
+def filter_overlay(raw_bytes, overlay_cutoff):
+    """Keep only game-line snapshots observed at or before the cutoff (deterministic rule:
+    every snapshot whose taken_at parses and is <= cutoff, in file order). Later or
+    unparseable snapshots are dropped and listed. Returns (sealed_bytes, report)."""
+    payload = json.loads(raw_bytes)
+    snaps = payload.get("snapshots") or []
+    kept = [x for x in snaps if _safe_le(x.get("taken_at"), overlay_cutoff)]
+    payload["snapshots"] = kept
+    sealed = json.dumps(payload, indent=2).encode()
+    return sealed, {"kept": len(kept),
+                    "dropped_post_cutoff_or_invalid": [x.get("taken_at") for x in snaps if x not in kept],
+                    "latest_kept_taken_at": max((x["taken_at"] for x in kept), key=_utc) if kept else None}
+
+
+def _safe_le(ts, cutoff):
+    try:
+        return _utc(ts) <= cutoff
+    except (TypeError, ValueError):
+        return False
+
+
+def build_tree(repo, workdir, date, live_ref="origin/main", overlay_cutoff=None):
+    """Fresh detached worktree at SHADOW_PIN plus the one sealed overlay file. Returns provenance."""
     if os.path.exists(workdir):
         raise FileExistsError(f"{workdir} exists; shadow trees are never reused")
     if _git(repo, "rev-parse", f"{SHADOW_PIN}^{{tree}}") != SHADOW_TREE:
         raise RuntimeError("SHADOW_PIN tree id mismatch")
     _git(repo, "worktree", "add", "--detach", workdir, SHADOW_PIN)
+    _git(workdir, "sparse-checkout", "disable")     # the pinned tree is always complete
+    if _git(workdir, "rev-parse", "HEAD^{tree}") != SHADOW_TREE or _git(workdir, "status", "--porcelain"):
+        raise RuntimeError("shadow worktree is not the exact pinned tree")
     for rel, want in PINNED_ARTIFACT_SHA256.items():
         if sha256_file(os.path.join(workdir, rel)) != want:
             raise RuntimeError(f"pinned artifact drift: {rel}")
+    # A pinned tree carries production's committed board files; the shadow run must write its own.
+    for f in glob.glob(os.path.join(workdir, "output", "board_freeze_*.json")):
+        os.remove(f)
+    cutoff = overlay_cutoff or datetime.now(timezone.utc)
     rel = LIVE_OVERLAY_TEMPLATE.format(date=date)
-    overlay = {"path": rel, "source_ref": _git(repo, "rev-parse", live_ref), "sha256": None}
+    target = os.path.join(workdir, rel)
+    if os.path.exists(target):
+        os.remove(target)                     # never the pinned (stale) copy
+    overlay = {"path": rel, "source_ref": _git(repo, "rev-parse", live_ref), "overlay_cutoff": cutoff.isoformat()}
     try:
-        blob = subprocess.check_output(["git", "-C", repo, "show", f"{live_ref}:{rel}"], stderr=subprocess.DEVNULL)
-        os.makedirs(os.path.dirname(os.path.join(workdir, rel)), exist_ok=True)
-        with open(os.path.join(workdir, rel), "wb") as fh:
-            fh.write(blob)
-        overlay["sha256"] = hashlib.sha256(blob).hexdigest()
+        raw = subprocess.check_output(["git", "-C", repo, "show", f"{live_ref}:{rel}"], stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError:
-        overlay["status"] = "ABSENT_ON_LIVE_REF"   # the pinned feature then returns {} by design
+        raw = None
+    if raw is None:
+        overlay["status"] = "ABSENT_ON_LIVE_REF"   # pinned line_movement(): missing file -> {} (exists at the pin)
+        overlay["sealed_sha256"] = None
+    else:
+        sealed, rep = filter_overlay(raw, cutoff)
+        os.makedirs(os.path.dirname(target), exist_ok=True)
+        with open(target, "wb") as fh:
+            fh.write(sealed)
+        overlay.update({"status": "SEALED", "source_sha256": hashlib.sha256(raw).hexdigest(),
+                        "sealed_sha256": hashlib.sha256(sealed).hexdigest(), **rep})
     return {"shadow_id": SHADOW_ID, "pin": SHADOW_PIN, "tree": SHADOW_TREE, "overlay": overlay}
 
 
-def run_pipeline(workdir, timeout_s=1800):
-    """Run the pinned generate_picks.py in the shadow tree (UTC). Returns the shadow board path."""
-    env = dict(os.environ, TZ="UTC", PYTHONDONTWRITEBYTECODE="1")
-    subprocess.run(["python3", "generate_picks.py"], cwd=workdir, env=env, check=True, timeout=timeout_s,
+def install_sealed_overlay(workdir, date, overlay_bytes):
+    """Replay: put back exactly the sealed overlay bytes (or none, if none was sealed)."""
+    target = os.path.join(workdir, LIVE_OVERLAY_TEMPLATE.format(date=date))
+    if os.path.exists(target):
+        os.remove(target)
+    if overlay_bytes is not None:
+        os.makedirs(os.path.dirname(target), exist_ok=True)
+        with open(target, "wb") as fh:
+            fh.write(overlay_bytes)
+
+
+def run_pipeline(workdir, tape_path, mode, timeout_s=1800):
+    """Run the pinned generate_picks.py under netrecord (record live / replay sealed). UTC,
+    fixed hash seed. Returns the freshly written shadow board path."""
+    env = dict(os.environ, TZ="UTC", PYTHONHASHSEED="0", PYTHONDONTWRITEBYTECODE="1")
+    subprocess.run(["python3", NETRECORD, "--mode", mode, "--tape", tape_path, "--", "generate_picks.py"],
+                   cwd=workdir, env=env, check=True, timeout=timeout_s,
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    date = subprocess.check_output(["python3", "-c", "import mlb_daily as m; print(m.TODAY)"], cwd=workdir,
-                                   env=env).decode().strip()
-    return os.path.join(workdir, "output", f"board_freeze_{date}.json")
+    rep = json.load(open(tape_path + f".{mode}.report.json"))
+    if mode == "replay" and (rep["replay_misses"] or rep["unconsumed"]):
+        raise RuntimeError(f"replay not exact: misses={len(rep['replay_misses'])} unconsumed={rep['unconsumed']}")
+    boards = glob.glob(os.path.join(workdir, "output", "board_freeze_*.json"))
+    if len(boards) != 1:
+        raise RuntimeError(f"expected exactly one fresh shadow board, found {len(boards)}")
+    return boards[0]
 
 
 def verify_shadow_board(board):
@@ -103,6 +172,17 @@ def verify_shadow_board(board):
         if prov.get(k) != v:
             raise ValueError(f"shadow board {k}={prov.get(k)} is not {v}")
     return board
+
+
+def replay_view(board):
+    b = {k: v for k, v in board.items() if k not in REPLAY_TIMESTAMP_FIELDS}
+    b["records"] = [{k: v for k, v in r.items() if k not in REPLAY_RECORD_TIMESTAMP_FIELDS}
+                    for r in board.get("records") or []]
+    return b
+
+
+def replay_equivalent(sealed_board, replayed_board):
+    return replay_view(sealed_board) == replay_view(replayed_board)
 
 
 def remove_tree(repo, workdir):
