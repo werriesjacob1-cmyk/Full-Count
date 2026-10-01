@@ -6608,3 +6608,27 @@ Codex's audit of v2 at `9265935966` (#91 comment 5938236903) returned "CREATE V3
 - End-to-end runner on the 2026-10-01 NIGHT unit (`v3/DRILL_2026-10-01_NIGHT.json`).
 
 **Open decision for Jacob:** activate prospective V3 collection, after Codex/SUPERCHAD review. That needs scheduling, an activation record, and a GitHub token for the receipts. Nothing is merged, deployed or activated.
+
+## 2026-10-01 20:15Z -- MLB V3 implementation repair (prereg unchanged; not activated)
+
+**Codex audit #91/5939071543 (`97484154b4`):** NOT READY — REQUIRED REPAIRS. It was repaired without a V4. The V3 prereg (`15fb1d539c`, sha256 `5eb56f28…3442`) is byte-identical.
+
+**V3_IMPLEMENTATION_CANDIDATE = `fff5989abb5d69f134e353422e339a640d8d9f1c`** (v3 tree `4b631deb8e`).
+- Anchored by #91 5939624280 plus FreeTSA/DigiCert tokens.
+- Full record on evidence ref `ea52828b81` `ANCHORS/`.
+- Checkpoint: #91 status after it.
+
+**Repairs:**
+- **quote identity:** event, market and selection ids; roster proof when the team slug is missing.
+- **capture:** mandatory re-verification; the manifest is rebuilt from the sealed capture.
+- **shadow reproducibility:** sealed pre-cutoff `data/odds` overlay bytes; a netrecord tape of every HTTP exchange; replay with the time-machine clock and no network. Proven live.
+- **evidence verifier:** `verify_evidence.py`, mandatory (chain from genesis, GitHub re-fetch, TSA from bytes).
+- **activation:** `activation.py` binds Jacob's exact comment + prereg + code commit/tree.
+- **one look:** enforced, with the lock published before any outcome.
+- **scheduling:** `schedule_plan.py`, first-pitch-aware.
+
+**Tests:** 64; 49 critical-guard mutants killed.
+
+**Open item:** tape storage of about 8 MB per unit.
+
+**Next:** Codex/SUPERCHAD audit of `fff5989abb`. Nothing activated or scheduled.
