@@ -1,6 +1,6 @@
 # Legacy preregistration port (2026-09-25): provenance manifest
 
-These pre-registration records come from draft PRs #74, #77, #78 and #84. Those PRs were opened on a repository history that no longer shares a merge base with `main` (it was re-rooted), so they cannot merge directly.
+These pre-registration records come from draft PRs #74, #77, #78 and #84, plus the locked prospective protocol from draft PR #85 (added 2026-10-01). Those PRs were opened on a repository history that no longer shares a merge base with `main` (it was re-rooted), so they cannot merge directly.
 
 **What this port is:**
 - **Verbatim, byte-for-byte.** Every file is unchanged from its source; the SHA-256 below verifies it.
@@ -19,6 +19,13 @@ These pre-registration records come from draft PRs #74, #77, #78 and #84. Those 
 | #77 | `superchad/hr-execution-prereg-v2-01` (`5869216a73`) | `engineering/PREREG_HR_EXECUTION_V2.md` | `engineering/PREREG_HR_EXECUTION_V2.md` | `ce4a70729c` 2026-08-29T09:11:26-05:00 | `5869216a73` 2026-08-29T10:06:04-05:00 (werriesjacob1-cmyk) | 21002 | `79969db3e7b3a34c6ebc4c8d2ec667eea951b8fddccfe13d3f590f85c5043917` |
 | #78 | `superchad/pa-opportunity-decisive-prereg-01` (`b019e49981`) | `engineering/PREREG_PA_OPPORTUNITY_DECISIVE_V1.md` | `engineering/PREREG_PA_OPPORTUNITY_DECISIVE_V1.md` | `ae11fe9061` 2026-08-29T09:22:14-05:00 | `b019e49981` 2026-08-29T09:44:13-05:00 (werriesjacob1-cmyk) | 11186 | `56a9dab974079089de9d8d478c20b2a176918bf161f1a3f2b20c130b4b75a15c` |
 | #84 | `superchad/hr-contact-state-integration-01` (`d9d40fa175`) | `engineering/PREREG_HR_EXECUTION_V2.md` | `engineering/legacy_prereg_amendments/pr84_7078a07957/PREREG_HR_EXECUTION_V2.md` | `97554d7920` 2026-08-29T10:20:48-05:00 | `7078a07957` 2026-08-29T10:41:53-05:00 (werriesjacob1-cmyk) | 24446 | `5ec5cc902c0e1fe17962c68703211b27749facf54698adde77c7280d37d70225` |
+| #85 | `claude/prospective-hits-pa-lifecycle-closure-01` (`4744ad2fc7`) | `engineering/locked-protocols/FULL_COUNT_PROSPECTIVE_HITS_PA_SHADOW_PROTOCOL_V1_LOCKED_2026-09-01.md` | `engineering/locked-protocols/FULL_COUNT_PROSPECTIVE_HITS_PA_SHADOW_PROTOCOL_V1_LOCKED_2026-09-01.md` | `df45774e6f` 2026-09-01T20:48:35+00:00 | `df45774e6f` 2026-09-01T20:48:35+00:00 (Jacob Werries) | 13333 | `5ce1ae95c4d3034d7948eb0ad7bc2441efcf2cabb234944e36bc315b2b355de7` |
+
+**Scope check (2026-10-01).** The changed files of every legacy draft PR were searched for preregistration, protocol, amendment and lock documents: #73, #75, #76, #79, #80, #81, #82, #83, #84 and #85.
+- The only governing document not already listed above was #85's locked PA-v1 shadow protocol. It is now included.
+  - Its hash equals the `5ce1ae95…` entry in #85's own `engineering/locked-protocols/SHA256SUMS.txt`.
+  - That branch commit (`df45774e6f`) is a byte-for-byte preservation copy. The protocol text itself records its lock date as 2026-09-01.
+- #84's `HR_CONTACT_STATE_EXECUTION_RUNBOOK.md` and `HR_CONTACT_STATE_AUTHORIZATION_TEMPLATE.json` are execution artifacts for #84's unexecuted code, not preregistrations. They stay with #84.
 
 **Verify:**
 
@@ -28,6 +35,7 @@ echo '2fdb801e5a1001a105f315e65877db5d7763ca759598d121afbce1bc9e5d58de  engineer
 echo '79969db3e7b3a34c6ebc4c8d2ec667eea951b8fddccfe13d3f590f85c5043917  engineering/PREREG_HR_EXECUTION_V2.md' | sha256sum -c
 echo '56a9dab974079089de9d8d478c20b2a176918bf161f1a3f2b20c130b4b75a15c  engineering/PREREG_PA_OPPORTUNITY_DECISIVE_V1.md' | sha256sum -c
 echo '5ec5cc902c0e1fe17962c68703211b27749facf54698adde77c7280d37d70225  engineering/legacy_prereg_amendments/pr84_7078a07957/PREREG_HR_EXECUTION_V2.md' | sha256sum -c
+echo '5ce1ae95c4d3034d7948eb0ad7bc2441efcf2cabb234944e36bc315b2b355de7  engineering/locked-protocols/FULL_COUNT_PROSPECTIVE_HITS_PA_SHADOW_PROTOCOL_V1_LOCKED_2026-09-01.md' | sha256sum -c
 ```
 
 Alligator.
