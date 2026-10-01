@@ -6632,3 +6632,15 @@ Codex's audit of v2 at `9265935966` (#91 comment 5938236903) returned "CREATE V3
 **Open item:** tape storage of about 8 MB per unit.
 
 **Next:** Codex/SUPERCHAD audit of `fff5989abb`. Nothing activated or scheduled.
+
+## 2026-10-01 22:05Z -- MLB V3 final-delta blocker repair (prereg unchanged; NOT activated)
+
+- **Audits:** Codex #91/5941258168 and SUPERCHAD #91/5941272601. Four blockers were repaired on `fff5989abb`; the new candidate is **`504ca9cdb972d218907eb4eec13852cf5a7981d2`** (v3 tree `a7c94431628c`).
+- **Prereg:** blob `71e7d2828d` is identical (sha256 `5eb56f28…3442`). No V4.
+- **Blocker 1:** roster identity proof is now required on the team-slug path too.
+- **Blocker 2:** TBD games are never eligible or covered, and the runner refuses unsafe units.
+- **Blocker 3:** the one-look early path uses the pinned `is_final`; Postponed, Suspended and Cancelled wait for grace.
+- **Blocker 4:** the confirmatory evaluator has no coefficient parameter; the frozen sha256 `3c9e2c01…2009` and the seals' challenger version are verified before the lock and before outcomes.
+- **Tests:** V3 88/88, V1 17/17, V2 16/16 (earlier "17" for V2 was a misstatement). Mutation 68/68.
+- **Anchor:** #91 5941555946; FreeTSA/DigiCert tokens; evidence ref `2dd2bb5864` `ANCHORS/`.
+- **Next:** Codex/SUPERCHAD audit of `504ca9cdb9`. Nothing activated or scheduled.
