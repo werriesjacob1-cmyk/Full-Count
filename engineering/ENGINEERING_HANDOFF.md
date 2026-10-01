@@ -6486,3 +6486,19 @@ Alligator
 - **Bridge:** #91 claim 5933308011; final report 5933949783.
 
 Alligator
+
+## 2026-10-01 15:20Z -- Authorized merge sequence: 3 merged, paused at #177
+- **Merged** (each at its exact authorized head, verified, CI green):
+
+  | PR | Head | Merge commit |
+  |---|---|---|
+  | #218 | `139e4b529b` | `ced1364e88` |
+  | #215 | `57f764491a` | `6528d3fe94` |
+  | #216 | `70038b5aa7` | `a8d2f9f97d` |
+
+- **Closed after preservation:** #74, #77 and #78, verified on main first. Their branches are kept.
+- **#177 NOT merged.** §17.2 item 1 overstates the Week 4 pin provenance ("first upstream release after the previous week's final game"); the files actually pinned were the releases current at build time. Fixing it needs a new head and re-authorization. A proposed sentence is in #91 comment 5934521256.
+- **#187 and #210** were not executed because of the stop rule. They are still at their authorized heads.
+- Main is now `1607693190`; 21 PRs are open.
+
+Alligator
