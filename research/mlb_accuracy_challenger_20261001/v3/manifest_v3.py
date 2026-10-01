@@ -199,15 +199,21 @@ def _opposite(rec, market, pn, line):
 
 
 def roster_proof(rec, game):
-    """When FanDuel shows no team slug: the board player's normalized name must occur exactly once
-    across both teams' MLB active rosters (pregame schedule snapshot) and that entry must be the
-    board's player_id. Anything else cannot exclude a same-name collision -> not proven."""
+    """Exact player identity, required on EVERY quote (team slug or not): the board player's
+    normalized name must occur exactly once across both teams' MLB active rosters (pregame schedule
+    snapshot), that single entry must carry the board's player_id, and it must sit on the roster of
+    the board's own team in this game. Same-team or cross-team normalized-name / suffix collisions,
+    a stale or mismatched player_id, a missing roster, or a team not in this game -> not proven."""
     rosters = (game or {}).get("rosters") or {}
     if not rosters.get("away") or not rosters.get("home"):
         return False
     pn = norm_name(rec.get("player_name"))
-    hits = [p for side in ("away", "home") for p in rosters[side] if norm_name(p.get("name")) == pn]
-    return len(hits) == 1 and str(hits[0].get("id")) == str(rec.get("player_id"))
+    hits = [(side, p) for side in ("away", "home") for p in rosters[side] if norm_name(p.get("name")) == pn]
+    if len(hits) != 1:
+        return False
+    side, entry = hits[0]
+    return (str(entry.get("id")) == str(rec.get("player_id"))
+            and norm_team(game.get(f"{side}_team")) == norm_team(rec.get("team")))
 
 
 def resolve_quote(rec, event, capture, cutoff, game=None):
@@ -249,14 +255,12 @@ def resolve_quote(rec, event, capture, cutoff, game=None):
     m, rn = hits[0]
     if m.get("market_id") in (None, "") or rn.get("selection_id") in (None, ""):
         return None, "QUOTE_ID_MISSING"
-    if rn.get("team_slug"):
-        if rn["team_slug"] != team_slug_of(rec.get("team")):
-            return None, "QUOTE_TEAM_MISMATCH"
-        identity_proof = "TEAM_SLUG"
-    elif roster_proof(rec, game):
-        identity_proof = "MLB_ACTIVE_ROSTER_UNIQUE_NAME_AND_ID"
-    else:
+    if rn.get("team_slug") and rn["team_slug"] != team_slug_of(rec.get("team")):
+        return None, "QUOTE_TEAM_MISMATCH"
+    if not roster_proof(rec, game):                    # a matching slug alone never proves the player
         return None, "QUOTE_IDENTITY_UNPROVEN"
+    identity_proof = ("TEAM_SLUG+MLB_ACTIVE_ROSTER_UNIQUE_NAME_ID_TEAM" if rn.get("team_slug")
+                      else "MLB_ACTIVE_ROSTER_UNIQUE_NAME_ID_TEAM")
     if m.get("in_play"):
         return None, "IN_PLAY"
     if m.get("market_status") != "OPEN" or rn.get("runner_status") != "ACTIVE":
@@ -310,6 +314,7 @@ def build_manifest(shadow_board, capture, schedule, *, window, cutoff_utc, shado
         stat, status = r.get("stat"), sel.get("recommendation_status")
         key = (gp, str(r.get("player_id")), stat, str(r.get("needs")), r.get("market_side"))
         g_ok = g is not None
+        g_timed = g_ok and not g.get("start_time_tbd")
         starter = None
         if stat in PITCHER_FAMILIES and g_ok:
             starter = str(r.get("player_id")) in {str(p) for p in (g.get("probable_pitcher_ids") or [])}
@@ -330,7 +335,9 @@ def build_manifest(shadow_board, capture, schedule, *, window, cutoff_utc, shado
                               and (r.get("provenance") or {}).get("model_version") == shadow_board["provenance"]["model_version"],
             "board_price": mkt.get("market_odds") is not None,
             "board_fresh": sealed_ok and board_age <= MAX_BOARD_AGE_S,
-            "game_not_started": g_ok and utc(g["game_date"]) > cutoff,
+            # a TBD game has no reliable first pitch: "first pitch is after the cutoff" cannot be
+            # established, and it is never covered nor part of the unit's deadline (schedule_plan).
+            "game_not_started": g_timed and utc(g["game_date"]) > cutoff,
             "event_mapping": gp in mapped,
         }
         quote, qreason = None, None
@@ -344,12 +351,13 @@ def build_manifest(shadow_board, capture, schedule, *, window, cutoff_utc, shado
             v = checks.get(gname)
             if v is False or v is None:
                 reason = {"family": "FAMILY_" + family_status(stat), "event_mapping": map_why.get(gp, "EVENT_NOT_MAPPED"),
+                          "game_not_started": "FIRST_PITCH_TBD_NOT_TIMED" if g_ok and not g_timed else "GAME_NOT_STARTED_FAIL",
                           "quote": qreason, "price_match": "PRICE_MISMATCH_BOARD_VS_CAPTURE"}.get(gname, gname.upper() + "_FAIL")
                 break
         row = {"candidate_id": r["candidate_id"], "game_pk": gp, "player_id": str(r.get("player_id")),
                "player_name": r.get("player_name"), "team": r.get("team"), "stat": stat,
                "family_status": family_status(stat), "needs": _int_needs(r.get("needs")), "line": r.get("line"),
-               "side": r.get("market_side"), "game_start_utc": g["game_date"] if g_ok else None,
+               "side": r.get("market_side"), "game_start_utc": g["game_date"] if g_timed else None,
                "game_type": g.get("game_type") if g_ok else None, "board_odds": mkt.get("market_odds"),
                "p0": pred.get("hit_probability"), "reliability": pred.get("reliability"),
                "recommendation_status": status, "shadow_champion": status == "top_pick",

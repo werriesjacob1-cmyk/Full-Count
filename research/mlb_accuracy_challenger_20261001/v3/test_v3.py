@@ -60,10 +60,32 @@ def board(records, *, generated=f"{D}T15:50:00+00:00", prov=None, date=D):
     return b
 
 
-def game(pk, *, away="Away Club", home="Home Club", start=START1, gtype="R", probables=(50,), rosters=None, tbd=False):
+def game(pk, *, away="Away Club", home="Home Club", start=START1, gtype="R", probables=(50,), rosters="AUTO", tbd=False):
     return {"game_pk": int(pk), "game_type": gtype, "game_date": start, "away_team": away, "home_team": home,
             "double_header": "N", "game_number": 1, "probable_pitcher_ids": list(probables),
-            "start_time_tbd": tbd, "rosters": rosters or {"away": None, "home": None}}
+            "start_time_tbd": tbd, "rosters": rosters}
+
+
+NO_ROSTERS = {"away": None, "home": None}
+
+
+def autofill_rosters(schedule, records):
+    """Fixture only: games declared rosters="AUTO" get active rosters built from the board's own
+    records (each player on his board team), plus one unrelated filler per side."""
+    for g in schedule["games"]:
+        if g.get("rosters") != "AUTO":
+            continue
+        ro = {"away": [{"id": 900001, "name": "Filler Away"}], "home": [{"id": 900002, "name": "Filler Home"}]}
+        seen = set()
+        for r in records:
+            if str(r["game_pk"]) != str(g["game_pk"]) or r["player_id"] in seen:
+                continue
+            side = "away" if r["team"] == g["away_team"] else "home" if r["team"] == g["home_team"] else None
+            if side:
+                ro[side].append({"id": int(r["player_id"]), "name": r["player_name"]})
+                seen.add(r["player_id"])
+        g["rosters"] = ro
+    return schedule
 
 
 def sched(*games, date=D):
@@ -103,10 +125,16 @@ def cap(*events, started=f"{D}T15:57:00+00:00", completed=f"{D}T15:58:30+00:00",
 
 
 HIT = "PLAYER_TO_RECORD_A_HIT"
+FINAL = {"codedGameState": "F", "detailedState": "Final"}
+IN_PROGRESS = {"codedGameState": "I", "detailedState": "In Progress"}
+POSTPONED = {"codedGameState": "D", "detailedState": "Postponed"}
+SUSPENDED = {"codedGameState": "T", "detailedState": "Suspended: Rain"}
+CANCELLED = {"codedGameState": "C", "detailedState": "Cancelled"}
+COMPLETED_EARLY = {"codedGameState": "F", "detailedState": "Completed Early: Rain"}
 
 
 def build(records, capture, schedule, window="DAY", cutoff=CUT):
-    return M3.build_manifest(board(records), capture, schedule, window=window, cutoff_utc=cutoff)
+    return M3.build_manifest(board(records), capture, autofill_rosters(schedule, records), window=window, cutoff_utc=cutoff)
 
 
 def why(m):
@@ -122,7 +150,8 @@ class QuoteIdentity(unittest.TestCase):
         for k in ("book", "capture_sha256", "event_id", "market_id", "market_type", "selection_id", "team_slug",
                   "side", "needs", "american"):
             self.assertIsNotNone(q[k], k)
-        self.assertEqual((q["event_id"], q["american"], q["identity_proof"]), (101, -120, "TEAM_SLUG"))
+        self.assertEqual((q["event_id"], q["american"], q["identity_proof"]),
+                         (101, -120, "TEAM_SLUG+MLB_ACTIVE_ROSTER_UNIQUE_NAME_ID_TEAM"))
 
     def test_market_from_wrong_event_rejected(self):
         c = cap(event(101, [market(HIT, [runner_("Al Bat", -120)], event_id=202)]))
@@ -144,11 +173,11 @@ class QuoteIdentity(unittest.TestCase):
 
     def test_missing_team_slug_needs_roster_proof(self):
         c = cap(event(101, [market(HIT, [runner_("Al Bat", -120, team=None)])]))
-        self.assertEqual(why(build([rec("a")], c, sched(game(1))))["a"], "QUOTE_IDENTITY_UNPROVEN")
+        self.assertEqual(why(build([rec("a")], c, sched(game(1, rosters=NO_ROSTERS))))["a"], "QUOTE_IDENTITY_UNPROVEN")
         ok = {"away": [{"id": 10, "name": "Al Bat"}], "home": [{"id": 77, "name": "Other Guy"}]}
         r = build([rec("a")], c, sched(game(1, rosters=ok)))["rows"][0]
         self.assertTrue(r["eligible"])
-        self.assertEqual(r["quote"]["identity_proof"], "MLB_ACTIVE_ROSTER_UNIQUE_NAME_AND_ID")
+        self.assertEqual(r["quote"]["identity_proof"], "MLB_ACTIVE_ROSTER_UNIQUE_NAME_ID_TEAM")
         twin = {"away": [{"id": 10, "name": "Al Bat"}], "home": [{"id": 78, "name": "Al Bat"}]}
         self.assertEqual(why(build([rec("a")], c, sched(game(1, rosters=twin))))["a"], "QUOTE_IDENTITY_UNPROVEN")
         other = {"away": [{"id": 99, "name": "Al Bat"}], "home": []}
@@ -209,6 +238,128 @@ class QuoteIdentity(unittest.TestCase):
         c = cap(event(101, [market(k, [runner_("K P Over", -120, handicap=4.5, rtype="OVER")], mid="mk")]))
         r = build([rec("k", name="K P", player="99", stat="strikeouts", needs="5", line=4.5)], c, sched(game(1)))["rows"][0]
         self.assertEqual((r["exclusion_reason"], r["starter_status"]), ("STARTER_FAIL", "NOT_MLB_PROBABLE"))
+
+
+# ---- blocker 1 (Codex 5941258168): exact player identity on the TEAM-SLUG path ----------------------
+class TeamSlugIdentity(unittest.TestCase):
+    """The runner shows the correct team slug in every case; only the roster proof decides."""
+    def q(self, rosters, player="10", name="Al Bat", runner_name="Al Bat"):
+        c = cap(event(101, [market(HIT, [runner_(runner_name, -120)])]))
+        return build([rec("a", player=player, name=name)], c, sched(game(1, rosters=rosters)))["rows"][0]
+
+    def test_same_normalized_name_same_team_different_ids_rejected(self):
+        r = self.q({"away": [{"id": 10, "name": "Al Bat"}, {"id": 11, "name": "Al Bat"}], "home": [{"id": 77, "name": "X Y"}]})
+        self.assertEqual(r["exclusion_reason"], "QUOTE_IDENTITY_UNPROVEN")
+
+    def test_suffix_normalized_teammate_collision_rejected(self):
+        r = self.q({"away": [{"id": 10, "name": "Al Bat"}, {"id": 12, "name": "Al Bat Jr."}], "home": [{"id": 77, "name": "X Y"}]})
+        self.assertEqual(r["exclusion_reason"], "QUOTE_IDENTITY_UNPROVEN")
+        r = self.q({"away": [{"id": 10, "name": "Al Bat II"}, {"id": 12, "name": "Al Bat"}], "home": [{"id": 77, "name": "X Y"}]},
+                   name="Al Bat II", runner_name="Al Bat II")
+        self.assertEqual(r["exclusion_reason"], "QUOTE_IDENTITY_UNPROVEN")
+
+    def test_correct_slug_but_wrong_or_stale_player_id_rejected(self):
+        r = self.q({"away": [{"id": 99, "name": "Al Bat"}], "home": [{"id": 77, "name": "X Y"}]})
+        self.assertEqual(r["exclusion_reason"], "QUOTE_IDENTITY_UNPROVEN")
+
+    def test_correct_slug_and_correct_player_id_succeeds(self):
+        r = self.q({"away": [{"id": 10, "name": "Al Bat"}], "home": [{"id": 77, "name": "X Y"}]})
+        self.assertTrue(r["eligible"], r["exclusion_reason"])
+        self.assertEqual(r["quote"]["identity_proof"], "TEAM_SLUG+MLB_ACTIVE_ROSTER_UNIQUE_NAME_ID_TEAM")
+
+    def test_ambiguous_or_missing_or_wrong_side_roster_rejected(self):
+        both = {"away": [{"id": 10, "name": "Al Bat"}], "home": [{"id": 78, "name": "Al Bat"}]}
+        self.assertEqual(self.q(both)["exclusion_reason"], "QUOTE_IDENTITY_UNPROVEN")           # cross-team twin
+        self.assertEqual(self.q(NO_ROSTERS)["exclusion_reason"], "QUOTE_IDENTITY_UNPROVEN")     # no roster
+        wrong_side = {"away": [{"id": 77, "name": "X Y"}], "home": [{"id": 10, "name": "Al Bat"}]}
+        self.assertEqual(self.q(wrong_side)["exclusion_reason"], "QUOTE_IDENTITY_UNPROVEN")     # id on the other team
+
+
+# ---- blocker 2: TBD first pitch -----------------------------------------------------------------------
+class TbdFirstPitch(unittest.TestCase):
+    def unit(self, g2, *, evs2=True):
+        recs = [rec("t", name="Timed Guy"), rec("x", name="Tbd Guy", game="2", player="11", team="Two Away")]
+        e1 = event(101, [market(HIT, [runner_("Timed Guy", -120)])])
+        e2 = event(102, [market(HIT, [runner_("Tbd Guy", -120, team="two_away")], mid="m2")],
+                   name="Two Away (x) @ Two Home (y)", open_date=g2["game_date"])
+        s = sched(game(1, start=f"{D}T17:05:00Z"), g2)
+        return build(recs, cap(e1, e2) if evs2 else cap(e1), s), s
+
+    def test_tbd_placeholder_earlier_than_timed_game(self):
+        m, s = self.unit(game(2, away="Two Away", home="Two Home", start=f"{D}T16:33:00Z", tbd=True))
+        self.assertEqual(why(m)["x"], "FIRST_PITCH_TBD_NOT_TIMED")
+        self.assertTrue(m["rows"][0]["eligible"] if m["rows"][0]["candidate_id"] == "t" else m["rows"][1]["eligible"])
+        self.assertEqual(m["covered_games"], ["1"])
+        self.assertEqual(m["earliest_first_pitch_utc"], f"{D}T17:05:00Z")
+        self.assertEqual(SP.unit_first_pitch(s, "DAY"), m["earliest_first_pitch_utc"])
+        self.assertTrue(SP.seal_deadline_consistent(m, s, "DAY"))
+
+    def test_tbd_placeholder_later_than_timed_game(self):
+        m, _ = self.unit(game(2, away="Two Away", home="Two Home", start=f"{D}T19:40:00Z", tbd=True))
+        self.assertEqual((why(m)["x"], m["covered_games"]), ("FIRST_PITCH_TBD_NOT_TIMED", ["1"]))
+
+    def test_doubleheader_timed_plus_tbd(self):
+        recs = [rec("g1", name="Al Bat"), rec("g2", name="Al Bat", game="2")]
+        e1 = event(101, [market(HIT, [runner_("Al Bat", -120)])], open_date=f"{D}T17:05:00Z")
+        s = sched(game(1, start=f"{D}T17:05:00Z"), game(2, start=f"{D}T20:05:00Z", tbd=True))   # both DAY
+        m = build(recs, cap(e1), s)
+        self.assertEqual(why(m), {"g1": None, "g2": "FIRST_PITCH_TBD_NOT_TIMED"})
+        self.assertEqual(m["covered_games"], ["1"])
+        s2 = sched(game(1, start=f"{D}T17:05:00Z"), game(2, start=f"{D}T23:10:00Z", tbd=True))  # TBD placeholder NIGHT
+        night = build(recs, cap(e1), s2, window="NIGHT")
+        self.assertEqual((why(night), night["covered_games"], night["earliest_first_pitch_utc"]),
+                         ({"g2": "FIRST_PITCH_TBD_NOT_TIMED"}, [], None))
+
+    def test_runner_refuses_to_seal_unit_whose_only_board_game_is_tbd(self):
+        out = tempfile.mkdtemp()
+        day = (datetime.now(timezone.utc) + __import__("datetime").timedelta(days=1)).date().isoformat()
+        timed, tbd = f"{day}T17:05:00Z", f"{day}T16:33:00Z"          # timed game has no board records
+        sch = sched(game(1, start=timed), game(2, away="Two Away", home="Two Home", start=tbd, tbd=True), date=day)
+        recs = [rec("x", name="Tbd Guy", game="2", player="11", team="Two Away")]
+        b = board(recs, generated=datetime.now(timezone.utc).isoformat(), date=day)
+        bp = os.path.join(out, "b.json")
+        json.dump(b, open(bp, "w"))
+
+        def fake_pipeline(tree, tape, mode):
+            open(tape, "wb").write(b"tape")
+            return bp
+        c = cap(event(102, [market(HIT, [runner_("Tbd Guy", -120, team="two_away")], mid="m2")],
+                      name="Two Away (x) @ Two Home (y)", open_date=tbd, completed=datetime.now(timezone.utc).isoformat()),
+                started=datetime.now(timezone.utc).isoformat(), completed=datetime.now(timezone.utc).isoformat())
+        try:
+            with mock.patch.object(RN, "schedule_snapshot", lambda d: autofill_rosters(sch, recs)), \
+                    mock.patch.object(SH, "build_tree", lambda *a, **k: {"overlay": {}}), \
+                    mock.patch.object(SH, "run_pipeline", fake_pipeline), \
+                    mock.patch.object(SH, "remove_tree", lambda *a: None), \
+                    mock.patch.object(CP, "capture", lambda: c):
+                rc = RN.main(["--mode", "drill", "--repo", "/nonexistent", "--date", day, "--window", "DAY", "--out", out])
+            self.assertEqual(rc, 4)
+            self.assertIn("no timed covered game", json.load(open(os.path.join(out, "MISSED_UNIT.json")))["reason"])
+            self.assertFalse(os.path.exists(os.path.join(out, "manifest.json.gz")))
+        finally:
+            shutil.rmtree(out)
+
+    def test_tbd_game_never_covered_and_unsafe_unit_not_sealable(self):
+        m, s = self.unit(game(2, away="Two Away", home="Two Home", start=f"{D}T16:33:00Z", tbd=True))
+        self.assertNotIn("2", m["covered_games"])
+        only_tbd = sched(game(2, away="Two Away", home="Two Home", start=f"{D}T16:33:00Z", tbd=True))
+        m2 = build([rec("x", name="Tbd Guy", game="2", player="11", team="Two Away")],
+                   cap(event(102, [market(HIT, [runner_("Tbd Guy", -120, team="two_away")], mid="m2")],
+                             name="Two Away (x) @ Two Home (y)", open_date=f"{D}T16:33:00Z")), only_tbd)
+        self.assertEqual((m2["covered_games"], m2["earliest_first_pitch_utc"]), ([], None))
+        self.assertIsNone(SP.unit_first_pitch(only_tbd, "DAY"))
+        self.assertFalse(SP.seal_deadline_consistent(m2, only_tbd, "DAY"))
+        bad = dict(m, earliest_first_pitch_utc=f"{D}T16:00:00Z")              # deadline earlier than planned
+        self.assertFalse(SP.seal_deadline_consistent(bad, s, "DAY"))
+        self.assertFalse(SP.seal_deadline_consistent(dict(m, covered_games=[]), s, "DAY"))   # inconsistent manifest
+
+    def test_once_timed_normal_behaviour(self):
+        m, s = self.unit(game(2, away="Two Away", home="Two Home", start=f"{D}T16:33:00Z", tbd=False))
+        self.assertEqual(why(m)["x"], None)
+        self.assertEqual(m["covered_games"], ["1", "2"])
+        self.assertEqual(m["earliest_first_pitch_utc"], f"{D}T16:33:00Z")
+        self.assertEqual(SP.unit_first_pitch(s, "DAY"), f"{D}T16:33:00Z")
+        self.assertTrue(SP.seal_deadline_consistent(m, s, "DAY"))
 
 
 class CaptureCompleteness(unittest.TestCase):
@@ -340,7 +491,8 @@ class TimestampAuthority(unittest.TestCase):
 GH_ISSUE = SL.ISSUE_91_API_URL
 
 
-def make_unit(root, *, date="2027-05-04", gtype="R", n=8, champs=2, prev=None, overlay_rows=None, mutate=None):
+def make_unit(root, *, date="2027-05-04", gtype="R", n=8, champs=2, prev=None, overlay_rows=None, mutate=None,
+              challenger=VE.FROZEN_COEFFICIENTS_SHA256):
     """A complete sealed unit on a synthetic evidence ref (no network)."""
     start = f"{date}T17:05:00Z"
     recs = [rec(f"{date}-{i}", name=f"P{i} X", player=str(i), game=str(i % 4 + 1), team=f"A{i % 4 + 1}",
@@ -351,7 +503,7 @@ def make_unit(root, *, date="2027-05-04", gtype="R", n=8, champs=2, prev=None, o
                  name=f"A{g} (x) @ H{g} (y)", open_date=start, completed=f"{date}T15:58:00+00:00", date=date)
            for g in range(1, 5)]
     b = board(recs, generated=f"{date}T15:50:00+00:00", date=date)
-    s = sched(*games, date=date)
+    s = autofill_rosters(sched(*games, date=date), recs)
     c = cap(*evs, started=f"{date}T15:57:00+00:00", completed=f"{date}T15:58:30+00:00")
     overlay = json.dumps({"snapshots": overlay_rows if overlay_rows is not None
                           else [{"taken_at": f"{date}T12:00:00+00:00", "rows": []}]}).encode()
@@ -375,7 +527,7 @@ def make_unit(root, *, date="2027-05-04", gtype="R", n=8, champs=2, prev=None, o
     arts = {nm: SH.sha256_file(os.path.join(d, nm)) for nm in list(files) + ["overlay.json", "shadow_tape.json.gz"]}
     chain = json.load(open(os.path.join(root, "CHAIN.json")))
     sl = SL.build_seal(m, prev_seal_sha256=chain[-1]["seal_sha256"], prereg_sha256=VE.PREREG_SHA256,
-                       challenger_sha256="c" * 64, shadow_id=SH.SHADOW_ID, created_at=f"{date}T16:00:01+00:00",
+                       challenger_sha256=challenger, shadow_id=SH.SHADOW_ID, created_at=f"{date}T16:00:01+00:00",
                        artifacts_sha256=arts)
     json.dump(sl, open(os.path.join(d, "seal.json"), "w"))
     json.dump({"github_comment_id": 4242, "tsa": [{"tsa": "freetsa", "token_b64": "TOKEN:" + sl["seal_sha256"],
@@ -447,7 +599,7 @@ class EvidenceVerifier(unittest.TestCase):
         os.remove(os.path.join(self.root, "CHAIN.json"))
         with self.assertRaises(VE.EvidenceError):
             VE.load_chain(self.root)
-        self.assertEqual(list(inspect.signature(EV.evaluate_from_evidence).parameters), ["evidence_root", "regime", "coef"])
+        self.assertEqual(list(inspect.signature(EV.evaluate_from_evidence).parameters), ["evidence_root", "regime"])
         self.assertFalse(hasattr(EV, "evaluate"))
 
     def test_fake_or_wrong_or_late_github_receipt(self):
@@ -554,7 +706,8 @@ class OneLook(unittest.TestCase):
         def lock(root, rec_):
             json.dump(rec_, open(os.path.join(root, f"FINAL_ANALYSIS_{rec_['regime']}.json"), "w"))
 
-        states = (lambda gps: {str(g): "Final" if terminal else "In Progress" for g in gps})
+        st = terminal if isinstance(terminal, dict) else (FINAL if terminal else IN_PROGRESS)
+        states = (lambda gps: {str(g): st for g in gps})
         with p1, p2, mock.patch.multiple(EV, utc_now=lambda: now, publish_lock=lock, grade_shadow_board=grade,
                                          fetch_game_states=states):
             out = EV.evaluate_from_evidence(self.root, "2027_REGULAR_CONFIRMATORY")
@@ -569,7 +722,8 @@ class OneLook(unittest.TestCase):
         with self.assertRaises(EV.OneLookRefused):     # 10-05 but games not all terminal and grace not elapsed
             self.run_eval(datetime(2027, 10, 5, 12, tzinfo=timezone.utc), terminal=False)
         out, graded = self.run_eval(datetime(2027, 10, 5, 12, tzinfo=timezone.utc))
-        self.assertEqual((out["one_look_trigger"], out["n_slates_used"], len(graded)), ("ALL_COVERED_GAMES_TERMINAL", 1, 1))
+        self.assertEqual((out["one_look_trigger"], out["n_slates_used"], len(graded)),
+                         ("ALL_COVERED_GAMES_FINAL_UNDER_PINNED_GRADER", 1, 1))
         with self.assertRaises(EV.OneLookRefused):
             self.run_eval(datetime(2027, 10, 20, tzinfo=timezone.utc))
 
@@ -616,6 +770,148 @@ class OneLook(unittest.TestCase):
     def test_grace_period_allows_after_seven_days(self):
         out, _ = self.run_eval(datetime(2027, 10, 12, tzinfo=timezone.utc), terminal=False)
         self.assertEqual(out["one_look_trigger"], "SEVEN_DAY_GRACE_ELAPSED")
+
+
+class OneLookGameStates(unittest.TestCase):
+    """Blocker 3: only the pinned grader's notion of final may unlock the early path."""
+    def setUp(self):
+        self.root = new_root()
+        self.sl, _, _ = make_unit(self.root, date="2027-09-28")
+
+    def tearDown(self):
+        shutil.rmtree(self.root, ignore_errors=True)
+
+    def attempt(self, when, state):
+        ext = Externals()
+        p1, p2 = ext.patch(self.sl)
+        lock = lambda root, r: json.dump(r, open(os.path.join(root, f"FINAL_ANALYSIS_{r['regime']}.json"), "w"))
+        grade = lambda b: {"source_board_sha256": b["board_sha256"],
+                           "records": [{"candidate_id": r["candidate_id"], "grade": "hit"} for r in b["records"]]}
+        with p1, p2, mock.patch.multiple(EV, utc_now=lambda: when, publish_lock=lock, grade_shadow_board=grade,
+                                         fetch_game_states=lambda gps: {str(g): state for g in gps}):
+            return EV.evaluate_from_evidence(self.root, "2027_REGULAR_CONFIRMATORY")
+
+    def locked(self):
+        return os.path.exists(os.path.join(self.root, "FINAL_ANALYSIS_2027_REGULAR_CONFIRMATORY.json"))
+
+    def test_postponed_suspended_cancelled_do_not_unlock(self):
+        for st in (POSTPONED, SUSPENDED, CANCELLED):
+            with self.assertRaises(EV.OneLookRefused):
+                self.attempt(datetime(2027, 10, 5, 12, tzinfo=timezone.utc), st)
+            self.assertFalse(self.locked(), st)
+        self.assertFalse(EV.pinned_is_final(None))
+
+    def test_final_unlocks_only_when_other_conditions_hold(self):
+        with self.assertRaises(EV.OneLookRefused):
+            self.attempt(datetime(2027, 10, 4, 23, 59, tzinfo=timezone.utc), FINAL)        # before the date
+        self.assertFalse(self.locked())
+        out = self.attempt(datetime(2027, 10, 5, 12, tzinfo=timezone.utc), FINAL)
+        self.assertEqual(out["one_look_trigger"], "ALL_COVERED_GAMES_FINAL_UNDER_PINNED_GRADER")
+
+    def test_postponed_then_final(self):
+        with self.assertRaises(EV.OneLookRefused):
+            self.attempt(datetime(2027, 10, 5, 12, tzinfo=timezone.utc), POSTPONED)
+        self.assertFalse(self.locked())
+        self.assertEqual(self.attempt(datetime(2027, 10, 6, 12, tzinfo=timezone.utc), FINAL)["n_slates_used"], 1)
+
+    def test_suspended_then_completed(self):
+        with self.assertRaises(EV.OneLookRefused):
+            self.attempt(datetime(2027, 10, 5, 12, tzinfo=timezone.utc), SUSPENDED)
+        out = self.attempt(datetime(2027, 10, 6, 12, tzinfo=timezone.utc), COMPLETED_EARLY)
+        self.assertEqual(out["one_look_trigger"], "ALL_COVERED_GAMES_FINAL_UNDER_PINNED_GRADER")
+
+    def test_grace_path_and_second_look(self):
+        out = self.attempt(datetime(2027, 10, 12, tzinfo=timezone.utc), POSTPONED)
+        self.assertEqual(out["one_look_trigger"], "SEVEN_DAY_GRACE_ELAPSED")
+        with self.assertRaises(EV.OneLookRefused):
+            self.attempt(datetime(2027, 10, 30, tzinfo=timezone.utc), FINAL)
+
+    def test_pinned_rule_matches_pinned_grader_source(self):
+        src = subprocess.check_output(["git", "-C", HERE, "show", f"{SH.SHADOW_PIN}:grade_results.py"]).decode()
+        self.assertIn('return coded in ("F", "O") or "final" in detailed.lower() or "completed" in detailed.lower()', src)
+
+
+# ---- blocker 4: frozen coefficient identity ----------------------------------------------------------
+class FrozenCoefficients(unittest.TestCase):
+    def setUp(self):
+        self.root = new_root()
+        self.sl, _, _ = make_unit(self.root, date="2027-09-28")
+        self.tmp = tempfile.mkdtemp()
+
+    def tearDown(self):
+        shutil.rmtree(self.root, ignore_errors=True)
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def variant(self, mutate_bytes=None, mutate_obj=None):
+        raw = open(VE.FROZEN_COEFFICIENTS_PATH, "rb").read()
+        if mutate_obj:
+            obj = json.loads(raw)
+            mutate_obj(obj)
+            raw = json.dumps(obj, indent=2, sort_keys=True).encode()
+        if mutate_bytes:
+            raw = mutate_bytes(bytearray(raw))
+        p = os.path.join(self.tmp, "coef.json")
+        open(p, "wb").write(bytes(raw))
+        return p
+
+    def evaluate_with(self, path):
+        ext = Externals()
+        p1, p2 = ext.patch(self.sl)
+        with p1, p2, mock.patch.object(VE, "FROZEN_COEFFICIENTS_PATH", path), \
+                mock.patch.multiple(EV, utc_now=lambda: datetime(2027, 10, 20, tzinfo=timezone.utc),
+                                    publish_lock=lambda *a: self.fail("one-look lock published"),
+                                    grade_shadow_board=lambda b: self.fail("outcomes opened"),
+                                    fetch_game_states=lambda g: {}):
+            return EV.evaluate_from_evidence(self.root, "2027_REGULAR_CONFIRMATORY")
+
+    def test_valid_frozen_file_loads_and_matches_prereg_hash(self):
+        self.assertEqual(VE.FROZEN_COEFFICIENTS_SHA256, "3c9e2c01cf4b7c57261622e829a1cccebd88d12b4950a84d7b7b96ad54672009")
+        self.assertEqual(VE.load_frozen_coefficients(), H.load_coefficients())
+
+    def test_one_byte_mutation_rejected_before_lock_and_outcomes(self):
+        def flip(b):
+            b[len(b) // 2] ^= 0x01
+            return b
+        with self.assertRaises(VE.CoefficientIntegrityError):
+            self.evaluate_with(self.variant(mutate_bytes=flip))
+
+    def test_same_schema_changed_coefficient_rejected(self):
+        def bump(o):
+            o["coefficients"]["p2"]["_pooled"]["beta"][2] += 0.01
+        with self.assertRaises(VE.CoefficientIntegrityError):
+            self.evaluate_with(self.variant(mutate_obj=bump))
+
+    def test_missing_artifact_rejected(self):
+        with self.assertRaises(VE.CoefficientIntegrityError):
+            self.evaluate_with(os.path.join(self.tmp, "absent.json"))
+
+    def test_caller_cannot_inject_coefficients(self):
+        with self.assertRaises(TypeError):
+            EV.evaluate_from_evidence(self.root, "2027_REGULAR_CONFIRMATORY", coef=H.load_coefficients())
+        with self.assertRaises(TypeError):
+            EV.evaluate_from_evidence(self.root, "2027_REGULAR_CONFIRMATORY", H.load_coefficients())
+
+    def test_wrong_challenger_version_in_seal_rejected_before_lock(self):
+        root = new_root()
+        try:
+            sl, _, _ = make_unit(root, date="2027-09-28", challenger="c" * 64)
+            ext = Externals()
+            p1, p2 = ext.patch(sl)
+            with p1, p2, mock.patch.multiple(EV, utc_now=lambda: datetime(2027, 10, 20, tzinfo=timezone.utc),
+                                             publish_lock=lambda r, x: None, fetch_game_states=lambda g: {},
+                                             grade_shadow_board=lambda b: self.fail("graded a wrong-version unit")):
+                out = EV.evaluate_from_evidence(root, "2027_REGULAR_CONFIRMATORY")
+            self.assertEqual(out["invalid_slates"]["2027-09-28/DAY"],
+                             "SLATE_INVALID_NO_CONFIRMATORY_USE:CHALLENGER_VERSION_MISMATCH")
+            self.assertEqual(out["n_slates_used"], 0)
+        finally:
+            shutil.rmtree(root)
+
+    def test_runner_seals_only_the_frozen_version(self):
+        self.assertEqual(RN._frozen_challenger_version(), VE.FROZEN_COEFFICIENTS_SHA256)
+        with mock.patch.object(VE, "FROZEN_COEFFICIENTS_PATH", self.variant(mutate_obj=lambda o: o.update(l2=2.0))):
+            with self.assertRaises(VE.CoefficientIntegrityError):
+                RN._frozen_challenger_version()
 
 
 # ---- statistics ----------------------------------------------------------------------------------------

@@ -49,7 +49,20 @@ GRADE_CLASS = {"hit": "settled", "miss": "settled", "void": "void", "push": "pus
 # before the day after the regime window.
 ANALYSIS_RULES = {"2027_REGULAR_CONFIRMATORY": {"earliest": date(2027, 10, 5), "grace_floor": date(2027, 10, 12)},
                   "2026_POSTSEASON_SHADOW": {"earliest": date(2026, 11, 16), "grace_floor": date(2026, 11, 16)}}
-TERMINAL_GAME_STATES = ("Final", "Game Over", "Completed Early", "Postponed", "Cancelled", "Suspended")
+# "Every covered unit is graded" (prereg s13) is proven without opening outcomes only when every covered
+# game is final under the PINNED grader's own rule (grade_results.is_final at 7d3ebacd55):
+# codedGameState F/O, or "final"/"completed" in detailedState. Postponed, Suspended and Cancelled are
+# NOT final there -- the pinned grader leaves their picks "ungraded" -- so they never unlock the early
+# path; such units wait for the conservative grace path.
+
+
+def pinned_is_final(status):
+    """Byte-for-byte the decision of grade_results.is_final at the shadow pin."""
+    if not status:
+        return False
+    coded = status.get("codedGameState", "")
+    detailed = status.get("detailedState", "")
+    return coded in ("F", "O") or "final" in detailed.lower() or "completed" in detailed.lower()
 
 
 class OneLookRefused(Exception):
@@ -62,14 +75,15 @@ def utc_now():
 
 
 def fetch_game_states(game_pks):
-    """statsapi game status only (not outcomes): {game_pk: detailedState}."""
+    """statsapi game status only (not outcomes): {game_pk: {"codedGameState", "detailedState"}}."""
     import requests
     out = {}
     for gp in sorted(set(game_pks)):
         r = requests.get("https://statsapi.mlb.com/api/v1/schedule", params={"gamePk": gp}, timeout=30)
         r.raise_for_status()
         games = [g for d in r.json().get("dates") or [] for g in d.get("games") or []]
-        out[str(gp)] = (games[0].get("status") or {}).get("detailedState") if games else None
+        st = (games[0].get("status") or {}) if games else {}
+        out[str(gp)] = {"codedGameState": st.get("codedGameState"), "detailedState": st.get("detailedState")}
     return out
 
 
@@ -116,8 +130,8 @@ def one_look_check(regime, evidence_root, unit_dates, covered_games, now):
     if today >= grace:
         return "SEVEN_DAY_GRACE_ELAPSED"
     states = fetch_game_states(covered_games)
-    if covered_games and all(states.get(str(g)) in TERMINAL_GAME_STATES for g in covered_games):
-        return "ALL_COVERED_GAMES_TERMINAL"
+    if covered_games and all(pinned_is_final(states.get(str(g))) for g in covered_games):
+        return "ALL_COVERED_GAMES_FINAL_UNDER_PINNED_GRADER"
     raise OneLookRefused(f"WAITING_FOR_GRADING_OR_GRACE until {grace}")
 
 
@@ -201,11 +215,12 @@ def _compute(pairs, coef, spec, regime):
 
 
 # ---- the single final-evaluation entry point -------------------------------------------------
-def evaluate_from_evidence(evidence_root, regime, coef=None):
+def evaluate_from_evidence(evidence_root, regime):
+    """No coefficient parameter: the confirmatory arms use only the preregistered frozen artifact."""
     spec = RG.REGIMES.get(regime)
     if spec is None or regime == "SMOKE_TEST_SYNTHETIC":
         raise ValueError(f"unknown or non-evidence regime {regime!r}")
-    coef = coef or H.load_coefficients()
+    coef = VE.load_frozen_coefficients()                       # sha256-verified; raises before lock/outcomes
     seals = VE.load_chain(evidence_root)                       # mandatory; raises on any break
     in_regime = [s for s in seals if spec["first"] <= s["date"] <= spec["last"]]
     now = utc_now()
@@ -216,6 +231,9 @@ def evaluate_from_evidence(evidence_root, regime, coef=None):
         unit = f"{s['date']}/{s['window']}"
         if not M3.utc(s["cutoff_utc"]) > M3.utc(V3_BOUNDARY_UTC):
             invalid[unit] = "PRE_V3_BOUNDARY_DRILL_ONLY"
+            continue
+        if s.get("challenger_version") != VE.FROZEN_COEFFICIENTS_SHA256:
+            invalid[unit] = "SLATE_INVALID_NO_CONFIRMATORY_USE:CHALLENGER_VERSION_MISMATCH"
             continue
         try:
             status, detail, man = VE.verify_unit(evidence_root, s)

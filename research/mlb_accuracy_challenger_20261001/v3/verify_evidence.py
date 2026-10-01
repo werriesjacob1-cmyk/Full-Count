@@ -49,6 +49,26 @@ REQUIRED_ARTIFACTS = ("shadow_board.json.gz", "capture.json.gz", "schedule.json"
                       "shadow_tape.json.gz")
 OPTIONAL_ARTIFACTS = ("overlay.json",)      # present iff an overlay was sealed
 GITHUB_API = "https://api.github.com/repos/werriesjacob1-cmyk/Full-Count"
+FROZEN_COEFFICIENTS_PATH = os.path.join(os.path.dirname(HERE), "frozen_coefficients.json")
+FROZEN_COEFFICIENTS_SHA256 = "3c9e2c01cf4b7c57261622e829a1cccebd88d12b4950a84d7b7b96ad54672009"   # prereg v3 s10
+
+
+class CoefficientIntegrityError(Exception):
+    pass
+
+
+def load_frozen_coefficients():
+    """The preregistered frozen challenger coefficients, or an exception. The bytes are read once,
+    hashed, and parsed from those same bytes; no other path, file or object is ever accepted."""
+    try:
+        with open(FROZEN_COEFFICIENTS_PATH, "rb") as fh:
+            raw = fh.read()
+    except OSError as exc:
+        raise CoefficientIntegrityError(f"frozen coefficient artifact missing: {exc}") from exc
+    got = hashlib.sha256(raw).hexdigest()
+    if got != FROZEN_COEFFICIENTS_SHA256:
+        raise CoefficientIntegrityError(f"frozen coefficient sha256 {got} != {FROZEN_COEFFICIENTS_SHA256}")
+    return json.loads(raw)
 
 
 class EvidenceError(Exception):

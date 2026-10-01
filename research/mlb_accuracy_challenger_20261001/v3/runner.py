@@ -118,6 +118,8 @@ def main(argv=None):
         SP.guard(now(), fp, "manifest")
         cutoff = now()
         man = M3.build_manifest(board, cap, sched, window=a.window, cutoff_utc=cutoff, shadow_provenance=prov)
+        if not SP.seal_deadline_consistent(man, sched, a.window):
+            raise SP.MissUnit("no timed covered game or manifest deadline earlier than the planned deadline")
         SP.guard(now(), fp, "seal")
     except SP.MissUnit as exc:
         _dump(os.path.join(a.out, "MISSED_UNIT.json"), {"date": a.date, "window": a.window, "first_pitch_utc": fp,
@@ -164,6 +166,11 @@ def _github_post_comment(body):
     return r.json()["id"]
 
 
+def _frozen_challenger_version():
+    VE.load_frozen_coefficients()                        # raises unless the exact preregistered artifact
+    return VE.FROZEN_COEFFICIENTS_SHA256
+
+
 def publish_seal(a, man, arts, fp):
     """Prospective only (activation-gated). Append-only: one new unit directory + CHAIN entry; never force."""
     ev = os.path.join(a.out, "evidence")
@@ -176,7 +183,7 @@ def publish_seal(a, man, arts, fp):
     if os.path.exists(unit_dir):
         raise RuntimeError("slate unit already sealed; superseding is not allowed")
     seal = SL.build_seal(man, prev_seal_sha256=chain[-1]["seal_sha256"], prereg_sha256=VE.PREREG_SHA256,
-                         challenger_sha256=SH.sha256_file(os.path.join(os.path.dirname(HERE), "frozen_coefficients.json")),
+                         challenger_sha256=_frozen_challenger_version(),
                          shadow_id=SH.SHADOW_ID, created_at=now(), artifacts_sha256=arts)
     os.makedirs(unit_dir)
     for name in arts:

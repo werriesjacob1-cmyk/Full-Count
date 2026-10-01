@@ -47,3 +47,11 @@ def guard(now_utc, first_pitch_utc, next_step):
     remaining = sum(BUDGET_S[s] for s in STEPS[STEPS.index(next_step):])
     if M3.utc(now_utc) + timedelta(seconds=remaining + SAFETY_S) > M3.utc(first_pitch_utc):
         raise MissUnit(f"before {next_step}: {remaining + SAFETY_S}s needed, first pitch {first_pitch_utc}")
+
+
+def seal_deadline_consistent(manifest, schedule, window):
+    """A unit may be sealed only if it covers >=1 timed game and its manifest deadline is not earlier
+    than the planned deadline (TBD games are never covered, so they can never shift it)."""
+    fp = unit_first_pitch(schedule, window)
+    efp = manifest.get("earliest_first_pitch_utc")
+    return bool(manifest.get("covered_games")) and fp is not None and efp is not None and M3.utc(efp) >= M3.utc(fp)

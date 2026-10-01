@@ -34,3 +34,16 @@ Where the prereg needed interpretation to be enforced, the strictest reading con
 - **Runner environment.** It needs `requirements-v3.txt` (time-machine) plus a GitHub token for the receipts.
 
 Alligator.
+
+## Final-delta blocker repair (Codex #91/5941258168, SUPERCHAD #91/5941272601)
+- **Repair base:** `fff5989abb5d69f134e353422e339a640d8d9f1c`.
+- **Prereg:** still byte-identical. All four repairs enforce existing V3 text.
+
+| Blocker | Repair | V3 text enforced |
+|---|---|---|
+| 1. Team-slug identity | `roster_proof` is now required on **every** quote. The normalized name must occur exactly once across both MLB active rosters, carry the board `player_id`, and sit on the board team's roster in this game. A matching slug must also agree, and a mismatched slug stays `QUOTE_TEAM_MISMATCH`. Same-team or suffix collisions, a wrong or stale id, a wrong side, or a missing roster give `QUOTE_IDENTITY_UNPROVEN`. | §5 "binds only to the exact offer" |
+| 2. TBD first pitch | A game with `start_time_tbd` fails gate 16 ("first pitch is after the cutoff" cannot be established), giving `FIRST_PITCH_TBD_NOT_TIMED`. It is never in `covered_games` and never sets the manifest deadline. `schedule_plan.seal_deadline_consistent` makes the runner refuse to seal (MISS UNIT, no backfill) a unit with no timed covered game, or whose manifest deadline is earlier than the planned one. | §6 gate 16; §4 "finish before the earliest covered first pitch" |
+| 3. One-look terminal states | The early path unlocks only if every covered game is final under the **pinned grader's own rule** (`grade_results.is_final` at the pin: codedGameState F/O, or "final"/"completed" in detailedState). Postponed, Suspended and Cancelled are not final there (their picks stay "ungraded"), so they wait for the unchanged conservative grace path. A refused attempt writes no lock. | §13 "every covered unit is graded" |
+| 4. Frozen coefficients | `evaluate_from_evidence(evidence_root, regime)` has no coefficient parameter. `verify_evidence.load_frozen_coefficients()` reads the fixed artifact once, requires sha256 `3c9e2c01…2009`, and parses those same bytes. This happens **before** the one-look check, the lock and any outcome access. A unit whose seal `challenger_version` is not that sha256 is invalid before the lock. The runner seals only that version. | §10 frozen coefficients |
+
+**Tests:** 88 (64 previous + 24 new). **Mutation:** 68/68 killed (the 49 previous guards plus 19 new).
