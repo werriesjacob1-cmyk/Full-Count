@@ -75,3 +75,42 @@ Log loss by family (lower is better):
 - The final-board sample (DB) is a p-surfaced subset; the frozen-board sample (FB) is the full board.
 - `market_implied` is not used. q is raw, so its intercept absorbs the hold.
 - No closing line is available, so CLV cannot be computed.
+
+## Mechanism (`diagnose.py` → `diagnose_report.json`, descriptive)
+
+This uses final-board rows only (n≈2,990, regular season). "Model" and "price" are mean stated probabilities; "real" is the realized hit rate. ΔLL is model log loss minus price log loss, so positive means the price is more accurate.
+
+**1. Where the model disagrees with the price, the model is wrong.** Its "edge" is mostly its own error.
+
+| Model − price | n | Model | Price | Real | ΔLL |
+|---|---|---|---|---|---|
+| ≤ −0.10 | 380 | 0.422 | 0.558 | 0.516 | +0.023 |
+| −0.10 to 0 | 1,612 | 0.346 | 0.391 | 0.355 | −0.004 |
+| 0 to +0.05 | 618 | 0.382 | 0.362 | 0.343 | +0.001 |
+| +0.05 to +0.10 | 217 | 0.512 | 0.443 | 0.373 | +0.034 |
+| +0.10 to +0.20 | 126 | 0.598 | 0.463 | 0.460 | +0.048 |
+| ≥ +0.20 | 39 | 0.707 | 0.424 | 0.359 | +0.290 |
+
+- When the model rates a prop well above its price, the realized rate lands at or **below the price**.
+- Top Picks are ranked partly on that positive gap. That is a built-in winner's curse, and it explains their 10–11pp overconfidence.
+- Top Pick rows in this set: the model said 0.640, the price said 0.533, and the realized rate was 0.500.
+
+**2. The specific code paths that lose most to the price:**
+- **`combined_strikeouts`** (`modelled_independent_binomials`, n=122): the model said 0.612, the price 0.541, real 0.475. ΔLL is **+0.108**, the worst of any probability basis with n ≥ 100.
+  - `generate_picks.score_combined_strikeouts` treats each starter's batters faced as a fixed `expected_bf`, with independent binomial strikeouts.
+  - That ignores early exits and game-level correlation, so the distribution is too narrow.
+  - `_pick_line` then picks the rung where model − price is largest, which amplifies the error.
+- **`pitcher_outs`** (`empirical_shrunk`, n=196): the model said 0.627, the price 0.560, real 0.495 (ΔLL +0.024).
+  - Rows passing through the per-family **calibration layer are worse** than raw ones: +0.054 versus +0.008. That calibration likely needs refitting, or should be removed for this family.
+- **`strikeouts`** (`modelled_shrunk`): ΔLL +0.010. The calibrated rows are worse than raw (+0.013 vs +0.001).
+- **Thin samples:** rows in the "other" family with `sample_n` < 20 (n=301; mostly `combined_strikeouts` and `nrfi_combined`): model 0.523, real 0.445.
+- **`hits_runs_rbis`** (`empirical`): ties with the price (ΔLL +0.000). **`other|combined_shrunk`** is the only basis that beats the price (−0.004).
+
+## Proposed accuracy fixes (each needs Jacob's approval, then its own test before any production change)
+1. **Anchor displayed probabilities to the price.** Use the per-family market-anchored form (p1/p2).
+   - Out of sample, this is the most accurate forecast tested here.
+   - It fixes the stated-versus-realized gap users see, without claiming an edge.
+2. **Stop treating model − price as edge when choosing Top Picks.**
+   - At minimum, require positive edge only where a family has shown out-of-sample value beyond the price; today that is no family with confidence, and only `pitcher_outs` with weak evidence.
+3. **`combined_strikeouts`.** Either pause it, or replace the fixed-BF binomial with a mixture over batters faced (an overdispersed count model). Then validate the replacement against graded rungs before it is shown again.
+4. **Calibration layer.** Refit or remove the per-family calibration for `pitcher_outs` and `strikeouts`, where it makes accuracy worse.
