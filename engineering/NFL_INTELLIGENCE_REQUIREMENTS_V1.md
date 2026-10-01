@@ -426,7 +426,14 @@ This section uses the directive's five statuses, one per listed angle:
 
 ### 17.2 Seal and provenance requirements learned in weeks 3–4 (now binding on prospective research seals)
 
-1. **Per-week pinned pre-week inputs.** Each target week pins the first upstream release after the previous week's final game. That release must be verified to contain every prior-week game and no target-week rows. Week 3's pins never change. Adding a week's pins is a builder change that needs Jacob's authorization; he gave it for week 4 on 2026-10-01.
+1. **Per-week pinned pre-week inputs.** For each target week, the protocol must pin the exact upstream files actually used at seal-build time, record their SHA-256 and available source timestamps, verify that they contain all required prior-week information and no target-week results, and complete that pinning before the target week's first kickoff. For Week 4 specifically, the pinned files were the releases current when the seal inputs were downloaded; they were not verified to be the first upstream releases published after Week 3's final game. Week 3's pins never change. Adding a week's pins is a builder change that needs Jacob's authorization; he gave it for week 4 on 2026-10-01.
+   - **ERRATUM (2026-10-01).** The README on the Week 4 seal branch (`claude/nfl-tier1-seal-2026w04`) describes the week-4 pins as "the first nflverse release after the previous week's Monday game", and the matching code comment above `PINNED_BY_WEEK` in that branch's `build_week_seal.py` says the same. That descriptive wording overstates how the upstream release was selected. What was actually verified is the rule above:
+     - the files were pinned before kickoff;
+     - every prior-week game is present;
+     - no target-week rows are present;
+     - SHA-256 and Last-Modified are recorded in `seal.json`.
+
+     The seal's hashes and input evidence are accurate, and no prediction, input, cutoff, hypothesis or seal evidence was changed. The sealed branch is immutable historical evidence and is intentionally left unedited.
 2. **Pinned reference files can drift upstream.** Example: nflverse `players.csv` changed after 2026-09-25. Recovery bundles must carry the pinned bytes, not only a URL and hash.
 3. **Truthful information cutoffs.** A cutoff stamped on a feature row must reflect that week's actual inputs, never a constant carried over from an earlier week.
 4. **Execution must not depend on one long-lived session.**
