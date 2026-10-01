@@ -122,6 +122,13 @@ class Guards(unittest.TestCase):
             H.evaluate([(late, graded(late, {"a": "hit"}))], COEF, boundary_utc="2026-10-01T18:00:00Z",
                        regime="POSTSEASON_2026_SHADOW")
 
+    def test_empty_window_reports_insufficient_not_crash(self):
+        out = H.evaluate([], COEF, boundary_utc=BOUNDARY, regime="POSTSEASON_2026_SHADOW")
+        self.assertEqual(out["arms"]["CHAMPION"]["n_scored"], 0)
+        self.assertIsNone(out["arms"]["C2_RESIDUAL"]["vs_champion_game"]["ci95"])
+        out = H.evaluate([], COEF, boundary_utc=BOUNDARY, regime="CONFIRMATORY_2027_REGULAR")
+        self.assertEqual(out["primary_verdict"], "INSUFFICIENT_N")
+
     def test_unknown_regime_refused(self):
         with self.assertRaises(ValueError):
             H.evaluate([], COEF, boundary_utc=BOUNDARY, regime="WHATEVER")

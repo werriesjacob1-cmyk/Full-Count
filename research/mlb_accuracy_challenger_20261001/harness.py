@@ -189,6 +189,8 @@ def clustered_diff(champ, chall, unit, B=BOOT_B, seed=BOOT_SEED):
             a, na, b, nb = a + sum(c[0]), na + len(c[0]), b + sum(c[1]), nb + len(c[1])
         if na and nb:
             draws.append(b / nb - a / na)
+    if not draws:  # no scored picks in one or both arms: no interval exists (never guessed)
+        return {"n_clusters": len(ks), "ci95": None, "one_sided_lower95": None}
     draws.sort()
     pick = lambda q: draws[min(len(draws) - 1, int(q * len(draws)))]
     return {"n_clusters": len(ks), "ci95": [pick(0.025), pick(0.975)], "one_sided_lower95": pick(0.05)}
@@ -209,7 +211,7 @@ def verdict(champ_sum, chall_sum, game_ci, n_slates):
     if diff <= 0:
         return "REJECTED"
     chalk_ok = chall_sum["mean_q"] - champ_sum["mean_q"] <= CHALK_GUARD
-    if game_ci["one_sided_lower95"] > 0 and chalk_ok:
+    if game_ci["one_sided_lower95"] is not None and game_ci["one_sided_lower95"] > 0 and chalk_ok:
         return "SUPPORTED"
     return "INCONCLUSIVE" if chalk_ok else "INCONCLUSIVE_CHALK_GUARD"
 
