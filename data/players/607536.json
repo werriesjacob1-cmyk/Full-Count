@@ -336,6 +336,96 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-27",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 32.3,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Chicago White Sox",
+          "game_pk": 824542,
+          "team": "Colorado Rockies",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 72.0,
+            "same_hand_ratio": 57.1429,
+            "l14_k_pct": 0.0,
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.3411,
+            "ump_k_pct": 0.024,
+            "ump_bb_pct": 0.372
+          },
+          "hit_probability": 0.3673,
+          "raw_hit_probability": 0.3673,
+          "lift": -0.1572,
+          "reliability": "A",
+          "sample_n": 25,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 15.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 20.2,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Chicago White Sox",
+          "game_pk": 824542,
+          "team": "Colorado Rockies",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.4244,
+            "avg_outs_per_start": 15.76
+          },
+          "hit_probability": 0.4244,
+          "raw_hit_probability": 0.4244,
+          "lift": -0.1016,
+          "reliability": "A",
+          "sample_n": 25,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 15.5,
+            "needs": 16
+          }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 19.4,
+          "notable_signals": 0,
+          "matchup": "Colorado Rockies @ Chicago White Sox",
+          "game_pk": 824542,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            607536,
+            641743
+          ],
+          "signals": {
+            "combined_k_edge": -0.1519
+          },
+          "hit_probability": 0.4207,
+          "raw_hit_probability": null,
+          "lift": -0.1519,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
+          }
+        }
+      ]
     }
   ]
 }

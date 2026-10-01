@@ -584,6 +584,68 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-29",
+      "evaluations": [
+        {
+          "prop": "Over 7.5 Strikeouts",
+          "type": "pitcher",
+          "score": 45.7,
+          "notable_signals": 1,
+          "matchup": "Boston Red Sox @ New York Yankees",
+          "game_pk": 849851,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 47.0,
+            "same_hand_ratio": 92.8571,
+            "l14_k_pct": 77.6471,
+            "env_neutral": 50.0,
+            "ump_accuracy": 76.5429,
+            "ump_k_pct": -0.78,
+            "ump_bb_pct": -0.168
+          },
+          "hit_probability": 0.279,
+          "raw_hit_probability": 0.279,
+          "lift": 0.1359,
+          "reliability": "A",
+          "sample_n": 33,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 7.5,
+            "needs": 8
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 51.8,
+          "notable_signals": 0,
+          "matchup": "Boston Red Sox @ New York Yankees",
+          "game_pk": 849851,
+          "team": "New York Yankees",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.6054,
+            "avg_outs_per_start": 17.61
+          },
+          "hit_probability": 0.566,
+          "raw_hit_probability": 0.6054,
+          "lift": -0.0358,
+          "reliability": "A",
+          "sample_n": 33,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }

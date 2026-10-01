@@ -12,7 +12,6 @@ reload, the open tab must drop the settled ones and keep only the live pick
 """
 from __future__ import annotations
 
-import copy
 import functools
 import http.server
 import json
@@ -54,22 +53,37 @@ def build_fixture():
     restamp(data, stamp)
     data.update({"date": "2026-09-24", "display_date": "2026-09-23",
                  "display_timezone": "America/Chicago"})
-    tops = [p for p in data["props"] if p.get("recommendation_status") == "top_pick"]
-    assert len(tops) >= 4, "fixture needs four top picks"
-    others = [p for p in data["props"] if p.get("recommendation_status") != "top_pick"]
+    # This tests browser rollover, not today's changing production pick volume.
+    # Synthetic, uniquely identified rows keep it reproducible when a live
+    # build publishes fewer than four Top Picks (including zero).
+    def fixture_pick(number):
+        return {
+            "id": f"fc2:900001:player-{number}:hits:1:over",
+            "name": f"Fixture Player {number}",
+            "prop": "Over 0.5 Hits",
+            "game_pk": 900001,
+            "matchup": "Fixture A @ Fixture B",
+            "recommendation_status": "top_pick",
+            "hit_probability": 0.7,
+            "market_odds": -150,
+            "game_start": "2026-09-24T00:10:00Z",
+            "why": [],
+        }
+
+    final_a, final_b, live_c, early = (fixture_pick(n) for n in range(1, 5))
     published = {"published_slate_date": "2026-09-23", "published_top_pick_at": "2026-09-23T20:00:00+00:00",
                  "publication_artifact_id": "f" * 64, "game_start": "2026-09-24T00:10:00Z",
                  "game_state_observed_at": stamp, "settlement_observed_at": stamp}
-    final_a, final_b, live_c = (copy.deepcopy(p) for p in tops[:3])
     for row, state, settle in ((final_a, "final", "hit"), (final_b, "final", "miss"), (live_c, "live", "open")):
         row.update(published)
         row.update({"game_state": state, "settlement_state": settle,
                     "settlement_authority": "official_final" if state == "final" else "none"})
         row["publication_snapshot"] = {k: row[k] for k in ("id", "recommendation_status", "market_odds")}
-    early = copy.deepcopy(tops[3])   # an unpublished Sept 24 (next build slate) Top Pick
     early["game_start"] = "2026-09-25T00:10:00Z"
     early["game_state"] = "pregame"
-    data["props"] = [final_a, final_b, live_c, early] + others
+    # Exclude live board props entirely: their counts, game states and
+    # publication metadata must not affect this fixed browser scenario.
+    data["props"] = [final_a, final_b, live_c, early]
     with open(os.path.join(DOCS_DIR, "live.json"), encoding="utf-8") as fh:
         live = json.load(fh)
     restamp(live, stamp)

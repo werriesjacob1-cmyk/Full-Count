@@ -36,6 +36,41 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-27",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 28.0,
+          "notable_signals": 1,
+          "matchup": "Pittsburgh Pirates @ Detroit Tigers",
+          "game_pk": 824217,
+          "team": "Detroit Tigers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 70.0,
+            "same_hand_ratio": 92.8571,
+            "env_neutral": 50.0,
+            "ump_accuracy": 72.7427,
+            "ump_k_pct": -0.216,
+            "ump_bb_pct": -0.252
+          },
+          "hit_probability": 0.6129,
+          "raw_hit_probability": 0.6943,
+          "lift": -0.0842,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        }
+      ]
     }
   ]
 }

@@ -409,6 +409,95 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-26",
+      "evaluations": [
+        {
+          "prop": "Over 6.5 Strikeouts",
+          "type": "pitcher",
+          "score": 22.3,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ San Francisco Giants",
+          "game_pk": 823165,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 50.0,
+            "same_hand_ratio": 33.3333,
+            "env_neutral": 50.0,
+            "ump_accuracy": 59.8309,
+            "ump_k_pct": 0.108,
+            "ump_bb_pct": -0.216
+          },
+          "hit_probability": 0.3192,
+          "raw_hit_probability": 0.3192,
+          "lift": 0.0608,
+          "reliability": "C",
+          "sample_n": 8,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 6.5,
+            "needs": 7
+          }
+        },
+        {
+          "prop": "Over 13.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 47.8,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ San Francisco Giants",
+          "game_pk": 823165,
+          "team": "Los Angeles Dodgers",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7582,
+            "avg_outs_per_start": 14.5
+          },
+          "hit_probability": 0.6957,
+          "raw_hit_probability": 0.7582,
+          "lift": -0.0735,
+          "reliability": "C",
+          "sample_n": 8,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 13.5,
+            "needs": 14
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 35.8,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ San Francisco Giants",
+          "game_pk": 823165,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            605483,
+            683363
+          ],
+          "signals": {
+            "combined_k_edge": -0.0754
+          },
+          "hit_probability": 0.4701,
+          "raw_hit_probability": null,
+          "lift": -0.0754,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
+          }
+        }
+      ]
     }
   ]
 }
