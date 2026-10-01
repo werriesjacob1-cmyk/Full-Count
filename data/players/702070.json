@@ -534,7 +534,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 50.1,
+          "score": 50.7,
           "notable_signals": 0,
           "matchup": "Cleveland Guardians @ Kansas City Royals",
           "game_pk": 824058,
@@ -544,13 +544,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 40.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 31.7647,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 65.7394,
+            "ump_k_pct": -0.48,
+            "ump_bb_pct": -0.252
           },
-          "hit_probability": 0.5871,
-          "raw_hit_probability": 0.5669,
-          "lift": 0.0632,
+          "hit_probability": 0.587,
+          "raw_hit_probability": 0.5662,
+          "lift": 0.0645,
           "reliability": "A",
           "sample_n": 29,
           "projection": {
@@ -560,9 +563,9 @@
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 44.1,
+          "score": 34.9,
           "notable_signals": 0,
           "matchup": "Cleveland Guardians @ Kansas City Royals",
           "game_pk": 824058,
@@ -571,18 +574,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5164,
+            "outs_rate": 0.4494,
             "avg_outs_per_start": 17.1
           },
-          "hit_probability": 0.5355,
-          "raw_hit_probability": 0.5164,
-          "lift": 0.0229,
+          "hit_probability": 0.4494,
+          "raw_hit_probability": 0.4494,
+          "lift": -0.0051,
           "reliability": "A",
           "sample_n": 29,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 17.5,
+            "needs": 18
           }
         }
       ]

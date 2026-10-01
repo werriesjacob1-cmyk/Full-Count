@@ -1945,6 +1945,105 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-09-27",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 38.4,
+          "notable_signals": 2,
+          "matchup": "Los Angeles Dodgers @ San Francisco Giants",
+          "game_pk": 823164,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 18.8571,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 25.2,
+            "season_barrel_pct": 7.3333,
+            "lineup_slot": 37.5,
+            "bullpen_fatigue": 13.8889,
+            "park_hand_index": -2.71,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 0.0,
+            "woba_ahead": 0.0,
+            "woba_behind": 0.0,
+            "pull_park_synergy": -0.1043,
+            "getaway_day": -2.0,
+            "series_game": 2.0,
+            "sp_rp_ops_gap": 1.992,
+            "vs_rp_ops": 0.384,
+            "ump_k_pct": -0.372,
+            "ump_bb_pct": -0.072
+          },
+          "hit_probability": 0.558,
+          "raw_hit_probability": 0.5708,
+          "lift": 0.0009,
+          "reliability": "B",
+          "sample_n": 57,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ San Francisco Giants",
+          "game_pk": 823164,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.013
+          },
+          "hit_probability": 0.013,
+          "raw_hit_probability": null,
+          "lift": -0.0344,
+          "reliability": "B",
+          "sample_n": 57,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ San Francisco Giants",
+          "game_pk": 823164,
+          "team": "San Francisco Giants",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0056
+          },
+          "hit_probability": 0.0056,
+          "raw_hit_probability": null,
+          "lift": -0.0149,
+          "reliability": "B",
+          "sample_n": 57,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

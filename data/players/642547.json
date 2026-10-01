@@ -611,11 +611,14 @@
             "opp_team_k_pct": 48.0,
             "same_hand_ratio": 61.1111,
             "l14_k_pct": 55.2941,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 49.8067,
+            "ump_k_pct": 0.876,
+            "ump_bb_pct": 0.168
           },
-          "hit_probability": 0.5045,
-          "raw_hit_probability": 0.5045,
-          "lift": -0.0194,
+          "hit_probability": 0.5038,
+          "raw_hit_probability": 0.5038,
+          "lift": -0.0187,
           "reliability": "A",
           "sample_n": 31,
           "projection": {
@@ -625,9 +628,9 @@
           }
         },
         {
-          "prop": "Over 15.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 43.3,
+          "score": 55.6,
           "notable_signals": 0,
           "matchup": "Tampa Bay Rays @ Philadelphia Phillies",
           "game_pk": 823409,
@@ -636,18 +639,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5543,
+            "outs_rate": 0.7203,
             "avg_outs_per_start": 15.84
           },
-          "hit_probability": 0.5621,
-          "raw_hit_probability": 0.5543,
-          "lift": -0.0228,
+          "hit_probability": 0.6725,
+          "raw_hit_probability": 0.7203,
+          "lift": -0.1025,
           "reliability": "A",
           "sample_n": 31,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 15.5,
-            "needs": 16
+            "value": 14.5,
+            "needs": 15
+          }
+        },
+        {
+          "prop": "Over 9.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 53.6,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ Philadelphia Phillies",
+          "game_pk": 823409,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            642547,
+            650911
+          ],
+          "signals": {
+            "combined_k_edge": -0.0375
+          },
+          "hit_probability": 0.5921,
+          "raw_hit_probability": null,
+          "lift": -0.0375,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 9.5,
+            "needs": 10
           }
         }
       ]
