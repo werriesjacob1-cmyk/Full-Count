@@ -1,0 +1,458 @@
+{
+ "b0_mismatches": 27,
+ "drivers": {
+  "B": {
+   "final_report_team_weeks": [],
+   "frozen_commit": "8aa8067fbc71416e4f541b9fd3610e59331f11c4",
+   "information_cutoff_basis": "LOCAL_RETRIEVAL_TIME_UPPER_BOUND (file mtime, UTC)",
+   "information_cutoffs": {
+    "F2_SNAP_SHARE_ROLE": "2026-10-01T05:19:11Z",
+    "F3_TARGET_AIR_YARDS": "2026-10-01T05:15:31Z",
+    "F8_INJURY_PRACTICE": "2026-10-01T05:19:11Z",
+    "F9_ABSENCE_REDISTRIBUTION": "2026-10-01T05:19:11Z"
+   },
+   "params_file": "engineering/nfl_tier1_player_opportunity_20260924/frozen_params.json",
+   "params_sha256": "e7757514a452a0c30bd4793787fd0a6dbb7e037ca1b6be307cda695f333dd5dd",
+   "raw_output": "ws_b_live.json",
+   "source_sha256": {
+    "/tmp/claude-0/nfl_tier1_B/players.csv": "4dd70f328f31b0bb7cbf043412298d5a325863e27b8f2eeea22c9e925c808dee",
+    "/tmp/claude-0/nfl_tier1_shared/injuries/injuries_2016.csv": "504e05968cb9c54ddc730fd9b6e7d1dd16a62db8029cc784d3d7bafcea7ff7cb",
+    "/tmp/claude-0/nfl_tier1_shared/injuries/injuries_2017.csv": "0d5139fbf41b0866517bd2bd5fd85bb20dbd4dd9bc36a706fed030a88731de6f",
+    "/tmp/claude-0/nfl_tier1_shared/injuries/injuries_2018.csv": "4724e1f37cc3076f564e997fbf269190e7dbe795a39315b903788e0a9c40065e",
+    "/tmp/claude-0/nfl_tier1_shared/injuries/injuries_2019.csv": "daddfe8e04ddc3a29bce14f362e774fbadfb274c807f1f0fde7b5bf32aaf6cdf",
+    "/tmp/claude-0/nfl_tier1_shared/injuries/injuries_2020.csv": "706cca82824214f6b73ba0c6e537d3ee39766a50c644b8974b9fc28d7518de90",
+    "/tmp/claude-0/nfl_tier1_shared/injuries/injuries_2021.csv": "1049fb9ff0fe7cfcf3ba8bfe1f5a35d3aba985c461c8fb7bf5201735b6d34254",
+    "/tmp/claude-0/nfl_tier1_shared/injuries/injuries_2022.csv": "5f0d60324e597edd1a2ced8540b04e40b51dd440591dd1df11b8d96343387c9e",
+    "/tmp/claude-0/nfl_tier1_shared/injuries/injuries_2023.csv": "16b04e21da5aa3944cfa9c22cafcc84ed7e6d9866eaddf0344e9b8cbf2f63afe",
+    "/tmp/claude-0/nfl_tier1_shared/injuries/injuries_2024.csv": "498bce8e13cb64b2ab9bb0ad6cb81d0a63c2ddb24016c9fc90c2de2126fae449",
+    "/tmp/claude-0/nfl_tier1_shared/injuries/injuries_2025.csv": "873ca1606dd575bd01152508a243ef6b3a0f8f97b90b707217e62ee8c7ceb735",
+    "/tmp/claude-0/nfl_tier1_shared/injuries/injuries_2026.csv": "e18f3b4ce7e35033218c063af9c86d8bb4b7c378f82195e1730659fc0781df76",
+    "/tmp/claude-0/nfl_tier1_shared/schedules/games.csv": "7fdc123e11cf224b97d120980a4cd18171147f6db6d4c3b193f27406b4856c4e",
+    "/tmp/claude-0/nfl_tier1_shared/snap_counts/snap_counts_2016.csv": "a778e24e9eb665ffe8f16093b03c5a263dca0250b3aa92bd6002f61f534bea59",
+    "/tmp/claude-0/nfl_tier1_shared/snap_counts/snap_counts_2017.csv": "eab2fad2df99249d4061ed9c5c34d312cdba07cf3159d027d255bdc9b6526917",
+    "/tmp/claude-0/nfl_tier1_shared/snap_counts/snap_counts_2018.csv": "9a408b78a55f799110aed70de3564e157faf089ce9bed780d0368bf49ae13e0b",
+    "/tmp/claude-0/nfl_tier1_shared/snap_counts/snap_counts_2019.csv": "0cd52be8fa57f18503b670cb8263246c4f548375b768cbcad1c7a7462c98970d",
+    "/tmp/claude-0/nfl_tier1_shared/snap_counts/snap_counts_2020.csv": "512e35f17d076eb5d99b933c4a144eb95dcddf40c0320dbb397cae3c35683716",
+    "/tmp/claude-0/nfl_tier1_shared/snap_counts/snap_counts_2021.csv": "8e4dae054a4749cf2d4919508d9161a6068fd67509979aefa385bfb3803d0ee5",
+    "/tmp/claude-0/nfl_tier1_shared/snap_counts/snap_counts_2022.csv": "0018a4833fbf0f825286c1c27450c6254391b548d6c55bcde728e93e4816815a",
+    "/tmp/claude-0/nfl_tier1_shared/snap_counts/snap_counts_2023.csv": "303b61aa5c33ffda863f93a750fc14483f397f9187ad502b1ce71e9b516a64c0",
+    "/tmp/claude-0/nfl_tier1_shared/snap_counts/snap_counts_2024.csv": "a2aa58efe093f8aa0ad5aadf09f81d8ec690a1183bd2dde68d20e7f109a9c335",
+    "/tmp/claude-0/nfl_tier1_shared/snap_counts/snap_counts_2025.csv": "3fc2deb0e9ad86d34d4578cb80bb21c95253e088ee22ca028adf46f7485eff1f",
+    "/tmp/claude-0/nfl_tier1_shared/snap_counts/snap_counts_2026.csv": "c5868527b1052ae572b2d8f34a7bb777675a5e762ceaeb25f72f10d1c59846d5",
+    "/tmp/claude-0/nfl_tier1_shared/stats_player_week_2026.csv": "e293e213908f746db982cd9112f5016125a42eeeec16c4773b35c6cc5edf6327",
+    "engineering/evidence/nflverse_weekly_stats_full_audit_2026-09-14.json": "35eaf8cb803f5d1a516bd7873d090a133ec5ab7567854f54353dcf1e23f45e40"
+   }
+  },
+  "B0": {
+   "frozen_commit": "c128fc6b605f5b70a078d56d8518ef4b16220753",
+   "harness_sha256": "70c6074977a9ad05b9ad9ba014347e8a397c278aeddfa2235ba0e6d3a0d7e5d7",
+   "provenance": {
+    "audit_manifest_sha256": "35eaf8cb803f5d1a516bd7873d090a133ec5ab7567854f54353dcf1e23f45e40",
+    "current_season": {
+     "path": "stats_player_week_2026.csv",
+     "rows": 3336,
+     "seasons": [
+      2026
+     ],
+     "sha256": "e293e213908f746db982cd9112f5016125a42eeeec16c4773b35c6cc5edf6327"
+    },
+    "seasons": {
+     "2015": "21052baa3b3291a92faf3e6827891295010dca8cc5cefd5a909984b9d7b64664",
+     "2016": "eb0264c65d1ef593196afcd4ba24e9f2e9b7942923bf6f4bb4639684e2c4d470",
+     "2017": "592b0916065987b0b3afb0480162f03350d16b12250dc42b0f194e2ab1378563",
+     "2018": "c53021bcfc9f89d30edd6f1fe145a1d7d6ce469efeec75974fe9f0adac568642",
+     "2019": "a05558126b1209b80fe11a8f18938cb35816370bf9990975a87de49e9eed7376",
+     "2020": "05b992676faccc8940efbf6242cb76358069372d31d7c2e02c1a4acdcd3cbe18",
+     "2021": "41915fb49238902ad1f129ebf0405b11a1e710454ae0fe8f7b3e4f9145875f48",
+     "2022": "ad426c3fe5bf1cc30c3f137fdfe96d054e19d400879ee4413129da49fa7b54be",
+     "2023": "f19cb71a5de0dce7fd09376026237c9ee9d5a93fe13815a2ea3ec2d37204cb17",
+     "2024": "3ddc45a84f759aa348ce465ae001752c530575455717657cdfe1f8abfcdb4759",
+     "2025": "e5e0615b3d96a3eaebfaee91e55afb4a4e7fe0caf057454177bcd7d6ad4bcfc2"
+    }
+   }
+  },
+  "C": {
+   "fanduel_capture": "FANDUEL_CAPTURED",
+   "frozen_commit": "40d842c9a967e6692c63a0b0a1730f36f304f2a8",
+   "games_csv_sha256": "7fdc123e11cf224b97d120980a4cd18171147f6db6d4c3b193f27406b4856c4e",
+   "games_manifest": [
+    {
+     "f1_live": true,
+     "game_id": "2026_04_ARI_NYG",
+     "information_cutoff": "2026-10-01T05:19:44Z",
+     "kickoff_utc": "2026-10-04T17:00:00Z",
+     "status": "EMITTED",
+     "weather": "NOT_YET_ISSUED"
+    },
+    {
+     "f1_live": true,
+     "game_id": "2026_04_ATL_NO",
+     "information_cutoff": "2026-10-01T05:19:45Z",
+     "kickoff_utc": "2026-10-06T00:15:00Z",
+     "status": "EMITTED",
+     "weather": "NOT_OUTDOORS"
+    },
+    {
+     "f1_live": true,
+     "game_id": "2026_04_DAL_HOU",
+     "information_cutoff": "2026-10-01T05:19:44Z",
+     "kickoff_utc": "2026-10-04T17:00:00Z",
+     "status": "EMITTED",
+     "weather": "NOT_OUTDOORS"
+    },
+    {
+     "f1_live": true,
+     "game_id": "2026_04_DEN_SF",
+     "information_cutoff": "2026-10-01T05:19:45Z",
+     "kickoff_utc": "2026-10-04T20:25:00Z",
+     "status": "EMITTED",
+     "weather": "NOT_YET_ISSUED"
+    },
+    {
+     "f1_live": true,
+     "game_id": "2026_04_DET_CAR",
+     "information_cutoff": "2026-10-01T05:19:45Z",
+     "kickoff_utc": "2026-10-05T00:20:00Z",
+     "status": "EMITTED",
+     "weather": "NOT_YET_ISSUED"
+    },
+    {
+     "f1_live": true,
+     "game_id": "2026_04_GB_TB",
+     "information_cutoff": "2026-10-01T05:19:44Z",
+     "kickoff_utc": "2026-10-04T17:00:00Z",
+     "status": "EMITTED",
+     "weather": "NOT_YET_ISSUED"
+    },
+    {
+     "f1_live": true,
+     "game_id": "2026_04_IND_WAS",
+     "information_cutoff": "2026-10-01T05:19:44Z",
+     "kickoff_utc": "2026-10-04T13:30:00Z",
+     "status": "EMITTED",
+     "weather": "NO_MOS_STATION"
+    },
+    {
+     "f1_live": true,
+     "game_id": "2026_04_JAX_CIN",
+     "information_cutoff": "2026-10-01T05:19:44Z",
+     "kickoff_utc": "2026-10-04T17:00:00Z",
+     "status": "EMITTED",
+     "weather": "NOT_YET_ISSUED"
+    },
+    {
+     "f1_live": true,
+     "game_id": "2026_04_KC_LV",
+     "information_cutoff": "2026-10-01T05:19:45Z",
+     "kickoff_utc": "2026-10-04T20:25:00Z",
+     "status": "EMITTED",
+     "weather": "NOT_OUTDOORS"
+    },
+    {
+     "f1_live": true,
+     "game_id": "2026_04_LAC_SEA",
+     "information_cutoff": "2026-10-01T05:19:45Z",
+     "kickoff_utc": "2026-10-04T20:25:00Z",
+     "status": "EMITTED",
+     "weather": "NOT_YET_ISSUED"
+    },
+    {
+     "f1_live": true,
+     "game_id": "2026_04_LA_PHI",
+     "information_cutoff": "2026-10-01T05:19:44Z",
+     "kickoff_utc": "2026-10-04T17:00:00Z",
+     "status": "EMITTED",
+     "weather": "NOT_YET_ISSUED"
+    },
+    {
+     "f1_live": true,
+     "game_id": "2026_04_MIA_MIN",
+     "information_cutoff": "2026-10-01T05:19:44Z",
+     "kickoff_utc": "2026-10-04T20:05:00Z",
+     "status": "EMITTED",
+     "weather": "NOT_OUTDOORS"
+    },
+    {
+     "f1_live": true,
+     "game_id": "2026_04_NE_BUF",
+     "information_cutoff": "2026-10-01T05:19:44Z",
+     "kickoff_utc": "2026-10-04T17:00:00Z",
+     "status": "EMITTED",
+     "weather": "NOT_YET_ISSUED"
+    },
+    {
+     "f1_live": true,
+     "game_id": "2026_04_NYJ_CHI",
+     "information_cutoff": "2026-10-01T05:19:44Z",
+     "kickoff_utc": "2026-10-04T17:00:00Z",
+     "status": "EMITTED",
+     "weather": "NOT_YET_ISSUED"
+    },
+    {
+     "f1_live": true,
+     "game_id": "2026_04_PIT_CLE",
+     "information_cutoff": "2026-10-01T05:19:44Z",
+     "kickoff_utc": "2026-10-02T00:15:00Z",
+     "status": "EMITTED",
+     "weather": "OK"
+    },
+    {
+     "f1_live": true,
+     "game_id": "2026_04_TEN_BAL",
+     "information_cutoff": "2026-10-01T05:19:44Z",
+     "kickoff_utc": "2026-10-04T17:00:00Z",
+     "status": "EMITTED",
+     "weather": "NOT_YET_ISSUED"
+    }
+   ],
+   "params_sha256": "34c803fbcb12a4a1a5843aab198cbbd0de3248daa81c3cbe04b351dc4eeb049f",
+   "pbp_sources": {
+    "play_by_play_2016.csv.gz": {
+     "received_at": "2026-09-24T21:00:04Z",
+     "sha256": "dc1703d9aae3ec697ac2787617f82b6f074d0c151e1a54f8217f570a63dcb5ed"
+    },
+    "play_by_play_2017.csv.gz": {
+     "received_at": "2026-09-24T21:00:05Z",
+     "sha256": "74032964ca6bdfc5bbe186253231a533d2d82aa531fac02b9382da01b3a8b34e"
+    },
+    "play_by_play_2018.csv.gz": {
+     "received_at": "2026-09-24T21:00:05Z",
+     "sha256": "d37899610b397b96a90da6902827de5b46c5457b93e0e16d5f95a8eb524e4a7d"
+    },
+    "play_by_play_2019.csv.gz": {
+     "received_at": "2026-09-24T21:00:05Z",
+     "sha256": "b764668137052be23745953cbc33fa17e537a70c81e9b73785a19a15e7288216"
+    },
+    "play_by_play_2020.csv.gz": {
+     "received_at": "2026-09-24T21:00:06Z",
+     "sha256": "bc954b5780e325df4faa255fac092585c981a4de5d2f553a8a4e0a3c8b3a3cf2"
+    },
+    "play_by_play_2021.csv.gz": {
+     "received_at": "2026-09-24T21:00:07Z",
+     "sha256": "e8743a568f99667a8bdcd29ba12224ee1782ad2b7916bee78ee335c099383739"
+    },
+    "play_by_play_2022.csv.gz": {
+     "received_at": "2026-09-24T21:00:07Z",
+     "sha256": "0c69a71eb39498956c7b1d5c1ca52ce7fe679934a95d1af249facb5ea9829ea4"
+    },
+    "play_by_play_2023.csv.gz": {
+     "received_at": "2026-09-24T21:00:08Z",
+     "sha256": "4649804ee0f0a40b41e51ec75a1ce921949d7fab5459213488656b92f78560e8"
+    },
+    "play_by_play_2024.csv.gz": {
+     "received_at": "2026-09-24T21:00:08Z",
+     "sha256": "23370d5d10f8104d80d46a1fc5e61f4f6f5a3263fe96fe2dd629913cfcb08c06"
+    },
+    "play_by_play_2025.csv.gz": {
+     "received_at": "2026-09-24T21:00:09Z",
+     "sha256": "2f135887790a013fd004e609e37096bb4816d5cc80b9f19122e1bad478961978"
+    },
+    "play_by_play_2026.csv.gz": {
+     "received_at": "2026-10-01T05:15:32Z",
+     "sha256": "321433f8c3cab61e7577f49dc2f22f8216de8a5eb84baa432f1cf3d60d0b705a"
+    }
+   },
+   "raw_output": "ws_c/team_context_live_2026_w04.json",
+   "raw_sha256": "0dfcb0540d6b3bc87aaaf0d3bba64cf1e86e372774b2508e093826498ff31b46",
+   "weather": {
+    "2026_04_ARI_NYG": {
+     "rerun_after_utc": "2026-10-03T17:00:00Z",
+     "runtime": "2026-10-03 12:00",
+     "station": "KEWR",
+     "status": "NOT_YET_ISSUED"
+    },
+    "2026_04_ATL_NO": {
+     "roof_type": "dome",
+     "status": "NOT_OUTDOORS"
+    },
+    "2026_04_DAL_HOU": {
+     "roof_type": "retractable",
+     "status": "NOT_OUTDOORS"
+    },
+    "2026_04_DEN_SF": {
+     "rerun_after_utc": "2026-10-03T17:00:00Z",
+     "runtime": "2026-10-03 12:00",
+     "station": "KSJC",
+     "status": "NOT_YET_ISSUED"
+    },
+    "2026_04_DET_CAR": {
+     "rerun_after_utc": "2026-10-03T17:00:00Z",
+     "runtime": "2026-10-03 12:00",
+     "station": "KCLT",
+     "status": "NOT_YET_ISSUED"
+    },
+    "2026_04_GB_TB": {
+     "rerun_after_utc": "2026-10-03T17:00:00Z",
+     "runtime": "2026-10-03 12:00",
+     "station": "KTPA",
+     "status": "NOT_YET_ISSUED"
+    },
+    "2026_04_IND_WAS": {
+     "stadium": "Tottenham Hotspur Stadium",
+     "status": "NO_MOS_STATION"
+    },
+    "2026_04_JAX_CIN": {
+     "rerun_after_utc": "2026-10-03T17:00:00Z",
+     "runtime": "2026-10-03 12:00",
+     "station": "KCVG",
+     "status": "NOT_YET_ISSUED"
+    },
+    "2026_04_KC_LV": {
+     "roof_type": "dome",
+     "status": "NOT_OUTDOORS"
+    },
+    "2026_04_LAC_SEA": {
+     "rerun_after_utc": "2026-10-03T17:00:00Z",
+     "runtime": "2026-10-03 12:00",
+     "station": "KSEA",
+     "status": "NOT_YET_ISSUED"
+    },
+    "2026_04_LA_PHI": {
+     "rerun_after_utc": "2026-10-03T17:00:00Z",
+     "runtime": "2026-10-03 12:00",
+     "station": "KPHL",
+     "status": "NOT_YET_ISSUED"
+    },
+    "2026_04_MIA_MIN": {
+     "roof_type": "dome",
+     "status": "NOT_OUTDOORS"
+    },
+    "2026_04_NE_BUF": {
+     "rerun_after_utc": "2026-10-03T17:00:00Z",
+     "runtime": "2026-10-03 12:00",
+     "station": "KBUF",
+     "status": "NOT_YET_ISSUED"
+    },
+    "2026_04_NYJ_CHI": {
+     "rerun_after_utc": "2026-10-03T17:00:00Z",
+     "runtime": "2026-10-03 12:00",
+     "station": "KMDW",
+     "status": "NOT_YET_ISSUED"
+    },
+    "2026_04_PIT_CLE": {
+     "f6_fcst_lead_hours": 36.25,
+     "f6_fcst_pop6": 22.0,
+     "f6_fcst_runtime": "2026-09-30 12:00",
+     "f6_fcst_temp_f": 76.0,
+     "f6_fcst_wind_kt": 6.5,
+     "raw_sha256": "1dd6fb360a12586f77e76eddbd3f7b94144f75e4a282665f554ec585b106fcef",
+     "retrieved_at": "2026-10-01T05:17:03Z",
+     "station": "KCLE",
+     "status": "OK"
+    },
+    "2026_04_TEN_BAL": {
+     "rerun_after_utc": "2026-10-03T17:00:00Z",
+     "runtime": "2026-10-03 12:00",
+     "station": "KBWI",
+     "status": "NOT_YET_ISSUED"
+    }
+   }
+  },
+  "D": {
+   "consumer_sha256": "d14cc1c74c597ca774cbfb7ba6b633fb112e1607791a74a169cae0bdd2ba81bd",
+   "frozen_commit": "76b42547c39357c27ebd15ec9c3bbd492b2de6a2",
+   "information_cutoff": "2026-09-30T16:25:46Z",
+   "pbp_sha256": {
+    "play_by_play_2016.csv.gz": "dc1703d9aae3ec697ac2787617f82b6f074d0c151e1a54f8217f570a63dcb5ed",
+    "play_by_play_2017.csv.gz": "74032964ca6bdfc5bbe186253231a533d2d82aa531fac02b9382da01b3a8b34e",
+    "play_by_play_2018.csv.gz": "d37899610b397b96a90da6902827de5b46c5457b93e0e16d5f95a8eb524e4a7d",
+    "play_by_play_2019.csv.gz": "b764668137052be23745953cbc33fa17e537a70c81e9b73785a19a15e7288216",
+    "play_by_play_2020.csv.gz": "bc954b5780e325df4faa255fac092585c981a4de5d2f553a8a4e0a3c8b3a3cf2",
+    "play_by_play_2021.csv.gz": "e8743a568f99667a8bdcd29ba12224ee1782ad2b7916bee78ee335c099383739",
+    "play_by_play_2022.csv.gz": "0c69a71eb39498956c7b1d5c1ca52ce7fe679934a95d1af249facb5ea9829ea4",
+    "play_by_play_2023.csv.gz": "4649804ee0f0a40b41e51ec75a1ce921949d7fab5459213488656b92f78560e8",
+    "play_by_play_2024.csv.gz": "23370d5d10f8104d80d46a1fc5e61f4f6f5a3263fe96fe2dd629913cfcb08c06",
+    "play_by_play_2025.csv.gz": "2f135887790a013fd004e609e37096bb4816d5cc80b9f19122e1bad478961978",
+    "play_by_play_2026.csv.gz": "321433f8c3cab61e7577f49dc2f22f8216de8a5eb84baa432f1cf3d60d0b705a"
+   },
+   "sources": {
+    "play_by_play_2026.csv.gz": "321433f8c3cab61e7577f49dc2f22f8216de8a5eb84baa432f1cf3d60d0b705a",
+    "snap_counts_2026.csv": "c5868527b1052ae572b2d8f34a7bb777675a5e762ceaeb25f72f10d1c59846d5",
+    "stats_player_week_2026.csv": "e293e213908f746db982cd9112f5016125a42eeeec16c4773b35c6cc5edf6327"
+   }
+  }
+ },
+ "dry_run": false,
+ "excluded_games": [],
+ "files_sha256": {
+  "driver_B.json": "4634aeafb63229208d933fceb3c9a65401d951a24b80fa501557dcf155d49768",
+  "driver_B.log": "e29d1e5c4d811291006fa1fd60f31c1e176b09b0f087ffff386e6a44b763ed48",
+  "driver_B0.json": "66ea608df234445bd73c534ac377aaba3de82a990868158da29e05716801abda",
+  "driver_B0.log": "ee4f814306509004d77712d0e07a1544bea41372564655a127780e3624fe406d",
+  "driver_C.json": "e6d8f89a5f480c6ccd8386de8e2dabad38f08d679747affd5ce6cf957c27b559",
+  "driver_C.log": "1d5ad8e761415438bdd0904e7a802a429d13b5131aff3bfe4722b8cc65ed4cb6",
+  "driver_D.json": "f3fff4429fd55a71b0c9ef46ac1a11c11f212855b1a895c8552a1b362bf30f78",
+  "driver_D.log": "a240fe5215423f0fb9960d8ce88253d6ef65e510196da7bbe1b45f3ec3b2127b",
+  "primary_predictions.json": "e4b664fc89bedc184b3fa53232f572fd28285507c0cef3393dc0152cb4c0a97f",
+  "ws_b_live.json": "01a1a9fd7576ac094de5886f306b188743b229f75ea66586ae05eb14b877ba19",
+  "ws_c/fanduel/event_35605982.json": "f78cfa849cf58adb399d90b093dfbacb3f4287759cad66cd69c2d932e33c25b8",
+  "ws_c/fanduel/event_36104914.json": "6e7a9f27924db8fafabcb3bc11a341d2f8a098e67f7e41ec740d6f880ceabf68",
+  "ws_c/fanduel/event_36104915.json": "809e9071040117ef3e85c6392dfea5ab31a47c84fd1bbe25332447a90343ff88",
+  "ws_c/fanduel/event_36104916.json": "8879ff34aed25119169cf6526790f06802012c65a1f0a3318897c4cabced7242",
+  "ws_c/fanduel/event_36104917.json": "44c7d51e70e055929bb100b7c8e174262f841f50ec01616d61a9e7b7e650174d",
+  "ws_c/fanduel/event_36104918.json": "eecb45ef8d1de915328e8a1d5a9e6acb629ae2b961739da86e71fe763a509c7b",
+  "ws_c/fanduel/event_36104919.json": "dc82efd2d2e90a0849c66ce2203cfb6b48d94fb5fb205842929229c231febf66",
+  "ws_c/fanduel/event_36104920.json": "68f3c17a2d98331fe3e8524bfb57e44fe0a9b29d1c0a88e388f36be426988a8e",
+  "ws_c/fanduel/event_36104921.json": "59591e088856e1df1d577a4e4c1131c3bb970663fdaa6d5e58f8c5b2620e511f",
+  "ws_c/fanduel/event_36104922.json": "78d118fff7c81c37c30b02d4fb6383b470a0f0e47c6fdb15e8a21e210e389cf6",
+  "ws_c/fanduel/event_36104923.json": "48ac13c164694738010bda29a02948298bbd23f87ad29b6ae7003d8336eb084f",
+  "ws_c/fanduel/event_36104924.json": "c69e5d43b233ddc0460ef43a70395cbf5d1f94236efb013c60e3899ee33c183f",
+  "ws_c/fanduel/event_36104925.json": "63a4116f1394209c366bc2917156a56cd2779e85bd2697099709ea50aa32ca68",
+  "ws_c/fanduel/event_36104926.json": "4e3b906463a84a540b0333d5ed822fdfc64b6a9528a2a4fd25a6d8606da8b83f",
+  "ws_c/fanduel/event_36104927.json": "f30b0afcec4c5c2ae2cac0cc21ac1e9cd9c34bbd97aa46d7b885fce8b4b62534",
+  "ws_c/fanduel/event_36104928.json": "095d6bf59b18aa1aab89051044ebe29a30196d271c43f0b1b072c5523cef0b47",
+  "ws_c/fanduel/fanduel_root.json": "9784292b70862946236f8781cef9d85c78e81562ab808513fd8265079f320fa3",
+  "ws_c/team_context_live_2026_w04.json": "58cf0beb15047f77dbe8a3f80bc6177b5bd867c90ea92be0ce80282ae1322e0a"
+ },
+ "first_kickoff_utc": "2026-10-02T00:15:00+00:00",
+ "frozen_commits": {
+  "B": "8aa8067fbc71416e4f541b9fd3610e59331f11c4",
+  "B0": "c128fc6b605f5b70a078d56d8518ef4b16220753",
+  "C": "40d842c9a967e6692c63a0b0a1730f36f304f2a8",
+  "D": "76b42547c39357c27ebd15ec9c3bbd492b2de6a2"
+ },
+ "games": {
+  "2026_04_ARI_NYG": "2026-10-04T17:00:00+00:00",
+  "2026_04_ATL_NO": "2026-10-06T00:15:00+00:00",
+  "2026_04_DAL_HOU": "2026-10-04T17:00:00+00:00",
+  "2026_04_DEN_SF": "2026-10-04T20:25:00+00:00",
+  "2026_04_DET_CAR": "2026-10-05T00:20:00+00:00",
+  "2026_04_GB_TB": "2026-10-04T17:00:00+00:00",
+  "2026_04_IND_WAS": "2026-10-04T13:30:00+00:00",
+  "2026_04_JAX_CIN": "2026-10-04T17:00:00+00:00",
+  "2026_04_KC_LV": "2026-10-04T20:25:00+00:00",
+  "2026_04_LAC_SEA": "2026-10-04T20:25:00+00:00",
+  "2026_04_LA_PHI": "2026-10-04T17:00:00+00:00",
+  "2026_04_MIA_MIN": "2026-10-04T20:05:00+00:00",
+  "2026_04_NE_BUF": "2026-10-04T17:00:00+00:00",
+  "2026_04_NYJ_CHI": "2026-10-04T17:00:00+00:00",
+  "2026_04_PIT_CLE": "2026-10-02T00:15:00+00:00",
+  "2026_04_TEN_BAL": "2026-10-04T17:00:00+00:00"
+ },
+ "generated_utc": "2026-10-01T05:19:11.257167+00:00",
+ "injuries": {
+  "previous_sha256": "b9f0740139d052ffb14bd23930f28cccd06547983a3fc4d2b7cd6192eb6aab01",
+  "retrieved_utc": "2026-10-01T05:19:11.998283+00:00",
+  "sha256": "e18f3b4ce7e35033218c063af9c86d8bb4b7c378f82195e1730659fc0781df76",
+  "upstream_last_modified": "Wed, 30 Sep 2026 13:36:27 GMT",
+  "url": "https://github.com/nflverse/nflverse-data/releases/download/injuries/injuries_2026.csv"
+ },
+ "label": "thu_all",
+ "pinned_inputs": {
+  "/tmp/claude-0/nfl_tier1_shared/pbp/play_by_play_2026.csv.gz": "321433f8c3cab61e7577f49dc2f22f8216de8a5eb84baa432f1cf3d60d0b705a",
+  "/tmp/claude-0/nfl_tier1_shared/snap_counts/snap_counts_2026.csv": "c5868527b1052ae572b2d8f34a7bb777675a5e762ceaeb25f72f10d1c59846d5",
+  "/tmp/claude-0/nfl_tier1_shared/stats_player_week_2026.csv": "e293e213908f746db982cd9112f5016125a42eeeec16c4773b35c6cc5edf6327"
+ },
+ "protocol": "PROSPECTIVE_PROTOCOL.md v1",
+ "row_counts": {
+  "H1": 344,
+  "H1_SECONDARY_receptions": 344,
+  "H2": 300,
+  "H2_SECONDARY_passing_yards": 42,
+  "H2_SECONDARY_receptions": 300,
+  "H3": 412
+ },
+ "rule": "A row counts only if this directory is committed before its game's kickoff. Nothing is back-filled.",
+ "season": 2026,
+ "week": 4
+}
