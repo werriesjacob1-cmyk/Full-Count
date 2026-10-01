@@ -403,4 +403,47 @@ This section uses the directive's five statuses, one per listed angle:
 |---|---|---|---|---|---|
 | Coherent multi-factor player/game predictions | P12, X01–X04, X18 | PARTIAL | Tier 1 challengers are single-family consumers; no validated combined model; prospective H1–H3 frozen for weeks 3–8 | Claude | Week-8 analysis, then a pre-registered combination |
 
+## 17. Present-tense status index (2026-10-01; supersedes §12 as the current checkpoint)
+
+§12 is kept as the 2026-09-23 checkpoint and §16 as the 2026-09-25 ledger. This section restates the current state by requirement category, with dated evidence. Statuses use §0's contract. Nothing here promotes a factor, changes a frozen protocol or authorizes publication.
+
+### 17.1 Category index
+
+| Category | Register IDs | Status on 2026-10-01 | Evidence and boundary |
+|---|---|---|---|
+| Live and operational (customer-facing) | E09–E10, M09–M13 | **Not operational** | Codex 2026-09-29 observation (#91 5895043340): no official NFL selection or customer path exists. `docs/nfl/data.json` holds zero records with `public_selector_validated=false`, and the publisher is manual and shadow-only. The live NFL workflows are research shadows. |
+| Research-only capabilities | P, R, G, M families | LIVE_RESEARCH_CONNECTED / PROSPECTIVE_FROZEN, by item | Tier 1 H1–H3 (#202–#205, #207 substrate) is prospective and frozen. The receptions, passing-yards and game-market shadow boards are research workflows. Mission 10 C1 (#193) one-week forward grade, labelled not confirmatory: C1−B0 MAE −0.034, 95% CI [−0.110, +0.043]. |
+| Source- and rights-blocked | F01–F09, D02–D08, M01–M03 | BLOCKED | Receiver–defender assignment is BLOCKED (#214 F18, closed unmerged as preserved history). Film: #174 is structured FTN charting (open, REVIEW REQUIRED) and #170 is a synthetic prototype (closed). Book quote-origin time is not provided (see pricing). |
+| Pricing and eligibility | M01–M05, M09, M12 | BLOCKED(three gates) | #196/#199 are research only. 57/57 archived ATL–GB FanDuel offers are QUARANTINED under `QUOTE_TIMESTAMP_NOT_PROVIDED`, `CURRENT_ROLE_NOT_VERIFIED` and `BOOK_ACTION_RULES_NOT_CERTIFIED` (#91 5894547329). |
+| Coaching and tactical | C01–C09 | HISTORICAL_RESEARCH (regime filter); playcaller NOT YET CERTIFIED | #181 regime consumer: 0 activations in the matched 2025 and 2024 populations. Current playcaller identity and game-plan prediction remain open. |
+| Injury, practice and role | N01–N08, R01–R09 | LIVE_RESEARCH_CONNECTED (nflverse injuries, snaps); 32-team news NOT YET CERTIFIED | Tier 1 WS-B F2/F8/F9 consume pinned snaps and refreshed nflverse injuries at each seal. No complete, time-safe 32-team news consumer exists. |
+| Market lines, totals and alternate lines | M06–M08, G01–G07 | HISTORICAL_RESEARCH / research shadow | The game-market shadow board runs on a schedule. #190 (passing-yards alternate ladder) was closed as preserved history: empirical versus Normal was a statistical tie, with no live consumer. |
+| TD markets | P, G, M families via Tier 1 H3 | PROSPECTIVE_FROZEN | H3 compares C-F4 `rz_blend` with `volume_only` and is sealed weekly. The anytime-TD population is touch-conditioned, so it is a forecast-quality test, not a pricing test (protocol §6). |
+| Player-prop pathways | P01–P12, M06 | PROSPECTIVE_FROZEN / research shadow | H1 (receiving yards), H2 (receiving yards via team volume) and the receptions secondaries are prospective. No NFL prop challenger has passed matched evaluation plus prospective evidence. #186 (rushing B0 / challenger) was closed as preserved history after the challenger was rejected. |
+| Seal and provenance | E03–E08 | Operational for Tier 1 research seals | Week 3 Sun/Mon seal **missed**, so those rows are excluded and never back-filled (#91 5913976107). Week 4 Thursday all-games seal `693526aa5f` was pushed 2026-10-01T05:22:30Z (#91 5925292654). The Saturday Sun/Mon refresh runs from a repository-attached runner session with a backstop (#91 5925884209). |
+| Customer publication | E09–E10, M11–M13 | NOT STARTED for NFL | Publication requires Jacob's explicit authorization. Validated selection and eligibility gates (pricing row) come first. |
+| Grading and learning loop | M10–M11, E01–E05 | PARTIAL | Grading path exercised on ATL–GB research rows. Tier 1 has a **single** analysis after week 8, with no interim looks. The Mission 10 grade is one-week evidence only. The equal-volume comparison is NOT AVAILABLE until eligible offers exist. |
+
+### 17.2 Seal and provenance requirements learned in weeks 3–4 (now binding on prospective research seals)
+
+1. **Per-week pinned pre-week inputs.** Each target week pins the first upstream release after the previous week's final game. That release must be verified to contain every prior-week game and no target-week rows. Week 3's pins never change. Adding a week's pins is a builder change that needs Jacob's authorization; he gave it for week 4 on 2026-10-01.
+2. **Pinned reference files can drift upstream.** Example: nflverse `players.csv` changed after 2026-09-25. Recovery bundles must carry the pinned bytes, not only a URL and hash.
+3. **Truthful information cutoffs.** A cutoff stamped on a feature row must reflect that week's actual inputs, never a constant carried over from an earlier week.
+4. **Execution must not depend on one long-lived session.**
+   - A scheduled prompt that is only *delivered* to a session is not an executed seal. That is the root cause of the week-3 miss.
+   - Seal runs need a session with repository access.
+   - They need a fresh-container drill of the exact command beforehand.
+   - They need an independent backstop check after the scheduled time.
+5. **Independent pre-kickoff proof.** A row counts only if all of the following hold:
+   - its seal commit is pushed before kickoff;
+   - every file re-hashes from a fresh clone;
+   - a #91 comment carries a server timestamp before kickoff.
+
+   Missed games are excluded, never back-filled.
+6. **Multiple seals for one game.** The analysis uses the latest seal committed before that game's kickoff. Every seal is kept.
+
+### 17.3 What this index does not change
+
+The §1–§11 requirement IDs, the §0 status contract and the §15–§16 crosswalk and ledger remain the accountable units. PR states cited here are dated observations and must be refreshed before they are relied on.
+
 Alligator.
