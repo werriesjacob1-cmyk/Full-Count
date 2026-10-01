@@ -10,6 +10,10 @@ S=/tmp/claude-0/nfl_tier1_shared
 HERE=$(cd "$(dirname "$0")" && pwd)
 (cd "$HERE" && sha256sum -c SHA256SUMS)
 
+# 0. Python packages pinned in MANIFEST.json (a fresh container lacks numpy/pandas;
+#    found by the 2026-10-01 fresh-container drill, branch claude/nfl-seal-drill-2026w04).
+python3 -c "import numpy, pandas, requests" 2>/dev/null || pip install -q numpy==2.4.6 pandas==3.0.5 requests==2.34.2
+
 # 1. players.csv: upstream drifted after 2026-09-25 (4dd70f32... pinned, 5b6f22c2... served
 #    on 2026-10-01). Place the pinned copy first so the week-3 restore accepts it.
 mkdir -p /tmp/claude-0/nfl_tier1_B
