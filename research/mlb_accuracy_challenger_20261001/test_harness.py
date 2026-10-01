@@ -111,6 +111,17 @@ class Guards(unittest.TestCase):
         with self.assertRaises(ValueError):
             H.evaluate([(b, graded(b, {"a": "hit"}))], COEF, boundary_utc=BOUNDARY, regime="POSTSEASON_2026_SHADOW")
 
+    def test_boundary_compares_parsed_times(self):
+        # 18:00:00.5+00:00 is after an 18:00:00Z boundary (string order would say otherwise)
+        b = board("2026-10-02", [rec("a", status="top_pick")], sealed="2026-10-01T18:00:00.500000+00:00")
+        out = H.evaluate([(b, graded(b, {"a": "hit"}))], COEF, boundary_utc="2026-10-01T18:00:00Z",
+                         regime="POSTSEASON_2026_SHADOW")
+        self.assertEqual(out["arms"]["CHAMPION"]["n_scored"], 1)
+        late = board("2026-10-02", [rec("a", status="top_pick")], sealed="2026-10-01T13:00:00-05:00")
+        with self.assertRaises(ValueError):  # 18:00Z exactly is not strictly after
+            H.evaluate([(late, graded(late, {"a": "hit"}))], COEF, boundary_utc="2026-10-01T18:00:00Z",
+                       regime="POSTSEASON_2026_SHADOW")
+
     def test_unknown_regime_refused(self):
         with self.assertRaises(ValueError):
             H.evaluate([], COEF, boundary_utc=BOUNDARY, regime="WHATEVER")

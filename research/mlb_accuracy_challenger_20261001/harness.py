@@ -237,6 +237,15 @@ def c3_pitcher_outs(rows, B=BOOT_B, seed=BOOT_SEED):
     return {"n": len(rs), "n_games": len(ks), "mean_ll_p2_minus_p1": mean, "ci95": [lo, hi], "verdict": v}
 
 
+def _utc(stamp):
+    """Parse an ISO-8601 timestamp ('Z' or offset) to an aware UTC datetime; naive is refused."""
+    from datetime import datetime, timezone
+    t = datetime.fromisoformat(str(stamp).replace("Z", "+00:00"))
+    if t.tzinfo is None:
+        raise ValueError(f"timestamp without timezone: {stamp}")
+    return t.astimezone(timezone.utc)
+
+
 def evaluate(slates, coef, *, boundary_utc, regime):
     """slates: list of (board, graded). Applies the leakage guards, builds the universe,
     selects at equal volume, and returns the full decision table."""
@@ -247,7 +256,7 @@ def evaluate(slates, coef, *, boundary_utc, regime):
         d = board["date"]
         if DEV_WINDOW[0] <= d <= DEV_WINDOW[1]:
             raise ValueError(f"{d}: inside the development window; refused")
-        if regime != "SMOKE_TEST_SYNTHETIC" and not board["sealed_at"] > boundary_utc:
+        if regime != "SMOKE_TEST_SYNTHETIC" and not _utc(board["sealed_at"]) > _utc(boundary_utc):
             raise ValueError(f"{d}: board sealed {board['sealed_at']} not after boundary {boundary_utc}; refused")
         rows, why = universe(board, graded, coef)
         audit[d] = {"eligible": len(rows), "excluded": why}
