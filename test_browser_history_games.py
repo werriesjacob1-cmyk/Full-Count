@@ -11,7 +11,10 @@ specific reason, never "not priced".
 history.json and live.json are served through Playwright route interception
 so each step controls exactly which document the page sees; data.json is the
 checked-in board with its freshness clocks rebased to now (same reasoning as
-test_browser_e2e._rebased) so the board is actionable.
+test_browser_e2e._rebased) so the board is actionable. The Games check runs
+against one synthetic pregame game and prop added to that board, so it never
+depends on which live highlights happen to resolve (2026-09-25: the first live
+highlight was no longer on the board and the check failed on data alone).
 
     python3 test_browser_history_games.py [-v]
 """
@@ -77,6 +80,30 @@ def live_doc(props):
 ID_A = "fc2:900001:player-1:hits:1:over"
 ID_C = "fc2:900001:player-3:hits:1:over"
 ID_D = "fc2:900000:player-4:hits:1:over"
+FIXTURE_GAME_PK = 900002
+ID_G = f"fc2:{FIXTURE_GAME_PK}:player-5:hits:1:over"
+
+
+def add_fixture_game(doc):
+    """One synthetic pregame game whose highlight resolves to a board prop."""
+    start = (datetime.now(timezone.utc) + timedelta(hours=6)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    matchup = "Fixture Away @ Fixture Home"
+    highlight = {"id": ID_G, "name": "Fixture Golf", "prop": "Over 0.5 Hits", "hit_probability": 0.7,
+                 "market_odds": -150, "price_clears": True, "why": "fixture"}
+    doc.setdefault("schedule", []).append({
+        "game_pk": FIXTURE_GAME_PK, "matchup": matchup, "away_team": "Fixture Away",
+        "home_team": "Fixture Home", "away_sp": "Fixture Arm A", "home_sp": "Fixture Arm B",
+        "hp_ump": "Fixture Ump", "game_start": start,
+        "weather": {"dome": False, "temp": 70.0, "wind_mph": 0.0, "wind_effect": "none",
+                    "park_hr_index": 50.0, "precip_prob": 0},
+        "umpire": {"name": "Fixture Ump", "k_pct": 0.22, "bb_pct": 0.085,
+                   "league_k_pct": 0.22, "league_bb_pct": 0.085},
+        "is_getaway": False, "is_opener": False,
+        "pick_sections": [{"label": "Best Overall Read", "picks": [highlight]}]})
+    doc.setdefault("props", []).append({
+        **{k: highlight[k] for k in ("id", "name", "prop", "hit_probability", "market_odds", "price_clears")},
+        "game_pk": FIXTURE_GAME_PK, "matchup": matchup, "game_start": start, "game_state": "pregame",
+        "stat": "hits", "type": "batter", "recommendation_status": "lean", "why": []})
 
 
 def pick(pid, name, grade=None):
@@ -120,6 +147,7 @@ def serve(route):
 
 try:
     board = rebased_board()
+    add_fixture_game(board)
     served["data.json"] = board
     served["history.json"] = history("2026-09-24T01:00:00+00:00", None)
     served["live.json"] = live_doc({ID_A: {
@@ -175,11 +203,10 @@ try:
     check(chip_a().strip() == "Hit ✓", "an older history.json never moves the page backwards", chip_a())
 
     print("-- Games: an unposted line is a labelled research projection, never 'not priced'")
-    game = next((g for g in board.get("schedule") or [] for s in g.get("pick_sections") or []
-                 for p in s.get("picks") or [] if p.get("id")), None)
-    check(game is not None, "the checked-in board has a game highlight to exercise")
+    game = next((g for g in board.get("schedule") or [] if g.get("game_pk") == FIXTURE_GAME_PK), None)
+    check(game is not None, "the served board has the fixture game highlight to exercise")
     if game is not None:
-        target = next(p["id"] for s in game["pick_sections"] for p in s["picks"] if p.get("id"))
+        target = ID_G
         stamp = iso(2)
         served["live.json"] = live_doc({target: {
             "market_odds": None, "market_implied": None, "price_clears": None,
