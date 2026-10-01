@@ -6453,3 +6453,14 @@ Alligator
 - **Week 5 onward** needs new per-week pins, which means a builder change. That requires Jacob's authorization each week, or a standing one.
 
 Alligator
+
+## 2026-10-01 06:20Z -- Saturday Week 4 seal path rebuilt after fresh-container drills
+- **Drill 1:** fresh-session routine, no repository attached. It had **no GitHub access**, so `trig_01D3Vqnvv8u4RdUhuFe6YKMx` is disabled.
+- **Drill 2:** repository attached (`claude/nfl-seal-drill-2026w04`). It passed: recovery OK after a pip install, the dry run matched (15 games, 320/283/387), and the API and push worked.
+  - `recover_w04.sh` now installs the pinned packages itself (`b304820f7a`).
+- **Saturday:**
+  - routine `trig_01SthdubqRKWd3N28PRZjzvc` fires at 18:30Z into runner `session_01YFgmGN4y6vJjiDc8rbZze2`, which has the repository attached;
+  - backstop `trig_01VarHYCdiEZ41YBBfFu9kNJ` fires at 20:00Z into this session.
+- **Lesson for Week 5 onward:** routines that create fresh sessions need a repository source. Use a runner session with the repository attached, run a drill first, and keep a backstop.
+
+Alligator
