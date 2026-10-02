@@ -155,5 +155,56 @@ class Manifest(unittest.TestCase):
                 F.verify_raw_files(d, man)
 
 
+class ZeroMatch(unittest.TestCase):
+    """Zero-match inputs must return an empty result with valid exclusion counts, never raise (Codex PASS-WITH-LIMITATIONS note)."""
+    def _fx(self):
+        f = MarketIdentity(); f.setUp(); return f
+
+    def _check_empty(self, m, ident):
+        self.assertEqual(len(m), 0)
+        self.assertEqual(ident["matched_player_games"], 0)
+        for k_ in ("events", "events_matched", "events_ambiguous", "events_unmatched", "player_prices_in_matched_events",
+                   "player_unmatched_in_eligible_population", "player_ambiguous_name_in_game",
+                   "doubleheader_player_games_matched", "doubleheader_exclusions"):
+            self.assertIn(k_, ident)
+
+    def test_no_events(self):
+        f = self._fx()
+        m, ident = F.match_market(f.props.iloc[0:0], f.sched, f.ev, pp)
+        self.assertEqual(len(m), 0)
+        self.assertEqual(ident["props_rows"], 0)
+
+    def test_all_events_unmatched(self):
+        f = self._fx()
+        props = f.props.assign(game="Foo (A) @ Bar (B)")
+        m, ident = F.match_market(props, f.sched, f.ev, pp)
+        self._check_empty(m, ident)
+        self.assertEqual(ident["events_matched"], 0)
+        self.assertEqual(ident["events_unmatched"], ident["events"])
+
+    def test_all_events_ambiguous(self):
+        f = self._fx()
+        sched = f.sched.assign(game_date_utc="2026-08-10T17:05:00Z")            # two games, same teams, same time
+        props = f.props[f.props["event_id"] == 9001]
+        m, ident = F.match_market(props, sched, f.ev, pp)
+        self._check_empty(m, ident)
+        self.assertEqual(ident["events_ambiguous"], 1)
+
+    def test_all_rows_filtered_by_time(self):
+        f = self._fx()
+        props = f.props[f.props["event_id"] == 9001].assign(taken_at="2026-08-10T18:00:00+00:00")
+        m, ident = F.match_market(props, f.sched, f.ev, pp)
+        self._check_empty(m, ident)
+        self.assertEqual(ident["events_matched"], 1)
+        self.assertEqual(ident["player_prices_in_matched_events"], 0)
+
+    def test_valid_mixed_input_unchanged(self):
+        f = self._fx()
+        m, ident = F.match_market(f.props, f.sched, f.ev, pp)
+        self.assertEqual({(r.game_pk, r.batter): r.american for r in m.itertuples()}, {(101, 1): -210, (102, 1): -180})
+        self.assertEqual((ident["events_matched"], ident["events_unmatched"], ident["player_ambiguous_name_in_game"],
+                          ident["player_unmatched_in_eligible_population"], ident["matched_player_games"]), (2, 1, 1, 1, 2))
+
+
 if __name__ == "__main__":
     unittest.main()

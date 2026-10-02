@@ -456,6 +456,13 @@ def match_market(props, sched, ev, pp):
     cutoff = pd.concat([pd.to_datetime(pr["start_time"], utc=True), pr["first_pitch"]], axis=1).min(axis=1)
     pr = pr[pd.to_datetime(pr["taken_at"], utc=True) < cutoff]
     pr = pr.sort_values("taken_at").groupby(["game_pk", "player_norm"], as_index=False).last()
+    if pr.empty:   # every event unmatched/ambiguous or every price at/after first pitch: empty result, full accounting
+        m = ev.iloc[0:0].assign(mkt_fair=[], mkt_implied=[], american=[], taken_at=[])
+        return m, ident | {"props_rows": int(len(props)), "events": int(len(ev_)), "events_matched": len(emap),
+                           "events_ambiguous": n_amb, "events_unmatched": n_none, "player_prices_in_matched_events": 0,
+                           "player_unmatched_in_eligible_population": 0, "player_ambiguous_name_in_game": 0,
+                           "matched_player_games": 0, "doubleheader_player_games_matched": 0,
+                           "doubleheader_exclusions": 0}
     names = ev.groupby(["game_pk", "player_norm"])["batter"].agg(list).reset_index()
     j = pr.merge(names, on=["game_pk", "player_norm"], how="left")
     unmatched = int(j["batter"].isna().sum())
