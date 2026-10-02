@@ -116,5 +116,6 @@ Frozen at the claim commit (before any challenger code). The challenger (Codex) 
 - Bullpen handedness uses the league same-hand share of relief PAs.
 
 ## LOG
+- 2026-10-02 minimum repair of Codex findings 1-4 (Jacob-authorized); single frozen 2026 rerun; head b52ac418ba; READY_FOR_CHALLENGE (delta-only).
 - 2026-10-02 frozen fit committed f48f87dea7 (sha 6c0ecde2…); ONE 2026 evaluation run -> INCONCLUSIVE at K=10 (+2.33pp, CI -0.19..+4.91). Head cc3ff960ccaad178023d4e92fa7940bdfe446ea3.
 - 2026-10-02 acceptance criteria written and frozen at claim; FC-MLB-002 claimed (CLAUDE_ACTIVE).
