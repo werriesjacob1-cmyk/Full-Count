@@ -1,21 +1,21 @@
 # Full Count Engineering Rules
 
-Repository memory:
+Orientation (default, one call):
+`git fetch -q --depth 1 origin claude/full-count-ops-state && git show FETCH_HEAD:engineering/ops/bin/fc.py | python3 - orient [TASK_ID]`
+prints CURRENT_STATE, the work queue and your task capsule. As challenger, use `orient TASK_ID --challenger` (objective state only; never the builder's conclusions).
+The Claude/Codex operating contract is `engineering/ops/OPERATING_CONTRACT.md` on that branch.
 
-- Read `engineering/PROJECT_STATE.md` for the current technical map.
-- Read `engineering/ENGINEERING_HANDOFF.md` for chronological decisions and work.
-- Use `engineering/AUDIT/README.md` for the Pre-Phase-V audit index and finding rules.
-- Read `engineering/AGENT_BRIDGE_PROTOCOL.md` and new GitHub Issue #91 comments before claiming significant work.
+Reference only when the task needs it: `engineering/PROJECT_STATE.md` (system map), `engineering/AUDIT/README.md` (audited areas), `engineering/AGENT_BRIDGE_PROTOCOL.md` (exceptional bridge messages), and `engineering/ENGINEERING_HANDOFF.md` (FROZEN history; reconstruction only).
 
 1. Full Count is an MLB betting analytics/research system.
 2. Current project stage is PRE-PHASE-V hardening. Phase V has NOT begun.
 3. Claude built/reviewed substantial portions of Phases 1–4.
-4. Codex and Claude Code collaborate asynchronously through repository history and GitHub Issue #91. Each must claim, report, hand off, and release work using the Agent Bridge protocol.
+4. Codex and Claude Code collaborate asynchronously through the ops-state work queue, repository history, and compact GitHub Issue #91 checkpoints. Each must claim, report, hand off, and release work per the operating contract. Acceptance criteria precede consequential builds; challenges are blind (objective state only).
 5. ChatGPT may act as architecture/adversarial reviewer.
 6. Any engineer may challenge prior decisions with evidence.
-7. Read `engineering/PROJECT_STATE.md` before significant work.
-8. Read `engineering/ENGINEERING_HANDOFF.md` before significant work.
-9. Update `engineering/ENGINEERING_HANDOFF.md` after every meaningful engineering task.
+7. Orient from CURRENT_STATE plus your task capsule before significant work; read reference documents only when the task needs them.
+8. `engineering/ENGINEERING_HANDOFF.md` is frozen history (2026-10-02); do not append to it.
+9. Update your task's queue entry, capsule LOG, and (if project state changed) CURRENT_STATE on `claude/full-count-ops-state` after every meaningful engineering task.
 10. Never silently alter prediction history.
 11. Probability and betting value are different concepts.
 12. Market-category rank does not equal Top Pick status.
