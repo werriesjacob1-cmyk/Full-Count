@@ -1,9 +1,81 @@
-# FC-MLB-002 — capsule
+# FC-MLB-002 — First predictive-engine challenger: batter × pitcher interaction for Hits 1+
 
 ## ACCEPTANCE_CRITERIA
-Not yet written. Must be written (and open to challenger additions) before any build — contract §3.
+Frozen at the claim commit (before any challenger code). The challenger (Codex) may ADD criteria; changes after that need SUPERCHAD.
+**Evidence class:** 2026 outcomes have already been visible to the project, so every 2026 result here is **DEVELOPMENT evidence**, never confirmatory. Confirmation happens only prospectively, in a separate task.
+
+1. **Target population**
+   - **Settlement:** MLB regular season (`game_type R`) batter-games from 2026-04-15 to the end of the 2026 regular season. The prop is **Hits Over 0.5**: YES iff the batter records ≥ 1 hit.
+   - **Eligibility:**
+     - the batter is in the starting lineup (one of the first 9 distinct batters for his team in that game);
+     - the opposing starting pitcher is identified (first pitcher his team faced);
+     - the batter has ≥ 30 season-to-date PA before the game (the champion's `min_pa`).
+   - **Diagnostics only:** Hits Over 1.5 and Total Bases Over 1.5.
+2. **Champion (CH0)**
+   - FULL COUNT's production hits path at main `8b68985234` (`generate_picks._batter_options`, hits, needs=1):
+     - `modelled = prop_probability.p_at_least_hits(1, pa_outcome_distribution(1B/2B/3B/HR per PA), project_batter_pa(slot, implied_total))`;
+     - `prob = 0.5 × league_hits_1plus + 0.5 × modelled`.
+   - These functions are **imported unchanged** from main.
+   - **Inputs:** season-to-date per-PA rates through D−1, rebuilt from Statcast PA outcomes (the same counts `batter_pa_composition` uses). The production calibrator is monotone: it is omitted from the ranking (no effect) and logloss is reported raw for both models.
+   - **Stated deviations, identical for both models:** actual lineup slot instead of projected; implied total = production's league-mean fallback.
+3. **Challenger (CH1)**
+   - CH1 replaces **only** the per-PA hit probability. PA count, slot, binomial mapping and the 0.5 league shrink are identical to CH0.
+   - **Per-PA probability:**
+     - `p = w_sp·p(b, SP) + (1−w_sp)·p(b, opposing bullpen)`;
+     - `w_sp = min(1, SP's season-to-date mean batters faced per start / league mean team PA per game)`.
+   - **`p(b, P)`** comes from a PA-level logistic model **fitted only on 2025 PAs and then frozen**:
+     - `logit p = β0 + β1·Lb + β2·Lp + β3·Mbp + β4·same_hand`;
+     - `Lb`: empirical-Bayes-shrunk logit of the batter's hits/PA;
+     - `Lp`: EB-shrunk logit of the pitcher's hits allowed per batter faced versus the batter's hand;
+     - `Mbp = Σ_f û_P(f | batter hand) · d̂_b(f)`, with `f` ∈ {fastball, breaking, offspeed};
+     - `û` is the pitcher's shrunk pitch-family usage against that hand;
+     - `d̂_b(f)` is the batter's EB-shrunk logit deviation in PAs that end on family `f`, relative to his overall rate;
+     - all inputs are season-to-date through D−1, and shrinkage strengths are fitted on 2025.
+   - The bullpen enters as a team-level aggregate pitcher.
+   - **Ablations reported:**
+     - CH0b: fitted batter-only;
+     - CH1a: batter + pitcher main effect;
+     - CH1: full model.
+4. **Same legitimate opportunity:** use the complete-case intersection of the population. On every slate date, both models select their top-K by P(≥1 hit) from the same eligible set, with identical K. Ties break by player id.
+5. **Primary metric**
+   - Realized Hits-1+ rate of each model's top-K per date, **K = 10 primary**; K = 5 and K = 20 are reported. Comparison is paired by date.
+   - Difference CH1 − CH0, with a 95% date-block bootstrap CI (2,000 reps).
+   - **Development verdict:**
+     - **IMPROVES** iff diff ≥ +2.0 pp and the CI lower bound > 0;
+     - **NO_GAIN** iff the CI includes 0 and |diff| < 1.0 pp;
+     - otherwise **INCONCLUSIVE**.
+6. **Secondary diagnostics**
+   - Logloss and Brier on the full population; calibration deciles.
+   - Subgroups: batter hand, starter share.
+   - **Market subset:** batter-games with a captured FanDuel *Over 0.5 Hits* pregame price (`data/props` snapshots taken before first pitch):
+     - logistic `outcome ~ market_logit + (model_logit − market_logit)`;
+     - equal-volume top-K within the subset;
+     - disagreement deciles.
+   - The market is treated as a strong prior; disagreement is not assumed to be edge.
+7. **Leakage / point-in-time**
+   - Features at date D use only pitches with `game_date < D`.
+   - Coefficients and shrinkage come from 2025 only. Nothing is tuned on 2026 outcomes.
+   - Usage and arsenal come only from prior games.
+   - Lineups and starters are treated as pregame-known (stated as optimistic versus production's projected lineups).
+   - Prices are used only from snapshots with `taken_at` < first pitch.
+8. **Data identity**
+   - Baseball Savant Statcast pitch-level CSVs, one file per day, with a sha256 manifest and fetch timestamps.
+   - The experiment code's commit SHA.
+   - Champion functions from main `8b68985234`.
+   - FanDuel snapshots from `data/props` at the recorded main SHA.
+9. **Evidence artifact:** `research/mlb_engine/fc_mlb_002/` on branch `claude/mlb-engine-interaction-20261002`, containing:
+   - `RESULTS.json` and `REPORT.md`;
+   - gzipped per-row predictions;
+   - the data manifest;
+   - all labelled `DEVELOPMENT_EVIDENCE`.
+10. **Stop condition**
+    - **One** evaluation run against these frozen criteria. No iteration on 2026 outcomes.
+    - **IMPROVES:** propose a prospective shadow (new task; SUPERCHAD/Jacob).
+    - **NO_GAIN or INCONCLUSIVE:** record it as a negative or inconclusive result. The next challenger is chosen from the diagnostics, without refitting on 2026.
+    - **Never:** production, selector, pick or ledger change, or promotion.
 
 ## BUILDER_NOTES
+(owner only)
 
 ## LOG
-- 2026-10-02 created READY by FC-OPS-001 (no findings recorded).
+- 2026-10-02 acceptance criteria written and frozen at claim; FC-MLB-002 claimed (CLAUDE_ACTIVE).
