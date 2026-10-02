@@ -1,0 +1,319 @@
+{
+  "baseline": "GAME_MARKET_B0_PRIOR_SCORING_BLEND",
+  "generated_at": "2026-10-02T15:29:24.369308+00:00",
+  "limitations": [
+    "Closing lines lack earlier offer timestamps and odds; no real usable-volume or ROI claim.",
+    "Market-only has no directional side against its own line.",
+    "A positive scalar blend preserves B0's side, so cannot improve its equal-volume cover rate.",
+    "The held partition is historical confirmation only, not a prospective trial."
+  ],
+  "matched_games": 6906,
+  "method": "OLS origin slope fit 2000-2019 only; fixed slope evaluated 2020-2022 and 2023-2025; archived closing lines only",
+  "partitions": {
+    "development": [
+      2000,
+      2019
+    ],
+    "held": [
+      2023,
+      2025
+    ],
+    "validation": [
+      2020,
+      2022
+    ]
+  },
+  "results": {
+    "margin": {
+      "development_slope": -0.01778146838068532,
+      "partitions": {
+        "development": {
+          "direction": {
+            "b0": {
+              "correct": 2501,
+              "n": 4916,
+              "rate": 0.508746948738812
+            },
+            "residual_blend": {
+              "correct": 2415,
+              "n": 4916,
+              "rate": 0.49125305126118796
+            }
+          },
+          "mae": {
+            "b0": 11.171112201504743,
+            "closing_market": 10.416879293424927,
+            "residual_blend": 10.420227409556626
+          },
+          "n_games": 5095,
+          "pushes": 146,
+          "uncertainty": {
+            "iterations": 2000,
+            "p2_5_p50_p97_5": {
+              "b0_minus_market_mae": [
+                0.6326583695509029,
+                0.7529832153160232,
+                0.8700994781474254
+              ],
+              "blend_direction": [
+                0.478065700877372,
+                0.49134377576257215,
+                0.5042103101252824
+              ],
+              "blend_minus_market_mae": [
+                0.0010333039815275669,
+                0.0033973386507408776,
+                0.0056638947056644184
+              ]
+            },
+            "seed": 20261002,
+            "unit": "season_week"
+          }
+        },
+        "held": {
+          "direction": {
+            "b0": {
+              "correct": 405,
+              "n": 791,
+              "rate": 0.5120101137800253
+            },
+            "residual_blend": {
+              "correct": 386,
+              "n": 791,
+              "rate": 0.4879898862199747
+            }
+          },
+          "mae": {
+            "b0": 10.473039215686274,
+            "closing_market": 9.744485294117647,
+            "residual_blend": 9.747982752052819
+          },
+          "n_games": 816,
+          "pushes": 19,
+          "uncertainty": {
+            "iterations": 2000,
+            "p2_5_p50_p97_5": {
+              "b0_minus_market_mae": [
+                0.39644171779141146,
+                0.7267657992565049,
+                1.0256626506024098
+              ],
+              "blend_direction": [
+                0.4481012658227848,
+                0.48863636363636365,
+                0.5285895806861499
+              ],
+              "blend_minus_market_mae": [
+                -0.0021530705240238035,
+                0.003600361751429304,
+                0.009628545424252621
+              ]
+            },
+            "seed": 20261002,
+            "unit": "season_week"
+          }
+        },
+        "validation": {
+          "direction": {
+            "b0": {
+              "correct": 390,
+              "n": 778,
+              "rate": 0.5012853470437018
+            },
+            "residual_blend": {
+              "correct": 388,
+              "n": 778,
+              "rate": 0.4987146529562982
+            }
+          },
+          "mae": {
+            "b0": 10.431647822445562,
+            "closing_market": 9.791457286432161,
+            "residual_blend": 9.796747236044535
+          },
+          "n_games": 796,
+          "pushes": 14,
+          "uncertainty": {
+            "iterations": 2000,
+            "p2_5_p50_p97_5": {
+              "b0_minus_market_mae": [
+                0.3110484544695087,
+                0.6315064102564119,
+                0.9682395833333342
+              ],
+              "blend_direction": [
+                0.46094750320102434,
+                0.49809885931558934,
+                0.5388535031847134
+              ],
+              "blend_minus_market_mae": [
+                -0.0013790741102059911,
+                0.005347810039303624,
+                0.01183625064619065
+              ]
+            },
+            "seed": 20261002,
+            "unit": "season_week"
+          }
+        }
+      }
+    },
+    "total": {
+      "development_slope": -0.03047657567821141,
+      "partitions": {
+        "development": {
+          "direction": {
+            "b0": {
+              "correct": 2433,
+              "n": 4969,
+              "rate": 0.489635741597907
+            },
+            "residual_blend": {
+              "correct": 2536,
+              "n": 4969,
+              "rate": 0.510364258402093
+            }
+          },
+          "mae": {
+            "b0": 11.234422636571802,
+            "closing_market": 10.688125613346418,
+            "residual_blend": 10.687009534626375
+          },
+          "n_games": 5095,
+          "pushes": 82,
+          "uncertainty": {
+            "iterations": 2000,
+            "p2_5_p50_p97_5": {
+              "b0_minus_market_mae": [
+                0.4473848824261495,
+                0.5446801545210498,
+                0.6503909061171083
+              ],
+              "blend_direction": [
+                0.4961816720257235,
+                0.5105570078423487,
+                0.524974924774323
+              ],
+              "blend_minus_market_mae": [
+                -0.004688665462971642,
+                -0.001133046197180576,
+                0.002353913416001774
+              ]
+            },
+            "seed": 20261002,
+            "unit": "season_week"
+          }
+        },
+        "held": {
+          "direction": {
+            "b0": {
+              "correct": 409,
+              "n": 808,
+              "rate": 0.5061881188118812
+            },
+            "residual_blend": {
+              "correct": 399,
+              "n": 808,
+              "rate": 0.4938118811881188
+            }
+          },
+          "mae": {
+            "b0": 10.718872549019608,
+            "closing_market": 10.120710784313726,
+            "residual_blend": 10.120632351949848
+          },
+          "n_games": 816,
+          "pushes": 5,
+          "uncertainty": {
+            "iterations": 2000,
+            "p2_5_p50_p97_5": {
+              "b0_minus_market_mae": [
+                0.29824341279799427,
+                0.5940667490729297,
+                0.9125770653514191
+              ],
+              "blend_direction": [
+                0.4573170731707317,
+                0.49318463444857497,
+                0.5306372549019608
+              ],
+              "blend_minus_market_mae": [
+                -0.009061206280911449,
+                5.261061152772584e-05,
+                0.009105760767347704
+              ]
+            },
+            "seed": 20261002,
+            "unit": "season_week"
+          }
+        },
+        "validation": {
+          "direction": {
+            "b0": {
+              "correct": 371,
+              "n": 778,
+              "rate": 0.4768637532133676
+            },
+            "residual_blend": {
+              "correct": 407,
+              "n": 778,
+              "rate": 0.5231362467866324
+            }
+          },
+          "mae": {
+            "b0": 11.094545644891122,
+            "closing_market": 10.444095477386934,
+            "residual_blend": 10.441756451253172
+          },
+          "n_games": 796,
+          "pushes": 11,
+          "uncertainty": {
+            "iterations": 2000,
+            "p2_5_p50_p97_5": {
+              "b0_minus_market_mae": [
+                0.33819706498951696,
+                0.6516852770885038,
+                0.9595012626262616
+              ],
+              "blend_direction": [
+                0.4915254237288136,
+                0.5239948119325551,
+                0.5565552699228792
+              ],
+              "blend_minus_market_mae": [
+                -0.011866146629483154,
+                -0.002504749857575206,
+                0.007126698627615724
+              ]
+            },
+            "seed": 20261002,
+            "unit": "season_week"
+          }
+        }
+      }
+    }
+  },
+  "schema": 1,
+  "source": {
+    "allowed_use": "RETROSPECTIVE_BENCHMARK_CONTROL_ONLY",
+    "bytes": 2177838,
+    "commit": "8ed09b2fe3ea42332b2249a995737e13dd931ff3",
+    "historical_cutoff_season": 2025,
+    "market_source": "PRO_FOOTBALL_REFERENCE_VIA_NFLVERSE",
+    "market_vintage": "CLOSING",
+    "path": "data/games.csv",
+    "point_in_time_feature_eligible": false,
+    "repository": "https://github.com/nflverse/nfldata",
+    "sha256": "26332ae5d8d8d0481f0670cf5e3849497a415351d4026ae5bee15a5aab96d188",
+    "source_class": "NFLVERSE_PFR_CLOSING"
+  },
+  "source_counts": {
+    "historical_reg_final_rows": 6967,
+    "historical_reg_rows_with_closing_market": 6967,
+    "non_reg_rows": 309,
+    "post_cutoff_reg_rows": 272,
+    "source_rows": 7548
+  },
+  "status": "EXPLORATORY_RESEARCH_ONLY_NOT_A_PICK"
+}
+
