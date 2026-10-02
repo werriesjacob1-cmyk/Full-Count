@@ -23,10 +23,10 @@
    "LANE": "A",
    "OWNER": "claude",
    "CHALLENGER": "superchad",
-   "STATUS": "CLAUDE_ACTIVE",
+   "STATUS": "READY_FOR_SUPERCHAD",
    "BASE_SHA": "8b689852342bd49014b86ad637e64002ad6f47b4",
    "BRANCH": "claude/full-count-ops-state",
-   "HEAD_SHA": null,
+   "HEAD_SHA": "55f17a1c5ed39a81890339109c426d966ae2cdc0",
    "OBJECTIVE": "Balanced Max Lean Phase 1: ops state, queue, contract, slim orientation, deterministic polling, usage measurement, one navigator pilot.",
    "ACCEPTANCE_CRITERIA": [
     "see TASKS/FC-OPS-001.md#ACCEPTANCE_CRITERIA"
@@ -39,15 +39,19 @@
     "nfl/AGENTS.md"
    ],
    "EVIDENCE_POINTERS": [
-    "engineering/ops/bin/fc.py",
-    "engineering/efficiency/SUPERCLAUDE_MAX_EFFICIENCY_INVESTIGATION_20261002.md@claude/efficiency-investigation-20261002"
+    "engineering/ops/PHASE1_VERIFICATION.md",
+    "PR #221 (orientation, draft) @ 55f17a1c5e",
+    "engineering/ops/bin/fc.py"
    ],
    "BLOCKERS": [],
-   "NEXT_ACTION": "Focused verification A-G; then READY_FOR_SUPERCHAD",
+   "NEXT_ACTION": "SUPERCHAD review; Jacob decides PR #221 merge. Engineering returns to FC-MLB-002 / FC-NFL-002.",
    "AUTHORITY_REQUIRED": "Jacob:merge (orientation PR to main only)",
    "WIP_EXEMPT": false,
    "CHALLENGE_ACTIVE": false,
-   "UPDATED": "2026-10-02T15:15:00Z"
+   "UPDATED": "2026-10-02T15:05:00Z",
+   "HISTORY": [
+    "2026-10-02T15:05:00Z claude -> READY_FOR_SUPERCHAD"
+   ]
   },
   {
    "TASK_ID": "FC-MLB-001",

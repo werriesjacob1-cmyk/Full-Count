@@ -1,5 +1,5 @@
 # FULL COUNT — CURRENT STATE
-as_of: 2026-10-02T15:15Z · main `8b68985234` · branch `claude/full-count-ops-state` (never merged to main)
+as_of: 2026-10-02T15:05Z · main `8b68985234` · branch `claude/full-count-ops-state` (never merged to main)
 
 This file is the default orientation. Do **not** read `ENGINEERING_HANDOFF.md` or Issue #91 history unless the task is historical reconstruction.
 
@@ -14,6 +14,14 @@ This file is the default orientation. Do **not** read `ENGINEERING_HANDOFF.md` o
   - access or security change.
 - No self-approval, no merging your own PR, no backfill of prospective evidence, no outcome reads past a prospective boundary.
 - Acceptance criteria are written before any consequential build (contract §3).
+
+## Working rules (summary; full text in OPERATING_CONTRACT.md)
+- **Checkpoint** (#91; produced by `fc.py checkpoint TASK_ID`):
+  `CHECKPOINT / TASK= HEAD= STATUS= / TESTS= BLOCKERS= / EVIDENCE= / NEXT= AUTHORITY= / Alligator`
+- **Lanes:** A = Claude builds → Codex challenges → minimum repair → delta check. B = Codex researches → Claude challenges. Both end at SUPERCHAD.
+- **WIP:** 1 active build per sport and 1 active challenge. Claims are made in WORK_QUEUE (`fc.py move`) and expire after 12 h.
+- **Challenger** receives `fc.py challenge-capsule` only: never BUILDER_NOTES, LOG, verdicts or builder conclusions.
+- **Efficiency:** batch independent commands; wait with `fc.py status --until-change`, never model polling; rotate sessions at about 150–200k.
 
 ## Split
 MLB 60% / NFL 40%. NFL may take the majority inside T−48h of an NFL slate lock.
