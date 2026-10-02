@@ -250,10 +250,10 @@
    "LANE": "A",
    "OWNER": "claude",
    "CHALLENGER": "codex",
-   "STATUS": "CLAUDE_ACTIVE",
+   "STATUS": "READY_FOR_CHALLENGE",
    "BASE_SHA": "7c331c266ba12c679cdefda225a6a44a5f171e18",
    "BRANCH": "claude/mlb-engine-pitcher-contact-20261003",
-   "HEAD_SHA": null,
+   "HEAD_SHA": "46712d809153d6ca12322b1910b99e7a753c8806",
    "OBJECTIVE": "Pitcher contact-suppression refinement: replace the raw pitcher H/BF main effect in repaired CH1a with a shrunk expected-hits (xBA-based) latent; optional team-defense conversion term. Hits 1+, equal-volume vs P0=CH1a.",
    "ACCEPTANCE_CRITERIA": [
     "Hits 1+ on repaired FC-MLB-002 player-game population; P0 = frozen CH1a (fidelity gate vs b52ac418ba predictions); P1 = Lb + pitcher xH/BF latent (2025-fit); P2 = P1 + team defense conversion; K=10 P1-P0: IMPROVES iff >=+1.0pp & CI>0; detail in TASKS/FC-MLB-004.md"
@@ -261,15 +261,21 @@
    "FILES_OR_AREAS": [
     "research/mlb_engine/fc_mlb_004/"
    ],
-   "EVIDENCE_POINTERS": [],
+   "EVIDENCE_POINTERS": [
+    "research/mlb_engine/fc_mlb_004/ @ 46712d8091 (claude/mlb-engine-pitcher-contact-20261003)",
+    "frozen fit committed before evaluation: 6e0e24f1e0 (out/FROZEN_FIT_004.json sha256 fbe9362f...)",
+    "out/RESULTS.json, out/REPORT.md (make_report.py), out/predictions_2026.csv.gz, out/evaluate.log",
+    "tests: test_fc_mlb_004.py (5); FC-MLB-002 machinery imported unchanged @ 7c331c266b"
+   ],
    "BLOCKERS": [],
-   "NEXT_ACTION": "Build pitcher xH/BF + defense tables; fit on 2025; freeze; single 2026 evaluation",
+   "NEXT_ACTION": "Codex Lane-A challenge of the single frozen experiment at HEAD_SHA (recompute, point-in-time, fidelity gate, criteria adherence)",
    "AUTHORITY_REQUIRED": "none for research; Jacob for any promotion/production change",
    "WIP_EXEMPT": false,
    "CHALLENGE_ACTIVE": false,
-   "UPDATED": "2026-10-02T21:42:13Z",
+   "UPDATED": "2026-10-02T21:51:43Z",
    "HISTORY": [
-    "2026-10-02T21:42:13Z claude -> CLAUDE_ACTIVE"
+    "2026-10-02T21:42:13Z claude -> CLAUDE_ACTIVE",
+    "2026-10-02T21:51:43Z claude -> READY_FOR_CHALLENGE"
    ]
   }
  ]

@@ -61,6 +61,12 @@ Frozen before any FC-MLB-004 code. Codex may add criteria at its morning challen
 
 ## BUILDER_NOTES
 (owner only)
+- Frozen fit 6e0e24f1e0 (kpx=150, kd=1500, chosen on the 2025 split); one 2026 evaluation at 46712d8091.
+- Fidelity gate passed: 37,125 rows; max |dCH0| 5.6e-17, max |dP0-CH1a| 0.
+- Primary K10 P1-P0 -0.18 [-1.96, +1.72] -> NO_GAIN (negative result recorded). K5 -0.12; K20 +0.34. Early instability not reduced.
+- Secondary: P2-P1 K10 +1.35 [+0.18, +2.52]; P2-P0 K10 +1.17 [-0.55, +2.94]. P2 is the best logloss (0.66468 vs P0 0.66496). Secondary only; not a verdict.
+- Criteria §12 says NO_GAIN -> record the negative result; Jacob's overnight instruction asks for a morning Codex challenge. Moving to READY_FOR_CHALLENGE so the negative result (and the P2 secondary) are verified; this is not a request for iteration.
 
 ## LOG
 - 2026-10-02 criteria frozen; claimed.
+- 2026-10-03 frozen fit 6e0e24f1e0; single evaluation 46712d8091; -> READY_FOR_CHALLENGE.
