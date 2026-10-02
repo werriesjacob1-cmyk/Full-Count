@@ -6736,3 +6736,16 @@ All are in the descriptive regime 2026_POSTSEASON_SHADOW.
 No merge, deploy, model, selector, pick or ledger change. No refit, prereg change or V4. No backfill. No outcome read or scored. No seal yet.
 
 Alligator
+
+## 2026-10-02 14:50Z -- Efficiency investigation (recommendations only)
+- **Report:** `claude/efficiency-investigation-20261002` @ `4b5a4b501f`, file `engineering/efficiency/SUPERCLAUDE_MAX_EFFICIENCY_INVESTIGATION_20261002.md`.
+- **Analyzer:** `engineering/efficiency/tools/transcript_usage.py` (read-only).
+- **Key measurements:**
+  - 2.36 B input tokens over 5,628 main-session calls, 98.7% cache reads, median context 415k;
+  - 101 subagents used 688 M;
+  - polling took 13.7%.
+- **Recommendation:** Architecture B, gated on the before/after benchmark.
+- Nothing installed. No settings, hooks, MCP, CLAUDE.md, AGENTS.md or scientific code changed.
+- #91 pointer posted.
+
+Alligator
