@@ -91,13 +91,13 @@
    "LANE": "A",
    "OWNER": "claude",
    "CHALLENGER": "codex",
-   "STATUS": "READY_FOR_CHALLENGE",
+   "STATUS": "MINIMUM_REPAIR",
    "BASE_SHA": "8b689852342bd49014b86ad637e64002ad6f47b4",
    "BRANCH": "claude/mlb-engine-interaction-20261002",
    "HEAD_SHA": "cc3ff960ccaad178023d4e92fa7940bdfe446ea3",
    "OBJECTIVE": "Specify the first MLB predictive-engine improvement experiment toward a probabilistic prop engine. Acceptance criteria are written and challenge-reviewed BEFORE any build.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD before build: target population, exact champion vs challenger comparison, same legitimate opportunity, metrics+threshold, evidence artifact, leakage constraints, stop condition (contract \u00c2\u00a73)."
+    "TBD before build: target population, exact champion vs challenger comparison, same legitimate opportunity, metrics+threshold, evidence artifact, leakage constraints, stop condition (contract Â§3)."
    ],
    "FILES_OR_AREAS": [
     "research/mlb_engine/"
@@ -109,15 +109,18 @@
     "research/mlb_engine/fc_mlb_002/fc_mlb_002.py",
     "research/mlb_engine/fc_mlb_002/STATCAST_MANIFEST.jsonl"
    ],
-   "BLOCKERS": [],
-   "NEXT_ACTION": "Codex blind challenge (fc.py challenge-capsule FC-MLB-002); then SUPERCHAD. Proposed follow-ups need new tasks/criteria.",
+   "BLOCKERS": [
+    "Codex BLOCK (relayed by SUPERCHAD): findings 1-4 (switch-hitter player-game split; market identity; K counts; manifest verification)"
+   ],
+   "NEXT_ACTION": "Minimum repair of findings 1-4 (Jacob-authorized); one frozen 2026 rerun; then Codex delta-only review",
    "AUTHORITY_REQUIRED": "none for research; Jacob for any promotion/production change",
    "WIP_EXEMPT": false,
    "CHALLENGE_ACTIVE": false,
-   "UPDATED": "2026-10-02T15:31:30Z",
+   "UPDATED": "2026-10-02T18:51:52Z",
    "HISTORY": [
     "2026-10-02T15:10:45Z claude -> CLAUDE_ACTIVE",
-    "2026-10-02T15:31:30Z claude -> READY_FOR_CHALLENGE"
+    "2026-10-02T15:31:30Z claude -> READY_FOR_CHALLENGE",
+    "2026-10-02T18:51:52Z claude -> MINIMUM_REPAIR"
    ]
   },
   {
@@ -133,7 +136,7 @@
    "HEAD_SHA": null,
    "OBJECTIVE": "Lane-B example (pending SUPERCHAD confirmation): Codex independent MLB research question chosen by SUPERCHAD, produced without access to FC-MLB-002 builder notes; Claude challenges.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD by SUPERCHAD/Codex before start (contract \u00c3\u201a\u00c2\u00a73)."
+    "TBD by SUPERCHAD/Codex before start (contract Ã‚Â§3)."
    ],
    "FILES_OR_AREAS": [
     "research/codex_mlb/"
@@ -190,7 +193,7 @@
    "HEAD_SHA": null,
    "OBJECTIVE": "Specify the next NFL predictive-engine experiment covering player props and spreads/totals (injuries, roles, coaching, weather, matchup, market, game state). Acceptance criteria before any build.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD before build (contract \u00c3\u201a\u00c2\u00a73)."
+    "TBD before build (contract Ã‚Â§3)."
    ],
    "FILES_OR_AREAS": [
     "nfl/engine/"
@@ -242,4 +245,3 @@
   }
  ]
 }
-
