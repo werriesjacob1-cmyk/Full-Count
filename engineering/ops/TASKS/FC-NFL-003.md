@@ -22,3 +22,5 @@ Research files are isolated under `nfl/research/fc_nfl_003/` and `engineering/nf
 
 - 2026-10-02: Codex claimed Lane B and preregistered this bounded first experiment before implementation.
 
+- 2026-10-02: Pinned 6,906-game residual study committed as draft PR #222 @ 17dab718f0bb33bbdae02ddde76c9f15c214f6b5. No held-out gain; challenge requested. Local legacy temp-directory tests blocked by Windows sandbox permission.
+

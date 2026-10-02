@@ -97,7 +97,7 @@
    "HEAD_SHA": "cc3ff960ccaad178023d4e92fa7940bdfe446ea3",
    "OBJECTIVE": "Specify the first MLB predictive-engine improvement experiment toward a probabilistic prop engine. Acceptance criteria are written and challenge-reviewed BEFORE any build.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD before build: target population, exact champion vs challenger comparison, same legitimate opportunity, metrics+threshold, evidence artifact, leakage constraints, stop condition (contract §3)."
+    "TBD before build: target population, exact champion vs challenger comparison, same legitimate opportunity, metrics+threshold, evidence artifact, leakage constraints, stop condition (contract \u00c2\u00a73)."
    ],
    "FILES_OR_AREAS": [
     "research/mlb_engine/"
@@ -133,7 +133,7 @@
    "HEAD_SHA": null,
    "OBJECTIVE": "Lane-B example (pending SUPERCHAD confirmation): Codex independent MLB research question chosen by SUPERCHAD, produced without access to FC-MLB-002 builder notes; Claude challenges.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD by SUPERCHAD/Codex before start (contract Â§3)."
+    "TBD by SUPERCHAD/Codex before start (contract \u00c3\u201a\u00c2\u00a73)."
    ],
    "FILES_OR_AREAS": [
     "research/codex_mlb/"
@@ -190,7 +190,7 @@
    "HEAD_SHA": null,
    "OBJECTIVE": "Specify the next NFL predictive-engine experiment covering player props and spreads/totals (injuries, roles, coaching, weather, matchup, market, game state). Acceptance criteria before any build.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD before build (contract Â§3)."
+    "TBD before build (contract \u00c3\u201a\u00c2\u00a73)."
    ],
    "FILES_OR_AREAS": [
     "nfl/engine/"
@@ -210,10 +210,10 @@
    "LANE": "B",
    "OWNER": "codex",
    "CHALLENGER": "claude",
-   "STATUS": "CODEX_ACTIVE",
+   "STATUS": "READY_FOR_CHALLENGE",
    "BASE_SHA": "24e3b96ad031789178f4a9562329f9e515e0baf1",
    "BRANCH": "codex/fc-nfl-003-20261002",
-   "HEAD_SHA": null,
+   "HEAD_SHA": "17dab718f0bb33bbdae02ddde76c9f15c214f6b5",
    "OBJECTIVE": "Bounded independent test of market-prior and football-residual game-market architecture, with player-prop implications.",
    "ACCEPTANCE_CRITERIA": [
     "see TASKS/FC-NFL-003.md#ACCEPTANCE_CRITERIA"
@@ -222,16 +222,24 @@
     "nfl/research/fc_nfl_003/",
     "engineering/nfl_fc_nfl_003/"
    ],
-   "EVIDENCE_POINTERS": [],
-   "BLOCKERS": [],
-   "NEXT_ACTION": "Codex runs pinned-source matched game-market study; Claude challenges after evidence.",
+   "EVIDENCE_POINTERS": [
+    "PR #222 (draft, research-only) @ 17dab718f0bb33bbdae02ddde76c9f15c214f6b5",
+    "engineering/nfl_fc_nfl_003/market_residual_report.json",
+    "engineering/nfl_fc_nfl_003/INTERPRETATION.md"
+   ],
+   "BLOCKERS": [
+    "No authenticated earlier pregame price/offer in historical closing-line study; prospective validation required"
+   ],
+   "NEXT_ACTION": "Claude independent challenge of PR #222; Jacob decision required for any merge. Next prospective paired-residual protocol remains separate.",
    "AUTHORITY_REQUIRED": "none for research; Jacob for merge, deployment, promotion, or picks",
    "WIP_EXEMPT": false,
    "CHALLENGE_ACTIVE": false,
-   "UPDATED": "2026-10-02T15:23:18Z",
+   "UPDATED": "2026-10-02T15:33:46Z",
    "HISTORY": [
-    "2026-10-02T15:23:18Z codex -> CODEX_ACTIVE"
+    "2026-10-02T15:23:18Z codex -> CODEX_ACTIVE",
+    "2026-10-02T15:33:46Z codex -> READY_FOR_CHALLENGE"
    ]
   }
  ]
 }
+
