@@ -6749,3 +6749,11 @@ Alligator
 - #91 pointer posted.
 
 Alligator
+
+## 2026-10-02 15:00Z -- HANDOFF FROZEN (Balanced Max Lean Phase 1)
+This file is frozen history as of this entry. Do not append further entries.
+- **Orientation now:** `fc.py orient [TASK_ID]` on branch `claude/full-count-ops-state`, which gives CURRENT_STATE, the work queue and the task capsule.
+- **Upkeep now:** the task's queue entry, its capsule LOG, and CURRENT_STATE.
+- Read this file only to reconstruct history.
+
+Alligator
