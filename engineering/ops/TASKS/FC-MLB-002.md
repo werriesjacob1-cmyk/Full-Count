@@ -75,7 +75,34 @@ Frozen at the claim commit (before any challenger code). The challenger (Codex) 
     - **Never:** production, selector, pick or ledger change, or promotion.
 
 ## BUILDER_NOTES
-(owner only)
+(owner only — not given to the challenger)
+
+**Champion weakness, verified in code at `8b68985234`:**
+- For Hits 1+, `_batter_options` computes `0.5·league + 0.5·Binom(project_batter_pa(slot, total), raw season hits/PA)`.
+- The opposing pitcher, his arsenal, handedness, the bullpen and the park never enter the per-PA probability. The `_keep_options` docstring itself says "blind to the opposing starter".
+- Matchup facts reach only the generic `score`.
+- The calibrator is monotone, so the within-slate ranking is driven only by the batter's own hit rate × slot.
+
+**Data available:**
+- Statcast pitch-level CSV from Savant, fetched per day for 2025 and 2026 regular season. It includes pitch_type, velocity, pfx, release, extension, plate location, count, bat speed and swing length, `n_thruorder`, and days of rest.
+- `backtest/engine.py` already has a point-in-time Statcast rebuild, but it is not used here, to keep the experiment small.
+- FanDuel one-sided prop snapshots in `data/props` (2026-08-06 → 10-02, about 6 per day, with `taken_at` and `start_time`): hits needs=1 rows run to roughly 700 per slate. Two-sided snapshots cover pitcher markets only.
+- `data/odds` holds game lines (from 08-05), which could feed implied totals; deliberately not used, identically for both models.
+- Grades and picks history covers only the selected board (~95 candidates/day), so it is too thin and selection-biased to serve as the population.
+
+**Data missing / not used in stage 1:**
+- Historical pregame lineups: actual lineups are used instead (optimistic, applies to both models).
+- Historical implied totals before 08-05.
+- Park and weather at PA level.
+- Pitch shape clusters: families only in stage 1.
+- Count-state usage.
+- Two-sided hits prices (one-sided, devigged with production's assumed hold).
+- Hits prices before 2026-08-06.
+
+**Design choices to flag for the challenger:**
+- Pitch families FB/BR/OS rather than shape.
+- `w_sp` uses the starter's BF/start, shrunk with 3 pseudo-starts (a mechanical expectation, not fitted).
+- Bullpen handedness uses the league same-hand share of relief PAs.
 
 ## LOG
 - 2026-10-02 acceptance criteria written and frozen at claim; FC-MLB-002 claimed (CLAUDE_ACTIVE).
