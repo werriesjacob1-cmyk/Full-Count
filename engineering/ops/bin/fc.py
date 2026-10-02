@@ -35,7 +35,7 @@ ACTIVE_BUILD = {"CLAUDE_ACTIVE", "CODEX_ACTIVE", "MINIMUM_REPAIR"}
 TRANSITIONS = {
     "READY": {"CLAUDE_ACTIVE", "CODEX_ACTIVE", "BLOCKED"},
     "CLAUDE_ACTIVE": {"READY_FOR_CHALLENGE", "BLOCKED", "READY", "READY_FOR_SUPERCHAD", "DONE"},
-    "CODEX_ACTIVE": {"READY_FOR_CHALLENGE", "BLOCKED", "READY", "READY_FOR_SUPERCHAD", "DONE"},
+    "CODEX_ACTIVE": {"READY_FOR_CHALLENGE", "BLOCKED", "READY", "READY_FOR_SUPERCHAD", "DONE"},  # skip-challenge: ops only
     "READY_FOR_CHALLENGE": {"MINIMUM_REPAIR", "READY_FOR_SUPERCHAD", "BLOCKED"},
     "MINIMUM_REPAIR": {"READY_FOR_CHALLENGE", "BLOCKED"},
     "BLOCKED": {"READY", "CLAUDE_ACTIVE", "CODEX_ACTIVE", "MINIMUM_REPAIR", "READY_FOR_CHALLENGE"},
@@ -50,6 +50,20 @@ CHALLENGE_FIELDS = ("TASK_ID", "SPORT", "KIND", "LANE", "OWNER", "CHALLENGER", "
                     "HEAD_SHA", "OBJECTIVE", "ACCEPTANCE_CRITERIA", "FILES_OR_AREAS", "EVIDENCE_POINTERS",
                     "AUTHORITY_REQUIRED")
 EXCLUDED_SECTIONS = ("BUILDER_NOTES", "LOG")
+PLACEHOLDER = re.compile(r"^\s*(TBD|TODO|NOT YET WRITTEN|SEE TASKS/)", re.I)
+
+
+def has_acceptance(t, src=None):
+    """Real acceptance criteria exist: a non-placeholder entry in the queue, or (for a pointer)
+    a non-placeholder ACCEPTANCE_CRITERIA section in the capsule."""
+    items = [a for a in (t.get("ACCEPTANCE_CRITERIA") or []) if a and not PLACEHOLDER.match(a)]
+    if items:
+        return True
+    if src is not None:
+        body = sections(src.read(f"TASKS/{t['TASK_ID']}.md") or "").get("ACCEPTANCE_CRITERIA", "")
+        lines = [ln for ln in body.splitlines() if ln.strip() and not ln.strip().startswith("<!--")]
+        return bool(lines) and not PLACEHOLDER.match(lines[0])
+    return False
 HERE = os.path.dirname(os.path.abspath(__file__)) if "__file__" in globals() and os.path.exists(__file__) else None
 
 
@@ -102,7 +116,7 @@ def overlaps(a, b):
     return a == b or a.startswith(b + "/") or b.startswith(a + "/")
 
 
-def validate(q):
+def validate(q, src=None):
     errs, warn = [], []
     tasks = q.get("tasks", [])
     ids = [t.get("TASK_ID") for t in tasks]
@@ -115,7 +129,7 @@ def validate(q):
         if t.get("STATUS") not in STATES:
             errs.append(f"{t.get('TASK_ID')}: BAD_STATUS {t.get('STATUS')}")
         if t.get("KIND") in ("build", "research") and t.get("STATUS") in ACTIVE_BUILD | {"READY_FOR_CHALLENGE"} \
-                and not t.get("ACCEPTANCE_CRITERIA"):
+                and not has_acceptance(t, src):
             errs.append(f"{t['TASK_ID']}: ACTIVE_WITHOUT_ACCEPTANCE_CRITERIA")
         if t.get("OWNER") == t.get("CHALLENGER") and t.get("KIND") != "ops":
             errs.append(f"{t.get('TASK_ID')}: SELF_CHALLENGE")
@@ -314,7 +328,7 @@ def main(argv=None):
             return status(a, src)
         q = load_queue(src)
         if a.cmd in ("orient", "queue"):
-            errs, warn = validate(q)
+            errs, warn = validate(q, src)
             out = []
             if a.cmd == "orient":
                 out.append(src.read("CURRENT_STATE.md") or "CURRENT_STATE.md missing")
@@ -339,9 +353,19 @@ def main(argv=None):
                 raise SystemExit(f"ILLEGAL_TRANSITION {t['STATUS']} -> {a.state}")
             if a.state in ACTIVE_BUILD and a.by not in ("claude", "codex"):
                 raise SystemExit("only an agent can claim work")
+            if a.state == "CLAUDE_ACTIVE" and a.by != "claude" or a.state == "CODEX_ACTIVE" and a.by != "codex":
+                raise SystemExit(f"{a.by} cannot set {a.state}")
+            if t["KIND"] != "ops" and t["STATUS"] in ("CLAUDE_ACTIVE", "CODEX_ACTIVE") \
+                    and a.state in ("READY_FOR_SUPERCHAD", "DONE"):
+                raise SystemExit("NO_SELF_APPROVAL: build/research must pass READY_FOR_CHALLENGE first")
+            if a.state == "DONE" and t["KIND"] != "ops" and a.by not in ("superchad", "jacob"):
+                raise SystemExit("DONE is set by SUPERCHAD or Jacob after challenge")
+            if a.state == "READY_FOR_SUPERCHAD" and t["STATUS"] == "READY_FOR_CHALLENGE" \
+                    and a.by != t.get("CHALLENGER"):
+                raise SystemExit("only the challenger passes a task to SUPERCHAD")
             t["STATUS"], t["UPDATED"] = a.state, now()
             t.setdefault("HISTORY", []).append(f"{t['UPDATED']} {a.by} -> {a.state}")
-            errs, _ = validate(q)
+            errs, _ = validate(q, src)
             if errs:
                 raise SystemExit("REFUSED (queue would be invalid): " + "; ".join(errs))
             src.write("WORK_QUEUE.json", json.dumps(q, indent=1) + "\n")
