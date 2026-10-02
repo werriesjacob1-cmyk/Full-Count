@@ -1,0 +1,21 @@
+{
+ "as_of": "2026-10-02T15:15:00Z",
+ "week4": {
+  "thursday_seal": "claude/nfl-tier1-seal-2026w04 @ 693526aa5f (IMMUTABLE)",
+  "inputs": "claude/nfl-seal-inputs-2026w04 @ b304820f7a (IMMUTABLE)",
+  "saturday_seal_trigger": "trig_01SthdubqRKWd3N28PRZjzvc -> session_01YFgmGN4y6vJjiDc8rbZze2 at 2026-10-03T18:30Z",
+  "backstop_trigger": "trig_01VarHYCdiEZ41YBBfFu9kNJ at 2026-10-03T20:00Z",
+  "first_sunday_kickoff_utc": "2026-10-04T13:30:00Z"
+ },
+ "open_nfl_drafts": {
+  "202": "claude/nfl-tier1-foundation-20260924 @ e05e02c592",
+  "203": "claude/nfl-tier1-player-opportunity-20260924 @ 8aa8067fbc",
+  "204": "claude/nfl-tier1-team-context-20260924 @ 40d842c9a9",
+  "205": "claude/nfl-tier1-touchdown-20260924 @ 76b42547c3",
+  "207": "claude/nfl-tier2-coverage-20260925 @ f4fb17aa0b",
+  "193": "claude/nfl-pregame-target-share-20260923 @ 05b188d33f",
+  "196": "codex/nfl-price-aware-offers-20260923 (codex-owned)",
+  "199": "codex/nfl-price-b0-join-20260924 (codex-owned)"
+ },
+ "source": "GET /pulls?state=open 2026-10-02T15:00Z"
+}

@@ -1,0 +1,193 @@
+{
+ "schema": 1,
+ "claim_ttl_hours": 12,
+ "wip": {
+  "active_build_per_sport": 1,
+  "active_challenge_total": 1
+ },
+ "states": [
+  "READY",
+  "CLAUDE_ACTIVE",
+  "CODEX_ACTIVE",
+  "READY_FOR_CHALLENGE",
+  "BLOCKED",
+  "MINIMUM_REPAIR",
+  "READY_FOR_SUPERCHAD",
+  "DONE"
+ ],
+ "tasks": [
+  {
+   "TASK_ID": "FC-OPS-001",
+   "SPORT": "OPS",
+   "KIND": "ops",
+   "LANE": "A",
+   "OWNER": "claude",
+   "CHALLENGER": "superchad",
+   "STATUS": "CLAUDE_ACTIVE",
+   "BASE_SHA": "8b689852342bd49014b86ad637e64002ad6f47b4",
+   "BRANCH": "claude/full-count-ops-state",
+   "HEAD_SHA": null,
+   "OBJECTIVE": "Balanced Max Lean Phase 1: ops state, queue, contract, slim orientation, deterministic polling, usage measurement, one navigator pilot.",
+   "ACCEPTANCE_CRITERIA": [
+    "see TASKS/FC-OPS-001.md#ACCEPTANCE_CRITERIA"
+   ],
+   "FILES_OR_AREAS": [
+    "engineering/ops/",
+    "CLAUDE.md",
+    "AGENTS.md",
+    ".claude/rules/",
+    "nfl/AGENTS.md"
+   ],
+   "EVIDENCE_POINTERS": [
+    "engineering/ops/bin/fc.py",
+    "engineering/efficiency/SUPERCLAUDE_MAX_EFFICIENCY_INVESTIGATION_20261002.md@claude/efficiency-investigation-20261002"
+   ],
+   "BLOCKERS": [],
+   "NEXT_ACTION": "Focused verification A-G; then READY_FOR_SUPERCHAD",
+   "AUTHORITY_REQUIRED": "Jacob:merge (orientation PR to main only)",
+   "WIP_EXEMPT": false,
+   "CHALLENGE_ACTIVE": false,
+   "UPDATED": "2026-10-02T15:15:00Z"
+  },
+  {
+   "TASK_ID": "FC-MLB-001",
+   "SPORT": "MLB",
+   "KIND": "ops",
+   "LANE": "A",
+   "OWNER": "claude",
+   "CHALLENGER": "codex",
+   "STATUS": "CLAUDE_ACTIVE",
+   "BASE_SHA": "504ca9cdb972d218907eb4eec13852cf5a7981d2",
+   "BRANCH": "claude/mlb-challenger-v3-evidence",
+   "HEAD_SHA": null,
+   "OBJECTIVE": "MLB V3 prospective evidence collection (automated runner). Standing; no manual intervention except reported failures.",
+   "ACCEPTANCE_CRITERIA": [
+    "Existing V3 prereg 15fb1d539c and activated implementation 504ca9cdb9 govern; nothing added here."
+   ],
+   "FILES_OR_AREAS": [
+    "research/mlb_accuracy_challenger_20261001/",
+    "research/mlb_accuracy_challenger_prereg_v3_20261001.md"
+   ],
+   "EVIDENCE_POINTERS": [
+    "branch claude/mlb-challenger-v3-evidence (CHAIN.json, seals/)",
+    "branch claude/mlb-v3-ops (v3_dispatch.py)",
+    "Issue #91 comment 5953838152 (Jacob authorization)"
+   ],
+   "BLOCKERS": [],
+   "NEXT_ACTION": "None manual. Runner session reports to #91 only on RAN/MISSED/failure.",
+   "AUTHORITY_REQUIRED": "Jacob for any change; never merge PR #220",
+   "WIP_EXEMPT": true,
+   "CHALLENGE_ACTIVE": false,
+   "UPDATED": "2026-10-02T15:15:00Z"
+  },
+  {
+   "TASK_ID": "FC-MLB-002",
+   "SPORT": "MLB",
+   "KIND": "research",
+   "LANE": "A",
+   "OWNER": "claude",
+   "CHALLENGER": "codex",
+   "STATUS": "READY",
+   "BASE_SHA": "8b689852342bd49014b86ad637e64002ad6f47b4",
+   "BRANCH": null,
+   "HEAD_SHA": null,
+   "OBJECTIVE": "Specify the first MLB predictive-engine improvement experiment toward a probabilistic prop engine. Acceptance criteria are written and challenge-reviewed BEFORE any build.",
+   "ACCEPTANCE_CRITERIA": [
+    "TBD before build: target population, exact champion vs challenger comparison, same legitimate opportunity, metrics+threshold, evidence artifact, leakage constraints, stop condition (contract \u00a73)."
+   ],
+   "FILES_OR_AREAS": [
+    "research/mlb_engine/"
+   ],
+   "EVIDENCE_POINTERS": [],
+   "BLOCKERS": [],
+   "NEXT_ACTION": "Claude drafts ACCEPTANCE_CRITERIA in TASKS/FC-MLB-002.md; Codex may add before build starts",
+   "AUTHORITY_REQUIRED": "none for research; Jacob for any promotion/production change",
+   "WIP_EXEMPT": false,
+   "CHALLENGE_ACTIVE": false,
+   "UPDATED": "2026-10-02T15:15:00Z"
+  },
+  {
+   "TASK_ID": "FC-MLB-003",
+   "SPORT": "MLB",
+   "KIND": "research",
+   "LANE": "B",
+   "OWNER": "codex",
+   "CHALLENGER": "claude",
+   "STATUS": "READY",
+   "BASE_SHA": "8b689852342bd49014b86ad637e64002ad6f47b4",
+   "BRANCH": null,
+   "HEAD_SHA": null,
+   "OBJECTIVE": "Lane-B example (pending SUPERCHAD confirmation): Codex independent MLB research question chosen by SUPERCHAD, produced without access to FC-MLB-002 builder notes; Claude challenges.",
+   "ACCEPTANCE_CRITERIA": [
+    "TBD by SUPERCHAD/Codex before start (contract \u00a73)."
+   ],
+   "FILES_OR_AREAS": [
+    "research/codex_mlb/"
+   ],
+   "EVIDENCE_POINTERS": [],
+   "BLOCKERS": [
+    "Awaiting SUPERCHAD topic selection"
+   ],
+   "NEXT_ACTION": "SUPERCHAD selects topic; Codex claims",
+   "AUTHORITY_REQUIRED": "none for research",
+   "WIP_EXEMPT": false,
+   "CHALLENGE_ACTIVE": false,
+   "UPDATED": "2026-10-02T15:15:00Z"
+  },
+  {
+   "TASK_ID": "FC-NFL-001",
+   "SPORT": "NFL",
+   "KIND": "ops",
+   "LANE": "A",
+   "OWNER": "claude",
+   "CHALLENGER": "codex",
+   "STATUS": "CLAUDE_ACTIVE",
+   "BASE_SHA": "693526aa5f",
+   "BRANCH": "claude/nfl-tier1-seal-2026w04",
+   "HEAD_SHA": null,
+   "OBJECTIVE": "NFL Week 4 Tier 1 protocol-v1 Saturday sun_mon seal (scheduled runner). Standing; Thursday seal 693526aa5f immutable.",
+   "ACCEPTANCE_CRITERIA": [
+    "Governed by the existing Tier 1 protocol (PROSPECTIVE_PROTOCOL.md on claude/nfl-tier1-seal-2026w04); nothing added here."
+   ],
+   "FILES_OR_AREAS": [
+    "engineering/nfl_tier1_status_20260924/seal/"
+   ],
+   "EVIDENCE_POINTERS": [
+    "branch claude/nfl-tier1-seal-2026w04",
+    "branch claude/nfl-seal-inputs-2026w04 @ b304820f7a"
+   ],
+   "BLOCKERS": [],
+   "NEXT_ACTION": "Runner fires 2026-10-03T18:30Z; backstop 20:00Z; verify only if no #91 report",
+   "AUTHORITY_REQUIRED": "Jacob authorized W4 seal 2026-10-01; no further authority",
+   "WIP_EXEMPT": true,
+   "CHALLENGE_ACTIVE": false,
+   "UPDATED": "2026-10-02T15:15:00Z"
+  },
+  {
+   "TASK_ID": "FC-NFL-002",
+   "SPORT": "NFL",
+   "KIND": "research",
+   "LANE": "A",
+   "OWNER": "claude",
+   "CHALLENGER": "codex",
+   "STATUS": "READY",
+   "BASE_SHA": "8b689852342bd49014b86ad637e64002ad6f47b4",
+   "BRANCH": null,
+   "HEAD_SHA": null,
+   "OBJECTIVE": "Specify the next NFL predictive-engine experiment covering player props and spreads/totals (injuries, roles, coaching, weather, matchup, market, game state). Acceptance criteria before any build.",
+   "ACCEPTANCE_CRITERIA": [
+    "TBD before build (contract \u00a73)."
+   ],
+   "FILES_OR_AREAS": [
+    "nfl/engine/"
+   ],
+   "EVIDENCE_POINTERS": [],
+   "BLOCKERS": [],
+   "NEXT_ACTION": "Claude drafts ACCEPTANCE_CRITERIA in TASKS/FC-NFL-002.md",
+   "AUTHORITY_REQUIRED": "none for research; Jacob for production/promotion",
+   "WIP_EXEMPT": false,
+   "CHALLENGE_ACTIVE": false,
+   "UPDATED": "2026-10-02T15:15:00Z"
+  }
+ ]
+}

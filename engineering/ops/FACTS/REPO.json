@@ -1,0 +1,47 @@
+{
+ "_note": "Objective facts only; each with a source pointer. Verify before relying on anything older than a day.",
+ "as_of": "2026-10-02T15:15:00Z",
+ "repository": "werriesjacob1-cmyk/Full-Count",
+ "default_branch": "main",
+ "main_sha": "8b689852342bd49014b86ad637e64002ad6f47b4",
+ "ops_state_branch": "claude/full-count-ops-state (orphan; never merged)",
+ "code_layout": {
+  "mlb_pipeline": [
+   "mlb_daily.py",
+   "mlb_sources.py",
+   "generate_picks.py",
+   "prop_probability.py",
+   "recommendation.py"
+  ],
+  "grading": [
+   "grade_results.py",
+   "grade_value.py",
+   "board_freeze_grader.py"
+  ],
+  "dashboard": "dashboard/ (build) -> docs/ (Pages)",
+  "nfl": "nfl/",
+  "research": "research/",
+  "backtest": "backtest/",
+  "ci": ".github/workflows/"
+ },
+ "size": {
+  "python_files": 439,
+  "python_loc": 125031,
+  "tracked_files": 3129,
+  "source": "git ls-tree origin/main 2026-10-02"
+ },
+ "tests": {
+  "root_suite": "pytest test_*.py at repo root (CI runs these)",
+  "research_suites": "not in CI; run explicitly"
+ },
+ "github_api": "REST via $GITHUB_TOKEN works through proxy; comments written from Claude cloud sessions get an auto-appended Claude footer (cannot post Jacob-format authorizations)",
+ "open_prs_count": {
+  "value": 19,
+  "source": "GET /pulls?state=open 2026-10-02T15:00Z"
+ },
+ "history_sources": {
+  "handoff": "engineering/ENGINEERING_HANDOFF.md (FROZEN 2026-10-02; newest entries on claude/nfl-housekeeping-20260924)",
+  "bridge": "Issue #91",
+  "system_map": "engineering/PROJECT_STATE.md (last verified 2026-08-17)"
+ }
+}

@@ -1,0 +1,38 @@
+{
+ "as_of": "2026-10-02T15:15:00Z",
+ "v3": {
+  "status": "ACTIVATED",
+  "authorization": "Issue #91 comment 5953838152 (2026-10-02T13:49:54Z)",
+  "prereg_commit": "15fb1d539c16d368bd8835254d93bb8f0ccd4609",
+  "prereg_sha256": "5eb56f2837e25d29c5821043955eefe52c0d5f0513e9b6099ac5facb2ff63442",
+  "implementation_commit": "504ca9cdb972d218907eb4eec13852cf5a7981d2",
+  "implementation_tree": "a7c94431628c7714cfadd0e9ed911c490687ad20",
+  "activation_record_sha256": "99d2655192506817b2ae18339adfe14dfa8131c6ed90448cbee38afba1a5794e",
+  "evidence_ref": "claude/mlb-challenger-v3-evidence",
+  "ops_ref": "claude/mlb-v3-ops",
+  "pr": 220,
+  "runner_session": "session_016RxnYjrtP3stCp3XRSa2Ux",
+  "dispatch_trigger": "trig_011u98uXVuFEipPfbTT6KGur (cron 7 13-23,0-1 * * * UTC)",
+  "boundary_utc": "2026-10-02T06:00:00Z",
+  "regimes": {
+   "2026_POSTSEASON_SHADOW": "F/D/L/W 2026-09-29..11-15, descriptive",
+   "2027_REGULAR_CONFIRMATORY": "R 2027-03-01..10-10"
+  },
+  "frozen_shadow_pin": "7d3ebacd55c34c6ec78030bdeca70799e56d4764",
+  "frozen_coefficients_sha256": "3c9e2c01cf4b7c57261622e829a1cccebd88d12b4950a84d7b7b96ad54672009"
+ },
+ "open_mlb_drafts": {
+  "219": "claude/mlb-accuracy-forward-chain-20261001",
+  "217": "claude/mlb-market-anchor-prereg-20260924",
+  "198": "claude/central-slate-contract-20260924"
+ },
+ "data_sources": [
+  "MLB Stats API",
+  "FanGraphs/Savant (pybaseball)",
+  "Rotowire",
+  "Open-Meteo/NWS",
+  "FanDuel public endpoints",
+  "UmpScorecards",
+  "Covers"
+ ]
+}
