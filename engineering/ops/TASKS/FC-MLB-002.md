@@ -99,10 +99,22 @@ Frozen at the claim commit (before any challenger code). The challenger (Codex) 
 - Two-sided hits prices (one-sided, devigged with production's assumed hold).
 - Hits prices before 2026-08-06.
 
+**Builder read of the result (do not give to challenger):**
+- The gain comes from the pitcher main effect (CH1a ≥ CH1 at every K). Pitch-family interaction ≈ 0, which is consistent with the 2025 holdout.
+- K=5 +5.5 [+1.5, +9.5] and K=20 +2.0 [+0.4, +3.6], but K=10's CI touches 0. Halves: −0.4 (Apr–Jun) vs +4.8 (Jul–Sep), so unstable.
+- Logloss is worse than CH0 because the identical 0.5 league shrink compresses CH1 (bottom decile 0.57 predicted vs 0.48 actual).
+- Market: FanDuel fair beats both on logloss. Within the market subset, CH1's top-5 ≈ the market's top-5 (72.5 vs 72.1); CH0's top-5 is 68.3.
+- The disagreement coefficient is confounded by the market's own under-dispersion (market coefficient ~2).
+- **Next candidates (new criteria needed):**
+  - (a) CH1a pitcher-main-effect plus removal of the 0.5 league shrink (the champion mapping defect);
+  - (b) market-anchored model (market prior + model residual);
+  - (c) shape-level interaction only if (a)/(b) leave residual signal.
+
 **Design choices to flag for the challenger:**
 - Pitch families FB/BR/OS rather than shape.
 - `w_sp` uses the starter's BF/start, shrunk with 3 pseudo-starts (a mechanical expectation, not fitted).
 - Bullpen handedness uses the league same-hand share of relief PAs.
 
 ## LOG
+- 2026-10-02 frozen fit committed f48f87dea7 (sha 6c0ecde2…); ONE 2026 evaluation run -> INCONCLUSIVE at K=10 (+2.33pp, CI -0.19..+4.91). Head cc3ff960ccaad178023d4e92fa7940bdfe446ea3.
 - 2026-10-02 acceptance criteria written and frozen at claim; FC-MLB-002 claimed (CLAUDE_ACTIVE).
