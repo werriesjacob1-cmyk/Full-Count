@@ -6679,3 +6679,60 @@ The receipt POST path works (201). The appended footer does not affect receipt v
 No merge, deploy, model, selector, pick or ledger change. No refit, prereg change, backfill or outcome read.
 
 Alligator
+
+## 2026-10-02 14:15Z -- MLB V3 ACTIVATED (Jacob #91/5953838152); prospective collection scheduled
+
+**Authorization.** Jacob posted the authorization himself as #91 **5953838152** (2026-10-02T13:49:54Z) from GitHub web:
+- it has no agent marker;
+- it names prereg `15fb1d539c`/`5eb56f28…3442`, impl `504ca9cdb9` and tree `a7c9443`;
+- all eight checks in the existing `activation.check_comment` pass.
+
+Comment 5943005635 (with a Claude footer) is NOT the authorization.
+
+**Live recheck at 13:51:35Z:**
+- PR #220 head `504ca9cdb972d218907eb4eec13852cf5a7981d2`, draft, unmerged; last updated 2026-10-01T22:03:46Z.
+- v3 tree `a7c94431628c7714cfadd0e9ed911c490687ad20`.
+- Prereg blob `71e7d2828d`, sha256 `5eb56f28…3442`.
+- `research/` clean.
+- No ACTIVATION.json.
+- Evidence ref `2dd2bb5864`, genesis only.
+
+**Activation record:**
+- Untracked file `research/mlb_accuracy_challenger_20261001/v3/ACTIVATION.json`, sha256 `99d2655192506817b2ae18339adfe14dfa8131c6ed90448cbee38afba1a5794e`; `activation_timestamp` 2026-10-02T13:51:55Z.
+- The existing verifier (activation.py sha `817b9f9c…`, unmodified) returns **`(True, [])`**. With the env var unset it returns `(False, ['ENV_NOT_SET'])`.
+- A byte-identical copy is persisted on the evidence ref at `ACTIVATION/ACTIVATION_5953838152.json`, commit `968c0e550e`. This is metadata only; `load_chain` still returns zero seals.
+
+**Scheduling (wiring only; the activated code is unchanged):**
+- Ops branch `claude/mlb-v3-ops` @ `edeec42926` holds `v3_dispatch.py` (sha256 `da3c276c…`) and a README. The dispatcher:
+  - creates a detached worktree at exactly `504ca9cdb9`, refusing on any head, tree or prereg mismatch;
+  - restores the record from the evidence ref and checks its hash;
+  - runs the existing verifier;
+  - plans the America/New_York DAY/NIGHT units with the existing `schedule_plan.plan`;
+  - runs the existing `runner.py --mode prospective` for each post-boundary, unsealed unit within 0–75 minutes of its latest start;
+  - reports a unit past its latest start as MISSED, with no backfill;
+  - uses a flock against concurrent runs, and depth-1 fetches (a full fetch pulls about 4 GB).
+- Runner session `session_016RxnYjrtP3stCp3XRSa2Ux` is woken by Routine `trig_011u98uXVuFEipPfbTT6KGur`, cron `7 13-23,0-1 * * *` UTC. The first firing is 2026-10-02T15:07Z.
+- The runner session posts to #91 only when a unit runs or is missed, or when the dispatcher fails.
+- The 2026-10-03T12:00Z authorization check-in (`trig_01LJoycs8KNRbBYxzYYKhd35`) is disabled as superseded.
+
+**Testing:**
+- A fresh depth-1 clone bootstraps, verifies activation and plans correctly.
+- A simulated (check-only) clock for Oct 3 gives: DAY due at the 15:07Z firing, NIGHT due at the 21:07Z firing; after the latest start the result is MISSED_NO_BACKFILL.
+- The pinned shadow tree builds from the depth-1 fetch.
+
+**Next units** (statsapi, refreshed 13:52Z; no games on Oct 2):
+
+| Unit | First pitch | Latest start |
+|---|---|---|
+| 2026-10-03 DAY | 17:00Z (CWS@CLE) | 16:05Z |
+| 2026-10-03 NIGHT | 22:30Z (NYY@TB) | 21:35Z |
+| 2026-10-04 DAY | 20:00Z | 19:05Z |
+| 2026-10-04 NIGHT | 00:00Z on 10-05 | 23:05Z |
+
+All are in the descriptive regime 2026_POSTSEASON_SHADOW.
+
+**Known risk:** a NIGHT unit whose latest start falls after 00:00Z UTC may hit the pinned pipeline's TODAY mismatch and fail closed. That loses the unit; nothing is backfilled.
+
+No merge, deploy, model, selector, pick or ledger change. No refit, prereg change or V4. No backfill. No outcome read or scored. No seal yet.
+
+Alligator
