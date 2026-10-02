@@ -1,0 +1,383 @@
+{
+ "label": "SELFCHECK on 2025 training season, IN-SAMPLE: bug check only, not evidence",
+ "criteria": "engineering/ops/TASKS/FC-MLB-002.md @ claude/full-count-ops-state cb1a338b28 (sha256 5779cfe9...)",
+ "champion_code": "8b689852342bd49014b86ad637e64002ad6f47b4",
+ "frozen_fit_sha256": "6c0ecde23577659c1e72e18448415208eb4f5d7d2748f24b9631cd01ded7d6aa",
+ "k": {
+  "kb": 200,
+  "kp": 150,
+  "kf": 100,
+  "ku": 400
+ },
+ "population": {
+  "batter_games": 37338,
+  "dates": 163,
+  "first": "2025-04-15",
+  "last": "2025-09-28",
+  "h1_base_rate": 0.6201992608066849
+ },
+ "repair": {
+  "settlement_identity": "(game_pk, batter); hits/TB summed over every PA of the player-game",
+  "audited_rule_fragments": {
+   "rows_by_stand": 41629,
+   "player_games_split": 2281,
+   "split_with_conflicting_h1": 1163
+  },
+  "matchup_side": "statsapi batSide; switch hitter bats opposite the starter's hand; bullpen side mixed by league RHP share of relief PAs as of D-1; undeterminable side excluded",
+  "side_excluded_rows": 0,
+  "switch_hitter_player_games": 4182,
+  "rows_before_min_pa": 39348,
+  "raw_provenance": {
+   "raw_files_verified": 385,
+   "manifest_sha256": "3fb1d0170a3f465ec30625b3deb08e17bae3f4858a468b0cae9f97d608b1d16a",
+   "pa_parquet_sha256": "cb06b8f38c9dd8275194ebe60dc4c24e263b1fa366edd03f42c4b9abf03387a4",
+   "pitches_parquet_sha256": "a87b1c7e560639aa692bfad87ae8a875147db53c3c612e484928fe26de639c76",
+   "pitches": 1429320,
+   "pa": 366775
+  }
+ },
+ "primary": {
+  "K5": {
+   "counts": {
+    "selected_rows": 815,
+    "dates": 163,
+    "dates_short": 0,
+    "shortfalls": {}
+   },
+   "CH0_rate": 0.6773006134969326,
+   "CH0b": {
+    "rate": 0.6834355828220858,
+    "diff_pp": 0.6134969325153377,
+    "ci95_pp": [
+     -2.2085889570552144,
+     3.4355828220858897
+    ],
+    "selected_rows": 815
+   },
+   "CH1a": {
+    "rate": 0.7263803680981594,
+    "diff_pp": 4.9079754601226995,
+    "ci95_pp": [
+     1.1042944785276076,
+     8.343558282208589
+    ],
+    "selected_rows": 815
+   },
+   "CH1": {
+    "rate": 0.7214723926380368,
+    "diff_pp": 4.417177914110431,
+    "ci95_pp": [
+     0.736196319018405,
+     7.85276073619632
+    ],
+    "selected_rows": 815
+   },
+   "CH1_minus_CH1a": {
+    "diff_pp": -0.49079754601227,
+    "ci95_pp": [
+     -1.9631901840490795,
+     0.98159509202454
+    ]
+   }
+  },
+  "K10": {
+   "counts": {
+    "selected_rows": 1630,
+    "dates": 163,
+    "dates_short": 0,
+    "shortfalls": {}
+   },
+   "CH0_rate": 0.6613496932515338,
+   "CH0b": {
+    "rate": 0.6858895705521473,
+    "diff_pp": 2.45398773006135,
+    "ci95_pp": [
+     0.490797546012271,
+     4.478527607361964
+    ],
+    "selected_rows": 1630
+   },
+   "CH1a": {
+    "rate": 0.7085889570552147,
+    "diff_pp": 4.723926380368099,
+    "ci95_pp": [
+     2.269938650306749,
+     6.993865030674848
+    ],
+    "selected_rows": 1630
+   },
+   "CH1": {
+    "rate": 0.7055214723926381,
+    "diff_pp": 4.417177914110431,
+    "ci95_pp": [
+     2.0245398773006147,
+     6.809815950920246
+    ],
+    "selected_rows": 1630
+   },
+   "CH1_minus_CH1a": {
+    "diff_pp": -0.3067484662576686,
+    "ci95_pp": [
+     -1.1042944785276074,
+     0.5521472392638036
+    ]
+   }
+  },
+  "K20": {
+   "counts": {
+    "selected_rows": 3260,
+    "dates": 163,
+    "dates_short": 0,
+    "shortfalls": {}
+   },
+   "CH0_rate": 0.6754601226993865,
+   "CH0b": {
+    "rate": 0.6874233128834356,
+    "diff_pp": 1.1963190184049077,
+    "ci95_pp": [
+     -0.03144171779141182,
+     2.453987730061349
+    ],
+    "selected_rows": 3260
+   },
+   "CH1a": {
+    "rate": 0.7021472392638037,
+    "diff_pp": 2.668711656441718,
+    "ci95_pp": [
+     1.1042944785276074,
+     4.263803680981594
+    ],
+    "selected_rows": 3260
+   },
+   "CH1": {
+    "rate": 0.7015337423312883,
+    "diff_pp": 2.607361963190184,
+    "ci95_pp": [
+     1.1042944785276068,
+     4.111196319018401
+    ],
+    "selected_rows": 3260
+   },
+   "CH1_minus_CH1a": {
+    "diff_pp": -0.06134969325153458,
+    "ci95_pp": [
+     -0.5828220858895714,
+     0.4294478527607356
+    ]
+   }
+  }
+ },
+ "verdict_K10_CH1_vs_CH0": "IMPROVES",
+ "stability_K10": {
+  "apr15_jun30": {
+   "dates": 77,
+   "CH1_minus_CH0_pp": 6.103896103896104,
+   "CH1a_minus_CH0_pp": 6.233766233766236
+  },
+  "jul01_end": {
+   "dates": 86,
+   "CH1_minus_CH0_pp": 2.9069767441860463,
+   "CH1a_minus_CH0_pp": 3.372093023255814
+  },
+  "2025-04": {
+   "dates": 16,
+   "CH1_minus_CH0_pp": 6.250000000000002,
+   "CH1a_minus_CH0_pp": 6.875000000000002
+  },
+  "2025-05": {
+   "dates": 31,
+   "CH1_minus_CH0_pp": 4.516129032258066,
+   "CH1a_minus_CH0_pp": 5.806451612903227
+  },
+  "2025-06": {
+   "dates": 30,
+   "CH1_minus_CH0_pp": 7.666666666666669,
+   "CH1a_minus_CH0_pp": 6.333333333333334
+  },
+  "2025-07": {
+   "dates": 27,
+   "CH1_minus_CH0_pp": 5.185185185185186,
+   "CH1a_minus_CH0_pp": 6.666666666666668
+  },
+  "2025-08": {
+   "dates": 31,
+   "CH1_minus_CH0_pp": 0.96774193548387,
+   "CH1a_minus_CH0_pp": 0.32258064516128937
+  },
+  "2025-09": {
+   "dates": 28,
+   "CH1_minus_CH0_pp": 2.8571428571428577,
+   "CH1a_minus_CH0_pp": 3.571428571428571
+  }
+ },
+ "secondary": {
+  "CH0": {
+   "logloss": 0.6612360647596597,
+   "brier": 0.2342565980947349,
+   "mean_pred": 0.6224811840059543
+  },
+  "CH0b": {
+   "logloss": 0.6612960174302875,
+   "brier": 0.23429582201776075,
+   "mean_pred": 0.6240375158556837
+  },
+  "CH1a": {
+   "logloss": 0.6609632430580772,
+   "brier": 0.23414229674060646,
+   "mean_pred": 0.6236338469965313
+  },
+  "CH1": {
+   "logloss": 0.6609659174372783,
+   "brier": 0.23414305903990043,
+   "mean_pred": 0.6236289145107562
+  },
+  "CH0_h2": {
+   "logloss": 0.5341201871545461,
+   "mean_pred": 0.23019973299607394,
+   "actual": 0.2248111843162462
+  },
+  "CH1_h2": {
+   "logloss": 0.5280605567544674,
+   "mean_pred": 0.22468725964009015,
+   "actual": 0.2248111843162462
+  },
+  "CH0_tb2": {
+   "logloss": 0.6577717612911612,
+   "mean_pred": 0.37222967709511917,
+   "actual": 0.3627939364722267
+  },
+  "CH1_tb2": {
+   "logloss": 0.6525448622987762,
+   "mean_pred": 0.3694925159364056,
+   "actual": 0.3627939364722267
+  },
+  "calibration_CH1_deciles": [
+   {
+    "pred": 0.5878,
+    "act": 0.5485,
+    "n": 3734
+   },
+   {
+    "pred": 0.6006,
+    "act": 0.5672,
+    "n": 3734
+   },
+   {
+    "pred": 0.6085,
+    "act": 0.5806,
+    "n": 3734
+   },
+   {
+    "pred": 0.6153,
+    "act": 0.5979,
+    "n": 3733
+   },
+   {
+    "pred": 0.6218,
+    "act": 0.6111,
+    "n": 3734
+   },
+   {
+    "pred": 0.6278,
+    "act": 0.6304,
+    "n": 3734
+   },
+   {
+    "pred": 0.6337,
+    "act": 0.6475,
+    "n": 3733
+   },
+   {
+    "pred": 0.6394,
+    "act": 0.6545,
+    "n": 3734
+   },
+   {
+    "pred": 0.6456,
+    "act": 0.6679,
+    "n": 3734
+   },
+   {
+    "pred": 0.6557,
+    "act": 0.6963,
+    "n": 3734
+   }
+  ],
+  "calibration_CH0_deciles": [
+   {
+    "pred": 0.534,
+    "act": 0.5533,
+    "n": 3734
+   },
+   {
+    "pred": 0.5803,
+    "act": 0.575,
+    "n": 3734
+   },
+   {
+    "pred": 0.5985,
+    "act": 0.5972,
+    "n": 3734
+   },
+   {
+    "pred": 0.6119,
+    "act": 0.6049,
+    "n": 3733
+   },
+   {
+    "pred": 0.6226,
+    "act": 0.6007,
+    "n": 3734
+   },
+   {
+    "pred": 0.633,
+    "act": 0.6259,
+    "n": 3734
+   },
+   {
+    "pred": 0.6433,
+    "act": 0.6603,
+    "n": 3733
+   },
+   {
+    "pred": 0.6531,
+    "act": 0.6492,
+    "n": 3734
+   },
+   {
+    "pred": 0.6638,
+    "act": 0.6668,
+    "n": 3734
+   },
+   {
+    "pred": 0.6844,
+    "act": 0.6687,
+    "n": 3734
+   }
+  ],
+  "subgroups": {
+   "LHB_side": {
+    "n": 16466,
+    "ll_gain_CH1_vs_CH0": -0.0003482595827194457
+   },
+   "RHB_side": {
+    "n": 20872,
+    "ll_gain_CH1_vs_CH0": 0.0007580108763957094
+   },
+   "switch": {
+    "n": 4182,
+    "ll_gain_CH1_vs_CH0": -0.00019269720749814923
+   },
+   "same_hand_sp": {
+    "n": 15761,
+    "ll_gain_CH1_vs_CH0": 0.0014227586274446757
+   },
+   "opp_hand_sp": {
+    "n": 21577,
+    "ll_gain_CH1_vs_CH0": -0.0005717818975798927
+   }
+  },
+  "corr_CH0_CH1": 0.8069467767016734,
+  "topK10_overlap_share": 0.4337423312883435
+ }
+}
