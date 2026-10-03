@@ -1,0 +1,309 @@
+"""Tests for the same-production-event prospective shadow capture tap.
+
+The single most important property under test is negative: this tap cannot
+affect the customer board, no matter what goes wrong inside it.
+"""
+
+import copy
+import json
+import os
+import tempfile
+import sys
+from datetime import datetime, timedelta, timezone
+
+from backtest import prospective_capture as pc
+from backtest import prospective_source_integrity as psi
+
+# A live.json with the two REQUIRED freshness channels present and current.
+# reconciliation is deliberately absent, matching every real board measured:
+# it is an enhancer, not a precondition.
+from datetime import datetime as _dt, timezone as _tz
+_FRESH_LIVE = {"prices_checked_at": _dt.now(_tz.utc).isoformat(),
+               "grades_checked_at": _dt.now(_tz.utc).isoformat(),
+               "reconciliation": None}
+
+FAILURES = []
+
+
+def check(name, condition, detail=""):
+    if condition:
+        print(f"  PASS  {name}")
+    else:
+        print(f"  FAIL  {name} {detail}")
+        FAILURES.append(name)
+
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+NOW = datetime(2026, 9, 3, 21, 0, 0, tzinfo=timezone.utc)
+START = NOW + timedelta(hours=2)
+GEN = (NOW - timedelta(minutes=8)).isoformat()
+ODDS = (NOW - timedelta(minutes=3)).isoformat()
+SCHEDULE = {1: {"started": False, "start": START.isoformat(), "status": {},
+                "resumed_from": None}}
+
+# Live raw rest. n_live=2 (last game D-2) -> historical-equivalent 1 -> stored
+# signal 0 -> 0_days_rest, which is what the frozen artifact was fitted on.
+REST = {"batters": {99001: {"days_since_last_game": 2}}}
+
+
+def row(**over):
+    r = {
+        "type": "batter", "name": "Test Batter", "player_id": 99001,
+        "team": "Testers", "side": "home", "matchup": "A @ B", "game_pk": 1,
+        "prop": "Over 0.5 Hits",
+        "projection": {"stat": "hits", "value": 0.5, "needs": 1},
+        "hit_probability": 0.62, "sample_n": 140, "reliability": "A",
+        "market_odds": -145, "score": 71.2, "status": "top_pick",
+        # lineup_slot 100.0 decodes to batting order 1; days_rest/getaway_day
+        # present so joint_key() resolves to a real cell.
+        "signals": {"lineup_slot": 100.0, "days_rest": 0.0, "getaway_day": 0.0},
+    }
+    r.update(over)
+    return r
+
+
+def cap(rows, **kw):
+    kw.setdefault("slate_date", "2026-09-03")
+    kw.setdefault("board_generated_at", GEN)
+    kw.setdefault("odds_fetched_at", ODDS)
+    kw.setdefault("schedule", SCHEDULE)
+    kw.setdefault("persist", False)
+    kw.setdefault("now", NOW)
+    # A genuinely-ran clean evaluation. Omitting it is UNKNOWN and correctly
+    # blocks every row -- asserted separately in check 11.
+    kw.setdefault("source_integrity",
+                  psi.evaluate(schedule=SCHEDULE,
+                               live_state=_FRESH_LIVE))
+    return pc.capture(rows, **kw)
+
+
+print("Check 1: the artifact must be the AUTHORITATIVE freeze")
+art = pc.load_artifact()
+check("artifact loads and verifies",
+      art["scientific_content_sha256"] ==
+      "a4f598bd4138305d8da4d85767eb873781b10e918dd1e402d536d9cd13fadf4a")
+check("effective_from is present and explicit", bool(art.get("effective_from")))
+# /tmp, NEVER the repo tree. A read-only auditor could not run this file
+# because it wrote a scratch artifact into backtest/.
+bad = os.path.join(tempfile.mkdtemp(prefix="pc-test-"), "_bad_artifact.json")
+try:
+    tampered = copy.deepcopy(art)
+    tampered["tables"]["hit_rate_given_pa"]["1"] = 0.99
+    with open(bad, "w") as fh:
+        json.dump(tampered, fh)
+    try:
+        pc.load_artifact(bad)
+        check("an edited artifact is refused", False, "no error raised")
+    except ValueError as exc:
+        check("an edited artifact is refused", "does not verify" in str(exc))
+finally:
+    if os.path.exists(bad):
+        os.remove(bad)
+
+print("\nCheck 2: capture NEVER raises, whatever it is handed")
+for label, rows in [("None", None), ("empty", []),
+                    ("garbage strings", ["not a row", 7]),
+                    ("row with no projection", [{"game_pk": 1}]),
+                    ("row with a None game_pk", [row(game_pk=None)]),
+                    ("deeply broken row", [{"projection": None, "signals": 5}])]:
+    try:
+        rep = cap(rows)
+        check(f"survives {label}", isinstance(rep, dict))
+    except BaseException as exc:
+        check(f"survives {label}", False, f"raised {type(exc).__name__}: {exc}")
+try:
+    rep = cap([row()], schedule=None)
+    check("survives a None schedule", isinstance(rep, dict))
+except BaseException as exc:
+    check("survives a None schedule", False, str(exc))
+try:
+    rep = cap([row()], artifact_path="/nonexistent/artifact.json")
+    check("survives a missing artifact", rep["ok"] is False and rep["error"])
+except BaseException as exc:
+    check("survives a missing artifact", False, str(exc))
+
+print("\nCheck 3: capture does not mutate the rows it observes")
+rows = [row(), row(player_id=99002, game_pk=1)]
+before = copy.deepcopy(rows)
+cap(rows)
+check("input rows are byte-identical afterwards", rows == before)
+
+print("\nCheck 4: a clean row is captured and PA-v1 scored")
+rep = cap([row()])
+check("capture ok", rep.get("ok") is True, str(rep.get("error")))
+check("1 raw row", rep.get("raw_count") == 1)
+check("1 eligible", rep.get("eligible_count") == 1, str(rep.get("rejection_funnel")))
+check("PA-v1 produced a score", rep.get("pa_scored") == 1)
+check("snapshot hash recorded", len(rep.get("snapshot_content_sha256") or "") == 64)
+check("epoch candidate id recorded", bool(rep.get("epoch_candidate_id")))
+check("dry run did not persist", rep.get("persisted") is False)
+
+print("\nCheck 5: ineligible rows are captured as rejections, not dropped silently")
+rep = cap([row(), row(player_id=2, lineup_assumed=True),
+           row(player_id=3, market_odds=None)])
+check("3 raw rows seen", rep.get("raw_count") == 3)
+check("1 eligible", rep.get("eligible_count") == 1)
+check("2 rejected", rep.get("rejected_count") == 2)
+funnel = rep.get("rejection_funnel") or {}
+check("assumed lineup counted in the funnel", funnel.get("lineup_confirmed") == 1)
+check("missing price counted in the funnel", funnel.get("real_current_price") == 1)
+
+print("\nCheck 6: effective_from is a hard preregistration boundary")
+eff = art["effective_from"]
+before_eff = (datetime.fromisoformat(eff.replace("Z", "+00:00"))
+              - timedelta(days=1)).isoformat()
+rep = cap([row()], board_generated_at=before_eff)
+check("a slate before effective_from is SKIPPED", rep.get("skipped") is True)
+check("skip is reported, not silent", "effective_from" in (rep.get("reason") or ""))
+check("skip is not an error", rep.get("ok") is True)
+
+print("\nCheck 7: PA-v1 fallback state is explicit, never collapsed to null")
+from backtest import prospective_eligibility as _pe
+_CL = psi.evaluate(schedule=SCHEDULE, live_state=_FRESH_LIVE)
+pool, _rej = _pe.partition([row()], now=NOW, schedule=SCHEDULE,
+                           odds_fetched_at=ODDS, board_generated_at=GEN,
+                           source_integrity=_CL)
+scores, states, _c, _rs = pc.score_pool(pool, art, rest_index=REST)
+pid = pool[0][1]["canonical_prop_id"]
+check("a full joint cell is labelled as such", states[pid] == "joint_cell")
+check("the score is a real probability", 0.0 < scores[pid] < 1.0)
+# No batting order at all -> unscorable, and labelled as unscorable rather
+# than silently indistinguishable from a confident score.
+pool2, _ = _pe.partition([row(signals={})], now=NOW, schedule=SCHEDULE,
+                         odds_fetched_at=ODDS, board_generated_at=GEN,
+                         source_integrity=_CL)
+s2, st2, _c2, _rs2 = pc.score_pool(pool2, art, rest_index=REST)
+pid2 = pool2[0][1]["canonical_prop_id"]
+check("no batting order -> None score", s2[pid2] is None)
+check("no batting order -> labelled unscorable",
+      st2[pid2] == "unscorable_no_batting_order")
+# Order present but a joint dimension missing -> order marginal fallback.
+pool3, _ = _pe.partition([row(signals={"lineup_slot": 100.0})], now=NOW,
+                         schedule=SCHEDULE, odds_fetched_at=ODDS,
+                         board_generated_at=GEN, source_integrity=_CL)
+s3, st3, _c3, _rs3 = pc.score_pool(pool3, art, rest_index=REST)
+pid3 = pool3[0][1]["canonical_prop_id"]
+check("partial signals -> order marginal fallback",
+      st3[pid3] == "order_marginal_fallback")
+check("fallback still yields a score", s3[pid3] is not None)
+
+print("\nCheck 8: the tap sits at the protocol section 4 boundary")
+src = open(os.path.join(HERE, "dashboard", "build_dashboard.py")).read()
+i_rec = src.index("gprec.attach_recommendations(all_candidates_for_rec")
+i_tap = src.index("prospective_capture as _shadow")
+i_clean = src.index("def clean(rows):")
+i_started = src.index("Game-start filter: removed")
+check("tap is AFTER attach_recommendations", i_rec < i_tap)
+check("tap is BEFORE clean() strips fields", i_tap < i_clean)
+check("tap is AFTER the game-start filter", i_started < i_tap)
+check("tap reads by_category_full['hits']",
+      'by_category_full.get("hits")' in src)
+
+print("\nCheck 9: the tap cannot affect production output")
+tap = src[i_tap - 2000:i_clean]
+check("tap is inside a try/except", "except BaseException as _shadow_exc" in tap)
+check("tap assigns nothing back into the board",
+      "by_category_full =" not in tap and "moonshots_full =" not in tap)
+check("tap does not call select_ or attach_ again",
+      "gp.select_" not in tap and "attach_market_prices" not in tap)
+check("persistence is opt-in via env, off by default in a plain build",
+      'FULLCOUNT_SHADOW_PERSIST' in tap)
+
+print("\nCheck 13: the PA-v1 rest adapter is applied at capture, and recorded")
+_r = row()
+_cl = psi.evaluate(schedule=SCHEDULE, live_state=_FRESH_LIVE)
+_pl, _ = _pe.partition([_r], now=NOW, schedule=SCHEDULE, odds_fetched_at=ODDS,
+                       board_generated_at=GEN, source_integrity=_cl)
+# last game D-2: live raw 2 -> historical-equivalent 1 -> signal 0 -> 0_days_rest
+_s, _st, _cp, _rs4 = pc.score_pool(_pl, art, rest_index={"batters": {99001: {
+    "days_since_last_game": 2}}})
+_pid = _pl[0][1]["canonical_prop_id"]
+check("scored through the adapter", _s[_pid] is not None)
+check("compat provenance recorded per candidate", _pid in _cp)
+check("records the live raw", _cp[_pid]["live_days_since_last_game"] == 2)
+check("records the historical equivalent", _cp[_pid]["historical_equivalent_raw"] == 1)
+check("records the compat version",
+      _cp[_pid]["compat_version"] == "pa-v1-rest-semantics-compat-v1")
+# Without rest data the adapter cannot reconstruct the frozen clock, so PA-v1
+# must fall back rather than score a wrong-clock cell.
+_s2, _st2, _cp2, _rs5 = pc.score_pool(_pl, art, rest_index=None)
+check("no rest data -> order-marginal fallback, not a wrong-clock joint cell",
+      _st2[_pid] == "order_marginal_fallback", _st2[_pid])
+check("and the reason is recorded", _cp2[_pid]["note"] == "absent")
+_s3, _st3, _cp3, _rs6 = pc.score_pool(_pl, art, rest_index={"batters": {99001: {
+    "days_since_last_game": 0}}})
+check("same-day game -> fallback, explicitly named",
+      _st3[_pid] == "order_marginal_fallback"
+      and _cp3[_pid]["note"] == "same_day_game_historically_unobservable")
+
+print("\nCheck 11: a capture with NO integrity evaluation counts nothing")
+no_eval = pc.capture([row()], slate_date="2026-09-03", board_generated_at=GEN,
+                     odds_fetched_at=ODDS, schedule=SCHEDULE, persist=False,
+                     now=NOW)
+check("capture still succeeds", no_eval.get("ok") is True)
+check("state is UNKNOWN", no_eval.get("source_integrity_state") == psi.UNKNOWN)
+check("every row is rejected (fail closed, never CLEAR by default)",
+      no_eval.get("eligible_count") == 0)
+check("and the funnel names the integrity gate",
+      (no_eval.get("rejection_funnel") or {}).get("no_source_integrity_hold") == 1)
+
+print("\nCheck 12: the sealed snapshot carries a COMPLETE receipt basis")
+from backtest import prospective_eligibility as _pe2
+from backtest import prospective_receipt as _pr2
+_clear = psi.evaluate(schedule=SCHEDULE, live_state=_FRESH_LIVE)
+_el, _rej = _pe2.partition([row()], now=NOW, schedule=SCHEDULE,
+                           odds_fetched_at=ODDS, board_generated_at=GEN,
+                           source_integrity=_clear)
+_snap = pc.build_snapshot(slate_date="2026-09-03", board_generated_at=GEN,
+                          odds_fetched_at=ODDS, eligible=_el, rejected=_rej,
+                          pa_scores={}, pa_states={}, artifact_sha="x" * 64,
+                          protocol_sha="y" * 64, funnel={},
+                          board_metadata={"model_version": "2026.08.15",
+                                          "git_sha": "c" * 40},
+                          captured_now=NOW.isoformat(),
+                          source_integrity=_clear)
+_row0 = _snap["eligible"][0]
+check("eligible rows carry receipt_basis", "receipt_basis" in _row0)
+check("basis carries every allow-listed row field",
+      set(_row0["receipt_basis"]["row"]) == set(_pr2.RECEIPT_ROW_FIELDS))
+check("basis carries the full positive gate trace",
+      isinstance(_row0["receipt_basis"]["verdict"]["gates"], dict)
+      and len(_row0["receipt_basis"]["verdict"]["gates"]) == 15)
+check("stat is reachable from the basis (Mission 1 lost it, breaking settlement)",
+      (_row0["receipt_basis"]["row"]["projection"] or {}).get("stat") == "hits")
+check("snapshot seals the epoch's own clock", _snap["captured_now"] == NOW.isoformat())
+check("snapshot seals version provenance",
+      _snap["board_metadata"]["model_version"] == "2026.08.15")
+check("snapshot seals the source-integrity verdict",
+      _snap["source_integrity"]["state"] == psi.CLEAR)
+check("rejected rows are auditable, not just countable",
+      "gates" in _snap["rejected"][0] if _snap["rejected"] else True)
+
+print("\nCheck 10: schedule resumption fields are additive and inert")
+check("resumed_from captured", '"resumed_from": g.get("resumedFrom")' in src)
+check("existing started key preserved", '"started": g.get("status", {})' in src)
+check("existing start key preserved", '"start": g.get("gameDate")' in src)
+
+
+
+print("\nCheck: a MISSING rest feed is recorded, not silently absorbed")
+# A red team measured that rest_index=None, {} and a player-absent index all
+# produce order_marginal_fallback identically, so one rest_and_usage fetch
+# failure mutes a PA-v1 feature for a whole slate and leaves no trace.
+_pl2 = [(dict(_pl[0][0]), dict(_pl[0][1]))]
+for _idx, _expected in ((None, "rest_index_absent"),
+                        ({}, "rest_index_absent"),
+                        ({"batters": {}}, "rest_index_empty"),
+                        ({"batters": {99001: {"days_since_last_game": 2}}},
+                         "rest_index_present")):
+    _r = pc.score_pool(_pl2, art, rest_index=_idx)
+    check(f"rest feed state {_expected!r} is reported", _r[3] == _expected, str(_r[3]))
+    _pid = next(iter(_r[2]))
+    check("and it travels on the per-row compat provenance",
+          _r[2][_pid].get("rest_index_state") == _expected)
+
+print()
+if FAILURES:
+    print(f"FAILED {len(FAILURES)}: {FAILURES}")
+    sys.exit(1)
+print("All prospective capture checks passed.")

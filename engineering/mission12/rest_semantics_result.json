@@ -1,0 +1,87 @@
+{
+  "slate_date": "2026-07-15",
+  "rows": [
+    {
+      "circumstance": "D-1",
+      "hist_raw": 0,
+      "hist_signal": -2,
+      "hist_bucket": "0_days_rest",
+      "live_raw": 1,
+      "live_signal": 0,
+      "live_bucket": "0_days_rest",
+      "same_cell": true
+    },
+    {
+      "circumstance": "D-2",
+      "hist_raw": 1,
+      "hist_signal": 0,
+      "hist_bucket": "0_days_rest",
+      "live_raw": 2,
+      "live_signal": 2,
+      "live_bucket": "2-3_days_rest",
+      "same_cell": false
+    },
+    {
+      "circumstance": "D-3",
+      "hist_raw": 2,
+      "hist_signal": 2,
+      "hist_bucket": "2-3_days_rest",
+      "live_raw": 3,
+      "live_signal": 4,
+      "live_bucket": "4plus_days_rest",
+      "same_cell": false
+    },
+    {
+      "circumstance": "D-4",
+      "hist_raw": 3,
+      "hist_signal": 4,
+      "hist_bucket": "4plus_days_rest",
+      "live_raw": 4,
+      "live_signal": 4,
+      "live_bucket": "4plus_days_rest",
+      "same_cell": true
+    },
+    {
+      "circumstance": "D-5",
+      "hist_raw": 4,
+      "hist_signal": 4,
+      "hist_bucket": "4plus_days_rest",
+      "live_raw": 5,
+      "live_signal": 4,
+      "live_bucket": "4plus_days_rest",
+      "same_cell": true
+    },
+    {
+      "circumstance": "D-7",
+      "hist_raw": 6,
+      "hist_signal": 4,
+      "hist_bucket": "4plus_days_rest",
+      "live_raw": 7,
+      "live_signal": 4,
+      "live_bucket": "4plus_days_rest",
+      "same_cell": true
+    },
+    {
+      "circumstance": "DH on D-1",
+      "hist_raw": 0,
+      "hist_signal": -2,
+      "hist_bucket": "0_days_rest",
+      "live_raw": 1,
+      "live_signal": 0,
+      "live_bucket": "0_days_rest",
+      "same_cell": true
+    },
+    {
+      "circumstance": "same-day (DH g1)",
+      "hist_raw": 1,
+      "hist_signal": 0,
+      "hist_bucket": "0_days_rest",
+      "live_raw": 0,
+      "live_signal": -2,
+      "live_bucket": "0_days_rest",
+      "same_cell": true
+    }
+  ],
+  "mismatch_count": 2,
+  "verdict": "PARITY DEFECT CONFIRMED"
+}
