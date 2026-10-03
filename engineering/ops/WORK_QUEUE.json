@@ -324,10 +324,10 @@
    "LANE": "A",
    "OWNER": "claude",
    "CHALLENGER": "codex",
-   "STATUS": "CLAUDE_ACTIVE",
+   "STATUS": "READY_FOR_CHALLENGE",
    "BASE_SHA": "5e1d6bd8ecdde737d98f71eb18dc214b94576da4",
    "BRANCH": "claude/mlb-engine-pa-world-model-20261003",
-   "HEAD_SHA": null,
+   "HEAD_SHA": "a555d4dd59e30b31b08e9e49827de31c375532a5",
    "OBJECTIVE": "Coherent PA event world model (8-class softmax: batter + opposing-pitcher event talent + handedness) aggregated to player-game Hits 1+; vs P0 at equal volume. DEVELOPMENT only.",
    "ACCEPTANCE_CRITERIA": [
     "K10 E1-P0 Hits 1+ equal volume: IMPROVES iff >=+1.0pp & CI>0; WORSE iff CI<0; NO_GAIN iff CI covers 0 & |d|<0.5; P0 fidelity gate vs FC-MLB-004 @46712d8091; detail in TASKS/FC-MLB-006.md"
@@ -335,16 +335,22 @@
    "FILES_OR_AREAS": [
     "research/mlb_engine/fc_mlb_006/"
    ],
-   "EVIDENCE_POINTERS": [],
+   "EVIDENCE_POINTERS": [
+    "research/mlb_engine/fc_mlb_006/ @ a555d4dd59 (claude/mlb-engine-pa-world-model-20261003)",
+    "frozen fit committed before evaluation: 3ede23c1a0 (out/FROZEN_FIT_006.json sha256 89874997...)",
+    "out/RESULTS.json, out/REPORT.md (make_report.py), out/predictions_2026.csv.gz, out/evaluate.log",
+    "tests: test_fc_mlb_006.py (13); fc_mlb_002/004/005 imported read-only"
+   ],
    "BLOCKERS": [],
-   "NEXT_ACTION": "Tests; 2025 fit + freeze; single 2026 evaluation; report and stop",
+   "NEXT_ACTION": "Report to SUPERCHAD/Jacob and stop (criteria \u00a712). Challenge only if SUPERCHAD requests.",
    "AUTHORITY_REQUIRED": "none for research; Jacob for any promotion/production change",
    "WIP_EXEMPT": false,
    "CHALLENGE_ACTIVE": false,
-   "UPDATED": "2026-10-03T14:31:12Z",
+   "UPDATED": "2026-10-03T14:37:37Z",
    "HISTORY": [
     "2026-10-03T14:31:12Z claude -> READY (created per Jacob/SUPERCHAD mission 2026-10-03)",
-    "2026-10-03T14:31:12Z claude -> CLAUDE_ACTIVE"
+    "2026-10-03T14:31:12Z claude -> CLAUDE_ACTIVE",
+    "2026-10-03T14:37:37Z claude -> READY_FOR_CHALLENGE"
    ]
   }
  ]

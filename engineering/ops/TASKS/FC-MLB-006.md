@@ -152,6 +152,11 @@ E1 − P0, P0 − CH0 and E1 − CH0 at K10, plus the log-loss gain, for:
 
 ## BUILDER_NOTES
 (owner only)
+- Fit 3ede23c1a0 converged (28 params). One 2026 evaluation at a555d4dd59; fidelity gate passed (37,125 rows).
+- K10 E1-P0 -0.18 [-2.27, +1.96] -> NO_GAIN. K5 -3.07 [-6.26, -0.12] (WORSE region, secondary). K20 -0.09 NO_GAIN.
+- E1 is the better probability model (PA hit logloss 0.52388 vs P0 0.52424; player-game E1_raw logloss best), but the top tail concentrates on fewer batters (K5 top-10 batters 62% of selections vs 44%) and is not more accurate.
+- Stability: E1 helps Apr-Jun (+1.17; April +6.25) and loses Jul-Sep (-1.40): complementary to P0's late-season pattern.
 
 ## LOG
 - 2026-10-03 criteria frozen; claimed.
+- 2026-10-03 fit 3ede23c1a0; single evaluation a555d4dd59 -> READY_FOR_CHALLENGE (holding for SUPERCHAD/Jacob).

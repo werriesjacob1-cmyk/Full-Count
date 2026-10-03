@@ -33,7 +33,7 @@ MLB 60% / NFL 40%. NFL may take the majority inside T−48h of an NFL slate lock
   - Runner session `session_016RxnYjrtP3stCp3XRSa2Ux`, woken by `trig_011u98uXVuFEipPfbTT6KGur` (hourly at :07, 13–01Z), running the dispatcher on `claude/mlb-v3-ops`.
   - Current regime is `2026_POSTSEASON_SHADOW` (descriptive). The confirmatory regime is the 2027 regular season.
   - No V3 outcome reads or scoring; one-look rules apply.
-- **Focus:** predictive-engine development (probabilistic prop engine): **FC-MLB-002** (repaired; zero-match fix 7c331c266b) ; **FC-MLB-004** DONE (negative); **FC-MLB-005** (team conversion residual) evaluated @ 5e1d6bd8ec, awaiting SUPERCHAD/Jacob.
+- **Focus:** predictive-engine development (probabilistic prop engine): **FC-MLB-002** (repaired; zero-match fix 7c331c266b) ; **FC-MLB-004** DONE (negative); **FC-MLB-005** DONE (NO_GAIN); **FC-MLB-006** (PA event world model) evaluated @ a555d4dd59, awaiting SUPERCHAD/Jacob.
 - **Other MLB drafts** (pointers only; read on demand): #219 forward-chain study, #217 market-anchor prereg, #198 slate-date contract audit.
 
 ## NFL
