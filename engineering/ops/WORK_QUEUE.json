@@ -97,7 +97,7 @@
    "HEAD_SHA": "b52ac418bae7a5b7e1bf42ccec4be70595eae337",
    "OBJECTIVE": "Specify the first MLB predictive-engine improvement experiment toward a probabilistic prop engine. Acceptance criteria are written and challenge-reviewed BEFORE any build.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD before build: target population, exact champion vs challenger comparison, same legitimate opportunity, metrics+threshold, evidence artifact, leakage constraints, stop condition (contract Â§3)."
+    "TBD before build: target population, exact champion vs challenger comparison, same legitimate opportunity, metrics+threshold, evidence artifact, leakage constraints, stop condition (contract \u00c2\u00a73)."
    ],
    "FILES_OR_AREAS": [
     "research/mlb_engine/fc_mlb_002/"
@@ -136,7 +136,7 @@
    "HEAD_SHA": null,
    "OBJECTIVE": "Lane-B example (pending SUPERCHAD confirmation): Codex independent MLB research question chosen by SUPERCHAD, produced without access to FC-MLB-002 builder notes; Claude challenges.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD by SUPERCHAD/Codex before start (contract Ã‚Â§3)."
+    "TBD by SUPERCHAD/Codex before start (contract \u00c3\u201a\u00c2\u00a73)."
    ],
    "FILES_OR_AREAS": [
     "research/codex_mlb/"
@@ -193,7 +193,7 @@
    "HEAD_SHA": null,
    "OBJECTIVE": "Specify the next NFL predictive-engine experiment covering player props and spreads/totals (injuries, roles, coaching, weather, matchup, market, game state). Acceptance criteria before any build.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD before build (contract Ã‚Â§3)."
+    "TBD before build (contract \u00c3\u201a\u00c2\u00a73)."
    ],
    "FILES_OR_AREAS": [
     "nfl/engine/"
@@ -315,6 +315,36 @@
     "2026-10-03T03:28:28Z claude -> READY_FOR_CHALLENGE",
     "2026-10-03T14:27:49Z codex -> READY_FOR_SUPERCHAD (Codex reproduction relayed by Jacob 2026-10-03; recorded by claude)",
     "2026-10-03T14:27:49Z superchad -> DONE (SUPERCHAD disposition NO_GAIN, relayed by Jacob 2026-10-03; recorded by claude)"
+   ]
+  },
+  {
+   "TASK_ID": "FC-MLB-006",
+   "SPORT": "MLB",
+   "KIND": "research",
+   "LANE": "A",
+   "OWNER": "claude",
+   "CHALLENGER": "codex",
+   "STATUS": "CLAUDE_ACTIVE",
+   "BASE_SHA": "5e1d6bd8ecdde737d98f71eb18dc214b94576da4",
+   "BRANCH": "claude/mlb-engine-pa-world-model-20261003",
+   "HEAD_SHA": null,
+   "OBJECTIVE": "Coherent PA event world model (8-class softmax: batter + opposing-pitcher event talent + handedness) aggregated to player-game Hits 1+; vs P0 at equal volume. DEVELOPMENT only.",
+   "ACCEPTANCE_CRITERIA": [
+    "K10 E1-P0 Hits 1+ equal volume: IMPROVES iff >=+1.0pp & CI>0; WORSE iff CI<0; NO_GAIN iff CI covers 0 & |d|<0.5; P0 fidelity gate vs FC-MLB-004 @46712d8091; detail in TASKS/FC-MLB-006.md"
+   ],
+   "FILES_OR_AREAS": [
+    "research/mlb_engine/fc_mlb_006/"
+   ],
+   "EVIDENCE_POINTERS": [],
+   "BLOCKERS": [],
+   "NEXT_ACTION": "Tests; 2025 fit + freeze; single 2026 evaluation; report and stop",
+   "AUTHORITY_REQUIRED": "none for research; Jacob for any promotion/production change",
+   "WIP_EXEMPT": false,
+   "CHALLENGE_ACTIVE": false,
+   "UPDATED": "2026-10-03T14:31:12Z",
+   "HISTORY": [
+    "2026-10-03T14:31:12Z claude -> READY (created per Jacob/SUPERCHAD mission 2026-10-03)",
+    "2026-10-03T14:31:12Z claude -> CLAUDE_ACTIVE"
    ]
   }
  ]
