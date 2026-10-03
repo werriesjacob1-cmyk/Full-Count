@@ -27,16 +27,109 @@
       "hits": 0,
       "misses": 0,
       "voids": 0,
-      "ungraded": 4
+      "ungraded": 6
     }
   },
   "public_top_pick_counts": {
     "hits": 0,
     "misses": 0,
     "voids": 0,
-    "ungraded": 4
+    "ungraded": 6
   },
   "public_top_picks": [
+    {
+      "id": "fc2:849829:player-545341:hits:1:over",
+      "identity_version": 2,
+      "game_pk": 849829,
+      "player_id": 545341,
+      "combo_player_ids": null,
+      "type": "batter",
+      "name": "Randal Grichuk",
+      "team": "Chicago White Sox",
+      "matchup": "Chicago White Sox @ Cleveland Guardians",
+      "game_start": "2026-10-03T17:00:00Z",
+      "stat": "hits",
+      "market_side": "over",
+      "lean": null,
+      "projection": {
+        "stat": "hits",
+        "value": 0.5,
+        "needs": 1
+      },
+      "prop": "Over 0.5 Hits",
+      "hit_probability": 0.6613,
+      "market_odds": -170,
+      "market_implied": 0.6296,
+      "market_edge": 0.0317,
+      "market_hold": null,
+      "price_clears": true,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (7.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "why": [
+        "L7 avg EV 91.5mph (league ~88.5) \u2014 hot recent contact",
+        "L7 barrel% 44.4 \u2014 hot recent contact",
+        "Platoon: R bat vs LHP (favorable)",
+        "Projected 4.31 PA (batting slot 2) \u2014 a favorable lineup slot",
+        "Pitch-type exploit: RV/100 +2.8 vs CH (opposing SP throws it 23.6% of the time)",
+        "Season barrel% 11.1",
+        "Hitters batting ahead of him: 0.339 wOBA (league ~.320)",
+        "Hitter batting behind him: 0.363 wOBA (league ~.320) \u2014 real lineup protection, pitchers can't just pitch around him",
+        "Sharp money backing Chicago White Sox (money% +23 pts vs ticket%)"
+      ],
+      "watchouts": [
+        "Opposing SP ERA 2.56 \u2014 elite pitcher, tough matchup",
+        "wOBA vs xwOBA: 0.370 vs 0.335 (+0.035) \u2014 outperforming his contact quality, regression risk",
+        "Team implied for 2.97 runs (league avg 4.245; line 2.5, game total 6.5) \u2014 a weak offensive environment",
+        "Wind blowing IN (7mph) \u2014 power suppressed",
+        "Opposing bullpen fatigue: 1/5 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+        "BvP: 5-for-12 vs Parker Messick (standard error \u00b114 pts on a 12-AB career sample -- weighted lightly on that basis, not just because the count looks small)"
+      ],
+      "prob_ci": [
+        0.6492,
+        0.6734
+      ],
+      "reliability": "A",
+      "reliability_note": null,
+      "sample_n": 112,
+      "lineup_assumed": null,
+      "base_rate": 0.5529,
+      "lift": 0.1084,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "versions": {
+        "model_version": "2026.08.15",
+        "selection_policy_version": "1.0.0",
+        "calibration_version": "1.0.0",
+        "feature_version": "1.0.0",
+        "git_sha": "b67ec2d72",
+        "prediction_timestamp": "2026-10-03T16:27:00.851131+00:00",
+        "odds_fetched_at": "2026-10-03T16:26:57.992082+00:00",
+        "board_generated_at": "2026-10-03T16:27:00.840039+00:00"
+      },
+      "qualification_timestamp": "2026-10-03T16:27:00.851131+00:00",
+      "board_timestamp": "2026-10-03T16:27:00.840039+00:00",
+      "slate_date": "2026-10-03",
+      "published_top_pick_at": "2026-10-03T16:37:36.992370+00:00",
+      "publication_artifact_id": "67be6b099e6fd11690e67ee4ec88a4410bc177c47c78c2a8f0086599d3faa94a",
+      "publication_source_commit": "df76db654d35fef87ac0b3e56126afc99a954937",
+      "publication_run_id": "37137471577",
+      "publication_deployment_id": null,
+      "grade": "ungraded",
+      "settlement_state": "ungraded",
+      "reason": "game_not_authoritatively_final",
+      "eligibility": {
+        "eligibility": "ungraded",
+        "reason_code": "game_not_authoritatively_final",
+        "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
+        "game_state": "live"
+      },
+      "settlement_authority": "none",
+      "settlement_observed_at": "2026-10-03T18:07:15.564374+00:00",
+      "settlement_source": "durable_morning_status_observation"
+    },
     {
       "id": "fc2:849829:player-595978:hits_runs_rbis:1:over",
       "identity_version": 2,
@@ -125,10 +218,105 @@
         "eligibility": "ungraded",
         "reason_code": "game_not_authoritatively_final",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "pregame"
+        "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-10-03T14:46:00.657064+00:00",
+      "settlement_observed_at": "2026-10-03T18:07:15.564374+00:00",
+      "settlement_source": "durable_morning_status_observation"
+    },
+    {
+      "id": "fc2:849829:player-686668:hits_runs_rbis:1:over",
+      "identity_version": 2,
+      "game_pk": 849829,
+      "player_id": 686668,
+      "combo_player_ids": null,
+      "type": "batter",
+      "name": "Brenton Doyle",
+      "team": "Chicago White Sox",
+      "matchup": "Chicago White Sox @ Cleveland Guardians",
+      "game_start": "2026-10-03T17:00:00Z",
+      "stat": "hits_runs_rbis",
+      "market_side": "over",
+      "lean": null,
+      "projection": {
+        "stat": "hits_runs_rbis",
+        "value": 0.5,
+        "needs": 1
+      },
+      "prop": "Over 0.5 Hits+Runs+RBIs",
+      "hit_probability": 0.6449,
+      "market_odds": -155,
+      "market_implied": 0.6078,
+      "market_edge": 0.0371,
+      "market_hold": null,
+      "price_clears": true,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (8.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "why": [
+        "L7 avg EV 98.1mph (league ~88.5) \u2014 hot recent contact",
+        "L7 barrel% 50.0 \u2014 hot recent contact",
+        "Bat speed trending up L14 (+2.7mph 2nd-half vs 1st-half)",
+        "Platoon: R bat vs LHP (favorable)",
+        "Projected 3.85 PA (batting slot 6)",
+        "Pitch-type exploit: RV/100 +2.5 vs CH (opposing SP throws it 23.6% of the time)",
+        "Sharp money backing Chicago White Sox (money% +23 pts vs ticket%)"
+      ],
+      "watchouts": [
+        "Opposing SP ERA 2.56 \u2014 elite pitcher, tough matchup",
+        "Hitters batting ahead of him: 0.209 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+        "Hitter batting behind him: 0.317 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+        "Team implied for 2.97 runs (league avg 4.245; line 2.5, game total 6.5) \u2014 a weak offensive environment",
+        "AVG vs xBA: 0.233 vs 0.203 (+0.030) \u2014 outperforming his contact quality, regression risk",
+        "wOBA vs xwOBA: 0.280 vs 0.245 (+0.035) \u2014 outperforming his contact quality, regression risk",
+        "L7 sample is thin (6 PA) \u2014 treat recent-form read with caution",
+        "Season barrel% 6.5 \u2014 below-average barrel rate",
+        "Wind blowing IN (7mph) \u2014 power suppressed",
+        "Opposing bullpen fatigue: 1/5 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+      ],
+      "prob_ci": [
+        0.6316,
+        0.6765
+      ],
+      "reliability": "B",
+      "reliability_note": null,
+      "sample_n": 73,
+      "lineup_assumed": null,
+      "base_rate": 0.6811,
+      "lift": -0.0362,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "versions": {
+        "model_version": "2026.08.15",
+        "selection_policy_version": "1.0.0",
+        "calibration_version": "1.0.0",
+        "feature_version": "1.0.0",
+        "git_sha": "b67ec2d72",
+        "prediction_timestamp": "2026-10-03T16:27:00.851131+00:00",
+        "odds_fetched_at": "2026-10-03T16:26:57.992082+00:00",
+        "board_generated_at": "2026-10-03T16:27:00.840039+00:00"
+      },
+      "qualification_timestamp": "2026-10-03T16:27:00.851131+00:00",
+      "board_timestamp": "2026-10-03T16:27:00.840039+00:00",
+      "slate_date": "2026-10-03",
+      "published_top_pick_at": "2026-10-03T16:37:36.992370+00:00",
+      "publication_artifact_id": "67be6b099e6fd11690e67ee4ec88a4410bc177c47c78c2a8f0086599d3faa94a",
+      "publication_source_commit": "df76db654d35fef87ac0b3e56126afc99a954937",
+      "publication_run_id": "37137471577",
+      "publication_deployment_id": null,
+      "grade": "ungraded",
+      "settlement_state": "ungraded",
+      "reason": "game_not_authoritatively_final",
+      "eligibility": {
+        "eligibility": "ungraded",
+        "reason_code": "game_not_authoritatively_final",
+        "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
+        "game_state": "live"
+      },
+      "settlement_authority": "none",
+      "settlement_observed_at": "2026-10-03T18:07:15.564374+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -217,10 +405,10 @@
         "eligibility": "ungraded",
         "reason_code": "game_not_authoritatively_final",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "pregame"
+        "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-10-03T14:46:00.657064+00:00",
+      "settlement_observed_at": "2026-10-03T18:07:15.564374+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -310,10 +498,10 @@
         "eligibility": "ungraded",
         "reason_code": "game_not_authoritatively_final",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "pregame"
+        "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-10-03T14:46:00.657064+00:00",
+      "settlement_observed_at": "2026-10-03T18:07:15.564374+00:00",
       "settlement_source": "durable_morning_status_observation"
     },
     {
@@ -401,10 +589,10 @@
         "eligibility": "ungraded",
         "reason_code": "game_not_authoritatively_final",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "pregame"
+        "game_state": "live"
       },
       "settlement_authority": "none",
-      "settlement_observed_at": "2026-10-03T14:46:00.657064+00:00",
+      "settlement_observed_at": "2026-10-03T18:07:15.564374+00:00",
       "settlement_source": "durable_morning_status_observation"
     }
   ],
@@ -707,7 +895,7 @@
       "odds_timestamp": "2026-10-03T02:25:47.886848+00:00",
       "lineup_checked_at": "2026-10-03T02:25:47.886848+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: In Progress)"
     },
     {
       "rank": 3,
@@ -1098,7 +1286,7 @@
       "odds_timestamp": "2026-10-03T02:25:47.886848+00:00",
       "lineup_checked_at": "2026-10-03T02:25:47.886848+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 6,
@@ -1209,7 +1397,7 @@
       "odds_timestamp": "2026-10-03T02:25:47.886848+00:00",
       "lineup_checked_at": "2026-10-03T02:25:47.886848+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: In Progress)"
     },
     {
       "rank": 7,
@@ -1428,7 +1616,7 @@
       "odds_timestamp": "2026-10-03T02:25:47.886848+00:00",
       "lineup_checked_at": "2026-10-03T02:25:47.886848+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 9,
@@ -1883,7 +2071,7 @@
       "odds_timestamp": "2026-10-03T02:25:47.886848+00:00",
       "lineup_checked_at": "2026-10-03T02:25:47.886848+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: In Progress)"
     }
   ],
   "shadow_tracking": [
@@ -1959,7 +2147,7 @@
       "odds_timestamp": "2026-10-03T02:25:47.886848+00:00",
       "lineup_checked_at": "2026-10-03T02:25:47.886848+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 2,
@@ -2033,7 +2221,7 @@
       "odds_timestamp": "2026-10-03T02:25:47.886848+00:00",
       "lineup_checked_at": "2026-10-03T02:25:47.886848+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 3,
@@ -2181,7 +2369,7 @@
       "odds_timestamp": "2026-10-03T02:25:47.886848+00:00",
       "lineup_checked_at": "2026-10-03T02:25:47.886848+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 5,
@@ -2253,7 +2441,7 @@
       "odds_timestamp": "2026-10-03T02:25:47.886848+00:00",
       "lineup_checked_at": "2026-10-03T02:25:47.886848+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 6,
@@ -2325,7 +2513,7 @@
       "odds_timestamp": "2026-10-03T02:25:47.886848+00:00",
       "lineup_checked_at": "2026-10-03T02:25:47.886848+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 7,
@@ -2397,7 +2585,7 @@
       "odds_timestamp": "2026-10-03T02:25:47.886848+00:00",
       "lineup_checked_at": "2026-10-03T02:25:47.886848+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Scheduled)"
+      "reason": "game not final yet (status: Pre-Game)"
     },
     {
       "rank": 8,
@@ -2508,7 +2696,7 @@
       "odds_timestamp": "2026-10-03T02:25:47.886848+00:00",
       "lineup_checked_at": "2026-10-03T02:25:47.886848+00:00",
       "grade": "ungraded",
-      "reason": "game not final yet (status: Pre-Game)"
+      "reason": "game not final yet (status: In Progress)"
     },
     {
       "rank": 9,
