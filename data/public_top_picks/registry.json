@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-10-03T13:42:40.383806+00:00",
+  "updated_at": "2026-10-03T14:22:45.765884+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -56406,6 +56406,108 @@
         },
         "qualification_timestamp": "2026-10-03T13:36:57.645155+00:00",
         "board_timestamp": "2026-10-03T13:36:57.633966+00:00",
+        "slate_date": "2026-10-03"
+      }
+    },
+    "fc2:849829:player-595978:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:849829:player-595978:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "849829",
+        [
+          "player",
+          "595978"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-10-03",
+      "first_published_at": "2026-10-03T14:22:45.765884+00:00",
+      "publication_provenance": {
+        "artifact_id": "84ba0a72648cd4d7f81a7478f7e96978b7b4a29ecfc3f746bcaa95a2b085285b",
+        "source_commit": "f25a600444f6f5666efa203131d3ec86cf15c2fd",
+        "workflow_run_id": "37129312560",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-10-03T14:22:31.455759+00:00",
+        "data_hash": "9178621b0033941e07f53c82c50be24964fb886e1d2dfda503aeeed605ab9192",
+        "live_hash": "0cf637c0f146adf12c6ffce3ec75cc51b04d1d6b69a992ecbdc2419fe18e5c28"
+      },
+      "snapshot": {
+        "id": "fc2:849829:player-595978:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 849829,
+        "player_id": 595978,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Austin Hedges",
+        "team": "Cleveland Guardians",
+        "matchup": "Chicago White Sox @ Cleveland Guardians",
+        "game_start": "2026-10-03T17:00:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6558,
+        "market_odds": -150,
+        "market_implied": 0.6,
+        "market_edge": 0.0558,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.0 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Platoon: R bat vs LHP (favorable)"
+        ],
+        "watchouts": [
+          "L7 avg EV 87.0mph (league ~88.5) \u2014 cold recent contact",
+          "L7 barrel% 0.0 \u2014 cold recent contact",
+          "Opposing SP ERA 1.29 \u2014 elite pitcher, tough matchup",
+          "Projected 3.7 PA (batting slot 8) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.328 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.311 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.77 runs (league avg 4.245; line 3.5, game total 7) \u2014 a weak offensive environment",
+          "AVG vs xBA: 0.247 vs 0.224 (+0.023) \u2014 outperforming his contact quality, regression risk",
+          "wOBA vs xwOBA: 0.313 vs 0.280 (+0.033) \u2014 outperforming his contact quality, regression risk",
+          "L7 sample is thin (1 PA) \u2014 treat recent-form read with caution",
+          "Public heavy on Cleveland Guardians (money% trails tickets% by 20 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 4.5 \u2014 below-average barrel rate",
+          "Wind blowing IN (6mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 0/11 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Cleveland Guardians (money% -20 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.645,
+          0.6789
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 74,
+        "lineup_assumed": null,
+        "base_rate": 0.6811,
+        "lift": -0.0253,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "dd4d884ec",
+          "prediction_timestamp": "2026-10-03T14:16:01.478810+00:00",
+          "odds_fetched_at": "2026-10-03T14:15:58.927809+00:00",
+          "board_generated_at": "2026-10-03T14:16:01.471189+00:00"
+        },
+        "qualification_timestamp": "2026-10-03T14:16:01.478810+00:00",
+        "board_timestamp": "2026-10-03T14:16:01.471189+00:00",
         "slate_date": "2026-10-03"
       }
     }
