@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-10-03T19:02:35.211236+00:00",
+  "updated_at": "2026-10-03T20:37:54.009484+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -57015,6 +57015,400 @@
         },
         "qualification_timestamp": "2026-10-03T18:56:52.687935+00:00",
         "board_timestamp": "2026-10-03T18:56:52.678954+00:00",
+        "slate_date": "2026-10-03"
+      }
+    },
+    "fc2:849830:player-630105:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:849830:player-630105:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "849830",
+        [
+          "player",
+          "630105"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-10-03",
+      "first_published_at": "2026-10-03T20:37:54.009484+00:00",
+      "publication_provenance": {
+        "artifact_id": "3dde5ef4f90edd51d38a1d23d44d793da7498bfe4614074f0fbb99af177a32c3",
+        "source_commit": "15c4d13fa3983addcc4a6ed3d923aaec625242f8",
+        "workflow_run_id": "37152160861",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-10-03T20:37:40.981832+00:00",
+        "data_hash": "be32f9410e5427cf01da7856cdd66f738097ffec74f60a757429ff3922214a4e",
+        "live_hash": "1b85f04f9e43759a1b4a5d7cdc0f9bdbf12e3232880829ef9fe11607b9caa4b0"
+      },
+      "snapshot": {
+        "id": "fc2:849830:player-630105:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 849830,
+        "player_id": 630105,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Jake Cronenworth",
+        "team": "San Diego Padres",
+        "matchup": "San Diego Padres @ Milwaukee Brewers",
+        "game_start": "2026-10-04T00:30:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6542,
+        "market_odds": -130,
+        "market_implied": 0.5652,
+        "market_edge": 0.089,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (13.1 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 11.1 \u2014 hot recent contact",
+          "Platoon: L bat vs RHP (favorable)",
+          "Hitters batting ahead of him: 0.353 wOBA (league ~.320)",
+          "Hitter batting behind him: 0.358 wOBA (league ~.320)",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "L7 avg EV 86.2mph (league ~88.5) \u2014 cold recent contact",
+          "Opposing SP ERA 1.80 \u2014 elite pitcher, tough matchup",
+          "Projected 3.46 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Team implied for 2.87 runs (league avg 4.245; line 2.5, game total 7) \u2014 a weak offensive environment",
+          "Season barrel% 3.9 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 0/7 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6434,
+          0.6773
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 108,
+        "lineup_assumed": null,
+        "base_rate": 0.6868,
+        "lift": -0.0326,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "4b976a7b6",
+          "prediction_timestamp": "2026-10-03T20:35:19.250134+00:00",
+          "odds_fetched_at": "2026-10-03T20:35:17.039445+00:00",
+          "board_generated_at": "2026-10-03T20:35:19.245375+00:00"
+        },
+        "qualification_timestamp": "2026-10-03T20:35:19.250134+00:00",
+        "board_timestamp": "2026-10-03T20:35:19.245375+00:00",
+        "slate_date": "2026-10-03"
+      }
+    },
+    "fc2:849830:player-593428:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:849830:player-593428:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "849830",
+        [
+          "player",
+          "593428"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-10-03",
+      "first_published_at": "2026-10-03T20:37:54.009484+00:00",
+      "publication_provenance": {
+        "artifact_id": "3dde5ef4f90edd51d38a1d23d44d793da7498bfe4614074f0fbb99af177a32c3",
+        "source_commit": "15c4d13fa3983addcc4a6ed3d923aaec625242f8",
+        "workflow_run_id": "37152160861",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-10-03T20:37:40.981832+00:00",
+        "data_hash": "be32f9410e5427cf01da7856cdd66f738097ffec74f60a757429ff3922214a4e",
+        "live_hash": "1b85f04f9e43759a1b4a5d7cdc0f9bdbf12e3232880829ef9fe11607b9caa4b0"
+      },
+      "snapshot": {
+        "id": "fc2:849830:player-593428:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 849830,
+        "player_id": 593428,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Xander Bogaerts",
+        "team": "San Diego Padres",
+        "matchup": "San Diego Padres @ Milwaukee Brewers",
+        "game_start": "2026-10-04T00:30:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6759,
+        "market_odds": -175,
+        "market_implied": 0.6364,
+        "market_edge": 0.0395,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 97.4mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 75.0 \u2014 hot recent contact",
+          "Projected 3.84 PA (batting slot 6)",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Opposing SP ERA 1.80 \u2014 elite pitcher, tough matchup",
+          "Hitters batting ahead of him: 0.320 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.316 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 2.87 runs (league avg 4.245; line 2.5, game total 7) \u2014 a weak offensive environment",
+          "Season barrel% 5.5 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 0/7 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.665,
+          0.699
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 153,
+        "lineup_assumed": null,
+        "base_rate": 0.6868,
+        "lift": -0.0109,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "4b976a7b6",
+          "prediction_timestamp": "2026-10-03T20:35:19.250134+00:00",
+          "odds_fetched_at": "2026-10-03T20:35:17.039445+00:00",
+          "board_generated_at": "2026-10-03T20:35:19.245375+00:00"
+        },
+        "qualification_timestamp": "2026-10-03T20:35:19.250134+00:00",
+        "board_timestamp": "2026-10-03T20:35:19.245375+00:00",
+        "slate_date": "2026-10-03"
+      }
+    },
+    "fc2:849830:player-701538:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:849830:player-701538:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "849830",
+        [
+          "player",
+          "701538"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-10-03",
+      "first_published_at": "2026-10-03T20:37:54.009484+00:00",
+      "publication_provenance": {
+        "artifact_id": "3dde5ef4f90edd51d38a1d23d44d793da7498bfe4614074f0fbb99af177a32c3",
+        "source_commit": "15c4d13fa3983addcc4a6ed3d923aaec625242f8",
+        "workflow_run_id": "37152160861",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-10-03T20:37:40.981832+00:00",
+        "data_hash": "be32f9410e5427cf01da7856cdd66f738097ffec74f60a757429ff3922214a4e",
+        "live_hash": "1b85f04f9e43759a1b4a5d7cdc0f9bdbf12e3232880829ef9fe11607b9caa4b0"
+      },
+      "snapshot": {
+        "id": "fc2:849830:player-701538:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 849830,
+        "player_id": 701538,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Jackson Merrill",
+        "team": "San Diego Padres",
+        "matchup": "San Diego Padres @ Milwaukee Brewers",
+        "game_start": "2026-10-04T00:30:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6687,
+        "market_odds": -175,
+        "market_implied": 0.6364,
+        "market_edge": 0.0323,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.9 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 28.6 \u2014 hot recent contact",
+          "Platoon: L bat vs RHP (favorable)",
+          "Projected 3.98 PA (batting slot 5)",
+          "Hitters batting ahead of him: 0.373 wOBA (league ~.320) \u2014 real RBI opportunity on base ahead of him",
+          "wOBA vs xwOBA: 0.320 vs 0.347 (-0.027) \u2014 underperforming his contact quality, positive regression candidate",
+          "Season barrel% 12.4",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "L7 avg EV 86.2mph (league ~88.5) \u2014 cold recent contact",
+          "Opposing SP ERA 1.80 \u2014 elite pitcher, tough matchup",
+          "Hitter batting behind him: 0.306 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 2.87 runs (league avg 4.245; line 2.5, game total 7) \u2014 a weak offensive environment",
+          "L7 sample is thin (7 PA) \u2014 treat recent-form read with caution",
+          "Opposing bullpen fatigue: 0/7 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6579,
+          0.6918
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 157,
+        "lineup_assumed": null,
+        "base_rate": 0.6868,
+        "lift": -0.0181,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "4b976a7b6",
+          "prediction_timestamp": "2026-10-03T20:35:19.250134+00:00",
+          "odds_fetched_at": "2026-10-03T20:35:17.039445+00:00",
+          "board_generated_at": "2026-10-03T20:35:19.245375+00:00"
+        },
+        "qualification_timestamp": "2026-10-03T20:35:19.250134+00:00",
+        "board_timestamp": "2026-10-03T20:35:19.245375+00:00",
+        "slate_date": "2026-10-03"
+      }
+    },
+    "fc2:849830:player-669134:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:849830:player-669134:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "849830",
+        [
+          "player",
+          "669134"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-10-03",
+      "first_published_at": "2026-10-03T20:37:54.009484+00:00",
+      "publication_provenance": {
+        "artifact_id": "3dde5ef4f90edd51d38a1d23d44d793da7498bfe4614074f0fbb99af177a32c3",
+        "source_commit": "15c4d13fa3983addcc4a6ed3d923aaec625242f8",
+        "workflow_run_id": "37152160861",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-10-03T20:37:40.981832+00:00",
+        "data_hash": "be32f9410e5427cf01da7856cdd66f738097ffec74f60a757429ff3922214a4e",
+        "live_hash": "1b85f04f9e43759a1b4a5d7cdc0f9bdbf12e3232880829ef9fe11607b9caa4b0"
+      },
+      "snapshot": {
+        "id": "fc2:849830:player-669134:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 849830,
+        "player_id": 669134,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Luis Campusano",
+        "team": "San Diego Padres",
+        "matchup": "San Diego Padres @ Milwaukee Brewers",
+        "game_start": "2026-10-04T00:30:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.649,
+        "market_odds": -130,
+        "market_implied": 0.5652,
+        "market_edge": 0.0838,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (12.6 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 20.0 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+2.7mph 2nd-half vs 1st-half)",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "L7 avg EV 85.1mph (league ~88.5) \u2014 cold recent contact",
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Opposing SP ERA 1.80 \u2014 elite pitcher, tough matchup",
+          "Projected 3.61 PA (batting slot 8) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.316 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.287 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 2.87 runs (league avg 4.245; line 2.5, game total 7) \u2014 a weak offensive environment",
+          "AVG vs xBA: 0.265 vs 0.239 (+0.026) \u2014 outperforming his contact quality, regression risk",
+          "wOBA vs xwOBA: 0.353 vs 0.327 (+0.026) \u2014 outperforming his contact quality, regression risk",
+          "L7 sample is thin (5 PA) \u2014 treat recent-form read with caution",
+          "Season barrel% 8.0 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 0/7 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6357,
+          0.6806
+        ],
+        "reliability": "B",
+        "reliability_note": null,
+        "sample_n": 71,
+        "lineup_assumed": null,
+        "base_rate": 0.6868,
+        "lift": -0.0378,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "4b976a7b6",
+          "prediction_timestamp": "2026-10-03T20:35:19.250134+00:00",
+          "odds_fetched_at": "2026-10-03T20:35:17.039445+00:00",
+          "board_generated_at": "2026-10-03T20:35:19.245375+00:00"
+        },
+        "qualification_timestamp": "2026-10-03T20:35:19.250134+00:00",
+        "board_timestamp": "2026-10-03T20:35:19.245375+00:00",
         "slate_date": "2026-10-03"
       }
     }
