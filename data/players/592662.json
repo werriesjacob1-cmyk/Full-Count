@@ -675,7 +675,7 @@
         {
           "prop": "Over 3.5 Strikeouts",
           "type": "pitcher",
-          "score": 46.5,
+          "score": 31.9,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ Milwaukee Brewers",
           "game_pk": 849830,
@@ -685,9 +685,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 50.0,
-            "same_hand_ratio": 43.75,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 0.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 59.6474,
+            "ump_k_pct": 0.192,
+            "ump_bb_pct": -0.168
           },
           "hit_probability": 0.5996,
           "raw_hit_probability": 0.6281,
@@ -703,7 +706,7 @@
         {
           "prop": "Over 11.5 Outs Recorded",
           "type": "pitcher",
-          "score": 82.6,
+          "score": 84.2,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ Milwaukee Brewers",
           "game_pk": 849830,
@@ -712,16 +715,44 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.9384,
+            "outs_rate": 0.9361,
             "avg_outs_per_start": 15.93
           },
-          "hit_probability": 0.9384,
-          "raw_hit_probability": 0.9384,
-          "lift": -0.0254,
+          "hit_probability": 0.9361,
+          "raw_hit_probability": 0.9361,
+          "lift": -0.0139,
           "reliability": "A",
           "sample_n": 30,
           "projection": {
             "stat": "pitcher_outs",
+            "value": 11.5,
+            "needs": 12
+          }
+        },
+        {
+          "prop": "Over 11.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 0.2,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Milwaukee Brewers",
+          "game_pk": 849830,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            592662,
+            694819
+          ],
+          "signals": {
+            "combined_k_edge": -0.2742
+          },
+          "hit_probability": 0.329,
+          "raw_hit_probability": null,
+          "lift": -0.2742,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
             "value": 11.5,
             "needs": 12
           }

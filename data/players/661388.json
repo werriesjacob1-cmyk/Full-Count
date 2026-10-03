@@ -3252,6 +3252,112 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-10-03",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 63.9,
+          "notable_signals": 2,
+          "matchup": "San Diego Padres @ Milwaukee Brewers",
+          "game_pk": 849830,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 31.1429,
+            "pitch_exploit": 0.5714,
+            "l7_avg_ev": 87.5,
+            "l7_barrel_pct": 0.0,
+            "bat_speed_trend": 12.6,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 36.6667,
+            "lineup_slot": 75.0,
+            "bullpen_fatigue": 20.8333,
+            "platoon_barrel_pct": -0.72,
+            "platoon_xwoba": 0.06,
+            "park_hand_index": 0.64,
+            "opp_catcher_framing": 1.2,
+            "days_rest": 4.0,
+            "woba_ahead": 61.8182,
+            "woba_behind": 82.7273,
+            "pull_park_synergy": 0.1568,
+            "hard_hit_105_rate": 0.74,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -0.168,
+            "vs_rp_ops": 0.3,
+            "ump_k_pct": -0.192,
+            "ump_bb_pct": 0.168
+          },
+          "hit_probability": 0.6271,
+          "raw_hit_probability": 0.6212,
+          "lift": 0.0742,
+          "reliability": "A",
+          "sample_n": 147,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 12.0,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Milwaukee Brewers",
+          "game_pk": 849830,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0762
+          },
+          "hit_probability": 0.0762,
+          "raw_hit_probability": null,
+          "lift": 0.0288,
+          "reliability": "A",
+          "sample_n": 147,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 3.4,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Milwaukee Brewers",
+          "game_pk": 849830,
+          "team": "Milwaukee Brewers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0259
+          },
+          "hit_probability": 0.0259,
+          "raw_hit_probability": null,
+          "lift": 0.0054,
+          "reliability": "A",
+          "sample_n": 147,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
