@@ -77,6 +77,11 @@ This hypothesis was generated AFTER inspecting 2026 development evidence: FC-MLB
 
 ## BUILDER_NOTES
 (owner only)
+- Frozen fit fc3230785a (Dteam coef 0.322; D0 refit = frozen CH1a exactly). One 2026 evaluation at 5e1d6bd8ec. Fidelity gate passed (37,125 rows).
+- Primary K10 D1-D0 +0.00 [-1.17, +1.23] -> NO_GAIN. K5 -0.25, K20 -0.06 (both NO_GAIN by the same rule). Negative result recorded; branch stopped.
+- Reading: the FC-MLB-004 P2-P1 gain did not transfer to the P0 baseline. Raw pitcher H/BF (Lp) already carries realized BIP conversion; Dteam mostly restored what P1's xH/BF removed (Dteam coef 0.57 next to Lpx vs 0.32 next to Lp).
+- Mechanism: team residual persistence r 0.39 (2025 halves), 0.35 (split-half), 0.53 (2025 vs 2026); eta2 by team 0.76; home residual tracks visitors-at-park (0.37) more than own away residual (0.23) -> park/context is material.
 
 ## LOG
 - 2026-10-03 criteria frozen from SUPERCHAD's adjudication; claimed.
+- 2026-10-03 frozen fit fc3230785a; single evaluation 5e1d6bd8ec; -> READY_FOR_CHALLENGE (holding for SUPERCHAD/Jacob).

@@ -286,10 +286,10 @@
    "LANE": "A",
    "OWNER": "claude",
    "CHALLENGER": "codex",
-   "STATUS": "CLAUDE_ACTIVE",
+   "STATUS": "READY_FOR_CHALLENGE",
    "BASE_SHA": "46712d809153d6ca12322b1910b99e7a753c8806",
    "BRANCH": "claude/mlb-engine-team-conversion-20261003",
-   "HEAD_SHA": null,
+   "HEAD_SHA": "5e1d6bd8ecdde737d98f71eb18dc214b94576da4",
    "OBJECTIVE": "Team conversion residual isolation: D1 = frozen P0 (CH1a) + Dteam (FC-MLB-004 construction, k_d=1500 reused); attribution of the FC-MLB-004 P2 signal. DEVELOPMENT only.",
    "ACCEPTANCE_CRITERIA": [
     "D1-D0 K10 Hits 1+ equal volume: IMPROVES iff >=+1.0pp & CI>0; WORSE iff CI<0; NO_GAIN iff CI covers 0 & |d|<0.5; fidelity gate vs FC-MLB-004 P0 @46712d8091; detail in TASKS/FC-MLB-005.md"
@@ -297,16 +297,22 @@
    "FILES_OR_AREAS": [
     "research/mlb_engine/fc_mlb_005/"
    ],
-   "EVIDENCE_POINTERS": [],
+   "EVIDENCE_POINTERS": [
+    "research/mlb_engine/fc_mlb_005/ @ 5e1d6bd8ec (claude/mlb-engine-team-conversion-20261003)",
+    "frozen fit committed before evaluation: fc3230785a (out/FROZEN_FIT_005.json sha256 2206fa1c...)",
+    "out/RESULTS.json, out/REPORT.md (make_report.py), out/predictions_2026.csv.gz, out/evaluate.log",
+    "tests: test_fc_mlb_005.py (8); fc_mlb_002 @ 7c331c266b and fc_mlb_004 @ 46712d8091 imported unchanged"
+   ],
    "BLOCKERS": [],
-   "NEXT_ACTION": "Build tests + 2025 fit (kd=1500 fixed); freeze; single 2026 evaluation; return to SUPERCHAD/Jacob (no Codex tonight)",
+   "NEXT_ACTION": "Return to SUPERCHAD/Jacob for disposition (criteria \u00a714: record and stop). No Codex tonight; challenge only if SUPERCHAD requests.",
    "AUTHORITY_REQUIRED": "none for research; Jacob for any promotion/production change",
    "WIP_EXEMPT": false,
    "CHALLENGE_ACTIVE": false,
-   "UPDATED": "2026-10-03T03:21:30Z",
+   "UPDATED": "2026-10-03T03:28:28Z",
    "HISTORY": [
     "2026-10-03T03:21:30Z claude -> READY (created per SUPERCHAD adjudication)",
-    "2026-10-03T03:21:30Z claude -> CLAUDE_ACTIVE"
+    "2026-10-03T03:21:30Z claude -> CLAUDE_ACTIVE",
+    "2026-10-03T03:28:28Z claude -> READY_FOR_CHALLENGE"
    ]
   }
  ]
