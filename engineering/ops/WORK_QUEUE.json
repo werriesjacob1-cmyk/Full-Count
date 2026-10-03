@@ -97,7 +97,7 @@
    "HEAD_SHA": "b52ac418bae7a5b7e1bf42ccec4be70595eae337",
    "OBJECTIVE": "Specify the first MLB predictive-engine improvement experiment toward a probabilistic prop engine. Acceptance criteria are written and challenge-reviewed BEFORE any build.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD before build: target population, exact champion vs challenger comparison, same legitimate opportunity, metrics+threshold, evidence artifact, leakage constraints, stop condition (contract \u00c2\u00a73)."
+    "TBD before build: target population, exact champion vs challenger comparison, same legitimate opportunity, metrics+threshold, evidence artifact, leakage constraints, stop condition (contract Â§3)."
    ],
    "FILES_OR_AREAS": [
     "research/mlb_engine/fc_mlb_002/"
@@ -136,7 +136,7 @@
    "HEAD_SHA": null,
    "OBJECTIVE": "Lane-B example (pending SUPERCHAD confirmation): Codex independent MLB research question chosen by SUPERCHAD, produced without access to FC-MLB-002 builder notes; Claude challenges.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD by SUPERCHAD/Codex before start (contract \u00c3\u201a\u00c2\u00a73)."
+    "TBD by SUPERCHAD/Codex before start (contract Ã‚Â§3)."
    ],
    "FILES_OR_AREAS": [
     "research/codex_mlb/"
@@ -193,7 +193,7 @@
    "HEAD_SHA": null,
    "OBJECTIVE": "Specify the next NFL predictive-engine experiment covering player props and spreads/totals (injuries, roles, coaching, weather, matchup, market, game state). Acceptance criteria before any build.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD before build (contract \u00c3\u201a\u00c2\u00a73)."
+    "TBD before build (contract Ã‚Â§3)."
    ],
    "FILES_OR_AREAS": [
     "nfl/engine/"
@@ -286,7 +286,7 @@
    "LANE": "A",
    "OWNER": "claude",
    "CHALLENGER": "codex",
-   "STATUS": "READY_FOR_CHALLENGE",
+   "STATUS": "DONE",
    "BASE_SHA": "46712d809153d6ca12322b1910b99e7a753c8806",
    "BRANCH": "claude/mlb-engine-team-conversion-20261003",
    "HEAD_SHA": "5e1d6bd8ecdde737d98f71eb18dc214b94576da4",
@@ -304,15 +304,17 @@
     "tests: test_fc_mlb_005.py (8); fc_mlb_002 @ 7c331c266b and fc_mlb_004 @ 46712d8091 imported unchanged"
    ],
    "BLOCKERS": [],
-   "NEXT_ACTION": "Return to SUPERCHAD/Jacob for disposition (criteria \u00a714: record and stop). No Codex tonight; challenge only if SUPERCHAD requests.",
+   "NEXT_ACTION": "None. CLOSED: NO_GAIN negative DEVELOPMENT evidence, independently reproduced by Codex. Caveat: descriptive 2025 first-half persistence used games before Apr 15 (criteria said Apr 15-Jul 15); does not affect fit, predictions, Dteam, K5/K10/K20 or verdict. Not rerun.",
    "AUTHORITY_REQUIRED": "none for research; Jacob for any promotion/production change",
    "WIP_EXEMPT": false,
    "CHALLENGE_ACTIVE": false,
-   "UPDATED": "2026-10-03T03:28:28Z",
+   "UPDATED": "2026-10-03T14:27:49Z",
    "HISTORY": [
     "2026-10-03T03:21:30Z claude -> READY (created per SUPERCHAD adjudication)",
     "2026-10-03T03:21:30Z claude -> CLAUDE_ACTIVE",
-    "2026-10-03T03:28:28Z claude -> READY_FOR_CHALLENGE"
+    "2026-10-03T03:28:28Z claude -> READY_FOR_CHALLENGE",
+    "2026-10-03T14:27:49Z codex -> READY_FOR_SUPERCHAD (Codex reproduction relayed by Jacob 2026-10-03; recorded by claude)",
+    "2026-10-03T14:27:49Z superchad -> DONE (SUPERCHAD disposition NO_GAIN, relayed by Jacob 2026-10-03; recorded by claude)"
    ]
   }
  ]

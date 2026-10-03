@@ -85,3 +85,4 @@ This hypothesis was generated AFTER inspecting 2026 development evidence: FC-MLB
 ## LOG
 - 2026-10-03 criteria frozen from SUPERCHAD's adjudication; claimed.
 - 2026-10-03 frozen fit fc3230785a; single evaluation 5e1d6bd8ec; -> READY_FOR_CHALLENGE (holding for SUPERCHAD/Jacob).
+- 2026-10-03 CLOSED DONE/NO_GAIN (SUPERCHAD). Codex reproduced 37,125 rows, D0 fidelity, K10 70.37/70.37, D1-D0 0.00 [-1.17,+1.23], K5 -0.25, K20 -0.06, PIT, chronology. Caveat (Codex): mechanism.persistence '2025_first_half' included games before 2025-04-15; descriptive only; no rerun.
