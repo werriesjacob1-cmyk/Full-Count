@@ -2641,6 +2641,141 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-10-03",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 63.5,
+          "notable_signals": 3,
+          "matchup": "New York Yankees @ Tampa Bay Rays",
+          "game_pk": 849835,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 4.8571,
+            "pitch_exploit": 6.2857,
+            "l7_avg_ev": 66.875,
+            "l7_barrel_pct": 100.0,
+            "bat_speed_trend": 14.25,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 23.3333,
+            "lineup_slot": 87.5,
+            "bullpen_fatigue": 0.0,
+            "bvp_ops": -1.014,
+            "platoon_barrel_pct": 0.64,
+            "platoon_xwoba": 2.1,
+            "park_hand_index": -1.54,
+            "opp_catcher_framing": -0.12,
+            "days_rest": 4.0,
+            "woba_ahead": 85.4545,
+            "woba_behind": 59.0909,
+            "pull_park_synergy": -0.9702,
+            "hard_hit_105_rate": -0.3925,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": 0.136,
+            "vs_rp_ops": 0.684,
+            "ump_k_pct": -0.12,
+            "ump_bb_pct": 0.012
+          },
+          "hit_probability": 0.6223,
+          "raw_hit_probability": 0.6176,
+          "lift": 0.0694,
+          "reliability": "A",
+          "sample_n": 132,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 33.5,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Tampa Bay Rays",
+          "game_pk": 849835,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 2.64,
+            "sprint_speed": 0.0,
+            "catcher_poptime": 20.0,
+            "on_base": 72.1689
+          },
+          "hit_probability": 0.0867,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 132,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 0.6,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Tampa Bay Rays",
+          "game_pk": 849835,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0309
+          },
+          "hit_probability": 0.0309,
+          "raw_hit_probability": null,
+          "lift": -0.0165,
+          "reliability": "A",
+          "sample_n": 132,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 0.0,
+          "notable_signals": 0,
+          "matchup": "New York Yankees @ Tampa Bay Rays",
+          "game_pk": 849835,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0026
+          },
+          "hit_probability": 0.0026,
+          "raw_hit_probability": null,
+          "lift": -0.0179,
+          "reliability": "A",
+          "sample_n": 132,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

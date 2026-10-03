@@ -675,8 +675,8 @@
         {
           "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 34.3,
-          "notable_signals": 0,
+          "score": 37.5,
+          "notable_signals": 1,
           "matchup": "New York Yankees @ Tampa Bay Rays",
           "game_pk": 849835,
           "team": "New York Yankees",
@@ -685,9 +685,12 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 18.0,
-            "same_hand_ratio": 12.5,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 100.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 70.0299,
+            "ump_k_pct": 0.12,
+            "ump_bb_pct": -0.012
           },
           "hit_probability": 0.4686,
           "raw_hit_probability": 0.4686,
