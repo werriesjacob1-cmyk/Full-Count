@@ -70,3 +70,4 @@ Frozen before any FC-MLB-004 code. Codex may add criteria at its morning challen
 ## LOG
 - 2026-10-02 criteria frozen; claimed.
 - 2026-10-03 frozen fit 6e0e24f1e0; single evaluation 46712d8091; -> READY_FOR_CHALLENGE.
+- 2026-10-03 SUPERCHAD: NO_GAIN accepted as negative development result; DONE; challenge waived; no further P1 work. P2 signal -> FC-MLB-005.

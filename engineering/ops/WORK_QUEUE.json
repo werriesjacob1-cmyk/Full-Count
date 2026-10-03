@@ -250,7 +250,7 @@
    "LANE": "A",
    "OWNER": "claude",
    "CHALLENGER": "codex",
-   "STATUS": "READY_FOR_CHALLENGE",
+   "STATUS": "DONE",
    "BASE_SHA": "7c331c266ba12c679cdefda225a6a44a5f171e18",
    "BRANCH": "claude/mlb-engine-pitcher-contact-20261003",
    "HEAD_SHA": "46712d809153d6ca12322b1910b99e7a753c8806",
@@ -268,14 +268,45 @@
     "tests: test_fc_mlb_004.py (5); FC-MLB-002 machinery imported unchanged @ 7c331c266b"
    ],
    "BLOCKERS": [],
-   "NEXT_ACTION": "Codex Lane-A challenge of the single frozen experiment at HEAD_SHA (recompute, point-in-time, fidelity gate, criteria adherence)",
+   "NEXT_ACTION": "None. Closed as NEGATIVE DEVELOPMENT RESULT (P1-P0 K10 NO_GAIN). No further P1 work; Codex challenge waived by SUPERCHAD.",
    "AUTHORITY_REQUIRED": "none for research; Jacob for any promotion/production change",
    "WIP_EXEMPT": false,
    "CHALLENGE_ACTIVE": false,
-   "UPDATED": "2026-10-02T21:51:43Z",
+   "UPDATED": "2026-10-03T03:21:30Z",
    "HISTORY": [
     "2026-10-02T21:42:13Z claude -> CLAUDE_ACTIVE",
-    "2026-10-02T21:51:43Z claude -> READY_FOR_CHALLENGE"
+    "2026-10-02T21:51:43Z claude -> READY_FOR_CHALLENGE",
+    "2026-10-03T03:21:30Z superchad -> DONE (adjudication relayed by Jacob 2026-10-03: NO_GAIN accepted as negative development evidence; challenge waived; recorded by claude via direct edit because fc.py has no READY_FOR_CHALLENGE->DONE path)"
+   ]
+  },
+  {
+   "TASK_ID": "FC-MLB-005",
+   "SPORT": "MLB",
+   "KIND": "research",
+   "LANE": "A",
+   "OWNER": "claude",
+   "CHALLENGER": "codex",
+   "STATUS": "CLAUDE_ACTIVE",
+   "BASE_SHA": "46712d809153d6ca12322b1910b99e7a753c8806",
+   "BRANCH": "claude/mlb-engine-team-conversion-20261003",
+   "HEAD_SHA": null,
+   "OBJECTIVE": "Team conversion residual isolation: D1 = frozen P0 (CH1a) + Dteam (FC-MLB-004 construction, k_d=1500 reused); attribution of the FC-MLB-004 P2 signal. DEVELOPMENT only.",
+   "ACCEPTANCE_CRITERIA": [
+    "D1-D0 K10 Hits 1+ equal volume: IMPROVES iff >=+1.0pp & CI>0; WORSE iff CI<0; NO_GAIN iff CI covers 0 & |d|<0.5; fidelity gate vs FC-MLB-004 P0 @46712d8091; detail in TASKS/FC-MLB-005.md"
+   ],
+   "FILES_OR_AREAS": [
+    "research/mlb_engine/fc_mlb_005/"
+   ],
+   "EVIDENCE_POINTERS": [],
+   "BLOCKERS": [],
+   "NEXT_ACTION": "Build tests + 2025 fit (kd=1500 fixed); freeze; single 2026 evaluation; return to SUPERCHAD/Jacob (no Codex tonight)",
+   "AUTHORITY_REQUIRED": "none for research; Jacob for any promotion/production change",
+   "WIP_EXEMPT": false,
+   "CHALLENGE_ACTIVE": false,
+   "UPDATED": "2026-10-03T03:21:30Z",
+   "HISTORY": [
+    "2026-10-03T03:21:30Z claude -> READY (created per SUPERCHAD adjudication)",
+    "2026-10-03T03:21:30Z claude -> CLAUDE_ACTIVE"
    ]
   }
  ]
