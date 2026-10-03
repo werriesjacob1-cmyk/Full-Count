@@ -160,3 +160,4 @@ E1 − P0, P0 − CH0 and E1 − CH0 at K10, plus the log-loss gain, for:
 ## LOG
 - 2026-10-03 criteria frozen; claimed.
 - 2026-10-03 fit 3ede23c1a0; single evaluation a555d4dd59 -> READY_FOR_CHALLENGE (holding for SUPERCHAD/Jacob).
+- 2026-10-03 CLOSED DONE/NO_GAIN (SUPERCHAD; Codex PASS WITH LIMITATIONS @ a555d4dd59: chronology, 37,125 rows/163 dates, 0 duplicate keys, baseline fidelity, PIT, sum-to-one, aggregation, K5/K10/K20, bootstrap, overlap, stability reproduced). Limitations: split used all-2025 MoM k; optimizer guard permissive on success=false (unused); schedule hash recorded not enforced (matched). No rerun; no FC-MLB-007.
