@@ -1,0 +1,146 @@
+{
+ "label": "FC-MLB-006 frozen 2025 fit (8-class PA softmax)",
+ "categories": [
+  "1B",
+  "2B",
+  "3B",
+  "HR",
+  "BB",
+  "HBP",
+  "K",
+  "OUT"
+ ],
+ "event_map": {
+  "single": "1B",
+  "double": "2B",
+  "triple": "3B",
+  "home_run": "HR",
+  "walk": "BB",
+  "intent_walk": "BB",
+  "hit_by_pitch": "HBP",
+  "strikeout": "K",
+  "strikeout_double_play": "K",
+  "field_out": "OUT",
+  "force_out": "OUT",
+  "grounded_into_double_play": "OUT",
+  "double_play": "OUT",
+  "triple_play": "OUT",
+  "sac_fly": "OUT",
+  "sac_fly_double_play": "OUT",
+  "sac_bunt": "OUT",
+  "fielders_choice": "OUT",
+  "fielders_choice_out": "OUT",
+  "field_error": "OUT",
+  "catcher_interf": "OUT"
+ },
+ "prior_strengths_mom_2025": {
+  "batter": {
+   "1B": 278.0947833045928,
+   "2B": 5000.0,
+   "3B": 378.074771972157,
+   "HR": 198.384915828184,
+   "BB": 114.69077660462447,
+   "HBP": 238.34285409213015,
+   "K": 52.34661448873013,
+   "OUT": 79.5992059849564
+  },
+  "batter_n_players": 348,
+  "pitcher": {
+   "1B": 445.9567695641649,
+   "2B": 2240.374296422301,
+   "3B": 5000.0,
+   "HR": 673.0762105765087,
+   "BB": 251.71958695661178,
+   "HBP": 355.1707209669295,
+   "K": 75.2100483380709,
+   "OUT": 190.20506203593857
+  },
+  "pitcher_n_players": 353
+ },
+ "theta": {
+  "1B": {
+   "alpha": -1.183100056140557,
+   "beta_batter": 0.4232949664465096,
+   "gamma_pitcher": 0.5160018363737867,
+   "delta_same_hand": 0.024163725692820572
+  },
+  "2B": {
+   "alpha": -2.3560600386344634,
+   "beta_batter": 0.7386375349372326,
+   "gamma_pitcher": 0.17934408566361246,
+   "delta_same_hand": -0.07451892465474745
+  },
+  "3B": {
+   "alpha": -4.829418283257241,
+   "beta_batter": 0.9311098491232516,
+   "gamma_pitcher": 1.4104205999842905,
+   "delta_same_hand": -0.23189008868961103
+  },
+  "HR": {
+   "alpha": -2.670513423609361,
+   "beta_batter": 1.0855809798495126,
+   "gamma_pitcher": 0.7330492636449321,
+   "delta_same_hand": -0.1514027811169977
+  },
+  "BB": {
+   "alpha": -1.655440973044198,
+   "beta_batter": 1.0118707600985877,
+   "gamma_pitcher": 1.2546691199107183,
+   "delta_same_hand": -0.1194902865082086
+  },
+  "HBP": {
+   "alpha": -3.858720823504771,
+   "beta_batter": 0.9027542865405916,
+   "gamma_pitcher": 1.1090721483028625,
+   "delta_same_hand": 0.2130552008378909
+  },
+  "K": {
+   "alpha": -0.7451959590772979,
+   "beta_batter": 1.0584420686625626,
+   "gamma_pitcher": 1.0484627897584815,
+   "delta_same_hand": 0.022297625250126445
+  }
+ },
+ "convergence": {
+  "success": true,
+  "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+  "nit": 275,
+  "nll": 1.4670017406487124,
+  "max_abs_grad": 4.805200501738938e-08
+ },
+ "n_pa_2025": 156735,
+ "train_event_freq": {
+  "1B": 0.14402016141895557,
+  "2B": 0.0426452292085367,
+  "3B": 0.0034070245956550867,
+  "HR": 0.03156282897884965,
+  "BB": 0.08384215395412639,
+  "HBP": 0.01055284397230995,
+  "K": 0.21940217564679235,
+  "OUT": 0.4645675822247743
+ },
+ "split_check_2025_descriptive": {
+  "multiclass_logloss_E1": 1.4698572483134702,
+  "multiclass_logloss_league_std": 1.4915576961656662,
+  "hit_logloss_E1": 0.5264551975282821,
+  "hit_logloss_P0_refit_first_half": 0.5268796683544187,
+  "hit_logloss_league_std": 0.5275168713176401,
+  "convergence_first_half": {
+   "success": true,
+   "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+   "nit": 281,
+   "nll": 1.4648462661474415,
+   "max_abs_grad": 3.91126769552447e-08
+  },
+  "n_score": 71776
+ },
+ "raw_provenance": {
+  "raw_files_verified": 385,
+  "manifest_sha256": "3fb1d0170a3f465ec30625b3deb08e17bae3f4858a468b0cae9f97d608b1d16a",
+  "pa_parquet_sha256": "cb06b8f38c9dd8275194ebe60dc4c24e263b1fa366edd03f42c4b9abf03387a4",
+  "pitches_parquet_sha256": "a87b1c7e560639aa692bfad87ae8a875147db53c3c612e484928fe26de639c76",
+  "pitches": 1429320,
+  "pa": 366775
+ },
+ "baseline_fit_sha256": "6c0ecde23577659c1e72e18448415208eb4f5d7d2748f24b9631cd01ded7d6aa"
+}

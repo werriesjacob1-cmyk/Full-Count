@@ -1,0 +1,96 @@
+{
+ "prior_strengths_mom_2025": {
+  "batter": {
+   "1B": 278.0947833045928,
+   "2B": 5000.0,
+   "3B": 378.074771972157,
+   "HR": 198.384915828184,
+   "BB": 114.69077660462447,
+   "HBP": 238.34285409213015,
+   "K": 52.34661448873013,
+   "OUT": 79.5992059849564
+  },
+  "batter_n_players": 348,
+  "pitcher": {
+   "1B": 445.9567695641649,
+   "2B": 2240.374296422301,
+   "3B": 5000.0,
+   "HR": 673.0762105765087,
+   "BB": 251.71958695661178,
+   "HBP": 355.1707209669295,
+   "K": 75.2100483380709,
+   "OUT": 190.20506203593857
+  },
+  "pitcher_n_players": 353
+ },
+ "theta": {
+  "1B": {
+   "alpha": -1.183100056140557,
+   "beta_batter": 0.4232949664465096,
+   "gamma_pitcher": 0.5160018363737867,
+   "delta_same_hand": 0.024163725692820572
+  },
+  "2B": {
+   "alpha": -2.3560600386344634,
+   "beta_batter": 0.7386375349372326,
+   "gamma_pitcher": 0.17934408566361246,
+   "delta_same_hand": -0.07451892465474745
+  },
+  "3B": {
+   "alpha": -4.829418283257241,
+   "beta_batter": 0.9311098491232516,
+   "gamma_pitcher": 1.4104205999842905,
+   "delta_same_hand": -0.23189008868961103
+  },
+  "HR": {
+   "alpha": -2.670513423609361,
+   "beta_batter": 1.0855809798495126,
+   "gamma_pitcher": 0.7330492636449321,
+   "delta_same_hand": -0.1514027811169977
+  },
+  "BB": {
+   "alpha": -1.655440973044198,
+   "beta_batter": 1.0118707600985877,
+   "gamma_pitcher": 1.2546691199107183,
+   "delta_same_hand": -0.1194902865082086
+  },
+  "HBP": {
+   "alpha": -3.858720823504771,
+   "beta_batter": 0.9027542865405916,
+   "gamma_pitcher": 1.1090721483028625,
+   "delta_same_hand": 0.2130552008378909
+  },
+  "K": {
+   "alpha": -0.7451959590772979,
+   "beta_batter": 1.0584420686625626,
+   "gamma_pitcher": 1.0484627897584815,
+   "delta_same_hand": 0.022297625250126445
+  }
+ },
+ "convergence": {
+  "success": true,
+  "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+  "nit": 275,
+  "nll": 1.4670017406487124,
+  "max_abs_grad": 4.805200501738938e-08
+ },
+ "split_check_2025_descriptive": {
+  "multiclass_logloss_E1": 1.4698572483134702,
+  "multiclass_logloss_league_std": 1.4915576961656662,
+  "hit_logloss_E1": 0.5264551975282821,
+  "hit_logloss_P0_refit_first_half": 0.5268796683544187,
+  "hit_logloss_league_std": 0.5275168713176401,
+  "convergence_first_half": {
+   "success": true,
+   "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH",
+   "nit": 281,
+   "nll": 1.4648462661474415,
+   "max_abs_grad": 3.91126769552447e-08
+  },
+  "n_score": 71776
+ }
+} 89874997bef3abd60e4159f3e512a13178a348982b08de6ded88f77359607622
+
+real	0m40.728s
+user	1m43.640s
+sys	0m7.656s
