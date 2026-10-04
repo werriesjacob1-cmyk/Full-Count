@@ -5033,6 +5033,136 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-10-04",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 45.4,
+          "notable_signals": 2,
+          "matchup": "Atlanta Braves @ Los Angeles Dodgers",
+          "game_pk": 849823,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 35.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 0.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 51.3,
+            "season_barrel_pct": 48.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": -0.32,
+            "platoon_xwoba": -0.18,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 4.0,
+            "woba_ahead": 7.2727,
+            "woba_behind": 24.5455,
+            "hard_hit_105_rate": 0.3225,
+            "team_total_move": -6.0,
+            "team_total_open": -6.0,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 1.216,
+            "vs_rp_ops": 2.136,
+            "ump_k_pct": 0.552,
+            "ump_bb_pct": -0.012
+          },
+          "hit_probability": 0.6537,
+          "raw_hit_probability": 0.6415,
+          "lift": 0.1023,
+          "reliability": "A",
+          "sample_n": 155,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 42.5,
+          "notable_signals": 1,
+          "matchup": "Atlanta Braves @ Los Angeles Dodgers",
+          "game_pk": 849823,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": 3.24,
+            "sprint_speed": 12.5,
+            "catcher_poptime": 20.0,
+            "on_base": 84.6449
+          },
+          "hit_probability": 0.0764,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 155,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 7.8,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Los Angeles Dodgers",
+          "game_pk": 849823,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0595
+          },
+          "hit_probability": 0.0595,
+          "raw_hit_probability": null,
+          "lift": 0.012,
+          "reliability": "A",
+          "sample_n": 155,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.3,
+          "notable_signals": 0,
+          "matchup": "Atlanta Braves @ Los Angeles Dodgers",
+          "game_pk": 849823,
+          "team": "Atlanta Braves",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.0294
+          },
+          "hit_probability": 0.0294,
+          "raw_hit_probability": null,
+          "lift": 0.0089,
+          "reliability": "A",
+          "sample_n": 155,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

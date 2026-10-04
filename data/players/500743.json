@@ -1489,9 +1489,9 @@
       "date": "2026-10-04",
       "evaluations": [
         {
-          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "prop": "Over 0.5 Hits",
           "type": "batter",
-          "score": 31.6,
+          "score": 28.0,
           "notable_signals": 1,
           "matchup": "Atlanta Braves @ Los Angeles Dodgers",
           "game_pk": 849823,
@@ -1505,7 +1505,7 @@
             "l7_avg_ev": 100.0,
             "l7_barrel_pct": 0.0,
             "bat_speed_trend": 9.6,
-            "park_hr_index": 51.5,
+            "park_hr_index": 51.3,
             "season_barrel_pct": 12.0,
             "lineup_slot": 12.5,
             "bullpen_fatigue": 15.1515,
@@ -1522,13 +1522,13 @@
             "ump_k_pct": 0.552,
             "ump_bb_pct": -0.012
           },
-          "hit_probability": 0.6249,
-          "raw_hit_probability": 0.5955,
-          "lift": -0.0618,
+          "hit_probability": 0.5917,
+          "raw_hit_probability": 0.5951,
+          "lift": 0.0403,
           "reliability": "A",
           "sample_n": 101,
           "projection": {
-            "stat": "hits_runs_rbis",
+            "stat": "hits",
             "value": 0.5,
             "needs": 1
           }
