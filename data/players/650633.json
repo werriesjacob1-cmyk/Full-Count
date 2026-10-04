@@ -766,7 +766,7 @@
       "date": "2026-10-04",
       "evaluations": [
         {
-          "prop": "Over 5.5 Strikeouts",
+          "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
           "score": 40.7,
           "notable_signals": 0,
@@ -785,15 +785,15 @@
             "ump_k_pct": -0.528,
             "ump_bb_pct": 0.312
           },
-          "hit_probability": 0.3672,
-          "raw_hit_probability": 0.3672,
-          "lift": -0.024,
+          "hit_probability": 0.5339,
+          "raw_hit_probability": 0.5339,
+          "lift": 0.0058,
           "reliability": "A",
           "sample_n": 32,
           "projection": {
             "stat": "strikeouts",
-            "value": 5.5,
-            "needs": 6
+            "value": 4.5,
+            "needs": 5
           }
         },
         {
@@ -825,7 +825,7 @@
         {
           "prop": "Over 10.5 Combined Strikeouts",
           "type": "pitcher_combo",
-          "score": 47.9,
+          "score": 49.4,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ Milwaukee Brewers",
           "game_pk": 849825,
@@ -837,11 +837,11 @@
             701656
           ],
           "signals": {
-            "combined_k_edge": -0.0659
+            "combined_k_edge": -0.0554
           },
           "hit_probability": 0.5769,
           "raw_hit_probability": null,
-          "lift": -0.0659,
+          "lift": -0.0554,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
