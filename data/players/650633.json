@@ -761,6 +761,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-10-04",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 43.0,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Milwaukee Brewers",
+          "game_pk": 849825,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 50.0,
+            "same_hand_ratio": 75.0,
+            "l14_k_pct": 74.7059,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6162,
+          "raw_hit_probability": 0.7106,
+          "lift": -0.0688,
+          "reliability": "A",
+          "sample_n": 32,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        },
+        {
+          "prop": "Over 16.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 80.4,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ Milwaukee Brewers",
+          "game_pk": 849825,
+          "team": "San Diego Padres",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.7306,
+            "avg_outs_per_start": 17.34
+          },
+          "hit_probability": 0.6277,
+          "raw_hit_probability": 0.7306,
+          "lift": 0.0006,
+          "reliability": "A",
+          "sample_n": 32,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 16.5,
+            "needs": 17
+          }
+        }
+      ]
     }
   ]
 }
