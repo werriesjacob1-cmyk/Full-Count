@@ -766,9 +766,9 @@
       "date": "2026-10-04",
       "evaluations": [
         {
-          "prop": "Over 3.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 43.0,
+          "score": 40.7,
           "notable_signals": 0,
           "matchup": "San Diego Padres @ Milwaukee Brewers",
           "game_pk": 849825,
@@ -778,26 +778,29 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 50.0,
-            "same_hand_ratio": 75.0,
+            "same_hand_ratio": 33.3333,
             "l14_k_pct": 74.7059,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 42.8025,
+            "ump_k_pct": -0.528,
+            "ump_bb_pct": 0.312
           },
-          "hit_probability": 0.6162,
-          "raw_hit_probability": 0.7106,
-          "lift": -0.0688,
+          "hit_probability": 0.3672,
+          "raw_hit_probability": 0.3672,
+          "lift": -0.024,
           "reliability": "A",
           "sample_n": 32,
           "projection": {
             "stat": "strikeouts",
-            "value": 3.5,
-            "needs": 4
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
           "score": 80.4,
-          "notable_signals": 1,
+          "notable_signals": 0,
           "matchup": "San Diego Padres @ Milwaukee Brewers",
           "game_pk": 849825,
           "team": "San Diego Padres",
@@ -805,18 +808,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.7306,
+            "outs_rate": 0.8733,
             "avg_outs_per_start": 17.34
           },
-          "hit_probability": 0.6277,
-          "raw_hit_probability": 0.7306,
-          "lift": 0.0006,
+          "hit_probability": 0.8733,
+          "raw_hit_probability": 0.8733,
+          "lift": 0.0089,
           "reliability": "A",
           "sample_n": 32,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 14.5,
+            "needs": 15
+          }
+        },
+        {
+          "prop": "Over 10.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 47.9,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Milwaukee Brewers",
+          "game_pk": 849825,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            650633,
+            701656
+          ],
+          "signals": {
+            "combined_k_edge": -0.0659
+          },
+          "hit_probability": 0.5769,
+          "raw_hit_probability": null,
+          "lift": -0.0659,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 10.5,
+            "needs": 11
           }
         }
       ]

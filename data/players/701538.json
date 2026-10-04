@@ -5687,6 +5687,136 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-10-04",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits",
+          "type": "batter",
+          "score": 51.1,
+          "notable_signals": 2,
+          "matchup": "San Diego Padres @ Milwaukee Brewers",
+          "game_pk": 849825,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 49.0625,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 62.6667,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 0.0,
+            "platoon_barrel_pct": 5.0,
+            "platoon_xwoba": 2.58,
+            "park_hand_index": -0.74,
+            "opp_catcher_framing": 0.72,
+            "days_rest": 4.0,
+            "woba_ahead": 75.4545,
+            "woba_behind": 23.6364,
+            "pull_park_synergy": -0.3315,
+            "hard_hit_105_rate": 1.2475,
+            "getaway_day": 0.0,
+            "series_game": 1.0,
+            "sp_rp_ops_gap": 0.4,
+            "vs_rp_ops": 0.648,
+            "ump_k_pct": 0.528,
+            "ump_bb_pct": -0.312
+          },
+          "hit_probability": 0.6061,
+          "raw_hit_probability": 0.6056,
+          "lift": 0.0547,
+          "reliability": "A",
+          "sample_n": 157,
+          "projection": {
+            "stat": "hits",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 52.7,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Milwaukee Brewers",
+          "game_pk": 849825,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -3.24,
+            "sprint_speed": 53.125,
+            "catcher_poptime": 5.7143,
+            "on_base": 56.8138
+          },
+          "hit_probability": 0.1592,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 157,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 17.1,
+          "notable_signals": 0,
+          "matchup": "San Diego Padres @ Milwaukee Brewers",
+          "game_pk": 849825,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0965
+          },
+          "hit_probability": 0.0965,
+          "raw_hit_probability": null,
+          "lift": 0.049,
+          "reliability": "A",
+          "sample_n": 157,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 11.0,
+          "notable_signals": 1,
+          "matchup": "San Diego Padres @ Milwaukee Brewers",
+          "game_pk": 849825,
+          "team": "San Diego Padres",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.056
+          },
+          "hit_probability": 0.056,
+          "raw_hit_probability": null,
+          "lift": 0.0355,
+          "reliability": "A",
+          "sample_n": 157,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
