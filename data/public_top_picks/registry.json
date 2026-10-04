@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-10-04T16:52:56.146415+00:00",
+  "updated_at": "2026-10-04T21:12:43.530922+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -58006,6 +58006,202 @@
         },
         "qualification_timestamp": "2026-10-04T16:47:42.098805+00:00",
         "board_timestamp": "2026-10-04T16:47:42.092561+00:00",
+        "slate_date": "2026-10-04"
+      }
+    },
+    "fc2:849823:player-657041:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:849823:player-657041:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "849823",
+        [
+          "player",
+          "657041"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-10-04",
+      "first_published_at": "2026-10-04T21:12:43.530922+00:00",
+      "publication_provenance": {
+        "artifact_id": "8947e4cd564c0c57c4b2c37d50ea62429498590dc77dde93f33dee077e21e0d9",
+        "source_commit": "f6d764e414b58eb27b7b081ca54baf2547329213",
+        "workflow_run_id": "37235082397",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-10-04T21:12:30.294882+00:00",
+        "data_hash": "927b17b43aaed68939205f2280a9de1dba35504f582fb12af7f0492e0ea8061b",
+        "live_hash": "64695c897f36efc5a0d33c6d8b40490b6753a959634c34a23c6431ab12dfafdb"
+      },
+      "snapshot": {
+        "id": "fc2:849823:player-657041:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 849823,
+        "player_id": 657041,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Lane Thomas",
+        "team": "Atlanta Braves",
+        "matchup": "Atlanta Braves @ Los Angeles Dodgers",
+        "game_start": "2026-10-05T00:00:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6049,
+        "market_odds": -110,
+        "market_implied": 0.5238,
+        "market_edge": 0.0811,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (12.0 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Platoon: R bat vs LHP (favorable)",
+          "Hitter batting behind him: 0.358 wOBA (league ~.320)",
+          "Pitch-type exploit: RV/100 +2.9 vs CH (opposing SP throws it 17.8% of the time)"
+        ],
+        "watchouts": [
+          "Opposing SP ERA 1.90 \u2014 elite pitcher, tough matchup",
+          "Projected 3.48 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.290 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Team implied for 3.05 runs (league avg 4.245; line 2.5, game total 7.5) \u2014 a weak offensive environment",
+          "L7 sample is thin (0 PA) \u2014 treat recent-form read with caution",
+          "Season barrel% 6.4 \u2014 below-average barrel rate",
+          "Wind blowing IN (4mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 0/8 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.5916,
+          0.6365
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 113,
+        "lineup_assumed": null,
+        "base_rate": 0.6939,
+        "lift": -0.089,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "f4edbe9b8",
+          "prediction_timestamp": "2026-10-04T21:07:13.195045+00:00",
+          "odds_fetched_at": "2026-10-04T21:07:10.873748+00:00",
+          "board_generated_at": "2026-10-04T21:07:13.190407+00:00"
+        },
+        "qualification_timestamp": "2026-10-04T21:07:13.195045+00:00",
+        "board_timestamp": "2026-10-04T21:07:13.190407+00:00",
+        "slate_date": "2026-10-04"
+      }
+    },
+    "fc2:849823:player-621566:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:849823:player-621566:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "849823",
+        [
+          "player",
+          "621566"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-10-04",
+      "first_published_at": "2026-10-04T21:12:43.530922+00:00",
+      "publication_provenance": {
+        "artifact_id": "8947e4cd564c0c57c4b2c37d50ea62429498590dc77dde93f33dee077e21e0d9",
+        "source_commit": "f6d764e414b58eb27b7b081ca54baf2547329213",
+        "workflow_run_id": "37235082397",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-10-04T21:12:30.294882+00:00",
+        "data_hash": "927b17b43aaed68939205f2280a9de1dba35504f582fb12af7f0492e0ea8061b",
+        "live_hash": "64695c897f36efc5a0d33c6d8b40490b6753a959634c34a23c6431ab12dfafdb"
+      },
+      "snapshot": {
+        "id": "fc2:849823:player-621566:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 849823,
+        "player_id": 621566,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Matt Olson",
+        "team": "Atlanta Braves",
+        "matchup": "Atlanta Braves @ Los Angeles Dodgers",
+        "game_start": "2026-10-05T00:00:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.7088,
+        "market_odds": -185,
+        "market_implied": 0.6491,
+        "market_edge": 0.0597,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 89.3mph (league ~88.5)",
+          "L7 barrel% 41.7 \u2014 hot recent contact",
+          "Projected 4.2 PA (batting slot 3) \u2014 a favorable lineup slot",
+          "Hitters batting ahead of him: 0.348 wOBA (league ~.320)",
+          "Pitch-type exploit: RV/100 +1.8 vs CH (opposing SP throws it 17.8% of the time)",
+          "Season barrel% 14.1 \u2014 well above-average barrel rate"
+        ],
+        "watchouts": [
+          "Platoon: L bat vs LHP (unfavorable)",
+          "Opposing SP ERA 1.90 \u2014 elite pitcher, tough matchup",
+          "Hitter batting behind him: 0.298 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.05 runs (league avg 4.245; line 2.5, game total 7.5) \u2014 a weak offensive environment",
+          "Wind blowing IN (4mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 0/8 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "BvP: 4-for-18 vs Blake Snell (standard error \u00b110 pts on a 18-AB career sample -- weighted lightly on that basis, not just because the count looks small)"
+        ],
+        "prob_ci": [
+          0.6921,
+          0.7508
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 162,
+        "lineup_assumed": null,
+        "base_rate": 0.6939,
+        "lift": 0.0149,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "f4edbe9b8",
+          "prediction_timestamp": "2026-10-04T21:07:13.195045+00:00",
+          "odds_fetched_at": "2026-10-04T21:07:10.873748+00:00",
+          "board_generated_at": "2026-10-04T21:07:13.190407+00:00"
+        },
+        "qualification_timestamp": "2026-10-04T21:07:13.195045+00:00",
+        "board_timestamp": "2026-10-04T21:07:13.190407+00:00",
         "slate_date": "2026-10-04"
       }
     }
