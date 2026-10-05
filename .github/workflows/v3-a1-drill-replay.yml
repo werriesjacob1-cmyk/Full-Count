@@ -4,15 +4,21 @@
 # artifacts on a fresh GitHub-hosted VM (a different machine from the recording container). It never collects,
 # seals, pushes, posts, deploys, merges, reads outcomes, or touches V3's trigger, dispatcher or evidence chain.
 #
-# Runs on: a push to the amendment branch that changes the drill directory, or manually (workflow_dispatch once the
-# file is on the default branch -- not required). Read-only token. The checkout is deliberately SHALLOW (depth 1):
-# provenance must not depend on clone depth. Third-party actions are pinned to exact commits.
+# GATE SEMANTICS (repair of the masked gate found by Codex in run 37353256200):
+#   * every run step is `bash --noprofile --norc -eo pipefail` (defaults.run.shell) AND starts `set -euo pipefail`;
+#   * no command's exit status passes through tail/tee/formatting: test output goes to a log file, the real exit
+#     code decides, and the log is printed afterwards;
+#   * test_a1.DrillArtifacts runs from the v3 directory (its import path) with A1_REQUIRE_DRILL=1, so a missing
+#     drill is a FAILURE, never a skip;
+#   * the verifier's result is enforced by three always-run gate steps (integrity, frozen conformance, exit code);
+#     any one failing fails the job.
+# The checkout is deliberately SHALLOW (depth 1): provenance must not depend on clone depth. Actions are pinned.
 name: V3 A1 drill replay (environment B)
 
 on:
   push:
     branches: [claude/mlb-v3-amendment-a1-20261005]
-    paths: ['research/mlb_accuracy_challenger_20261001/v3/a1_drill/**']
+    paths: ['research/mlb_accuracy_challenger_20261001/v3/**', '.github/workflows/v3-a1-drill-replay.yml']
   workflow_dispatch: {}
 
 permissions:
@@ -22,13 +28,18 @@ concurrency:
   group: v3-a1-drill-replay-${{ github.sha }}
   cancel-in-progress: false
 
+defaults:
+  run:
+    shell: bash --noprofile --norc -eo pipefail {0}
+
 jobs:
   replay-b:
     runs-on: ubuntu-24.04
-    timeout-minutes: 75
+    timeout-minutes: 150
     env:
       V3: research/mlb_accuracy_challenger_20261001/v3
       SHADOW_PIN: 7d3ebacd55c34c6ec78030bdeca70799e56d4764
+      PYTHONUNBUFFERED: '1'
     steps:
       - name: Checkout exact amendment commit (shallow on purpose)
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
@@ -40,61 +51,143 @@ jobs:
         with:
           python-version: '3.11'
       - name: Fetch the frozen shadow pin only (depth 1)
-        run: git fetch --no-tags --depth 1 origin "$SHADOW_PIN"
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth 1 origin "$SHADOW_PIN"
+      - name: Process-tree tracer (R5 drill trace method)
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq strace
+          strace -V | head -n 1
       - name: Virgin-environment identities
         run: |
-          set -eu
-          echo "commit=$(git rev-parse HEAD)"
-          echo "v3_tree=$(git rev-parse HEAD:$V3)"
-          echo "shallow=$(git rev-parse --is-shallow-repository)"
-          echo "lock_sha256=$(sha256sum $V3/shadow-requirements.lock | cut -d' ' -f1)"
-          echo "python=$(python3 --version)  runner_image=${ImageOS:-?}-${ImageVersion:-?}"
-          test ! -e "$HOME/.pybaseball" && echo "host pybaseball cache: ABSENT"
-          echo "::notice title=A1-B IDENTITIES::commit=$(git rev-parse HEAD) v3_tree=$(git rev-parse HEAD:$V3) shallow=$(git rev-parse --is-shallow-repository) lock_sha256=$(sha256sum $V3/shadow-requirements.lock | cut -d' ' -f1) python=$(python3 --version | cut -d' ' -f2) image=${ImageOS:-?}-${ImageVersion:-?} host_pybaseball_cache=$(test -e $HOME/.pybaseball && echo PRESENT || echo ABSENT)"
-          ls -1 $V3/a1_drill
-      - name: Unit + mutant tests (hermetic)
-        run: |
-          set -eu
-          cd "$V3"
-          V3A1_ISOLATION_BASE="$RUNNER_TEMP/iso_tests" python3 -W ignore -m unittest test_a1 -v 2>&1 | tail -20
-          python3 -W ignore -m unittest test_v3 2>&1 | tail -3
-      - name: Replay every drill from sealed artifacts alone (environment B)
-        run: |
-          set -eu
+          set -euo pipefail
           mkdir -p "$RUNNER_TEMP/out"
+          commit=$(git rev-parse HEAD); tree=$(git rev-parse "HEAD:$V3"); shallow=$(git rev-parse --is-shallow-repository)
+          lock=$(sha256sum "$V3/shadow-requirements.lock" | cut -d' ' -f1); py=$(python3 --version | cut -d' ' -f2)
+          strace_v=$(strace -V | head -n 1 | awk '{print $NF}')
+          host_cache=ABSENT; if [ -e "$HOME/.pybaseball" ]; then host_cache=PRESENT; fi
+          echo "::notice title=A1-B IDENTITIES::commit=$commit v3_tree=$tree shallow=$shallow lock_sha256=$lock python=$py strace=$strace_v image=${ImageOS:-?}-${ImageVersion:-?} host_pybaseball_cache=$host_cache"
+          ls -1 "$V3/a1_drill"
+      - name: Unit + mutant tests (test_a1, test_v3) -- real exit codes
+        working-directory: research/mlb_accuracy_challenger_20261001/v3
+        run: |
+          set -euo pipefail
           rc=0
-          for d in $V3/a1_drill/A1_DRILL_*/; do
-            n=$(basename "$d")
-            V3A1_ISOLATION_BASE="$RUNNER_TEMP/iso_$n" python3 "$V3/a1_drill.py" verify --drill-dir "$d" \
-              --result "$RUNNER_TEMP/out/${n}_REPLAY_B_RESULT.json" || rc=1
-            A1_DRILL_DIR="$d" V3A1_ISOLATION_BASE="$RUNNER_TEMP/iso_mut_$n" \
-              python3 -W ignore -m unittest "test_a1.DrillArtifacts" -v 2>&1 | tail -3 || rc=1
+          V3A1_ISOLATION_BASE="$RUNNER_TEMP/iso_tests" python3 -W ignore -m unittest test_a1 -v > "$RUNNER_TEMP/out/test_a1.log" 2>&1 || rc=$?
+          cat "$RUNNER_TEMP/out/test_a1.log"
+          echo "::notice title=A1-B TEST test_a1::rc=$rc $(grep -E '^(Ran |OK|FAILED)' "$RUNNER_TEMP/out/test_a1.log" | tr '\n' ' ')"
+          if [ "$rc" -ne 0 ]; then echo "::error title=A1-B TEST test_a1::unittest exited $rc"; exit "$rc"; fi
+          rc=0
+          python3 -W ignore -m unittest test_v3 > "$RUNNER_TEMP/out/test_v3.log" 2>&1 || rc=$?
+          cat "$RUNNER_TEMP/out/test_v3.log"
+          echo "::notice title=A1-B TEST test_v3::rc=$rc $(grep -E '^(Ran |OK|FAILED)' "$RUNNER_TEMP/out/test_v3.log" | tr '\n' ' ')"
+          if [ "$rc" -ne 0 ]; then echo "::error title=A1-B TEST test_v3::unittest exited $rc"; exit "$rc"; fi
+      - name: Drill-artifact mutation test (required, never skipped)
+        working-directory: research/mlb_accuracy_challenger_20261001/v3
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          drills=(a1_drill/A1_DRILL_*/)
+          if [ "${#drills[@]}" -lt 1 ]; then echo "::error title=A1-B DRILLS::no A1_DRILL_* directory committed"; exit 1; fi
+          for d in "${drills[@]}"; do
+            n=$(basename "$d"); rc=0
+            A1_REQUIRE_DRILL=1 A1_DRILL_DIR="$PWD/$d" V3A1_ISOLATION_BASE="$RUNNER_TEMP/iso_mut_$n" \
+              python3 -W ignore -m unittest test_a1.DrillArtifacts -v > "$RUNNER_TEMP/out/${n}_drill_mutant.log" 2>&1 || rc=$?
+            cat "$RUNNER_TEMP/out/${n}_drill_mutant.log"
+            echo "::notice title=A1-B TEST DrillArtifacts $n::rc=$rc $(grep -E '^(Ran |OK|FAILED)' "$RUNNER_TEMP/out/${n}_drill_mutant.log" | tr '\n' ' ')"
+            if [ "$rc" -ne 0 ]; then echo "::error title=A1-B TEST DrillArtifacts $n::unittest exited $rc"; exit "$rc"; fi
+            if grep -q "skipped" "$RUNNER_TEMP/out/${n}_drill_mutant.log"; then echo "::error::DrillArtifacts skipped"; exit 1; fi
           done
-          {
-            echo "## FC-MLB-001A drill replay (environment B) — NOT A PROSPECTIVE UNIT"
-            for f in "$RUNNER_TEMP"/out/*_REPLAY_B_RESULT.json; do
-              python3 -c "import json,sys; r=json.load(open(sys.argv[1])); print('###', sys.argv[1].rsplit('/',1)[-1]); print('result:', r['result']); print('checks:', json.dumps(r['checks'])); print('replay:', json.dumps({k: r['replay'][k] for k in ('misses','unconsumed','n_http','guard_violations','environment_mismatch')})); print('hashes:', json.dumps(r['hashes'])); print('identities:', json.dumps(r['identities']))" "$f"
-            done
-          } >> "$GITHUB_STEP_SUMMARY"
-          cat "$GITHUB_STEP_SUMMARY"
-          # Also expose results through the check-run annotations API (readable without blob downloads)
-          for f in "$RUNNER_TEMP"/out/*_REPLAY_B_RESULT.json; do
-            python3 - "$f" <<'PY'
+      - name: Replay every drill from sealed artifacts alone (environment B, traced)
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          drills=("$V3"/a1_drill/A1_DRILL_*/)
+          if [ "${#drills[@]}" -lt 1 ]; then echo "::error title=A1-B DRILLS::no A1_DRILL_* directory committed"; exit 1; fi
+          : > "$RUNNER_TEMP/out/verify_rc.txt"
+          for d in "${drills[@]}"; do
+            n=$(basename "$d"); rc=0
+            V3A1_ISOLATION_BASE="$RUNNER_TEMP/iso_$n" python3 "$V3/a1_drill.py" verify --drill-dir "$d" \
+              --result "$RUNNER_TEMP/out/${n}_REPLAY_B_RESULT.json" > "$RUNNER_TEMP/out/${n}_verify.log" 2>&1 || rc=$?
+            tail -c 20000 "$RUNNER_TEMP/out/${n}_verify.log"
+            echo "$n $rc" >> "$RUNNER_TEMP/out/verify_rc.txt"
+            test -s "$RUNNER_TEMP/out/${n}_REPLAY_B_RESULT.json"      # a crashed verifier (no result) fails here
+            python3 - "$RUNNER_TEMP/out/${n}_REPLAY_B_RESULT.json" "$rc" <<'PY'
           import json, sys
-          r = json.load(open(sys.argv[1]))
-          n = sys.argv[1].rsplit("/", 1)[-1]
-          rows = {"RESULT": {"result": r["result"], "checks": r["checks"]},
-                  "REPLAY": {k: r["replay"][k] for k in ("misses", "unconsumed", "n_http", "guard_violations",
-                                                          "environment_mismatch", "error")},
-                  "REPLAY_ENV": r["replay"]["replay_env"], "HASHES": r["hashes"], "IDENTITIES": r["identities"],
-                  "TSA": r.get("tsa"), "VERIFIER_ENV": r.get("verifier_environment")}
+          r = json.load(open(sys.argv[1])); n = sys.argv[1].rsplit("/", 1)[-1]
+          tr = r.get("r5_process_trace") or {}
+          rows = {"RESULT": {"verify_rc": int(sys.argv[2]), "result": r["result"], "gates": r.get("gates")},
+                  "CHECKS": r["checks"],
+                  "REPLAY": {k: r["replay"].get(k) for k in ("misses", "unconsumed", "n_http", "guard_violations",
+                                                             "environment_mismatch", "record_nonconformance", "error")},
+                  "LITERAL_BOARD": r.get("literal_board"),
+                  "R5_TRACE": {k: tr.get(k) for k in ("n_successful_calls", "executables", "frozen_r5_violations",
+                                                      "frozen_r5_violation_classes")},
+                  "HASHES": r["hashes"], "IDENTITIES": r["identities"],
+                  "REPLAY_ENV": r["replay"].get("replay_env"),
+                  "TSA_AND_VERIFIER": {"tsa": r.get("tsa"), "verifier": r.get("verifier_environment"),
+                                       "diagnostics": r.get("diagnostics")}}
           for k, v in rows.items():
               print(f"::notice title=A1-B {n} {k}::{json.dumps(v, sort_keys=True)}")
           PY
           done
-          exit $rc
-        working-directory: ${{ github.workspace }}
-      - name: Durable result artifact
+          {
+            echo "## FC-MLB-001A drill replay (environment B) — NOT A PROSPECTIVE UNIT"
+            for f in "$RUNNER_TEMP"/out/*_REPLAY_B_RESULT.json; do
+              python3 -c "import json,sys; r=json.load(open(sys.argv[1])); print('###', sys.argv[1].rsplit('/',1)[-1]); print('result:', r['result'], 'gates:', json.dumps(r['gates'])); print('checks:', json.dumps(r['checks'])); print('literal_board:', json.dumps(r['literal_board']))" "$f"
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: 'Gate 1/3: integrity (sealed artifacts intact; tape consumed exactly; same locked environment)'
+        if: always()
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          results=("$RUNNER_TEMP"/out/*_REPLAY_B_RESULT.json)
+          if [ "${#results[@]}" -lt 1 ]; then echo "::error title=A1-B GATE integrity::no replay result"; exit 1; fi
+          python3 - "${results[@]}" <<'PY'
+          import json, sys
+          bad = {}
+          for f in sys.argv[1:]:
+              r = json.load(open(f))
+              if r.get("gates", {}).get("integrity") != "PASS":
+                  bad[f.rsplit("/", 1)[-1]] = {k: v for k, v in r["checks"].items() if v != "PASS"}
+          if bad:
+              print(f"::error title=A1-B GATE integrity::FAIL {json.dumps(bad, sort_keys=True)[:3000]}")
+              sys.exit(1)
+          print("::notice title=A1-B GATE integrity::PASS")
+          PY
+      - name: 'Gate 2/3: frozen FC-MLB-001A conformance (literal board identity, R5 trace, R4 record mechanism)'
+        if: always()
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          results=("$RUNNER_TEMP"/out/*_REPLAY_B_RESULT.json)
+          if [ "${#results[@]}" -lt 1 ]; then echo "::error title=A1-B GATE frozen::no replay result"; exit 1; fi
+          python3 - "${results[@]}" <<'PY'
+          import json, sys
+          bad = {}
+          for f in sys.argv[1:]:
+              r = json.load(open(f))
+              if r.get("gates", {}).get("frozen_conformance") != "PASS":
+                  bad[f.rsplit("/", 1)[-1]] = {k: v for k, v in r["checks"].items() if v != "PASS"}
+          if bad:
+              print(f"::error title=A1-B GATE frozen_conformance::FAIL {json.dumps(bad, sort_keys=True)[:3000]}")
+              sys.exit(1)
+          print("::notice title=A1-B GATE frozen_conformance::PASS")
+          PY
+      - name: 'Gate 3/3: verifier exit codes'
+        if: always()
+        run: |
+          set -euo pipefail
+          test -s "$RUNNER_TEMP/out/verify_rc.txt"
+          cat "$RUNNER_TEMP/out/verify_rc.txt"
+          if awk '$2 != 0 {bad=1} END {exit bad ? 0 : 1}' "$RUNNER_TEMP/out/verify_rc.txt"; then
+            echo "::error title=A1-B GATE verify_rc::a verifier exited nonzero"; exit 1
+          fi
+          echo "::notice title=A1-B GATE verify_rc::all verifiers exited 0"
+      - name: Durable result artifact (results, retained replay board bytes, env, process traces, logs)
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
         with:

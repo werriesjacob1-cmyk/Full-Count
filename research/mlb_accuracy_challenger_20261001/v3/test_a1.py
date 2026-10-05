@@ -2,7 +2,7 @@
 
 The stub pipeline behaves like the frozen one where it matters: it consults a pybaseball-style disk cache
 under $PYBASEBALL_CACHE before fetching over `requests`, and stamps `git rev-parse --short HEAD` into its
-board provenance. Every test exercises the real isolation / lock / shim / guard / netrecord code.
+board provenance. Every test exercises the real isolation / lock / injected-git-config / guard / trace / netrecord code.
 """
 import gzip
 import http.server
@@ -42,6 +42,8 @@ for u in cfg["urls"]:
         vals.append(t)
 if cfg.get("read_hidden"):
     open(cfg["read_hidden"]).read()
+if cfg.get("read_hidden_via_subprocess"):          # invisible to the in-process audit hook
+    subprocess.run(["cat", cfg["read_hidden_via_subprocess"]], capture_output=True)
 sha = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True).stdout.strip()
 os.makedirs("output", exist_ok=True)
 json.dump({"records": vals, "provenance": {"git_sha": sha}}, open("output/board_freeze_stub.json", "w"), sort_keys=True)
@@ -144,8 +146,14 @@ class A1(unittest.TestCase):
         w, urls = self.tree("t_legacy")
         self.dirty_host_home(urls)
         tape = os.path.join(self.base, "legacy_tape.json.gz")
-        subprocess.run([sys.executable, SH.NETRECORD, "--mode", "record", "--tape", tape, "--", "generate_picks.py"],
-                       cwd=w, env=dict(os.environ), check=True, capture_output=True)
+        # the locked test packages (requests, time-machine) from the hash lock, but pre-A1 behaviour otherwise:
+        # inherited host environment (HOME + pybaseball cache), no isolation, no guard. Never the host site-packages
+        # (a clean runner's interpreter has none of them -- that made this test error on GitHub run 37353256200).
+        venv = os.path.join(self.base, "legacy_venv")
+        ISO.build_venv(venv, TEST_LOCK, os.environ.get("V3A1_WHEEL_CACHE"))
+        r = subprocess.run([os.path.join(venv, "bin", "python"), SH.NETRECORD, "--mode", "record", "--tape", tape, "--",
+                            "generate_picks.py"], cwd=w, env=dict(os.environ), capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stderr[-2000:])
         board = json.load(open(os.path.join(w, "output", "board_freeze_stub.json")))
         self.assertEqual(board["records"], ["STALE-HOST-CACHE"] * 2)
         self.assertEqual(json.load(open(tape + ".record.report.json"))["n_http"], 0)
@@ -186,15 +194,48 @@ class A1(unittest.TestCase):
 
     # ---- R4: provenance identity -------------------------------------------------------------------------
     def test_provenance_identical_for_shallow_full_and_any_abbrev(self):
+        """R4 as frozen: injected GIT_CONFIG_COUNT/KEY_0/VALUE_0 core.abbrev=10 beats hostile repo-local config;
+        no PATH shim and no persistent git config is written anywhere."""
         shas = {}
         for name, shallow, abbrev in (("p_full", False, None), ("p_shallow", True, None), ("p_abbrev4", True, "4"),
                                       ("p_abbrev12", False, "12")):
             w, _ = self.tree(name, shallow=shallow)
             if abbrev:
                 _git(w, "config", "core.abbrev", abbrev)
-            board = self.run_p(w, os.path.join(self.base, name + ".json.gz"), "record")
+            cfg_before = open(os.path.join(w, ".git", "config"), "rb").read()
+            tape = os.path.join(self.base, name + ".json.gz")
+            board = self.run_p(w, tape, "record")
             shas[name] = board["provenance"]["git_sha"]
+            self.assertEqual(open(os.path.join(w, ".git", "config"), "rb").read(), cfg_before)   # nothing persisted
+            env = json.load(open(tape + ".record.env.json"))
+            self.assertEqual(env["git_identity"]["injected"], {"GIT_CONFIG_COUNT": "1", "GIT_CONFIG_KEY_0": "core.abbrev",
+                                                               "GIT_CONFIG_VALUE_0": "10"})
+            self.assertNotIn("shim_sha256", env["git_identity"])
         self.assertEqual(set(shas.values()), {self.full_sha[:10]}, shas)
+        self.assertFalse(os.path.exists(os.path.join(self.base, ".gitconfig")))
+
+    def test_isolated_env_has_injected_git_config_and_no_shim(self):
+        with ISO.IsolatedRun("replay", self.base, lock_path=TEST_LOCK) as iso:
+            for k, v in ISO.GIT_INJECTED_CONFIG.items():
+                self.assertEqual(iso.env[k], v)
+            first = iso.env["PATH"].split(":")[0]
+            self.assertEqual(first, os.path.dirname(iso.python))                     # venv first, no shim dir
+            self.assertFalse(os.path.exists(os.path.join(iso.root, "bin", "git")))
+            self.assertEqual(shutil.which("git", path=iso.env["PATH"]), shutil.which("git", path="/usr/local/bin:/usr/bin:/bin"))
+
+    def test_mutant_without_r4_abbrev7_shallow_rejected_with_r4_accepted(self):
+        """Frozen bar: abbrev-7 shallow clone provenance is rejected without R4 and accepted with it."""
+        w, _ = self.tree("p_abbrev7", shallow=True)
+        _git(w, "config", "core.abbrev", "7")
+        with ISO.IsolatedRun("record", w, lock_path=TEST_LOCK) as iso:
+            bare = {k: v for k, v in iso.env.items() if k not in ISO.GIT_INJECTED_CONFIG}
+            without = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=w, env=bare,
+                                     capture_output=True, text=True, check=True).stdout.strip()
+            withr4 = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=w, env=iso.env,
+                                    capture_output=True, text=True, check=True).stdout.strip()
+        self.assertEqual(len(without), 7)
+        self.assertNotEqual(without, self.full_sha[:10])          # verify_shadow_board would reject this
+        self.assertEqual(withr4, self.full_sha[:10])
 
     def test_mutant_real_git_short_depends_on_clone_config(self):
         w, _ = self.tree("p_mut", shallow=True)
@@ -251,6 +292,58 @@ class A1(unittest.TestCase):
         self.assertEqual(env["guard"]["subprocess_executables"], ["git"])
         self.assertNotIn("GITHUB_TOKEN", env["env_keys"])
 
+    # ---- R5: process-tree trace (strace -f) ------------------------------------------------------------------
+    def test_subprocess_hidden_read_is_invisible_to_hook_but_caught_by_trace(self):
+        hidden = os.path.join(self.base, "hidden_host_state_sub.txt")
+        open(hidden, "w").write("secret")
+        w, _ = self.tree("t_sub", cfg={"read_hidden_via_subprocess": hidden})
+        tape = os.path.join(self.base, "t_sub.json.gz")
+        self.run_p(w, tape, "record")                                   # the audit hook alone does not see it
+        env = json.load(open(tape + ".record.env.json"))
+        self.assertEqual(env["guard"]["violations"], [])
+        tr = env["process_trace"]
+        self.assertIn("cat", tr["executables"])
+        self.assertIn("HOST_STATE", tr["frozen_r5_violation_classes"])  # the trace does
+        self.assertTrue(any("hidden_host_state_sub.txt" in e for e in tr["examples"]["HOST_STATE"]), tr["examples"])
+        self.assertTrue(os.path.exists(tape + ".record.strace"))
+
+    def test_trace_reports_every_class_outside_frozen_surfaces(self):
+        """Frozen R5 permits only the pinned tree (+ sealed overlay) and the isolated HOME; the trace never waives
+        the interpreter, shared libraries, git or OS files -- they are reported as frozen-R5 violations."""
+        w, _ = self.tree("t_clean")
+        tape = os.path.join(self.base, "t_clean.json.gz")
+        self.run_p(w, tape, "record")
+        tr = json.load(open(tape + ".record.env.json"))["process_trace"]
+        self.assertEqual(tr["frozen_r5_permitted_classes"], ["PINNED_TREE", "ISOLATED_HOME"])
+        self.assertIn("PINNED_TREE", tr["by_class"])
+        self.assertIn("git", tr["executables"])
+        for c in ("INTERPRETER_STDLIB", "SHARED_LIBRARIES", "RUN_ROOT_VENV", "EXECUTABLES"):
+            self.assertIn(c, tr["frozen_r5_violation_classes"])
+        self.assertGreater(tr["frozen_r5_violations"], 0)
+        self.assertNotIn("PINNED_TREE", tr["frozen_r5_violation_classes"])
+
+    def test_trace_required_fail_closed_without_strace(self):
+        real = shutil.which
+        try:
+            ISO.shutil.which = lambda name, path=None: None if name == "strace" else real(name, path=path)
+            with self.assertRaisesRegex(ISO.IsolationError, "strace is not installed"):
+                ISO.trace_command("/dev/null")
+        finally:
+            ISO.shutil.which = real
+
+    def test_trace_parser_handles_unfinished_and_failed_calls(self):
+        t = os.path.join(self.base, "synthetic.strace")
+        open(t, "w").write(
+            '10 openat(AT_FDCWD, "/w/tree/a.py", O_RDONLY|O_CLOEXEC) = 3\n'
+            '11 openat(AT_FDCWD, "/var/cache/x", O_RDONLY <unfinished ...>\n'
+            '10 openat(AT_FDCWD, "/nope", O_RDONLY) = -1 ENOENT (No such file or directory)\n'
+            '11 <... openat resumed>) = 4\n'
+            '12 execve("/usr/bin/git", ["git"], 0x0 /* 3 vars */) = 0\n')
+        tr = ISO.summarize_trace(t, "/w/tree", "/w/root")
+        self.assertEqual(tr["n_successful_calls"], 3)
+        self.assertEqual(tr["frozen_r5_violation_classes"], {"EXECUTABLES": 1, "HOST_STATE": 1})
+        self.assertEqual(tr["by_class"]["PINNED_TREE"]["reads"], 1)
+
     def test_record_replay_environment_mismatch_detected(self):
         rec = {"a1_version": ISO.A1_VERSION, "lock_sha256": "a", "installed_set_sha256": "b", "python": "3.11.15",
                "isolation": {"home_empty_at_start": True}, "guard": {"violations": []}, "mode": "record"}
@@ -258,6 +351,12 @@ class A1(unittest.TestCase):
         self.assertTrue(ISO.check_replay_compatible(rec, dict(rec, mode="replay", lock_sha256="z")))
         self.assertTrue(ISO.check_replay_compatible(rec, dict(rec, mode="replay", python="3.12.1")))
         self.assertTrue(ISO.check_replay_compatible(rec, dict(rec, mode="replay", guard={"violations": ["/x"]})))
+
+    def test_record_mechanism_conformance(self):
+        cur = {"a1_version": ISO.A1_VERSION, "git_identity": {"injected": dict(ISO.GIT_INJECTED_CONFIG)}}
+        self.assertEqual(ISO.check_record_conformance(cur), [])
+        shim = {"a1_version": "fc-mlb-001a-a1-1", "git_identity": {"shim_sha256": "x", "rule": "rev-parse --short HEAD"}}
+        self.assertEqual(len(ISO.check_record_conformance(shim)), 2)      # superseded version AND non-frozen R4
 
 
 class DrillArtifacts(unittest.TestCase):
@@ -267,7 +366,10 @@ class DrillArtifacts(unittest.TestCase):
     def test_changed_artifact_fails(self):
         d = os.environ.get("A1_DRILL_DIR")
         if not d:
+            if os.environ.get("A1_REQUIRE_DRILL") == "1":      # CI: a missing drill is a failure, never a silent skip
+                self.fail("A1_REQUIRE_DRILL=1 but A1_DRILL_DIR is not set")
             self.skipTest("A1_DRILL_DIR not set")
+        self.assertTrue(os.path.isfile(os.path.join(d, "SHA256SUMS")), f"not a drill dir: {d}")
         import a1_drill as AD
         t = tempfile.mkdtemp(prefix="a1mut_")
         m = os.path.join(t, os.path.basename(d.rstrip("/")))
@@ -280,6 +382,8 @@ class DrillArtifacts(unittest.TestCase):
         r = json.load(open(res))
         self.assertTrue(r["checks"]["sha256sums"].startswith("FAIL"))
         self.assertTrue(r["checks"]["artifact_set"].startswith("FAIL"))
+        self.assertEqual(r["gates"]["integrity"], "FAIL")
+        self.assertEqual(r["result"], "FAIL")
 
 
 if __name__ == "__main__":

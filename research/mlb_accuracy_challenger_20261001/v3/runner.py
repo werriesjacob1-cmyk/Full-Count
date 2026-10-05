@@ -106,7 +106,8 @@ def main(argv=None):
         prov = SH.build_tree(a.repo, tree, a.date)
         try:
             tape = os.path.join(a.out, "shadow_tape.json.gz")
-            board = SH.verify_shadow_board(json.load(open(SH.run_pipeline(tree, tape, "record"))))
+            raw_board = open(SH.run_pipeline(tree, tape, "record"), "rb").read()   # literal pipeline bytes (A1)
+            board = SH.verify_shadow_board(json.loads(raw_board))
             ov = os.path.join(tree, SH.LIVE_OVERLAY_TEMPLATE.format(date=a.date))
             if prov["overlay"].get("sealed_sha256"):
                 shutil.copy(ov, os.path.join(a.out, "overlay.json"))
@@ -128,6 +129,8 @@ def main(argv=None):
         print(f"MISS UNIT: {exc}")
         return 4
     _dump(os.path.join(a.out, "shadow_board.json.gz"), board, gz=True)
+    with gzip.GzipFile(os.path.join(a.out, "shadow_board_raw.json.gz"), "wb", mtime=0) as fh:   # A1: literal bytes
+        fh.write(raw_board)
     _dump(os.path.join(a.out, "capture.json.gz"), cap, gz=True)
     _dump(os.path.join(a.out, "schedule.json"), sched)
     _dump(os.path.join(a.out, "manifest.json.gz"), man, gz=True)

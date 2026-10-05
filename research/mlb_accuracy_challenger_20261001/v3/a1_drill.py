@@ -107,6 +107,12 @@ def record(a):
         p = os.path.join(a.out, junk)
         if os.path.exists(p):
             os.replace(p, os.path.join(a.out, "record_" + junk.split(".gz.")[1]))
+    st = os.path.join(a.out, "shadow_tape.json.gz.record.strace")          # raw record process-tree trace (R5)
+    if os.path.exists(st):
+        import shutil
+        with open(st, "rb") as src, gzip.GzipFile(os.path.join(a.out, "record_record.strace.gz"), "wb", mtime=0) as dst:
+            shutil.copyfileobj(src, dst)
+        os.remove(st)
     summ = json.load(open(os.path.join(a.out, "DRILL_SUMMARY.json")))
     env = json.load(open(os.path.join(a.out, "shadow_env.json")))
     meta = {"label": LABEL, "not_a_prospective_unit": True, "evidence_chain": "NOT APPENDED (drill mode: no push, no #91 receipt)",
@@ -128,6 +134,15 @@ def record(a):
     return 0
 
 
+# Every check belongs to exactly one gate. INTEGRITY: sealed artifacts intact and the replay consumed exactly the
+# tape under the same locked environment. FROZEN_CONFORMANCE: the frozen FC-MLB-001A acceptance criteria as written.
+GATES = {"integrity": ("sha256sums", "artifact_set", "provenance_identity", "board_hash", "capture_hash", "schedule_hash",
+                       "manifest_hash", "manifest_reproducible", "overlay", "tape_identity", "timestamps",
+                       "replay_tape_exact", "replay_environment"),
+         "frozen_conformance": ("literal_board_identity", "r5_process_trace_frozen_surfaces", "r5_record_process_trace",
+                                "record_conforms_to_current_a1")}
+
+
 def _load(d, n):
     return json.load(gzip.open(os.path.join(d, n))) if n.endswith(".gz") else json.load(open(os.path.join(d, n)))
 
@@ -137,8 +152,9 @@ def verify(a):
     res = {"label": LABEL, "checks": {}}
     ok = res["checks"]
     sums = [ln.split("  ", 1) for ln in open(os.path.join(orig, "SHA256SUMS")).read().splitlines()]
-    bad = [n for h, n in sums if _sha(os.path.join(orig, n)) != h]
-    ok["sha256sums"] = "PASS" if not bad else f"FAIL: {bad}"
+    bad = [n for h, n in sums if not os.path.exists(os.path.join(orig, n)) or _sha(os.path.join(orig, n)) != h]
+    unlisted = sorted(set(os.listdir(orig)) - {n for _, n in sums} - {"SHA256SUMS"})
+    ok["sha256sums"] = "PASS" if not bad and not unlisted else f"FAIL: changed={bad} unlisted={unlisted}"
     d, tmp = materialize(orig)
     try:
         return _verify(a, d, res, ok)
@@ -195,20 +211,48 @@ def _verify(a, d, res, ok):
     res["tsa"] = tchk
     ok["timestamps"] = "PASS" if len(pregame) == len(tsa) >= 1 else f"FAIL: {tchk}"
     detail = {}
-    exact = VE.replay_shadow(d, board, overlay_bytes, detail)
+    keep = os.path.join(os.path.dirname(os.path.abspath(a.result)), os.path.basename(os.path.normpath(a.drill_dir)) + "_REPLAY_B") if a.result else None
+    VE.replay_shadow(d, board, overlay_bytes, detail, keep_dir=keep)
     rep = detail.get("replay_env") or {}
+    rec_fp = _load(d, "shadow_env.json") if os.path.exists(os.path.join(d, "shadow_env.json")) else {}
+    trace = rep.get("process_trace") or {}
+    lit = detail.get("literal_board") or {}
     res["replay"] = {"misses": rep.get("replay_misses"), "unconsumed": rep.get("unconsumed"),
                      "n_http": rep.get("n_http"), "guard_violations": (rep.get("guard") or {}).get("violations"),
                      "environment_mismatch": detail.get("environment_mismatch"), "error": detail.get("replay_error"),
-                     "replay_env": {k: rep.get(k) for k in ("python", "machine", "lock_sha256", "installed_set_sha256", "isolation")}}
-    ok["exact_replay"] = "PASS" if exact and rep.get("replay_misses") == 0 and rep.get("unconsumed") == 0 else "FAIL"
+                     "record_nonconformance": detail.get("record_nonconformance"),
+                     "replay_env": {k: rep.get(k) for k in ("a1_version", "python", "machine", "lock_sha256", "installed_set_sha256",
+                                                            "isolation", "git_identity")},
+                     "retained_outputs_dir": os.path.basename(keep) if keep else None}
+    res["literal_board"] = lit
+    res["r5_process_trace"] = {k: trace.get(k) for k in ("method", "n_successful_calls", "executables", "by_class",
+                                                         "frozen_r5_permitted_classes", "frozen_r5_violation_classes",
+                                                         "frozen_r5_violations", "examples")}
+    res["diagnostics"] = {"canonical_equivalence_NOT_THE_CRITERION": detail.get("canonical_equivalence_diagnostic_only")}
+    # integrity: the sealed evidence is intact and the replay consumed exactly the tape under the same locked env
+    ok["replay_tape_exact"] = ("PASS" if rep.get("replay_misses") == 0 and rep.get("unconsumed") == 0
+                               and not detail.get("replay_error") and not (rep.get("guard") or {}).get("violations") else
+                               f"FAIL: misses={rep.get('replay_misses')} unconsumed={rep.get('unconsumed')} error={detail.get('replay_error')}")
+    ok["replay_environment"] = "PASS" if rep and not detail.get("environment_mismatch") else f"FAIL: {detail.get('environment_mismatch') or 'no replay env'}"
+    # frozen conformance: the FC-MLB-001A acceptance criteria exactly as frozen (never canonicalized or waived)
+    ok["literal_board_identity"] = "PASS" if lit.get("identical") else f"FAIL: differing fields {lit.get('differing_fields')}"
+    ok["r5_process_trace_frozen_surfaces"] = ("PASS" if trace and trace.get("frozen_r5_violations") == 0 else
+                                              f"FAIL: {trace.get('frozen_r5_violations')} reads/execs outside the pinned tree + "
+                                              f"isolated HOME: {trace.get('frozen_r5_violation_classes')}")
+    conf = ISO.check_record_conformance(rec_fp) if rec_fp else ["no sealed record fingerprint"]
+    ok["record_conforms_to_current_a1"] = "PASS" if not conf else f"FAIL: {conf}"
+    rtrace = rec_fp.get("process_trace")
+    ok["r5_record_process_trace"] = ("PASS" if rtrace and rtrace.get("frozen_r5_violations") == 0 else
+                                     "FAIL: " + ("record was not traced (recorded before the process-tree trace existed)" if not rtrace
+                                                 else f"{rtrace.get('frozen_r5_violations')} frozen-R5 violations at record"))
     res["identities"] = {k: meta.get(k) for k in ("amendment_commit", "amendment_v3_tree", "shadow_pin", "lock_sha256",
                                                   "installed_set_sha256", "manifest_sha256")}
     res["hashes"] = {"shadow_board_sha256": board.get("board_sha256"), "capture_sha256": cap.get("capture_sha256"),
                      "schedule_sha256": man.get("schedule_sha256"), "manifest_sha256": man.get("manifest_sha256"),
                      "tape_sha256": arts.get("shadow_tape.json.gz")}
     res["verifier_environment"] = {"python": platform.python_version(), "platform": platform.platform()}
-    res["result"] = "PASS" if all(v == "PASS" for v in ok.values()) else "FAIL"
+    res["gates"] = {g: ("PASS" if all(ok.get(k, "FAIL: missing") == "PASS" for k in ks) else "FAIL") for g, ks in GATES.items()}
+    res["result"] = "PASS" if all(v == "PASS" for v in ok.values()) and all(v == "PASS" for v in res["gates"].values()) else "FAIL"
     if a.result:
         with open(a.result, "w") as fh:
             json.dump(res, fh, indent=1, sort_keys=True)

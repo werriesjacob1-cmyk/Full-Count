@@ -48,7 +48,8 @@ GENESIS_SEAL_SHA256 = PREREG_SHA256
 REQUIRED_ARTIFACTS = ("shadow_board.json.gz", "capture.json.gz", "schedule.json", "manifest.json.gz",
                       "shadow_tape.json.gz")
 OPTIONAL_ARTIFACTS = ("overlay.json",      # present iff an overlay was sealed
-                      "shadow_env.json")   # FC-MLB-001A: record-environment fingerprint (absent on legacy units)
+                      "shadow_env.json",   # FC-MLB-001A: record-environment fingerprint (absent on legacy units)
+                      "shadow_board_raw.json.gz")   # FC-MLB-001A: literal record pipeline board bytes (newer units)
 GITHUB_API = "https://api.github.com/repos/werriesjacob1-cmyk/Full-Count"
 FROZEN_COEFFICIENTS_PATH = os.path.join(os.path.dirname(HERE), "frozen_coefficients.json")
 FROZEN_COEFFICIENTS_SHA256 = "3c9e2c01cf4b7c57261622e829a1cccebd88d12b4950a84d7b7b96ad54672009"   # prereg v3 s10
@@ -102,10 +103,52 @@ def _repo_root():
     return subprocess.check_output(["git", "-C", HERE, "rev-parse", "--show-toplevel"]).decode().strip()
 
 
-def replay_shadow(unit_dir, board, overlay_bytes, detail=None):
+def _board_field_diffs(a, b, path="board"):
+    if isinstance(a, dict) and isinstance(b, dict):
+        out = []
+        for k in sorted(set(a) | set(b)):
+            out += _board_field_diffs(a.get(k, "<absent>"), b.get(k, "<absent>"), f"{path}.{k}")
+        return out
+    if isinstance(a, list) and isinstance(b, list) and len(a) == len(b):
+        return [d for i, (x, y) in enumerate(zip(a, b)) for d in _board_field_diffs(x, y, f"{path}[{i}]")]
+    return [] if a == b else [path]
+
+
+def literal_board_identity(unit_dir, replay_raw):
+    """FC-MLB-001A: EXACT shadow-board identity. Compares literal bytes, never a canonicalized view:
+      sealed  - the record board as sealed (gunzipped shadow_board.json.gz) vs the replay board serialized by the
+                identical sealing serializer (runner._dump: json indent=1, sort_keys);
+      raw     - when the unit carries shadow_board_raw.json.gz: record pipeline bytes vs replay pipeline bytes.
+    Differing field paths are reported (indices collapsed) so a failure names exactly what prevents identity."""
+    import re
+    rec_sealed = gzip.open(os.path.join(unit_dir, "shadow_board.json.gz")).read()
+    rep_board = json.loads(replay_raw)
+    rep_sealed = json.dumps(rep_board, indent=1, sort_keys=True).encode()
+    h = lambda b: hashlib.sha256(b).hexdigest()
+    out = {"record_sealed_board_sha256": h(rec_sealed), "replay_sealed_board_sha256": h(rep_sealed),
+           "replay_raw_board_sha256": h(replay_raw), "sealed_identical": rec_sealed == rep_sealed}
+    rawp = os.path.join(unit_dir, "shadow_board_raw.json.gz")
+    if os.path.exists(rawp):
+        rec_raw = gzip.open(rawp).read()
+        out.update(record_raw_board_sha256=h(rec_raw), raw_identical=rec_raw == replay_raw)
+    else:
+        out["record_raw_board"] = "NOT RETAINED (unit predates shadow_board_raw.json.gz); sealed bytes compared"
+    paths = _board_field_diffs(json.loads(rec_sealed), rep_board)
+    collapsed = {}
+    for p in paths:
+        k = re.sub(r"\[\d+\]", "[*]", p)
+        collapsed[k] = collapsed.get(k, 0) + 1
+    out["differing_fields"] = collapsed
+    out["identical"] = out["sealed_identical"] and out.get("raw_identical", True)
+    return out
+
+
+def replay_shadow(unit_dir, board, overlay_bytes, detail=None, keep_dir=None):
     """Reproduce the shadow board from sealed inputs only, in a fresh isolated environment (FC-MLB-001A).
-    Returns True iff replay-equivalent. A1 units must also replay under the identical locked environment
-    as recorded (shadow_env.json); legacy units have no fingerprint and must replay exactly regardless."""
+    Returns True iff the replay board is LITERALLY identical to the sealed record board (literal_board_identity),
+    the replay environment matches the sealed record environment, and the record conforms to the current A1
+    mechanism. The canonical (timestamp-stripped) comparison is kept only as a labelled diagnostic.
+    keep_dir: retain the replay's raw board bytes, env fingerprint and process trace there."""
     import isolation as ISO
     detail = detail if detail is not None else {}
     repo = _repo_root()
@@ -117,22 +160,42 @@ def replay_shadow(unit_dir, board, overlay_bytes, detail=None):
         tape = os.path.join(work, "tape.json.gz")
         shutil.copy(os.path.join(unit_dir, "shadow_tape.json.gz"), tape)
         try:
-            out = json.load(open(SH.run_pipeline(tree, tape, "replay")))
+            raw = open(SH.run_pipeline(tree, tape, "replay"), "rb").read()
         except (RuntimeError, ISO.IsolationError) as exc:
             detail["replay_error"] = str(exc)[:500]
             return False
         finally:
             if os.path.exists(tape + ".replay.env.json"):
                 detail["replay_env"] = json.load(open(tape + ".replay.env.json"))
+            if keep_dir:
+                os.makedirs(keep_dir, exist_ok=True)
+                for suffix in (".replay.env.json", ".replay.report.json", ".replay.strace"):
+                    if os.path.exists(tape + suffix):
+                        if suffix == ".replay.strace":
+                            with open(tape + suffix, "rb") as src, gzip.GzipFile(os.path.join(keep_dir, "replay.strace.gz"), "wb", mtime=0) as dst:
+                                shutil.copyfileobj(src, dst)
+                        else:
+                            shutil.copy(tape + suffix, os.path.join(keep_dir, "replay" + suffix))
+        if keep_dir:
+            with open(os.path.join(keep_dir, "replay_board_raw.json"), "wb") as fh:
+                fh.write(raw)
+        out = json.loads(raw)
+        detail["literal_board"] = literal_board_identity(unit_dir, raw)
+        detail["canonical_equivalence_diagnostic_only"] = SH.replay_equivalent(board, out)
         rec = os.path.join(unit_dir, "shadow_env.json")
+        problems = []
         if os.path.exists(rec):
-            problems = ISO.check_replay_compatible(json.load(open(rec)), detail.get("replay_env") or {})
+            rec_fp = json.load(open(rec))
+            problems = ISO.check_replay_compatible(rec_fp, detail.get("replay_env") or {})
             if problems:
                 detail["environment_mismatch"] = problems
-                return False
+            conf = ISO.check_record_conformance(rec_fp)
+            if conf:
+                detail["record_nonconformance"] = conf
+                problems = problems + conf
         else:
             detail["legacy_unit"] = "no sealed record-environment fingerprint (pre-A1)"
-        return SH.replay_equivalent(board, out)
+        return detail["literal_board"]["identical"] and not problems
     finally:
         SH.remove_tree(repo, tree)
         shutil.rmtree(work, ignore_errors=True)

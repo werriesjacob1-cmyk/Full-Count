@@ -152,15 +152,20 @@ def run_pipeline(workdir, tape_path, mode, timeout_s=1800, script="generate_pick
     fixed hash seed. Returns the freshly written shadow board path.
 
     FC-MLB-001A (A1): every record and every replay runs in its OWN fresh isolated root
-    (empty HOME / pybaseball cache / TMPDIR, venv from the hash lock, provenance git shim,
-    explicit environment, audit-hook guard). The run's environment fingerprint is written to
-    <tape>.<mode>.env.json; any isolation breach or guard violation fails the run closed."""
+    (empty HOME / pybaseball cache / TMPDIR, venv from the hash lock, injected git core.abbrev=10 (R4),
+    explicit environment, audit-hook guard, strace -f process-tree trace). The run's environment fingerprint
+    (with the classified trace) is written to <tape>.<mode>.env.json and the raw trace to <tape>.<mode>.strace;
+    any isolation breach or guard violation fails the run closed. Frozen-R5 trace violations are RECORDED
+    (process_trace.frozen_r5_violations), not waived: the verifiers report them as a failed check."""
     import isolation as ISO
+    trace_path = tape_path + f".{mode}.strace"
     with ISO.IsolatedRun(mode, workdir, lock_path=lock_path or ISO.SHADOW_LOCK) as iso:
-        proc = subprocess.run([iso.python, NETRECORD, "--mode", mode, "--tape", tape_path, "--", script],
-                              cwd=workdir, env=iso.env, timeout=timeout_s,
+        # R5: the whole process tree runs under strace -f (subprocesses + native/OS reads), not just the audit hook
+        proc = subprocess.run([*ISO.trace_command(trace_path), iso.python, NETRECORD, "--mode", mode, "--tape", tape_path,
+                               "--", script], cwd=workdir, env=iso.env, timeout=timeout_s,
                               stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
         fp = dict(iso.fingerprint)
+        fp["process_trace"] = ISO.summarize_trace(trace_path, workdir, iso.root, tape_path)
     rep_path = tape_path + f".{mode}.report.json"
     if not os.path.exists(rep_path):
         raise RuntimeError(f"pipeline produced no {mode} report (rc {proc.returncode}): "

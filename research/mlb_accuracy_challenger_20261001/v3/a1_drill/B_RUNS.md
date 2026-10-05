@@ -8,9 +8,23 @@ Each run is a fresh GitHub-hosted VM with a shallow checkout, a fresh venv from 
 | run | commit verified | result |
 |---|---|---|
 | [37352202211](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/37352202211) | `fc3a59d52f` | job **success** (tests + replay green). The result JSON was not readable through the builder's API client (blob-hosted logs), so annotations were added. |
-| [37353256200](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/37353256200) | `b22da45369` | **PASS** — see below |
+| [37353256200](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/37353256200) | `b22da45369` | job green, but **INVALID AS A GATE** (see correction) |
 
-**Run 37353256200 in detail:**
+## CORRECTION (Codex final audit, accepted)
+Runs 37352202211, 37353256200 and 37353829066 are **not valid gate evidence**.
+- Their test steps piped `unittest` through `tail` without `pipefail`.
+- `test_a1.DrillArtifacts` ran from the workspace root, where it cannot import `test_a1`.
+- Required tests could therefore be red while the job was green. Codex reproduced exactly that for 37353256200.
+- The replay annotations below were real verifier output. However, that verifier's `exact_replay` was the timestamp-stripped `replay_equivalent`, **not** literal board identity.
+
+The repaired gate (a1-2) is recorded on Issue #91, with run ids for the controlled mutant and for the clean exact head. It has:
+- `bash -eo pipefail` everywhere, real exit codes, and no tail/tee on any test;
+- DrillArtifacts run from `v3/` with `A1_REQUIRE_DRILL=1`;
+- literal board identity;
+- a `strace -f` process-tree trace;
+- three always-run gate steps.
+
+**Run 37353256200 in detail (historical; superseded):**
 - Every check PASS:
   - sha256sums, artifact set, board / capture / schedule / manifest hashes, manifest reproducible;
   - overlay, tape identity, provenance identity, timestamps, exact replay.

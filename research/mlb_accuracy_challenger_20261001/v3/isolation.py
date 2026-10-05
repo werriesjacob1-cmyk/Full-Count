@@ -7,16 +7,17 @@ Every RECORD and every REPLAY of the pinned pipeline runs in its OWN fresh root:
   <root>/tmp      TMPDIR/TMP/TEMP; empty at start
   <root>/venv     fresh venv: `pip install --no-deps --only-binary=:all: --require-hashes -r LOCK`,
                   then the installed set must equal the lock exactly (fail closed)
-  <root>/bin/git  provenance shim (R4): exactly `git rev-parse --short HEAD` answers HEAD[:10] of the
-                  full commit id; every other git call is passed to the real git unchanged
+R4 (frozen mechanism): every git call the pinned pipeline makes runs with the injected command-scope
+config GIT_CONFIG_COUNT=1 / GIT_CONFIG_KEY_0=core.abbrev / GIT_CONFIG_VALUE_0=10 (overrides repo-local
+config); system and global git config are disabled. No PATH shim, no persistent git config.
 
 The pipeline's environment is EXPLICIT (never inherited). Record mode alone passes through the
 named network/CA variables needed to reach live sources; their NAMES are fingerprinted, not values.
 netrecord.py installs an audit-hook guard (R5) from V3A1_GUARD: every file the pipeline process
-opens/lists outside the permitted surfaces is a violation and the run fails closed.
-
-Guarantees (and limits) are stated in AMENDMENT_A1.md. This is process-level isolation, not an OS
-sandbox: subprocesses (only the git shim is expected) are logged, not audited.
+opens/lists outside the permitted surfaces is a violation and the run fails closed. In addition the
+whole process tree (subprocesses and native/OS reads included) is traced with `strace -f` (openat/open/
+execve) and every successful open is classified (trace_surfaces). The audit hook is process-level only;
+the strace trace is the process-tree record. Neither is an OS sandbox.
 """
 from __future__ import annotations
 
@@ -33,7 +34,9 @@ import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SHADOW_LOCK = os.path.join(HERE, "shadow-requirements.lock")
-A1_VERSION = "fc-mlb-001a-a1-1"
+A1_VERSION = "fc-mlb-001a-a1-2"   # a1-2: R4 via injected GIT_CONFIG_* (a1-1 used a PATH shim)
+# R4, exactly as frozen: command-scope git config injected through the environment
+GIT_INJECTED_CONFIG = {"GIT_CONFIG_COUNT": "1", "GIT_CONFIG_KEY_0": "core.abbrev", "GIT_CONFIG_VALUE_0": "10"}
 RECORD_PASSTHROUGH = ("HTTPS_PROXY", "https_proxy", "HTTP_PROXY", "http_proxy", "NO_PROXY", "no_proxy",
                       "REQUESTS_CA_BUNDLE", "SSL_CERT_FILE", "CURL_CA_BUNDLE")
 VENV_BOOTSTRAP = {"pip", "setuptools"}           # seeded by `python -m venv`; reported, never used by the pipeline
@@ -77,23 +80,6 @@ def lock_pins(lock_path):
 
 def _dir_empty(path):
     return not os.path.exists(path) or not any(os.scandir(path))
-
-
-def _git_shim(bin_dir, real_git):
-    os.makedirs(bin_dir, exist_ok=True)
-    shim = os.path.join(bin_dir, "git")
-    body = ("#!/bin/sh\n"
-            "# FC-MLB-001A R4: deterministic provenance; `rev-parse --short HEAD` -> first 10 hex of the full HEAD id.\n"
-            "if [ \"$#\" -eq 3 ] && [ \"$1\" = rev-parse ] && [ \"$2\" = --short ] && [ \"$3\" = HEAD ]; then\n"
-            f"  full=$('{real_git}' rev-parse HEAD) || exit $?\n"
-            "  printf '%s\\n' \"$(printf '%s' \"$full\" | cut -c1-10)\"\n"
-            "  exit 0\n"
-            "fi\n"
-            f"exec '{real_git}' \"$@\"\n")
-    with open(shim, "w") as fh:
-        fh.write(body)
-    os.chmod(shim, 0o755)
-    return shim, sha256_bytes(body.replace(real_git, "<REAL_GIT>").encode())
 
 
 def _installed_set(py):
@@ -149,7 +135,7 @@ class IsolatedRun:
         os.makedirs(base, exist_ok=True)
         self.root = tempfile.mkdtemp(prefix=f"v3a1_{mode}_", dir=base)
         self.home, self.tmp = os.path.join(self.root, "home"), os.path.join(self.root, "tmp")
-        self.venv, self.bin = os.path.join(self.root, "venv"), os.path.join(self.root, "bin")
+        self.venv = os.path.join(self.root, "venv")
         self.wheel_cache = wheel_cache or os.environ.get("V3A1_WHEEL_CACHE") or os.path.join(base, "v3a1_wheelcache")
         self.extra_allowed = tuple(os.path.abspath(p) for p in extra_allowed)
 
@@ -163,23 +149,22 @@ class IsolatedRun:
         if not all(start.values()):
             raise IsolationError(f"ISOLATION_BREACH: run root not empty at start {start}")
         deps = build_venv(self.venv, self.lock_path, self.wheel_cache)
-        real_git = shutil.which("git", path="/usr/local/bin:/usr/bin:/bin")
-        if not real_git:
+        if not shutil.which("git", path="/usr/local/bin:/usr/bin:/bin"):
             raise IsolationError("git not found")
-        _, shim_sha = _git_shim(self.bin, real_git)
         py = os.path.join(self.venv, "bin", "python")
         stdlib = {sysconfig.get_paths()["stdlib"], sysconfig.get_paths()["platstdlib"]}
         # the interpreter's stdlib zip entry on sys.path (probed by the import system even when absent)
         stdlib_zip = os.path.join(sys.base_prefix, "lib", f"python{sys.version_info.major}{sys.version_info.minor}.zip")
         allowed = sorted({self.workdir + "/", self.root + "/", HERE + "/", *(p.rstrip("/") + "/" for p in stdlib), stdlib_zip,
                           *(p + ("/" if os.path.isdir(p) else "") for p in self.extra_allowed), *OS_RUNTIME_PREFIXES})
-        env = {"PATH": f"{self.bin}:{os.path.dirname(py)}:/usr/local/bin:/usr/bin:/bin",
+        env = {"PATH": f"{os.path.dirname(py)}:/usr/local/bin:/usr/bin:/bin",
                "HOME": self.home, "XDG_CACHE_HOME": os.path.join(self.home, ".cache"),
                "XDG_CONFIG_HOME": os.path.join(self.home, ".config"), "XDG_DATA_HOME": os.path.join(self.home, ".local/share"),
                "MPLCONFIGDIR": os.path.join(self.home, ".config", "matplotlib"), "PYBASEBALL_CACHE": pybb,
                "TMPDIR": self.tmp, "TMP": self.tmp, "TEMP": self.tmp, "TZ": "UTC", "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8",
                "PYTHONHASHSEED": "0", "PYTHONDONTWRITEBYTECODE": "1", "PYTHONNOUSERSITE": "1",
-               "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull, "GIT_TERMINAL_PROMPT": "0"}
+               "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull, "GIT_TERMINAL_PROMPT": "0",
+               **GIT_INJECTED_CONFIG}
         passed = []
         if self.mode == "record":
             for k in RECORD_PASSTHROUGH:
@@ -196,7 +181,9 @@ class IsolatedRun:
             "lock_sha256": sha256_bytes(open(self.lock_path, "rb").read()), **deps,
             "python": platform.python_version(), "python_implementation": platform.python_implementation(),
             "machine": platform.machine(), "isolation": start,
-            "git_identity": {"shim_sha256": shim_sha, "rule": "rev-parse --short HEAD -> full HEAD id [:10]"},
+            "git_identity": {"mechanism": "env GIT_CONFIG_COUNT/GIT_CONFIG_KEY_0/GIT_CONFIG_VALUE_0",
+                             "injected": dict(GIT_INJECTED_CONFIG), "system_config": "disabled",
+                             "global_config": os.devnull},
             "env_keys": sorted(env), "passthrough_env_keys": passed,
             "guard_surfaces": {"pinned_tree": True, "run_root": True, "amendment_code": True, "stdlib": True,
                                "os_runtime_prefixes": list(OS_RUNTIME_PREFIXES),
@@ -208,10 +195,140 @@ class IsolatedRun:
         return False
 
 
-def check_replay_compatible(record_fp, replay_fp):
-    """A1 units: replay must use the identical lock + installed set and the same interpreter line."""
+# ---- R5 process-tree trace (the frozen "drill trace method": strace -f openat, whole process tree) -------
+# The audit hook above only sees the pipeline's own Python process. The trace below records every successful
+# open/openat/execve of the WHOLE process tree (subprocesses, native libraries, the dynamic loader, OS files),
+# and classifies each path. Frozen R5 permits exactly: the pinned tree (which holds the sealed overlay) and
+# the isolated HOME. Every other class is reported as a frozen-R5 violation; nothing is silently allowed.
+TRACE_SYSCALLS = "openat,open,execve"
+FROZEN_R5_CLASSES = ("PINNED_TREE", "ISOLATED_HOME")
+_TRACE_LINE = re.compile(r'^(\d+)\s+(?:(openat|open|execve)\((?:AT_FDCWD, )?"((?:[^"\\]|\\.)*)"(.*)'
+                         r'|<\.\.\. (openat|open|execve) resumed>(.*))$')
+_TRACE_RESULT = re.compile(r'= (-?\d+)(?: (E[A-Z]+))?')
+
+
+def trace_command(trace_path):
+    st = shutil.which("strace", path="/usr/local/bin:/usr/bin:/bin")
+    if not st:
+        raise IsolationError("R5 process-tree trace required but strace is not installed (fail closed)")
+    return [st, "-f", "-qq", "-e", f"trace={TRACE_SYSCALLS}", "-e", "signal=none", "-o", trace_path]
+
+
+def _classify(path, ctx):
+    p = os.path.normpath(os.path.join(ctx["cwd"], path)) if not path.startswith("/") else os.path.normpath(path)
+    under = lambda base: p == base or p.startswith(base.rstrip("/") + "/")
+    if under(ctx["workdir"]):
+        return "PINNED_TREE"
+    if under(ctx["home"]):
+        return "ISOLATED_HOME"
+    if under(ctx["root"]):
+        return "RUN_ROOT_" + (p[len(ctx["root"]) + 1:].split("/", 1)[0].upper() or "DIR")   # TMP / VENV
+    if ctx["tape"] and (p == ctx["tape"] or p.startswith(ctx["tape"] + ".")):
+        return "SEALED_TAPE_AND_REPORT"
+    if under(HERE):
+        return "AMENDMENT_CODE"
+    if ctx.get("gitdir") and under(ctx["gitdir"]):
+        return "REPO_GIT_DIR"                         # git's object store/refs (a worktree's .git lives outside it)
+    if any(under(b) for b in ctx["interp"]):
+        return "INTERPRETER_STDLIB"
+    if p == "/etc/ld.so.cache" or ".so" in os.path.basename(p) or any(under(b) for b in ("/lib", "/lib64", "/usr/lib64", "/usr/lib/x86_64-linux-gnu")):
+        return "SHARED_LIBRARIES"
+    if any(under(b) for b in ("/proc", "/sys", "/dev")):
+        return "OS_VIRTUAL_" + p.split("/")[1].upper()
+    if any(under(b) for b in ("/var/cache", "/var/lib", "/var/tmp", "/tmp", "/root", "/home")):
+        return "HOST_STATE"
+    if any(under(b) for b in ("/usr/bin", "/bin", "/usr/local/bin", "/usr/sbin", "/sbin", "/usr/lib/git-core")):
+        return "EXECUTABLES"
+    if under("/etc"):
+        return "OS_CONFIG"
+    if any(under(b) for b in ("/usr/share", "/usr/lib/locale", "/usr/local/share", "/usr/lib")):
+        return "OS_DATA"
+    return "OTHER"
+
+
+def summarize_trace(trace_path, workdir, root, tape_path=None, examples=12):
+    """Parse an `strace -f` log of the pipeline's process tree into a machine-independent surface summary."""
+    ctx = {"cwd": os.path.abspath(workdir), "workdir": os.path.abspath(workdir), "root": os.path.abspath(root),
+           "home": os.path.join(os.path.abspath(root), "home"), "tape": os.path.abspath(tape_path) if tape_path else None,
+           "interp": sorted({os.path.realpath(sys.executable), sysconfig.get_paths()["stdlib"],
+                             sysconfig.get_paths()["platstdlib"],
+                             os.path.join(sys.base_prefix, "lib", f"python{sys.version_info.major}{sys.version_info.minor}.zip")})}
+    try:
+        gd = subprocess.run(["git", "-C", ctx["workdir"], "rev-parse", "--path-format=absolute", "--git-common-dir"],
+                            capture_output=True, text=True, timeout=30).stdout.strip()
+        ctx["gitdir"] = os.path.normpath(gd) if gd and not gd.startswith(ctx["workdir"] + "/") else None
+    except (OSError, subprocess.SubprocessError):
+        ctx["gitdir"] = None
+    labels = [(ctx["workdir"], "<PINNED_TREE>"), (ctx["root"], "<RUN_ROOT>"), (HERE, "<AMENDMENT_CODE>")]
+    if ctx["gitdir"]:
+        labels.append((ctx["gitdir"], "<REPO_GIT_DIR>"))
+    if ctx["tape"]:
+        labels.append((os.path.dirname(ctx["tape"]), "<TAPE_DIR>"))
+    pending, opens = {}, []
+    for line in open(trace_path, errors="replace"):
+        m = _TRACE_LINE.match(line.rstrip("\n"))
+        if not m:
+            continue
+        pid = m.group(1)
+        if m.group(2):
+            call, path, rest = m.group(2), m.group(3), m.group(4)
+            if rest.endswith("<unfinished ...>"):
+                pending[(pid, call)] = (path, rest)
+                continue
+        else:
+            call, rest = m.group(5), m.group(6)
+            if (pid, call) not in pending:
+                continue
+            path, head = pending.pop((pid, call))
+            rest = head + rest
+        r = _TRACE_RESULT.search(rest)
+        if not r or int(r.group(1)) < 0:
+            continue                                  # failed probes (ENOENT etc.) read nothing
+        write = call != "execve" and any(f in rest for f in ("O_WRONLY", "O_CREAT", "O_TRUNC"))
+        opens.append((call, path.encode().decode("unicode_escape"), write))
+    by_class, ex, execs = {}, {}, set()
+    for call, path, write in opens:
+        c = _classify(path, ctx)
+        k = by_class.setdefault(c, {"reads": 0, "writes": 0, "execs": 0, "unique_paths": set()})
+        k["execs" if call == "execve" else ("writes" if write else "reads")] += 1
+        k["unique_paths"].add(path)
+        if call == "execve":
+            execs.add(os.path.basename(path))
+        lab = path
+        for base, name in labels:
+            if lab.startswith(base):
+                lab = name + lab[len(base):]
+                break
+        ex.setdefault(c, [])
+        if lab not in ex[c] and len(ex[c]) < examples:
+            ex[c].append(lab)
+    frozen_viol = {c: v["reads"] + v["execs"] for c, v in by_class.items() if c not in FROZEN_R5_CLASSES and v["reads"] + v["execs"]}
+    return {"method": f"strace -f -e trace={TRACE_SYSCALLS} (whole process tree; successful calls only)",
+            "n_successful_calls": len(opens), "executables": sorted(execs),
+            "by_class": {c: {**{k: v[k] for k in ("reads", "writes", "execs")}, "unique_paths": len(v["unique_paths"])}
+                         for c, v in sorted(by_class.items())},
+            "examples": {c: ex[c] for c in sorted(ex)},
+            "frozen_r5_permitted_classes": list(FROZEN_R5_CLASSES),
+            "frozen_r5_violation_classes": dict(sorted(frozen_viol.items())),
+            "frozen_r5_violations": sum(frozen_viol.values())}
+
+
+def check_record_conformance(record_fp):
+    """The recorded unit must have been produced by the CURRENT A1 mechanism (a1_version, frozen R4 injection)."""
     problems = []
-    for k in ("a1_version", "lock_sha256", "installed_set_sha256"):
+    if record_fp.get("a1_version") != A1_VERSION:
+        problems.append(f"a1_version: record={record_fp.get('a1_version')} current={A1_VERSION}")
+    if (record_fp.get("git_identity") or {}).get("injected") != GIT_INJECTED_CONFIG:
+        problems.append(f"R4: record git identity mechanism is not the frozen injected core.abbrev=10: "
+                        f"{record_fp.get('git_identity')}")
+    return problems
+
+
+def check_replay_compatible(record_fp, replay_fp):
+    """A1 units: replay must use the identical lock + installed set and the same interpreter line
+    (mechanism conformance of the RECORD is checked separately by check_record_conformance)."""
+    problems = []
+    for k in ("lock_sha256", "installed_set_sha256"):
         if record_fp.get(k) != replay_fp.get(k):
             problems.append(f"{k}: record={record_fp.get(k)} replay={replay_fp.get(k)}")
     if str(record_fp.get("python", "")).rsplit(".", 1)[0] != str(replay_fp.get("python", "")).rsplit(".", 1)[0]:
