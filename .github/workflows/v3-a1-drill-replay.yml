@@ -50,6 +50,7 @@ jobs:
           echo "lock_sha256=$(sha256sum $V3/shadow-requirements.lock | cut -d' ' -f1)"
           echo "python=$(python3 --version)  runner_image=${ImageOS:-?}-${ImageVersion:-?}"
           test ! -e "$HOME/.pybaseball" && echo "host pybaseball cache: ABSENT"
+          echo "::notice title=A1-B IDENTITIES::commit=$(git rev-parse HEAD) v3_tree=$(git rev-parse HEAD:$V3) shallow=$(git rev-parse --is-shallow-repository) lock_sha256=$(sha256sum $V3/shadow-requirements.lock | cut -d' ' -f1) python=$(python3 --version | cut -d' ' -f2) image=${ImageOS:-?}-${ImageVersion:-?} host_pybaseball_cache=$(test -e $HOME/.pybaseball && echo PRESENT || echo ABSENT)"
           ls -1 $V3/a1_drill
       - name: Unit + mutant tests (hermetic)
         run: |
@@ -76,6 +77,21 @@ jobs:
             done
           } >> "$GITHUB_STEP_SUMMARY"
           cat "$GITHUB_STEP_SUMMARY"
+          # Also expose results through the check-run annotations API (readable without blob downloads)
+          for f in "$RUNNER_TEMP"/out/*_REPLAY_B_RESULT.json; do
+            python3 - "$f" <<'PY'
+          import json, sys
+          r = json.load(open(sys.argv[1]))
+          n = sys.argv[1].rsplit("/", 1)[-1]
+          rows = {"RESULT": {"result": r["result"], "checks": r["checks"]},
+                  "REPLAY": {k: r["replay"][k] for k in ("misses", "unconsumed", "n_http", "guard_violations",
+                                                          "environment_mismatch", "error")},
+                  "REPLAY_ENV": r["replay"]["replay_env"], "HASHES": r["hashes"], "IDENTITIES": r["identities"],
+                  "TSA": r.get("tsa"), "VERIFIER_ENV": r.get("verifier_environment")}
+          for k, v in rows.items():
+              print(f"::notice title=A1-B {n} {k}::{json.dumps(v, sort_keys=True)}")
+          PY
+          done
           exit $rc
         working-directory: ${{ github.workspace }}
       - name: Durable result artifact
