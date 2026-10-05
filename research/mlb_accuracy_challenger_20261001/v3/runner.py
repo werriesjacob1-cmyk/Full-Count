@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import gzip
+import hashlib
 import json
 import os
 import shutil
@@ -33,9 +34,11 @@ sys.path.insert(0, HERE)
 import activation as AC  # noqa: E402
 import capture as CP  # noqa: E402
 import manifest_v3 as M3  # noqa: E402
+import payload as PL  # noqa: E402
 import schedule_plan as SP  # noqa: E402
 import seal as SL  # noqa: E402
 import shadow as SH  # noqa: E402
+import tape_store as TS  # noqa: E402
 import verify_evidence as VE  # noqa: E402
 
 MIN_LEAD_S = SP.SAFETY_S
@@ -106,14 +109,23 @@ def main(argv=None):
         prov = SH.build_tree(a.repo, tree, a.date)
         try:
             tape = os.path.join(a.out, "shadow_tape.json.gz")
-            raw_board = open(SH.run_pipeline(tree, tape, "record"), "rb").read()   # literal pipeline bytes (A1)
+            # FC-MLB-001B: the pinned runtime sandbox (digest-pinned image, enumerated surfaces, whole-tree trace)
+            raw_board = open(SH.run_pipeline_b(tree, tape, "record",
+                                               overlay_rel=SH.LIVE_OVERLAY_TEMPLATE.format(date=a.date)), "rb").read()
             board = SH.verify_shadow_board(json.loads(raw_board))
             ov = os.path.join(tree, SH.LIVE_OVERLAY_TEMPLATE.format(date=a.date))
             if prov["overlay"].get("sealed_sha256"):
                 shutil.copy(ov, os.path.join(a.out, "overlay.json"))
         finally:
             SH.remove_tree(a.repo, tree)
-        prov["tape_sha256"] = SH.sha256_file(tape)
+        prov["tape_sha256"], tape_bytes = TS.file_identity(tape)
+        payload = PL.payload_bytes(board)                    # FC-MLB-001B scientific payload (frozen spec)
+        prov["scientific_payload_spec"] = PL.SPEC
+        prov["scientific_payload_sha256"] = hashlib.sha256(payload).hexdigest()
+        rec_env = json.load(open(tape + ".record.env.json"))
+        prov["runtime_image_digest"] = rec_env["runtime_image"]["manifest_digest"]
+        prov["runtime_rootfs_tree_sha256"] = rec_env["runtime_image"]["rootfs_tree_sha256"]
+        prov["tape_store"] = _store_tape(a.mode, tape, prov["tape_sha256"], tape_bytes)
         SP.guard(now(), fp, "capture")
         cap = CP.capture()
         SP.guard(now(), fp, "manifest")
@@ -138,12 +150,22 @@ def main(argv=None):
     if not os.path.exists(env_fp):
         raise RuntimeError("A1: record-environment fingerprint missing; refusing to seal")
     shutil.copy(env_fp, os.path.join(a.out, "shadow_env.json"))
-    names = list(VE.REQUIRED_ARTIFACTS) + [n for n in VE.OPTIONAL_ARTIFACTS if os.path.exists(os.path.join(a.out, n))]
+    with open(os.path.join(a.out, "shadow_payload.json"), "wb") as fh:      # FC-MLB-001B: sealed payload bytes
+        fh.write(payload)
+    for src, dst in ((".record.strace", "shadow_record_trace.strace.gz"),
+                     (".record.setup.strace", "shadow_record_setup_trace.strace.gz")):
+        if os.path.exists(tape + src):
+            with open(tape + src, "rb") as fin, gzip.GzipFile(os.path.join(a.out, dst), "wb", mtime=0) as fout:
+                shutil.copyfileobj(fin, fout)
+    # the complete tape lives in the content-addressed store (prov.tape_store), never among the sealed unit files
+    names = list(VE.B_REQUIRED_ARTIFACTS) + [n for n in VE.OPTIONAL_ARTIFACTS if os.path.exists(os.path.join(a.out, n))]
     arts = {n: SH.sha256_file(os.path.join(a.out, n)) for n in names}
     summary = {"label": "DRILL_NONCONFIRMATORY" if a.mode == "drill" else "PROSPECTIVE", "date": a.date,
                "window": a.window, "cutoff_utc": cutoff, "first_pitch_utc": fp, "manifest_sha256": man["manifest_sha256"],
                "capture_status": cap["status"], "capture_completed_at": cap["capture_completed_at"],
-               "overlay": prov["overlay"], "tape_sha256": prov["tape_sha256"], "artifacts_sha256": arts,
+               "overlay": prov["overlay"], "tape_sha256": prov["tape_sha256"], "tape_store": prov["tape_store"],
+               "scientific_payload_sha256": prov["scientific_payload_sha256"],
+               "runtime_image_digest": prov["runtime_image_digest"], "artifacts_sha256": arts,
                "counts": man["counts"]}
     if a.mode == "drill":
         if a.with_tsa:
@@ -153,6 +175,26 @@ def main(argv=None):
         return 0
     status = publish_seal(a, man, arts, fp)
     return 0 if status == "ON_TIME" else 3
+
+
+def _store_tape(mode, tape, sha256, size):
+    """FC-MLB-001B: put the complete tape into the content-addressed, create-only store and verify it by reading it
+    back before anything is sealed. Prospective units REQUIRE the authoritative R2 store (fail closed); drills may
+    use an isolated local store. V3B_TAPE_STORE = "r2" | "localfs:<root>"."""
+    spec = os.environ.get("V3B_TAPE_STORE", "")
+    if spec == "r2":
+        store = TS.R2Store.from_env()
+    elif spec.startswith("localfs:") and mode == "drill":
+        store = TS.LocalFSStore(spec.split(":", 1)[1])
+    else:
+        raise SP.MissUnit(f"tape store not configured for {mode} (V3B_TAPE_STORE={spec!r}; prospective requires r2)")
+    try:
+        loc = store.put(tape, sha256, size)
+    except TS.ObjectExists:
+        loc = {"store": store.kind, "key": TS.key_for(sha256), "sha256": sha256, "bytes": size,
+               **({"root": store.root} if store.kind == "localfs" else {"endpoint": store.endpoint, "bucket": store.bucket})}
+    TS.fetch_verified(loc)                                  # read back + hash before sealing (fail closed)
+    return loc
 
 
 def _try_tsa(digest, url):

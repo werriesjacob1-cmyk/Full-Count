@@ -189,6 +189,53 @@ def run_pipeline(workdir, tape_path, mode, timeout_s=1800, script="generate_pick
     return boards[0]
 
 
+def run_pipeline_b(workdir, tape_path, mode, timeout_s=1800, script="generate_picks.py", lock_path=None,
+                   overlay_rel=None):
+    """FC-MLB-001B: run the pinned generate_picks.py under netrecord inside the pinned runtime sandbox
+    (sandbox.SandboxRun: digest-pinned image, enumerated surfaces only, no network in replay, unprivileged,
+    whole-tree strace). Writes <tape>.<mode>.env.json (fingerprint + classified trace) and <tape>.<mode>.strace.
+    Fails closed on: isolation breach, lock mismatch, any FORBIDDEN/UNCLASSIFIED read, replay miss/unconsumed,
+    nonzero exit, not exactly one board. Returns the fresh board path."""
+    import isolation as ISO
+    import sandbox as SB
+    name = os.path.basename(tape_path)
+    with SB.SandboxRun(mode, workdir, lock_path or ISO.SHADOW_LOCK, overlay_rel=overlay_rel) as sb:
+        sb.setup(tape_path + f".{mode}.setup.strace")
+        inner = os.path.join(sb.dirs["io"], name)
+        if mode == "replay":
+            shutil.copy(tape_path, inner)
+            os.chown(inner, SB.UID, SB.GID)
+        proc = sb.run(["/v3b/run/venv/bin/python", "/v3b/code/netrecord.py", "--mode", mode, "--tape",
+                       f"/v3b/io/{name}", "--", script], tape_path + f".{mode}.strace", timeout_s)
+        fp = dict(sb.fingerprint)
+        rep_in = inner + f".{mode}.report.json"
+        if mode == "record" and os.path.exists(inner):
+            shutil.copy(inner, tape_path)
+        if os.path.exists(rep_in):
+            shutil.copy(rep_in, tape_path + f".{mode}.report.json")
+    rep_path = tape_path + f".{mode}.report.json"
+    if not os.path.exists(rep_path):
+        raise RuntimeError(f"pipeline produced no {mode} report (rc {proc.returncode}): "
+                           f"{proc.stderr.decode(errors='replace').strip()[-800:]}")
+    rep = json.load(open(rep_path))
+    fp["n_http"], fp["replay_misses"], fp["unconsumed"] = rep["n_http"], len(rep["replay_misses"]), rep["unconsumed"]
+    with open(tape_path + f".{mode}.env.json", "w") as fh:
+        json.dump(fp, fh, indent=1, sort_keys=True)
+    tr = fp["process_trace"]
+    if tr["forbidden_reads"] or fp["setup_trace"]["forbidden_reads"]:
+        raise RuntimeError(f"001B boundary: forbidden/unclassified reads {tr['forbidden_or_unclassified']} "
+                           f"{tr['examples'].get('FORBIDDEN_MUTABLE_STATE', [])[:5]} {tr['examples'].get('UNCLASSIFIED', [])[:5]}")
+    if mode == "replay" and (rep["replay_misses"] or rep["unconsumed"]):
+        raise RuntimeError(f"replay not exact: misses={len(rep['replay_misses'])} unconsumed={rep['unconsumed']}")
+    if proc.returncode != 0:
+        raise RuntimeError(f"pipeline exited rc {proc.returncode} in {mode}: "
+                           f"{proc.stderr.decode(errors='replace').strip()[-800:]}")
+    boards = glob.glob(os.path.join(workdir, "output", "board_freeze_*.json"))
+    if len(boards) != 1:
+        raise RuntimeError(f"expected exactly one fresh shadow board, found {len(boards)}")
+    return boards[0]
+
+
 def _surface_label(prefix, workdir):
     """Stable, machine-independent names for permitted surfaces (paths differ across containers)."""
     p = prefix.rstrip("/")

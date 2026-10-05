@@ -49,7 +49,12 @@ REQUIRED_ARTIFACTS = ("shadow_board.json.gz", "capture.json.gz", "schedule.json"
                       "shadow_tape.json.gz")
 OPTIONAL_ARTIFACTS = ("overlay.json",      # present iff an overlay was sealed
                       "shadow_env.json",   # FC-MLB-001A: record-environment fingerprint (absent on legacy units)
-                      "shadow_board_raw.json.gz")   # FC-MLB-001A: literal record pipeline board bytes (newer units)
+                      "shadow_board_raw.json.gz",   # FC-MLB-001A: literal record pipeline board bytes (newer units)
+                      "shadow_record_trace.strace.gz", "shadow_record_setup_trace.strace.gz")   # FC-MLB-001B traces
+# FC-MLB-001B units: the scientific payload bytes + record-environment fingerprint are sealed; the complete tape is
+# NOT a unit file -- it lives in the content-addressed store named by manifest shadow_provenance.tape_store.
+B_REQUIRED_ARTIFACTS = ("shadow_board.json.gz", "capture.json.gz", "schedule.json", "manifest.json.gz",
+                        "shadow_payload.json", "shadow_env.json")
 GITHUB_API = "https://api.github.com/repos/werriesjacob1-cmyk/Full-Count"
 FROZEN_COEFFICIENTS_PATH = os.path.join(os.path.dirname(HERE), "frozen_coefficients.json")
 FROZEN_COEFFICIENTS_SHA256 = "3c9e2c01cf4b7c57261622e829a1cccebd88d12b4950a84d7b7b96ad54672009"   # prereg v3 s10
@@ -201,6 +206,102 @@ def replay_shadow(unit_dir, board, overlay_bytes, detail=None, keep_dir=None):
         shutil.rmtree(work, ignore_errors=True)
 
 
+def sealed_b_identity_problems(unit_dir, board, prov):
+    """FC-MLB-001B sealed identities (no replay needed): payload bytes == frozen-spec payload of the sealed board and
+    == the manifest-bound hash; tape locator is the content address of the manifest-bound tape sha256; the record
+    ran in the pinned runtime with zero forbidden reads."""
+    import payload as PL
+    import runtime_image as RI
+    import tape_store as TS
+    problems = []
+    pb = open(os.path.join(unit_dir, "shadow_payload.json"), "rb").read()
+    if prov.get("scientific_payload_spec") != PL.SPEC:
+        problems.append(f"payload spec {prov.get('scientific_payload_spec')} != {PL.SPEC}")
+    if pb != PL.payload_bytes(board):
+        problems.append("sealed payload bytes are not the frozen-spec payload of the sealed board")
+    if hashlib.sha256(pb).hexdigest() != prov.get("scientific_payload_sha256"):
+        problems.append("sealed payload sha256 != manifest scientific_payload_sha256")
+    loc = prov.get("tape_store") or {}
+    if loc.get("sha256") != prov.get("tape_sha256") or loc.get("key") != (TS.key_for(prov["tape_sha256"]) if prov.get("tape_sha256") else None) \
+            or not isinstance(loc.get("bytes"), int):
+        problems.append(f"tape locator is not the content address of the sealed tape: {loc}")
+    env = json.load(open(os.path.join(unit_dir, "shadow_env.json")))
+    if (env.get("runtime_image") or {}).get("manifest_digest") != RI.MANIFEST_DIGEST or \
+            prov.get("runtime_image_digest") != RI.MANIFEST_DIGEST:
+        problems.append("record did not run in the pinned runtime image")
+    if (env.get("process_trace") or {}).get("forbidden_reads") != 0 or (env.get("setup_trace") or {}).get("forbidden_reads") != 0:
+        problems.append("record trace has forbidden/unclassified reads")
+    return problems
+
+
+def replay_shadow_b(unit_dir, board, overlay_bytes, prov, detail=None, keep_dir=None, tape_locator=None, repo=None):
+    """FC-MLB-001B replay: fetch the tape BY EXACT IDENTITY (size + sha256 verified before use; missing/mismatch
+    fail closed), replay in a fresh pinned-runtime sandbox with no network, regenerate the scientific payload and
+    require LITERAL byte + SHA-256 equality with the sealed payload; replay environment must be compatible with the
+    sealed record environment. `tape_locator` may name a different transport for the SAME identity (drills)."""
+    import payload as PL
+    import sandbox as SB
+    import tape_store as TS
+    detail = detail if detail is not None else {}
+    sealed_loc = prov.get("tape_store") or {}
+    loc = dict(tape_locator or sealed_loc)
+    for f in ("key", "sha256", "bytes"):
+        if loc.get(f) != sealed_loc.get(f):
+            detail["replay_error"] = f"transport locator {f} differs from the sealed tape identity"
+            return False
+    repo = repo or _repo_root()
+    work = tempfile.mkdtemp(prefix="v3breplay_")
+    tree = os.path.join(work, "tree")
+    try:
+        os.makedirs(os.path.join(work, "tapefetch"))
+        try:
+            tape = TS.fetch_verified(loc, os.path.join(work, "tapefetch"), repo=repo)
+        except TS.StoreError as exc:
+            detail["replay_error"] = f"{exc.code}: {exc}"
+            return False
+        detail["tape_fetched"] = {"store": loc.get("store"), "sha256": loc["sha256"], "bytes": loc["bytes"], "verified": True}
+        SH.build_tree(repo, tree, board["date"], live_ref=SH.SHADOW_PIN)     # no live read at all
+        SH.install_sealed_overlay(tree, board["date"], overlay_bytes)
+        local = os.path.join(work, "tape.json.gz")
+        shutil.move(tape, local)
+        overlay_rel = SH.LIVE_OVERLAY_TEMPLATE.format(date=board["date"])
+        try:
+            raw = open(SH.run_pipeline_b(tree, local, "replay", overlay_rel=overlay_rel), "rb").read()
+        except (RuntimeError, OSError) as exc:
+            detail["replay_error"] = str(exc)[:800]
+            return False
+        finally:
+            if os.path.exists(local + ".replay.env.json"):
+                detail["replay_env"] = json.load(open(local + ".replay.env.json"))
+            if keep_dir:
+                os.makedirs(keep_dir, exist_ok=True)
+                for suffix in (".replay.env.json", ".replay.report.json", ".replay.strace", ".replay.setup.strace"):
+                    if os.path.exists(local + suffix):
+                        if suffix.endswith("strace"):
+                            with open(local + suffix, "rb") as src, gzip.GzipFile(os.path.join(keep_dir, "replay" + suffix + ".gz"), "wb", mtime=0) as dst:
+                                shutil.copyfileobj(src, dst)
+                        else:
+                            shutil.copy(local + suffix, os.path.join(keep_dir, "replay" + suffix))
+        if keep_dir:
+            with open(os.path.join(keep_dir, "replay_board_raw.json"), "wb") as fh:
+                fh.write(raw)
+        sealed = open(os.path.join(unit_dir, "shadow_payload.json"), "rb").read()
+        detail["payload"] = PL.compare(sealed, json.loads(raw))
+        if keep_dir:
+            with open(os.path.join(keep_dir, "replay_payload.json"), "wb") as fh:
+                fh.write(PL.payload_bytes(json.loads(raw)))
+        rec_env = json.load(open(os.path.join(unit_dir, "shadow_env.json")))
+        problems = SB.check_compatible(rec_env, detail.get("replay_env") or {})
+        if problems:
+            detail["environment_mismatch"] = problems
+        rep = detail.get("replay_env") or {}
+        return bool(detail["payload"]["literal_identical"] and not problems and rep.get("replay_misses") == 0
+                    and rep.get("unconsumed") == 0)
+    finally:
+        SH.remove_tree(repo, tree)
+        shutil.rmtree(work, ignore_errors=True)
+
+
 def load_chain(root):
     """Ordered, verified seal records from the anchored genesis. Raises EvidenceError."""
     path = os.path.join(root, "CHAIN.json")
@@ -244,7 +345,9 @@ def verify_unit(root, seal):
     unit = f"{seal['date']}_{seal['window']}"
     d = os.path.join(root, "seals", unit)
     arts = seal.get("artifacts_sha256") or {}
-    if not set(REQUIRED_ARTIFACTS) <= set(arts) or set(arts) - set(REQUIRED_ARTIFACTS) - set(OPTIONAL_ARTIFACTS):
+    is_b = "shadow_payload.json" in arts
+    req = B_REQUIRED_ARTIFACTS if is_b else REQUIRED_ARTIFACTS
+    if not set(req) <= set(arts) or set(arts) - set(req) - set(OPTIONAL_ARTIFACTS):
         return "ARTIFACT_SET_INVALID", sorted(arts), None
     for name, want in arts.items():
         p = os.path.join(d, name)
@@ -284,7 +387,11 @@ def verify_unit(root, seal):
             return "OVERLAY_POST_CUTOFF_ROW", None, None
         if cutoff > M3.utc(man["cutoff_utc"]):
             return "OVERLAY_CUTOFF_AFTER_MANIFEST_CUTOFF", None, None
-    if prov.get("tape_sha256") != arts["shadow_tape.json.gz"]:
+    if is_b:
+        problems = sealed_b_identity_problems(d, board, prov)
+        if problems:
+            return "B_SEALED_IDENTITY_INVALID", problems, None
+    elif prov.get("tape_sha256") != arts["shadow_tape.json.gz"]:
         return "TAPE_NOT_SEALED_ONE", None, None
     rc = json.load(open(os.path.join(d, "receipts.json"))) if os.path.exists(os.path.join(d, "receipts.json")) else {}
     if not rc.get("github_comment_id"):
@@ -295,6 +402,10 @@ def verify_unit(root, seal):
     if status != "ON_TIME":
         return status, detail, None
     rdetail = {}
+    if is_b:
+        if not replay_shadow_b(d, board, overlay_bytes, prov, rdetail):
+            return "SHADOW_PAYLOAD_NOT_REPRODUCIBLE", {k: v for k, v in rdetail.items() if k != "replay_env"}, None
+        return "VERIFIED", detail, man
     if not replay_shadow(d, board, overlay_bytes, rdetail):
         return "SHADOW_NOT_REPRODUCIBLE", {k: v for k, v in rdetail.items() if k != "replay_env"}, None
     return "VERIFIED", detail, man

@@ -320,8 +320,10 @@ class TbdFirstPitch(unittest.TestCase):
         bp = os.path.join(out, "b.json")
         json.dump(b, open(bp, "w"))
 
-        def fake_pipeline(tree, tape, mode):
+        def fake_pipeline(tree, tape, mode, **k):
             open(tape, "wb").write(b"tape")
+            json.dump({"runtime_image": {"manifest_digest": "sha256:x", "rootfs_tree_sha256": "y"}},
+                      open(tape + ".record.env.json", "w"))         # FC-MLB-001B record fingerprint (stub)
             return bp
         c = cap(event(102, [market(HIT, [runner_("Tbd Guy", -120, team="two_away")], mid="m2")],
                       name="Two Away (x) @ Two Home (y)", open_date=tbd, completed=datetime.now(timezone.utc).isoformat()),
@@ -329,7 +331,8 @@ class TbdFirstPitch(unittest.TestCase):
         try:
             with mock.patch.object(RN, "schedule_snapshot", lambda d: autofill_rosters(sch, recs)), \
                     mock.patch.object(SH, "build_tree", lambda *a, **k: {"overlay": {}}), \
-                    mock.patch.object(SH, "run_pipeline", fake_pipeline), \
+                    mock.patch.object(SH, "run_pipeline_b", fake_pipeline), \
+                    mock.patch.dict(os.environ, {"V3B_TAPE_STORE": "localfs:" + os.path.join(out, "store")}), \
                     mock.patch.object(SH, "remove_tree", lambda *a: None), \
                     mock.patch.object(CP, "capture", lambda: c):
                 rc = RN.main(["--mode", "drill", "--repo", "/nonexistent", "--date", day, "--window", "DAY", "--out", out])
