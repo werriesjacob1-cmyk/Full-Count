@@ -1,0 +1,25 @@
+Traceback (most recent call last):
+  File "/tmp/claude-0/full-count-worktrees/v3a1/research/mlb_accuracy_challenger_20261001/v3/a1_drill.py", line 176, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/tmp/claude-0/full-count-worktrees/v3a1/research/mlb_accuracy_challenger_20261001/v3/a1_drill.py", line 172, in main
+    return record(a) if a.cmd == "record" else verify(a)
+           ^^^^^^^^^
+  File "/tmp/claude-0/full-count-worktrees/v3a1/research/mlb_accuracy_challenger_20261001/v3/a1_drill.py", line 57, in record
+    rc = RN.main(["--mode", "drill", "--with-tsa", "--repo", a.repo, "--date", a.date, "--window", a.window, "--out", a.out])
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/claude-0/full-count-worktrees/v3a1/research/mlb_accuracy_challenger_20261001/v3/runner.py", line 106, in main
+    prov = SH.build_tree(a.repo, tree, a.date)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/claude-0/full-count-worktrees/v3a1/research/mlb_accuracy_challenger_20261001/v3/shadow.py", line 106, in build_tree
+    _git(repo, "worktree", "add", "--detach", workdir, SHADOW_PIN)
+  File "/tmp/claude-0/full-count-worktrees/v3a1/research/mlb_accuracy_challenger_20261001/v3/shadow.py", line 69, in _git
+    return subprocess.check_output(["git", "-C", repo, *args], stderr=subprocess.STDOUT).decode().strip()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/home/user/Full-Count', 'worktree', 'add', '--detach', '/tmp/claude-0/-home-user-Full-Count/46a4218b-3a66-52d9-8838-d59c25a73d68/scratchpad/a1run/A1_DRILL_20261005_NIGHT/shadow_tree', '7d3ebacd55c34c6ec78030bdeca70799e56d4764']' returned non-zero exit status 128.
+rc=1

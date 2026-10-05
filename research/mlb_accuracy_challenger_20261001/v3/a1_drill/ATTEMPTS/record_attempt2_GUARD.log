@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "/tmp/claude-0/full-count-worktrees/v3a1/research/mlb_accuracy_challenger_20261001/v3/a1_drill.py", line 176, in <module>
+    "seal_sha256": json.load(open(os.path.join(d, "seal.json"))).get("seal_sha256")}
+
+  File "/tmp/claude-0/full-count-worktrees/v3a1/research/mlb_accuracy_challenger_20261001/v3/a1_drill.py", line 172, in main
+    after = {n: _sha(os.path.join(d, n)) for n in sorted(os.listdir(d))}
+       ^^^^^^^^^
+  File "/tmp/claude-0/full-count-worktrees/v3a1/research/mlb_accuracy_challenger_20261001/v3/a1_drill.py", line 57, in record
+    rc = RN.main(["--mode", "drill", "--with-tsa", "--repo", a.repo, "--date", a.date, "--window", a.window, "--out", a.out])
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/claude-0/full-count-worktrees/v3a1/research/mlb_accuracy_challenger_20261001/v3/runner.py", line 109, in main
+    board = SH.verify_shadow_board(json.load(open(SH.run_pipeline(tree, tape, "record"))))
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/claude-0/full-count-worktrees/v3a1/research/mlb_accuracy_challenger_20261001/v3/shadow.py", line 175, in run_pipeline
+    raise RuntimeError(f"A1 guard: hidden local state read outside permitted surfaces: {fp['guard']['violations'][:10]}")
+RuntimeError: A1 guard: hidden local state read outside permitted surfaces: ['/usr/X11/lib/X11/fonts', '/usr/X11R6/lib/X11/fonts/TTF', '/usr/lib/openoffice/share/fonts/truetype', '/usr/lib/python311.zip', '/usr/local/share/fonts']
+rc=1

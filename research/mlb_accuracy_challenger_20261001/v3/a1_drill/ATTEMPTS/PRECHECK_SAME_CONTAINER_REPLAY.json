@@ -1,0 +1,60 @@
+{
+ "checks": {
+  "artifact_set": "PASS",
+  "board_hash": "PASS",
+  "capture_hash": "PASS",
+  "exact_replay": "PASS",
+  "manifest_hash": "PASS",
+  "manifest_reproducible": "PASS",
+  "overlay": "PASS",
+  "provenance_identity": "PASS",
+  "schedule_hash": "PASS",
+  "sha256sums": "PASS",
+  "tape_identity": "PASS",
+  "timestamps": "PASS"
+ },
+ "hashes": {
+  "capture_sha256": "73c03fee7d4f3cfe167b3419f68147d01a3c2dc2cf2aa090af046f51d204a12a",
+  "manifest_sha256": "04f0b81043d62c6384d84a9d67abad2eb131e4c28aebe54c9272a38d35d094cf",
+  "schedule_sha256": "51f48ae2b3963b8b272e9514d472dc82793349aebefc4808fc57072d23dd09f4",
+  "shadow_board_sha256": "44f94b6aba474a5d1f5f42aa6d417aba7c478eb59701752ac7da90317b14deeb",
+  "tape_sha256": "e2cf77b38acaa8f5c3a93b14db1dfec4d3636971031ef865ff45ce0b32d0c4f7"
+ },
+ "identities": {
+  "amendment_commit": "e6fdee023031a0e36d9868fca8a97efa310c4c14",
+  "amendment_v3_tree": "ed32e97b6c96243fb1f133970894be617578e4c6",
+  "installed_set_sha256": "da98e4afa00f1c7a63a056e21e0e613e7c4334fdedafc1a3f046eba802263823",
+  "lock_sha256": "33034a7f7fe786fa7e651104881949729272c24daf1dc12ab4953267a06a4061",
+  "manifest_sha256": "04f0b81043d62c6384d84a9d67abad2eb131e4c28aebe54c9272a38d35d094cf",
+  "shadow_pin": "7d3ebacd55c34c6ec78030bdeca70799e56d4764"
+ },
+ "label": "FC-MLB-001A EVIDENCE-INTEGRITY DRILL \u2014 NOT A PROSPECTIVE UNIT",
+ "replay": {
+  "environment_mismatch": null,
+  "error": null,
+  "guard_violations": [],
+  "misses": 0,
+  "n_http": 0,
+  "replay_env": {
+   "installed_set_sha256": "da98e4afa00f1c7a63a056e21e0e613e7c4334fdedafc1a3f046eba802263823",
+   "isolation": {
+    "home_empty_at_start": true,
+    "pybaseball_cache_empty_at_start": true,
+    "tmp_empty_at_start": true
+   },
+   "lock_sha256": "33034a7f7fe786fa7e651104881949729272c24daf1dc12ab4953267a06a4061",
+   "machine": "x86_64",
+   "python": "3.11.15"
+  },
+  "unconsumed": 0
+ },
+ "result": "PASS",
+ "tsa": {
+  "digicert": "2026-10-05 17:49:21+00:00",
+  "freetsa": "2026-10-05 17:49:21+00:00"
+ },
+ "verifier_environment": {
+  "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
+  "python": "3.11.15"
+ }
+}

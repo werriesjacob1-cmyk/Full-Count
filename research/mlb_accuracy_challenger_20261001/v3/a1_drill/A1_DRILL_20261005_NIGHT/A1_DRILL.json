@@ -1,0 +1,42 @@
+{
+ "amendment_commit": "e6fdee023031a0e36d9868fca8a97efa310c4c14",
+ "amendment_v3_tree": "ed32e97b6c96243fb1f133970894be617578e4c6",
+ "artifacts_sha256": {
+  "capture.json.gz": "7437020e56a1a13807290711c14b4ee74a69c7520ba3cdd4d598bd493bd020c6",
+  "manifest.json.gz": "0ea8009ffcf9ab8e8df5824ff57a1109ed5c11be2edab7c62f1bb3643b234ac0",
+  "overlay.json": "5535af2297a30d1bfcd21c1f4ef66991482ca617d79e6cb69de12135532a1720",
+  "schedule.json": "89dbe3afd063fb1784a1aeb7122bec0acf6c6f47d9022a9dc35207b55c09789f",
+  "shadow_board.json.gz": "289c9f476491c0ff8d0f91d7b1bf33a33eaad5d115647e980e9ce4df1827e6b3",
+  "shadow_env.json": "3ba6711608aeb93a3711e80c4d8b4f02ced398f74a1a2ed859ea155304e56c89",
+  "shadow_tape.json.gz": "e2cf77b38acaa8f5c3a93b14db1dfec4d3636971031ef865ff45ce0b32d0c4f7"
+ },
+ "evidence_chain": "NOT APPENDED (drill mode: no push, no #91 receipt)",
+ "installed_set_sha256": "da98e4afa00f1c7a63a056e21e0e613e7c4334fdedafc1a3f046eba802263823",
+ "label": "FC-MLB-001A EVIDENCE-INTEGRITY DRILL \u2014 NOT A PROSPECTIVE UNIT",
+ "lock_sha256": "33034a7f7fe786fa7e651104881949729272c24daf1dc12ab4953267a06a4061",
+ "manifest_sha256": "04f0b81043d62c6384d84a9d67abad2eb131e4c28aebe54c9272a38d35d094cf",
+ "not_a_prospective_unit": true,
+ "record_environment": {
+  "guard_violations": [],
+  "isolation": {
+   "home_empty_at_start": true,
+   "pybaseball_cache_empty_at_start": true,
+   "tmp_empty_at_start": true
+  },
+  "machine": "x86_64",
+  "n_http_recorded": 612,
+  "platform": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
+  "python": "3.11.15"
+ },
+ "shadow_pin": "7d3ebacd55c34c6ec78030bdeca70799e56d4764",
+ "shadow_tree": "02526a74f6669069127d5a72d771a437cb5561bf",
+ "slate_used_for_live_inputs": {
+  "date": "2026-10-05",
+  "window": "NIGHT"
+ },
+ "tape_storage": {
+  "reason": "complete (cache-free) tape exceeds GitHub's 100 MB per-file limit",
+  "split_parts": true,
+  "whole_sha256": "e2cf77b38acaa8f5c3a93b14db1dfec4d3636971031ef865ff45ce0b32d0c4f7"
+ }
+}

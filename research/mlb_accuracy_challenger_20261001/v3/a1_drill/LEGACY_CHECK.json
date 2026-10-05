@@ -1,0 +1,43 @@
+{
+ "all_not_reproducible": true,
+ "all_unchanged": true,
+ "label": "FC-MLB-001A legacy-unit check (read-only; seals untouched)",
+ "units": {
+  "2026-10-03_DAY": {
+   "error": "replay not exact: misses=228 unconsumed=1",
+   "legacy_unit": null,
+   "replay_misses": 228,
+   "reproducible": false,
+   "seal_sha256": "c7ba282d2a8e694c127d383c0cc0411d5dbe585a5a55375a2848c37248dc8557",
+   "unconsumed": 1,
+   "unit_files_unchanged": true
+  },
+  "2026-10-03_NIGHT": {
+   "error": "replay not exact: misses=225 unconsumed=1",
+   "legacy_unit": null,
+   "replay_misses": 225,
+   "reproducible": false,
+   "seal_sha256": "2db651ec735e3beb34c0b6baa8d8960259040cab8c578f8a703558bfc34a608d",
+   "unconsumed": 1,
+   "unit_files_unchanged": true
+  },
+  "2026-10-04_DAY": {
+   "error": "replay not exact: misses=219 unconsumed=1",
+   "legacy_unit": null,
+   "replay_misses": 219,
+   "reproducible": false,
+   "seal_sha256": "e182c7a682082e439ff42ac9109be5e0dc6bb32f8d4561cd83abf0bfb99847f8",
+   "unconsumed": 1,
+   "unit_files_unchanged": true
+  },
+  "2026-10-04_NIGHT": {
+   "error": "replay not exact: misses=223 unconsumed=1",
+   "legacy_unit": null,
+   "replay_misses": 223,
+   "reproducible": false,
+   "seal_sha256": "989efd3949c490bbc29925d00c590f9a495638f0f4f1d7c2462b5a57cec8b182",
+   "unconsumed": 1,
+   "unit_files_unchanged": true
+  }
+ }
+}
