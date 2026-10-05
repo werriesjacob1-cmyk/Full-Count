@@ -103,7 +103,7 @@
    "HEAD_SHA": "b52ac418bae7a5b7e1bf42ccec4be70595eae337",
    "OBJECTIVE": "Specify the first MLB predictive-engine improvement experiment toward a probabilistic prop engine. Acceptance criteria are written and challenge-reviewed BEFORE any build.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD before build: target population, exact champion vs challenger comparison, same legitimate opportunity, metrics+threshold, evidence artifact, leakage constraints, stop condition (contract \u00c2\u00a73)."
+    "TBD before build: target population, exact champion vs challenger comparison, same legitimate opportunity, metrics+threshold, evidence artifact, leakage constraints, stop condition (contract Â§3)."
    ],
    "FILES_OR_AREAS": [
     "research/mlb_engine/fc_mlb_002/"
@@ -142,7 +142,7 @@
    "HEAD_SHA": null,
    "OBJECTIVE": "Lane-B example (pending SUPERCHAD confirmation): Codex independent MLB research question chosen by SUPERCHAD, produced without access to FC-MLB-002 builder notes; Claude challenges.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD by SUPERCHAD/Codex before start (contract \u00c3\u201a\u00c2\u00a73)."
+    "TBD by SUPERCHAD/Codex before start (contract Ã‚Â§3)."
    ],
    "FILES_OR_AREAS": [
     "research/codex_mlb/"
@@ -199,7 +199,7 @@
    "HEAD_SHA": null,
    "OBJECTIVE": "Specify the next NFL predictive-engine experiment covering player props and spreads/totals (injuries, roles, coaching, weather, matchup, market, game state). Acceptance criteria before any build.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD before build (contract \u00c3\u201a\u00c2\u00a73)."
+    "TBD before build (contract Ã‚Â§3)."
    ],
    "FILES_OR_AREAS": [
     "nfl/engine/"
@@ -405,6 +405,38 @@
     "2026-10-05T17:18:59Z claude -> CLAUDE_ACTIVE (SUPERCHAD authorized implementation; base 504ca9cdb9, v3 tree a7c9443, commit tree c90dc9d66a; criteria b54055041f)",
     "2026-10-05T18:09:48Z claude -> READY_FOR_CHALLENGE",
     "2026-10-05T20:49:40Z claude -> BLOCKED"
+   ]
+  },
+  {
+   "TASK_ID": "FC-MLB-001B",
+   "SPORT": "MLB",
+   "KIND": "engineering",
+   "LANE": "A",
+   "OWNER": "claude",
+   "CHALLENGER": "codex",
+   "STATUS": "READY",
+   "BASE_SHA": "8ef01e4c221cdc272a4c2d4d90b0655e33d88acd",
+   "BRANCH": "claude/mlb-v3-amendment-b-20261005",
+   "HEAD_SHA": null,
+   "OBJECTIVE": "Successor to FC-MLB-001A: replace the two mis-specified A1 requirements (A1 R5, raw literal-board equality) with a pinned-runtime boundary (digest-pinned image, sandbox, whole-tree trace, forbidden-read classes) and a frozen scientific-payload identity contract; R2 content-addressed tape-store code path (no account changes); new 001B drill A->B. Infrastructure only.",
+   "ACCEPTANCE_CRITERIA": [
+    "TASKS/FC-MLB-001B.md (frozen before code): inherited I1-I8, new R5 runtime boundary, pinned image digest, payload v1 literal identity, R2 store fail-closed, new drill A->B, mutant nonzero / clean green, Codex reproduction; V3 held"
+   ],
+   "FILES_OR_AREAS": [
+    "research/mlb_accuracy_challenger_20261001/v3/ (001B branch only)",
+    ".github/workflows/v3-b-drill-replay.yml (001B branch only)"
+   ],
+   "EVIDENCE_POINTERS": [
+    "A1 STOP report #91/6002668247; Codex delta audit #91/6002665832; A1 runs 37370084563/37370057443"
+   ],
+   "BLOCKERS": [],
+   "NEXT_ACTION": "Implement 001B on claude/mlb-v3-amendment-b-20261005; drill on the 2026-10-06 slate (05:00Z-21:00Z).",
+   "AUTHORITY_REQUIRED": "Jacob: R2 account actions, new activation, trigger re-enable; SUPERCHAD: criteria changes, acceptance",
+   "WIP_EXEMPT": false,
+   "CHALLENGE_ACTIVE": false,
+   "UPDATED": "2026-10-05T21:01:53Z",
+   "HISTORY": [
+    "2026-10-05T21:01:53Z claude -> READY (criteria frozen per SUPERCHAD disposition; supersedes A1 R5 + raw literal-board equality only)"
    ]
   }
  ]
