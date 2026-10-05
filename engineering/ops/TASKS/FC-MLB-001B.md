@@ -145,7 +145,8 @@ If 001B would require any of these, STOP.
 - **Sandbox:** `unshare` mount + pid (+ net in replay) namespaces, with `chroot` into a tmpfs root holding only the enumerated binds. Host `strace -f` wraps the whole tree.
 - **Font discovery:** remove `fc-list` / OS fonts from the sandbox view; matplotlib falls back to its locked bundled fonts.
 - **Drill timing:** the pinned pipeline uses its own "today". The earliest drill is the 2026-10-06 slate, after 05:00Z and before the guard deadline (NIGHT first pitch 22:00Z).
-- **Drill tape transport to B:** a non-authoritative content-addressed git-object branch (drill only), read through the same verify-before-replay store path.
+- **Drill tape transport to B:** SUPERSEDED (SUPERCHAD 2026-10-05): no git ref, no git history. A GitHub Release is not permitted for this session (HTTP 403), so the fallback is ONE GitHub Actions artifact (`fc-mlb-001b-drill-tape-<sha256>.json.gz`) from an environment-A runner job. Identities are committed in `b_drill/B_DRILL_RECORD.json`; B downloads by artifact id and verifies size + sha256 before replay.
 
 ## LOG
 - 2026-10-05 criteria frozen (SUPERCHAD disposition after #91/6002668247 + #91/6002665832). V3 held.
+- 2026-10-05 implementation b55e71e191 (CI 37377103196: test_b/test_v3/test_a1 OK; no drill yet). Transport changed per SUPERCHAD -> Actions artifact @ 5b464486de. Drill A scheduled 2026-10-06 ~13:00Z. V3 held.
