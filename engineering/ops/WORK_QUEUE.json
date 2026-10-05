@@ -103,7 +103,7 @@
    "HEAD_SHA": "b52ac418bae7a5b7e1bf42ccec4be70595eae337",
    "OBJECTIVE": "Specify the first MLB predictive-engine improvement experiment toward a probabilistic prop engine. Acceptance criteria are written and challenge-reviewed BEFORE any build.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD before build: target population, exact champion vs challenger comparison, same legitimate opportunity, metrics+threshold, evidence artifact, leakage constraints, stop condition (contract Â§3)."
+    "TBD before build: target population, exact champion vs challenger comparison, same legitimate opportunity, metrics+threshold, evidence artifact, leakage constraints, stop condition (contract \u00c2\u00a73)."
    ],
    "FILES_OR_AREAS": [
     "research/mlb_engine/fc_mlb_002/"
@@ -142,7 +142,7 @@
    "HEAD_SHA": null,
    "OBJECTIVE": "Lane-B example (pending SUPERCHAD confirmation): Codex independent MLB research question chosen by SUPERCHAD, produced without access to FC-MLB-002 builder notes; Claude challenges.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD by SUPERCHAD/Codex before start (contract Ã‚Â§3)."
+    "TBD by SUPERCHAD/Codex before start (contract \u00c3\u201a\u00c2\u00a73)."
    ],
    "FILES_OR_AREAS": [
     "research/codex_mlb/"
@@ -199,7 +199,7 @@
    "HEAD_SHA": null,
    "OBJECTIVE": "Specify the next NFL predictive-engine experiment covering player props and spreads/totals (injuries, roles, coaching, weather, matchup, market, game state). Acceptance criteria before any build.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD before build (contract Ã‚Â§3)."
+    "TBD before build (contract \u00c3\u201a\u00c2\u00a73)."
    ],
    "FILES_OR_AREAS": [
     "nfl/engine/"
@@ -414,7 +414,7 @@
    "LANE": "A",
    "OWNER": "claude",
    "CHALLENGER": "codex",
-   "STATUS": "READY",
+   "STATUS": "CLAUDE_ACTIVE",
    "BASE_SHA": "8ef01e4c221cdc272a4c2d4d90b0655e33d88acd",
    "BRANCH": "claude/mlb-v3-amendment-b-20261005",
    "HEAD_SHA": null,
@@ -434,9 +434,10 @@
    "AUTHORITY_REQUIRED": "Jacob: R2 account actions, new activation, trigger re-enable; SUPERCHAD: criteria changes, acceptance",
    "WIP_EXEMPT": false,
    "CHALLENGE_ACTIVE": false,
-   "UPDATED": "2026-10-05T21:01:53Z",
+   "UPDATED": "2026-10-05T21:02:08Z",
    "HISTORY": [
-    "2026-10-05T21:01:53Z claude -> READY (criteria frozen per SUPERCHAD disposition; supersedes A1 R5 + raw literal-board equality only)"
+    "2026-10-05T21:01:53Z claude -> READY (criteria frozen per SUPERCHAD disposition; supersedes A1 R5 + raw literal-board equality only)",
+    "2026-10-05T21:02:08Z claude -> CLAUDE_ACTIVE"
    ]
   }
  ]
