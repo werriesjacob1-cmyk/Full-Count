@@ -6307,3 +6307,41 @@ are all untouched. Draft PR opened against `main`, not merged -- this
 workstream does not merge its own PR.
 
 Alligator
+
+## 2026-10-05 — FC-MLB-001A a1-2 narrow repair (Codex final audit) — STOP on two frozen criteria; V3 HELD
+
+**Branch:** `claude/mlb-v3-amendment-a1-20261005`
+- Repaired exact head `0478658601b2e58a49bd15e8fc0ec090bd7e7ca2` (v3 tree `2e5a4eee1ebc79d611cf537a8359bcdfc3eda7d7`).
+- Parent `ca08763f6d`; frozen criteria `b54055041f`; base `504ca9cdb9`.
+- This handoff note is the only commit after the repaired head. It touches no `v3/` or workflow path.
+
+**Repairs:**
+1. **CI gate.**
+   - Every step is `bash -eo pipefail`, with real unittest exit codes and no tail/tee.
+   - DrillArtifacts runs from `v3/` with `A1_REQUIRE_DRILL=1`.
+   - strace is installed.
+   - Three always-run gates: integrity / frozen conformance / verifier rc.
+   - The hidden runner failure Codex found had a real cause: the no-isolation mutant used the host interpreter, which has no `requests` on a clean runner. It now uses a venv from the hash lock.
+2. **R4 exactly as frozen.** Injected `GIT_CONFIG_COUNT=1`, `KEY_0=core.abbrev`, `VALUE_0=10`; the shim was removed (`a1_version` `fc-mlb-001a-a1-2`). Full, shallow, hostile abbrev 4 and 12 all give `HEAD[:10]`, and `.git/config` is unchanged. The abbrev-7 mutant gives 7 characters without the injection.
+3. **R5.** The whole process tree is traced with `strace -f` and every successful call classified. **Frozen R5 is technically overbroad.** About 2,870 reads per replay fall outside pinned tree + overlay + isolated HOME:
+   - the interpreter/stdlib, the R3 venv, libc/libm, the sealed tape, `netrecord.py`;
+   - the git object store needed by R4 itself (R4 vs R5 conflict);
+   - `/sys` CPU topology (BLAS);
+   - matplotlib→`fc-list` reading the host `/var/cache/fontconfig` (hidden host state the audit hook missed).
+   STOP: SUPERCHAD/Jacob decide. R5 was not redefined.
+4. **Literal board identity.** The verifier now compares literal bytes; canonical equivalence is a diagnostic only. **NOT identical.** Exactly `board_generated_at`, `sealed_at`, `board_sha256` and `records[*].generation_timestamp` (135) differ, all from the ticking replay clock. Every other byte is identical. STOP. New units also seal `shadow_board_raw.json.gz`.
+5. **Storage.** `v3/STORAGE_DESIGN_A1.md`, design only: an R2 bucket-lock primary in the existing Cloudflare account plus a GitHub immutable-release mirror, content-addressed by whole-tape sha256 bound in the seal; the verifier hashes before replay and fails closed. Not implemented.
+
+**Environment-B evidence:**
+- MUTANT `f583177c2a` (overlay odds −155→−255): [run 37370057443](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/37370057443) FAILURE. Integrity FAIL (sha256sums, artifact_set, overlay); tests pass; all three gates fail.
+- CLEAN exact head `0478658601`: [run 37370084563](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/37370084563) FAILURE, by design of the frozen gate.
+  - test_a1 21 OK (DrillArtifacts is skipped in that step and run in its own required step: OK); test_v3 88 OK.
+  - **Integrity PASS:** 0 misses, 0 unconsumed, 0 guard violations; capture `73c03fee…`, schedule `51f48ae2…`, manifest `04f0b810…`, tape `e2cf77b3…`; provenance `7d3ebacd55`; lock `33034a7f…` / installed set `da98e4af…`.
+  - **Frozen conformance FAIL:** literal identity, R5 trace, R5 record not traced, and record = a1-1 shim.
+- Run 37370032573 (head A, same tree) was cancelled while queued; it never ran.
+
+**Unchanged:** science and prereg (blob `71e7d282`); trigger `trig_011u98uX` enabled=false (updated 16:39:32Z); evidence ref `6089f3f211`; ops `edeec42926`; PR #220 head `504ca9cdb9`; the four Oct 3–4 units.
+
+**Next:** SUPERCHAD/Jacob decide R5 (an enumerated, sealed runtime-surface list plus an OS sandbox?) and literal identity (tape the clock, or amend?). Then a conforming a1 drill record, then Codex. No reactivation.
+
+Alligator
