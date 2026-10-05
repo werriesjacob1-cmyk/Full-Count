@@ -147,20 +147,55 @@ def install_sealed_overlay(workdir, date, overlay_bytes):
             fh.write(overlay_bytes)
 
 
-def run_pipeline(workdir, tape_path, mode, timeout_s=1800):
+def run_pipeline(workdir, tape_path, mode, timeout_s=1800, script="generate_picks.py", lock_path=None):
     """Run the pinned generate_picks.py under netrecord (record live / replay sealed). UTC,
-    fixed hash seed. Returns the freshly written shadow board path."""
-    env = dict(os.environ, TZ="UTC", PYTHONHASHSEED="0", PYTHONDONTWRITEBYTECODE="1")
-    subprocess.run(["python3", NETRECORD, "--mode", mode, "--tape", tape_path, "--", "generate_picks.py"],
-                   cwd=workdir, env=env, check=True, timeout=timeout_s,
-                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    rep = json.load(open(tape_path + f".{mode}.report.json"))
+    fixed hash seed. Returns the freshly written shadow board path.
+
+    FC-MLB-001A (A1): every record and every replay runs in its OWN fresh isolated root
+    (empty HOME / pybaseball cache / TMPDIR, venv from the hash lock, provenance git shim,
+    explicit environment, audit-hook guard). The run's environment fingerprint is written to
+    <tape>.<mode>.env.json; any isolation breach or guard violation fails the run closed."""
+    import isolation as ISO
+    with ISO.IsolatedRun(mode, workdir, lock_path=lock_path or ISO.SHADOW_LOCK) as iso:
+        proc = subprocess.run([iso.python, NETRECORD, "--mode", mode, "--tape", tape_path, "--", script],
+                              cwd=workdir, env=iso.env, timeout=timeout_s,
+                              stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+        fp = dict(iso.fingerprint)
+    rep_path = tape_path + f".{mode}.report.json"
+    if not os.path.exists(rep_path):
+        raise RuntimeError(f"pipeline produced no {mode} report (rc {proc.returncode}): "
+                           f"{proc.stderr.decode(errors='replace').strip()[-600:]}")
+    rep = json.load(open(rep_path))
+    fp["guard"] = rep.get("guard") or {"violations": ["GUARD_NOT_ACTIVE"]}
+    fp["guard"]["reads_by_surface"] = {_surface_label(k, workdir): v for k, v in fp["guard"].get("reads_by_surface", {}).items()}
+    fp["n_http"], fp["replay_misses"], fp["unconsumed"] = rep["n_http"], len(rep["replay_misses"]), rep["unconsumed"]
+    with open(tape_path + f".{mode}.env.json", "w") as fh:
+        json.dump(fp, fh, indent=1, sort_keys=True)
+    if fp["guard"]["violations"]:
+        raise RuntimeError(f"A1 guard: hidden local state read outside permitted surfaces: {fp['guard']['violations'][:10]}")
     if mode == "replay" and (rep["replay_misses"] or rep["unconsumed"]):
         raise RuntimeError(f"replay not exact: misses={len(rep['replay_misses'])} unconsumed={rep['unconsumed']}")
+    if proc.returncode != 0:
+        raise RuntimeError(f"pipeline exited rc {proc.returncode} in {mode}: "
+                           f"{proc.stderr.decode(errors='replace').strip()[-600:]}")
     boards = glob.glob(os.path.join(workdir, "output", "board_freeze_*.json"))
     if len(boards) != 1:
         raise RuntimeError(f"expected exactly one fresh shadow board, found {len(boards)}")
     return boards[0]
+
+
+def _surface_label(prefix, workdir):
+    """Stable, machine-independent names for permitted surfaces (paths differ across containers)."""
+    p = prefix.rstrip("/")
+    if p == os.path.abspath(workdir):
+        return "PINNED_TREE"
+    if "/v3a1_record_" in p or "/v3a1_replay_" in p:
+        return "RUN_ROOT"
+    if p == os.path.dirname(os.path.abspath(__file__)):
+        return "AMENDMENT_CODE"
+    if p.endswith(("/lib/python3.11", "/lib/python3.12")) or "/lib/python3." in p:
+        return "STDLIB"
+    return p if p.startswith(("/dev", "/proc", "/sys", "/etc", "/usr/share", "/usr/lib/ssl")) else "SEALED_UNIT_DIR"
 
 
 def verify_shadow_board(board):

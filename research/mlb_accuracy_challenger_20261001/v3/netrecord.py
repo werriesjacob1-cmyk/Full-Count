@@ -79,6 +79,42 @@ def install():
     requests.Session.send = send
 
 
+GUARD = {"on": False, "allowed": (), "violations": set(), "surfaces": {}, "subprocesses": set()}
+
+
+def _guard_path(p):
+    if isinstance(p, int) or p is None:
+        return None
+    if isinstance(p, bytes):
+        p = p.decode("utf-8", "replace")
+    p = str(p)
+    if not os.path.isabs(p):
+        p = os.path.join(os.getcwd(), p)
+    return os.path.normpath(p)
+
+
+def install_guard(cfg):
+    """FC-MLB-001A R5: audit every file the pipeline process opens or lists. Anything outside the
+    permitted surfaces (pinned tree, isolated run root, amendment code, stdlib, named OS runtime
+    files) is a violation; shadow.run_pipeline fails the run closed. Subprocess executables are logged."""
+    GUARD.update(on=True, allowed=tuple(cfg["allowed_prefixes"]))
+
+    def hook(event, args):
+        if event in ("open", "os.listdir", "os.scandir"):
+            p = _guard_path(args[0] if args else None)
+            if p is None:
+                return
+            hit = next((a for a in GUARD["allowed"] if p == a.rstrip("/") or p.startswith(a)), None)
+            if hit is None:
+                GUARD["violations"].add(p)
+            else:
+                GUARD["surfaces"][hit] = GUARD["surfaces"].get(hit, 0) + 1
+        elif event == "subprocess.Popen":
+            GUARD["subprocesses"].add(os.path.basename(str(args[0])))
+
+    sys.addaudithook(hook)
+
+
 def tape_sha256(path):
     h = hashlib.sha256()
     with open(path, "rb") as fh:
@@ -110,6 +146,11 @@ def main(argv=None):
     else:
         STATE["started_at"] = _dtm.datetime.now(_dtm.timezone.utc).isoformat()
     install()
+    if os.environ.get("V3A1_GUARD"):
+        cfg = json.loads(os.environ["V3A1_GUARD"])
+        cfg["allowed_prefixes"] = list(cfg["allowed_prefixes"]) + [os.path.abspath(a.tape) + p for p in
+                                                                   ("", ".record.report.json", ".replay.report.json")]
+        install_guard(cfg)
     sys.path.insert(0, os.getcwd())
     script = [s for s in a.script if s != "--"]
     sys.argv = script
@@ -128,6 +169,10 @@ def main(argv=None):
         report = {"mode": a.mode, "rc": rc, "n_http": STATE["n_http"], "started_at": STATE["started_at"],
                   "replay_misses": STATE["misses"],
                   "unconsumed": sum(len(v) for v in STATE["http"].values()) if a.mode == "replay" else None}
+        if GUARD["on"]:
+            report["guard"] = {"violations": sorted(GUARD["violations"]),
+                               "reads_by_surface": dict(sorted(GUARD["surfaces"].items())),
+                               "subprocess_executables": sorted(GUARD["subprocesses"])}
         with open(a.tape + f".{a.mode}.report.json", "w") as fh:
             json.dump(report, fh, indent=1)
     return rc

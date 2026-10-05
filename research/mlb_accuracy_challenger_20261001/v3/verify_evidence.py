@@ -47,7 +47,8 @@ PREREG_SHA256 = "5eb56f2837e25d29c5821043955eefe52c0d5f0513e9b6099ac5facb2ff6344
 GENESIS_SEAL_SHA256 = PREREG_SHA256
 REQUIRED_ARTIFACTS = ("shadow_board.json.gz", "capture.json.gz", "schedule.json", "manifest.json.gz",
                       "shadow_tape.json.gz")
-OPTIONAL_ARTIFACTS = ("overlay.json",)      # present iff an overlay was sealed
+OPTIONAL_ARTIFACTS = ("overlay.json",      # present iff an overlay was sealed
+                      "shadow_env.json")   # FC-MLB-001A: record-environment fingerprint (absent on legacy units)
 GITHUB_API = "https://api.github.com/repos/werriesjacob1-cmyk/Full-Count"
 FROZEN_COEFFICIENTS_PATH = os.path.join(os.path.dirname(HERE), "frozen_coefficients.json")
 FROZEN_COEFFICIENTS_SHA256 = "3c9e2c01cf4b7c57261622e829a1cccebd88d12b4950a84d7b7b96ad54672009"   # prereg v3 s10
@@ -101,8 +102,12 @@ def _repo_root():
     return subprocess.check_output(["git", "-C", HERE, "rev-parse", "--show-toplevel"]).decode().strip()
 
 
-def replay_shadow(unit_dir, board, overlay_bytes):
-    """Reproduce the shadow board from sealed inputs only. Returns True iff replay-equivalent."""
+def replay_shadow(unit_dir, board, overlay_bytes, detail=None):
+    """Reproduce the shadow board from sealed inputs only, in a fresh isolated environment (FC-MLB-001A).
+    Returns True iff replay-equivalent. A1 units must also replay under the identical locked environment
+    as recorded (shadow_env.json); legacy units have no fingerprint and must replay exactly regardless."""
+    import isolation as ISO
+    detail = detail if detail is not None else {}
     repo = _repo_root()
     work = tempfile.mkdtemp(prefix="v3replay_")
     tree = os.path.join(work, "tree")
@@ -111,7 +116,22 @@ def replay_shadow(unit_dir, board, overlay_bytes):
         SH.install_sealed_overlay(tree, board["date"], overlay_bytes)
         tape = os.path.join(work, "tape.json.gz")
         shutil.copy(os.path.join(unit_dir, "shadow_tape.json.gz"), tape)
-        out = json.load(open(SH.run_pipeline(tree, tape, "replay")))
+        try:
+            out = json.load(open(SH.run_pipeline(tree, tape, "replay")))
+        except (RuntimeError, ISO.IsolationError) as exc:
+            detail["replay_error"] = str(exc)[:500]
+            return False
+        finally:
+            if os.path.exists(tape + ".replay.env.json"):
+                detail["replay_env"] = json.load(open(tape + ".replay.env.json"))
+        rec = os.path.join(unit_dir, "shadow_env.json")
+        if os.path.exists(rec):
+            problems = ISO.check_replay_compatible(json.load(open(rec)), detail.get("replay_env") or {})
+            if problems:
+                detail["environment_mismatch"] = problems
+                return False
+        else:
+            detail["legacy_unit"] = "no sealed record-environment fingerprint (pre-A1)"
         return SH.replay_equivalent(board, out)
     finally:
         SH.remove_tree(repo, tree)
@@ -211,6 +231,7 @@ def verify_unit(root, seal):
                                             earliest_first_pitch_utc=man["earliest_first_pitch_utc"])
     if status != "ON_TIME":
         return status, detail, None
-    if not replay_shadow(d, board, overlay_bytes):
-        return "SHADOW_NOT_REPRODUCIBLE", None, None
+    rdetail = {}
+    if not replay_shadow(d, board, overlay_bytes, rdetail):
+        return "SHADOW_NOT_REPRODUCIBLE", {k: v for k, v in rdetail.items() if k != "replay_env"}, None
     return "VERIFIED", detail, man

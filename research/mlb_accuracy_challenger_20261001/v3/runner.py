@@ -131,7 +131,11 @@ def main(argv=None):
     _dump(os.path.join(a.out, "capture.json.gz"), cap, gz=True)
     _dump(os.path.join(a.out, "schedule.json"), sched)
     _dump(os.path.join(a.out, "manifest.json.gz"), man, gz=True)
-    names = list(VE.REQUIRED_ARTIFACTS) + (["overlay.json"] if os.path.exists(os.path.join(a.out, "overlay.json")) else [])
+    env_fp = os.path.join(a.out, "shadow_tape.json.gz.record.env.json")      # FC-MLB-001A: sealed record environment
+    if not os.path.exists(env_fp):
+        raise RuntimeError("A1: record-environment fingerprint missing; refusing to seal")
+    shutil.copy(env_fp, os.path.join(a.out, "shadow_env.json"))
+    names = list(VE.REQUIRED_ARTIFACTS) + [n for n in VE.OPTIONAL_ARTIFACTS if os.path.exists(os.path.join(a.out, n))]
     arts = {n: SH.sha256_file(os.path.join(a.out, n)) for n in names}
     summary = {"label": "DRILL_NONCONFIRMATORY" if a.mode == "drill" else "PROSPECTIVE", "date": a.date,
                "window": a.window, "cutoff_utc": cutoff, "first_pitch_utc": fp, "manifest_sha256": man["manifest_sha256"],
