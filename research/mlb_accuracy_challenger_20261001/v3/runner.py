@@ -178,23 +178,22 @@ def main(argv=None):
 
 
 def _store_tape(mode, tape, sha256, size):
-    """FC-MLB-001B: put the complete tape into the content-addressed, create-only store and verify it by reading it
-    back before anything is sealed. Prospective units REQUIRE the authoritative R2 store (fail closed); drills may
-    use an isolated local store. V3B_TAPE_STORE = "r2" | "localfs:<root>"."""
+    """FC-MLB-001B: put the complete tape into the content-addressed, create-only store and prove it by reading it
+    back before anything is sealed (tape_store.put_verified). Prospective units REQUIRE the authoritative R2 store;
+    drills may use an isolated local store. V3B_TAPE_STORE = "r2" | "localfs:<root>". EVERY store failure (missing
+    configuration, credentials, network, conflict, mismatch) is a MISS UNIT: recorded, never sealed, never retried
+    later (no backfill)."""
     spec = os.environ.get("V3B_TAPE_STORE", "")
-    if spec == "r2":
-        store = TS.R2Store.from_env()
-    elif spec.startswith("localfs:") and mode == "drill":
-        store = TS.LocalFSStore(spec.split(":", 1)[1])
-    else:
-        raise SP.MissUnit(f"tape store not configured for {mode} (V3B_TAPE_STORE={spec!r}; prospective requires r2)")
     try:
-        loc = store.put(tape, sha256, size)
-    except TS.ObjectExists:
-        loc = {"store": store.kind, "key": TS.key_for(sha256), "sha256": sha256, "bytes": size,
-               **({"root": store.root} if store.kind == "localfs" else {"endpoint": store.endpoint, "bucket": store.bucket})}
-    TS.fetch_verified(loc)                                  # read back + hash before sealing (fail closed)
-    return loc
+        if spec == "r2":
+            store = TS.R2Store.from_env()
+        elif spec.startswith("localfs:") and mode == "drill":
+            store = TS.LocalFSStore(spec.split(":", 1)[1])
+        else:
+            raise SP.MissUnit(f"tape store not configured for {mode} (V3B_TAPE_STORE={spec!r}; prospective requires r2)")
+        return dict(TS.put_verified(store, tape, sha256, size), storage_contract=TS.STORAGE_CONTRACT)
+    except TS.StoreError as exc:
+        raise SP.MissUnit(f"tape store {exc.code}: {exc}") from exc
 
 
 def _try_tsa(digest, url):

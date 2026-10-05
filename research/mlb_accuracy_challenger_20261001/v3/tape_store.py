@@ -33,6 +33,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+STORAGE_CONTRACT = "fc-mlb-001b-r2-cas-1"     # content-addressed, create-only, read-back-verified (put_verified)
 KEY_PREFIX = "v3/tapes/sha256/"
 EMPTY_SHA256 = hashlib.sha256(b"").hexdigest()
 
@@ -55,6 +56,25 @@ class TapeSizeMismatch(StoreError):
 
 class ObjectExists(StoreError):
     code = "OBJECT_EXISTS"
+
+
+class ObjectConflict(StoreError):
+    """The content address is occupied by bytes that are NOT the tape (substitution/corruption): fail closed."""
+    code = "OBJECT_CONFLICT"
+
+
+class StoreAuthError(StoreError):
+    """Credentials rejected (401/403). Never retried, never read as 'missing'."""
+    code = "STORE_AUTH_FAILED"
+
+
+class StoreUnavailable(StoreError):
+    """Network interruption / 5xx / 429 that persisted through the bounded retries."""
+    code = "STORE_UNAVAILABLE"
+
+
+TRANSIENT_HTTP = (429, 500, 502, 503, 504)
+RETRY_DELAYS_S = (1.0, 2.0, 4.0)          # bounded: at most len+1 attempts per request
 
 
 def key_for(sha256):
@@ -107,6 +127,9 @@ class LocalFSStore:
         os.replace(tmp, dest)
         return {"store": self.kind, "root": self.root, "key": key, "sha256": sha256, "bytes": size}
 
+    def locator(self, sha256, size):
+        return {"store": self.kind, "root": self.root, "key": key_for(sha256), "sha256": sha256, "bytes": size}
+
     def get(self, key, dest):
         src = self._p(key)
         if not os.path.isfile(src):
@@ -144,64 +167,109 @@ def sigv4_headers(method, url, region, access_key, secret_key, payload_sha256, a
 
 
 class R2Store:
-    """R2 through its S3 endpoint. Path-style URLs: {endpoint}/{bucket}/{key}. Region `auto`."""
+    """R2 through its S3 endpoint. Path-style URLs: {endpoint}/{bucket}/{key}. Region `auto`.
+
+    Failure semantics (every one fails closed; nothing is ever read as success):
+      401/403 -> StoreAuthError (no retry)        404 -> TapeMissing           412 on PUT -> ObjectExists
+      429/5xx, connection reset/refused, timeout, truncated body (IncompleteRead) -> retried with bounded backoff,
+      then StoreUnavailable. PUT is create-only + payload-bound, so a retry after a lost response can only create
+      the object or meet 412 -- never a second, different object (see put_verified)."""
     kind = "r2"
 
-    def __init__(self, endpoint, bucket, access_key=None, secret_key=None, region="auto", public_base=None):
+    def __init__(self, endpoint, bucket, access_key=None, secret_key=None, region="auto", public_base=None,
+                 sleep=None, timeout_s=600):
         self.endpoint, self.bucket, self.region = endpoint.rstrip("/"), bucket, region
         self.access_key, self.secret_key, self.public_base = access_key, secret_key, public_base
+        self.sleep = sleep if sleep is not None else __import__("time").sleep
+        self.timeout_s = timeout_s
+        self.attempts = []                       # (method, outcome) audit trail of every request attempt
 
     @classmethod
     def from_env(cls):
-        need = ("V3B_R2_ENDPOINT", "V3B_R2_BUCKET")
+        need = ("V3B_R2_ENDPOINT", "V3B_R2_BUCKET", "V3B_R2_ACCESS_KEY_ID", "V3B_R2_SECRET_ACCESS_KEY")
         if not all(os.environ.get(k) for k in need):
             raise StoreError(f"R2 store not configured ({', '.join(need)})")
-        return cls(os.environ["V3B_R2_ENDPOINT"], os.environ["V3B_R2_BUCKET"], os.environ.get("V3B_R2_ACCESS_KEY_ID"),
-                   os.environ.get("V3B_R2_SECRET_ACCESS_KEY"), public_base=os.environ.get("V3B_R2_PUBLIC_BASE"))
+        return cls(os.environ["V3B_R2_ENDPOINT"], os.environ["V3B_R2_BUCKET"], os.environ["V3B_R2_ACCESS_KEY_ID"],
+                   os.environ["V3B_R2_SECRET_ACCESS_KEY"], public_base=os.environ.get("V3B_R2_PUBLIC_BASE"))
 
     def _url(self, key):
         return f"{self.endpoint}/{self.bucket}/{urllib.parse.quote(key, safe='/')}"
 
     def _req(self, method, key, payload_sha, headers=None, data=None):
         if not (self.access_key and self.secret_key):
-            raise StoreError("R2 credentials missing")
+            raise StoreAuthError("R2 credentials missing")
         amz = _dt.datetime.now(_dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
         h = sigv4_headers(method, self._url(key), self.region, self.access_key, self.secret_key, payload_sha, amz, headers)
         h.pop("host")
         return urllib.request.Request(self._url(key), data=data, method=method, headers=h)
 
-    def put(self, path, sha256, size):
-        key = key_for(sha256)
-        _verify(path, sha256, size)
-        with open(path, "rb") as fh:
-            req = self._req("PUT", key, sha256, {"if-none-match": "*", "content-length": str(size),
-                                                 "content-type": "application/gzip"}, data=fh)
+    def _with_retries(self, method, key, attempt):
+        """Run attempt() with bounded retries on transient failures only; map every failure to a StoreError."""
+        import http.client
+        import socket
+        last = None
+        for i in range(len(RETRY_DELAYS_S) + 1):
             try:
-                with urllib.request.urlopen(req, timeout=600) as r:
-                    if r.status not in (200, 201):
-                        raise StoreError(f"PUT {key}: HTTP {r.status}")
+                out = attempt()
+                self.attempts.append((method, "ok"))
+                return out
             except urllib.error.HTTPError as exc:
+                self.attempts.append((method, exc.code))
+                if exc.code in (401, 403):
+                    raise StoreAuthError(f"{method} {key}: HTTP {exc.code} (credentials rejected)") from exc
+                if exc.code == 404:
+                    raise TapeMissing(f"{method} {key}: HTTP 404") from exc
                 if exc.code == 412:
                     raise ObjectExists(f"{key} already exists (create-only)") from exc
-                raise StoreError(f"PUT {key}: HTTP {exc.code}") from exc
+                if exc.code not in TRANSIENT_HTTP:
+                    raise StoreError(f"{method} {key}: HTTP {exc.code}") from exc
+                last = exc
+            except (urllib.error.URLError, http.client.HTTPException, ConnectionError, socket.timeout,
+                    TimeoutError) as exc:
+                self.attempts.append((method, type(exc).__name__))
+                last = exc
+            if i < len(RETRY_DELAYS_S):
+                self.sleep(RETRY_DELAYS_S[i])
+        raise StoreUnavailable(f"{method} {key}: still failing after {len(RETRY_DELAYS_S) + 1} attempts: {last!r}")
+
+    def put(self, path, sha256, size):
+        """Create-only, payload-bound upload of exactly `size` bytes hashing to `sha256` (checked BEFORE sending)."""
+        key = key_for(sha256)
+        _verify(path, sha256, size)
+
+        def attempt():
+            with open(path, "rb") as fh:
+                req = self._req("PUT", key, sha256, {"if-none-match": "*", "content-length": str(size),
+                                                     "content-type": "application/gzip"}, data=fh)
+                with urllib.request.urlopen(req, timeout=self.timeout_s) as r:
+                    if r.status not in (200, 201):
+                        raise StoreError(f"PUT {key}: HTTP {r.status}")
+                    return r.headers.get("ETag")
+        etag = self._with_retries("PUT", key, attempt)
         return {"store": self.kind, "endpoint": self.endpoint, "bucket": self.bucket, "key": key, "sha256": sha256,
-                "bytes": size, "public_base": self.public_base}
+                "bytes": size, "public_base": self.public_base, "etag": etag}
 
     def get(self, key, dest):
-        if self.public_base:
-            req = urllib.request.Request(f"{self.public_base.rstrip('/')}/{urllib.parse.quote(key, safe='/')}")
-        else:
-            req = self._req("GET", key, EMPTY_SHA256)
-        try:
-            with urllib.request.urlopen(req, timeout=600) as r, open(dest, "wb") as fh:
-                shutil.copyfileobj(r, fh, 1 << 20)
-        except urllib.error.HTTPError as exc:
-            if exc.code in (403, 404):
-                raise TapeMissing(f"{key}: HTTP {exc.code}") from exc
-            raise StoreError(f"GET {key}: HTTP {exc.code}") from exc
-        except urllib.error.URLError as exc:
-            raise TapeMissing(f"{key}: store unreachable ({exc.reason})") from exc
-        return dest
+        def attempt():
+            if self.public_base:
+                req = urllib.request.Request(f"{self.public_base.rstrip('/')}/{urllib.parse.quote(key, safe='/')}")
+            else:
+                req = self._req("GET", key, EMPTY_SHA256)
+            import http.client
+            got = 0
+            with urllib.request.urlopen(req, timeout=self.timeout_s) as r, open(dest, "wb") as fh:
+                want = r.headers.get("Content-Length")
+                for chunk in iter(lambda: r.read(1 << 20), b""):
+                    fh.write(chunk)
+                    got += len(chunk)
+            if want is not None and got != int(want):   # urllib can return a short body silently: retry it
+                raise http.client.IncompleteRead(b"", int(want) - got)
+            return dest
+        return self._with_retries("GET", key, attempt)
+
+    def locator(self, sha256, size):
+        return {"store": self.kind, "endpoint": self.endpoint, "bucket": self.bucket, "key": key_for(sha256),
+                "sha256": sha256, "bytes": size, "public_base": self.public_base}
 
 
 # ---- drill-only transport: one GitHub Actions artifact (outside git) -------------------------------------------
@@ -253,7 +321,37 @@ def fetch_verified(loc, dest_dir=None, repo=None):
             raise StoreError(f"sealed tape locator lacks {f}")
     if loc["key"] != key_for(loc["sha256"]):
         raise StoreError("sealed key is not the content address of the sealed sha256")
+    return _fetch_via(store_from_locator(loc, repo), loc, dest_dir)
+
+
+def _fetch_via(store, loc, dest_dir=None):
     dest_dir = dest_dir or tempfile.mkdtemp(prefix="v3b_tape_")
     dest = os.path.join(dest_dir, "shadow_tape.json.gz")
-    store_from_locator(loc, repo).get(loc["key"], dest)
+    try:
+        store.get(loc["key"], dest)
+    except StoreError:
+        raise
+    except Exception as exc:  # noqa: BLE001 -- any other failure is still a failure to retrieve: fail closed
+        raise StoreUnavailable(f"{loc['key']}: retrieval failed: {exc!r}") from exc
     return _verify(dest, loc["sha256"], int(loc["bytes"]))
+
+
+def put_verified(store, path, sha256, size):
+    """The ONLY write path for sealed evidence. Ends in exactly one of two states:
+      * an object at the content address whose bytes were read back and hashed to (sha256, size); or
+      * an exception (nothing may be sealed).
+    CREATED: this call stored it. EXISTS_VERIFIED: the address was already occupied (e.g. an earlier attempt whose
+    response was lost) AND its bytes are proven identical. Occupied by other bytes -> ObjectConflict."""
+    _verify(path, sha256, size)                                   # local bytes are the identity BEFORE any send
+    try:
+        loc = store.put(path, sha256, size)
+        status = "CREATED"
+    except ObjectExists:
+        loc = store.locator(sha256, size) if hasattr(store, "locator") else {
+            "store": store.kind, "key": key_for(sha256), "sha256": sha256, "bytes": size, "root": getattr(store, "root", None)}
+        status = "EXISTS_VERIFIED"
+    try:
+        _fetch_via(store, loc)                                    # read back by identity (writer's own credentials)
+    except (TapeHashMismatch, TapeSizeMismatch) as exc:
+        raise ObjectConflict(f"{loc['key']}: the content address holds different bytes ({exc.code}); refusing") from exc
+    return dict(loc, write_status=status, verified_readback=True)

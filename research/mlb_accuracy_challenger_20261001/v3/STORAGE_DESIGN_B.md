@@ -19,30 +19,47 @@
 | Prospective requires R2 | `runner._store_tape`: `V3B_TAPE_STORE=r2` is mandatory in prospective mode; anything else is a MISS UNIT (no seal). |
 | No Git LFS, no ~257 MB/unit in git, no release mirror | None is used. The certification drill alone moves its tape as ONE temporary GitHub Actions artifact (non-authoritative, hash-verified before replay); it is never used for units. |
 
-## Account actions Jacob would need to authorize (exact; none performed)
-1. **Create the bucket** `fc-v3-evidence-tapes` in the existing FULL COUNT Cloudflare account (R2 → Create bucket; default location; Standard storage class).
-2. **Add a bucket-lock rule** (R2 → bucket → Settings → Bucket lock rules → Add rule):
-   - name `v3-tapes-retain`;
-   - prefix `v3/tapes/`;
-   - retention **until 2031-01-01T00:00:00Z** (covers the 2027 confirmatory season, its evaluation and an audit window).
-   - Objects under the prefix then cannot be deleted or overwritten before that date.
-3. **Create the runner token** (R2 → Manage API tokens → Create): permission **Object Read & Write**, applied to **`fc-v3-evidence-tapes` only**, TTL ≥ the collection horizon. Record the Access Key ID and Secret once.
-4. **Choose verifier read access:**
-   - (a) a second token, **Object Read only**, on the same bucket, for Codex and auditors; or
-   - (b) the public `r2.dev` URL / a custom domain for read-only public download (`V3B_R2_PUBLIC_BASE`). The evidence is content-addressed, so public read cannot alter it.
-5. **Recording-environment secrets** (the V3 runner environment only):
-   - `V3B_TAPE_STORE=r2`;
-   - `V3B_R2_ENDPOINT=https://<ACCOUNT_ID>.r2.cloudflarestorage.com`;
-   - `V3B_R2_BUCKET=fc-v3-evidence-tapes`;
-   - `V3B_R2_ACCESS_KEY_ID`, `V3B_R2_SECRET_ACCESS_KEY`.
-   They must never be committed or logged.
-6. **Network policy:** allow the recording environment to reach `<ACCOUNT_ID>.r2.cloudflarestorage.com` (and the public read host if 4b) through the existing TLS proxy.
-7. **Capability verification, before any reactivation** (an authorized smoke test, outside the locked prefix or on a test bucket):
-   - `If-None-Match: *` on an existing key returns 412;
-   - an overwrite or delete under the locked prefix is refused;
-   - the object token cannot read or change the lock rules (403);
-   - a GET by key returns byte-identical content.
-   If R2 does not honour `If-None-Match`, the runner must `HEAD` before `PUT`. The bucket lock still blocks overwrite, and the sha256 binding still blocks substitution.
+## Failure semantics, as implemented (`tape_store.R2Store`, `put_verified`, `fetch_verified`; tests `test_b.R2Mutants`)
+| Situation | Result |
+|---|---|
+| Local tape bytes ≠ (sha256, size) | refused **before any request** (`TAPE_HASH_MISMATCH` / `TAPE_SIZE_MISMATCH`) |
+| PUT accepted | read back through the writer's own credentials and re-hashed → `write_status: CREATED`, `verified_readback: true` |
+| Address already occupied by identical bytes (e.g. an earlier attempt whose response was lost) | 412 → read back + hash → `EXISTS_VERIFIED` (never rewritten) |
+| Address occupied by different bytes | `OBJECT_CONFLICT` (fail closed; nothing sealed) |
+| Object missing | `TAPE_MISSING` |
+| Wrong object / truncated / one-byte substitution | `TAPE_SIZE_MISMATCH` / `TAPE_HASH_MISMATCH` |
+| Credentials rejected (401/403) or absent | `STORE_AUTH_FAILED`: never retried, never treated as "missing" |
+| Connection reset/drop, timeout, short body, 429/5xx | bounded retry (1s, 2s, 4s; four attempts), then `STORE_UNAVAILABLE` |
+| Any store failure inside the prospective runner | **MISS UNIT** (recorded; no seal; no later backfill) |
+
+**Retries cannot create ambiguous evidence.** PUT is create-only (`If-None-Match: *`) and payload-bound (`x-amz-content-sha256` = the tape's sha256, which the server verifies). A retry therefore either creates the single object or meets 412, after which the existing bytes are proven by hashing. The final state is always one verified object at the content address, or an exception.
+
+**Sealed metadata.** The manifest's `shadow_provenance.tape_store` (TSA-timestamped, chained) carries:
+`{store: "r2", endpoint, bucket, key: "v3/tapes/sha256/<sha256>.json.gz", sha256, bytes, etag, write_status, verified_readback: true}`.
+
+## Exact Cloudflare setup for Jacob (none performed; requires separate account-level authorization)
+| Item | Value |
+|---|---|
+| Account | the existing FULL COUNT Cloudflare account (the one hosting the `fc-live-heartbeat` Worker) |
+| Bucket name | **`fc-v3-evidence-tapes`** (Standard storage class; default location; **no** lifecycle/expiration rules; **no** public write) |
+| Bucket lock | one rule: name `v3-tapes-retain`, prefix **`v3/tapes/`**, retention **"retain until date"** |
+| Minimum retention date | **2028-12-31T00:00:00Z**. This covers the 2027 confirmatory regime (last slate 2027-10-10), its one-look analysis (on/after 2027-10-05, grace to ≥ 2027-10-12 + 7 days), and a year of audit. Recommended: **2031-01-01T00:00:00Z**. |
+| Runner token | R2 API token, permission **Object Read & Write**, **Apply to specific buckets only: `fc-v3-evidence-tapes`**, TTL ≥ the collection horizon. |
+| Runner token MAY | `PutObject` (create-only by code), `GetObject`/`HeadObject` (read-back) on that bucket only |
+| Runner token MAY NOT | create, delete or list buckets; read or change **bucket-lock rules**, lifecycle, CORS or public-access settings; touch any other bucket. Object-scoped tokens cannot reach bucket configuration. The Object tier also allows `DeleteObject`, but the bucket lock refuses deletion or overwrite of every object under `v3/tapes/` until the retention date. |
+| Lock / retention privilege (separate) | **Only** Jacob's Cloudflare dashboard login (account Super Administrator), or an **Admin Read & Write** R2 token that is never placed in any runner, CI or agent environment. |
+| Verifier read access | either an **Object Read only** token on the same bucket (for Codex/auditors), or enable the bucket's `r2.dev` / custom-domain public **read** URL (`V3B_R2_PUBLIC_BASE`; content-addressed, so public read cannot alter evidence) |
+| Recording-environment secrets | `V3B_TAPE_STORE=r2`, `V3B_R2_ENDPOINT=https://<ACCOUNT_ID>.r2.cloudflarestorage.com`, `V3B_R2_BUCKET=fc-v3-evidence-tapes`, `V3B_R2_ACCESS_KEY_ID`, `V3B_R2_SECRET_ACCESS_KEY` (never committed or logged) |
+| Network | The recording session reaches `*.r2.cloudflarestorage.com` through the existing TLS proxy. Checked 2026-10-05: DNS resolves and TLS reaches Cloudflare's R2 edge; a real account endpoint is still unproven. |
+
+**One-time capability check after setup** (authorized smoke test; uses a non-locked prefix such as `smoke/`, or a throwaway bucket):
+1. A PUT with `If-None-Match: *` on an existing key returns 412.
+2. Overwrite and delete under `v3/tapes/` are refused.
+3. The runner token gets 403 on bucket-lock read/modify.
+4. A GET returns byte-identical content.
+5. `x-amz-content-sha256` mismatch is rejected.
+
+If R2 does not honour `If-None-Match`, the bucket lock still blocks overwrite, `put_verified` still proves the bytes by read-back, and SUPERCHAD is told before activation.
 
 ## Not done here (by design)
 - Cloudflare resources, tokens, secrets and network policy.

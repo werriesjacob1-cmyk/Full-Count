@@ -483,30 +483,219 @@ class DrillPath(unittest.TestCase):
 
 
 class _S3(http.server.BaseHTTPRequestHandler):
-    objects = {}
+    """S3-compatible mock (R2 path-style). Verifies SigV4 exactly, enforces x-amz-content-sha256 and create-only
+    If-None-Match, and can inject: transient 5xx, lost PUT responses, dropped/truncated GETs, substituted bytes."""
+    protocol_version = "HTTP/1.1"
+    objects, creds, faults, requests_seen = {}, {"AK": "SK"}, {}, []
+
+    def _auth_ok(self):
+        auth = self.headers.get("Authorization", "")
+        try:
+            cred = auth.split("Credential=")[1].split(",")[0]
+            ak, day, region = cred.split("/")[:3]
+            signed = auth.split("SignedHeaders=")[1].split(",")[0].split(";")
+        except IndexError:
+            return False
+        if ak not in self.creds:
+            return False
+        extra = {h: self.headers.get(h) for h in signed if h not in ("host", "x-amz-content-sha256", "x-amz-date")}
+        want = TS.sigv4_headers(self.command, f"http://{self.headers['Host']}{self.path}", region, ak, self.creds[ak],
+                                self.headers.get("x-amz-content-sha256"), self.headers.get("x-amz-date"), extra)
+        return want["authorization"] == auth
+
+    def _reply(self, code, body=b""):
+        self.send_response(code)
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        if body:
+            self.wfile.write(body)
+
+    def _fault(self, name):
+        n = self.faults.get(name, 0)
+        if n:
+            self.faults[name] = n - 1 if n > 0 else n          # negative = forever
+            return True
+        return False
 
     def do_PUT(self):
-        n = int(self.headers["Content-Length"])
-        body = self.rfile.read(n)
-        ok_sig = self.headers.get("Authorization", "").startswith("AWS4-HMAC-SHA256 Credential=AK/")
-        if not ok_sig or hashlib.sha256(body).hexdigest() != self.headers.get("x-amz-content-sha256"):
-            self.send_response(400)
-        elif self.path in self.objects and self.headers.get("If-None-Match") == "*":
-            self.send_response(412)
-        else:
-            self.objects[self.path] = body
-            self.send_response(200)
+        self.requests_seen.append(("PUT", self.path))
+        body = self.rfile.read(int(self.headers["Content-Length"]))
+        if not self._auth_ok():
+            return self._reply(403, b"SignatureDoesNotMatch")
+        if self._fault("put_503"):
+            return self._reply(503)
+        if hashlib.sha256(body).hexdigest() != self.headers.get("x-amz-content-sha256"):
+            return self._reply(400, b"XAmzContentSHA256Mismatch")
+        if self.path in self.objects and self.headers.get("If-None-Match") == "*":
+            return self._reply(412, b"PreconditionFailed")
+        self.objects[self.path] = body
+        if self._fault("put_lose_response"):                   # stored, but the client never hears back
+            self.close_connection = True
+            self.connection.shutdown(2)
+            return
+        self.send_response(200)
+        self.send_header("ETag", '"%s"' % hashlib.md5(body).hexdigest())
+        self.send_header("Content-Length", "0")
         self.end_headers()
 
     def do_GET(self):
+        self.requests_seen.append(("GET", self.path))
+        if not self._auth_ok():
+            return self._reply(403, b"InvalidAccessKeyId")
+        if self._fault("get_drop"):
+            self.close_connection = True
+            self.connection.shutdown(2)
+            return
         b = self.objects.get(self.path)
-        self.send_response(200 if b is not None else 404)
-        self.end_headers()
-        if b is not None:
-            self.wfile.write(b)
+        if b is None:
+            return self._reply(404, b"NoSuchKey")
+        if self._fault("get_truncate"):
+            self.send_response(200)
+            self.send_header("Content-Length", str(len(b)))
+            self.end_headers()
+            self.wfile.write(b[: len(b) // 2])
+            self.close_connection = True
+            self.connection.shutdown(2)
+            return
+        self._reply(200, b)
 
     def log_message(self, *a):
         pass
+
+
+class R2Mutants(unittest.TestCase):
+    """FC-MLB-001B prospective R2 path against the mock: every mutant must fail closed; retries must never create
+    ambiguous evidence."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), _S3)
+        threading.Thread(target=cls.srv.serve_forever, daemon=True).start()
+        cls.endpoint = f"http://127.0.0.1:{cls.srv.server_port}"
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.srv.shutdown()
+
+    def setUp(self):
+        _S3.objects.clear()
+        _S3.faults.clear()
+        _S3.requests_seen.clear()
+        self.d = tempfile.mkdtemp()
+        self.tape = os.path.join(self.d, "t.json.gz")
+        with open(self.tape, "wb") as fh:
+            fh.write(os.urandom(400_000))
+        self.sha, self.n = TS.file_identity(self.tape)
+        self.env = mock.patch.dict(os.environ, {"NO_PROXY": "127.0.0.1", "no_proxy": "127.0.0.1"})
+        self.env.start()
+
+    def tearDown(self):
+        self.env.stop()
+
+    def store(self, secret="SK"):
+        return TS.R2Store(self.endpoint, "fc-v3-evidence-tapes", "AK", secret, sleep=lambda s: None, timeout_s=20)
+
+    def path(self):
+        return f"/fc-v3-evidence-tapes/{TS.key_for(self.sha)}"
+
+    def test_create_readback_and_seal_identity(self):
+        loc = TS.put_verified(self.store(), self.tape, self.sha, self.n)
+        self.assertEqual((loc["write_status"], loc["verified_readback"]), ("CREATED", True))
+        self.assertEqual((loc["key"], loc["sha256"], loc["bytes"], loc["bucket"], loc["endpoint"]),
+                         (TS.key_for(self.sha), self.sha, self.n, "fc-v3-evidence-tapes", self.endpoint))
+        self.assertTrue(loc["etag"])
+        again = TS.put_verified(self.store(), self.tape, self.sha, self.n)      # create-only: recognized, not rewritten
+        self.assertEqual(again["write_status"], "EXISTS_VERIFIED")
+        self.assertEqual(len(_S3.objects), 1)
+
+    def test_upload_refuses_local_bytes_that_are_not_the_identity(self):
+        with self.assertRaises(TS.TapeHashMismatch):
+            TS.put_verified(self.store(), self.tape, "3" * 64, self.n)
+        with self.assertRaises(TS.TapeSizeMismatch):
+            TS.put_verified(self.store(), self.tape, self.sha, self.n + 1)
+        self.assertEqual(_S3.requests_seen, [])                              # nothing was sent
+
+    def test_missing_object(self):
+        with mock.patch.dict(os.environ, {"V3B_R2_ACCESS_KEY_ID": "AK", "V3B_R2_SECRET_ACCESS_KEY": "SK"}):
+            with self.assertRaises(TS.TapeMissing):
+                TS.fetch_verified(self.store().locator(self.sha, self.n))
+
+    def test_wrong_object_served(self):
+        TS.put_verified(self.store(), self.tape, self.sha, self.n)
+        _S3.objects[self.path()] = os.urandom(1000)                           # another object at the address
+        with mock.patch.dict(os.environ, {"V3B_R2_ACCESS_KEY_ID": "AK", "V3B_R2_SECRET_ACCESS_KEY": "SK"}):
+            with self.assertRaises(TS.TapeSizeMismatch):
+                TS.fetch_verified(self.store().locator(self.sha, self.n))
+
+    def test_same_key_wrong_bytes_conflict_and_one_byte_corruption(self):
+        b = bytearray(open(self.tape, "rb").read())
+        b[12345] ^= 0x01
+        _S3.objects[self.path()] = bytes(b)                                   # pre-occupied by substituted bytes
+        with self.assertRaises(TS.ObjectConflict):
+            TS.put_verified(self.store(), self.tape, self.sha, self.n)
+        with mock.patch.dict(os.environ, {"V3B_R2_ACCESS_KEY_ID": "AK", "V3B_R2_SECRET_ACCESS_KEY": "SK"}):
+            with self.assertRaises(TS.TapeHashMismatch):
+                TS.fetch_verified(self.store().locator(self.sha, self.n))
+
+    def test_truncated_download(self):
+        TS.put_verified(self.store(), self.tape, self.sha, self.n)
+        _S3.faults["get_truncate"] = 1                                        # transient: retried, then verified
+        with mock.patch.dict(os.environ, {"V3B_R2_ACCESS_KEY_ID": "AK", "V3B_R2_SECRET_ACCESS_KEY": "SK"}):
+            p = TS.fetch_verified(self.store().locator(self.sha, self.n), tempfile.mkdtemp())
+            self.assertEqual(TS.file_identity(p), (self.sha, self.n))
+            _S3.faults["get_truncate"] = -1                                   # persistent: fail closed
+            with self.assertRaises(TS.StoreUnavailable):
+                TS.fetch_verified(self.store().locator(self.sha, self.n), tempfile.mkdtemp())
+
+    def test_credential_failure_is_not_retried_and_not_missing(self):
+        st = self.store(secret="WRONG")
+        with self.assertRaises(TS.StoreAuthError):
+            TS.put_verified(st, self.tape, self.sha, self.n)
+        self.assertEqual(st.attempts, [("PUT", 403)])                         # exactly one attempt
+        TS.put_verified(self.store(), self.tape, self.sha, self.n)
+        with mock.patch.dict(os.environ, {"V3B_R2_ACCESS_KEY_ID": "AK", "V3B_R2_SECRET_ACCESS_KEY": "WRONG"}):
+            with self.assertRaises(TS.StoreAuthError):
+                TS.fetch_verified(self.store().locator(self.sha, self.n))
+        with mock.patch.dict(os.environ, {"V3B_R2_ACCESS_KEY_ID": "", "V3B_R2_SECRET_ACCESS_KEY": ""}):
+            with self.assertRaises(TS.StoreAuthError):
+                TS.fetch_verified(self.store().locator(self.sha, self.n))
+
+    def test_network_interruption(self):
+        _S3.faults["put_lose_response"] = 1               # stored, response lost -> retry meets 412 -> proven
+        loc = TS.put_verified(self.store(), self.tape, self.sha, self.n)
+        self.assertEqual(loc["write_status"], "EXISTS_VERIFIED")
+        self.assertEqual(len(_S3.objects), 1)                                 # never a second / different object
+        _S3.faults["get_drop"] = 2                                            # transient: retried
+        with mock.patch.dict(os.environ, {"V3B_R2_ACCESS_KEY_ID": "AK", "V3B_R2_SECRET_ACCESS_KEY": "SK"}):
+            self.assertTrue(TS.fetch_verified(self.store().locator(self.sha, self.n), tempfile.mkdtemp()))
+            _S3.faults["get_drop"] = -1                                       # persistent: fail closed
+            with self.assertRaises(TS.StoreUnavailable):
+                TS.fetch_verified(self.store().locator(self.sha, self.n), tempfile.mkdtemp())
+
+    def test_transient_5xx_then_success_and_persistent_5xx(self):
+        _S3.faults["put_503"] = 2
+        self.assertEqual(TS.put_verified(self.store(), self.tape, self.sha, self.n)["write_status"], "CREATED")
+        _S3.objects.clear()
+        _S3.faults["put_503"] = -1
+        with self.assertRaises(TS.StoreUnavailable):
+            TS.put_verified(self.store(), self.tape, self.sha, self.n)
+        self.assertEqual(_S3.objects, {})
+
+    def test_runner_turns_every_store_failure_into_a_miss_unit(self):
+        import runner as RN
+        import schedule_plan as SP
+        env = {"V3B_TAPE_STORE": "r2", "V3B_R2_ENDPOINT": self.endpoint, "V3B_R2_BUCKET": "fc-v3-evidence-tapes",
+               "V3B_R2_ACCESS_KEY_ID": "AK", "V3B_R2_SECRET_ACCESS_KEY": "WRONG"}
+        with mock.patch.dict(os.environ, env):
+            with self.assertRaisesRegex(SP.MissUnit, "STORE_AUTH_FAILED"):
+                RN._store_tape("prospective", self.tape, self.sha, self.n)
+        with mock.patch.dict(os.environ, {"V3B_TAPE_STORE": "localfs:/tmp/x"}):
+            with self.assertRaisesRegex(SP.MissUnit, "prospective requires r2"):
+                RN._store_tape("prospective", self.tape, self.sha, self.n)
+        with mock.patch.dict(os.environ, dict(env, V3B_R2_SECRET_ACCESS_KEY="SK")):
+            with mock.patch.object(TS, "RETRY_DELAYS_S", ()):
+                loc = RN._store_tape("prospective", self.tape, self.sha, self.n)
+        self.assertEqual((loc["store"], loc["write_status"], loc["verified_readback"]), ("r2", "CREATED", True))
 
 
 class Store(unittest.TestCase):
@@ -545,26 +734,6 @@ class Store(unittest.TestCase):
     def test_put_refuses_bytes_not_matching_identity(self):
         with self.assertRaises(TS.TapeHashMismatch):
             TS.LocalFSStore(os.path.join(self.d, "s2")).put(self.tape, "2" * 64, self.n)
-
-    def test_r2_s3_path_against_mock_server(self):
-        _S3.objects = {}
-        srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), _S3)
-        threading.Thread(target=srv.serve_forever, daemon=True).start()
-        try:
-            env = {"V3B_R2_ACCESS_KEY_ID": "AK", "V3B_R2_SECRET_ACCESS_KEY": "SK", "NO_PROXY": "127.0.0.1", "no_proxy": "127.0.0.1"}
-            with mock.patch.dict(os.environ, env):
-                s = TS.R2Store(f"http://127.0.0.1:{srv.server_port}", "fc-v3-evidence-tapes", "AK", "SK")
-                loc = self._roundtrip(s)
-                self.assertEqual(loc["store"], "r2")
-                key = f"/fc-v3-evidence-tapes/{loc['key']}"
-                _S3.objects[key] = _S3.objects[key][:-1] + bytes([_S3.objects[key][-1] ^ 1])
-                with self.assertRaises(TS.TapeHashMismatch):
-                    TS.fetch_verified(loc)
-                _S3.objects.pop(key)
-                with self.assertRaises(TS.TapeMissing):
-                    TS.fetch_verified(loc)
-        finally:
-            srv.shutdown()
 
     def test_actions_artifact_drill_transport_fails_closed(self):
         loc = {"store": TS.ARTIFACT_KIND, "key": TS.key_for(self.sha), "sha256": self.sha, "bytes": self.n}
