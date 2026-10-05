@@ -368,10 +368,10 @@
    "LANE": "A",
    "OWNER": "claude",
    "CHALLENGER": "codex",
-   "STATUS": "READY_FOR_CHALLENGE",
+   "STATUS": "BLOCKED",
    "BASE_SHA": "504ca9cdb972d218907eb4eec13852cf5a7981d2",
    "BRANCH": "claude/mlb-v3-amendment-a1-20261005",
-   "HEAD_SHA": "ca08763f6dbb2c35056aeaffcaa73a57bffcff5f",
+   "HEAD_SHA": "0478658601b2e58a49bd15e8fc0ec090bd7e7ca2",
    "OBJECTIVE": "V3 evidence-integrity amendment A1: shadow record/replay independent of unsealed pybaseball cache, deterministic hash-locked shadow deps, clone-shape-independent provenance, cross-container exact replay. Infrastructure only; no model/prereg/science change.",
    "ACCEPTANCE_CRITERIA": [
     "R1-R6 + acceptance bar in TASKS/FC-MLB-001A.md: container-A record drill, different virgin container-B exact replay (0 misses, 0 unconsumed, exact hashes/provenance), Codex reproduction, new Jacob activation before reactivation"
@@ -381,23 +381,30 @@
     "v3_dispatch.py on claude/mlb-v3-ops (after challenge + Jacob)"
    ],
    "EVIDENCE_POINTERS": [
-    "claude/mlb-v3-amendment-a1-20261005 @ ca08763f6d (base 504ca9cdb9; code commits 00dc06956c, e6fdee0230)",
-    "v3/AMENDMENT_A1.md (scope, guarantees/limits, results, open items)",
-    "v3/a1_drill/A1_DRILL_20261005_NIGHT (record A @ e6fdee0230; manifest 04f0b810...; tape e2cf77b3... in 3 parts)",
-    "Env B: GitHub Actions run 37353256200 PASS (0 misses / 0 unconsumed / identical hashes); v3/a1_drill/B_RUNS.md",
-    "v3/a1_drill/LEGACY_CHECK.json (Oct 3-4 units still not reproducible; files unchanged)",
-    "tests: test_a1.py 13 (+1 drill-tamper, run in B); test_v3.py 88"
+    "claude/mlb-v3-amendment-a1-20261005 @ 0478658601 (a1-2 repair; v3 tree 2e5a4eee; parent ca08763f6d; handoff-only tip 8ef01e4c22)",
+    "v3/AMENDMENT_A1.md (R4 frozen injection; R5 BLOCKED section; literal-identity STOP section; corrected results)",
+    "v3/STORAGE_DESIGN_A1.md (design only, not implemented)",
+    "Env B MUTANT f583177c2a: run 37370057443 FAILURE (integrity FAIL: sha256sums/artifact_set/overlay)",
+    "Env B CLEAN exact head 0478658601: run 37370084563 FAILURE by frozen gate (tests OK; integrity PASS 0 misses/0 unconsumed/exact hashes; frozen_conformance FAIL: literal identity 4 clock fields, R5 trace ~2866 out-of-surface reads, record a1-1 shim/untraced)",
+    "Withdrawn: runs 37352202211/37353256200/37353829066 (masked gate)",
+    "v3/a1_drill/LEGACY_CHECK.json (Oct 3-4 units untouched, not reproducible)"
    ],
-   "BLOCKERS": [],
-   "NEXT_ACTION": "Codex independent challenge (clean Linux: rerun v3-a1-drill-replay workflow or reproduce its steps). Open items for SUPERCHAD/Jacob: tape storage (~257 MB/unit), dispatcher AUTH_COMMIT update, new activation. V3 stays HELD.",
+   "BLOCKERS": [
+    "Frozen R5 technically overbroad (interpreter/stdlib/venv/libc/sealed tape/R4 git object store outside the 3 permitted surfaces) - SUPERCHAD/Jacob criterion decision",
+    "Literal shadow-board identity fails on 4 replay-clock fields (board_generated_at, sealed_at, board_sha256, records[*].generation_timestamp) - clock taping vs criterion amendment: SUPERCHAD/Jacob",
+    "Existing drill recorded at a1-1 (shim, untraced): a conforming drill record needed after the decisions",
+    "Tape storage: design only (STORAGE_DESIGN_A1.md); credentials/bucket/network are Jacob's"
+   ],
+   "NEXT_ACTION": "SUPERCHAD/Jacob: decide R5 and literal-identity criteria (builder STOPPED; criteria not amended). Codex may rerun the exact-head gate (workflow_dispatch or push of 0478658601 tree). V3 stays HELD.",
    "AUTHORITY_REQUIRED": "Jacob: new activation + trigger re-enable; SUPERCHAD for criteria changes",
    "WIP_EXEMPT": false,
    "CHALLENGE_ACTIVE": false,
-   "UPDATED": "2026-10-05T18:09:48Z",
+   "UPDATED": "2026-10-05T20:49:40Z",
    "HISTORY": [
     "2026-10-05T16:45:01Z claude -> READY (criteria frozen at ops b54055041f per SUPERCHAD disposition)",
     "2026-10-05T17:18:59Z claude -> CLAUDE_ACTIVE (SUPERCHAD authorized implementation; base 504ca9cdb9, v3 tree a7c9443, commit tree c90dc9d66a; criteria b54055041f)",
-    "2026-10-05T18:09:48Z claude -> READY_FOR_CHALLENGE"
+    "2026-10-05T18:09:48Z claude -> READY_FOR_CHALLENGE",
+    "2026-10-05T20:49:40Z claude -> BLOCKED"
    ]
   }
  ]
