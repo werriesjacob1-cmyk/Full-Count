@@ -37,6 +37,11 @@ import shadow as SH  # noqa: E402
 import verify_evidence as VE  # noqa: E402
 
 V3_BOUNDARY_UTC = "2026-10-02T06:00:00Z"   # slates cut off at/before this are NONCONFIRMATORY / DRILL ONLY
+# Units sealed under the A1-defective shadow record path: sealed on time but NOT reproducible from sealed artifacts
+# (#91/5998885845; FC-MLB-001A legacy check). Excluded by name BEFORE verification, so they can never be scored as
+# paired evidence even if some future verifier were to accept them.
+QUARANTINED_UNITS = {u: "QUARANTINED_DESCRIPTIVE_SHADOW_NOT_REPRODUCIBLE (#91/5998885845; FC-MLB-001A)"
+                     for u in ("2026-10-03/DAY", "2026-10-03/NIGHT", "2026-10-04/DAY", "2026-10-04/NIGHT")}
 PRACTICAL_DELTA = 0.05     # minimum practically meaningful hit-rate gain (C2 - shadow champion)
 MIN_CHAMPION_SETTLED = 250  # coverage floors, NOT a power guarantee
 MIN_SLATES = 60
@@ -229,6 +234,9 @@ def evaluate_from_evidence(evidence_root, regime):
     invalid, verified = {}, []
     for s in in_regime:
         unit = f"{s['date']}/{s['window']}"
+        if unit in QUARANTINED_UNITS:
+            invalid[unit] = QUARANTINED_UNITS[unit]
+            continue
         if not M3.utc(s["cutoff_utc"]) > M3.utc(V3_BOUNDARY_UTC):
             invalid[unit] = "PRE_V3_BOUNDARY_DRILL_ONLY"
             continue
@@ -254,4 +262,71 @@ def evaluate_from_evidence(evidence_root, regime):
         pairs.append((man, grade_shadow_board(board)))
     out = _compute(pairs, coef, spec, regime)
     out.update({"invalid_slates": invalid, "one_look_trigger": trigger})
+    import scorecard_v3 as SC                                  # reporting only: same pairs, same frozen selection
+    out["scorecard"] = SC.build_scorecard(pairs, coef, regime)
+    out["_graded"] = [(f"{m['date']}/{m['window']}", g) for m, g in pairs]   # persisted by main(), never re-graded
     return out
+
+
+def _canon(obj):
+    return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False, default=str).encode("utf-8")
+
+
+def write_result(out, regime, out_dir):
+    """Persist the single look (it cannot be re-run: ONE_LOOK_ALREADY_TAKEN). Pinned-grader outputs are written as
+    GRADED/<unit>.json with their sha256 bound into FINAL_RESULT_<regime>.json. Returns the written paths."""
+    import hashlib
+    import scorecard_v3 as SC
+    os.makedirs(os.path.join(out_dir, "GRADED"), exist_ok=True)
+    graded = out.pop("_graded", [])
+    hashes, paths = {}, []
+    for unit, g in graded:
+        p = os.path.join(out_dir, "GRADED", unit.replace("/", "_") + ".json")
+        with open(p, "wb") as fh:
+            fh.write(_canon(g))
+        hashes[unit] = hashlib.sha256(_canon(g)).hexdigest()
+        paths.append(p)
+    out["graded_sha256"] = hashes
+    for name, data in ((f"FINAL_RESULT_{regime}.json", _canon(out)),
+                       (f"SCORECARD_{regime}.md", SC.render_markdown(out["scorecard"]).encode())):
+        p = os.path.join(out_dir, name)
+        with open(p, "wb") as fh:
+            fh.write(data)
+        paths.append(p)
+    return paths
+
+
+def publish_result(evidence_root, paths):
+    """Append the persisted result to the evidence ref (after the lock; never rewrites)."""
+    import shutil
+    rel = []
+    for p in paths:
+        dest = os.path.join(evidence_root, "FINAL", os.path.relpath(p, os.path.dirname(paths[-1])))
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        if os.path.exists(dest):
+            raise FileExistsError(f"{dest} already exists: the final result is never rewritten")
+        shutil.copyfile(p, dest)
+        rel.append(dest)
+    for cmd in (["add", *rel], ["commit", "-m", "MLB v3 FINAL RESULT (single preregistered look)"],
+                ["push", "origin", "HEAD:claude/mlb-challenger-v3-evidence"]):
+        subprocess.run(["git", "-C", evidence_root, *cmd], check=True)
+
+
+def main(argv=None):
+    import argparse
+    ap = argparse.ArgumentParser(description="The single preregistered V3 final evaluation (one look per regime).")
+    ap.add_argument("--evidence-root", required=True, help="checkout of claude/mlb-challenger-v3-evidence")
+    ap.add_argument("--regime", required=True, choices=sorted(k for k in RG.REGIMES if k != "SMOKE_TEST_SYNTHETIC"))
+    ap.add_argument("--out", required=True, help="local directory; written BEFORE publishing")
+    ap.add_argument("--no-publish", action="store_true")
+    a = ap.parse_args(argv)
+    out = evaluate_from_evidence(a.evidence_root, a.regime)
+    paths = write_result(out, a.regime, a.out)
+    if not a.no_publish:
+        publish_result(a.evidence_root, paths)
+    print(json.dumps({"regime": a.regime, "primary_verdict": out.get("primary_verdict"), "written": paths}, indent=1))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
