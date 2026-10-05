@@ -60,7 +60,7 @@
    "LANE": "A",
    "OWNER": "claude",
    "CHALLENGER": "codex",
-   "STATUS": "CLAUDE_ACTIVE",
+   "STATUS": "BLOCKED",
    "BASE_SHA": "504ca9cdb972d218907eb4eec13852cf5a7981d2",
    "BRANCH": "claude/mlb-challenger-v3-evidence",
    "HEAD_SHA": null,
@@ -84,9 +84,10 @@
    "AUTHORITY_REQUIRED": "Jacob for any change; never merge PR #220",
    "WIP_EXEMPT": true,
    "CHALLENGE_ACTIVE": false,
-   "UPDATED": "2026-10-05T16:45:01Z",
+   "UPDATED": "2026-10-05T17:18:59Z",
    "HISTORY": [
-    "2026-10-05T16:45:01Z claude: collection HOLD recorded (SUPERCHAD disposition; #91/5998885845)"
+    "2026-10-05T16:45:01Z claude: collection HOLD recorded (SUPERCHAD disposition; #91/5998885845)",
+    "2026-10-05T17:18:59Z claude -> BLOCKED (V3 collection held 2026-10-05T16:39:32Z; blocked on FC-MLB-001A)"
    ]
   },
   {
@@ -367,7 +368,7 @@
    "LANE": "A",
    "OWNER": "claude",
    "CHALLENGER": "codex",
-   "STATUS": "READY",
+   "STATUS": "CLAUDE_ACTIVE",
    "BASE_SHA": "504ca9cdb972d218907eb4eec13852cf5a7981d2",
    "BRANCH": "claude/mlb-v3-amendment-a1-20261005",
    "HEAD_SHA": null,
@@ -388,9 +389,10 @@
    "AUTHORITY_REQUIRED": "Jacob: new activation + trigger re-enable; SUPERCHAD for criteria changes",
    "WIP_EXEMPT": false,
    "CHALLENGE_ACTIVE": false,
-   "UPDATED": "2026-10-05T16:45:01Z",
+   "UPDATED": "2026-10-05T17:18:59Z",
    "HISTORY": [
-    "2026-10-05T16:45:01Z claude -> READY (criteria frozen at ops b54055041f per SUPERCHAD disposition)"
+    "2026-10-05T16:45:01Z claude -> READY (criteria frozen at ops b54055041f per SUPERCHAD disposition)",
+    "2026-10-05T17:18:59Z claude -> CLAUDE_ACTIVE (SUPERCHAD authorized implementation; base 504ca9cdb9, v3 tree a7c9443, commit tree c90dc9d66a; criteria b54055041f)"
    ]
   }
  ]
