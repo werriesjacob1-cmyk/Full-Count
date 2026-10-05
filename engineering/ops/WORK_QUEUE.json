@@ -77,12 +77,17 @@
     "branch claude/mlb-v3-ops (v3_dispatch.py)",
     "Issue #91 comment 5953838152 (Jacob authorization)"
    ],
-   "BLOCKERS": [],
-   "NEXT_ACTION": "None manual. Runner session reports to #91 only on RAN/MISSED/failure.",
+   "BLOCKERS": [
+    "FC-MLB-001A evidence-integrity amendment"
+   ],
+   "NEXT_ACTION": "ON HOLD since 2026-10-05T16:39:32Z (trig_011u98uX enabled=false; prior: enabled, cron '7 13-23,0-1 * * *'). Reactivate only after FC-MLB-001A acceptance + new Jacob activation.",
    "AUTHORITY_REQUIRED": "Jacob for any change; never merge PR #220",
    "WIP_EXEMPT": true,
    "CHALLENGE_ACTIVE": false,
-   "UPDATED": "2026-10-02T15:15:00Z"
+   "UPDATED": "2026-10-05T16:45:01Z",
+   "HISTORY": [
+    "2026-10-05T16:45:01Z claude: collection HOLD recorded (SUPERCHAD disposition; #91/5998885845)"
+   ]
   },
   {
    "TASK_ID": "FC-MLB-002",
@@ -353,6 +358,39 @@
     "2026-10-03T14:37:37Z claude -> READY_FOR_CHALLENGE",
     "2026-10-03T14:52:59Z codex -> READY_FOR_SUPERCHAD (Codex PASS WITH LIMITATIONS at a555d4dd59, relayed by Jacob 2026-10-03; recorded by claude)",
     "2026-10-03T14:52:59Z superchad -> DONE (SUPERCHAD: NO_GAIN negative DEVELOPMENT evidence, relayed by Jacob 2026-10-03; recorded by claude)"
+   ]
+  },
+  {
+   "TASK_ID": "FC-MLB-001A",
+   "SPORT": "MLB",
+   "KIND": "engineering",
+   "LANE": "A",
+   "OWNER": "claude",
+   "CHALLENGER": "codex",
+   "STATUS": "READY",
+   "BASE_SHA": "504ca9cdb972d218907eb4eec13852cf5a7981d2",
+   "BRANCH": "claude/mlb-v3-amendment-a1-20261005",
+   "HEAD_SHA": null,
+   "OBJECTIVE": "V3 evidence-integrity amendment A1: shadow record/replay independent of unsealed pybaseball cache, deterministic hash-locked shadow deps, clone-shape-independent provenance, cross-container exact replay. Infrastructure only; no model/prereg/science change.",
+   "ACCEPTANCE_CRITERIA": [
+    "R1-R6 + acceptance bar in TASKS/FC-MLB-001A.md: container-A record drill, different virgin container-B exact replay (0 misses, 0 unconsumed, exact hashes/provenance), Codex reproduction, new Jacob activation before reactivation"
+   ],
+   "FILES_OR_AREAS": [
+    "research/mlb_accuracy_challenger_20261001/v3/ (amendment branch only)",
+    "v3_dispatch.py on claude/mlb-v3-ops (after challenge + Jacob)"
+   ],
+   "EVIDENCE_POINTERS": [
+    "#91/5998885845 (hold + classification)",
+    "#91/5971140470, 5983051660, 5985109220"
+   ],
+   "BLOCKERS": [],
+   "NEXT_ACTION": "Implement R1-R5 on claude/mlb-v3-amendment-a1-20261005; drill A; virgin replay B; Codex challenge; Jacob activation",
+   "AUTHORITY_REQUIRED": "Jacob: new activation + trigger re-enable; SUPERCHAD for criteria changes",
+   "WIP_EXEMPT": false,
+   "CHALLENGE_ACTIVE": false,
+   "UPDATED": "2026-10-05T16:45:01Z",
+   "HISTORY": [
+    "2026-10-05T16:45:01Z claude -> READY (criteria frozen at ops b54055041f per SUPERCHAD disposition)"
    ]
   }
  ]

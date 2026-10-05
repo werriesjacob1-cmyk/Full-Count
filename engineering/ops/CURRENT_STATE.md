@@ -27,7 +27,7 @@ This file is the default orientation. Do **not** read `ENGINEERING_HANDOFF.md` o
 MLB 60% / NFL 40%. NFL may take the majority inside T−48h of an NFL slate lock.
 
 ## MLB
-- **V3 accuracy challenger:** ACTIVATED 2026-10-02 (Jacob, #91/5953838152). Collection is automated. **Do not touch.**
+- **V3 accuracy challenger:** ACTIVATED 2026-10-02 (Jacob, #91/5953838152). **COLLECTION ON HOLD since 2026-10-05T16:39:32Z** (trigger disabled; #91/5998885845). Units 2026-10-03/04 DAY+NIGHT = DESCRIPTIVE SHADOW, sealed on time, NOT reproducible from sealed artifacts alone. Amendment FC-MLB-001A (criteria frozen) must pass before reactivation.
   - Implementation `504ca9cdb9` (tree `a7c9443`), prereg `15fb1d539c`. PR #220 is draft and must never be merged without Jacob.
   - Evidence ref `claude/mlb-challenger-v3-evidence` is append-only.
   - Runner session `session_016RxnYjrtP3stCp3XRSa2Ux`, woken by `trig_011u98uXVuFEipPfbTT6KGur` (hourly at :07, 13–01Z), running the dispatcher on `claude/mlb-v3-ops`.
