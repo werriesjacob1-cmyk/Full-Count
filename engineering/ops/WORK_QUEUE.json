@@ -417,7 +417,7 @@
    "STATUS": "CLAUDE_ACTIVE",
    "BASE_SHA": "8ef01e4c221cdc272a4c2d4d90b0655e33d88acd",
    "BRANCH": "claude/mlb-v3-amendment-b-20261005",
-   "HEAD_SHA": null,
+   "HEAD_SHA": "dac663c0a28a2a27fbc26fe609de628a5739b99b",
    "OBJECTIVE": "Successor to FC-MLB-001A: replace the two mis-specified A1 requirements (A1 R5, raw literal-board equality) with a pinned-runtime boundary (digest-pinned image, sandbox, whole-tree trace, forbidden-read classes) and a frozen scientific-payload identity contract; R2 content-addressed tape-store code path (no account changes); new 001B drill A->B. Infrastructure only.",
    "ACCEPTANCE_CRITERIA": [
     "TASKS/FC-MLB-001B.md (frozen before code): inherited I1-I8, new R5 runtime boundary, pinned image digest, payload v1 literal identity, R2 store fail-closed, new drill A->B, mutant nonzero / clean green, Codex reproduction; V3 held"
@@ -427,10 +427,12 @@
     ".github/workflows/v3-b-drill-replay.yml (001B branch only)"
    ],
    "EVIDENCE_POINTERS": [
-    "A1 STOP report #91/6002668247; Codex delta audit #91/6002665832; A1 runs 37370084563/37370057443"
+    "claude/mlb-v3-amendment-b-20261005 @ dac663c0a2 (impl b55e71e191 + transport 5b464486de + R2 bug fix)",
+    "CI 37385877630: test_b 32 / test_v3 88 / test_a1 21 OK; no drill yet",
+    "Prep (not executed): claude/mlb-v3-reactivation-prep-20261005 @ ae45814729 (REACTIVATION_PACKAGE.md, GRADING_AUDIT_V3.md, scorecard_v3.py)"
    ],
    "BLOCKERS": [],
-   "NEXT_ACTION": "Implement 001B on claude/mlb-v3-amendment-b-20261005; drill on the 2026-10-06 slate (05:00Z-21:00Z).",
+   "NEXT_ACTION": "Drill A on 2026-10-06 ~13:00Z via v3-b-drill-record.yml (Actions artifact transport), then env B, mutant, clean rerun; then Codex. V3 held.",
    "AUTHORITY_REQUIRED": "Jacob: R2 account actions, new activation, trigger re-enable; SUPERCHAD: criteria changes, acceptance",
    "WIP_EXEMPT": false,
    "CHALLENGE_ACTIVE": false,
