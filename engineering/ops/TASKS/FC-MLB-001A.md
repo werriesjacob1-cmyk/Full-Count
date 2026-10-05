@@ -84,3 +84,4 @@ Frozen 2026-10-05, before any amendment code. Authority: SUPERCHAD disposition, 
 
 ## LOG
 - 2026-10-05 criteria frozen (V3 hold 16:39:32Z; #91/5998885845).
+- 2026-10-05 implemented @ ca08763f6d; drill record A (e6fdee0230) + env B GitHub Actions 37353256200 PASS; legacy units unchanged/not reproducible; -> READY_FOR_CHALLENGE. V3 held.

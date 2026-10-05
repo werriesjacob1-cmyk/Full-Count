@@ -103,7 +103,7 @@
    "HEAD_SHA": "b52ac418bae7a5b7e1bf42ccec4be70595eae337",
    "OBJECTIVE": "Specify the first MLB predictive-engine improvement experiment toward a probabilistic prop engine. Acceptance criteria are written and challenge-reviewed BEFORE any build.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD before build: target population, exact champion vs challenger comparison, same legitimate opportunity, metrics+threshold, evidence artifact, leakage constraints, stop condition (contract Â§3)."
+    "TBD before build: target population, exact champion vs challenger comparison, same legitimate opportunity, metrics+threshold, evidence artifact, leakage constraints, stop condition (contract \u00c2\u00a73)."
    ],
    "FILES_OR_AREAS": [
     "research/mlb_engine/fc_mlb_002/"
@@ -142,7 +142,7 @@
    "HEAD_SHA": null,
    "OBJECTIVE": "Lane-B example (pending SUPERCHAD confirmation): Codex independent MLB research question chosen by SUPERCHAD, produced without access to FC-MLB-002 builder notes; Claude challenges.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD by SUPERCHAD/Codex before start (contract Ã‚Â§3)."
+    "TBD by SUPERCHAD/Codex before start (contract \u00c3\u201a\u00c2\u00a73)."
    ],
    "FILES_OR_AREAS": [
     "research/codex_mlb/"
@@ -199,7 +199,7 @@
    "HEAD_SHA": null,
    "OBJECTIVE": "Specify the next NFL predictive-engine experiment covering player props and spreads/totals (injuries, roles, coaching, weather, matchup, market, game state). Acceptance criteria before any build.",
    "ACCEPTANCE_CRITERIA": [
-    "TBD before build (contract Ã‚Â§3)."
+    "TBD before build (contract \u00c3\u201a\u00c2\u00a73)."
    ],
    "FILES_OR_AREAS": [
     "nfl/engine/"
@@ -368,10 +368,10 @@
    "LANE": "A",
    "OWNER": "claude",
    "CHALLENGER": "codex",
-   "STATUS": "CLAUDE_ACTIVE",
+   "STATUS": "READY_FOR_CHALLENGE",
    "BASE_SHA": "504ca9cdb972d218907eb4eec13852cf5a7981d2",
    "BRANCH": "claude/mlb-v3-amendment-a1-20261005",
-   "HEAD_SHA": null,
+   "HEAD_SHA": "ca08763f6dbb2c35056aeaffcaa73a57bffcff5f",
    "OBJECTIVE": "V3 evidence-integrity amendment A1: shadow record/replay independent of unsealed pybaseball cache, deterministic hash-locked shadow deps, clone-shape-independent provenance, cross-container exact replay. Infrastructure only; no model/prereg/science change.",
    "ACCEPTANCE_CRITERIA": [
     "R1-R6 + acceptance bar in TASKS/FC-MLB-001A.md: container-A record drill, different virgin container-B exact replay (0 misses, 0 unconsumed, exact hashes/provenance), Codex reproduction, new Jacob activation before reactivation"
@@ -381,18 +381,23 @@
     "v3_dispatch.py on claude/mlb-v3-ops (after challenge + Jacob)"
    ],
    "EVIDENCE_POINTERS": [
-    "#91/5998885845 (hold + classification)",
-    "#91/5971140470, 5983051660, 5985109220"
+    "claude/mlb-v3-amendment-a1-20261005 @ ca08763f6d (base 504ca9cdb9; code commits 00dc06956c, e6fdee0230)",
+    "v3/AMENDMENT_A1.md (scope, guarantees/limits, results, open items)",
+    "v3/a1_drill/A1_DRILL_20261005_NIGHT (record A @ e6fdee0230; manifest 04f0b810...; tape e2cf77b3... in 3 parts)",
+    "Env B: GitHub Actions run 37353256200 PASS (0 misses / 0 unconsumed / identical hashes); v3/a1_drill/B_RUNS.md",
+    "v3/a1_drill/LEGACY_CHECK.json (Oct 3-4 units still not reproducible; files unchanged)",
+    "tests: test_a1.py 13 (+1 drill-tamper, run in B); test_v3.py 88"
    ],
    "BLOCKERS": [],
-   "NEXT_ACTION": "Implement R1-R5 on claude/mlb-v3-amendment-a1-20261005; drill A; virgin replay B; Codex challenge; Jacob activation",
+   "NEXT_ACTION": "Codex independent challenge (clean Linux: rerun v3-a1-drill-replay workflow or reproduce its steps). Open items for SUPERCHAD/Jacob: tape storage (~257 MB/unit), dispatcher AUTH_COMMIT update, new activation. V3 stays HELD.",
    "AUTHORITY_REQUIRED": "Jacob: new activation + trigger re-enable; SUPERCHAD for criteria changes",
    "WIP_EXEMPT": false,
    "CHALLENGE_ACTIVE": false,
-   "UPDATED": "2026-10-05T17:18:59Z",
+   "UPDATED": "2026-10-05T18:09:48Z",
    "HISTORY": [
     "2026-10-05T16:45:01Z claude -> READY (criteria frozen at ops b54055041f per SUPERCHAD disposition)",
-    "2026-10-05T17:18:59Z claude -> CLAUDE_ACTIVE (SUPERCHAD authorized implementation; base 504ca9cdb9, v3 tree a7c9443, commit tree c90dc9d66a; criteria b54055041f)"
+    "2026-10-05T17:18:59Z claude -> CLAUDE_ACTIVE (SUPERCHAD authorized implementation; base 504ca9cdb9, v3 tree a7c9443, commit tree c90dc9d66a; criteria b54055041f)",
+    "2026-10-05T18:09:48Z claude -> READY_FOR_CHALLENGE"
    ]
   }
  ]
