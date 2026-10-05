@@ -6345,3 +6345,29 @@ Alligator
 **Next:** SUPERCHAD/Jacob decide R5 (an enumerated, sealed runtime-surface list plus an OS sandbox?) and literal identity (tape the clock, or amend?). Then a conforming a1 drill record, then Codex. No reactivation.
 
 Alligator
+
+## 2026-10-05 — V3 reactivation prep (FC-MLB-001B waiting for the Oct 6 drill window) — NOT EXECUTED; V3 HELD
+
+**R2 prospective path:** bug fix on the 001B branch, `dac663c0a2`.
+- Every store failure becomes a MISS UNIT.
+- Auth failures, network failures, short bodies and conflicts fail closed.
+- `put_verified` proves the stored bytes by read-back. Retries cannot create ambiguous evidence.
+- Tests: an S3 mock that verifies SigV4 exactly, with injected faults.
+- CI 37385877630: test_b 32, test_v3 88, test_a1 21 OK.
+- `STORAGE_DESIGN_B.md` has the exact Cloudflare setup. None was performed.
+
+**Prep branch** `claude/mlb-v3-reactivation-prep-20261005` @ `ae45814729`:
+- `scorecard_v3.py`: the North-Star scorecard. It is post-lock only, uses the frozen selection, and is regime-labelled.
+- `evaluate_v3`: one-look persistence (gap G1), and quarantine of the Oct 3–4 units by name (G3).
+- `reactivation/`: `REACTIVATION_PACKAGE.md` (sequence, bindings, blocker audit), `GRADING_AUDIT_V3.md`, `prepare_activation.py`, and the dispatcher template + diff.
+- Nothing is bound, signed, enabled or pushed to the evidence/ops refs.
+
+**Remaining gates:**
+1. 001B drill (Oct 6, about 13:00Z).
+2. Codex.
+3. SUPERCHAD/Jacob.
+4. Jacob's R2 account actions.
+
+**Open grading item:** G2, the pinned-grader evaluation environment; due before 2026-11-16.
+
+Alligator
