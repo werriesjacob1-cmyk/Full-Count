@@ -157,6 +157,31 @@ def verify(a):
     return 0 if res["result"] == "PASS" else 1
 
 
+def legacy(a):
+    """Read-only: replay each existing (pre-A1) sealed unit from its sealed artifacts in a clean isolated
+    environment. Expected: none reproduces (they are DESCRIPTIVE SHADOW, NOT REPRODUCIBLE). Never writes there."""
+    out = {"label": "FC-MLB-001A legacy-unit check (read-only; seals untouched)", "units": {}}
+    for unit in sorted(os.listdir(os.path.join(a.evidence_dir, "seals"))):
+        d = os.path.join(a.evidence_dir, "seals", unit)
+        before = {n: _sha(os.path.join(d, n)) for n in sorted(os.listdir(d))}
+        board = _load(d, "shadow_board.json.gz")
+        ov = os.path.join(d, "overlay.json")
+        detail = {}
+        exact = VE.replay_shadow(d, board, open(ov, "rb").read() if os.path.exists(ov) else None, detail)
+        rep = detail.get("replay_env") or {}
+        after = {n: _sha(os.path.join(d, n)) for n in sorted(os.listdir(d))}
+        out["units"][unit] = {"reproducible": bool(exact), "replay_misses": rep.get("replay_misses"),
+                              "unconsumed": rep.get("unconsumed"), "legacy_unit": detail.get("legacy_unit"),
+                              "error": detail.get("replay_error"), "unit_files_unchanged": before == after,
+                              "seal_sha256": json.load(open(os.path.join(d, "seal.json"))).get("seal_sha256")}
+    out["all_not_reproducible"] = all(not u["reproducible"] for u in out["units"].values())
+    out["all_unchanged"] = all(u["unit_files_unchanged"] for u in out["units"].values())
+    with open(a.result, "w") as fh:
+        json.dump(out, fh, indent=1, sort_keys=True)
+    print(json.dumps(out, indent=1, sort_keys=True))
+    return 0 if out["all_not_reproducible"] and out["all_unchanged"] else 1
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -168,8 +193,11 @@ def main(argv=None):
     v = sub.add_parser("verify")
     v.add_argument("--drill-dir", required=True)
     v.add_argument("--result")
+    lg = sub.add_parser("legacy")
+    lg.add_argument("--evidence-dir", required=True)
+    lg.add_argument("--result", required=True)
     a = ap.parse_args(argv)
-    return record(a) if a.cmd == "record" else verify(a)
+    return {"record": record, "verify": verify, "legacy": legacy}[a.cmd](a)
 
 
 if __name__ == "__main__":
