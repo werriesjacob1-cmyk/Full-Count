@@ -3,12 +3,14 @@
 
   record:  sudo python3 b_drill.py record --repo R --date YYYY-MM-DD --window DAY|NIGHT --out DIR/B_DRILL_<...>
                                            --store LOCAL_STORE_DIR --transport-out TRANSPORT_DIR
-           ENVIRONMENT A. runner.py --mode drill --with-tsa (local only: no evidence-ref push, no #91 receipt, never a
-           chain unit) with the 001B pinned-runtime sandbox. The complete tape goes to the create-only content-addressed
-           store (isolated local store; R2 is not authorized) and NEVER into the drill directory; it is also laid out
-           under TRANSPORT_DIR as content-addressed parts for the drill-only git transport ref (so a virgin
-           environment B can retrieve it). Writes B_DRILL.json and SHA256SUMS.
-  verify:  sudo python3 b_drill.py verify --drill-dir DIR [--result OUT.json]
+           ENVIRONMENT A (a fresh GitHub-hosted runner job). runner.py --mode drill --with-tsa (no evidence-ref push, no
+           #91 receipt, never a chain unit) in the 001B pinned-runtime sandbox. The complete tape goes to the
+           create-only content-addressed store (isolated local store; R2 is not authorized) and NEVER into the drill
+           directory or git. One copy, named fc-mlb-001b-drill-tape-<sha256>.json.gz, is placed in TRANSPORT_DIR and
+           uploaded by the workflow as ONE GitHub Actions artifact (temporary, non-authoritative drill transport;
+           SUPERCHAD disposition 2026-10-05: no git ref, no git history). Writes B_DRILL.json and SHA256SUMS.
+  verify:  sudo python3 b_drill.py verify --drill-dir DIR --tape-file DOWNLOADED_TAPE [--record B_DRILL_RECORD.json]
+                                          [--result OUT.json]
            ENVIRONMENT B, from the sealed drill artifacts alone + the tape retrieved BY EXACT IDENTITY (size + sha256
            verified before use): every artifact hash and binding, manifest re-resolution, overlay cutoff, sealed
            scientific payload (frozen spec), envelope chronology incl. TSA tokens over the manifest digest, a fresh
@@ -26,6 +28,7 @@ import hashlib
 import json
 import os
 import platform
+import shutil
 import subprocess
 import sys
 
@@ -42,9 +45,8 @@ import tape_store as TS  # noqa: E402
 import verify_evidence as VE  # noqa: E402
 
 LABEL = "FC-MLB-001B EVIDENCE-INTEGRITY DRILL — NOT A PROSPECTIVE UNIT"
-TRANSPORT_REF = "claude/mlb-v3-001b-drill-objects"
 GATES = {
-    "integrity": ("sha256sums", "artifact_set", "provenance_identity", "board_hash", "capture_hash", "schedule_hash",
+    "integrity": ("frozen_record_identity", "sha256sums", "artifact_set", "provenance_identity", "board_hash", "capture_hash", "schedule_hash",
                   "manifest_hash", "manifest_reproducible", "overlay", "payload_sealed", "tape_identity",
                   "envelope_chronology"),
     "replay": ("tape_retrieved_verified", "replay_exact", "payload_literal_identity", "runtime_dependency_identity",
@@ -83,7 +85,8 @@ def record(a):
     loc = summ["tape_store"]
     if TS.file_identity(tape) != (loc["sha256"], loc["bytes"]):
         raise SystemExit("local tape is not the stored tape identity")
-    TS.GitObjectStore.layout(tape, loc["sha256"], a.transport_out)          # drill transport for environment B
+    os.makedirs(a.transport_out, exist_ok=True)                              # ONE file, named by its sha256
+    shutil.copyfile(tape, os.path.join(a.transport_out, TS.transport_asset_name(loc["sha256"])))
     os.rename(tape + ".record.report.json", os.path.join(a.out, "record_report.json"))
     for leftover in (tape, tape + ".record.env.json", tape + ".record.strace", tape + ".record.setup.strace"):
         if os.path.exists(leftover):
@@ -100,9 +103,10 @@ def record(a):
             "scientific_payload_spec": PL.SPEC, "scientific_payload_sha256": summ["scientific_payload_sha256"],
             "manifest_sha256": summ["manifest_sha256"], "artifacts_sha256": summ["artifacts_sha256"],
             "tape_store_sealed": loc,
-            "tape_transport": {"store": "git-drill-transport", "ref": TRANSPORT_REF, "key": loc["key"],
-                               "sha256": loc["sha256"], "bytes": loc["bytes"],
-                               "note": "drill-only, non-authoritative transport of the SAME content identity"},
+            "tape_transport": {"store": TS.ARTIFACT_KIND, "asset_name": TS.transport_asset_name(loc["sha256"]),
+                               "key": loc["key"], "sha256": loc["sha256"], "bytes": loc["bytes"],
+                               "note": "drill-only, non-authoritative GitHub Actions artifact carrying the SAME content "
+                                       "identity; bytes verified (size + sha256) before replay"},
             "record_environment": {"python": env["python"], "kernel": env["kernel_surfaces"], "user": env["user"],
                                    "network": env["network"], "isolation": env["isolation"], "n_http_recorded": env["n_http"],
                                    "forbidden_reads": env["process_trace"]["forbidden_reads"],
@@ -137,7 +141,20 @@ def verify(a):
 
 def _verify(a, d, res, ok):
     fail = lambda k, why: ok.__setitem__(k, f"FAIL: {why}")
-    sums = [ln.split("  ", 1) for ln in open(os.path.join(d, "SHA256SUMS")).read().splitlines()]
+    sums_text = open(os.path.join(d, "SHA256SUMS")).read()
+    if a.record:        # identities frozen in git (committed from record A's annotations) -- the only trust anchor
+        rec = json.load(open(a.record))
+        tt = (rec.get("tape") or {})
+        problems = []
+        if rec.get("sha256sums") != sums_text:
+            problems.append("drill files differ from the committed SHA256SUMS")
+        if a.tape_file and os.path.basename(a.tape_file) != tt.get("asset_name"):
+            problems.append("downloaded tape is not the committed transport asset")
+        ok["frozen_record_identity"] = "PASS" if not problems else f"FAIL: {problems}"
+        res["frozen_record"] = {k: rec.get(k) for k in ("record_run_id", "files_artifact", "tape", "drill")}
+    else:
+        ok["frozen_record_identity"] = "FAIL: no committed B_DRILL_RECORD.json given (--record)"
+    sums = [ln.split("  ", 1) for ln in sums_text.splitlines()]
     bad = [n for h, n in sums if not os.path.exists(os.path.join(d, n)) or _sha(os.path.join(d, n)) != h]
     unlisted = sorted(set(os.listdir(d)) - {n for _, n in sums} - {"SHA256SUMS"})
     ok["sha256sums"] = "PASS" if not bad and not unlisted else f"FAIL: changed={bad} unlisted={unlisted}"
@@ -192,7 +209,11 @@ def _verify(a, d, res, ok):
     # ---- environment B replay --------------------------------------------------------------------------------------
     detail = {}
     keep = os.path.join(os.path.dirname(os.path.abspath(a.result)), os.path.basename(os.path.normpath(d)) + "_REPLAY_B") if a.result else None
-    transport = dict(tr, repo=VE._repo_root()) if tr else None
+    if a.record:                                  # the tape identity B must find is the committed one
+        tt = json.load(open(a.record)).get("tape") or {}
+        if any(tt.get(k) != loc.get(k) for k in ("sha256", "bytes", "key")):
+            fail("tape_identity", f"committed tape identity {tt} != sealed {loc}")
+    transport = dict(tr, local_path=os.path.abspath(a.tape_file)) if tr and a.tape_file else dict(tr or {}, local_path=None)
     VE.replay_shadow_b(d, board, overlay_bytes, prov, detail, keep_dir=keep, tape_locator=transport)
     rep = detail.get("replay_env") or {}
     rec = _load(d, "shadow_env.json")
@@ -249,6 +270,8 @@ def main(argv=None):
     r.add_argument("--transport-out", required=True)
     v = sub.add_parser("verify")
     v.add_argument("--drill-dir", required=True)
+    v.add_argument("--tape-file", help="the downloaded drill transport file (environment B)")
+    v.add_argument("--record", help="committed B_DRILL_RECORD.json: the frozen identities")
     v.add_argument("--result")
     a = ap.parse_args(argv)
     return {"record": record, "verify": verify}[a.cmd](a)

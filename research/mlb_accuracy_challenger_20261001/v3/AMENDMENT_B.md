@@ -90,7 +90,13 @@ All other A1 results are inherited:
 - Prospective mode requires the R2 store; anything else is a MISS UNIT.
 - `R2Store` is implemented and tested against a local mock S3 server and the AWS SigV4 reference vector.
 - **No Cloudflare resource was created or changed.**
-- Drills use an isolated local store for record. A **drill-only, non-authoritative** git transport ref (`claude/mlb-v3-001b-drill-objects`, content-addressed parts) carries the same identity to a virgin environment B.
+- **Drill tape transport** (SUPERCHAD disposition, 2026-10-05; certification drill only):
+  - **No git ref and no git history.** A GitHub Release was preferred, but this session is not permitted to create releases (HTTP 403), so the authorized fallback is used: the complete tape as **ONE GitHub Actions artifact**.
+  - Environment A is a fresh GitHub-hosted runner job (`.github/workflows/v3-b-drill-record.yml`). The tape file inside the artifact is named `fc-mlb-001b-drill-tape-<sha256>.json.gz`, and is temporary (90-day retention) and non-authoritative.
+  - The identities (run id, artifact ids and zip digests, tape sha256 and bytes, the drill files' SHA256SUMS) are committed as `b_drill/B_DRILL_RECORD.json`.
+  - Environment B (`v3-b-drill-replay.yml`) downloads both artifacts **by exact artifact id**, checks the zip digests, and checks every drill file against the committed SHA256SUMS. The verifier checks the tape's **byte size and SHA-256 before replay**; absence or mismatch fails closed.
+  - The recorded sha256, bound into the TSA-timestamped manifest, is authoritative. The transport is never trusted.
+- The prospective path remains the separately reviewed R2 design.
 
 ## Unchanged (science freeze)
 - The challenger model, coefficients, selection, rankings, projected PA, hypotheses, equal-volume procedure and 2027 regime.
@@ -98,7 +104,7 @@ All other A1 results are inherited:
 - `manifest_v3`, `evaluate_v3`, `regimes`, `capture`, `seal` and `schedule_plan` are byte-identical to base.
 
 **Files:**
-- New: `runtime_image.py`, `sandbox.py`, `payload.py`, `tape_store.py`, `b_drill.py`, `test_b.py`, this note, `STORAGE_DESIGN_B.md`, `.github/workflows/v3-b-drill-replay.yml`.
+- New: `runtime_image.py`, `sandbox.py`, `payload.py`, `tape_store.py`, `b_drill.py`, `test_b.py`, this note, `STORAGE_DESIGN_B.md`, `.github/workflows/v3-b-drill-record.yml` (environment A), `.github/workflows/v3-b-drill-replay.yml` (environment B).
 - Changed:
   - `shadow.py`: `run_pipeline_b` added; A1 `run_pipeline` kept as the historical path.
   - `runner.py`: 001B record path, payload, tape store.
@@ -112,4 +118,4 @@ All other A1 results are inherited:
 - Kernel surfaces: 5.
 - The payload `d5c07bb6…da49` is **byte-identical** to the payload of the A1 record board. That board was recorded on a different interpreter build (host 3.11.15) and different system libraries, without thread pinning.
 
-**The 001B drill A → B** (required for acceptance) is recorded in `b_drill/` and its runs are on Issue #91.
+**The 001B drill A → B** (required for acceptance): its identities are in `b_drill/B_DRILL_RECORD.json`, and its runs are on Issue #91.

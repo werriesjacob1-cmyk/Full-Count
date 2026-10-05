@@ -4,6 +4,12 @@
 # collects, seals, pushes, posts, deploys, merges, reads outcomes, or touches V3's trigger, dispatcher, activation or
 # evidence chain. Criteria: ops e5475e66c0 engineering/ops/TASKS/FC-MLB-001B.md.
 #
+# Inputs: the identities frozen in git (b_drill/B_DRILL_RECORD.json, committed from environment A's annotations) name
+# environment A's run and its two artifacts. This job downloads them BY EXACT ARTIFACT ID (REST API; artifacts are
+# temporary, outside git, non-authoritative), checks the artifact zip digests, then the verifier checks every drill
+# file against the committed SHA256SUMS and the tape's byte size + sha256 BEFORE replay. A committed
+# b_drill/MUTANT.json deliberately corrupts the downloaded bytes (controlled mutant): the job must fail.
+#
 # Gate semantics (inherited from the repaired A1 gate): every step runs bash -eo pipefail and starts set -euo
 # pipefail; test output goes to a log and the REAL exit code decides; required tests are never skipped (the
 # sandbox tests require root and run under sudo; a skip is a failure); a missing drill is a failure; the verifier
@@ -14,11 +20,13 @@ name: V3 001B drill replay (environment B, pinned runtime)
 on:
   push:
     branches: [claude/mlb-v3-amendment-b-20261005]
-    paths: ['research/mlb_accuracy_challenger_20261001/v3/**', '.github/workflows/v3-b-drill-replay.yml']
+    paths: ['research/mlb_accuracy_challenger_20261001/v3/**', '.github/workflows/v3-b-drill-replay.yml',
+            '!research/mlb_accuracy_challenger_20261001/v3/b_drill/RECORD_REQUEST.json']
   workflow_dispatch: {}
 
 permissions:
   contents: read
+  actions: read          # download environment A's artifacts by id
 
 concurrency:
   group: v3-b-drill-replay-${{ github.sha }}
@@ -84,23 +92,61 @@ jobs:
           if grep -q "skipped" "$RUNNER_TEMP/out/test_b.log"; then echo "::error title=B TEST test_b::a 001B test was skipped"; exit 1; fi
           run test_v3 python3 -W ignore -m unittest test_v3
           run test_a1 env V3A1_ISOLATION_BASE="$RUNNER_TEMP/iso_a1" python3 -W ignore -m unittest test_a1
-      - name: Replay every 001B drill from sealed artifacts + the tape by exact identity (environment B)
+      - name: Retrieve environment A's artifacts by exact id (temporary transport; verified, never trusted)
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          shopt -s nullglob
-          drills=("$V3"/b_drill/B_DRILL_*/)
-          if [ "${#drills[@]}" -lt 1 ]; then echo "::error title=B DRILLS::no B_DRILL_* directory committed"; exit 1; fi
+          rec="$V3/b_drill/B_DRILL_RECORD.json"
+          if [ ! -s "$rec" ]; then echo "::error title=B DRILLS::no committed b_drill/B_DRILL_RECORD.json"; exit 1; fi
+          python3 - "$rec" > "$RUNNER_TEMP/ids.env" <<'PY'
+          import json, sys
+          r = json.load(open(sys.argv[1]))
+          print(f"DRILL={r['drill']}\nFILES_ID={r['files_artifact']['id']}\nFILES_ZIP={r['files_artifact']['zip_sha256']}")
+          print(f"TAPE_ID={r['tape']['artifact_id']}\nTAPE_ZIP={r['tape']['zip_sha256']}\nTAPE_NAME={r['tape']['asset_name']}")
+          PY
+          source "$RUNNER_TEMP/ids.env"
+          mkdir -p "$RUNNER_TEMP/dl/files/$DRILL" "$RUNNER_TEMP/dl/tape"
+          for kind in files tape; do
+            id_var="${kind^^}_ID"; zip_var="${kind^^}_ZIP"
+            curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+              -o "$RUNNER_TEMP/dl/$kind.zip" "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/${!id_var}/zip"
+            got="sha256:$(sha256sum "$RUNNER_TEMP/dl/$kind.zip" | cut -d' ' -f1)"
+            echo "artifact $kind id=${!id_var} zip=$got committed=${!zip_var}"
+            if [ "$got" != "${!zip_var}" ]; then echo "::error title=B ARTIFACT $kind::zip digest $got != committed ${!zip_var}"; exit 1; fi
+          done
+          unzip -q "$RUNNER_TEMP/dl/files.zip" -d "$RUNNER_TEMP/dl/files/$DRILL"
+          unzip -q "$RUNNER_TEMP/dl/tape.zip" -d "$RUNNER_TEMP/dl/tape"
+          test -f "$RUNNER_TEMP/dl/tape/$TAPE_NAME"
+          echo "::notice title=B TRANSPORT::files_artifact=$FILES_ID tape_artifact=$TAPE_ID tape=$TAPE_NAME bytes=$(stat -c %s "$RUNNER_TEMP/dl/tape/$TAPE_NAME")"
+          mut="$V3/b_drill/MUTANT.json"
+          if [ -f "$mut" ]; then   # controlled corruption mutant: flip one byte of the downloaded tape
+            python3 - "$mut" "$RUNNER_TEMP/dl/tape/$TAPE_NAME" <<'PY'
+          import json, sys
+          m = json.load(open(sys.argv[1])); off = int(m["flip_tape_byte_at"])
+          with open(sys.argv[2], "r+b") as fh:
+              fh.seek(off); b = fh.read(1); fh.seek(off); fh.write(bytes([b[0] ^ 0x01]))
+          print(f"::warning title=B MUTANT::CONTROLLED MUTANT ACTIVE: flipped tape byte at offset {off} ({m.get('label')})")
+          PY
+          fi
+      - name: Replay the 001B drill in the pinned runtime from the frozen identities (environment B)
+        run: |
+          set -euo pipefail
+          source "$RUNNER_TEMP/ids.env"
           : > "$RUNNER_TEMP/out/verify_rc.txt"
-          for d in "${drills[@]}"; do
-            n=$(basename "$d"); rc=0
-            sudo -E env "PATH=$PATH" V3B_RUNTIME_CACHE="$RUNNER_TEMP/v3b_runtime" V3A1_ISOLATION_BASE="$RUNNER_TEMP/iso_$n" \
-              python3 "$V3/b_drill.py" verify --drill-dir "$d" --result "$RUNNER_TEMP/out/${n}_REPLAY_B_RESULT.json" \
-              > "$RUNNER_TEMP/out/${n}_verify.log" 2>&1 || rc=$?
-            tail -c 30000 "$RUNNER_TEMP/out/${n}_verify.log"
-            echo "$n $rc" >> "$RUNNER_TEMP/out/verify_rc.txt"
-            test -s "$RUNNER_TEMP/out/${n}_REPLAY_B_RESULT.json"
-            sudo chmod -R a+rX "$RUNNER_TEMP/out"
-            python3 - "$RUNNER_TEMP/out/${n}_REPLAY_B_RESULT.json" "$rc" <<'PY'
+          n="$DRILL"; rc=0
+          # root (sandbox) reads the runner-owned checkout: safe.directory scoped to this one command via the
+          # environment (never written to any git config; the sandbox's env -i drops it for the pipeline)
+          sudo -E env "PATH=$PATH" V3B_RUNTIME_CACHE="$RUNNER_TEMP/v3b_runtime" V3A1_ISOLATION_BASE="$RUNNER_TEMP/iso_$n" \
+            GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0="$GITHUB_WORKSPACE" \
+            python3 "$V3/b_drill.py" verify --drill-dir "$RUNNER_TEMP/dl/files/$n" --tape-file "$RUNNER_TEMP/dl/tape/$TAPE_NAME" \
+            --record "$V3/b_drill/B_DRILL_RECORD.json" --result "$RUNNER_TEMP/out/${n}_REPLAY_B_RESULT.json" \
+            > "$RUNNER_TEMP/out/${n}_verify.log" 2>&1 || rc=$?
+          tail -c 30000 "$RUNNER_TEMP/out/${n}_verify.log"
+          echo "$n $rc" >> "$RUNNER_TEMP/out/verify_rc.txt"
+          sudo chmod -R a+rX "$RUNNER_TEMP/out"
+          test -s "$RUNNER_TEMP/out/${n}_REPLAY_B_RESULT.json"
+          python3 - "$RUNNER_TEMP/out/${n}_REPLAY_B_RESULT.json" "$rc" <<'PY'
           import json, sys
           r = json.load(open(sys.argv[1])); n = sys.argv[1].rsplit("/", 1)[-1].replace("_REPLAY_B_RESULT.json", "")
           tr = r.get("traces") or {}
@@ -110,14 +156,14 @@ jobs:
                   "REPLAY": r.get("replay"),
                   "HASHES": r.get("hashes"),
                   "IDENTITIES": r.get("identities"),
-                  "TRACE": {k: {kk: (v or {}).get(kk) for kk in ("forbidden_reads", "executables", "n_successful_calls")}
+                  "TRACE": {k: {kk: (v or {}).get(kk) for kk in ("forbidden_reads", "executables", "n_successful_calls", "by_class")}
                             for k, v in tr.items()},
                   "KERNEL": r.get("kernel_surfaces"),
-                  "ENVELOPE": {"envelope": r.get("envelope"), "verifier": r.get("verifier_environment")}}
+                  "ENVELOPE": {"envelope": r.get("envelope"), "verifier": r.get("verifier_environment"),
+                               "frozen_record": r.get("frozen_record")}}
           for k, v in rows.items():
-              print(f"::notice title=B {n} {k}::{json.dumps(v, sort_keys=True)[:4000]}")
+              print(f"::notice title=B {n} {k}::{json.dumps(v, sort_keys=True)[:6000]}")
           PY
-          done
       - name: 'Gate 1/3: integrity (sealed artifacts, bindings, payload seal, tape identity, envelope chronology)'
         if: always()
         run: |

@@ -16,18 +16,18 @@ Backends
                  rules are administered with a separate privilege (see STORAGE_DESIGN_B.md). AUTHORITATIVE for
                  prospective units once Jacob authorizes the account actions. Not activated here.
   LocalFSStore   isolated mock/local store with the same create-only/content-addressed semantics (tests, drills).
-  GitObjectStore drill-only, NON-authoritative transport: content-addressed parts on a dedicated git ref, so a
-                 virgin environment B can retrieve a drill tape. Never used for prospective units.
+  ArtifactTransport  drill-only, NON-authoritative transport (FC-MLB-001B certification drill only): the complete
+                 tape as ONE GitHub Actions artifact named with its full sha256, downloaded by exact artifact id
+                 into a local file by environment B. The bytes are verified like any other store (size + sha256
+                 before use); the transport is never trusted. Never used for prospective units, never in git.
 """
 from __future__ import annotations
 
 import datetime as _dt
 import hashlib
 import hmac
-import json
 import os
 import shutil
-import subprocess
 import tempfile
 import urllib.error
 import urllib.parse
@@ -35,7 +35,6 @@ import urllib.request
 
 KEY_PREFIX = "v3/tapes/sha256/"
 EMPTY_SHA256 = hashlib.sha256(b"").hexdigest()
-PART_BYTES = 95 * 1024 * 1024
 
 
 class StoreError(RuntimeError):
@@ -205,54 +204,28 @@ class R2Store:
         return dest
 
 
-# ---- drill-only transport: content-addressed parts on a git ref -------------------------------------------------
-class GitObjectStore:
-    """objects/sha256/<hex>/{index.json, part00, ...} on `ref` of `remote`. NON-authoritative, drill transport."""
-    kind = "git-drill-transport"
+# ---- drill-only transport: one GitHub Actions artifact (outside git) -------------------------------------------
+ARTIFACT_KIND = "actions-artifact-drill-transport"
 
-    def __init__(self, repo, ref, remote="origin"):
-        self.repo, self.ref, self.remote = repo, ref, remote
 
-    def _git(self, *a, **k):
-        return subprocess.run(["git", "-C", self.repo, *a], check=True, capture_output=True, **k).stdout
+def transport_asset_name(sha256):
+    """The single transport file/artifact name is bound to the whole-tape sha256."""
+    key_for(sha256)
+    return f"fc-mlb-001b-drill-tape-{sha256}.json.gz"
+
+
+class ArtifactTransport:
+    """Reads the tape from the local file environment B downloaded (by exact artifact id). NON-authoritative."""
+    kind = ARTIFACT_KIND
+
+    def __init__(self, local_path):
+        self.local_path = local_path
 
     def get(self, key, dest):
-        sha = key[len(KEY_PREFIX):].split(".", 1)[0]
-        try:
-            self._git("fetch", "-q", "--no-tags", "--depth", "1", self.remote, f"+refs/heads/{self.ref}:refs/v3b/{self.ref}")
-            base = f"refs/v3b/{self.ref}:objects/sha256/{sha}"
-            idx = json.loads(self._git("show", f"{base}/index.json"))
-        except subprocess.CalledProcessError as exc:
-            raise TapeMissing(f"{key} not on drill transport ref {self.ref}: {exc.stderr.decode(errors='replace')[-300:]}") from exc
-        with open(dest, "wb") as fh:
-            for part in idx["parts"]:
-                b = self._git("show", f"{base}/{part['name']}")
-                if hashlib.sha256(b).hexdigest() != part["sha256"]:
-                    raise TapeHashMismatch(f"drill transport part {part['name']} corrupted")
-                fh.write(b)
+        if not self.local_path or not os.path.isfile(self.local_path):
+            raise TapeMissing(f"{key}: drill transport file not present ({self.local_path})")
+        shutil.copyfile(self.local_path, dest)
         return dest
-
-    @staticmethod
-    def layout(path, sha256, out_dir):
-        """Write the content-addressed part layout for a tape (committed to the drill transport ref by the drill tool)."""
-        d = os.path.join(out_dir, "objects", "sha256", sha256)
-        os.makedirs(d, exist_ok=True)
-        parts = []
-        with open(path, "rb") as fh:
-            i = 0
-            while True:
-                b = fh.read(PART_BYTES)
-                if not b:
-                    break
-                name = f"part{i:02d}"
-                with open(os.path.join(d, name), "wb") as o:
-                    o.write(b)
-                parts.append({"name": name, "sha256": hashlib.sha256(b).hexdigest(), "bytes": len(b)})
-                i += 1
-        size = sum(p["bytes"] for p in parts)
-        with open(os.path.join(d, "index.json"), "w") as fh:
-            json.dump({"sha256": sha256, "bytes": size, "parts": parts}, fh, indent=1, sort_keys=True)
-        return d
 
 
 def store_from_locator(loc, repo=None):
@@ -264,8 +237,12 @@ def store_from_locator(loc, repo=None):
         return R2Store(loc["endpoint"], loc["bucket"], os.environ.get("V3B_R2_ACCESS_KEY_ID"),
                        os.environ.get("V3B_R2_SECRET_ACCESS_KEY"),
                        public_base=os.environ.get("V3B_R2_PUBLIC_BASE") or loc.get("public_base"))
-    if kind == "git-drill-transport":
-        return GitObjectStore(repo or loc["repo"], loc["ref"])
+    if kind == ARTIFACT_KIND:
+        if not loc.get("local_path") or not os.path.isfile(loc["local_path"]):
+            raise TapeMissing(f"{loc.get('key')}: drill transport artifact was not downloaded ({loc.get('local_path')})")
+        if os.path.basename(loc.get("local_path") or "") != transport_asset_name(loc["sha256"]):
+            raise StoreError("drill transport file name is not bound to the sealed sha256")
+        return ArtifactTransport(loc.get("local_path"))
     raise StoreError(f"unknown tape store {kind!r}")
 
 

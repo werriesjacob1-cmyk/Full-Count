@@ -17,7 +17,7 @@
 | Lock administration separate | Bucket and lock rules are managed only from Jacob's dashboard login, or an Admin token that is never given to the runner. |
 | Verifier downloads the exact object and hashes it before replay | `tape_store.fetch_verified`: missing → `TAPE_MISSING`, size → `TAPE_SIZE_MISMATCH`, bytes → `TAPE_HASH_MISMATCH`, all fail closed. A locator whose key is not the content address of the sealed sha256 is refused. |
 | Prospective requires R2 | `runner._store_tape`: `V3B_TAPE_STORE=r2` is mandatory in prospective mode; anything else is a MISS UNIT (no seal). |
-| No Git LFS, no ~257 MB/unit in git, no release mirror | None is used. The drill-only git transport ref is non-authoritative and never used for units. |
+| No Git LFS, no ~257 MB/unit in git, no release mirror | None is used. The certification drill alone moves its tape as ONE temporary GitHub Actions artifact (non-authoritative, hash-verified before replay); it is never used for units. |
 
 ## Account actions Jacob would need to authorize (exact; none performed)
 1. **Create the bucket** `fc-v3-evidence-tapes` in the existing FULL COUNT Cloudflare account (R2 → Create bucket; default location; Standard storage class).

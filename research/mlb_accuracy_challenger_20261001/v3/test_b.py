@@ -377,6 +377,111 @@ class Offline(unittest.TestCase):
                 RI.fetch_image(tempfile.mkdtemp())
 
 
+class DrillPath(unittest.TestCase):
+    """The REAL runner record path + b_drill record + b_drill verify, with only the network-facing inputs and the
+    sandbox replay stubbed (the sandbox itself is covered by Sandbox). Exercises: payload sealing, the content-
+    addressed store, the ONE-file Actions-artifact transport, the committed frozen record, envelope chronology,
+    and fail-closed verification of a corrupted transport file."""
+
+    def test_record_then_verify_then_corrupted_transport_fails(self):
+        import datetime as dt
+        import b_drill as BD
+        import capture as CP
+        import runner as RN
+        import seal as SL
+        import test_v3 as T3
+        import verify_evidence as VE
+        base = tempfile.mkdtemp(prefix="bdrill_")
+        now = datetime_now = dt.datetime.now(dt.timezone.utc)
+        day = (now + dt.timedelta(days=1)).date().isoformat()
+        start = f"{day}T23:05:00Z"
+        recs = [T3.rec("c1", name="Al Bat"), T3.rec("c2", name="Bo Bat", player="12", p=0.55)]
+        gen = (datetime_now - dt.timedelta(minutes=2)).isoformat()
+        for r in recs:
+            r["generation_timestamp"] = gen
+        b = {"date": day, "board_generated_at": gen, "sealed_at": gen, "provenance": dict(T3.PROV), "records": recs}
+        b["board_sha256"] = VE.H.canonical_board_hash(b)
+        sch = T3.autofill_rosters(T3.sched(T3.game(1, start=start), date=day), recs)
+        c = T3.cap(T3.event(101, [T3.market(T3.HIT, [T3.runner_("Al Bat", -120), T3.runner_("Bo Bat", 110, sel=2)])],
+                            open_date=start, completed=now.isoformat(), date=day),
+                   started=now.isoformat(), completed=now.isoformat())
+        tape_bytes = os.urandom(50_000)
+        env = {"runtime_image": {"manifest_digest": RI.MANIFEST_DIGEST, "rootfs_tree_sha256": "r"},
+               "b_version": SB.B_VERSION, "lock_sha256": "l", "installed_set_sha256": "i", "python": "3.11.17",
+               "git_identity": {"head": SH.SHADOW_PIN, "tree": SH.SHADOW_TREE, "injected": dict(ISO.GIT_INJECTED_CONFIG)},
+               "amendment_code_sha256": {"netrecord.py": "n"}, "isolation": {"home_empty_at_start": True},
+               "kernel_surfaces": SB.kernel_fingerprint(), "user": "65534:65534", "network": "host egress",
+               "n_http": 3, "process_trace": {"forbidden_reads": 0, "by_class": {}, "kernel_virtual_paths": ["/proc/stat"],
+                                              "n_kernel_virtual_paths": 1},
+               "setup_trace": {"forbidden_reads": 0}}
+        bp = os.path.join(base, "b.json")
+        json.dump(b, open(bp, "w"))
+
+        def fake_pipeline(tree, tape, mode, **k):
+            open(tape, "wb").write(tape_bytes)
+            json.dump(env, open(tape + ".record.env.json", "w"))
+            json.dump({"n_http": 3, "replay_misses": [], "unconsumed": 0}, open(tape + ".record.report.json", "w"))
+            return bp
+        prov = {"shadow_id": SH.SHADOW_ID, "pin": SH.SHADOW_PIN, "tree": SH.SHADOW_TREE,
+                "overlay": {"status": "ABSENT_ON_LIVE_REF", "sealed_sha256": None}}
+        out = os.path.join(base, "B_DRILL_TEST")
+        tsa_t = (now + dt.timedelta(minutes=1)).replace(microsecond=0)
+        with mock.patch.object(RN, "schedule_snapshot", lambda d: sch), \
+                mock.patch.object(SH, "build_tree", lambda *a, **k: json.loads(json.dumps(prov))), \
+                mock.patch.object(SH, "run_pipeline_b", fake_pipeline), mock.patch.object(SH, "remove_tree", lambda *a: None), \
+                mock.patch.object(CP, "capture", lambda: c), mock.patch.object(SL, "tsa_request", lambda d, u: "VE9LRU4="), \
+                mock.patch.object(SL, "tsa_check", lambda digest, b64, name: tsa_t):
+            self.assertEqual(BD.main(["record", "--repo", "/nonexistent", "--date", day, "--window", "NIGHT", "--out", out,
+                                      "--store", os.path.join(base, "store"), "--transport-out", os.path.join(base, "transport")]), 0)
+            self.assertNotIn("shadow_tape.json.gz", os.listdir(out))                       # never in the drill dir / git
+            meta = json.load(open(os.path.join(out, "B_DRILL.json")))
+            tt = meta["tape_transport"]
+            tfile = os.path.join(base, "transport", tt["asset_name"])
+            self.assertEqual(os.listdir(os.path.join(base, "transport")), [tt["asset_name"]])   # ONE file
+            self.assertEqual(TS.file_identity(tfile), (hashlib.sha256(tape_bytes).hexdigest(), len(tape_bytes)))
+            self.assertIn(tt["sha256"], tt["asset_name"])
+            record = os.path.join(base, "B_DRILL_RECORD.json")
+            json.dump({"drill": "B_DRILL_TEST", "sha256sums": open(os.path.join(out, "SHA256SUMS")).read(),
+                       "tape": {"asset_name": tt["asset_name"], "sha256": tt["sha256"], "bytes": tt["bytes"], "key": tt["key"]}},
+                      open(record, "w"))
+
+            def fake_replay(d, board, overlay_bytes, p, detail, keep_dir=None, tape_locator=None):
+                detail["tape_fetched"] = None
+                try:
+                    TS.fetch_verified(tape_locator, tempfile.mkdtemp())
+                    detail["tape_fetched"] = {"verified": True}
+                except TS.StoreError as exc:
+                    detail["replay_error"] = f"{exc.code}: {exc}"
+                    return False
+                detail["replay_env"] = dict(env, replay_misses=0, unconsumed=0, network="none (own network namespace)")
+                detail["payload"] = PL.compare(open(os.path.join(d, "shadow_payload.json"), "rb").read(), board)
+                return True
+            with mock.patch.object(VE, "replay_shadow_b", fake_replay):
+                res = os.path.join(base, "r.json")
+                rc = BD.main(["verify", "--drill-dir", out, "--tape-file", tfile, "--record", record, "--result", res])
+                r = json.load(open(res))
+                self.assertEqual(rc, 0, {k: v for k, v in r["checks"].items() if v != "PASS"})
+                self.assertEqual(r["gates"], {"integrity": "PASS", "replay": "PASS"})
+                self.assertTrue(r["payload"]["literal_identical"])
+                with open(tfile, "r+b") as fh:                                  # corrupted transport bytes
+                    fh.seek(1234)
+                    x = fh.read(1)
+                    fh.seek(1234)
+                    fh.write(bytes([x[0] ^ 1]))
+                self.assertEqual(BD.main(["verify", "--drill-dir", out, "--tape-file", tfile, "--record", record,
+                                          "--result", res]), 1)
+                r = json.load(open(res))
+                self.assertTrue(r["checks"]["tape_retrieved_verified"].startswith("FAIL"))
+                self.assertIn("TAPE_HASH_MISMATCH", r["checks"]["tape_retrieved_verified"])
+                self.assertEqual(BD.main(["verify", "--drill-dir", out, "--tape-file", os.path.join(base, "nope.json.gz"),
+                                          "--record", record, "--result", res]), 1)   # absent -> fail closed
+                json.dump(dict(json.load(open(record)), sha256sums="tampered"), open(record, "w"))
+                self.assertEqual(BD.main(["verify", "--drill-dir", out, "--tape-file", tfile, "--record", record,
+                                          "--result", res]), 1)
+                self.assertTrue(json.load(open(res))["checks"]["frozen_record_identity"].startswith("FAIL"))
+        shutil.rmtree(base, ignore_errors=True)
+
+
 class _S3(http.server.BaseHTTPRequestHandler):
     objects = {}
 
@@ -460,6 +565,30 @@ class Store(unittest.TestCase):
                     TS.fetch_verified(loc)
         finally:
             srv.shutdown()
+
+    def test_actions_artifact_drill_transport_fails_closed(self):
+        loc = {"store": TS.ARTIFACT_KIND, "key": TS.key_for(self.sha), "sha256": self.sha, "bytes": self.n}
+        dl = os.path.join(self.d, "dl")
+        os.makedirs(dl)
+        good = os.path.join(dl, TS.transport_asset_name(self.sha))
+        shutil.copyfile(self.tape, good)
+        got = TS.fetch_verified(dict(loc, local_path=good), tempfile.mkdtemp())
+        self.assertEqual(TS.file_identity(got), (self.sha, self.n))
+        with self.assertRaises(TS.TapeMissing):                          # absent
+            TS.fetch_verified(dict(loc, local_path=None))
+        other = os.path.join(dl, "renamed.json.gz")
+        shutil.copyfile(self.tape, other)
+        with self.assertRaises(TS.StoreError):                           # name not bound to the sealed sha256
+            TS.fetch_verified(dict(loc, local_path=other))
+        with open(good, "r+b") as fh:                                    # truncated
+            fh.truncate(self.n - 1)
+        with self.assertRaises(TS.TapeSizeMismatch):
+            TS.fetch_verified(dict(loc, local_path=good))
+        b = bytearray(open(self.tape, "rb").read())
+        b[7] ^= 0x40
+        open(good, "wb").write(bytes(b))                                 # substituted, same size
+        with self.assertRaises(TS.TapeHashMismatch):
+            TS.fetch_verified(dict(loc, local_path=good))
 
     def test_sigv4_aws_reference_vector(self):
         h = TS.sigv4_headers("GET", "https://examplebucket.s3.amazonaws.com/test.txt", "us-east-1",
