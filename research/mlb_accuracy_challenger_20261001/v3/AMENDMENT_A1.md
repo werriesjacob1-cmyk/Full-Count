@@ -76,3 +76,41 @@ V3 collection stays **HELD**: trigger `trig_011u98uXVuFEipPfbTT6KGur` is disable
 6. Jacob's explicit trigger re-enable.
 
 Local tests passing never reactivate V3.
+
+## Results (drill — NOT A PROSPECTIVE UNIT)
+**Record A** (builder container, isolated root, commit `e6fdee0230`, v3 tree `ed32e97b`):
+- Live inputs from the 2026-10-05 NIGHT slate; 612 HTTP exchanges taped; guard 0 violations.
+- HOME/pybaseball cache/TMP empty at start; python 3.11.15; kernel 6.18 (glibc 2.39).
+- Lock `33034a7f…`; installed set `da98e4af…`; manifest `04f0b810…`; TSA 17:49:21Z.
+- Attempt history is in `a1_drill/ATTEMPTS/`: attempt 1 hit ENOSPC; attempt 2 failed closed on the guard (font-dir probes + stdlib zip, then named).
+
+**Replay B** ([run 37353256200](https://github.com/werriesjacob1-cmyk/Full-Count/actions/runs/37353256200), GitHub-hosted Azure VM, python 3.11.16, kernel 6.17-azure, shallow clone):
+- **PASS on every check.**
+- **0 misses, 0 unconsumed.**
+- Board / capture / schedule / manifest / tape hashes identical to A; provenance `7d3ebacd55`; both TSA tokens valid pregame.
+- Same-container pre-check: also PASS.
+
+**Shallow / full / `core.abbrev`:**
+- `test_provenance_identical_for_shallow_full_and_any_abbrev` passes: full, shallow, abbrev 4 and abbrev 12 all give `HEAD[:10]`.
+- The mutant shows real git gives 4 characters.
+- Environment B itself ran from a shallow clone.
+
+**Legacy units** (`a1_drill/LEGACY_CHECK.json`, clean A1 environment, read-only):
+- 2026-10-03_DAY: 228 misses.
+- 2026-10-03_NIGHT: 225 misses.
+- 2026-10-04_DAY: 219 misses.
+- 2026-10-04_NIGHT: 223 misses.
+- Each has 1 unconsumed exchange, and **all files are unchanged**. They remain NOT reproducible; A1 does not bless them.
+
+## Open items before reactivation (not solved by A1)
+1. **Evidence storage size.**
+   - A complete (cache-free) tape is about 257 MB per unit, versus the old cache-masked tapes of a few MB.
+   - GitHub rejects files over 100 MB, so the drill stores byte-exact ≤95 MB parts bound by the whole-file sha256.
+   - Two units a day would add roughly 0.5 GB/day to the evidence ref.
+   - The storage design is a SUPERCHAD/Jacob decision. Options: chunked git as in the drill, an external immutable store bound by sha256, or Git LFS.
+   - `runner.py` in prospective mode does **not** yet split tapes. The seal/push path must adopt the chosen design before any reactivation.
+2. **Dispatcher.**
+   - `claude/mlb-v3-ops` `v3_dispatch.py` pins `AUTH_COMMIT 504ca9cdb9` / tree `a7c9443`. It must be updated to the amended commit.
+   - A **new Jacob activation record** is required; the old one cannot bind the new tree.
+   - The dispatcher's own `requirements-v3.txt` bootstrap becomes moot, because each run builds its own locked venv.
+3. **Codex** independent challenge of B (clean Linux path: rerun the workflow or reproduce its steps).
