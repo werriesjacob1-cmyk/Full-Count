@@ -34,6 +34,52 @@ import shadow as SH  # noqa: E402
 import verify_evidence as VE  # noqa: E402
 
 LABEL = "FC-MLB-001A EVIDENCE-INTEGRITY DRILL — NOT A PROSPECTIVE UNIT"
+PART_BYTES = 95 * 1024 * 1024          # GitHub rejects files > 100 MB; parts are byte-exact slices of the tape
+
+
+def split_tape(d, name="shadow_tape.json.gz"):
+    """Store the (complete, large) tape as byte-exact parts + an index binding the whole-file sha256."""
+    p = os.path.join(d, name)
+    whole = _sha(p)
+    parts = []
+    with open(p, "rb") as fh:
+        i = 0
+        while True:
+            b = fh.read(PART_BYTES)
+            if not b:
+                break
+            pn = f"{name}.part{i:02d}"
+            with open(os.path.join(d, pn), "wb") as out:
+                out.write(b)
+            parts.append({"name": pn, "sha256": hashlib.sha256(b).hexdigest(), "bytes": len(b)})
+            i += 1
+    with open(os.path.join(d, name + ".parts.json"), "w") as fh:
+        json.dump({"file": name, "sha256": whole, "bytes": os.path.getsize(p), "parts": parts}, fh, indent=1)
+    os.remove(p)
+    return whole
+
+
+def materialize(d):
+    """Return a directory where every split artifact is reassembled (a temp COPY; the drill dir is never modified)."""
+    idx = [n for n in os.listdir(d) if n.endswith(".parts.json")]
+    if not idx:
+        return d, None
+    import shutil
+    import tempfile
+    t = tempfile.mkdtemp(prefix="a1drill_")
+    w = os.path.join(t, os.path.basename(os.path.normpath(d)))
+    shutil.copytree(d, w)
+    for n in idx:
+        meta = json.load(open(os.path.join(w, n)))
+        with open(os.path.join(w, meta["file"]), "wb") as out:
+            for part in meta["parts"]:
+                b = open(os.path.join(w, part["name"]), "rb").read()
+                if hashlib.sha256(b).hexdigest() != part["sha256"]:
+                    raise SystemExit(f"tape part hash mismatch: {part['name']}")
+                out.write(b)
+        if _sha(os.path.join(w, meta["file"])) != meta["sha256"]:
+            raise SystemExit(f"reassembled {meta['file']} sha256 mismatch")
+    return w, t
 
 
 def _sha(p):
@@ -73,6 +119,8 @@ def record(a):
                                    "isolation": env["isolation"], "guard_violations": env["guard"]["violations"],
                                    "n_http_recorded": env["n_http"]},
             "manifest_sha256": summ["manifest_sha256"], "artifacts_sha256": summ["artifacts_sha256"]}
+    meta["tape_storage"] = {"split_parts": True, "whole_sha256": split_tape(a.out),
+                            "reason": "complete (cache-free) tape exceeds GitHub's 100 MB per-file limit"}
     with open(os.path.join(a.out, "A1_DRILL.json"), "w") as fh:
         json.dump(meta, fh, indent=1, sort_keys=True)
     write_sums(a.out)
@@ -85,15 +133,26 @@ def _load(d, n):
 
 
 def verify(a):
-    d, res = a.drill_dir, {"label": LABEL, "checks": {}}
+    orig = a.drill_dir
+    res = {"label": LABEL, "checks": {}}
     ok = res["checks"]
+    sums = [ln.split("  ", 1) for ln in open(os.path.join(orig, "SHA256SUMS")).read().splitlines()]
+    bad = [n for h, n in sums if _sha(os.path.join(orig, n)) != h]
+    ok["sha256sums"] = "PASS" if not bad else f"FAIL: {bad}"
+    d, tmp = materialize(orig)
+    try:
+        return _verify(a, d, res, ok)
+    finally:
+        if tmp:
+            import shutil
+            shutil.rmtree(tmp, ignore_errors=True)
+
+
+def _verify(a, d, res, ok):
 
     def fail(k, why):
         ok[k] = f"FAIL: {why}"
 
-    sums = [ln.split("  ", 1) for ln in open(os.path.join(d, "SHA256SUMS")).read().splitlines()]
-    bad = [n for h, n in sums if _sha(os.path.join(d, n)) != h]
-    ok["sha256sums"] = "PASS" if not bad else f"FAIL: {bad}"
     summ, meta = _load(d, "DRILL_SUMMARY.json"), _load(d, "A1_DRILL.json")
     arts = summ["artifacts_sha256"]
     need = set(VE.REQUIRED_ARTIFACTS) | {"shadow_env.json"}

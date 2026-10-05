@@ -43,8 +43,11 @@ OS_RUNTIME_PREFIXES = ("/dev/", "/proc/", "/sys/", "/etc/ssl/", "/etc/pki/", "/e
                        "/usr/share/ca-certificates/", "/usr/lib/ssl/", "/usr/share/zoneinfo/", "/etc/localtime",
                        "/etc/timezone", "/etc/hosts", "/etc/resolv.conf", "/etc/nsswitch.conf", "/etc/host.conf",
                        "/etc/gai.conf", "/etc/services", "/etc/protocols", "/etc/mime.types", "/usr/share/mime/",
-                       "/etc/os-release", "/usr/lib/os-release", "/usr/share/fonts/", "/etc/fonts/",
-                       "/usr/share/zoneinfo")
+                       "/etc/os-release", "/usr/lib/os-release", "/usr/share/fonts", "/etc/fonts/",
+                       "/usr/share/zoneinfo",
+                       # matplotlib font discovery probes these standard OS font locations (rendering only)
+                       "/usr/local/share/fonts", "/usr/X11/lib/X11/fonts", "/usr/X11R6/lib/X11/fonts",
+                       "/usr/lib/openoffice/share/fonts", "/usr/share/texmf/fonts")
 
 
 class IsolationError(RuntimeError):
@@ -166,7 +169,9 @@ class IsolatedRun:
         _, shim_sha = _git_shim(self.bin, real_git)
         py = os.path.join(self.venv, "bin", "python")
         stdlib = {sysconfig.get_paths()["stdlib"], sysconfig.get_paths()["platstdlib"]}
-        allowed = sorted({self.workdir + "/", self.root + "/", HERE + "/", *(p.rstrip("/") + "/" for p in stdlib),
+        # the interpreter's stdlib zip entry on sys.path (probed by the import system even when absent)
+        stdlib_zip = os.path.join(sys.base_prefix, "lib", f"python{sys.version_info.major}{sys.version_info.minor}.zip")
+        allowed = sorted({self.workdir + "/", self.root + "/", HERE + "/", *(p.rstrip("/") + "/" for p in stdlib), stdlib_zip,
                           *(p + ("/" if os.path.isdir(p) else "") for p in self.extra_allowed), *OS_RUNTIME_PREFIXES})
         env = {"PATH": f"{self.bin}:{os.path.dirname(py)}:/usr/local/bin:/usr/bin:/bin",
                "HOME": self.home, "XDG_CACHE_HOME": os.path.join(self.home, ".cache"),
