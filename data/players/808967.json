@@ -528,7 +528,7 @@
         {
           "prop": "Over 6.5 Strikeouts",
           "type": "pitcher",
-          "score": 55.3,
+          "score": 40.1,
           "notable_signals": 0,
           "matchup": "Los Angeles Dodgers @ Atlanta Braves",
           "game_pk": 849819,
@@ -540,11 +540,14 @@
             "opp_team_k_pct": 46.0,
             "same_hand_ratio": 100.0,
             "l14_k_pct": 2.3529,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 50.6706,
+            "ump_k_pct": -0.06,
+            "ump_bb_pct": -0.396
           },
-          "hit_probability": 0.3733,
-          "raw_hit_probability": 0.3733,
-          "lift": 0.115,
+          "hit_probability": 0.3735,
+          "raw_hit_probability": 0.3735,
+          "lift": 0.1148,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
@@ -554,9 +557,9 @@
           }
         },
         {
-          "prop": "Over 19.5 Outs Recorded",
+          "prop": "Over 17.5 Outs Recorded",
           "type": "pitcher",
-          "score": 53.3,
+          "score": 90.2,
           "notable_signals": 1,
           "matchup": "Los Angeles Dodgers @ Atlanta Braves",
           "game_pk": 849819,
@@ -565,18 +568,46 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.3942,
+            "outs_rate": 0.8423,
             "avg_outs_per_start": 19.82
           },
-          "hit_probability": 0.3942,
-          "raw_hit_probability": 0.3942,
-          "lift": 0.1602,
+          "hit_probability": 0.8423,
+          "raw_hit_probability": 0.8423,
+          "lift": 0.2359,
           "reliability": "A",
           "sample_n": 28,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 19.5,
-            "needs": 20
+            "value": 17.5,
+            "needs": 18
+          }
+        },
+        {
+          "prop": "Over 13.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 55.0,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Atlanta Braves",
+          "game_pk": 849819,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            808967,
+            519242
+          ],
+          "signals": {
+            "combined_k_edge": 0.0143
+          },
+          "hit_probability": 0.5679,
+          "raw_hit_probability": null,
+          "lift": 0.0143,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 13.5,
+            "needs": 14
           }
         }
       ]
