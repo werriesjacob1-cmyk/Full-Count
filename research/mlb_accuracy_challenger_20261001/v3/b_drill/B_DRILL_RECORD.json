@@ -1,0 +1,27 @@
+{
+ "drill": "B_DRILL_20261006_NIGHT",
+ "files_artifact": {
+  "id": 11440875126,
+  "name": "fc-mlb-001b-drill-files-B_DRILL_20261006_NIGHT",
+  "zip_sha256": "693fa7c6c622c5b9f6abd32b12f903f26281ec8eeedb928ddf6588c86dd42b3e"
+ },
+ "label": "FC-MLB-001B EVIDENCE-INTEGRITY DRILL — NOT A PROSPECTIVE UNIT",
+ "manifest_sha256": "d32cf2e7ce10e6a66bc5fe2592f2cc8c7fa2fe4267278df1cde59f92fa6d95f1",
+ "record_commit": "20cdc5492ac333fefcfdeaef49d3f7143d6c59bc",
+ "record_run_id": 37519025967,
+ "repository": "werriesjacob1-cmyk/Full-Count",
+ "rootfs_tree_sha256": "5b1f69853ed2dcbabab032fff2916e224492086ce0798cf032eb745f7c55f288",
+ "runtime_image": "sha256:9fd630803ec3446920ed6b64d20150bd724c1751e71817293a4230522c1a384a",
+ "scientific_payload_sha256": "65f84854b229b3794fae0520ddd04f76769b11b8c750e147d43ee5614ff1457a",
+ "sha256sums": "980a809fa5929f6dea8ac30c4bf5dd2929d4252130e5f6385651051e80ad6b3d  B_DRILL.json\nf01cd01c2d9697dd6f5a264f15c731a7ff81c030dbba7466755f4e76637a5e3d  DRILL_SUMMARY.json\nbb8a256f65d16dd63cf33815caf24cda038850a01ed1fd7ce8553045ae11413d  capture.json.gz\na1142b02b68e339ab6dddc468314e5563385005406bfd2b3a9c15a48f4d152d6  manifest.json.gz\nd6700c1eff20d311c941397813e4eb7a021ae42eb6d2befd8357bca108964bf3  overlay.json\n45c6b77bd111de20c45bd98e8231459b3b5fe7e852c7710b4395c75e4a9140c2  record_report.json\nd067e047637869c0a32373bab143117f13c42b44cfb56e3b9a6b036273b76c11  schedule.json\n904fb058805a8f0205f315e0d910bee1e69d5e32b0eaccc8f3da8e18f250f79d  shadow_board.json.gz\n5be90fc6285d43887b32d8e8879c5a750cdb2fc72d0a9eb97a91c08c64a4478b  shadow_board_raw.json.gz\n110e3127cc303eb9cb67d21a433cefd2ee815a8d4484f1882259964d86bcb450  shadow_env.json\n65f84854b229b3794fae0520ddd04f76769b11b8c750e147d43ee5614ff1457a  shadow_payload.json\na4fb342ed1ffc866c84a20d8761c302272f490c03d0809b1385dedfa92d556a7  shadow_record_setup_trace.strace.gz\neec953a50620df7c1d529452ef9a79684c4aebae34409110dbc5e71d25204c48  shadow_record_trace.strace.gz\n",
+ "tape": {
+  "artifact_id": 11440380328,
+  "artifact_name": "tape-B_DRILL_20261006_NIGHT",
+  "asset_name": "fc-mlb-001b-drill-tape-7c6d697e9a5f491601c3e645f3604f0c84c6cd777372ab8aa67d5f6d6bbfe3a1.json.gz",
+  "bytes": 257561834,
+  "key": "v3/tapes/sha256/7c6d697e9a5f491601c3e645f3604f0c84c6cd777372ab8aa67d5f6d6bbfe3a1.json.gz",
+  "sha256": "7c6d697e9a5f491601c3e645f3604f0c84c6cd777372ab8aa67d5f6d6bbfe3a1",
+  "transport": "github-actions-artifact",
+  "zip_sha256": "03813126b68bbb08d1256f04900b6c0712daa7a0208265ae81ec92717b829298"
+ }
+}
