@@ -6417,3 +6417,27 @@ Alligator
 **Unchanged:** the 001B criteria, the 001B branch `dac663c0a2`, the drill plan, the science, the trigger (disabled), the dispatcher, the evidence ref and PR #220. No Cloudflare resource was created.
 
 Alligator
+
+## 2026-10-06 — FC-MLB-001B: Codex pre-drill MUST FIX 1+2 repaired; drill recorded A→B; mutant red; clean green — READY FOR CODEX; V3 HELD
+
+**Fixes:** `674576e4bb` on `claude/mlb-v3-amendment-b-20261005`.
+- **MUST FIX 1 — digest format:** one frozen representation, bare lowercase hex. Record A normalizes, and replay B compares normalized values.
+- **MUST FIX 2 — provenance binding:** `b_artifacts.py` binds both artifacts before download. It checks: id, name, not expired, metadata digest, `workflow_run.id`/`head_sha` equal to `record_run_id`/`record_commit`, and run id/`head_sha`/repository. Mismatch fails closed.
+- **Tests:** `test_b_artifacts` 12 OK.
+- **CI 37518119432:** test_b 32, test_v3 88, test_a1 21 (1 skipped) and test_b_artifacts 12 OK.
+
+**Drill `B_DRILL_20261006_NIGHT`** (first pitch 22:00Z; latest start 21:05Z):
+- **Record A:** request at 19:26:48Z; run 37519025967 @ `20cdc5492a`; recorded 19:32–19:37Z.
+- **Tape:** artifact 11440380328, transport github-actions-artifact; sha256 `7c6d697e9a5f491601c3e645f3604f0c84c6cd777372ab8aa67d5f6d6bbfe3a1`; 257,561,834 bytes; zip `03813126…9298`.
+- **Files:** artifact 11440875126; zip `693fa7c6…2b3e`.
+- **Replay B:**
+  - clean run 37520390885: PASS;
+  - mutant run 37521643420: FAIL, TAPE_HASH_MISMATCH (as required);
+  - clean rerun 37522585905 @ `6a9618cd76`: PASS.
+- **Results:** 0 misses, 0 unconsumed, 0 forbidden reads; payload literally identical (`65f84854…457a`, 194,048 bytes); runtime `sha256:9fd63080…384a`, rootfs `5b1f6985…f288`.
+
+**Ops:** FC-MLB-001B is READY_FOR_CHALLENGE at `6a9618cd76`.
+
+**Unchanged:** criteria, science, trigger, dispatcher, activation, evidence chain, PR #220.
+
+Alligator
