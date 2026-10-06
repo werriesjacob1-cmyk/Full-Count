@@ -5,8 +5,9 @@
 # evidence chain. Criteria: ops e5475e66c0 engineering/ops/TASKS/FC-MLB-001B.md.
 #
 # Inputs: the identities frozen in git (b_drill/B_DRILL_RECORD.json, committed from environment A's annotations) name
-# environment A's run and its two artifacts. This job downloads them BY EXACT ARTIFACT ID (REST API; artifacts are
-# temporary, outside git, non-authoritative), checks the artifact zip digests, then the verifier checks every drill
+# environment A's run and its two artifacts. This job first requires GitHub's artifact + run metadata to bind exactly
+# to the committed record (b_artifacts.py), downloads them BY EXACT ARTIFACT ID (REST API; artifacts are temporary,
+# outside git, non-authoritative), checks the artifact zip digests (bare lowercase hex), then the verifier checks every drill
 # file against the committed SHA256SUMS and the tape's byte size + sha256 BEFORE replay. A committed
 # b_drill/MUTANT.json deliberately corrupts the downloaded bytes (controlled mutant): the job must fail.
 #
@@ -90,6 +91,7 @@ jobs:
           }
           run test_b sudo -E env "PATH=$PATH" V3B_RUNTIME_CACHE="$RUNNER_TEMP/v3b_runtime" V3A1_ISOLATION_BASE="$RUNNER_TEMP/iso_b" python3 -W ignore -m unittest test_b -v
           if grep -q "skipped" "$RUNNER_TEMP/out/test_b.log"; then echo "::error title=B TEST test_b::a 001B test was skipped"; exit 1; fi
+          run test_b_artifacts python3 -W ignore -m unittest test_b_artifacts
           run test_v3 python3 -W ignore -m unittest test_v3
           run test_a1 env V3A1_ISOLATION_BASE="$RUNNER_TEMP/iso_a1" python3 -W ignore -m unittest test_a1
       - name: Retrieve environment A's artifacts by exact id (temporary transport; verified, never trusted)
@@ -107,13 +109,13 @@ jobs:
           PY
           source "$RUNNER_TEMP/ids.env"
           mkdir -p "$RUNNER_TEMP/dl/files/$DRILL" "$RUNNER_TEMP/dl/tape"
+          # Codex pre-drill audit MUST FIX 1 + 2: GitHub's artifact + workflow-run metadata must agree EXACTLY with
+          # the committed record (id, name, record run id, record commit, repository, not expired, digest) BEFORE
+          # download; then the zip's own sha256 (bare lowercase hex, the one frozen representation) is checked.
           for kind in files tape; do
-            id_var="${kind^^}_ID"; zip_var="${kind^^}_ZIP"
-            curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
-              -o "$RUNNER_TEMP/dl/$kind.zip" "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/${!id_var}/zip"
-            got="sha256:$(sha256sum "$RUNNER_TEMP/dl/$kind.zip" | cut -d' ' -f1)"
-            echo "artifact $kind id=${!id_var} zip=$got committed=${!zip_var}"
-            if [ "$got" != "${!zip_var}" ]; then echo "::error title=B ARTIFACT $kind::zip digest $got != committed ${!zip_var}"; exit 1; fi
+            python3 "$V3/b_artifacts.py" --record "$rec" --kind "$kind" --out "$RUNNER_TEMP/dl/$kind.zip" \
+              | tee "$RUNNER_TEMP/out/binding_$kind.json"
+            echo "::notice title=B ARTIFACT BINDING $kind::$(cat "$RUNNER_TEMP/out/binding_$kind.json")"
           done
           unzip -q "$RUNNER_TEMP/dl/files.zip" -d "$RUNNER_TEMP/dl/files/$DRILL"
           unzip -q "$RUNNER_TEMP/dl/tape.zip" -d "$RUNNER_TEMP/dl/tape"

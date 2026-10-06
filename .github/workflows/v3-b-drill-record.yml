@@ -118,13 +118,18 @@ jobs:
               for chunk in iter(lambda: fh.read(1 << 20), b""):
                   h.update(chunk); n += len(chunk)
           tt = meta["tape_transport"]
+          def hex64(d):  # frozen digest representation: bare 64-char lowercase hex (Codex pre-drill audit MUST FIX 1)
+              d = d.strip().lower()
+              d = d[len("sha256:"):] if d.startswith("sha256:") else d
+              assert len(d) == 64 and all(c in "0123456789abcdef" for c in d), f"not a sha256 digest: {d!r}"
+              return d
           assert (h.hexdigest(), n, name) == (tt["sha256"], tt["bytes"], tt["asset_name"]), "transport file != sealed identity"
           rec = {"label": meta["label"], "drill": os.path.basename(d), "record_run_id": int(os.environ["GITHUB_RUN_ID"]),
-                 "record_commit": os.environ["GITHUB_SHA"],
+                 "record_commit": os.environ["GITHUB_SHA"], "repository": os.environ["GITHUB_REPOSITORY"],
                  "files_artifact": {"name": f"fc-mlb-001b-drill-files-{os.path.basename(d)}",
-                                    "id": int(os.environ["FILES_ID"]), "zip_sha256": os.environ["FILES_DIGEST"]},
+                                    "id": int(os.environ["FILES_ID"]), "zip_sha256": hex64(os.environ["FILES_DIGEST"])},
                  "tape": {"transport": "github-actions-artifact", "artifact_name": f"tape-{os.path.basename(d)}",
-                          "artifact_id": int(os.environ["TAPE_ID"]), "zip_sha256": os.environ["TAPE_DIGEST"],
+                          "artifact_id": int(os.environ["TAPE_ID"]), "zip_sha256": hex64(os.environ["TAPE_DIGEST"]),
                           "asset_name": name, "key": tt["key"], "sha256": tt["sha256"], "bytes": tt["bytes"]},
                  "scientific_payload_sha256": meta["scientific_payload_sha256"], "manifest_sha256": meta["manifest_sha256"],
                  "runtime_image": meta["runtime_image"]["manifest_digest"],
