@@ -429,17 +429,52 @@
    "EVIDENCE_POINTERS": [
     "claude/mlb-v3-amendment-b-20261005 @ dac663c0a2 (impl b55e71e191 + transport 5b464486de + R2 bug fix)",
     "CI 37385877630: test_b 32 / test_v3 88 / test_a1 21 OK; no drill yet",
-    "Prep (not executed): claude/mlb-v3-reactivation-prep-20261005 @ ae45814729 (REACTIVATION_PACKAGE.md, GRADING_AUDIT_V3.md, scorecard_v3.py)"
+    "Prep (not executed): claude/mlb-v3-reactivation-prep-20261005 @ 2e97b013d2 (temporary Actions-artifact tape store + retention monitor + R2 migration tooling; REACTIVATION_PACKAGE.md, GRADING_AUDIT_V3.md, scorecard_v3.py)"
    ],
    "BLOCKERS": [],
-   "NEXT_ACTION": "Drill A on 2026-10-06 ~13:00Z via v3-b-drill-record.yml (Actions artifact transport), then env B, mutant, clean rerun; then Codex. V3 held.",
-   "AUTHORITY_REQUIRED": "Jacob: R2 account actions, new activation, trigger re-enable; SUPERCHAD: criteria changes, acceptance",
+   "NEXT_ACTION": "Drill A on 2026-10-06 ~13:00Z via v3-b-drill-record.yml (Actions artifact transport; plan unchanged), then env B, mutant, clean rerun; then Codex (001B head + prep temporary-store delta). V3 held.",
+   "AUTHORITY_REQUIRED": "Jacob: new activation, trigger re-enable (R2 account is NOT required for activation; see FC-MLB-001C); SUPERCHAD: criteria changes, acceptance",
    "WIP_EXEMPT": false,
    "CHALLENGE_ACTIVE": false,
-   "UPDATED": "2026-10-05T21:02:08Z",
+   "UPDATED": "2026-10-06T04:15:04Z",
    "HISTORY": [
     "2026-10-05T21:01:53Z claude -> READY (criteria frozen per SUPERCHAD disposition; supersedes A1 R5 + raw literal-board equality only)",
     "2026-10-05T21:02:08Z claude -> CLAUDE_ACTIVE"
+   ]
+  },
+  {
+   "TASK_ID": "FC-MLB-001C",
+   "SPORT": "MLB",
+   "KIND": "engineering",
+   "LANE": "A",
+   "OWNER": "claude",
+   "CHALLENGER": "codex",
+   "STATUS": "BLOCKED",
+   "BASE_SHA": "2e97b013d2fb",
+   "BRANCH": "(none yet; tooling pre-built on claude/mlb-v3-reactivation-prep-20261005)",
+   "HEAD_SHA": null,
+   "OBJECTIVE": "Migrate authoritative V3 tape storage from GitHub Actions artifacts to Cloudflare R2 or equivalent durable object storage before temporary artifact retention threatens any prospective evidence (Jacob 2026-10-06). Byte-preserving; sealed identity unchanged.",
+   "ACCEPTANCE_CRITERIA": [
+    "TASKS/FC-MLB-001C.md: preserved R2 contract (CAS key, sha256+size, create-only, bucket lock, read-back, fail closed, scoped creds, separate retention admin); byte-preserving copy with independent source verification; create-only STORAGE_MIGRATIONS record keeping the original artifact identity; seals never modified; retention_monitor MIGRATED_DURABLE for every artifact-backed unit; Codex review"
+   ],
+   "FILES_OR_AREAS": [
+    "research/mlb_accuracy_challenger_20261001/v3/tape_migration.py",
+    "evidence ref STORAGE_MIGRATIONS/ (append-only)"
+   ],
+   "EVIDENCE_POINTERS": [
+    "claude/mlb-v3-reactivation-prep-20261005 @ 2e97b013d2: tape_migration.py, retention_monitor.py, STORAGE_TEMPORARY.md, test_temp_storage.py (15 OK)",
+    "001B STORAGE_DESIGN_B.md (exact Cloudflare setup; none performed)"
+   ],
+   "BLOCKERS": [
+    "Jacob: Cloudflare payment method + R2 account/bucket-lock/token setup (separate authorization)"
+   ],
+   "NEXT_ACTION": "Standing: retention_monitor on every dispatcher tick; at MIGRATE_WARNING (<=45 days remaining) raise on #91; migrate once Jacob sets up R2. Not an activation prerequisite.",
+   "AUTHORITY_REQUIRED": "Jacob: Cloudflare account/payment/bucket lock/tokens; agents create no Cloudflare resource",
+   "WIP_EXEMPT": true,
+   "CHALLENGE_ACTIVE": false,
+   "UPDATED": "2026-10-06T04:15:04Z",
+   "HISTORY": [
+    "2026-10-06T04:15:04Z claude -> BLOCKED (milestone recorded per Jacob storage decision; blocked on R2 account)"
    ]
   }
  ]

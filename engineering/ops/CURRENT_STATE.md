@@ -33,6 +33,7 @@ MLB 60% / NFL 40%. NFL may take the majority inside T−48h of an NFL slate lock
   - Runner session `session_016RxnYjrtP3stCp3XRSa2Ux`, woken by `trig_011u98uXVuFEipPfbTT6KGur` (hourly at :07, 13–01Z), running the dispatcher on `claude/mlb-v3-ops`.
   - Current regime is `2026_POSTSEASON_SHADOW` (descriptive). The confirmatory regime is the 2027 regular season.
   - No V3 outcome reads or scoring; one-look rules apply.
+  - **Tape storage (Jacob 2026-10-06):** GitHub Actions artifacts are the TEMPORARY authoritative store (hash-bound, 90-day retention, `retention_monitor.py` WARN ≤45 / CRITICAL ≤30 days remaining). R2 is not an activation prerequisite. **FC-MLB-001C** (migration to R2 or equivalent durable storage, byte-preserving) is a standing milestone, blocked on Jacob's Cloudflare setup; never drop it.
 - **Focus:** predictive-engine development (probabilistic prop engine): **FC-MLB-002** (repaired; zero-match fix 7c331c266b) ; **FC-MLB-004** DONE (negative); **FC-MLB-005** DONE (NO_GAIN); **FC-MLB-006** DONE (NO_GAIN). No FC-MLB-007 authorized; next MLB direction pending V3 first evidence and cleanup.
 - **Other MLB drafts** (pointers only; read on demand): #219 forward-chain study, #217 market-anchor prereg, #198 slate-date contract audit.
 
@@ -53,6 +54,7 @@ Run `fc.py queue` for the live board. WIP: at most 1 active build per sport and 
 
 ## Blockers / risks
 - **Engineering blockers:** none recorded.
+- **Evidence-retention risk:** artifact-backed V3 tapes expire after 90 days. 2027 confirmatory units cannot reach their 2027-10-05 look without FC-MLB-001C.
 - **Ops risk:** a V3 NIGHT unit whose latest start falls after 00:00Z may fail closed. The unit is lost; no backfill.
 
 ## Pointers
