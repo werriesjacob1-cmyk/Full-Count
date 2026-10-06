@@ -414,10 +414,10 @@
    "LANE": "A",
    "OWNER": "claude",
    "CHALLENGER": "codex",
-   "STATUS": "CLAUDE_ACTIVE",
+   "STATUS": "READY_FOR_CHALLENGE",
    "BASE_SHA": "8ef01e4c221cdc272a4c2d4d90b0655e33d88acd",
    "BRANCH": "claude/mlb-v3-amendment-b-20261005",
-   "HEAD_SHA": "dac663c0a28a2a27fbc26fe609de628a5739b99b",
+   "HEAD_SHA": "6a9618cd7641ee26607777e59ffdf1903ef99915",
    "OBJECTIVE": "Successor to FC-MLB-001A: replace the two mis-specified A1 requirements (A1 R5, raw literal-board equality) with a pinned-runtime boundary (digest-pinned image, sandbox, whole-tree trace, forbidden-read classes) and a frozen scientific-payload identity contract; R2 content-addressed tape-store code path (no account changes); new 001B drill A->B. Infrastructure only.",
    "ACCEPTANCE_CRITERIA": [
     "TASKS/FC-MLB-001B.md (frozen before code): inherited I1-I8, new R5 runtime boundary, pinned image digest, payload v1 literal identity, R2 store fail-closed, new drill A->B, mutant nonzero / clean green, Codex reproduction; V3 held"
@@ -427,19 +427,21 @@
     ".github/workflows/v3-b-drill-replay.yml (001B branch only)"
    ],
    "EVIDENCE_POINTERS": [
-    "claude/mlb-v3-amendment-b-20261005 @ dac663c0a2 (impl b55e71e191 + transport 5b464486de + R2 bug fix)",
-    "CI 37385877630: test_b 32 / test_v3 88 / test_a1 21 OK; no drill yet",
+    "claude/mlb-v3-amendment-b-20261005 @ 6a9618cd76 (Codex MUST FIX 1+2 at 674576e4bb: bare-hex digest + artifact metadata provenance binding)",
+    "Drill B_DRILL_20261006_NIGHT: record A run 37519025967 @ 20cdc5492a; files artifact 11440875126 (zip 693fa7c6...2b3e), tape artifact 11440380328 (tape sha256 7c6d697e9a5f491601c3e645f3604f0c84c6cd777372ab8aa67d5f6d6bbfe3a1, 257561834 bytes, zip 03813126...9298)",
+    "Replay B clean 37520390885 PASS; mutant 37521643420 FAIL (TAPE_HASH_MISMATCH); clean rerun 37522585905 PASS; payload literal identical 65f84854...457a",
     "Prep (not executed): claude/mlb-v3-reactivation-prep-20261005 @ 2e97b013d2 (temporary Actions-artifact tape store + retention monitor + R2 migration tooling; REACTIVATION_PACKAGE.md, GRADING_AUDIT_V3.md, scorecard_v3.py)"
    ],
    "BLOCKERS": [],
-   "NEXT_ACTION": "Drill A on 2026-10-06 ~13:00Z via v3-b-drill-record.yml (Actions artifact transport; plan unchanged), then env B, mutant, clean rerun; then Codex (001B head + prep temporary-store delta). V3 held.",
+   "NEXT_ACTION": "Codex: independent challenge of the exact head 6a9618cd76 + drill evidence (and the prep temporary-store delta). V3 held; no activation.",
    "AUTHORITY_REQUIRED": "Jacob: new activation, trigger re-enable (R2 account is NOT required for activation; see FC-MLB-001C); SUPERCHAD: criteria changes, acceptance",
    "WIP_EXEMPT": false,
    "CHALLENGE_ACTIVE": false,
-   "UPDATED": "2026-10-06T04:15:04Z",
+   "UPDATED": "2026-10-06T20:09:04Z",
    "HISTORY": [
     "2026-10-05T21:01:53Z claude -> READY (criteria frozen per SUPERCHAD disposition; supersedes A1 R5 + raw literal-board equality only)",
-    "2026-10-05T21:02:08Z claude -> CLAUDE_ACTIVE"
+    "2026-10-05T21:02:08Z claude -> CLAUDE_ACTIVE",
+    "2026-10-06T20:09:04Z claude -> READY_FOR_CHALLENGE"
    ]
   },
   {
