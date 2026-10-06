@@ -68,6 +68,11 @@ class StoreAuthError(StoreError):
     code = "STORE_AUTH_FAILED"
 
 
+class TapeExpired(TapeMissing):
+    """A temporary (Actions artifact) tape whose retention ran out: the evidence can no longer be replayed."""
+    code = "TAPE_EXPIRED"
+
+
 class StoreUnavailable(StoreError):
     """Network interruption / 5xx / 429 that persisted through the bounded retries."""
     code = "STORE_UNAVAILABLE"
@@ -296,6 +301,71 @@ class ArtifactTransport:
         return dest
 
 
+# ---- TEMPORARY authoritative prospective store: GitHub Actions artifacts (Jacob, 2026-10-06) ---------------------
+# Same evidence-integrity contract as R2 (content address = whole-tape sha256; exact size; create-only per run;
+# verified read-back BEFORE the seal is published; fetch by exact identity; hash before replay; missing / expired /
+# size / hash mismatch fail closed; NO fallback to runner-local caches or any other source). The transport is not
+# trusted; the sealed sha256 + size are authoritative. NOT archival: artifacts expire (90 days on this repository),
+# so every artifact-backed tape MUST be migrated byte-for-byte to durable storage (R2) before the migration
+# threshold (retention_monitor.py; milestone FC-MLB-001C). The R2 code above stays ready for that.
+GHA_KIND = "github-actions-artifact"
+GHA_CONTRACT = "fc-v3-gha-artifact-temp-1"
+
+
+def gha_names(sha256):
+    """(artifact name, file name inside it), both bound to the whole-tape sha256."""
+    key_for(sha256)
+    return f"v3-tape-{sha256}", f"fc-v3-tape-{sha256}.json.gz"
+
+
+class ActionsArtifactStage:
+    """Stages the tape inside a GitHub Actions job for upload by the workflow (only an Actions job can create an
+    artifact). The locator binds repository + run + artifact name + sha256 + size BEFORE upload; the workflow then
+    uploads, and artifact_api.confirm_upload proves the uploaded bytes (read-back) before the seal is published."""
+    kind = GHA_KIND
+
+    def __init__(self, stage_dir, repository, run_id, run_attempt, retention_days):
+        if not (repository and run_id and run_attempt and retention_days):
+            raise StoreError("Actions artifact store needs repository, run id, run attempt and retention days")
+        self.stage_dir, self.repository = os.path.abspath(stage_dir), repository
+        self.run_id, self.run_attempt, self.retention_days = int(run_id), int(run_attempt), int(retention_days)
+
+    @classmethod
+    def from_env(cls):
+        return cls(os.environ.get("V3B_ARTIFACT_STAGE_DIR") or "", os.environ.get("GITHUB_REPOSITORY"),
+                   os.environ.get("GITHUB_RUN_ID"), os.environ.get("GITHUB_RUN_ATTEMPT"),
+                   os.environ.get("V3B_ARTIFACT_RETENTION_DAYS"))
+
+    def locator(self, sha256, size):
+        name, fname = gha_names(sha256)
+        return {"store": self.kind, "storage_contract": GHA_CONTRACT, "repository": self.repository,
+                "run_id": self.run_id, "run_attempt": self.run_attempt, "artifact_name": name, "file_name": fname,
+                "key": key_for(sha256), "sha256": sha256, "bytes": size, "retention_days": self.retention_days,
+                "durability": "TEMPORARY (Actions artifact retention); R2 migration required"}
+
+    def stage(self, path, sha256, size):
+        _verify(path, sha256, size)
+        os.makedirs(self.stage_dir, exist_ok=True)
+        if os.listdir(self.stage_dir):
+            raise StoreError("artifact stage dir is not empty: exactly one tape per artifact")
+        dest = os.path.join(self.stage_dir, gha_names(sha256)[1])
+        shutil.copyfile(path, dest)
+        _verify(dest, sha256, size)
+        return dict(self.locator(sha256, size), write_status="STAGED_FOR_UPLOAD", verified_readback=False)
+
+
+def _gha_local(loc):
+    """The verifier never downloads by itself from a random place: the exact artifact (by id) is downloaded by
+    artifact_api into V3B_ARTIFACT_DOWNLOAD_DIR; anything else -> missing. No fallback."""
+    d = os.environ.get("V3B_ARTIFACT_DOWNLOAD_DIR")
+    p = os.path.join(d, loc["file_name"]) if d and loc.get("file_name") else None
+    if loc.get("file_name") != gha_names(loc["sha256"])[1]:
+        raise StoreError("artifact file name is not bound to the sealed sha256")
+    if not p or not os.path.isfile(p):
+        raise TapeMissing(f"{loc.get('artifact_name')}: artifact not downloaded (missing or expired)")
+    return ArtifactTransport(p)
+
+
 def store_from_locator(loc, repo=None):
     kind = loc.get("store")
     if kind == "localfs":
@@ -305,6 +375,8 @@ def store_from_locator(loc, repo=None):
         return R2Store(loc["endpoint"], loc["bucket"], os.environ.get("V3B_R2_ACCESS_KEY_ID"),
                        os.environ.get("V3B_R2_SECRET_ACCESS_KEY"),
                        public_base=os.environ.get("V3B_R2_PUBLIC_BASE") or loc.get("public_base"))
+    if kind == GHA_KIND:
+        return _gha_local(loc)
     if kind == ARTIFACT_KIND:
         if not loc.get("local_path") or not os.path.isfile(loc["local_path"]):
             raise TapeMissing(f"{loc.get('key')}: drill transport artifact was not downloaded ({loc.get('local_path')})")

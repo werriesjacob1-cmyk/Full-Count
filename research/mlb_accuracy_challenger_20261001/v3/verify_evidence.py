@@ -50,7 +50,8 @@ REQUIRED_ARTIFACTS = ("shadow_board.json.gz", "capture.json.gz", "schedule.json"
 OPTIONAL_ARTIFACTS = ("overlay.json",      # present iff an overlay was sealed
                       "shadow_env.json",   # FC-MLB-001A: record-environment fingerprint (absent on legacy units)
                       "shadow_board_raw.json.gz",   # FC-MLB-001A: literal record pipeline board bytes (newer units)
-                      "shadow_record_trace.strace.gz", "shadow_record_setup_trace.strace.gz")   # FC-MLB-001B traces
+                      "shadow_record_trace.strace.gz", "shadow_record_setup_trace.strace.gz",   # FC-MLB-001B traces
+                      "tape_artifact.json")   # TEMPORARY Actions-artifact store: upload read-back proof + expiry
 # FC-MLB-001B units: the scientific payload bytes + record-environment fingerprint are sealed; the complete tape is
 # NOT a unit file -- it lives in the content-addressed store named by manifest shadow_provenance.tape_store.
 B_REQUIRED_ARTIFACTS = ("shadow_board.json.gz", "capture.json.gz", "schedule.json", "manifest.json.gz",
@@ -234,6 +235,34 @@ def sealed_b_identity_problems(unit_dir, board, prov):
     return problems
 
 
+def temporary_store_problems(unit_dir, arts, prov):
+    """A unit whose tape lives in a TEMPORARY Actions artifact must seal the pre-seal upload read-back proof, and the
+    proof must name exactly the sealed tape identity."""
+    import tape_store as TS
+    loc = prov.get("tape_store") or {}
+    if loc.get("store") != TS.GHA_KIND:
+        return []
+    if "tape_artifact.json" not in arts:
+        return ["Actions-artifact tape sealed without its upload read-back proof (tape_artifact.json)"]
+    proof = json.load(open(os.path.join(unit_dir, "tape_artifact.json")))
+    keys = ("repository", "run_id", "artifact_name", "file_name", "sha256", "bytes", "key")
+    bad = [k for k in keys if proof.get(k) != loc.get(k)]
+    if bad or not proof.get("verified_readback") or proof.get("storage_contract") != TS.GHA_CONTRACT \
+            or not proof.get("artifact_id") or not proof.get("expires_at"):
+        return [f"upload proof does not prove the sealed tape identity (mismatch: {bad})"]
+    return []
+
+
+def tape_locator_for(root, unit, seal, prov):
+    """Where to fetch the sealed tape from. The sealed locator, unless a VALID byte-preserving storage migration
+    record (STORAGE_MIGRATIONS/<unit>.json) names a durable copy of the SAME identity. V3B_VERIFY_TAPE_SOURCE=sealed
+    forces the original (e.g. to cross-check the artifact before it expires). Identity is checked again on fetch."""
+    import tape_migration as MG
+    if os.environ.get("V3B_VERIFY_TAPE_SOURCE") == "sealed":
+        return None
+    return MG.durable_locator(root, unit, seal, prov.get("tape_store") or {})
+
+
 def replay_shadow_b(unit_dir, board, overlay_bytes, prov, detail=None, keep_dir=None, tape_locator=None, repo=None):
     """FC-MLB-001B replay: fetch the tape BY EXACT IDENTITY (size + sha256 verified before use; missing/mismatch
     fail closed), replay in a fresh pinned-runtime sandbox with no network, regenerate the scientific payload and
@@ -393,6 +422,15 @@ def verify_unit(root, seal):
             return "B_SEALED_IDENTITY_INVALID", problems, None
     elif prov.get("tape_sha256") != arts["shadow_tape.json.gz"]:
         return "TAPE_NOT_SEALED_ONE", None, None
+    tape_locator = None
+    if is_b:
+        problems = temporary_store_problems(d, arts, prov)
+        if problems:
+            return "TEMP_STORE_PROOF_INVALID", problems, None
+        try:
+            tape_locator = tape_locator_for(root, unit, seal, prov)
+        except Exception as exc:  # noqa: BLE001 -- an invalid migration record is never silently ignored
+            return "STORAGE_MIGRATION_INVALID", str(exc), None
     rc = json.load(open(os.path.join(d, "receipts.json"))) if os.path.exists(os.path.join(d, "receipts.json")) else {}
     if not rc.get("github_comment_id"):
         return "MISSING_EXTERNAL_RECEIPT", "receipts.json has no GitHub comment id", None
@@ -403,7 +441,7 @@ def verify_unit(root, seal):
         return status, detail, None
     rdetail = {}
     if is_b:
-        if not replay_shadow_b(d, board, overlay_bytes, prov, rdetail):
+        if not replay_shadow_b(d, board, overlay_bytes, prov, rdetail, tape_locator=tape_locator):
             return "SHADOW_PAYLOAD_NOT_REPRODUCIBLE", {k: v for k, v in rdetail.items() if k != "replay_env"}, None
         return "VERIFIED", detail, man
     if not replay_shadow(d, board, overlay_bytes, rdetail):

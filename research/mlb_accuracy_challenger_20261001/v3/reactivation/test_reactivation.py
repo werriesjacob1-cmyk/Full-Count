@@ -46,6 +46,12 @@ class Reactivation(unittest.TestCase):
         self.assertEqual((b["scientific_payload_spec"], b["storage_contract"]),
                          ("fc-mlb-001b-payload-v1", "fc-mlb-001b-r2-cas-1"))
         self.assertEqual(b["prereg_blob"], PA.PREREG_BLOB)
+        ts = b["tape_storage"]                       # Jacob 2026-10-06: temporary Actions artifacts, R2 later
+        self.assertEqual((ts["initial_backend"], ts["initial_contract"], ts["artifact_retention_days"]),
+                         ("github-actions-artifact", "fc-v3-gha-artifact-temp-1", 90))
+        self.assertEqual((ts["migration_warn_days_remaining"], ts["migration_critical_days_remaining"]), (45, 30))
+        self.assertIn("FC-MLB-001C", ts["migration_milestone"])
+        self.assertEqual(ts["durable_target"]["contract"], "fc-mlb-001b-r2-cas-1")
         self.assertEqual(b["trigger"]["id"], "trig_011u98uXVuFEipPfbTT6KGur")
         text = open(os.path.join(self.out, "JACOB_AUTHORIZATION.txt")).read()
         rec = {"implementation_commit": COMMIT, "jacob_authorization_comment_id": 7000000001}
@@ -68,6 +74,15 @@ class Reactivation(unittest.TestCase):
         self.assertIn(f'AUTH_COMMIT = "{COMMIT}"', disp)
         self.assertIn(f'ACTIVATION_SHA256 = "{__import__("hashlib").sha256(raw).hexdigest()}"', disp)
         self.assertIn('ACTIVATION_ON_EVIDENCE = "ACTIVATION/ACTIVATION_7000000001.json"', disp)
+        wf = open(os.path.join(self.out, "v3-unit-record.yml"), "rb").read()
+        self.assertNotIn(b"@@", wf)
+        self.assertIn(f"AUTH_COMMIT: '{COMMIT}'".encode(), wf)
+        self.assertIn(b"retention-days: ${{ env.RETENTION_DAYS }}", wf)
+        self.assertIn(b"RETENTION_DAYS: '90'", wf)
+        self.assertIn(f'RECORD_WORKFLOW_SHA256 = "{__import__("hashlib").sha256(wf).hexdigest()}"', disp)
+        self.assertIn('REQUEST_BRANCH = "claude/mlb-v3-unit-requests"', disp)
+        self.assertNotIn("V3B_R2", disp)                                       # R2 is not an initial requirement
+        __import__("yaml").safe_load(wf)
 
     def test_refusals(self):
         with self.assertRaises(SystemExit):
@@ -76,6 +91,12 @@ class Reactivation(unittest.TestCase):
             self.step1(codex="0" * 40)                                         # not the Codex-passed head
         with self.assertRaises(SystemExit):
             self.step1(impl="1" * 40, codex="1" * 40)                          # not present
+        no_temp = "dac663c0a28a2a27fbc26fe609de628a5739b99b"                   # 001B head without the temporary store
+        if COMMIT != no_temp:
+            with self.assertRaisesRegex(SystemExit, "TEMPORARY Actions-artifact store"):
+                self.step1(impl=no_temp, codex=no_temp)
+        with self.assertRaises(SystemExit):                                    # thresholds must fit the retention
+            self.step1(extra=["--artifact-retention-days", "30"])
         self.step1()
         text = open(os.path.join(self.out, "JACOB_AUTHORIZATION.txt")).read()
         for bad in (text + "\nCLAUDE STATUS", text.replace("JACOB AUTHORIZATION: ALLOW", "ALLOW"),

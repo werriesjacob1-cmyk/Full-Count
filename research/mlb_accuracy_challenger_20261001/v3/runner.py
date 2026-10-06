@@ -91,7 +91,13 @@ def main(argv=None):
     ap.add_argument("--window", choices=("DAY", "NIGHT"), required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--with-tsa", action="store_true", help="drill only: also request (labelled) TSA tokens")
+    ap.add_argument("--phase", choices=("all", "stage", "publish"), default="all",
+                    help="prospective with the TEMPORARY Actions-artifact store: 'stage' records + seals nothing and "
+                         "leaves the tape for upload; 'publish' (after the workflow uploaded it and wrote the read-back "
+                         "proof tape_artifact.json) publishes the seal")
     a = ap.parse_args(argv)
+    if a.phase == "publish":
+        return publish_staged(a)
     if a.mode == "prospective":
         ok, reasons = AC.verify_activation(os.path.dirname(os.path.dirname(os.path.dirname(HERE))))
         if not ok:
@@ -173,24 +179,78 @@ def main(argv=None):
         _dump(os.path.join(a.out, "DRILL_SUMMARY.json"), summary)
         print(json.dumps({k: v for k, v in summary.items() if k != "drill_tsa_over_manifest_sha256"}, indent=1))
         return 0
+    if prov["tape_store"].get("store") == TS.GHA_KIND:
+        if a.phase != "stage":
+            raise RuntimeError("the Actions-artifact store requires --phase stage, then upload + confirm, then --phase publish")
+        _dump(os.path.join(a.out, "STAGED.json"), {"unit": f"{a.date}_{a.window}", "first_pitch_utc": fp,
+                                                   "manifest_sha256": man["manifest_sha256"], "artifacts_sha256": arts,
+                                                   "tape_store": prov["tape_store"], "staged_at": now()})
+        _dump(os.path.join(a.out, "TAPE_LOCATOR.json"), prov["tape_store"])
+        print(json.dumps({"status": "STAGED", "unit": f"{a.date}_{a.window}", "tape_store": prov["tape_store"]}, indent=1))
+        return 0
     status = publish_seal(a, man, arts, fp)
+    return 0 if status == "ON_TIME" else 3
+
+
+def publish_staged(a):
+    """Phase 2 of the Actions-artifact path. Seals ONLY if the uploaded artifact was read back and proven identical
+    (tape_artifact.json, written by artifact_api.confirm_upload) to the tape identity already bound in the manifest.
+    Any failure is a MISS UNIT (recorded, never sealed, no backfill)."""
+    ok, reasons = AC.verify_activation(os.path.dirname(os.path.dirname(os.path.dirname(HERE))))
+    if a.mode != "prospective" or not ok:
+        print(f"REFUSED: publish is prospective-only and activation-gated: {reasons}")
+        return 2
+    st = json.load(open(os.path.join(a.out, "STAGED.json")))
+
+    def miss(reason):
+        _dump(os.path.join(a.out, "MISSED_UNIT.json"), {"date": a.date, "window": a.window, "at": now(),
+                                                        "first_pitch_utc": st.get("first_pitch_utc"), "reason": reason,
+                                                        "status": "MISS_UNIT_NO_CONFIRMATORY_USE_NO_BACKFILL"})
+        print(f"MISS UNIT: {reason}")
+        return 4
+
+    man = json.load(gzip.open(os.path.join(a.out, "manifest.json.gz")))
+    loc = (man.get("shadow_provenance") or {}).get("tape_store") or {}
+    proof_p = os.path.join(a.out, "tape_artifact.json")
+    if st.get("unit") != f"{a.date}_{a.window}" or man["manifest_sha256"] != st["manifest_sha256"]:
+        return miss("staged unit or manifest changed between stage and publish")
+    if not os.path.exists(proof_p):
+        return miss("no upload read-back proof (tape_artifact.json): the artifact was not proven")
+    proof = json.load(open(proof_p))
+    keys = ("repository", "run_id", "artifact_name", "file_name", "sha256", "bytes", "key")
+    bad = [k for k in keys if proof.get(k) != loc.get(k)]
+    if bad or not proof.get("verified_readback") or proof.get("storage_contract") != TS.GHA_CONTRACT:
+        return miss(f"uploaded artifact is not the sealed tape identity (mismatch: {bad})")
+    arts = {n: SH.sha256_file(os.path.join(a.out, n)) for n in st["artifacts_sha256"]}
+    if arts != st["artifacts_sha256"]:
+        return miss("a staged unit file changed between stage and publish")
+    arts["tape_artifact.json"] = SH.sha256_file(proof_p)
+    try:
+        status = publish_seal(a, man, arts, st["first_pitch_utc"])
+    except SP.MissUnit as exc:
+        return miss(str(exc))
     return 0 if status == "ON_TIME" else 3
 
 
 def _store_tape(mode, tape, sha256, size):
     """FC-MLB-001B: put the complete tape into the content-addressed, create-only store and prove it by reading it
     back before anything is sealed (tape_store.put_verified). Prospective units REQUIRE the authoritative R2 store;
-    drills may use an isolated local store. V3B_TAPE_STORE = "r2" | "localfs:<root>". EVERY store failure (missing
+    drills may use an isolated local store. V3B_TAPE_STORE = "r2" | "actions-artifact" (TEMPORARY: staged here,
+    uploaded by the workflow, read back by artifact_api.confirm_upload before the seal is published) |
+    "localfs:<root>" (drill only). EVERY store failure (missing
     configuration, credentials, network, conflict, mismatch) is a MISS UNIT: recorded, never sealed, never retried
     later (no backfill)."""
     spec = os.environ.get("V3B_TAPE_STORE", "")
     try:
+        if spec == "actions-artifact":         # TEMPORARY authoritative store (Jacob 2026-10-06); R2 migration required
+            return TS.ActionsArtifactStage.from_env().stage(tape, sha256, size)
         if spec == "r2":
             store = TS.R2Store.from_env()
         elif spec.startswith("localfs:") and mode == "drill":
             store = TS.LocalFSStore(spec.split(":", 1)[1])
         else:
-            raise SP.MissUnit(f"tape store not configured for {mode} (V3B_TAPE_STORE={spec!r}; prospective requires r2)")
+            raise SP.MissUnit(f"tape store not configured for {mode} (V3B_TAPE_STORE={spec!r}; prospective requires "
+                              f"r2 or actions-artifact)")
         return dict(TS.put_verified(store, tape, sha256, size), storage_contract=TS.STORAGE_CONTRACT)
     except TS.StoreError as exc:
         raise SP.MissUnit(f"tape store {exc.code}: {exc}") from exc
