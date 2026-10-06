@@ -6371,3 +6371,49 @@ Alligator
 **Open grading item:** G2, the pinned-grader evaluation environment; due before 2026-11-16.
 
 Alligator
+
+## 2026-10-06 — Jacob's storage decision: temporary Actions-artifact tape store; R2 later (FC-MLB-001C) — NOT EXECUTED; V3 HELD
+
+**Decision (Jacob):**
+- GitHub Actions artifacts are the **temporary** authoritative tape store for the 001B drill and short-term prospective collection.
+- R2 is no longer an activation prerequisite. It remains the durable target; the R2 code and design are preserved unchanged.
+- Artifacts are not archival.
+
+**Prep branch** `claude/mlb-v3-reactivation-prep-20261005` @ `2e97b013d2` (see `v3/STORAGE_TEMPORARY.md`):
+- **Contract** `fc-v3-gha-artifact-temp-1`:
+  - artifact `v3-tape-<sha256>` holds exactly one file;
+  - run, name, artifact id and GitHub zip digest are recorded;
+  - exact-identity download, re-hashed before replay;
+  - missing, expired, size/SHA mismatch and corruption fail closed;
+  - no fallback source.
+- **Write path:**
+  - `runner --phase stage` → upload (`retention-days` 90, compression 0) → `artifact_api confirm` (read-back proof `tape_artifact.json`, a sealed unit file) → `runner --phase publish`;
+  - `verify-b` runs on a fresh runner.
+- **Retention:**
+  - effective 90 days, anchored to the run start (measured on artifact 11369873498); the repo setting is unreadable (403);
+  - `retention_monitor.py`: WARN at ≤ 45 days remaining (exit 10), CRITICAL at ≤ 30 (exit 20), and EXPIRED/PROOF_MISSING/LIVE_MISMATCH/MIGRATION_INVALID (exit 20);
+  - the dispatcher reports `RETENTION_ALERT` on every tick.
+- **Migration** (`tape_migration.py`):
+  - byte-preserving: independent source verification against the seal, then `put_verified` to R2 with read-back;
+  - a create-only `STORAGE_MIGRATIONS/<unit>.json` on the evidence ref keeps the original artifact identity;
+  - seals, manifest and CHAIN are never modified;
+  - the verifier uses a durable locator only when it validates against the sealed identity.
+- **Reactivation package:**
+  - R2 is removed as an initial blocker;
+  - the retention config is bound as activation evidence;
+  - the record workflow template is added, and its sha is bound into the dispatcher;
+  - the dispatcher pushes `requests/<unit>.json` (no R2 preflight);
+  - a commit without the temporary store is refused.
+- **Tests:**
+  - `test_temp_storage` 15 OK;
+  - `test_v3`, `test_scorecard`, and `test_b` Offline/Store/R2Mutants: 116 OK;
+  - `test_reactivation` 4 OK.
+- **Finding:** 2027 confirmatory units cannot survive to their 2027-10-05 look on 90-day artifacts. FC-MLB-001C must complete before they age past 45 days.
+
+**Open for Codex:**
+- review the temporary-store delta together with the 001B drill head;
+- the receipt is posted by `github-actions[bot]` (the author is not bound by `verify_receipts_raw`).
+
+**Unchanged:** the 001B criteria, the 001B branch `dac663c0a2`, the drill plan, the science, the trigger (disabled), the dispatcher, the evidence ref and PR #220. No Cloudflare resource was created.
+
+Alligator
