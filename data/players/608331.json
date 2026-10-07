@@ -528,7 +528,7 @@
         {
           "prop": "Over 4.5 Strikeouts",
           "type": "pitcher",
-          "score": 40.6,
+          "score": 41.5,
           "notable_signals": 0,
           "matchup": "Tampa Bay Rays @ New York Yankees",
           "game_pk": 849838,
@@ -538,13 +538,16 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 18.0,
-            "same_hand_ratio": 61.1111,
+            "same_hand_ratio": 75.0,
             "l14_k_pct": 72.3529,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 54.4716,
+            "ump_k_pct": 0.024,
+            "ump_bb_pct": 0.432
           },
-          "hit_probability": 0.6001,
-          "raw_hit_probability": 0.6248,
-          "lift": 0.0695,
+          "hit_probability": 0.6002,
+          "raw_hit_probability": 0.6252,
+          "lift": 0.0688,
           "reliability": "A",
           "sample_n": 20,
           "projection": {
@@ -554,9 +557,9 @@
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 44.0,
+          "score": 72.8,
           "notable_signals": 0,
           "matchup": "Tampa Bay Rays @ New York Yankees",
           "game_pk": 849838,
@@ -565,18 +568,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.5563,
+            "outs_rate": 0.7974,
             "avg_outs_per_start": 16.9
           },
-          "hit_probability": 0.5092,
-          "raw_hit_probability": 0.5563,
-          "lift": -0.0681,
+          "hit_probability": 0.7974,
+          "raw_hit_probability": 0.7974,
+          "lift": 0.0088,
           "reliability": "A",
           "sample_n": 20,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]
