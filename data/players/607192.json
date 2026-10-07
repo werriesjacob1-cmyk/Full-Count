@@ -492,9 +492,9 @@
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 15.5 Outs Recorded",
           "type": "pitcher",
-          "score": 86.1,
+          "score": 80.9,
           "notable_signals": 1,
           "matchup": "Los Angeles Dodgers @ Atlanta Braves",
           "game_pk": 849822,
@@ -503,18 +503,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6906,
+            "outs_rate": 0.714,
             "avg_outs_per_start": 17.08
           },
-          "hit_probability": 0.5772,
-          "raw_hit_probability": 0.6906,
-          "lift": 0.0569,
+          "hit_probability": 0.5888,
+          "raw_hit_probability": 0.714,
+          "lift": -0.0056,
           "reliability": "B",
           "sample_n": 13,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 15.5,
+            "needs": 16
           }
         },
         {
@@ -532,11 +532,11 @@
             641816
           ],
           "signals": {
-            "combined_k_edge": 0.3419
+            "combined_k_edge": 0.3776
           },
           "hit_probability": 0.6276,
           "raw_hit_probability": null,
-          "lift": 0.3419,
+          "lift": 0.3776,
           "reliability": "D",
           "sample_n": 0,
           "projection": {
