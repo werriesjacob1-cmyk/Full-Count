@@ -655,6 +655,34 @@
             "value": 12.5,
             "needs": 13
           }
+        },
+        {
+          "prop": "Over 7.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 54.9,
+          "notable_signals": 1,
+          "matchup": "Tampa Bay Rays @ New York Yankees",
+          "game_pk": 849838,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            607259,
+            608331
+          ],
+          "signals": {
+            "combined_k_edge": 0.153
+          },
+          "hit_probability": 0.7363,
+          "raw_hit_probability": null,
+          "lift": 0.153,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 7.5,
+            "needs": 8
+          }
         }
       ]
     }
