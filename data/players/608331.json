@@ -521,6 +521,65 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-10-07",
+      "evaluations": [
+        {
+          "prop": "Over 4.5 Strikeouts",
+          "type": "pitcher",
+          "score": 40.6,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ New York Yankees",
+          "game_pk": 849838,
+          "team": "New York Yankees",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 18.0,
+            "same_hand_ratio": 61.1111,
+            "l14_k_pct": 72.3529,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.6001,
+          "raw_hit_probability": 0.6248,
+          "lift": 0.0695,
+          "reliability": "A",
+          "sample_n": 20,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 4.5,
+            "needs": 5
+          }
+        },
+        {
+          "prop": "Over 16.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 44.0,
+          "notable_signals": 0,
+          "matchup": "Tampa Bay Rays @ New York Yankees",
+          "game_pk": 849838,
+          "team": "New York Yankees",
+          "side": "home",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.5563,
+            "avg_outs_per_start": 16.9
+          },
+          "hit_probability": 0.5092,
+          "raw_hit_probability": 0.5563,
+          "lift": -0.0681,
+          "reliability": "A",
+          "sample_n": 20,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 16.5,
+            "needs": 17
+          }
+        }
+      ]
     }
   ]
 }
