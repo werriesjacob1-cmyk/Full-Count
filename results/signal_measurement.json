@@ -61,8 +61,8 @@
     "2026-10-06",
     "2026-10-07"
   ],
-  "n_graded": 30847,
-  "hit_rate": 0.3276817842902065,
+  "n_graded": 30849,
+  "hit_rate": 0.32766054004992057,
   "signals": [
     {
       "signal": "hard_hit_rate",
@@ -170,16 +170,16 @@
     },
     {
       "signal": "fi_n_starts",
-      "n": 715,
+      "n": 716,
       "n_hit": 397,
-      "n_miss": 318,
-      "auc": 0.5340129588264183,
-      "se": 0.02162401480105949,
-      "lo": 0.4916298898163417,
-      "hi": 0.5763960278364949,
+      "n_miss": 319,
+      "auc": 0.5353671343856352,
+      "se": 0.02159880831395636,
+      "lo": 0.49303347009028076,
+      "hi": 0.5777007986809897,
       "separates": false,
       "enough_data": true,
-      "strength": 0.034012958826418305
+      "strength": 0.03536713438563521
     },
     {
       "signal": "team_total_open",
@@ -260,19 +260,6 @@
       "strength": 0.020639487095183318
     },
     {
-      "signal": "home_team_scores_p",
-      "n": 584,
-      "n_hit": 306,
-      "n_miss": 278,
-      "auc": 0.5196195984388959,
-      "se": 0.023901406525334453,
-      "lo": 0.4727728416492404,
-      "hi": 0.5664663552285515,
-      "separates": false,
-      "enough_data": true,
-      "strength": 0.019619598438895935
-    },
-    {
       "signal": "ump_run_impact",
       "n": 131,
       "n_hit": 91,
@@ -284,6 +271,19 @@
       "separates": false,
       "enough_data": true,
       "strength": 0.019368131868131855
+    },
+    {
+      "signal": "home_team_scores_p",
+      "n": 585,
+      "n_hit": 306,
+      "n_miss": 279,
+      "auc": 0.5191393164195188,
+      "se": 0.02388091699992584,
+      "lo": 0.4723327190996642,
+      "hi": 0.5659459137393734,
+      "separates": false,
+      "enough_data": true,
+      "strength": 0.019139316419518826
     },
     {
       "signal": "ump_accuracy",
@@ -351,6 +351,19 @@
       "strength": 0.01326044335241866
     },
     {
+      "signal": "away_team_scores_p",
+      "n": 585,
+      "n_hit": 306,
+      "n_miss": 279,
+      "auc": 0.5132007402722141,
+      "se": 0.023896498938978345,
+      "lo": 0.4663636023518165,
+      "hi": 0.5600378781926116,
+      "separates": false,
+      "enough_data": true,
+      "strength": 0.013200740272214073
+    },
+    {
       "signal": "vs_rp_ops",
       "n": 10483,
       "n_hit": 6717,
@@ -362,19 +375,6 @@
       "separates": true,
       "enough_data": true,
       "strength": 0.012751093819464376
-    },
-    {
-      "signal": "away_team_scores_p",
-      "n": 584,
-      "n_hit": 306,
-      "n_miss": 278,
-      "auc": 0.512725114026426,
-      "se": 0.023919712326133047,
-      "lo": 0.4658424778672052,
-      "hi": 0.5596077501856467,
-      "separates": false,
-      "enough_data": true,
-      "strength": 0.012725114026425954
     },
     {
       "signal": "tto_penalty",
@@ -456,16 +456,16 @@
     },
     {
       "signal": "same_hand_ratio",
-      "n": 1401,
+      "n": 1402,
       "n_hit": 690,
-      "n_miss": 711,
-      "auc": 0.508816934711266,
-      "se": 0.015430491809311081,
-      "lo": 0.47857317076501626,
-      "hi": 0.5390606986575157,
+      "n_miss": 712,
+      "auc": 0.5088187998697281,
+      "se": 0.015425212876435454,
+      "lo": 0.47858538263191464,
+      "hi": 0.5390522171075416,
       "separates": false,
       "enough_data": true,
-      "strength": 0.008816934711265989
+      "strength": 0.008818799869728111
     },
     {
       "signal": "bvp_ops",
@@ -598,6 +598,19 @@
       "strength": 0.004778167532404787
     },
     {
+      "signal": "opp_team_k_pct",
+      "n": 1185,
+      "n_hit": 568,
+      "n_miss": 617,
+      "auc": 0.4957626635012669,
+      "se": 0.016790561675543308,
+      "lo": 0.462853162617202,
+      "hi": 0.5286721643853318,
+      "separates": false,
+      "enough_data": true,
+      "strength": 0.004237336498733091
+    },
+    {
       "signal": "sp_rp_ops_gap",
       "n": 10483,
       "n_hit": 6717,
@@ -609,19 +622,6 @@
       "separates": false,
       "enough_data": true,
       "strength": 0.003828081521422444
-    },
-    {
-      "signal": "opp_team_k_pct",
-      "n": 1184,
-      "n_hit": 568,
-      "n_miss": 616,
-      "auc": 0.4962802382476678,
-      "se": 0.01679754123101146,
-      "lo": 0.46335705743488537,
-      "hi": 0.5292034190604503,
-      "separates": false,
-      "enough_data": true,
-      "strength": 0.0037197617523321846
     },
     {
       "signal": "platoon_barrel_pct",
@@ -690,13 +690,13 @@
     },
     {
       "signal": "env_neutral",
-      "n": 1401,
+      "n": 1402,
       "n_hit": 690,
-      "n_miss": 711,
+      "n_miss": 712,
       "auc": 0.5,
-      "se": 0.015432064792695165,
-      "lo": 0.4697531530063175,
-      "hi": 0.5302468469936825,
+      "se": 0.015426722603558445,
+      "lo": 0.46976362369702546,
+      "hi": 0.5302363763029746,
       "separates": false,
       "enough_data": true,
       "strength": 0.0
