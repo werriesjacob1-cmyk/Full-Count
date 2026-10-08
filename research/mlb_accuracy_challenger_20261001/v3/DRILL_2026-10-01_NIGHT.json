@@ -1,0 +1,44 @@
+{
+ "files_sha256": {
+  "DRILL_SUMMARY.json": "490072903debbc86b1f373f38b7ac098c7504f7d7cda736485c57b5f3a493e10",
+  "capture.json.gz": "33f41f0f14afc8f2a15b23cf3cef57e0773d7647c41c6cd676116f434106e345",
+  "manifest.json.gz": "257aef7aa7942a41445b185790a7fc881e862bbd71c9aacca6de74aeef09352a",
+  "schedule.json": "1ae50077a7df1bbf1be07c09fa809a573e85d9d0b06e999c41ccf3dcdb3f1077",
+  "shadow_board.json.gz": "f4c57878acefecdc265d94607ebda55b341959a8fca6972296b96b20692d2b03"
+ },
+ "label": "DRILL_NONCONFIRMATORY",
+ "summary": {
+  "capture_completed_at": "2026-10-01T19:22:12.203590+00:00",
+  "capture_started_at": "2026-10-01T19:22:04.141937+00:00",
+  "capture_status": "COMPLETE",
+  "counts": {
+   "eligible_primary": 1,
+   "exclusions": {
+    "BOARD_PRICE_FAIL": 1,
+    "QC_FAIL": 62,
+    "SAMPLE_N_FAIL": 1
+   },
+   "records": 65,
+   "shadow_champion_excluded_by_reason": {},
+   "shadow_champion_in_primary_universe": 1,
+   "shadow_champion_total": 1
+  },
+  "cutoff_utc": "2026-10-01T19:22:12.211884+00:00",
+  "date": "2026-10-01",
+  "earliest_first_pitch_utc": "2026-10-02T00:00:00Z",
+  "label": "DRILL_NONCONFIRMATORY",
+  "manifest_sha256": "5f4b29f9b7d370f0c9345cb05e86b54ce962579e557cc55d186ad8497f96b90c",
+  "window": "NIGHT"
+ },
+ "tsa_over_manifest_sha256": {
+  "digicert": {
+   "gen_time": "2026-10-01T19:22:13+00:00",
+   "verified": true
+  },
+  "freetsa": {
+   "gen_time": "2026-10-01T19:22:12+00:00",
+   "verified": true
+  }
+ },
+ "why": "pre-V3-boundary end-to-end drill of runner.py --mode drill on the real 2026-10-01 NIGHT unit; never sealed to the evidence ref, never posted; NEVER evaluable"
+}

@@ -1,0 +1,24 @@
+OOS 3141 eligible universe (status!=None) 3141 Counter({'lean': 1933, 'neutral': 1057, 'value': 76, 'top_pick': 75})
+slates 28 slates with 0 champion picks 5
+rule                     n  hits  hit%   meanQ  hit-Q  ROI   games maxPerGame overlapW/champ  CI
+champion(top_pick)        75   40  0.533  0.549 -0.016 -0.027   56    4     75  [0.412,0.651]
+raw_p                     75   50  0.667  0.707 -0.041 -0.091   60    4      6  [0.560,0.776]
+calibrated_pcal           75   51  0.680  0.749 -0.069 -0.113   59    4      1  [0.577,0.795]
+price_q(favorite)         75   60  0.800  0.804 -0.004 -0.008   48    7      0  [0.702,0.878]
+price_recal_p1            75   59  0.787  0.787 -0.000 -0.002   47    8      0  [0.692,0.867]
+blend_p2                  75   58  0.773  0.788 -0.014 -0.019   48    7      0  [0.667,0.859]
+residual_p2-p1            75   36  0.480  0.458 +0.022 -0.015   57    5     23  [0.366,0.597]
+edge_p-q                  75   33  0.440  0.448 -0.008 -0.072   59    4     18  [0.312,0.558]
+champion family mix Counter({'strikeouts': 31, 'hits_runs_rbis': 21, 'pitcher_outs': 17, 'hits': 6})
+champion by family hit: {'strikeouts': (31, np.float64(0.452)), 'hits_runs_rbis': (21, np.float64(0.571)), 'hits': (6, np.float64(0.333)), 'pitcher_outs': (17, np.float64(0.706))}
+champion stated vs real by family: {'strikeouts': (np.float64(0.614), np.float64(0.516), np.float64(0.452)), 'hits_runs_rbis': (np.float64(0.658), np.float64(0.606), np.float64(0.571)), 'hits': (np.float64(0.635), np.float64(0.582), np.float64(0.333)), 'pitcher_outs': (np.float64(0.674), np.float64(0.526), np.float64(0.706))}
+champion picks per game dist Counter({1: 43, 2: 9, 4: 2, 3: 2})
+week 2026-08-31 523 p2-p1 0.0027 p-q -0.0006
+week 2026-09-07 492 p2-p1 0.0011 p-q 0.0123
+week 2026-09-14 555 p2-p1 -0.0007 p-q 0.0189
+week 2026-09-21 1571 p2-p1 0.0002 p-q 0.005
+fam hits 355 p2-p1 -0.0003 pcal-p 0.0055
+fam hits_runs_rbis 392 p2-p1 0.0004 pcal-p 0.0116
+fam other 2119 p2-p1 0.0011 pcal-p -0.0012
+fam pitcher_outs 137 p2-p1 -0.0087 pcal-p -0.0151
+fam strikeouts 138 p2-p1 0.0057 pcal-p 0.0111
