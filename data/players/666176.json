@@ -4794,6 +4794,136 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-10-08",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 44.6,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Chicago White Sox",
+          "game_pk": 849832,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 0.0,
+            "l7_avg_ev": 100.0,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 39.0,
+            "season_barrel_pct": 39.3333,
+            "lineup_slot": 62.5,
+            "bullpen_fatigue": 15.1515,
+            "platoon_barrel_pct": 3.52,
+            "platoon_xwoba": 5.0,
+            "opp_catcher_framing": 1.08,
+            "days_rest": 4.0,
+            "woba_ahead": 62.7273,
+            "woba_behind": 35.4545,
+            "hard_hit_105_rate": 1.2225,
+            "team_total_move": 0.0,
+            "team_total_open": -4.0,
+            "getaway_day": 0.0,
+            "series_game": 3.0,
+            "sp_rp_ops_gap": -1.808,
+            "vs_rp_ops": -0.444,
+            "ump_k_pct": 0.384,
+            "ump_bb_pct": -0.108
+          },
+          "hit_probability": 0.6577,
+          "raw_hit_probability": 0.6502,
+          "lift": -0.0116,
+          "reliability": "A",
+          "sample_n": 159,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Steal a Base",
+          "type": "batter",
+          "score": 42.2,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Chicago White Sox",
+          "game_pk": 849832,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_cs_pct": -0.36,
+            "sprint_speed": 31.25,
+            "catcher_poptime": 17.1429,
+            "on_base": 44.3378
+          },
+          "hit_probability": 0.0341,
+          "raw_hit_probability": null,
+          "lift": null,
+          "reliability": "A",
+          "sample_n": 159,
+          "projection": {
+            "stat": "stolen_base",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 16.9,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Chicago White Sox",
+          "game_pk": 849832,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0955
+          },
+          "hit_probability": 0.0955,
+          "raw_hit_probability": null,
+          "lift": 0.0481,
+          "reliability": "A",
+          "sample_n": 159,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 13.5,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Chicago White Sox",
+          "game_pk": 849832,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.066
+          },
+          "hit_probability": 0.066,
+          "raw_hit_probability": null,
+          "lift": 0.0455,
+          "reliability": "A",
+          "sample_n": 159,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }

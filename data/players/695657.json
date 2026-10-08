@@ -4207,8 +4207,8 @@
         {
           "prop": "Over 0.5 Hits+Runs+RBIs",
           "type": "batter",
-          "score": 14.6,
-          "notable_signals": 1,
+          "score": 24.3,
+          "notable_signals": 2,
           "matchup": "Cleveland Guardians @ Chicago White Sox",
           "game_pk": 849832,
           "team": "Chicago White Sox",
@@ -4220,28 +4220,28 @@
             "sp_era_weak": 1.7143,
             "l7_avg_ev": 0.0,
             "l7_barrel_pct": 100.0,
-            "park_hr_index": 41.5,
+            "park_hr_index": 39.0,
             "season_barrel_pct": 60.0,
             "lineup_slot": 0.0,
             "bullpen_fatigue": 0.0,
             "bvp_ops": -0.882,
-            "platoon_barrel_pct": 1.44,
-            "platoon_xwoba": -1.02,
-            "opp_catcher_framing": -0.24,
+            "platoon_barrel_pct": 2.56,
+            "platoon_xwoba": -0.18,
+            "opp_catcher_framing": 0.48,
             "days_rest": 4.0,
             "woba_ahead": 7.2727,
             "woba_behind": 44.5455,
-            "hard_hit_105_rate": 0.895,
+            "hard_hit_105_rate": 1.3275,
             "getaway_day": 0.0,
             "series_game": 3.0,
             "sp_rp_ops_gap": -1.952,
             "vs_rp_ops": -2.076,
-            "ump_k_pct": 0.708,
-            "ump_bb_pct": -0.048
+            "ump_k_pct": 0.384,
+            "ump_bb_pct": -0.108
           },
-          "hit_probability": 0.626,
-          "raw_hit_probability": 0.5972,
-          "lift": -0.0399,
+          "hit_probability": 0.6262,
+          "raw_hit_probability": 0.5976,
+          "lift": -0.0431,
           "reliability": "A",
           "sample_n": 153,
           "projection": {
@@ -4253,8 +4253,8 @@
         {
           "prop": "To Hit a Laser (105+ MPH)",
           "type": "batter",
-          "score": 13.6,
-          "notable_signals": 0,
+          "score": 17.9,
+          "notable_signals": 1,
           "matchup": "Cleveland Guardians @ Chicago White Sox",
           "game_pk": 849832,
           "team": "Chicago White Sox",
@@ -4262,11 +4262,11 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "hard_hit_rate": 0.0824
+            "hard_hit_rate": 0.0997
           },
-          "hit_probability": 0.0824,
+          "hit_probability": 0.0997,
           "raw_hit_probability": null,
-          "lift": 0.0352,
+          "lift": 0.0523,
           "reliability": "A",
           "sample_n": 153,
           "projection": {
@@ -4278,7 +4278,7 @@
         {
           "prop": "To Hit a Moonshot (420+ FT)",
           "type": "batter",
-          "score": 3.9,
+          "score": 7.2,
           "notable_signals": 0,
           "matchup": "Cleveland Guardians @ Chicago White Sox",
           "game_pk": 849832,
@@ -4287,11 +4287,11 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "moonshot_rate": 0.0282
+            "moonshot_rate": 0.0412
           },
-          "hit_probability": 0.0282,
+          "hit_probability": 0.0412,
           "raw_hit_probability": null,
-          "lift": 0.0072,
+          "lift": 0.0207,
           "reliability": "A",
           "sample_n": 153,
           "projection": {
