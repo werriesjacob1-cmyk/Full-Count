@@ -1,0 +1,32 @@
+{
+  "protocol": "PROSPECTIVE_PROTOCOL.md v1",
+  "game": "2026_03_ATL_GB",
+  "kickoff": "2026-09-25T00:15:00Z",
+  "seals": [
+    {
+      "role": "C-F3 (+F2/F8/F9 exploratory)",
+      "commit": "fb6bd1b587",
+      "commit_time": "2026-09-24T21:23:47+00:00",
+      "path": "engineering/nfl_tier1_player_opportunity_20260924/live_2026_w3_features.json",
+      "sha256": "b8bbc0b69ee0f095059935f59de58f73c247147bec18dab1fff01b792662c24b",
+      "atl_gb_mentions": 153
+    },
+    {
+      "role": "C-F6 (+F1/F5/F7/F10 exploratory)",
+      "commit": "40d842c9a9",
+      "commit_time": "2026-09-24T21:24:48+00:00",
+      "path": "engineering/nfl_tier1_team_context_20260924/live/team_context_live_2026_w03.json",
+      "sha256": "c3bb9569a1f52f4e77683dc1aab348d1399ef9e7c4e2f8366fe5709023cfd4ed",
+      "atl_gb_mentions": 47
+    },
+    {
+      "role": "C-F4",
+      "commit": "76b42547c3",
+      "commit_time": "2026-09-24T21:28:09+00:00",
+      "path": "engineering/nfl_tier1_touchdown_20260924/touchdown_report.json",
+      "sha256": "126277d23e430bd0b28e221de1282e44ed76d72d011e87fec07a0e43e798d676",
+      "atl_gb_mentions": 24
+    }
+  ],
+  "rule": "A row counts only if its prediction is in one of these commits (all committed before kickoff). Nothing is back-filled."
+}
