@@ -106,6 +106,42 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-10-08",
+      "evaluations": [
+        {
+          "prop": "Over 3.5 Strikeouts",
+          "type": "pitcher",
+          "score": 50.1,
+          "notable_signals": 1,
+          "matchup": "Cleveland Guardians @ Chicago White Sox",
+          "game_pk": 849832,
+          "team": "Chicago White Sox",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 38.0,
+            "same_hand_ratio": 100.0,
+            "l14_k_pct": 48.8235,
+            "env_neutral": 50.0,
+            "ump_accuracy": 78.461,
+            "ump_k_pct": -0.708,
+            "ump_bb_pct": 0.048
+          },
+          "hit_probability": 0.6099,
+          "raw_hit_probability": 0.6584,
+          "lift": -0.0805,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 3.5,
+            "needs": 4
+          }
+        }
+      ]
     }
   ]
 }

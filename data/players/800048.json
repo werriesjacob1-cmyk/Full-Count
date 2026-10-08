@@ -792,10 +792,10 @@
       "date": "2026-10-08",
       "evaluations": [
         {
-          "prop": "Over 6.5 Strikeouts",
+          "prop": "Over 5.5 Strikeouts",
           "type": "pitcher",
-          "score": 50.7,
-          "notable_signals": 0,
+          "score": 33.7,
+          "notable_signals": 1,
           "matchup": "Cleveland Guardians @ Chicago White Sox",
           "game_pk": 849832,
           "team": "Cleveland Guardians",
@@ -804,27 +804,30 @@
           "combo_player_ids": null,
           "signals": {
             "opp_team_k_pct": 71.0,
-            "same_hand_ratio": 100.0,
+            "same_hand_ratio": 43.75,
             "l14_k_pct": 50.0,
             "tto_penalty": -8.0,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 78.461,
+            "ump_k_pct": -0.708,
+            "ump_bb_pct": 0.048
           },
-          "hit_probability": 0.2654,
-          "raw_hit_probability": 0.2654,
-          "lift": 0.0075,
+          "hit_probability": 0.4172,
+          "raw_hit_probability": 0.4172,
+          "lift": 0.0364,
           "reliability": "A",
           "sample_n": 32,
           "projection": {
             "stat": "strikeouts",
-            "value": 6.5,
-            "needs": 7
+            "value": 5.5,
+            "needs": 6
           }
         },
         {
-          "prop": "Over 16.5 Outs Recorded",
+          "prop": "Over 14.5 Outs Recorded",
           "type": "pitcher",
-          "score": 70.8,
-          "notable_signals": 1,
+          "score": 85.5,
+          "notable_signals": 0,
           "matchup": "Cleveland Guardians @ Chicago White Sox",
           "game_pk": 849832,
           "team": "Cleveland Guardians",
@@ -832,18 +835,18 @@
           "lean": null,
           "combo_player_ids": null,
           "signals": {
-            "outs_rate": 0.6721,
+            "outs_rate": 0.9375,
             "avg_outs_per_start": 17.47
           },
-          "hit_probability": 0.5679,
-          "raw_hit_probability": 0.6721,
-          "lift": -0.0218,
+          "hit_probability": 0.9375,
+          "raw_hit_probability": 0.9375,
+          "lift": 0.0,
           "reliability": "A",
           "sample_n": 32,
           "projection": {
             "stat": "pitcher_outs",
-            "value": 16.5,
-            "needs": 17
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]
