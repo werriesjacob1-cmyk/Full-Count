@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_849831",
+  "name": "Chicago White Sox @ Cleveland Guardians \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-10-10",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 62.8,
+          "notable_signals": 0,
+          "matchup": "Chicago White Sox @ Cleveland Guardians",
+          "game_pk": 849831,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.2841,
+            "away_team_scores_p": 0.2908,
+            "fi_n_starts": 30.0
+          },
+          "hit_probability": 0.5077,
+          "raw_hit_probability": null,
+          "lift": 0.0093,
+          "reliability": "A",
+          "sample_n": 30,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 50.8
+          }
+        }
+      ]
+    }
+  ]
+}
