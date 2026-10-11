@@ -673,8 +673,8 @@
         {
           "prop": "Over 7.5 Strikeouts",
           "type": "pitcher",
-          "score": 37.9,
-          "notable_signals": 0,
+          "score": 40.9,
+          "notable_signals": 1,
           "matchup": "Los Angeles Dodgers @ Milwaukee Brewers",
           "game_pk": 849809,
           "team": "Los Angeles Dodgers",
@@ -685,7 +685,10 @@
             "opp_team_k_pct": 50.0,
             "same_hand_ratio": 43.75,
             "l14_k_pct": 98.8235,
-            "env_neutral": 50.0
+            "env_neutral": 50.0,
+            "ump_accuracy": 79.5114,
+            "ump_k_pct": 0.948,
+            "ump_bb_pct": -0.12
           },
           "hit_probability": 0.2594,
           "raw_hit_probability": 0.2594,
@@ -722,6 +725,34 @@
             "stat": "pitcher_outs",
             "value": 17.5,
             "needs": 18
+          }
+        },
+        {
+          "prop": "Over 14.5 Combined Strikeouts",
+          "type": "pitcher_combo",
+          "score": 23.6,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Milwaukee Brewers",
+          "game_pk": 849809,
+          "team": null,
+          "side": null,
+          "lean": null,
+          "combo_player_ids": [
+            669373,
+            694819
+          ],
+          "signals": {
+            "combined_k_edge": -0.1307
+          },
+          "hit_probability": 0.4307,
+          "raw_hit_probability": null,
+          "lift": -0.1307,
+          "reliability": "D",
+          "sample_n": 0,
+          "projection": {
+            "stat": "combined_strikeouts",
+            "value": 14.5,
+            "needs": 15
           }
         }
       ]
