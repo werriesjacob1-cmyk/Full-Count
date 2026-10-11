@@ -1,6 +1,6 @@
 {
   "date": "2026-10-11",
-  "generated": "2026-10-11T02:13:01.012396",
+  "generated": "2026-10-11T19:16:26.949886",
   "picks": [
     {
       "rank": 1,
@@ -19,37 +19,38 @@
         "needs": 8
       },
       "lean": null,
-      "score": 39.0,
+      "score": 40.0,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "best_of_category",
-      "hit_probability": 0.2995,
+      "hit_probability": 0.3003,
       "signals": {
         "opp_team_k_pct": 34.0,
+        "same_hand_ratio": 75.0,
         "l14_k_pct": 86.4706,
         "env_neutral": 50.0
       },
-      "base_rate": 0.1583,
-      "lift": 0.1412,
+      "base_rate": 0.1599,
+      "lift": 0.1404,
       "lift_reference_rate": null,
       "stable_lift": null,
-      "raw_hit_probability": 0.2995,
+      "raw_hit_probability": 0.3003,
       "calibrated_by": null,
       "prob_ci": null,
       "prob_ci_source": null,
       "sample_n": 30,
       "reliability": "A",
       "lineup_assumed": null,
-      "max_acceptable_price": 234,
-      "estimated_odds": 199,
-      "market_odds": 108,
-      "market_implied": 0.4533,
+      "max_acceptable_price": 233,
+      "estimated_odds": 198,
+      "market_odds": 110,
+      "market_implied": 0.4494,
       "market_hold": null,
-      "posted_implied": 0.4808,
-      "market_fair": 0.4533,
+      "posted_implied": 0.4762,
+      "market_fair": 0.4494,
       "market_fair_method": "exact_two_sided",
-      "edge_vs_fair": -0.1538,
-      "market_edge": -0.1538,
+      "edge_vs_fair": -0.1491,
+      "market_edge": -0.1491,
       "price_clears": false,
       "probability_basis": "modelled_shrunk",
       "probability_detail": {
@@ -61,13 +62,13 @@
           "stat": "strikeouts",
           "line": 3.5,
           "needs": 4,
-          "prob": 0.8313,
+          "prob": 0.8321,
           "basis": "modelled_shrunk",
-          "base_rate": 0.7002,
-          "lift": 0.1311,
+          "base_rate": 0.7017,
+          "lift": 0.1304,
           "empirical": 0.994,
           "modelled": 0.9624,
-          "raw_prob": 0.8313,
+          "raw_prob": 0.8321,
           "calibrated_by": null
         },
         {
@@ -76,11 +77,11 @@
           "needs": 5,
           "prob": 0.6273,
           "basis": "modelled_shrunk",
-          "base_rate": 0.5396,
-          "lift": 0.0877,
+          "base_rate": 0.5394,
+          "lift": 0.0879,
           "empirical": 0.9603,
           "modelled": 0.8976,
-          "raw_prob": 0.7186,
+          "raw_prob": 0.7185,
           "calibrated_by": "strikeouts",
           "ci": [
             0.5979,
@@ -92,30 +93,30 @@
           "stat": "strikeouts",
           "line": 5.5,
           "needs": 6,
-          "prob": 0.5888,
+          "prob": 0.5889,
           "basis": "modelled_shrunk",
-          "base_rate": 0.3909,
-          "lift": 0.1979,
+          "base_rate": 0.3914,
+          "lift": 0.1975,
           "empirical": 0.8591,
           "modelled": 0.7824,
-          "raw_prob": 0.5866,
+          "raw_prob": 0.5869,
           "calibrated_by": "strikeouts",
           "ci": [
-            0.5147,
-            0.6872
+            0.5148,
+            0.6873
           ],
           "ci_source": "historical_reliability_band"
         }
       ],
       "why": [
         "Expected workload 21.1 batters faced (his own 18.5/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "Platoon advantage: 4 of 8 projected hitters bat right-handed against this RHP",
         "L14 K% 29.7 (37 PA) \u2014 hot recent form",
         "Recency-weighted K rate 34.2% (exp. decay, halflife 30d, 30 real starts / 665 BF) \u2014 drives a favorable strikeout-probability read"
       ],
       "watchouts": [
         "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average",
-        "Opposing team K% 20.4 \u2014 contact-oriented lineup, tougher matchup",
-        "Opposing lineup handedness unavailable \u2014 could not compute a platoon-matchup read"
+        "Opposing team K% 20.4 \u2014 contact-oriented lineup, tougher matchup"
       ],
       "signal_weight_adjustment": null,
       "recommendation_status": "lean",
@@ -127,10 +128,10 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "293ceaf",
-      "prediction_timestamp": "2026-10-11T02:13:01.011834+00:00",
-      "odds_timestamp": "2026-10-11T02:13:01.009893+00:00",
-      "lineup_checked_at": "2026-10-11T02:13:01.009893+00:00"
+      "git_sha": "bd71e61",
+      "prediction_timestamp": "2026-10-11T19:16:26.949401+00:00",
+      "odds_timestamp": "2026-10-11T19:16:26.947113+00:00",
+      "lineup_checked_at": "2026-10-11T19:16:26.947113+00:00"
     },
     {
       "rank": 2,
@@ -149,37 +150,38 @@
         "needs": 8
       },
       "lean": null,
-      "score": 38.2,
+      "score": 37.9,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "best_of_category",
-      "hit_probability": 0.2586,
+      "hit_probability": 0.2594,
       "signals": {
         "opp_team_k_pct": 50.0,
+        "same_hand_ratio": 43.75,
         "l14_k_pct": 98.8235,
         "env_neutral": 50.0
       },
-      "base_rate": 0.1583,
-      "lift": 0.1003,
+      "base_rate": 0.1599,
+      "lift": 0.0995,
       "lift_reference_rate": null,
       "stable_lift": null,
-      "raw_hit_probability": 0.2586,
+      "raw_hit_probability": 0.2594,
       "calibrated_by": null,
       "prob_ci": null,
       "prob_ci_source": null,
       "sample_n": 26,
       "reliability": "A",
       "lineup_assumed": null,
-      "max_acceptable_price": 287,
-      "estimated_odds": 241,
-      "market_odds": 114,
-      "market_implied": 0.4405,
+      "max_acceptable_price": 286,
+      "estimated_odds": 240,
+      "market_odds": 116,
+      "market_implied": 0.4369,
       "market_hold": null,
-      "posted_implied": 0.4673,
-      "market_fair": 0.4405,
+      "posted_implied": 0.463,
+      "market_fair": 0.4369,
       "market_fair_method": "exact_two_sided",
-      "edge_vs_fair": -0.1819,
-      "market_edge": -0.1819,
+      "edge_vs_fair": -0.1775,
+      "market_edge": -0.1775,
       "price_clears": false,
       "probability_basis": "modelled_shrunk",
       "probability_detail": {
@@ -191,30 +193,30 @@
           "stat": "strikeouts",
           "line": 3.5,
           "needs": 4,
-          "prob": 0.82,
+          "prob": 0.8207,
           "basis": "modelled_shrunk",
-          "base_rate": 0.7002,
-          "lift": 0.1198,
+          "base_rate": 0.7017,
+          "lift": 0.119,
           "empirical": 0.9308,
           "modelled": 0.9397,
-          "raw_prob": 0.82,
+          "raw_prob": 0.8207,
           "calibrated_by": null
         },
         {
           "stat": "strikeouts",
           "line": 4.5,
           "needs": 5,
-          "prob": 0.6207,
+          "prob": 0.6206,
           "basis": "modelled_shrunk",
-          "base_rate": 0.5396,
-          "lift": 0.0811,
+          "base_rate": 0.5394,
+          "lift": 0.0812,
           "empirical": 0.8929,
           "modelled": 0.8514,
-          "raw_prob": 0.6955,
+          "raw_prob": 0.6954,
           "calibrated_by": "strikeouts",
           "ci": [
-            0.5914,
-            0.7093
+            0.5913,
+            0.7092
           ],
           "ci_source": "historical_reliability_band"
         },
@@ -224,11 +226,11 @@
           "needs": 6,
           "prob": 0.5783,
           "basis": "modelled_shrunk",
-          "base_rate": 0.3909,
-          "lift": 0.1874,
+          "base_rate": 0.3914,
+          "lift": 0.1869,
           "empirical": 0.779,
           "modelled": 0.7115,
-          "raw_prob": 0.5512,
+          "raw_prob": 0.5514,
           "calibrated_by": "strikeouts",
           "ci": [
             0.5042,
@@ -240,12 +242,12 @@
       "why": [
         "Opposing team K% 22.0",
         "Expected workload 22.8 batters faced (his own 22.0/start over 1 real start, shrunk toward the 23.1 league mean)",
+        "3 of 8 projected hitters bat left-handed against this LHP",
         "L14 K% 31.8 (22 PA) \u2014 hot recent form",
         "Recency-weighted K rate 29.7% (exp. decay, halflife 30d, 26 real starts / 620 BF) \u2014 drives a favorable strikeout-probability read"
       ],
       "watchouts": [
-        "Workload estimate rests on only 1 start in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average",
-        "Opposing lineup handedness unavailable \u2014 could not compute a platoon-matchup read"
+        "Workload estimate rests on only 1 start in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average"
       ],
       "signal_weight_adjustment": null,
       "recommendation_status": "lean",
@@ -257,10 +259,10 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "293ceaf",
-      "prediction_timestamp": "2026-10-11T02:13:01.011834+00:00",
-      "odds_timestamp": "2026-10-11T02:13:01.009893+00:00",
-      "lineup_checked_at": "2026-10-11T02:13:01.009893+00:00"
+      "git_sha": "bd71e61",
+      "prediction_timestamp": "2026-10-11T19:16:26.949401+00:00",
+      "odds_timestamp": "2026-10-11T19:16:26.947113+00:00",
+      "lineup_checked_at": "2026-10-11T19:16:26.947113+00:00"
     },
     {
       "rank": 3,
@@ -279,7 +281,7 @@
         "needs": 18
       },
       "lean": null,
-      "score": 65.1,
+      "score": 65.4,
       "confidence": "Medium",
       "notable_signals": 0,
       "category": "best_of_category",
@@ -301,15 +303,15 @@
       "lineup_assumed": null,
       "max_acceptable_price": -134,
       "estimated_odds": -155,
-      "market_odds": null,
-      "market_implied": null,
+      "market_odds": -154,
+      "market_implied": 0.5647,
       "market_hold": null,
-      "posted_implied": null,
-      "market_fair": null,
-      "market_fair_method": null,
-      "edge_vs_fair": null,
-      "market_edge": null,
-      "price_clears": null,
+      "posted_implied": 0.6063,
+      "market_fair": 0.5647,
+      "market_fair_method": "exact_two_sided",
+      "edge_vs_fair": 0.0087,
+      "market_edge": 0.0087,
+      "price_clears": false,
       "probability_basis": "empirical_shrunk",
       "probability_detail": {
         "empirical": 0.683,
@@ -350,23 +352,21 @@
       "why": [
         "Recorded 18+ outs (6.0 IP) in 68.3% of his last 26 real starts (league 64.3%, avg 18.31 outs/start)"
       ],
-      "watchouts": [
-        "No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number"
-      ],
+      "watchouts": [],
       "signal_weight_adjustment": null,
       "recommendation_status": "neutral",
       "status_reasons": [
-        "no market price posted, and no strong enough read to lean on regardless"
+        "no meaningful evidence either direction \u2014 this is a real 'no opinion,' not a gap in coverage"
       ],
       "stale": false,
       "model_version": "2026.08.15",
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "293ceaf",
-      "prediction_timestamp": "2026-10-11T02:13:01.011834+00:00",
-      "odds_timestamp": "2026-10-11T02:13:01.009893+00:00",
-      "lineup_checked_at": "2026-10-11T02:13:01.009893+00:00"
+      "git_sha": "bd71e61",
+      "prediction_timestamp": "2026-10-11T19:16:26.949401+00:00",
+      "odds_timestamp": "2026-10-11T19:16:26.947113+00:00",
+      "lineup_checked_at": "2026-10-11T19:16:26.947113+00:00"
     },
     {
       "rank": 4,
@@ -385,7 +385,7 @@
         "needs": 17
       },
       "lean": null,
-      "score": 42.7,
+      "score": 42.9,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "best_of_category",
@@ -410,15 +410,15 @@
       "lineup_assumed": null,
       "max_acceptable_price": -116,
       "estimated_odds": -134,
-      "market_odds": null,
-      "market_implied": null,
+      "market_odds": -125,
+      "market_implied": 0.5147,
       "market_hold": null,
-      "posted_implied": null,
-      "market_fair": null,
-      "market_fair_method": null,
-      "edge_vs_fair": null,
-      "market_edge": null,
-      "price_clears": null,
+      "posted_implied": 0.5556,
+      "market_fair": 0.5147,
+      "market_fair_method": "exact_two_sided",
+      "edge_vs_fair": 0.0234,
+      "market_edge": 0.0234,
+      "price_clears": false,
       "probability_basis": "empirical_shrunk",
       "probability_detail": {
         "empirical": 0.6131,
@@ -460,23 +460,22 @@
         "Recorded 17+ outs (5.2 IP) in 61.3% of his last 30 real starts (league 67.9%, avg 17.47 outs/start)"
       ],
       "watchouts": [
-        "No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number",
         "No positive read here: 6.6 pts BELOW the 68% league base rate for this market"
       ],
       "signal_weight_adjustment": null,
       "recommendation_status": "neutral",
       "status_reasons": [
-        "no market price posted, and no strong enough read to lean on regardless"
+        "no meaningful evidence either direction \u2014 this is a real 'no opinion,' not a gap in coverage"
       ],
       "stale": false,
       "model_version": "2026.08.15",
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "293ceaf",
-      "prediction_timestamp": "2026-10-11T02:13:01.011834+00:00",
-      "odds_timestamp": "2026-10-11T02:13:01.009893+00:00",
-      "lineup_checked_at": "2026-10-11T02:13:01.009893+00:00"
+      "git_sha": "bd71e61",
+      "prediction_timestamp": "2026-10-11T19:16:26.949401+00:00",
+      "odds_timestamp": "2026-10-11T19:16:26.947113+00:00",
+      "lineup_checked_at": "2026-10-11T19:16:26.947113+00:00"
     },
     {
       "rank": 5,
@@ -517,14 +516,14 @@
       "lineup_assumed": null,
       "max_acceptable_price": -112,
       "estimated_odds": -129,
-      "market_odds": -210,
-      "market_implied": 0.6396,
+      "market_odds": -188,
+      "market_implied": 0.6162,
       "market_hold": null,
-      "posted_implied": 0.6774,
-      "market_fair": 0.6396,
+      "posted_implied": 0.6528,
+      "market_fair": 0.6162,
       "market_fair_method": "exact_two_sided",
-      "edge_vs_fair": -0.1106,
-      "market_edge": -0.1106,
+      "edge_vs_fair": -0.0872,
+      "market_edge": -0.0872,
       "price_clears": false,
       "probability_basis": "combined_shrunk",
       "probability_detail": {
@@ -548,10 +547,10 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "293ceaf",
-      "prediction_timestamp": "2026-10-11T02:13:01.011834+00:00",
-      "odds_timestamp": "2026-10-11T02:13:01.009893+00:00",
-      "lineup_checked_at": "2026-10-11T02:13:01.009893+00:00"
+      "git_sha": "bd71e61",
+      "prediction_timestamp": "2026-10-11T19:16:26.949401+00:00",
+      "odds_timestamp": "2026-10-11T19:16:26.947113+00:00",
+      "lineup_checked_at": "2026-10-11T19:16:26.947113+00:00"
     }
   ],
   "shadow_tracking": [
@@ -572,21 +571,22 @@
         "needs": 4
       },
       "lean": null,
-      "score": 39.0,
+      "score": 40.0,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "shadow",
-      "hit_probability": 0.8313,
+      "hit_probability": 0.8321,
       "signals": {
         "opp_team_k_pct": 34.0,
+        "same_hand_ratio": 75.0,
         "l14_k_pct": 86.4706,
         "env_neutral": 50.0
       },
-      "base_rate": 0.7002,
-      "lift": 0.1311,
+      "base_rate": 0.7017,
+      "lift": 0.1304,
       "lift_reference_rate": null,
       "stable_lift": null,
-      "raw_hit_probability": 0.8313,
+      "raw_hit_probability": 0.8321,
       "calibrated_by": null,
       "prob_ci": null,
       "prob_ci_source": null,
@@ -594,7 +594,7 @@
       "reliability": null,
       "lineup_assumed": null,
       "max_acceptable_price": -350,
-      "estimated_odds": -648,
+      "estimated_odds": -652,
       "market_odds": null,
       "market_implied": null,
       "market_hold": null,
@@ -621,10 +621,10 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "293ceaf",
-      "prediction_timestamp": "2026-10-11T02:13:01.011834+00:00",
-      "odds_timestamp": "2026-10-11T02:13:01.009893+00:00",
-      "lineup_checked_at": "2026-10-11T02:13:01.009893+00:00"
+      "git_sha": "bd71e61",
+      "prediction_timestamp": "2026-10-11T19:16:26.949401+00:00",
+      "odds_timestamp": "2026-10-11T19:16:26.947113+00:00",
+      "lineup_checked_at": "2026-10-11T19:16:26.947113+00:00"
     },
     {
       "rank": 2,
@@ -643,21 +643,22 @@
         "needs": 5
       },
       "lean": null,
-      "score": 39.0,
+      "score": 40.0,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "shadow",
       "hit_probability": 0.6273,
       "signals": {
         "opp_team_k_pct": 34.0,
+        "same_hand_ratio": 75.0,
         "l14_k_pct": 86.4706,
         "env_neutral": 50.0
       },
-      "base_rate": 0.5396,
-      "lift": 0.0877,
+      "base_rate": 0.5394,
+      "lift": 0.0879,
       "lift_reference_rate": null,
       "stable_lift": null,
-      "raw_hit_probability": 0.7186,
+      "raw_hit_probability": 0.7185,
       "calibrated_by": "strikeouts",
       "prob_ci": null,
       "prob_ci_source": null,
@@ -692,10 +693,10 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "293ceaf",
-      "prediction_timestamp": "2026-10-11T02:13:01.011834+00:00",
-      "odds_timestamp": "2026-10-11T02:13:01.009893+00:00",
-      "lineup_checked_at": "2026-10-11T02:13:01.009893+00:00"
+      "git_sha": "bd71e61",
+      "prediction_timestamp": "2026-10-11T19:16:26.949401+00:00",
+      "odds_timestamp": "2026-10-11T19:16:26.947113+00:00",
+      "lineup_checked_at": "2026-10-11T19:16:26.947113+00:00"
     },
     {
       "rank": 3,
@@ -714,21 +715,22 @@
         "needs": 6
       },
       "lean": null,
-      "score": 39.0,
+      "score": 40.0,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "shadow",
-      "hit_probability": 0.5888,
+      "hit_probability": 0.5889,
       "signals": {
         "opp_team_k_pct": 34.0,
+        "same_hand_ratio": 75.0,
         "l14_k_pct": 86.4706,
         "env_neutral": 50.0
       },
-      "base_rate": 0.3909,
-      "lift": 0.1979,
+      "base_rate": 0.3914,
+      "lift": 0.1975,
       "lift_reference_rate": null,
       "stable_lift": null,
-      "raw_hit_probability": 0.5866,
+      "raw_hit_probability": 0.5869,
       "calibrated_by": "strikeouts",
       "prob_ci": null,
       "prob_ci_source": null,
@@ -763,10 +765,10 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "293ceaf",
-      "prediction_timestamp": "2026-10-11T02:13:01.011834+00:00",
-      "odds_timestamp": "2026-10-11T02:13:01.009893+00:00",
-      "lineup_checked_at": "2026-10-11T02:13:01.009893+00:00"
+      "git_sha": "bd71e61",
+      "prediction_timestamp": "2026-10-11T19:16:26.949401+00:00",
+      "odds_timestamp": "2026-10-11T19:16:26.947113+00:00",
+      "lineup_checked_at": "2026-10-11T19:16:26.947113+00:00"
     },
     {
       "rank": 4,
@@ -785,7 +787,7 @@
         "needs": 12
       },
       "lean": null,
-      "score": 65.1,
+      "score": 65.4,
       "confidence": "Medium",
       "notable_signals": 0,
       "category": "shadow",
@@ -833,10 +835,10 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "293ceaf",
-      "prediction_timestamp": "2026-10-11T02:13:01.011834+00:00",
-      "odds_timestamp": "2026-10-11T02:13:01.009893+00:00",
-      "lineup_checked_at": "2026-10-11T02:13:01.009893+00:00"
+      "git_sha": "bd71e61",
+      "prediction_timestamp": "2026-10-11T19:16:26.949401+00:00",
+      "odds_timestamp": "2026-10-11T19:16:26.947113+00:00",
+      "lineup_checked_at": "2026-10-11T19:16:26.947113+00:00"
     },
     {
       "rank": 5,
@@ -855,7 +857,7 @@
         "needs": 13
       },
       "lean": null,
-      "score": 65.1,
+      "score": 65.4,
       "confidence": "Medium",
       "notable_signals": 0,
       "category": "shadow",
@@ -903,10 +905,10 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "293ceaf",
-      "prediction_timestamp": "2026-10-11T02:13:01.011834+00:00",
-      "odds_timestamp": "2026-10-11T02:13:01.009893+00:00",
-      "lineup_checked_at": "2026-10-11T02:13:01.009893+00:00"
+      "git_sha": "bd71e61",
+      "prediction_timestamp": "2026-10-11T19:16:26.949401+00:00",
+      "odds_timestamp": "2026-10-11T19:16:26.947113+00:00",
+      "lineup_checked_at": "2026-10-11T19:16:26.947113+00:00"
     },
     {
       "rank": 6,
@@ -925,7 +927,7 @@
         "needs": 14
       },
       "lean": null,
-      "score": 65.1,
+      "score": 65.4,
       "confidence": "Medium",
       "notable_signals": 0,
       "category": "shadow",
@@ -973,10 +975,10 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "293ceaf",
-      "prediction_timestamp": "2026-10-11T02:13:01.011834+00:00",
-      "odds_timestamp": "2026-10-11T02:13:01.009893+00:00",
-      "lineup_checked_at": "2026-10-11T02:13:01.009893+00:00"
+      "git_sha": "bd71e61",
+      "prediction_timestamp": "2026-10-11T19:16:26.949401+00:00",
+      "odds_timestamp": "2026-10-11T19:16:26.947113+00:00",
+      "lineup_checked_at": "2026-10-11T19:16:26.947113+00:00"
     },
     {
       "rank": 7,
@@ -995,37 +997,38 @@
         "needs": 8
       },
       "lean": null,
-      "score": 39.0,
+      "score": 40.0,
       "confidence": "Low",
       "notable_signals": 0,
       "category": "shadow",
-      "hit_probability": 0.2995,
+      "hit_probability": 0.3003,
       "signals": {
         "opp_team_k_pct": 34.0,
+        "same_hand_ratio": 75.0,
         "l14_k_pct": 86.4706,
         "env_neutral": 50.0
       },
-      "base_rate": 0.1583,
-      "lift": 0.1412,
+      "base_rate": 0.1599,
+      "lift": 0.1404,
       "lift_reference_rate": null,
       "stable_lift": null,
-      "raw_hit_probability": 0.2995,
+      "raw_hit_probability": 0.3003,
       "calibrated_by": null,
       "prob_ci": null,
       "prob_ci_source": null,
       "sample_n": 30,
       "reliability": "A",
       "lineup_assumed": null,
-      "max_acceptable_price": 234,
-      "estimated_odds": 199,
-      "market_odds": 108,
-      "market_implied": 0.4533,
+      "max_acceptable_price": 233,
+      "estimated_odds": 198,
+      "market_odds": 110,
+      "market_implied": 0.4494,
       "market_hold": null,
-      "posted_implied": 0.4808,
-      "market_fair": 0.4533,
+      "posted_implied": 0.4762,
+      "market_fair": 0.4494,
       "market_fair_method": "exact_two_sided",
-      "edge_vs_fair": -0.1538,
-      "market_edge": -0.1538,
+      "edge_vs_fair": -0.1491,
+      "market_edge": -0.1491,
       "price_clears": false,
       "probability_basis": "modelled_shrunk",
       "probability_detail": {
@@ -1037,13 +1040,13 @@
           "stat": "strikeouts",
           "line": 3.5,
           "needs": 4,
-          "prob": 0.8313,
+          "prob": 0.8321,
           "basis": "modelled_shrunk",
-          "base_rate": 0.7002,
-          "lift": 0.1311,
+          "base_rate": 0.7017,
+          "lift": 0.1304,
           "empirical": 0.994,
           "modelled": 0.9624,
-          "raw_prob": 0.8313,
+          "raw_prob": 0.8321,
           "calibrated_by": null
         },
         {
@@ -1052,11 +1055,11 @@
           "needs": 5,
           "prob": 0.6273,
           "basis": "modelled_shrunk",
-          "base_rate": 0.5396,
-          "lift": 0.0877,
+          "base_rate": 0.5394,
+          "lift": 0.0879,
           "empirical": 0.9603,
           "modelled": 0.8976,
-          "raw_prob": 0.7186,
+          "raw_prob": 0.7185,
           "calibrated_by": "strikeouts",
           "ci": [
             0.5979,
@@ -1068,30 +1071,30 @@
           "stat": "strikeouts",
           "line": 5.5,
           "needs": 6,
-          "prob": 0.5888,
+          "prob": 0.5889,
           "basis": "modelled_shrunk",
-          "base_rate": 0.3909,
-          "lift": 0.1979,
+          "base_rate": 0.3914,
+          "lift": 0.1975,
           "empirical": 0.8591,
           "modelled": 0.7824,
-          "raw_prob": 0.5866,
+          "raw_prob": 0.5869,
           "calibrated_by": "strikeouts",
           "ci": [
-            0.5147,
-            0.6872
+            0.5148,
+            0.6873
           ],
           "ci_source": "historical_reliability_band"
         }
       ],
       "why": [
         "Expected workload 21.1 batters faced (his own 18.5/start over 2 real starts, shrunk toward the 23.1 league mean)",
+        "Platoon advantage: 4 of 8 projected hitters bat right-handed against this RHP",
         "L14 K% 29.7 (37 PA) \u2014 hot recent form",
         "Recency-weighted K rate 34.2% (exp. decay, halflife 30d, 30 real starts / 665 BF) \u2014 drives a favorable strikeout-probability read"
       ],
       "watchouts": [
         "Workload estimate rests on only 2 starts in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average",
-        "Opposing team K% 20.4 \u2014 contact-oriented lineup, tougher matchup",
-        "Opposing lineup handedness unavailable \u2014 could not compute a platoon-matchup read"
+        "Opposing team K% 20.4 \u2014 contact-oriented lineup, tougher matchup"
       ],
       "signal_weight_adjustment": null,
       "recommendation_status": "lean",
@@ -1103,10 +1106,10 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "293ceaf",
-      "prediction_timestamp": "2026-10-11T02:13:01.011834+00:00",
-      "odds_timestamp": "2026-10-11T02:13:01.009893+00:00",
-      "lineup_checked_at": "2026-10-11T02:13:01.009893+00:00"
+      "git_sha": "bd71e61",
+      "prediction_timestamp": "2026-10-11T19:16:26.949401+00:00",
+      "odds_timestamp": "2026-10-11T19:16:26.947113+00:00",
+      "lineup_checked_at": "2026-10-11T19:16:26.947113+00:00"
     },
     {
       "rank": 8,
@@ -1125,7 +1128,7 @@
         "needs": 18
       },
       "lean": null,
-      "score": 65.1,
+      "score": 65.4,
       "confidence": "Medium",
       "notable_signals": 0,
       "category": "shadow",
@@ -1147,15 +1150,15 @@
       "lineup_assumed": null,
       "max_acceptable_price": -134,
       "estimated_odds": -155,
-      "market_odds": null,
-      "market_implied": null,
+      "market_odds": -154,
+      "market_implied": 0.5647,
       "market_hold": null,
-      "posted_implied": null,
-      "market_fair": null,
-      "market_fair_method": null,
-      "edge_vs_fair": null,
-      "market_edge": null,
-      "price_clears": null,
+      "posted_implied": 0.6063,
+      "market_fair": 0.5647,
+      "market_fair_method": "exact_two_sided",
+      "edge_vs_fair": 0.0087,
+      "market_edge": 0.0087,
+      "price_clears": false,
       "probability_basis": "empirical_shrunk",
       "probability_detail": {
         "empirical": 0.683,
@@ -1196,23 +1199,21 @@
       "why": [
         "Recorded 18+ outs (6.0 IP) in 68.3% of his last 26 real starts (league 64.3%, avg 18.31 outs/start)"
       ],
-      "watchouts": [
-        "No real FanDuel line found for this pitcher yet -- this threshold is model-anchored to his average workload, not a posted market number"
-      ],
+      "watchouts": [],
       "signal_weight_adjustment": null,
       "recommendation_status": "neutral",
       "status_reasons": [
-        "no market price posted, and no strong enough read to lean on regardless"
+        "no meaningful evidence either direction \u2014 this is a real 'no opinion,' not a gap in coverage"
       ],
       "stale": false,
       "model_version": "2026.08.15",
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "293ceaf",
-      "prediction_timestamp": "2026-10-11T02:13:01.011834+00:00",
-      "odds_timestamp": "2026-10-11T02:13:01.009893+00:00",
-      "lineup_checked_at": "2026-10-11T02:13:01.009893+00:00"
+      "git_sha": "bd71e61",
+      "prediction_timestamp": "2026-10-11T19:16:26.949401+00:00",
+      "odds_timestamp": "2026-10-11T19:16:26.947113+00:00",
+      "lineup_checked_at": "2026-10-11T19:16:26.947113+00:00"
     },
     {
       "rank": 9,
@@ -1253,14 +1254,14 @@
       "lineup_assumed": null,
       "max_acceptable_price": -112,
       "estimated_odds": -129,
-      "market_odds": -210,
-      "market_implied": 0.6396,
+      "market_odds": -188,
+      "market_implied": 0.6162,
       "market_hold": null,
-      "posted_implied": 0.6774,
-      "market_fair": 0.6396,
+      "posted_implied": 0.6528,
+      "market_fair": 0.6162,
       "market_fair_method": "exact_two_sided",
-      "edge_vs_fair": -0.1106,
-      "market_edge": -0.1106,
+      "edge_vs_fair": -0.0872,
+      "market_edge": -0.0872,
       "price_clears": false,
       "probability_basis": "combined_shrunk",
       "probability_detail": {
@@ -1284,10 +1285,10 @@
       "selection_policy_version": "1.0.0",
       "calibration_version": "1.0.0",
       "feature_version": "1.0.0",
-      "git_sha": "293ceaf",
-      "prediction_timestamp": "2026-10-11T02:13:01.011834+00:00",
-      "odds_timestamp": "2026-10-11T02:13:01.009893+00:00",
-      "lineup_checked_at": "2026-10-11T02:13:01.009893+00:00"
+      "git_sha": "bd71e61",
+      "prediction_timestamp": "2026-10-11T19:16:26.949401+00:00",
+      "odds_timestamp": "2026-10-11T19:16:26.947113+00:00",
+      "lineup_checked_at": "2026-10-11T19:16:26.947113+00:00"
     }
   ],
   "recommendation_metadata": {
@@ -1295,9 +1296,9 @@
     "selection_policy_version": "1.0.0",
     "calibration_version": "1.0.0",
     "feature_version": "1.0.0",
-    "git_sha": "293ceaf",
-    "prediction_timestamp": "2026-10-11T02:13:01.011834+00:00",
-    "odds_fetched_at": "2026-10-11T02:13:01.009893+00:00",
-    "board_generated_at": "2026-10-11T02:13:01.009893+00:00"
+    "git_sha": "bd71e61",
+    "prediction_timestamp": "2026-10-11T19:16:26.949401+00:00",
+    "odds_fetched_at": "2026-10-11T19:16:26.947113+00:00",
+    "board_generated_at": "2026-10-11T19:16:26.947113+00:00"
   }
 }
