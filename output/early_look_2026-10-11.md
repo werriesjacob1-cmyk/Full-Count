@@ -16,7 +16,7 @@ Every player below is projected into last night's/his last game's batting slot f
 - **Jackson Chourio** (Milwaukee Brewers) — Over 0.5 Hits — 65.6% [Los Angeles Dodgers @ Milwaukee Brewers]
 - **Max Muncy** (Los Angeles Dodgers) — Over 0.5 Hits+Runs+RBIs — 63.9% [Los Angeles Dodgers @ Milwaukee Brewers]
 - **Freddie Freeman** (Los Angeles Dodgers) — Over 0.5 Hits — 63.6% [Los Angeles Dodgers @ Milwaukee Brewers]
-- **Shohei Ohtani** (Los Angeles Dodgers) — Over 0.5 Hits — 62.3% [Los Angeles Dodgers @ Milwaukee Brewers]
+- **Shohei Ohtani** (Los Angeles Dodgers) — Over 0.5 Hits — 62.2% [Los Angeles Dodgers @ Milwaukee Brewers]
 - **William Contreras** (Milwaukee Brewers) — Over 0.5 Hits — 61.8% [Los Angeles Dodgers @ Milwaukee Brewers]
 - **Mookie Betts** (Los Angeles Dodgers) — Over 0.5 Hits — 61.8% [Los Angeles Dodgers @ Milwaukee Brewers]
 - **Gary Sanchez** (Milwaukee Brewers) — Over 0.5 Hits+Runs+RBIs — 61.1% [Los Angeles Dodgers @ Milwaukee Brewers]
