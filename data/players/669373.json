@@ -666,6 +666,64 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-10-11",
+      "evaluations": [
+        {
+          "prop": "Over 7.5 Strikeouts",
+          "type": "pitcher",
+          "score": 38.2,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Milwaukee Brewers",
+          "game_pk": 849809,
+          "team": "Los Angeles Dodgers",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "opp_team_k_pct": 50.0,
+            "l14_k_pct": 98.8235,
+            "env_neutral": 50.0
+          },
+          "hit_probability": 0.2586,
+          "raw_hit_probability": 0.2586,
+          "lift": 0.1003,
+          "reliability": "A",
+          "sample_n": 26,
+          "projection": {
+            "stat": "strikeouts",
+            "value": 7.5,
+            "needs": 8
+          }
+        },
+        {
+          "prop": "Over 17.5 Outs Recorded",
+          "type": "pitcher",
+          "score": 65.1,
+          "notable_signals": 0,
+          "matchup": "Los Angeles Dodgers @ Milwaukee Brewers",
+          "game_pk": 849809,
+          "team": "Los Angeles Dodgers",
+          "side": "away",
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "outs_rate": 0.683,
+            "avg_outs_per_start": 18.31
+          },
+          "hit_probability": 0.5734,
+          "raw_hit_probability": 0.683,
+          "lift": -0.0695,
+          "reliability": "A",
+          "sample_n": 26,
+          "projection": {
+            "stat": "pitcher_outs",
+            "value": 17.5,
+            "needs": 18
+          }
+        }
+      ]
     }
   ]
 }
