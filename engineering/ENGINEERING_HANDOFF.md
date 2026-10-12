@@ -6331,3 +6331,35 @@ Tests: h1 41/41, strikeout alternatives 43/43, refit 26/26, support boundary
 1 intentional fail (governance).
 
 Alligator
+
+## 2026-10-12 -- MLB calibration v1.0.0 restored (Jacob Option A), PR #225
+
+Jacob approved Option A, subject to independent verification before merge.
+- **Restoration:** production `backtest/calibrators_by_market.json` is now
+  byte-exact v1.0.0 (sha256 `43576599...c877`, = `a052e79a`).
+- **Provenance:** lineage verified 4118bc69 -> 83f1f6a0 -> a052e79a. It is
+  the last production write before the bot's first one on 09-14.
+- **Audit records:** all five bot-written versions that shipped are
+  archived byte-exact under `backtest/fixtures/unapproved/`, with their
+  production windows recorded in the registry.
+- **Governance test:** `test_calibration_governance.py` (19 checks) now also
+  checks the production digest, the integrity of the archived records, and
+  the authorization record. It is registry-driven, not coefficient-pinned.
+- **Weekly bot:** stays candidate-only.
+
+Impact, measured on the 20 frozen boards (09-20..10-12). The board simulation
+reproduces the recorded selections 80/80.
+- Main board goes from 76 to 83 picks, +10 of them pitcher_outs (pitcher_outs
+  ships raw again).
+- strikeouts probabilities shift slightly; there is no reliable strikeouts
+  evidence either way.
+
+Risks:
+- Raw pitcher_outs looks overconfident on live candidates (0.619 vs 0.460,
+  n=139, leakage caveats). This is a separate Jacob decision.
+- Main's bot runs again 10-19 09:00 UTC if this PR is unmerged.
+
+Historical records, published picks and grades are unchanged. Not merged.
+Codex review requested.
+
+Alligator

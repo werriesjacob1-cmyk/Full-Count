@@ -72,10 +72,10 @@ jobs:
 
       - name: Run the calibration recheck
         # Extends backtest/rows.jsonl to the current rolling window, fits one
-        # candidate calibrator per market on the older portion, and only
-        # promotes a candidate into backtest/calibrators_by_market.json if it
-        # clears a real held-out improvement bar over BOTH the raw probability
-        # and whatever is already shipping for that market. See
+        # candidate calibrator per market on the older portion, and records as
+        # a CANDIDATE (backtest/calibrator_candidates.json, never production)
+        # any fit that clears the held-out improvement bar over BOTH the raw
+        # probability and whatever is already shipping for that market. See
         # backtest/refit_calibrators.py's own module docstring for exactly
         # what the bar is and why it is deliberately conservative. Writes
         # backtest/calibration_recheck_report.json every run, promoted or not,
@@ -94,7 +94,7 @@ jobs:
           python3 backtest/refit_calibrators.py --dry-run
           --candidates-out backtest/calibrator_candidates.json
 
-      - name: Commit any promoted calibrators and this run's report
+      - name: Commit this run's report and candidate calibrators (never production)
         if: always()
         run: |
           shopt -s nullglob

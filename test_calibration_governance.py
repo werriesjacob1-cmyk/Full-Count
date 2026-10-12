@@ -17,6 +17,7 @@ by (a) restoring an approved calibrator set, or (b) a reviewed PR adding a
 new approved registry entry with a bumped CALIBRATION_VERSION and Jacob's
 authorization. Never by copying the bot's latest numbers into the registry.
 """
+import hashlib
 import json
 import os
 import sys
@@ -72,6 +73,11 @@ def diff(live, approved):
     return out
 
 
+def sha256_of(rel):
+    with open(os.path.join(HERE, rel), "rb") as fh:
+        return hashlib.sha256(fh.read()).hexdigest()
+
+
 registry = json.load(open(os.path.join(HERE, "backtest", "calibration_registry.json")))
 live_raw = json.load(open(os.path.join(HERE, "backtest", "calibrators_by_market.json")))
 live = {m: canon(e) for m, e in live_raw.items()}
@@ -81,6 +87,11 @@ for entry in registry["approved"]:
     fx = json.load(open(os.path.join(HERE, entry["fixture"])))
     check(same({m: canon(e) for m, e in fx.items()}, entry["markets"]),
           f"approved v{entry['calibration_version']} matches fixture {entry['fixture']}")
+    check(sha256_of(entry["fixture"]) == entry["source_file_sha256"],
+          f"approved v{entry['calibration_version']} fixture bytes equal recorded digest "
+          f"{entry['source_file_sha256'][:12]} (source commit {entry['source_commit'][:10]})")
+    check(bool((entry.get("authorization") or {}).get("by")),
+          f"approved v{entry['calibration_version']} records who authorized it")
 
 print("== 2. PRODUCTION calibrators equal an approved, versioned entry")
 match = [e for e in registry["approved"] if same(live, e["markets"])]
@@ -93,6 +104,21 @@ if match:
     check(rec.CALIBRATION_VERSION == match[0]["calibration_version"],
           f"recommendation.CALIBRATION_VERSION ({rec.CALIBRATION_VERSION}) equals the approved "
           f"entry's version ({match[0]['calibration_version']})")
+
+print("== 2b. production bytes equal an approved artifact exactly (any meta/support edit needs an entry)")
+prod_sha = sha256_of(os.path.join("backtest", "calibrators_by_market.json"))
+check(prod_sha in {e["source_file_sha256"] for e in registry["approved"]},
+      f"production calibrators_by_market.json sha256 {prod_sha[:12]} is an approved artifact digest")
+
+print("== 2c. every unapproved bot-written version that shipped is preserved byte-exact and stays unapproved")
+approved_digests = {e["source_file_sha256"] for e in registry["approved"]}
+for u in registry["unapproved_history"]:
+    check(sha256_of(u["fixture"]) == u["file_sha256"],
+          f"audit record {u['date']} {u['commit'][:10]} preserved byte-exact")
+    check(u["file_sha256"] not in approved_digests,
+          f"audit record {u['date']} {u['commit'][:10]} is not listed as approved")
+check(prod_sha not in {u["file_sha256"] for u in registry["unapproved_history"]},
+      "production is not any recorded unapproved bot-written version")
 
 print("== 3. the weekly recheck can only write candidates, never production")
 wf = yaml.safe_load(open(os.path.join(HERE, ".github", "workflows", "calibration-recheck.yml")))
