@@ -23,7 +23,13 @@ Findings:
                       artifact by more than PUBLICATION_SLA_MINUTES
   STUCK_DEPLOY        a Dashboard Pages Deploy run has been non-terminal
                       (waiting/queued/pending/in_progress/requested) for
-                      more than STUCK_DEPLOY_MINUTES
+                      more than STUCK_DEPLOY_MINUTES AND no deploy has
+                      succeeded since it was created (i.e. it is actually
+                      blocking). During recovery, run 37642347599 stayed a
+                      'queued' phantom that GitHub refuses to cancel or
+                      force-cancel (HTTP 409) while later deploys succeeded
+                      past it; flagging it forever would recreate the
+                      cry-wolf watchdog that hid this incident.
 """
 from __future__ import annotations
 
@@ -57,6 +63,7 @@ def _parse(ts):
 
 
 def evaluate(*, repo_generated_at, public_manifest, deploy_runs, now,
+             last_success_created_at=None,
              sla_minutes=PUBLICATION_SLA_MINUTES, stuck_minutes=STUCK_DEPLOY_MINUTES):
     """Pure decision. Returns a list of (code, message) findings; empty = healthy."""
     findings = []
@@ -83,6 +90,9 @@ def evaluate(*, repo_generated_at, public_manifest, deploy_runs, now,
         created = _parse(run.get("created_at"))
         if status not in NON_TERMINAL or created is None:
             continue
+        last_ok = _parse(last_success_created_at)
+        if last_ok is not None and last_ok > created:
+            continue  # a later deploy succeeded past it: not blocking
         age = (now - created).total_seconds() / 60.0
         if age > stuck_minutes:
             findings.append((
@@ -124,6 +134,20 @@ def fetch_non_terminal_deploy_runs(repository, token):
     return runs
 
 
+def fetch_last_success_created_at(repository, token):
+    headers = {"Accept": "application/vnd.github+json"}
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    url = (f"https://api.github.com/repos/{repository}/actions/workflows/"
+           f"{DEPLOY_WORKFLOW}/runs?status=success&per_page=1")
+    try:
+        runs = _get_json(url, headers).get("workflow_runs", [])
+    except Exception as exc:  # noqa: BLE001 - unknown means "do not excuse"
+        print(f"last-success query failed: {exc}")
+        return None
+    return runs[0].get("created_at") if runs else None
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("data_json", nargs="?", default="docs/data.json")
@@ -134,12 +158,13 @@ def main(argv=None):
             repo_generated_at = json.load(fh).get("generated_at")
     except (OSError, json.JSONDecodeError):
         repo_generated_at = None
+    repository = os.environ.get("GITHUB_REPOSITORY", "werriesjacob1-cmyk/Full-Count")
+    token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
     findings = evaluate(
         repo_generated_at=repo_generated_at,
         public_manifest=fetch_public_manifest(args.base_url),
-        deploy_runs=fetch_non_terminal_deploy_runs(
-            os.environ.get("GITHUB_REPOSITORY", "werriesjacob1-cmyk/Full-Count"),
-            os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")),
+        deploy_runs=fetch_non_terminal_deploy_runs(repository, token),
+        last_success_created_at=fetch_last_success_created_at(repository, token),
         now=datetime.now(timezone.utc),
     )
     if not findings:

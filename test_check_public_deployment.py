@@ -50,6 +50,17 @@ class EvaluateTests(unittest.TestCase):
         self.assertEqual(self.codes(deploy_runs=[run(1, "in_progress", "2026-10-12T17:50:00Z")]), [])
         self.assertEqual(self.codes(deploy_runs=[run(1, "completed", "2026-10-01T00:00:00Z")]), [])
 
+    def test_phantom_run_bypassed_by_later_success_is_not_blocking(self):
+        # Recovery 2026-10-12: 37642347599 stayed 'queued' (cancel and
+        # force-cancel both HTTP 409) while deploy 38301593329 succeeded.
+        phantom = [run(37642347599, "queued", "2026-10-07T15:07:01Z")]
+        self.assertEqual(self.codes(deploy_runs=phantom,
+                                    last_success_created_at="2026-10-12T17:02:17Z"), [])
+        # With no later success it is still reported as blocking.
+        self.assertEqual(self.codes(deploy_runs=phantom,
+                                    last_success_created_at="2026-10-06T15:11:31Z"), ["STUCK_DEPLOY"])
+        self.assertEqual(self.codes(deploy_runs=phantom), ["STUCK_DEPLOY"])
+
     def test_unreadable_inputs_fail_closed(self):
         self.assertEqual(self.codes(public_manifest=None), ["PUBLIC_UNREACHABLE"])
         self.assertEqual(self.codes(public_manifest={"source_commit": "x"}), ["PUBLIC_UNREACHABLE"])
@@ -57,10 +68,12 @@ class EvaluateTests(unittest.TestCase):
 
     def test_main_exit_codes(self):
         with mock.patch.object(cpd, "fetch_public_manifest", return_value=manifest("2026-10-06T15:13:14+00:00")), \
-             mock.patch.object(cpd, "fetch_non_terminal_deploy_runs", return_value=[]):
+             mock.patch.object(cpd, "fetch_non_terminal_deploy_runs", return_value=[]), \
+             mock.patch.object(cpd, "fetch_last_success_created_at", return_value=None):
             self.assertEqual(cpd.main(["docs/data.json"]), 1)
         with mock.patch.object(cpd, "fetch_public_manifest", return_value=None), \
-             mock.patch.object(cpd, "fetch_non_terminal_deploy_runs", return_value=[]):
+             mock.patch.object(cpd, "fetch_non_terminal_deploy_runs", return_value=[]), \
+             mock.patch.object(cpd, "fetch_last_success_created_at", return_value=None):
             self.assertEqual(cpd.main(["/nonexistent/data.json"]), 1)
 
 
