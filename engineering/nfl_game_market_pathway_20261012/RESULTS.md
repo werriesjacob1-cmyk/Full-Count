@@ -76,3 +76,76 @@ Paired season-week bootstrap 95% intervals (config − M0 log loss):
 - Cross-book price dispersion: only FanDuel is captured, so M0 = one book's line and its no-vig EV is always ≈ −vig.
 
 Alligator
+
+---
+
+## Amendment A1 (2026-10-12, after Codex review 6129120014): D1-consistent fit
+
+**Classification: AMENDED_EXPLORATORY_POST_D1.** This is not a pre-registered test:
+- the amendment followed D1;
+- validation and held were viewed before it;
+- held 2023–2025 was also inspected by PR #222;
+- 2026 Weeks 1–5 had also been viewed once.
+
+Nothing here is promotion evidence.
+
+**Defect (Codex P1).** `fit_params` estimated M0 sigma, the key weights and C1's k around the *raw line*, while evaluation used the *solved* M0 center.
+
+**Fix.** The `v1_1_d1_solved_m0` procedure fits on development 2000–2019 only:
+- It runs 3 pre-declared outer fixed-point iterations: solve the centers, refit sigma, refit the key weights.
+- It then fits C1's k on the final centers, which are exactly the evaluation centers.
+- Its normal equation is unit-tested against `market_center`.
+
+**Original params preserved.** The original procedure still reproduces `game_market_v1_params.json` byte-for-byte (sha `c1dbd52e…`). The 2026-10-12T17:01Z freezes remain bound to it.
+
+- Amended params: `game_market_v1_1_params.json`, sha `acc53f4d…`.
+- Amended report: `benchmark_report_amended_d1.json`.
+
+| Parameter | Original (line-centered) | Amended (D1) |
+|---|---|---|
+| C1 k margin / total | −0.0489 / +0.0649 | **+0.0677 / +0.1308** |
+| M0 sigma margin / total | 13.356 / 13.494 | 13.371 / 13.525 |
+| Key weight at 3 / 7 | 3.10 / 1.96 | 3.19 / 1.97 |
+
+**Convergence (limitation).** Max / mean center shift by iteration:
+
+| Iteration | Max shift (pts) | Mean shift (pts) |
+|---|---|---|
+| 1 | 2.45 | 0.51 |
+| 2 | 0.61 | 0.19 |
+| 3 | 0.41 | 0.17 |
+
+The joint fixed point is not converged at the declared count. Centers and key weights are only weakly separately identified. No extra iterations were run after seeing this, to avoid tuning.
+
+**3-outcome log loss at the close, before → after**
+
+| Partition | M0 spread | C1 spread | M0 total | C1 total | F1 spread | F1 total |
+|---|---|---|---|---|---|---|
+| dev | .7801 → .7801 | .7803 → .7802 | .7535 → .7535 | .7536 → .7539 | .8105 → .8127 | .7759 → .7769 |
+| validation | .7572 → .7574 | .7580 → .7567 | .7480 → .7480 | .7482 → .7486 | .7823 → .7824 | .7715 → .7721 |
+| held* | .7605 → .7604 | .7608 → .7602 | .7195 → .7195 | .7196 → .7199 | .7878 → .7893 | .7407 → .7412 |
+| 2026 Wk 1–5 | .8618 → .8605 | .8631 → .8590 | .6931 → .6931 | .6977 → .7024 | .8649 → .8587 | .7828 → .7834 |
+
+\*Previously inspected.
+
+**Amended C1 − M0 bootstrap intervals** (season-week, 2,000 draws): all span 0.
+
+| Market | Validation | Held |
+|---|---|---|
+| Spread | [−.0020, +.0006] | [−.0014, +.0009] |
+| Total | [−.0012, +.0024] | [−.0013, +.0021] |
+
+**F1 − M0 intervals** still exclude 0: validation spread [+.0047, +.0471], held spread [+.0104, +.0472].
+
+**Amended C1 sides** at the −110 break-even (hits-misses, against the close):
+
+| Market | dev | validation | held | 2026 |
+|---|---|---|---|---|
+| Spread | 10-18 | 9-1 | 4-4 | — |
+| Total | 203-197-6 | 42-43 | 25-30-1 | 2-5 |
+
+These are small, unstable and below break-even overall.
+
+**Conclusion unchanged.** Football-only F1 is decisively worse than the market. Market-anchored C1 is statistically indistinguishable from M0. The B0-family negative result stands and is strengthened by the consistent fit.
+
+Alligator

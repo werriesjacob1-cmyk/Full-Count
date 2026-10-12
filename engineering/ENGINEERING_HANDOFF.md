@@ -6359,3 +6359,40 @@ Tests: `nfl/tests/test_game_market_research_pathway.py` 32 OK; full NFL suite
 Nothing merged, deployed, promoted, or public.
 
 Alligator
+
+## 2026-10-12 -- FC-NFL-004 targeted repair of Codex review 6129120014 (Claude)
+
+Branch `claude/trusting-tesla-71g8mc`. The true merge base is `d18116fd`; the
+earlier `1eec042e` "base" was misstated. Repair code is `9644db45`.
+
+- **P1 M0 consistency.**
+  - The D1 fit procedure estimates M0 sigma, the key weights and C1's k around
+    the solved M0, with k fit on the final evaluation centers.
+  - The original procedure byte-reproduces `c1dbd52e`, which the existing
+    freezes are bound to. Amended params are `acc53f4d`.
+  - Results are labelled AMENDED_EXPLORATORY. C1−M0 still spans 0 and F1 still
+    loses. The fixed point is not converged at the 3 declared iterations
+    (mean shift 0.17 pts); this is disclosed, not tuned.
+- **P1 slate provenance.**
+  - The FanDuel root is archived and hashed, and discovery re-derives from it.
+  - Coverage is cross-checked against schedule games in the window:
+    COMPLETE, PARTIAL_COVERAGE, NO_EVENTS, or DISCOVERY_FAILURE (which fails).
+  - Freeze v2 binds the discovery. `verify-slate` re-checks everything.
+  - Real vintage 2026-10-12T17:34Z: COMPLETE 15/15, verified from root sha
+    `1c965bee…`.
+  - The 17:01Z v1 vintage has no archived root. That gap is disclosed, and
+    that vintage stays as-is.
+- **P1 lifecycle.**
+  - Read-only `actions: read` artifact chain: fetch-prior → replay → freeze →
+    grade → rolling ledger artifact.
+  - Durable persistence (`contents: write`) is designed in `LIFECYCLE_DESIGN.md`
+    and is blocked on Jacob.
+- **P2.**
+  - Explicit terminal dispositions for postponed, not-final-after-7-days, and
+    not-found games.
+  - The later vintage is labelled NOT_A_VERIFIED_CLOSE.
+  - The grading identity is rechecked field by field.
+- **Tests.** Lifecycle 15 OK, pathway 32 OK; full NFL suite 88 files /
+  1,103 tests OK.
+
+Alligator
