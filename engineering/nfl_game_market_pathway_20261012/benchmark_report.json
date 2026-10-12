@@ -1,0 +1,3226 @@
+{
+  "fresh_2026": {
+    "configs": {
+      "B0": {
+        "homewin_logloss": 0.6442906937252095,
+        "margin_mae": 9.89674774220318,
+        "margin_rmse": 13.130504179631345,
+        "n": 78,
+        "spread_brier_nonpush": 0.24873105951345423,
+        "spread_logloss3": 0.8675537208329062,
+        "spread_push_obs_rate": 0.07692307692307693,
+        "spread_push_pred_mean": 0.019205614539972875,
+        "spread_sides_0.5238": {
+          "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.04561338182646067,
+          "closing_price_rows": 62,
+          "hit_rate": 0.5483870967741935,
+          "hits": 34,
+          "misses": 28,
+          "picks": 68,
+          "pushes": 6
+        },
+        "spread_sides_0.5500": {
+          "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.0957916698173143,
+          "closing_price_rows": 54,
+          "hit_rate": 0.5740740740740741,
+          "hits": 31,
+          "misses": 23,
+          "picks": 58,
+          "pushes": 4
+        },
+        "total_brier_nonpush": 0.295286629154305,
+        "total_logloss3": 0.7913400896325998,
+        "total_mae": 12.125624925615714,
+        "total_push_obs_rate": 0.0,
+        "total_push_pred_mean": 0.0,
+        "total_rmse": 14.852458309707659,
+        "total_sides_0.5238": {
+          "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.34530979945159207,
+          "closing_price_rows": 67,
+          "hit_rate": 0.34328358208955223,
+          "hits": 23,
+          "misses": 44,
+          "picks": 67,
+          "pushes": 0
+        },
+        "total_sides_0.5500": {
+          "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.27635540872610026,
+          "closing_price_rows": 58,
+          "hit_rate": 0.3793103448275862,
+          "hits": 22,
+          "misses": 36,
+          "picks": 58,
+          "pushes": 0
+        }
+      },
+      "C1": {
+        "homewin_logloss": 0.6505054316239823,
+        "margin_mae": 10.135898000713041,
+        "margin_rmse": 12.6761192801641,
+        "n": 78,
+        "spread_brier_nonpush": 0.2507464184216517,
+        "spread_logloss3": 0.8631470337018856,
+        "spread_push_obs_rate": 0.07692307692307693,
+        "spread_push_pred_mean": 0.021561433863572094,
+        "spread_sides_0.5238": {
+          "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+          "closing_price_rows": 0,
+          "hit_rate": null,
+          "hits": 0,
+          "misses": 0,
+          "picks": 0,
+          "pushes": 0
+        },
+        "spread_sides_0.5500": {
+          "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+          "closing_price_rows": 0,
+          "hit_rate": null,
+          "hits": 0,
+          "misses": 0,
+          "picks": 0,
+          "pushes": 0
+        },
+        "total_brier_nonpush": 0.2522576982964855,
+        "total_logloss3": 0.697663230336062,
+        "total_mae": 10.619989406854549,
+        "total_push_obs_rate": 0.0,
+        "total_push_pred_mean": 0.0,
+        "total_rmse": 13.11317657800422,
+        "total_sides_0.5238": {
+          "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+          "closing_price_rows": 0,
+          "hit_rate": null,
+          "hits": 0,
+          "misses": 0,
+          "picks": 0,
+          "pushes": 0
+        },
+        "total_sides_0.5500": {
+          "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+          "closing_price_rows": 0,
+          "hit_rate": null,
+          "hits": 0,
+          "misses": 0,
+          "picks": 0,
+          "pushes": 0
+        }
+      },
+      "F1": {
+        "homewin_logloss": 0.6491227061475245,
+        "margin_mae": 9.995961395404896,
+        "margin_rmse": 13.161791141089841,
+        "n": 78,
+        "spread_brier_nonpush": 0.24821442380849357,
+        "spread_logloss3": 0.8648771909055504,
+        "spread_push_obs_rate": 0.07692307692307693,
+        "spread_push_pred_mean": 0.019852708226010277,
+        "spread_sides_0.5238": {
+          "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.12261249012197067,
+          "closing_price_rows": 58,
+          "hit_rate": 0.5862068965517241,
+          "hits": 34,
+          "misses": 24,
+          "picks": 64,
+          "pushes": 6
+        },
+        "spread_sides_0.5500": {
+          "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.0894451819495699,
+          "closing_price_rows": 51,
+          "hit_rate": 0.5686274509803921,
+          "hits": 29,
+          "misses": 22,
+          "picks": 57,
+          "pushes": 6
+        },
+        "total_brier_nonpush": 0.2932146373791083,
+        "total_logloss3": 0.7828188743386485,
+        "total_mae": 11.780749196280832,
+        "total_push_obs_rate": 0.0,
+        "total_push_pred_mean": 0.0,
+        "total_rmse": 14.507503384006988,
+        "total_sides_0.5238": {
+          "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.39257509639019916,
+          "closing_price_rows": 66,
+          "hit_rate": 0.3181818181818182,
+          "hits": 21,
+          "misses": 45,
+          "picks": 66,
+          "pushes": 0
+        },
+        "total_sides_0.5500": {
+          "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.40039602958294546,
+          "closing_price_rows": 54,
+          "hit_rate": 0.3148148148148148,
+          "hits": 17,
+          "misses": 37,
+          "picks": 54,
+          "pushes": 0
+        }
+      },
+      "M0": {
+        "homewin_logloss": 0.6488529378982294,
+        "margin_mae": 10.104317443967538,
+        "margin_rmse": 12.664047836953198,
+        "n": 78,
+        "spread_brier_nonpush": 0.24999999999999828,
+        "spread_logloss3": 0.8617737804876244,
+        "spread_push_obs_rate": 0.07692307692307693,
+        "spread_push_pred_mean": 0.02156475866552807,
+        "spread_sides_0.5238": {
+          "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+          "closing_price_rows": 0,
+          "hit_rate": null,
+          "hits": 0,
+          "misses": 0,
+          "picks": 0,
+          "pushes": 0
+        },
+        "spread_sides_0.5500": {
+          "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+          "closing_price_rows": 0,
+          "hit_rate": null,
+          "hits": 0,
+          "misses": 0,
+          "picks": 0,
+          "pushes": 0
+        },
+        "total_brier_nonpush": 0.2500000000000127,
+        "total_logloss3": 0.6931471805599707,
+        "total_mae": 10.5440287296293,
+        "total_push_obs_rate": 0.0,
+        "total_push_pred_mean": 0.0,
+        "total_rmse": 13.044485697340527,
+        "total_sides_0.5238": {
+          "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+          "closing_price_rows": 0,
+          "hit_rate": null,
+          "hits": 0,
+          "misses": 0,
+          "picks": 0,
+          "pushes": 0
+        },
+        "total_sides_0.5500": {
+          "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+          "closing_price_rows": 0,
+          "hit_rate": null,
+          "hits": 0,
+          "misses": 0,
+          "picks": 0,
+          "pushes": 0
+        }
+      }
+    },
+    "game_ids": [
+      "2026_01_ARI_LAC",
+      "2026_01_ATL_PIT",
+      "2026_01_BAL_IND",
+      "2026_01_BUF_HOU",
+      "2026_01_CHI_CAR",
+      "2026_01_CLE_JAX",
+      "2026_01_DAL_NYG",
+      "2026_01_DEN_KC",
+      "2026_01_GB_MIN",
+      "2026_01_MIA_LV",
+      "2026_01_NE_SEA",
+      "2026_01_NO_DET",
+      "2026_01_NYJ_TEN",
+      "2026_01_SF_LA",
+      "2026_01_TB_CIN",
+      "2026_01_WAS_PHI",
+      "2026_02_CAR_ATL",
+      "2026_02_CIN_HOU",
+      "2026_02_CLE_TB",
+      "2026_02_DET_BUF",
+      "2026_02_GB_NYJ",
+      "2026_02_IND_KC",
+      "2026_02_JAX_DEN",
+      "2026_02_LV_LAC",
+      "2026_02_MIA_SF",
+      "2026_02_MIN_CHI",
+      "2026_02_NO_BAL",
+      "2026_02_NYG_LA",
+      "2026_02_PHI_TEN",
+      "2026_02_PIT_NE",
+      "2026_02_SEA_ARI",
+      "2026_02_WAS_DAL",
+      "2026_03_ARI_SF",
+      "2026_03_ATL_GB",
+      "2026_03_BAL_DAL",
+      "2026_03_CAR_CLE",
+      "2026_03_CIN_PIT",
+      "2026_03_HOU_IND",
+      "2026_03_KC_MIA",
+      "2026_03_LAC_BUF",
+      "2026_03_LA_DEN",
+      "2026_03_LV_NO",
+      "2026_03_MIN_TB",
+      "2026_03_NE_JAX",
+      "2026_03_NYJ_DET",
+      "2026_03_PHI_CHI",
+      "2026_03_SEA_WAS",
+      "2026_03_TEN_NYG",
+      "2026_04_ARI_NYG",
+      "2026_04_ATL_NO",
+      "2026_04_DAL_HOU",
+      "2026_04_DEN_SF",
+      "2026_04_DET_CAR",
+      "2026_04_GB_TB",
+      "2026_04_IND_WAS",
+      "2026_04_JAX_CIN",
+      "2026_04_KC_LV",
+      "2026_04_LAC_SEA",
+      "2026_04_LA_PHI",
+      "2026_04_MIA_MIN",
+      "2026_04_NE_BUF",
+      "2026_04_NYJ_CHI",
+      "2026_04_PIT_CLE",
+      "2026_04_TEN_BAL",
+      "2026_05_BAL_ATL",
+      "2026_05_CHI_GB",
+      "2026_05_CIN_MIA",
+      "2026_05_CLE_NYJ",
+      "2026_05_DEN_LAC",
+      "2026_05_DET_ARI",
+      "2026_05_HOU_TEN",
+      "2026_05_IND_PIT",
+      "2026_05_LV_NE",
+      "2026_05_MIN_NO",
+      "2026_05_NYG_WAS",
+      "2026_05_PHI_JAX",
+      "2026_05_SF_SEA",
+      "2026_05_TB_DAL"
+    ],
+    "n_games": 78,
+    "reliability": {
+      "C1": {
+        "spread": [
+          {
+            "bin": 4,
+            "mean_pred": 0.49351893194605373,
+            "n": 38,
+            "obs_rate": 0.5263157894736842
+          },
+          {
+            "bin": 5,
+            "mean_pred": 0.5039739871588336,
+            "n": 34,
+            "obs_rate": 0.4117647058823529
+          }
+        ],
+        "total": [
+          {
+            "bin": 4,
+            "mean_pred": 0.49339250958699865,
+            "n": 39,
+            "obs_rate": 0.6410256410256411
+          },
+          {
+            "bin": 5,
+            "mean_pred": 0.5052209216753057,
+            "n": 39,
+            "obs_rate": 0.358974358974359
+          }
+        ]
+      },
+      "F1": {
+        "spread": [
+          {
+            "bin": 2,
+            "mean_pred": 0.2733656832500015,
+            "n": 3,
+            "obs_rate": 0.6666666666666666
+          },
+          {
+            "bin": 3,
+            "mean_pred": 0.3557133638616267,
+            "n": 9,
+            "obs_rate": 0.3333333333333333
+          },
+          {
+            "bin": 4,
+            "mean_pred": 0.45682733281180393,
+            "n": 23,
+            "obs_rate": 0.391304347826087
+          },
+          {
+            "bin": 5,
+            "mean_pred": 0.5453702817112355,
+            "n": 16,
+            "obs_rate": 0.4375
+          },
+          {
+            "bin": 6,
+            "mean_pred": 0.6418527713988638,
+            "n": 14,
+            "obs_rate": 0.6428571428571429
+          },
+          {
+            "bin": 7,
+            "mean_pred": 0.7518833593858363,
+            "n": 7,
+            "obs_rate": 0.5714285714285714
+          }
+        ],
+        "total": [
+          {
+            "bin": 2,
+            "mean_pred": 0.27994107511990846,
+            "n": 1,
+            "obs_rate": 0.0
+          },
+          {
+            "bin": 3,
+            "mean_pred": 0.3588734906396232,
+            "n": 17,
+            "obs_rate": 0.7058823529411765
+          },
+          {
+            "bin": 4,
+            "mean_pred": 0.4502140082142354,
+            "n": 21,
+            "obs_rate": 0.6190476190476191
+          },
+          {
+            "bin": 5,
+            "mean_pred": 0.5450829548938511,
+            "n": 26,
+            "obs_rate": 0.4230769230769231
+          },
+          {
+            "bin": 6,
+            "mean_pred": 0.6326938840993913,
+            "n": 11,
+            "obs_rate": 0.2727272727272727
+          },
+          {
+            "bin": 7,
+            "mean_pred": 0.7225795969364062,
+            "n": 2,
+            "obs_rate": 0.0
+          }
+        ]
+      }
+    },
+    "source_sha256": "9380292232901e4321c99992c7efca0c567a0a801dcb292662a3f78a9a101c49",
+    "subgroups": {
+      "qb_change_LEAKY": {
+        "B0": {
+          "margin_mae": 13.448038778452041,
+          "spread_logloss3": 0.8060500545989014,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.09659030290340022,
+            "closing_price_rows": 19,
+            "hit_rate": 0.5789473684210527,
+            "hits": 11,
+            "misses": 8,
+            "picks": 20,
+            "pushes": 1
+          },
+          "total_logloss3": 0.7834645593734972,
+          "total_mae": 10.778320851726619,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.20881858447570403,
+            "closing_price_rows": 22,
+            "hit_rate": 0.4090909090909091,
+            "hits": 9,
+            "misses": 13,
+            "picks": 22,
+            "pushes": 0
+          }
+        },
+        "C1": {
+          "margin_mae": 13.379125958209814,
+          "spread_logloss3": 0.786900247473797,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "total_logloss3": 0.6962650557424411,
+          "total_mae": 9.226734667793094,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          }
+        },
+        "F1": {
+          "margin_mae": 14.045975853988221,
+          "spread_logloss3": 0.8364118393164823,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 9.907483322478174e-05,
+            "closing_price_rows": 19,
+            "hit_rate": 0.5263157894736842,
+            "hits": 10,
+            "misses": 9,
+            "picks": 20,
+            "pushes": 1
+          },
+          "total_logloss3": 0.7705420183321597,
+          "total_mae": 10.325244439225214,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.2287200507664117,
+            "closing_price_rows": 20,
+            "hit_rate": 0.4,
+            "hits": 8,
+            "misses": 12,
+            "picks": 20,
+            "pushes": 0
+          }
+        },
+        "M0": {
+          "margin_mae": 13.361893262884765,
+          "spread_logloss3": 0.7873571820030443,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "total_logloss3": 0.6931471805601147,
+          "total_mae": 9.178562508153437,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          }
+        },
+        "n": 22
+      },
+      "qb_stable_LEAKY": {
+        "B0": {
+          "margin_mae": 8.50159769224827,
+          "spread_logloss3": 0.8917158754248368,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.02308869576920832,
+            "closing_price_rows": 43,
+            "hit_rate": 0.5348837209302325,
+            "hits": 23,
+            "misses": 20,
+            "picks": 48,
+            "pushes": 5
+          },
+          "total_logloss3": 0.7944340479486758,
+          "total_mae": 12.654922954643572,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.41203883788424855,
+            "closing_price_rows": 45,
+            "hit_rate": 0.3111111111111111,
+            "hits": 14,
+            "misses": 31,
+            "picks": 45,
+            "pushes": 0
+          }
+        },
+        "C1": {
+          "margin_mae": 8.861772731696451,
+          "spread_logloss3": 0.8931011282914919,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "total_logloss3": 0.6982125132121275,
+          "total_mae": 11.167339482914409,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          }
+        },
+        "F1": {
+          "margin_mae": 8.404884286675733,
+          "spread_logloss3": 0.8760600076012556,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.18229851295494945,
+            "closing_price_rows": 39,
+            "hit_rate": 0.6153846153846154,
+            "hits": 24,
+            "misses": 15,
+            "picks": 44,
+            "pushes": 5
+          },
+          "total_logloss3": 0.7876419249126262,
+          "total_mae": 12.35255463655268,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.4638164205744546,
+            "closing_price_rows": 46,
+            "hit_rate": 0.2826086956521739,
+            "hits": 13,
+            "misses": 33,
+            "picks": 46,
+            "pushes": 0
+          }
+        },
+        "M0": {
+          "margin_mae": 8.824555515107198,
+          "spread_logloss3": 0.8910088727494238,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "total_logloss3": 0.6931471805599142,
+          "total_mae": 11.080461888066244,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          }
+        },
+        "n": 56
+      },
+      "weeks_1_4": {
+        "B0": {
+          "margin_mae": 9.605693272716787,
+          "spread_logloss3": 0.8657477896221143,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.10927318522088125,
+            "closing_price_rows": 50,
+            "hit_rate": 0.58,
+            "hits": 29,
+            "misses": 21,
+            "picks": 55,
+            "pushes": 5
+          },
+          "total_logloss3": 0.8050310198478291,
+          "total_mae": 12.626308726965245,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.38871525261288425,
+            "closing_price_rows": 56,
+            "hit_rate": 0.32142857142857145,
+            "hits": 18,
+            "misses": 38,
+            "picks": 56,
+            "pushes": 0
+          }
+        },
+        "C1": {
+          "margin_mae": 9.95780958327674,
+          "spread_logloss3": 0.8644558407984541,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "total_logloss3": 0.6980076849429481,
+          "total_mae": 10.815664836271667,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          }
+        },
+        "F1": {
+          "margin_mae": 9.637445657085234,
+          "spread_logloss3": 0.8554563032594671,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.18610965989101702,
+            "closing_price_rows": 47,
+            "hit_rate": 0.6170212765957447,
+            "hits": 29,
+            "misses": 18,
+            "picks": 52,
+            "pushes": 5
+          },
+          "total_logloss3": 0.7863244020380533,
+          "total_mae": 12.057933524153349,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.4509874010367096,
+            "closing_price_rows": 52,
+            "hit_rate": 0.28846153846153844,
+            "hits": 15,
+            "misses": 37,
+            "picks": 52,
+            "pushes": 0
+          }
+        },
+        "M0": {
+          "margin_mae": 9.914083433096788,
+          "spread_logloss3": 0.8624073116114848,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "total_logloss3": 0.6931471805599961,
+          "total_mae": 10.73338597046308,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          }
+        },
+        "n": 64
+      },
+      "weeks_5_plus": {
+        "B0": {
+          "margin_mae": 11.22728245985527,
+          "spread_logloss3": 0.8758094063679555,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.21963579898362506,
+            "closing_price_rows": 12,
+            "hit_rate": 0.4166666666666667,
+            "hits": 5,
+            "misses": 7,
+            "picks": 13,
+            "pushes": 1
+          },
+          "total_logloss3": 0.7287529800772657,
+          "total_mae": 9.836784690874996,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.12433658335774123,
+            "closing_price_rows": 11,
+            "hit_rate": 0.45454545454545453,
+            "hits": 5,
+            "misses": 6,
+            "picks": 11,
+            "pushes": 0
+          }
+        },
+        "C1": {
+          "margin_mae": 10.950016480421851,
+          "spread_logloss3": 0.8571639155461446,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "total_logloss3": 0.6960885807045836,
+          "total_mae": 9.725473158090585,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          }
+        },
+        "F1": {
+          "margin_mae": 11.63489048486621,
+          "spread_logloss3": 0.9079441058590737,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.14869359889122735,
+            "closing_price_rows": 11,
+            "hit_rate": 0.45454545454545453,
+            "hits": 5,
+            "misses": 6,
+            "picks": 12,
+            "pushes": 1
+          },
+          "total_logloss3": 0.766793604855655,
+          "total_mae": 10.513620840292178,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.1756151077031603,
+            "closing_price_rows": 14,
+            "hit_rate": 0.42857142857142855,
+            "hits": 6,
+            "misses": 8,
+            "picks": 14,
+            "pushes": 0
+          }
+        },
+        "M0": {
+          "margin_mae": 10.973958636519539,
+          "spread_logloss3": 0.8588776382071196,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "total_logloss3": 0.6931471805598546,
+          "total_mae": 9.678395628674867,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          }
+        },
+        "n": 14
+      }
+    }
+  },
+  "generated_at": "2026-10-12T16:52:47.588893Z",
+  "limitations": [
+    "Closing lines/odds are retrospective controls; no timestamped earlier offers exist in this source.",
+    "Information timing (open vs close) cannot be tested from this source.",
+    "QB-change subgroup uses realised starters (leaky); it is a diagnostic, never a feature.",
+    "Margin and total are separate marginals; no same-game joint distribution.",
+    "Held 2023-2025 was previously inspected by PR #222 for B0/close."
+  ],
+  "matched_games": 6906,
+  "params_sha256": "c1dbd52ee5232a882b9d91278261af66b54f5902b0ad1eeead28888eefb34fb5",
+  "partitions": {
+    "development": {
+      "configs": {
+        "B0": {
+          "homewin_logloss": 0.6545914531476655,
+          "margin_mae": 11.195956123002272,
+          "margin_rmse": 14.288393723603777,
+          "n": 5095,
+          "spread_brier_nonpush": 0.2677667244345786,
+          "spread_logloss3": 0.8205644468986255,
+          "spread_push_obs_rate": 0.028655544651619236,
+          "spread_push_pred_mean": 0.024277324978516254,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.013812741289403479,
+            "closing_price_rows": 2936,
+            "hit_rate": 0.5071100917431193,
+            "hits": 2211,
+            "misses": 2149,
+            "picks": 4493,
+            "pushes": 133
+          },
+          "spread_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.015296799111311614,
+            "closing_price_rows": 2481,
+            "hit_rate": 0.5056664867781975,
+            "hits": 1874,
+            "misses": 1832,
+            "picks": 3827,
+            "pushes": 121
+          },
+          "total_brier_nonpush": 0.2648966400738665,
+          "total_logloss3": 0.7851574203580483,
+          "total_mae": 11.263929632536202,
+          "total_push_obs_rate": 0.016094210009813543,
+          "total_push_pred_mean": 0.015419367468286673,
+          "total_rmse": 14.133887528018471,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.019972234188746038,
+            "closing_price_rows": 2820,
+            "hit_rate": 0.49161073825503354,
+            "hits": 2051,
+            "misses": 2121,
+            "picks": 4238,
+            "pushes": 66
+          },
+          "total_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.021841653265910733,
+            "closing_price_rows": 2218,
+            "hit_rate": 0.48724179829890646,
+            "hits": 1604,
+            "misses": 1688,
+            "picks": 3341,
+            "pushes": 49
+          }
+        },
+        "C1": {
+          "homewin_logloss": 0.611606473082281,
+          "margin_mae": 10.45736434757126,
+          "margin_rmse": 13.346645449936977,
+          "n": 5095,
+          "spread_brier_nonpush": 0.25005401400170807,
+          "spread_logloss3": 0.7802552094373281,
+          "spread_push_obs_rate": 0.028655544651619236,
+          "spread_push_pred_mean": 0.027383263018476857,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.9523809523809523,
+            "closing_price_rows": 1,
+            "hit_rate": 1.0,
+            "hits": 1,
+            "misses": 0,
+            "picks": 1,
+            "pushes": 0
+          },
+          "spread_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "total_brier_nonpush": 0.2500452367255996,
+          "total_logloss3": 0.753594769502706,
+          "total_mae": 10.70268518564025,
+          "total_push_obs_rate": 0.016094210009813543,
+          "total_push_pred_mean": 0.01681916453420351,
+          "total_rmse": 13.481456018184458,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.16338516734556338,
+            "closing_price_rows": 5,
+            "hit_rate": 0.6666666666666666,
+            "hits": 4,
+            "misses": 2,
+            "picks": 6,
+            "pushes": 0
+          },
+          "total_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          }
+        },
+        "F1": {
+          "homewin_logloss": 0.6441006289185061,
+          "margin_mae": 10.91870951025864,
+          "margin_rmse": 13.995422226233861,
+          "n": 5095,
+          "spread_brier_nonpush": 0.26388039657359497,
+          "spread_logloss3": 0.8104778708233161,
+          "spread_push_obs_rate": 0.028655544651619236,
+          "spread_push_pred_mean": 0.0252281136948899,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.023187706279033708,
+            "closing_price_rows": 2908,
+            "hit_rate": 0.5077319587628866,
+            "hits": 2167,
+            "misses": 2101,
+            "picks": 4389,
+            "pushes": 121
+          },
+          "spread_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.015876534583673923,
+            "closing_price_rows": 2399,
+            "hit_rate": 0.5126744517231558,
+            "hits": 1800,
+            "misses": 1711,
+            "picks": 3613,
+            "pushes": 102
+          },
+          "total_brier_nonpush": 0.260700836228588,
+          "total_logloss3": 0.7758676645218333,
+          "total_mae": 11.079524986244138,
+          "total_push_obs_rate": 0.016094210009813543,
+          "total_push_pred_mean": 0.015761017096549382,
+          "total_rmse": 13.913596521456133,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -3.877568984293225e-05,
+            "closing_price_rows": 2766,
+            "hit_rate": 0.5013167344984438,
+            "hits": 2094,
+            "misses": 2083,
+            "picks": 4243,
+            "pushes": 66
+          },
+          "total_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.0029930718673018704,
+            "closing_price_rows": 2080,
+            "hit_rate": 0.49984515329823476,
+            "hits": 1614,
+            "misses": 1615,
+            "picks": 3278,
+            "pushes": 49
+          }
+        },
+        "M0": {
+          "homewin_logloss": 0.6116288607752061,
+          "margin_mae": 10.450144523625942,
+          "margin_rmse": 13.342959525635587,
+          "n": 5095,
+          "spread_brier_nonpush": 0.2500000000000028,
+          "spread_logloss3": 0.7801498182040274,
+          "spread_push_obs_rate": 0.028655544651619236,
+          "spread_push_pred_mean": 0.027390985730223024,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "spread_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "total_brier_nonpush": 0.25000000000000383,
+          "total_logloss3": 0.7535054517674744,
+          "total_mae": 10.700909933162608,
+          "total_push_obs_rate": 0.016094210009813543,
+          "total_push_pred_mean": 0.0168204640760596,
+          "total_rmse": 13.482131129994386,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "total_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          }
+        }
+      },
+      "n_games": 5095,
+      "reliability": {
+        "C1": {
+          "spread": [
+            {
+              "bin": 4,
+              "mean_pred": 0.49528313494485104,
+              "n": 2454,
+              "obs_rate": 0.4967400162999185
+            },
+            {
+              "bin": 5,
+              "mean_pred": 0.5047472739225072,
+              "n": 2495,
+              "obs_rate": 0.47655310621242486
+            }
+          ],
+          "total": [
+            {
+              "bin": 4,
+              "mean_pred": 0.49477602789179725,
+              "n": 2129,
+              "obs_rate": 0.4960075152653828
+            },
+            {
+              "bin": 5,
+              "mean_pred": 0.5057420806280808,
+              "n": 2884,
+              "obs_rate": 0.49826629680998613
+            }
+          ]
+        },
+        "F1": {
+          "spread": [
+            {
+              "bin": 1,
+              "mean_pred": 0.16677073649928392,
+              "n": 20,
+              "obs_rate": 0.6
+            },
+            {
+              "bin": 2,
+              "mean_pred": 0.26651447476682694,
+              "n": 244,
+              "obs_rate": 0.5
+            },
+            {
+              "bin": 3,
+              "mean_pred": 0.35823038674388985,
+              "n": 882,
+              "obs_rate": 0.47165532879818595
+            },
+            {
+              "bin": 4,
+              "mean_pred": 0.4504965048257648,
+              "n": 1518,
+              "obs_rate": 0.48616600790513836
+            },
+            {
+              "bin": 5,
+              "mean_pred": 0.5491397584218489,
+              "n": 1324,
+              "obs_rate": 0.4954682779456193
+            },
+            {
+              "bin": 6,
+              "mean_pred": 0.6419436662078509,
+              "n": 744,
+              "obs_rate": 0.489247311827957
+            },
+            {
+              "bin": 7,
+              "mean_pred": 0.7359322451624766,
+              "n": 198,
+              "obs_rate": 0.47474747474747475
+            },
+            {
+              "bin": 8,
+              "mean_pred": 0.823080848774191,
+              "n": 19,
+              "obs_rate": 0.3157894736842105
+            }
+          ],
+          "total": [
+            {
+              "bin": 1,
+              "mean_pred": 0.19277415064118286,
+              "n": 2,
+              "obs_rate": 0.0
+            },
+            {
+              "bin": 2,
+              "mean_pred": 0.2667684979255917,
+              "n": 73,
+              "obs_rate": 0.5616438356164384
+            },
+            {
+              "bin": 3,
+              "mean_pred": 0.36005107427385913,
+              "n": 525,
+              "obs_rate": 0.5142857142857142
+            },
+            {
+              "bin": 4,
+              "mean_pred": 0.45498373974348205,
+              "n": 1521,
+              "obs_rate": 0.48652202498356345
+            },
+            {
+              "bin": 5,
+              "mean_pred": 0.5482948729876892,
+              "n": 1696,
+              "obs_rate": 0.49410377358490565
+            },
+            {
+              "bin": 6,
+              "mean_pred": 0.6406179853381075,
+              "n": 1026,
+              "obs_rate": 0.5048732943469786
+            },
+            {
+              "bin": 7,
+              "mean_pred": 0.7265078304563153,
+              "n": 165,
+              "obs_rate": 0.509090909090909
+            },
+            {
+              "bin": 8,
+              "mean_pred": 0.8309217645672387,
+              "n": 5,
+              "obs_rate": 0.4
+            }
+          ]
+        }
+      },
+      "subgroups": {
+        "qb_change_LEAKY": {
+          "B0": {
+            "margin_mae": 11.58481799443545,
+            "spread_logloss3": 0.8304951981155668,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.05123131750164601,
+              "closing_price_rows": 570,
+              "hit_rate": 0.49774266365688485,
+              "hits": 441,
+              "misses": 445,
+              "picks": 912,
+              "pushes": 26
+            },
+            "total_logloss3": 0.7809061861976513,
+            "total_mae": 11.378667788453496,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.012852412291760958,
+              "closing_price_rows": 569,
+              "hit_rate": 0.48703494926719276,
+              "hits": 432,
+              "misses": 455,
+              "picks": 899,
+              "pushes": 12
+            }
+          },
+          "C1": {
+            "margin_mae": 10.675269061391049,
+            "spread_logloss3": 0.776962167494531,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.9523809523809523,
+              "closing_price_rows": 1,
+              "hit_rate": 1.0,
+              "hits": 1,
+              "misses": 0,
+              "picks": 1,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7421080455009359,
+            "total_mae": 10.673187131251845,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": 1.0,
+              "hits": 1,
+              "misses": 0,
+              "picks": 1,
+              "pushes": 0
+            }
+          },
+          "F1": {
+            "margin_mae": 11.325079369917392,
+            "spread_logloss3": 0.8190892538589628,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.06294809016073674,
+              "closing_price_rows": 577,
+              "hit_rate": 0.49774266365688485,
+              "hits": 441,
+              "misses": 445,
+              "picks": 911,
+              "pushes": 25
+            },
+            "total_logloss3": 0.772357952388029,
+            "total_mae": 11.227985545366378,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.036196942782071986,
+              "closing_price_rows": 562,
+              "hit_rate": 0.4798206278026906,
+              "hits": 428,
+              "misses": 464,
+              "picks": 903,
+              "pushes": 11
+            }
+          },
+          "M0": {
+            "margin_mae": 10.673781971353275,
+            "spread_logloss3": 0.7770848623228613,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7418398220491649,
+            "total_mae": 10.66782872282854,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            }
+          },
+          "n": 1049
+        },
+        "qb_stable_LEAKY": {
+          "B0": {
+            "margin_mae": 11.095136522623278,
+            "spread_logloss3": 0.8179897167882518,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.004798122337172608,
+              "closing_price_rows": 2366,
+              "hit_rate": 0.5094991364421416,
+              "hits": 1770,
+              "misses": 1704,
+              "picks": 3581,
+              "pushes": 107
+            },
+            "total_logloss3": 0.7862596310931587,
+            "total_mae": 11.234181652912563,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.021771958160040798,
+              "closing_price_rows": 2251,
+              "hit_rate": 0.4928462709284627,
+              "hits": 1619,
+              "misses": 1666,
+              "picks": 3339,
+              "pushes": 54
+            }
+          },
+          "C1": {
+            "margin_mae": 10.400868538180022,
+            "spread_logloss3": 0.7811089911965952,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7565729142080586,
+            "total_mae": 10.710333099395424,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.16338516734556338,
+              "closing_price_rows": 5,
+              "hit_rate": 0.6,
+              "hits": 3,
+              "misses": 2,
+              "picks": 5,
+              "pushes": 0
+            }
+          },
+          "F1": {
+            "margin_mae": 10.813350641553244,
+            "spread_logloss3": 0.8082452112077962,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.013345689333627165,
+              "closing_price_rows": 2331,
+              "hit_rate": 0.5103489059727971,
+              "hits": 1726,
+              "misses": 1656,
+              "picks": 3478,
+              "pushes": 96
+            },
+            "total_logloss3": 0.7767776220177208,
+            "total_mae": 11.041033852650656,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.009181228804636529,
+              "closing_price_rows": 2204,
+              "hit_rate": 0.5071537290715373,
+              "hits": 1666,
+              "misses": 1619,
+              "picks": 3340,
+              "pushes": 55
+            }
+          },
+          "M0": {
+            "margin_mae": 10.392162397410921,
+            "spread_logloss3": 0.7809444644520114,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7565299810740751,
+            "total_mae": 10.709486846074233,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            }
+          },
+          "n": 4046
+        },
+        "weeks_1_4": {
+          "B0": {
+            "margin_mae": 11.45980114730862,
+            "spread_logloss3": 0.815730449373561,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.022006562134310927,
+              "closing_price_rows": 632,
+              "hit_rate": 0.5134357005758158,
+              "hits": 535,
+              "misses": 507,
+              "picks": 1072,
+              "pushes": 30
+            },
+            "total_logloss3": 0.78683590020422,
+            "total_mae": 11.521489128575853,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.13000929112255918,
+              "closing_price_rows": 614,
+              "hit_rate": 0.4766633565044687,
+              "hits": 480,
+              "misses": 527,
+              "picks": 1020,
+              "pushes": 13
+            }
+          },
+          "C1": {
+            "margin_mae": 10.673166319740968,
+            "spread_logloss3": 0.7728048313924974,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7467894270736795,
+            "total_mae": 10.860786876772952,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            }
+          },
+          "F1": {
+            "margin_mae": 11.12639550288915,
+            "spread_logloss3": 0.8022796335322676,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.01466982505312861,
+              "closing_price_rows": 627,
+              "hit_rate": 0.5102439024390244,
+              "hits": 523,
+              "misses": 502,
+              "picks": 1052,
+              "pushes": 27
+            },
+            "total_logloss3": 0.7773764864308894,
+            "total_mae": 11.350815782889907,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.07862195820998949,
+              "closing_price_rows": 591,
+              "hit_rate": 0.48542713567839196,
+              "hits": 483,
+              "misses": 512,
+              "picks": 1010,
+              "pushes": 15
+            }
+          },
+          "M0": {
+            "margin_mae": 10.662460556203424,
+            "spread_logloss3": 0.7725311999823627,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7462265781998632,
+            "total_mae": 10.85095939413396,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            }
+          },
+          "n": 1219
+        },
+        "weeks_5_plus": {
+          "B0": {
+            "margin_mae": 11.11297699900087,
+            "spread_logloss3": 0.8220847366259354,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.023638175214658472,
+              "closing_price_rows": 2304,
+              "hit_rate": 0.5051235684147076,
+              "hits": 1676,
+              "misses": 1642,
+              "picks": 3421,
+              "pushes": 103
+            },
+            "total_logloss3": 0.7846295393125159,
+            "total_mae": 11.182927303931368,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.010654580388480293,
+              "closing_price_rows": 2206,
+              "hit_rate": 0.49636650868878357,
+              "hits": 1571,
+              "misses": 1594,
+              "picks": 3218,
+              "pushes": 53
+            }
+          },
+          "C1": {
+            "margin_mae": 10.389494738676815,
+            "spread_logloss3": 0.7825983494880631,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.9523809523809523,
+              "closing_price_rows": 1,
+              "hit_rate": 1.0,
+              "hits": 1,
+              "misses": 0,
+              "picks": 1,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7557350461851062,
+            "total_mae": 10.652962285358836,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.16338516734556338,
+              "closing_price_rows": 5,
+              "hit_rate": 0.6666666666666666,
+              "hits": 4,
+              "misses": 2,
+              "picks": 6,
+              "pushes": 0
+            }
+          },
+          "F1": {
+            "margin_mae": 10.853392372741459,
+            "spread_logloss3": 0.8130562122210943,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.033593963247585124,
+              "closing_price_rows": 2281,
+              "hit_rate": 0.5069380203515264,
+              "hits": 1644,
+              "misses": 1599,
+              "picks": 3337,
+              "pushes": 94
+            },
+            "total_logloss3": 0.7753931408099811,
+            "total_mae": 10.994204170683975,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.02131417183632103,
+              "closing_price_rows": 2175,
+              "hit_rate": 0.5062853551225645,
+              "hits": 1611,
+              "misses": 1571,
+              "picks": 3233,
+              "pushes": 51
+            }
+          },
+          "M0": {
+            "margin_mae": 10.383371240934522,
+            "spread_logloss3": 0.7825458697035653,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7557946537486194,
+            "total_mae": 10.653719455112018,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            }
+          },
+          "n": 3876
+        }
+      }
+    },
+    "held": {
+      "configs": {
+        "B0": {
+          "homewin_logloss": 0.6479824164878307,
+          "margin_mae": 10.487314081583042,
+          "margin_rmse": 13.657971260767042,
+          "n": 816,
+          "spread_brier_nonpush": 0.2637011675691742,
+          "spread_logloss3": 0.790720742528207,
+          "spread_push_obs_rate": 0.023284313725490197,
+          "spread_push_pred_mean": 0.018983718984628885,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.044141877452590086,
+            "closing_price_rows": 682,
+            "hit_rate": 0.5,
+            "hits": 341,
+            "misses": 341,
+            "picks": 697,
+            "pushes": 15
+          },
+          "spread_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.026313966257438124,
+            "closing_price_rows": 550,
+            "hit_rate": 0.509090909090909,
+            "hits": 280,
+            "misses": 270,
+            "picks": 561,
+            "pushes": 11
+          },
+          "total_brier_nonpush": 0.26423850281440764,
+          "total_logloss3": 0.7504450145393562,
+          "total_mae": 10.768232049028136,
+          "total_push_obs_rate": 0.006127450980392157,
+          "total_push_pred_mean": 0.008139705073142715,
+          "total_rmse": 13.660874555116509,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.021480503663720143,
+            "closing_price_rows": 699,
+            "hit_rate": 0.5121602288984263,
+            "hits": 358,
+            "misses": 341,
+            "picks": 704,
+            "pushes": 5
+          },
+          "total_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.029238999084635394,
+            "closing_price_rows": 561,
+            "hit_rate": 0.5080213903743316,
+            "hits": 285,
+            "misses": 276,
+            "picks": 565,
+            "pushes": 4
+          }
+        },
+        "C1": {
+          "homewin_logloss": 0.6091757201579981,
+          "margin_mae": 9.794845218190936,
+          "margin_rmse": 12.618612282483618,
+          "n": 816,
+          "spread_brier_nonpush": 0.2501784159396689,
+          "spread_logloss3": 0.7608100184927722,
+          "spread_push_obs_rate": 0.023284313725490197,
+          "spread_push_pred_mean": 0.02127708437300278,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "spread_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "total_brier_nonpush": 0.2500515238096789,
+          "total_logloss3": 0.719592413213063,
+          "total_mae": 10.131680397999345,
+          "total_push_obs_rate": 0.006127450980392157,
+          "total_push_pred_mean": 0.008926721505470981,
+          "total_rmse": 12.942158539540543,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.8928571428571429,
+            "closing_price_rows": 1,
+            "hit_rate": 1.0,
+            "hits": 1,
+            "misses": 0,
+            "picks": 1,
+            "pushes": 0
+          },
+          "total_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          }
+        },
+        "F1": {
+          "homewin_logloss": 0.6468626699711063,
+          "margin_mae": 10.39517953766427,
+          "margin_rmse": 13.43299157283862,
+          "n": 816,
+          "spread_brier_nonpush": 0.26271495724969174,
+          "spread_logloss3": 0.7878450108903499,
+          "spread_push_obs_rate": 0.023284313725490197,
+          "spread_push_pred_mean": 0.019492105280779548,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.06445023743431912,
+            "closing_price_rows": 683,
+            "hit_rate": 0.4890190336749634,
+            "hits": 334,
+            "misses": 349,
+            "picks": 700,
+            "pushes": 17
+          },
+          "spread_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.05400048962825881,
+            "closing_price_rows": 558,
+            "hit_rate": 0.4946236559139785,
+            "hits": 276,
+            "misses": 282,
+            "picks": 571,
+            "pushes": 13
+          },
+          "total_brier_nonpush": 0.2598985046705694,
+          "total_logloss3": 0.7407140550037224,
+          "total_mae": 10.505934488209023,
+          "total_push_obs_rate": 0.006127450980392157,
+          "total_push_pred_mean": 0.008370059591836334,
+          "total_rmse": 13.39783453640474,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.02245923255338924,
+            "closing_price_rows": 657,
+            "hit_rate": 0.5114155251141552,
+            "hits": 336,
+            "misses": 321,
+            "picks": 660,
+            "pushes": 3
+          },
+          "total_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.033609819895591225,
+            "closing_price_rows": 497,
+            "hit_rate": 0.5050301810865191,
+            "hits": 251,
+            "misses": 246,
+            "picks": 499,
+            "pushes": 2
+          }
+        },
+        "M0": {
+          "homewin_logloss": 0.6093997702171209,
+          "margin_mae": 9.785167953377146,
+          "margin_rmse": 12.617526550416745,
+          "n": 816,
+          "spread_brier_nonpush": 0.2500000000000151,
+          "spread_logloss3": 0.7604611564690944,
+          "spread_push_obs_rate": 0.023284313725490197,
+          "spread_push_pred_mean": 0.021282153457156693,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "spread_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "total_brier_nonpush": 0.24999999999998876,
+          "total_logloss3": 0.7194893362656504,
+          "total_mae": 10.13063307379845,
+          "total_push_obs_rate": 0.006127450980392157,
+          "total_push_pred_mean": 0.008927056915414198,
+          "total_rmse": 12.940499787578533,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "total_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          }
+        }
+      },
+      "n_games": 816,
+      "reliability": {
+        "C1": {
+          "spread": [
+            {
+              "bin": 4,
+              "mean_pred": 0.4947599508590381,
+              "n": 480,
+              "obs_rate": 0.49166666666666664
+            },
+            {
+              "bin": 5,
+              "mean_pred": 0.504692731368271,
+              "n": 317,
+              "obs_rate": 0.5173501577287066
+            }
+          ],
+          "total": [
+            {
+              "bin": 4,
+              "mean_pred": 0.49493715908059327,
+              "n": 374,
+              "obs_rate": 0.4893048128342246
+            },
+            {
+              "bin": 5,
+              "mean_pred": 0.5054196157756163,
+              "n": 437,
+              "obs_rate": 0.5217391304347826
+            }
+          ]
+        },
+        "F1": {
+          "spread": [
+            {
+              "bin": 1,
+              "mean_pred": 0.16901847498977243,
+              "n": 3,
+              "obs_rate": 0.3333333333333333
+            },
+            {
+              "bin": 2,
+              "mean_pred": 0.26343889697351164,
+              "n": 24,
+              "obs_rate": 0.4166666666666667
+            },
+            {
+              "bin": 3,
+              "mean_pred": 0.3583407178230656,
+              "n": 111,
+              "obs_rate": 0.4774774774774775
+            },
+            {
+              "bin": 4,
+              "mean_pred": 0.4527039780015944,
+              "n": 212,
+              "obs_rate": 0.5471698113207547
+            },
+            {
+              "bin": 5,
+              "mean_pred": 0.5476819482403751,
+              "n": 230,
+              "obs_rate": 0.47391304347826085
+            },
+            {
+              "bin": 6,
+              "mean_pred": 0.6433597575396094,
+              "n": 159,
+              "obs_rate": 0.4779874213836478
+            },
+            {
+              "bin": 7,
+              "mean_pred": 0.7308166867755871,
+              "n": 50,
+              "obs_rate": 0.62
+            },
+            {
+              "bin": 8,
+              "mean_pred": 0.8288748449131281,
+              "n": 8,
+              "obs_rate": 0.5
+            }
+          ],
+          "total": [
+            {
+              "bin": 2,
+              "mean_pred": 0.27692081089853837,
+              "n": 9,
+              "obs_rate": 0.5555555555555556
+            },
+            {
+              "bin": 3,
+              "mean_pred": 0.36649670386062466,
+              "n": 106,
+              "obs_rate": 0.5283018867924528
+            },
+            {
+              "bin": 4,
+              "mean_pred": 0.4563901785510477,
+              "n": 261,
+              "obs_rate": 0.4789272030651341
+            },
+            {
+              "bin": 5,
+              "mean_pred": 0.5468074962506706,
+              "n": 293,
+              "obs_rate": 0.5324232081911263
+            },
+            {
+              "bin": 6,
+              "mean_pred": 0.6409261590782699,
+              "n": 117,
+              "obs_rate": 0.47863247863247865
+            },
+            {
+              "bin": 7,
+              "mean_pred": 0.744496839563976,
+              "n": 21,
+              "obs_rate": 0.5714285714285714
+            },
+            {
+              "bin": 8,
+              "mean_pred": 0.823404253946171,
+              "n": 4,
+              "obs_rate": 0.25
+            }
+          ]
+        }
+      },
+      "subgroups": {
+        "qb_change_LEAKY": {
+          "B0": {
+            "margin_mae": 11.611978857138928,
+            "spread_logloss3": 0.8345128008801465,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.042716418575796965,
+              "closing_price_rows": 160,
+              "hit_rate": 0.5,
+              "hits": 80,
+              "misses": 80,
+              "picks": 164,
+              "pushes": 4
+            },
+            "total_logloss3": 0.7528327279011385,
+            "total_mae": 11.178842399379993,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.04229826251987699,
+              "closing_price_rows": 165,
+              "hit_rate": 0.5454545454545454,
+              "hits": 90,
+              "misses": 75,
+              "picks": 167,
+              "pushes": 2
+            }
+          },
+          "C1": {
+            "margin_mae": 10.312658194352581,
+            "spread_logloss3": 0.7698100462182932,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7323884572891846,
+            "total_mae": 10.327354331127406,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.8928571428571429,
+              "closing_price_rows": 1,
+              "hit_rate": 1.0,
+              "hits": 1,
+              "misses": 0,
+              "picks": 1,
+              "pushes": 0
+            }
+          },
+          "F1": {
+            "margin_mae": 11.258468086077576,
+            "spread_logloss3": 0.8109059862341418,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.015456380182469481,
+              "closing_price_rows": 169,
+              "hit_rate": 0.514792899408284,
+              "hits": 87,
+              "misses": 82,
+              "picks": 172,
+              "pushes": 3
+            },
+            "total_logloss3": 0.7465758698897544,
+            "total_mae": 10.845364392474588,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.0753685927598971,
+              "closing_price_rows": 160,
+              "hit_rate": 0.5625,
+              "hits": 90,
+              "misses": 70,
+              "picks": 161,
+              "pushes": 1
+            }
+          },
+          "M0": {
+            "margin_mae": 10.30513192907909,
+            "spread_logloss3": 0.7694196732923598,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7331965607280332,
+            "total_mae": 10.335367122352128,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            }
+          },
+          "n": 188
+        },
+        "qb_stable_LEAKY": {
+          "B0": {
+            "margin_mae": 10.150630995907076,
+            "spread_logloss3": 0.7776110180534226,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.04457879971367609,
+              "closing_price_rows": 522,
+              "hit_rate": 0.5,
+              "hits": 261,
+              "misses": 261,
+              "picks": 533,
+              "pushes": 11
+            },
+            "total_logloss3": 0.7497302213673577,
+            "total_mae": 10.645310479177581,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.04118742579910128,
+              "closing_price_rows": 534,
+              "hit_rate": 0.50187265917603,
+              "hits": 268,
+              "misses": 266,
+              "picks": 537,
+              "pushes": 3
+            }
+          },
+          "C1": {
+            "margin_mae": 9.639831142524711,
+            "spread_logloss3": 0.758115742676852,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7157617503367718,
+            "total_mae": 10.073102851139351,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            }
+          },
+          "F1": {
+            "margin_mae": 10.136742838457737,
+            "spread_logloss3": 0.7809414068065397,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.08055911267860433,
+              "closing_price_rows": 514,
+              "hit_rate": 0.4805447470817121,
+              "hits": 247,
+              "misses": 267,
+              "picks": 528,
+              "pushes": 14
+            },
+            "total_logloss3": 0.7389592441779677,
+            "total_mae": 10.404321714320606,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.053953099857465325,
+              "closing_price_rows": 497,
+              "hit_rate": 0.4949698189134809,
+              "hits": 246,
+              "misses": 251,
+              "picks": 499,
+              "pushes": 2
+            }
+          },
+          "M0": {
+            "margin_mae": 9.629509947912231,
+            "spread_logloss3": 0.7577793074837854,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7153858996431536,
+            "total_mae": 10.069343263084926,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            }
+          },
+          "n": 628
+        },
+        "weeks_1_4": {
+          "B0": {
+            "margin_mae": 10.849909528072077,
+            "spread_logloss3": 0.7916513486287747,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.003962018673552258,
+              "closing_price_rows": 163,
+              "hit_rate": 0.5214723926380368,
+              "hits": 85,
+              "misses": 78,
+              "picks": 168,
+              "pushes": 5
+            },
+            "total_logloss3": 0.7241494399593925,
+            "total_mae": 10.500373375194597,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.03147464992955597,
+              "closing_price_rows": 167,
+              "hit_rate": 0.5389221556886228,
+              "hits": 90,
+              "misses": 77,
+              "picks": 167,
+              "pushes": 0
+            }
+          },
+          "C1": {
+            "margin_mae": 10.302535996218966,
+            "spread_logloss3": 0.7785247560220713,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.702506062098175,
+            "total_mae": 10.247322139297113,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            }
+          },
+          "F1": {
+            "margin_mae": 10.75079819646839,
+            "spread_logloss3": 0.7872654641529734,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.0450042414029066,
+              "closing_price_rows": 161,
+              "hit_rate": 0.546583850931677,
+              "hits": 88,
+              "misses": 73,
+              "picks": 166,
+              "pushes": 5
+            },
+            "total_logloss3": 0.7171253178383975,
+            "total_mae": 10.399118630653108,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.05467008880153315,
+              "closing_price_rows": 152,
+              "hit_rate": 0.4934210526315789,
+              "hits": 75,
+              "misses": 77,
+              "picks": 152,
+              "pushes": 0
+            }
+          },
+          "M0": {
+            "margin_mae": 10.292952058306893,
+            "spread_logloss3": 0.7774818597278101,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7026004560754693,
+            "total_mae": 10.248409441405006,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            }
+          },
+          "n": 192
+        },
+        "weeks_5_plus": {
+          "B0": {
+            "margin_mae": 10.375746251894109,
+            "spread_logloss3": 0.7904344021895708,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.05676098531575611,
+              "closing_price_rows": 519,
+              "hit_rate": 0.4932562620423892,
+              "hits": 256,
+              "misses": 263,
+              "picks": 529,
+              "pushes": 10
+            },
+            "total_logloss3": 0.7585359605639604,
+            "total_mae": 10.85065010251538,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.03810364398341396,
+              "closing_price_rows": 532,
+              "hit_rate": 0.5037593984962406,
+              "hits": 268,
+              "misses": 264,
+              "picks": 537,
+              "pushes": 5
+            }
+          },
+          "C1": {
+            "margin_mae": 9.638632671105388,
+            "spread_logloss3": 0.7553593300222187,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7248497520176439,
+            "total_mae": 10.096098323753877,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.8928571428571429,
+              "closing_price_rows": 1,
+              "hit_rate": 1.0,
+              "hits": 1,
+              "misses": 0,
+              "picks": 1,
+              "pushes": 0
+            }
+          },
+          "F1": {
+            "margin_mae": 10.285758411878385,
+            "spread_logloss3": 0.7880233329633889,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.09820918588794621,
+              "closing_price_rows": 522,
+              "hit_rate": 0.47126436781609193,
+              "hits": 246,
+              "misses": 276,
+              "picks": 534,
+              "pushes": 12
+            },
+            "total_logloss3": 0.7479721279776685,
+            "total_mae": 10.538800905918537,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.012764083742066716,
+              "closing_price_rows": 505,
+              "hit_rate": 0.5168316831683168,
+              "hits": 261,
+              "misses": 244,
+              "picks": 508,
+              "pushes": 3
+            }
+          },
+          "M0": {
+            "margin_mae": 9.628926690321837,
+            "spread_logloss3": 0.7552240170048741,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7246859147857061,
+            "total_mae": 10.094394191457969,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            }
+          },
+          "n": 624
+        }
+      },
+      "uncertainty": {
+        "iterations": 2000,
+        "p2_5_p50_p97_5": {
+          "B0_minus_M0_spread_logloss3": [
+            0.009752699282734058,
+            0.030260170785915714,
+            0.04997994566534797
+          ],
+          "B0_minus_M0_total_logloss3": [
+            0.013315458405235134,
+            0.030964378644839228,
+            0.04939035738603153
+          ],
+          "B0_spread_hit_rate_at_breakeven": [
+            0.4578313253012048,
+            0.5,
+            0.541727672035139
+          ],
+          "B0_total_hit_rate_at_breakeven": [
+            0.4720670391061452,
+            0.5121951219512195,
+            0.5514285714285714
+          ],
+          "C1_minus_M0_spread_logloss3": [
+            -0.0005233971525646318,
+            0.00035182041957566076,
+            0.0012188252591308674
+          ],
+          "C1_minus_M0_total_logloss3": [
+            -0.0007464027484587715,
+            0.00012010836683249757,
+            0.0009608431667754554
+          ],
+          "C1_total_hit_rate_at_breakeven": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "F1_minus_M0_spread_logloss3": [
+            0.00981301282041905,
+            0.027275816371554504,
+            0.04547100027471944
+          ],
+          "F1_minus_M0_total_logloss3": [
+            0.00724341830839863,
+            0.021479218632707082,
+            0.03516495914587303
+          ],
+          "F1_spread_hit_rate_at_breakeven": [
+            0.4514200298953662,
+            0.48942598187311176,
+            0.5267727930535456
+          ],
+          "F1_total_hit_rate_at_breakeven": [
+            0.47360248447204967,
+            0.5108695652173914,
+            0.5496987951807228
+          ]
+        },
+        "seed": 20261012,
+        "unit": "season_week"
+      }
+    },
+    "validation": {
+      "configs": {
+        "B0": {
+          "homewin_logloss": 0.6583008998440442,
+          "margin_mae": 10.443922253775959,
+          "margin_rmse": 13.35372786263919,
+          "n": 796,
+          "spread_brier_nonpush": 0.26263754080331647,
+          "spread_logloss3": 0.7838624788197973,
+          "spread_push_obs_rate": 0.017587939698492462,
+          "spread_push_pred_mean": 0.021102279835213213,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.01867696392992154,
+            "closing_price_rows": 679,
+            "hit_rate": 0.5066273932253313,
+            "hits": 344,
+            "misses": 335,
+            "picks": 692,
+            "pushes": 13
+          },
+          "spread_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.019913457299835218,
+            "closing_price_rows": 580,
+            "hit_rate": 0.506896551724138,
+            "hits": 294,
+            "misses": 286,
+            "picks": 589,
+            "pushes": 9
+          },
+          "total_brier_nonpush": 0.26686205828572995,
+          "total_logloss3": 0.7833720365460584,
+          "total_mae": 11.21287634910388,
+          "total_push_obs_rate": 0.013819095477386936,
+          "total_push_pred_mean": 0.015676350826011286,
+          "total_rmse": 13.907375452410681,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.09835628502089054,
+            "closing_price_rows": 643,
+            "hit_rate": 0.463452566096423,
+            "hits": 298,
+            "misses": 345,
+            "picks": 650,
+            "pushes": 7
+          },
+          "total_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.08774044060459346,
+            "closing_price_rows": 520,
+            "hit_rate": 0.46923076923076923,
+            "hits": 244,
+            "misses": 276,
+            "picks": 524,
+            "pushes": 4
+          }
+        },
+        "C1": {
+          "homewin_logloss": 0.6061855367831848,
+          "margin_mae": 9.860573442119982,
+          "margin_rmse": 12.691893889202811,
+          "n": 796,
+          "spread_brier_nonpush": 0.250381115662279,
+          "spread_logloss3": 0.7579724103454228,
+          "spread_push_obs_rate": 0.017587939698492462,
+          "spread_push_pred_mean": 0.023695091982626766,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "spread_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "total_brier_nonpush": 0.2501031346319421,
+          "total_logloss3": 0.7482177350544815,
+          "total_mae": 10.480471262538556,
+          "total_push_obs_rate": 0.013819095477386936,
+          "total_push_pred_mean": 0.01717360340051465,
+          "total_rmse": 13.13107791559469,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.8695652173913043,
+            "closing_price_rows": 1,
+            "hit_rate": 1.0,
+            "hits": 1,
+            "misses": 0,
+            "picks": 1,
+            "pushes": 0
+          },
+          "total_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          }
+        },
+        "F1": {
+          "homewin_logloss": 0.6605756001823738,
+          "margin_mae": 10.35428799291552,
+          "margin_rmse": 13.29202469427957,
+          "n": 796,
+          "spread_brier_nonpush": 0.261927932375366,
+          "spread_logloss3": 0.7823395859858199,
+          "spread_push_obs_rate": 0.017587939698492462,
+          "spread_push_pred_mean": 0.021658644837510545,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.007383410036930812,
+            "closing_price_rows": 670,
+            "hit_rate": 0.5134328358208955,
+            "hits": 344,
+            "misses": 326,
+            "picks": 682,
+            "pushes": 12
+          },
+          "spread_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.0015292914271929077,
+            "closing_price_rows": 557,
+            "hit_rate": 0.5170556552962298,
+            "hits": 288,
+            "misses": 269,
+            "picks": 565,
+            "pushes": 8
+          },
+          "total_brier_nonpush": 0.2614210390756503,
+          "total_logloss3": 0.7715422842157942,
+          "total_mae": 10.901065006919827,
+          "total_push_obs_rate": 0.013819095477386936,
+          "total_push_pred_mean": 0.01619960118481544,
+          "total_rmse": 13.637748340590797,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.04126833288230211,
+            "closing_price_rows": 634,
+            "hit_rate": 0.49369085173501576,
+            "hits": 313,
+            "misses": 321,
+            "picks": 643,
+            "pushes": 9
+          },
+          "total_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.04194534854301749,
+            "closing_price_rows": 468,
+            "hit_rate": 0.4935897435897436,
+            "hits": 231,
+            "misses": 237,
+            "picks": 476,
+            "pushes": 8
+          }
+        },
+        "M0": {
+          "homewin_logloss": 0.6068187757930785,
+          "margin_mae": 9.843192427949873,
+          "margin_rmse": 12.674111929114584,
+          "n": 796,
+          "spread_brier_nonpush": 0.2500000000000024,
+          "spread_logloss3": 0.7572250395838265,
+          "spread_push_obs_rate": 0.017587939698492462,
+          "spread_push_pred_mean": 0.02370415557877594,
+          "spread_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "spread_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "total_brier_nonpush": 0.25000000000001676,
+          "total_logloss3": 0.7480151414927708,
+          "total_mae": 10.480920859094434,
+          "total_push_obs_rate": 0.013819095477386936,
+          "total_push_pred_mean": 0.017169723337568197,
+          "total_rmse": 13.128386584471404,
+          "total_sides_0.5238": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          },
+          "total_sides_0.5500": {
+            "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+            "closing_price_rows": 0,
+            "hit_rate": null,
+            "hits": 0,
+            "misses": 0,
+            "picks": 0,
+            "pushes": 0
+          }
+        }
+      },
+      "n_games": 796,
+      "reliability": {
+        "C1": {
+          "spread": [
+            {
+              "bin": 4,
+              "mean_pred": 0.49421696382780156,
+              "n": 461,
+              "obs_rate": 0.5032537960954447
+            },
+            {
+              "bin": 5,
+              "mean_pred": 0.5049867845940109,
+              "n": 321,
+              "obs_rate": 0.470404984423676
+            }
+          ],
+          "total": [
+            {
+              "bin": 4,
+              "mean_pred": 0.4938033344971315,
+              "n": 469,
+              "obs_rate": 0.4925373134328358
+            },
+            {
+              "bin": 5,
+              "mean_pred": 0.5046178206850944,
+              "n": 316,
+              "obs_rate": 0.43037974683544306
+            }
+          ]
+        },
+        "F1": {
+          "spread": [
+            {
+              "bin": 1,
+              "mean_pred": 0.17640448056806793,
+              "n": 2,
+              "obs_rate": 0.0
+            },
+            {
+              "bin": 2,
+              "mean_pred": 0.26332195018292126,
+              "n": 37,
+              "obs_rate": 0.43243243243243246
+            },
+            {
+              "bin": 3,
+              "mean_pred": 0.35239444546970705,
+              "n": 114,
+              "obs_rate": 0.4824561403508772
+            },
+            {
+              "bin": 4,
+              "mean_pred": 0.4528450774942284,
+              "n": 193,
+              "obs_rate": 0.47150259067357514
+            },
+            {
+              "bin": 5,
+              "mean_pred": 0.5457362566092769,
+              "n": 205,
+              "obs_rate": 0.5073170731707317
+            },
+            {
+              "bin": 6,
+              "mean_pred": 0.6511726637385211,
+              "n": 160,
+              "obs_rate": 0.475
+            },
+            {
+              "bin": 7,
+              "mean_pred": 0.7400002767872477,
+              "n": 60,
+              "obs_rate": 0.55
+            },
+            {
+              "bin": 8,
+              "mean_pred": 0.826379942667931,
+              "n": 11,
+              "obs_rate": 0.7272727272727273
+            }
+          ],
+          "total": [
+            {
+              "bin": 1,
+              "mean_pred": 0.1903779041882174,
+              "n": 1,
+              "obs_rate": 0.0
+            },
+            {
+              "bin": 2,
+              "mean_pred": 0.2693771892404167,
+              "n": 24,
+              "obs_rate": 0.5
+            },
+            {
+              "bin": 3,
+              "mean_pred": 0.35599390120974783,
+              "n": 148,
+              "obs_rate": 0.47297297297297297
+            },
+            {
+              "bin": 4,
+              "mean_pred": 0.4542026042003355,
+              "n": 303,
+              "obs_rate": 0.4884488448844885
+            },
+            {
+              "bin": 5,
+              "mean_pred": 0.542036549180259,
+              "n": 223,
+              "obs_rate": 0.4484304932735426
+            },
+            {
+              "bin": 6,
+              "mean_pred": 0.6374994367683644,
+              "n": 74,
+              "obs_rate": 0.43243243243243246
+            },
+            {
+              "bin": 7,
+              "mean_pred": 0.7246341021313948,
+              "n": 12,
+              "obs_rate": 0.4166666666666667
+            }
+          ]
+        }
+      },
+      "subgroups": {
+        "qb_change_LEAKY": {
+          "B0": {
+            "margin_mae": 9.975509468575032,
+            "spread_logloss3": 0.7896598274491884,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.0732420437028918,
+              "closing_price_rows": 174,
+              "hit_rate": 0.5574712643678161,
+              "hits": 97,
+              "misses": 77,
+              "picks": 177,
+              "pushes": 3
+            },
+            "total_logloss3": 0.7760999816636827,
+            "total_mae": 11.275234783300803,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.1829281508879243,
+              "closing_price_rows": 160,
+              "hit_rate": 0.41875,
+              "hits": 67,
+              "misses": 93,
+              "picks": 161,
+              "pushes": 1
+            }
+          },
+          "C1": {
+            "margin_mae": 9.382745415288097,
+            "spread_logloss3": 0.7776917741200032,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7235095248984731,
+            "total_mae": 10.218861338928981,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            }
+          },
+          "F1": {
+            "margin_mae": 9.88799153191007,
+            "spread_logloss3": 0.7929024432856595,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.05374033155275718,
+              "closing_price_rows": 170,
+              "hit_rate": 0.5470588235294118,
+              "hits": 93,
+              "misses": 77,
+              "picks": 174,
+              "pushes": 4
+            },
+            "total_logloss3": 0.7515037976962579,
+            "total_mae": 10.683216391794618,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.012307297139959832,
+              "closing_price_rows": 150,
+              "hit_rate": 0.5066666666666667,
+              "hits": 76,
+              "misses": 74,
+              "picks": 151,
+              "pushes": 1
+            }
+          },
+          "M0": {
+            "margin_mae": 9.34927488638523,
+            "spread_logloss3": 0.7759502976788228,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7228493960274818,
+            "total_mae": 10.210687763086735,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            }
+          },
+          "n": 198
+        },
+        "qb_stable_LEAKY": {
+          "B0": {
+            "margin_mae": 10.599015450213725,
+            "spread_logloss3": 0.7819429553605675,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.050348067549940395,
+              "closing_price_rows": 505,
+              "hit_rate": 0.4891089108910891,
+              "hits": 247,
+              "misses": 258,
+              "picks": 515,
+              "pushes": 10
+            },
+            "total_logloss3": 0.7857798406709922,
+            "total_mae": 11.192229242128978,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.07034076009599323,
+              "closing_price_rows": 483,
+              "hit_rate": 0.4782608695652174,
+              "hits": 231,
+              "misses": 252,
+              "picks": 489,
+              "pushes": 6
+            }
+          },
+          "C1": {
+            "margin_mae": 10.01878405969977,
+            "spread_logloss3": 0.7514432564535048,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7563987143369055,
+            "total_mae": 10.567091270690222,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.8695652173913043,
+              "closing_price_rows": 1,
+              "hit_rate": 1.0,
+              "hits": 1,
+              "misses": 0,
+              "picks": 1,
+              "pushes": 0
+            }
+          },
+          "F1": {
+            "margin_mae": 10.508680466626354,
+            "spread_logloss3": 0.7788421850738328,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.02816548217742473,
+              "closing_price_rows": 500,
+              "hit_rate": 0.502,
+              "hits": 251,
+              "misses": 249,
+              "picks": 508,
+              "pushes": 8
+            },
+            "total_logloss3": 0.7781771008225972,
+            "total_mae": 10.973195484837541,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.05024386048839993,
+              "closing_price_rows": 484,
+              "hit_rate": 0.4896694214876033,
+              "hits": 237,
+              "misses": 247,
+              "picks": 492,
+              "pushes": 8
+            }
+          },
+          "M0": {
+            "margin_mae": 10.00673034304987,
+            "spread_logloss3": 0.7510250377396637,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7563476123993381,
+            "total_mae": 10.570396031351164,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            }
+          },
+          "n": 598
+        },
+        "weeks_1_4": {
+          "B0": {
+            "margin_mae": 9.723638605994976,
+            "spread_logloss3": 0.7842963675492802,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.031856136042735954,
+              "closing_price_rows": 154,
+              "hit_rate": 0.5,
+              "hits": 77,
+              "misses": 77,
+              "picks": 157,
+              "pushes": 3
+            },
+            "total_logloss3": 0.7716356719113004,
+            "total_mae": 10.97745922268917,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.07406987677225017,
+              "closing_price_rows": 149,
+              "hit_rate": 0.47651006711409394,
+              "hits": 71,
+              "misses": 78,
+              "picks": 149,
+              "pushes": 0
+            }
+          },
+          "C1": {
+            "margin_mae": 8.791926821563615,
+            "spread_logloss3": 0.7453446261979907,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7422200617039544,
+            "total_mae": 10.08660212058833,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            }
+          },
+          "F1": {
+            "margin_mae": 9.771760011486768,
+            "spread_logloss3": 0.7865282610534583,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.024952700537782237,
+              "closing_price_rows": 163,
+              "hit_rate": 0.5030674846625767,
+              "hits": 82,
+              "misses": 81,
+              "picks": 165,
+              "pushes": 2
+            },
+            "total_logloss3": 0.7589609461496936,
+            "total_mae": 10.62538685544383,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.0004705051880392579,
+              "closing_price_rows": 155,
+              "hit_rate": 0.5161290322580645,
+              "hits": 80,
+              "misses": 75,
+              "picks": 157,
+              "pushes": 2
+            }
+          },
+          "M0": {
+            "margin_mae": 8.788785403529811,
+            "spread_logloss3": 0.7453086261745008,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7426321872962518,
+            "total_mae": 10.10183239334518,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            }
+          },
+          "n": 188
+        },
+        "weeks_5_plus": {
+          "B0": {
+            "margin_mae": 10.666641539602974,
+            "spread_logloss3": 0.7837283158573914,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.014811073443495982,
+              "closing_price_rows": 525,
+              "hit_rate": 0.5085714285714286,
+              "hits": 267,
+              "misses": 258,
+              "picks": 535,
+              "pushes": 10
+            },
+            "total_logloss3": 0.7870010440318059,
+            "total_mae": 11.285669802666323,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.10568153771126992,
+              "closing_price_rows": 494,
+              "hit_rate": 0.45951417004048584,
+              "hits": 227,
+              "misses": 267,
+              "picks": 501,
+              "pushes": 7
+            }
+          },
+          "C1": {
+            "margin_mae": 10.191010226107805,
+            "spread_logloss3": 0.7618770541278524,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7500722787878681,
+            "total_mae": 10.602259747220534,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": 0.8695652173913043,
+              "closing_price_rows": 1,
+              "hit_rate": 1.0,
+              "hits": 1,
+              "misses": 0,
+              "picks": 1,
+              "pushes": 0
+            }
+          },
+          "F1": {
+            "margin_mae": 10.53441177664678,
+            "spread_logloss3": 0.7810444035635896,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.0017349004676235481,
+              "closing_price_rows": 507,
+              "hit_rate": 0.5167652859960552,
+              "hits": 262,
+              "misses": 245,
+              "picks": 517,
+              "pushes": 10
+            },
+            "total_logloss3": 0.77543256638097,
+            "total_mae": 10.986307593231485,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": -0.05477463747708899,
+              "closing_price_rows": 479,
+              "hit_rate": 0.48643006263048016,
+              "hits": 233,
+              "misses": 246,
+              "picks": 486,
+              "pushes": 7
+            }
+          },
+          "M0": {
+            "margin_mae": 10.169226178921866,
+            "spread_logloss3": 0.7609097200459205,
+            "spread_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            },
+            "total_logloss3": 0.7496796075930103,
+            "total_mae": 10.598139003109006,
+            "total_sides_0.5238": {
+              "RETROSPECTIVE_CLOSING_PRICE_CONTROL_roi": null,
+              "closing_price_rows": 0,
+              "hit_rate": null,
+              "hits": 0,
+              "misses": 0,
+              "picks": 0,
+              "pushes": 0
+            }
+          },
+          "n": 608
+        }
+      },
+      "uncertainty": {
+        "iterations": 2000,
+        "p2_5_p50_p97_5": {
+          "B0_minus_M0_spread_logloss3": [
+            0.005507939169466732,
+            0.02626273266336439,
+            0.050511359393028935
+          ],
+          "B0_minus_M0_total_logloss3": [
+            0.01716764968300962,
+            0.03524493028582274,
+            0.05296035226713726
+          ],
+          "B0_spread_hit_rate_at_breakeven": [
+            0.4654919236417034,
+            0.5072886297376094,
+            0.5446428571428571
+          ],
+          "B0_total_hit_rate_at_breakeven": [
+            0.4301242236024845,
+            0.4637223974763407,
+            0.49921507064364207
+          ],
+          "C1_minus_M0_spread_logloss3": [
+            -0.00024334342732991538,
+            0.0007629768828133086,
+            0.0016720450413059322
+          ],
+          "C1_minus_M0_total_logloss3": [
+            -0.0006836891021358796,
+            0.0002076618473336626,
+            0.001104699366183945
+          ],
+          "C1_total_hit_rate_at_breakeven": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "F1_minus_M0_spread_logloss3": [
+            0.005693966306552839,
+            0.024703721800746935,
+            0.04591424648478102
+          ],
+          "F1_minus_M0_total_logloss3": [
+            0.010056570601404007,
+            0.023520169643531267,
+            0.03731104509299132
+          ],
+          "F1_spread_hit_rate_at_breakeven": [
+            0.47678018575851394,
+            0.5136363636363637,
+            0.5497702909647779
+          ],
+          "F1_total_hit_rate_at_breakeven": [
+            0.4555735056542811,
+            0.4935897435897436,
+            0.5304212168486739
+          ]
+        },
+        "seed": 20261012,
+        "unit": "season_week"
+      }
+    }
+  },
+  "prereg_commit": "35a6cb032c5f6ac5ced37ba3a86716a57e1123e8",
+  "schema": "fc-nfl-004-benchmark-v1",
+  "source": {
+    "allowed_use": "RETROSPECTIVE_BENCHMARK_CONTROL_ONLY",
+    "bytes": 2177838,
+    "commit": "8ed09b2fe3ea42332b2249a995737e13dd931ff3",
+    "historical_cutoff_season": 2025,
+    "market_source": "PRO_FOOTBALL_REFERENCE_VIA_NFLVERSE",
+    "market_vintage": "CLOSING",
+    "path": "data/games.csv",
+    "point_in_time_feature_eligible": false,
+    "repository": "https://github.com/nflverse/nfldata",
+    "sha256": "26332ae5d8d8d0481f0670cf5e3849497a415351d4026ae5bee15a5aab96d188",
+    "source_class": "NFLVERSE_PFR_CLOSING"
+  },
+  "source_counts": {
+    "historical_reg_final_rows": 6967,
+    "historical_reg_rows_with_closing_market": 6967,
+    "non_reg_rows": 309,
+    "post_cutoff_reg_rows": 272,
+    "source_rows": 7548
+  },
+  "status": "RESEARCH_ONLY_NOT_PROMOTED_NOT_A_PICK",
+  "why_diagnostics_development": {
+    "c1_k": {
+      "margin": -0.04893216716599262,
+      "total": 0.0649321977257778
+    },
+    "f1": {
+      "margin": [
+        2.5322722244974614,
+        0.8210772238000146
+      ],
+      "total": [
+        20.591672702843272,
+        0.5302893042747573
+      ]
+    },
+    "margin": {
+      "b0_mean_residual_actual_minus_b0": 2.5708047105004908,
+      "corr_b0_line": 0.7411830294727926,
+      "line_mean_residual_actual_minus_line": -0.019430814524043178,
+      "ols_actual_on_line_and_b0": {
+        "b0_margin": 0.008966535113927398,
+        "intercept": -0.14707764110672503,
+        "line_margin": 1.054561910090291
+      },
+      "sd_b0": 5.6941766528276245,
+      "sd_line": 5.916278574278386
+    },
+    "total": {
+      "b0_mean_residual_actual_minus_b0": 0.032158979391560316,
+      "corr_b0_line": 0.6935164083964694,
+      "line_mean_residual_actual_minus_line": 0.6759568204121688,
+      "ols_actual_on_line_and_b0": {
+        "b0_total": -0.09296676726032228,
+        "intercept": 5.122446586342315,
+        "line_total": 0.9912518503128493
+      },
+      "sd_b0": 5.354240319424191,
+      "sd_line": 4.854266620453638
+    }
+  }
+}
