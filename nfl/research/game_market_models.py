@@ -35,7 +35,8 @@ from nfl.research.game_score_distribution import (
 CONFIGS = ("B0", "F1", "M0", "C1")
 MARKET_CONFIGS = frozenset({"M0", "C1"})
 PARAMS_SCHEMA = "fc-nfl-004-game-market-params-v1"
-DEFAULT_PARAMS_PATH = Path(__file__).with_name("game_market_v1_params.json")
+ORIGINAL_PARAMS_PATH = Path(__file__).with_name("game_market_v1_params.json")  # frozen; bound by 2026-10-12T17:01Z freezes
+DEFAULT_PARAMS_PATH = Path(__file__).with_name("game_market_v1_1_params.json")  # D1-consistent amended fit
 
 
 class GameMarketModelError(ValueError):
@@ -175,40 +176,96 @@ def distribution(
     )
 
 
-def fit_params(dev_rows: list[Mapping[str, Any]], provenance: Mapping[str, Any]) -> GameMarketParams:
+FIT_PROCEDURE_ORIGINAL = "v1_line_centered"
+FIT_PROCEDURE_D1 = "v1_1_d1_solved_m0"
+D1_OUTER_ITERATIONS = 3
+
+
+def fit_params(
+    dev_rows: list[Mapping[str, Any]],
+    provenance: Mapping[str, Any],
+    *,
+    procedure: str = FIT_PROCEDURE_D1,
+) -> GameMarketParams:
     """Fit every parameter on development rows only.
 
     Each row needs b0_margin, b0_total, line_margin, line_total, actual_margin,
     actual_total.
+
+    ``FIT_PROCEDURE_ORIGINAL`` reproduces the pre-registered fit (M0 sigma, key
+    weights and C1 k estimated around the raw line). It is kept only so the
+    original params artifact, which earlier freezes are bound to, stays
+    reproducible.
+
+    ``FIT_PROCEDURE_D1`` (default, FC-NFL-004 amendment) estimates them around
+    the SOLVED M0 center used at evaluation time (deviation D1). Because the
+    solved center depends on sigma and the key weights, a fixed, pre-declared
+    number of outer fixed-point iterations is run:
+    centers <- solve(line | sigma, w); sigma <- RMSE(actual - centers);
+    w <- fit_key_weights(centers). Then C1: (actual - m0) ~ k (F1 - line).
     """
     if not dev_rows:
         raise GameMarketModelError("no development rows")
+    if procedure not in (FIT_PROCEDURE_ORIGINAL, FIT_PROCEDURE_D1):
+        raise GameMarketModelError(f"unknown fit procedure: {procedure}")
     col = lambda k: [float(r[k]) for r in dev_rows]  # noqa: E731
     b0m, b0t = col("b0_margin"), col("b0_total")
     lm, lt = col("line_margin"), col("line_total")
     am, at = col("actual_margin"), col("actual_total")
+    iam, iat = [int(x) for x in am], [int(x) for x in at]
 
     f1m = _ols(b0m, am)
     f1t = _ols(b0t, at)
     fm = [f1m[0] + f1m[1] * x for x in b0m]
     ft = [f1t[0] + f1t[1] * x for x in b0t]
-    km = _origin_slope([f - l for f, l in zip(fm, lm)], [a - l for a, l in zip(am, lm)])
-    kt = _origin_slope([f - l for f, l in zip(ft, lt)], [a - l for a, l in zip(at, lt)])
-    cm = [l + km * (f - l) for f, l in zip(fm, lm)]
-    ct = [l + kt * (f - l) for f, l in zip(ft, lt)]
+
+    sm = _rmse(a - p for a, p in zip(am, lm))
+    st = _rmse(a - p for a, p in zip(at, lt))
+    mw = fit_key_weights(zip(lm, iam), sm, MARGIN_SUPPORT)
+    tw = fit_key_weights(zip(lt, iat), st, TOTAL_SUPPORT)
+    m0m, m0t = list(lm), list(lt)
+    trace: list[dict[str, float]] = []
+    if procedure == FIT_PROCEDURE_D1:
+        for _ in range(D1_OUTER_ITERATIONS):
+            cache_m = {l: solve_center("margin", l, sm, mw) for l in set(lm)}
+            cache_t = {l: solve_center("total", l, st, tw) for l in set(lt)}
+            new_m = [cache_m[l] for l in lm]
+            new_t = [cache_t[l] for l in lt]
+            deltas = [abs(a - b) for a, b in zip(new_m, m0m)] + [abs(a - b) for a, b in zip(new_t, m0t)]
+            shift = max(deltas)
+            mean_shift = statistics.fmean(deltas)
+            m0m, m0t = new_m, new_t
+            sm = _rmse(a - p for a, p in zip(am, m0m))
+            st = _rmse(a - p for a, p in zip(at, m0t))
+            mw = fit_key_weights(zip(m0m, iam), sm, MARGIN_SUPPORT)
+            tw = fit_key_weights(zip(m0t, iat), st, TOTAL_SUPPORT)
+            trace.append({"max_center_shift": shift, "mean_center_shift": mean_shift,
+                          "sigma_margin": sm, "sigma_total": st})
+        # Final centers solved with the FINAL sigma/weights are exactly the
+        # evaluation-time M0 centers; C1's k and sigma are fit on them.
+        cache_m = {l: solve_center("margin", l, sm, mw) for l in set(lm)}
+        cache_t = {l: solve_center("total", l, st, tw) for l in set(lt)}
+        m0m = [cache_m[l] for l in lm]
+        m0t = [cache_t[l] for l in lt]
+
+    km = _origin_slope([f - l for f, l in zip(fm, lm)], [a - c for a, c in zip(am, m0m)])
+    kt = _origin_slope([f - l for f, l in zip(ft, lt)], [a - c for a, c in zip(at, m0t)])
+    cm = [c + km * (f - l) for c, f, l in zip(m0m, fm, lm)]
+    ct = [c + kt * (f - l) for c, f, l in zip(m0t, ft, lt)]
 
     sigma = {
         "B0": {"margin": _rmse(a - p for a, p in zip(am, b0m)), "total": _rmse(a - p for a, p in zip(at, b0t))},
         "F1": {"margin": _rmse(a - p for a, p in zip(am, fm)), "total": _rmse(a - p for a, p in zip(at, ft))},
-        "M0": {"margin": _rmse(a - p for a, p in zip(am, lm)), "total": _rmse(a - p for a, p in zip(at, lt))},
+        "M0": {"margin": sm, "total": st},
         "C1": {"margin": _rmse(a - p for a, p in zip(am, cm)), "total": _rmse(a - p for a, p in zip(at, ct))},
     }
-    # Key-number shape is fitted around the best available center (the
-    # archived close) and shared by every configuration.
-    mw = fit_key_weights(zip(lm, (int(x) for x in am)), sigma["M0"]["margin"], MARGIN_SUPPORT)
-    tw = fit_key_weights(zip(lt, (int(x) for x in at)), sigma["M0"]["total"], TOTAL_SUPPORT)
+    prov = {**dict(provenance), "fit_rows": len(dev_rows)}
+    if procedure == FIT_PROCEDURE_D1:
+        # The original artifact carries no procedure key; adding one only to the
+        # amended fit keeps the original params byte-reproducible.
+        prov.update({"fit_procedure": procedure, "d1_outer_iterations": D1_OUTER_ITERATIONS,
+                     "d1_trace": trace})
     return GameMarketParams(
         f1_margin=f1m, f1_total=f1t, c1_k_margin=km, c1_k_total=kt,
-        sigma=sigma, margin_weights=mw, total_weights=tw,
-        provenance={**dict(provenance), "fit_rows": len(dev_rows)},
+        sigma=sigma, margin_weights=mw, total_weights=tw, provenance=prov,
     )

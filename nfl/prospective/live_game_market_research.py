@@ -9,21 +9,26 @@
   create-only write under the ledger root -> slate artifact (JSON + Markdown).
   Every discovered event is accounted FROZEN or NOT_FROZEN with a reason.
 
-``grade`` (post-game):
-  every ungraded freeze -> ESPN scoreboard -> ``extract_espn_final_outcome``
-  (explicit STATUS_FINAL, bound to the same identity hash) ->
-  ``grade_research_freeze`` with the latest LATER freeze of the same event as
-  the closing reference -> create-only grade document.
+``fetch-prior`` / ``replay`` / ``grade`` (lifecycle, see
+``game_market_research_lifecycle``): download prior rolling ledger artifacts
+(read-only), replay them byte-for-byte into the working ledger, then grade
+every ungraded freeze from an explicit ESPN final (or write an explicit
+terminal disposition). The movement reference is the latest LATER pre-kickoff
+research vintage, which is not a verified closing price.
+
+``verify-slate``: re-derive discovery from the archived FanDuel root bytes and
+check every slate invariant.
 
 Research only. Never public, never a pick, never promotes a model.
 """
 from __future__ import annotations
 
 import argparse
+import gzip
 import hashlib
 import json
 import os
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -33,15 +38,27 @@ from nfl.archive.http import fetch
 from nfl.archive.provenance import CHECKED_AND_FOUND
 from nfl.archive.sources import fanduel_nfl
 from nfl.normalize.fanduel_game_lines import normalize_payload
-from nfl.prospective.espn_final_outcome import extract_espn_final_outcome
 from nfl.prospective.game_identity import bind_nflverse_game_identity
 from nfl.prospective.game_market_research_freeze import (
     build_research_freeze,
-    load_research_freeze,
+    canonical_sha256,
     qb_state_from_schedule,
     write_research_freeze,
 )
-from nfl.prospective.game_market_research_grade import grade_research_freeze, write_grade
+from nfl.prospective.game_market_research_lifecycle import (
+    ESPN_SCOREBOARD,
+    fetch_prior_ledgers,
+    grade_ledger,
+    merge_ledgers,
+)
+from nfl.prospective.game_market_slate import (
+    DISCOVERY_FAILURE,
+    artifact_sha,
+    build_discovery,
+    reconcile_expected,
+    slate_status,
+    verify_slate_artifact,
+)
 from nfl.prospective.game_market_snapshot import seal_game_market_snapshot
 from nfl.prospective.live_game_market_shadow import (
     CURRENT_GAMES_URL,
@@ -57,7 +74,6 @@ ET = ZoneInfo("America/New_York")
 # Live FanDuel NFL marketTime trails the scheduled kickoff by one minute.
 FANDUEL_KICKOFF_LAG_TOLERANCE_MINUTES = 2
 DEFAULT_LEDGER = Path("data/nfl_game_market_research/frozen")
-ESPN_SCOREBOARD = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates={d}"
 
 
 def _now() -> str:
@@ -66,6 +82,16 @@ def _now() -> str:
 
 def _sha(body: bytes) -> str:
     return hashlib.sha256(body).hexdigest()
+
+
+def _archive(raw_dir: Path, name: str, body: bytes) -> str:
+    """Gzip one raw source response (deterministic gzip header); return its sha256."""
+    digest = _sha(body)
+    raw_dir.mkdir(parents=True, exist_ok=True)
+    path = raw_dir / f"{name}_{digest[:12]}.gz"
+    if not path.exists():
+        path.write_bytes(gzip.compress(body, compresslevel=9, mtime=0))
+    return digest
 
 
 def freeze_slate(*, ledger: Path, artifact_dir: Path, code_sha: str, window_days: float,
@@ -80,23 +106,34 @@ def freeze_slate(*, ledger: Path, artifact_dir: Path, code_sha: str, window_days
     schedule_rows = _load_games_csv(sched_body)
     schedule_source = {"url": CURRENT_GAMES_URL, "sha256": _sha(sched_body),
                        "bytes": len(sched_body), "observed_at": sched_obs}
-    if raw_dir:
-        raw_dir.mkdir(parents=True, exist_ok=True)
-        (raw_dir / f"games_{schedule_source['sha256'][:12]}.csv").write_bytes(sched_body)
 
     root = fanduel_nfl._fetch_first_healthy_host(
         "root_nfl_page", f"content-managed-page?page=CUSTOM&customPageId=nfl&_ak={fanduel_nfl.AK}",
         {"feed": "nfl root", "audit": "fc_nfl_004"}, session)
     if root.outcome != CHECKED_AND_FOUND:
-        raise SystemExit(f"FanDuel root not conclusive: {root.outcome} {root.failure_reason}")
+        raise SystemExit(f"DISCOVERY_FAILURE: FanDuel root not conclusive: {root.outcome} {root.failure_reason}")
     observed = _parse_iso(root.observed_at)
-    horizon = observed + timedelta(days=window_days)
-    events = [e for e in fanduel_nfl.discover_events(root.body)
-              if (k := _parse_iso(e.get("open_date"))) is not None and observed < k <= horizon]
+    stamp = observed.strftime("%Y%m%dT%H%M%SZ")
+    raw_dir = Path(raw_dir) if raw_dir else Path(artifact_dir).parent / "raw" / stamp
+    _archive(raw_dir, "games_schedule", sched_body)
+    _archive(raw_dir, "fanduel_root", root.body)
+
+    discovery = build_discovery(root_body=root.body, root_observed_at=root.observed_at, root_url=root.url,
+                                window_days=window_days, discover=fanduel_nfl.discover_events)
+    coverage = reconcile_expected(discovery, schedule_rows, TEAM_FULL_TO_ABBR,
+                                  tolerance_minutes=FANDUEL_KICKOFF_LAG_TOLERANCE_MINUTES)
+    process_ids = coverage["process_event_ids"]
+    binding = {
+        **{k: discovery[k] for k in ("root_sha256", "root_bytes", "root_observed_at", "root_url",
+                                     "discovery_sha256")},
+        "process_event_ids": process_ids,
+        "process_event_ids_sha256": canonical_sha256(sorted(process_ids)),
+    }
+    events = {e["event_id"]: e for e in discovery["all_events"]}
 
     results = []
-    for event in sorted(events, key=lambda e: (e.get("open_date"), str(e["event_id"]))):
-        eid = str(event["event_id"])
+    for eid in process_ids:
+        event = events[eid]
         res = {"event_id": eid, "event_name": event["name"], "open_date": event.get("open_date")}
         try:
             fetched = fanduel_nfl._fetch_first_healthy_host(
@@ -104,49 +141,54 @@ def freeze_slate(*, ledger: Path, artifact_dir: Path, code_sha: str, window_days
                 {"event_id": eid, "event_name": event["name"], "audit": "fc_nfl_004"}, session)
             if fetched.outcome != CHECKED_AND_FOUND:
                 raise ValueError(f"SOURCE_UNAVAILABLE: {fetched.outcome} {fetched.failure_reason}")
-            payload_sha = _sha(fetched.body)
-            if raw_dir:
-                (raw_dir / f"fanduel_event_{eid}_{payload_sha[:12]}.json").write_bytes(fetched.body)
+            payload_sha = _archive(raw_dir, f"fanduel_event_{eid}", fetched.body)
             normalized = normalize_payload(json.loads(fetched.body), captured_at=fetched.observed_at,
                                            source_payload_sha256=payload_sha,
                                            source_artifact=fetched.artifact, source_url=fetched.url)
             snapshot = seal_game_market_snapshot(
                 normalized["candidates"], _failure_rows(eid, normalized), event_id=eid, sealed_at=_now())
             try:
-                binding = bind_nflverse_game_identity(
+                identity = bind_nflverse_game_identity(
                     snapshot, schedule_rows, team_aliases=TEAM_FULL_TO_ABBR, source_url=CURRENT_GAMES_URL,
                     source_sha256=schedule_source["sha256"], observed_at=sched_obs,
                     kickoff_tolerance_minutes=FANDUEL_KICKOFF_LAG_TOLERANCE_MINUTES)
             except ValueError as exc:
-                binding = None
+                identity = None
                 res["identity_error"] = str(exc)
             prediction = build_live_b0_prediction(schedule_rows, event)
             qb = qb_state_from_schedule(schedule_rows, prediction["game_id"])
             record = build_research_freeze(
-                market_snapshot=snapshot, identity_binding=binding, b0_prediction=prediction,
+                market_snapshot=snapshot, identity_binding=identity, b0_prediction=prediction,
                 qb_state=qb, params=params, code_sha=code_sha, schedule_source=schedule_source,
-                frozen_at=_now())
+                frozen_at=_now(), discovery=binding)
             path = write_research_freeze(ledger, record)
             res.update({"status": "FROZEN", "path": str(path), "record_sha256": record["record_sha256"],
+                        "discovery_sha256": discovery["discovery_sha256"],
                         "summary": _event_summary(record)})
         except Exception as exc:  # noqa: BLE001 - every event must be accounted for
             res.update({"status": "NOT_FROZEN", "reason": f"{type(exc).__name__}: {exc}"})
         results.append(res)
 
+    status = slate_status(len(coverage["expected_games"]), len(process_ids),
+                          len(coverage["expected_not_discovered"]))
     body = {
-        "schema": "fc-nfl-004-slate-artifact-v1", "research_only": True, "public_eligible": False,
+        "schema": "fc-nfl-004-slate-artifact-v2", "research_only": True, "public_eligible": False,
         "generated_at": _now(), "code_sha": code_sha, "params_sha256": params_sha256(params),
-        "fanduel_root_observed_at": root.observed_at, "schedule_source": schedule_source,
-        "window_days": window_days, "discovered_events": len(events), "accounted_events": len(results),
+        "schedule_source": schedule_source, "raw_dir": str(raw_dir),
+        "discovery": discovery, "coverage": coverage, "slate_status": status,
+        "discovered_events": len(process_ids), "accounted_events": len(results),
+        "frozen_events": sum(r["status"] == "FROZEN" for r in results),
         "events": results,
     }
     if body["discovered_events"] != body["accounted_events"]:
         raise SystemExit("slate accounting invariant failed")
-    artifact = {**body, "artifact_sha256": _sha(json.dumps(body, sort_keys=True).encode())}
+    artifact = {**body, "artifact_sha256": artifact_sha(body)}
     artifact_dir.mkdir(parents=True, exist_ok=True)
-    stamp = observed.strftime("%Y%m%dT%H%M%SZ")
     (artifact_dir / f"slate_{stamp}.json").write_text(json.dumps(artifact, indent=2, sort_keys=True) + "\n")
     (artifact_dir / f"slate_{stamp}.md").write_text(render_markdown(artifact))
+    verify_slate_artifact(artifact, root.body, fanduel_nfl.discover_events)
+    if status == DISCOVERY_FAILURE:
+        raise SystemExit(f"DISCOVERY_FAILURE: {len(coverage['expected_games'])} scheduled games, 0 discovered")
     return artifact
 
 
@@ -183,9 +225,13 @@ def render_markdown(artifact: dict) -> str:
         "RESEARCH ONLY. Not picks. Not public. `RESEARCH_LEAN` is a measurement label.",
         "",
         f"- code `{artifact['code_sha']}` · params `{artifact['params_sha256'][:12]}` · "
-        f"schedule `{artifact['schedule_source']['sha256'][:12]}` · FanDuel root observed "
-        f"{artifact['fanduel_root_observed_at']}",
-        f"- events discovered {artifact['discovered_events']}, accounted {artifact['accounted_events']}",
+        f"schedule `{artifact['schedule_source']['sha256'][:12]}` · FanDuel root "
+        f"`{artifact['discovery']['root_sha256'][:12]}` observed {artifact['discovery']['root_observed_at']}",
+        f"- slate status **{artifact['slate_status']}** · scheduled games in window "
+        f"{len(artifact['coverage']['expected_games'])} · processed {artifact['discovered_events']} · "
+        f"accounted {artifact['accounted_events']} · frozen {artifact['frozen_events']}",
+        *[f"- expected but not discovered: {m['game_id']} ({m['reason']})"
+          for m in artifact['coverage']['expected_not_discovered']],
         "",
         "| Game | Kickoff (UTC) | Fair home spread F1 / C1 | Fair total F1 / C1 | Market | Side | Line | Odds | No-vig | C1 p | C1 EV | F1 p | Decision / reasons |",
         "|---|---|---|---|---|---|---|---|---|---|---|---|---|",
@@ -210,71 +256,53 @@ def render_markdown(artifact: dict) -> str:
 
 
 # ---------------------------------------------------------------------------
-def grade_ledger(*, ledger: Path, now: datetime | None = None) -> list[dict]:
-    now = now or datetime.now(timezone.utc)
-    session = requests.Session()
-    by_event: dict[str, list[tuple[Path, dict]]] = {}
-    for path in sorted(Path(ledger).rglob("*.json")):
-        if path.parent.name == "grades":
-            continue
-        rec = load_research_freeze(path)
-        by_event.setdefault(rec["event_id"], []).append((path, rec))
-    reports = []
-    for event_id, items in by_event.items():
-        items.sort(key=lambda pr: pr[1]["frozen_at"])
-        for i, (path, rec) in enumerate(items):
-            gpath = path.parent / "grades" / (path.stem + ".grade.json")
-            if gpath.exists():
-                continue
-            binding = rec.get("identity_binding")
-            if not binding or not rec.get("scheduled_kickoff"):
-                reports.append({"freeze": str(path), "status": "NOT_GRADABLE", "reason": "IDENTITY_UNBOUND"})
-                continue
-            kickoff = datetime.fromisoformat(rec["scheduled_kickoff"])
-            if now < kickoff + timedelta(hours=3):
-                reports.append({"freeze": str(path), "status": "PENDING", "reason": "GAME_NOT_YET_COMPLETE"})
-                continue
-            day = kickoff.astimezone(ET).strftime("%Y%m%d")
-            url = ESPN_SCOREBOARD.format(d=day)
-            got = fetch("espn_scoreboard", f"scoreboard_{day}", url, context={"audit": "fc_nfl_004"}, session=session)
-            if got.outcome != CHECKED_AND_FOUND:
-                reports.append({"freeze": str(path), "status": "PENDING", "reason": f"SOURCE_UNAVAILABLE {got.outcome}"})
-                continue
-            espn_events = [e for e in json.loads(got.body).get("events", []) if str(e.get("id")) == binding.get("nflverse_espn")]
-            if len(espn_events) != 1:
-                reports.append({"freeze": str(path), "status": "PENDING", "reason": "ESPN_EVENT_NOT_FOUND"})
-                continue
-            try:
-                outcome = extract_espn_final_outcome(binding, espn_events[0], source_url=url,
-                                                     payload_sha256=_sha(got.body), observed_at=got.observed_at)
-            except ValueError as exc:
-                reports.append({"freeze": str(path), "status": "PENDING", "reason": str(exc)})
-                continue
-            later = [r for _, r in items[i + 1:]]
-            closing = later[-1]["market_snapshot"] if later else None
-            grade = grade_research_freeze(rec, outcome, closing_snapshot=closing, graded_at=_now())
-            write_grade(gpath, grade)
-            reports.append({"freeze": str(path), "status": "GRADED", "grade": str(gpath),
-                            "grade_sha256": grade["grade_sha256"]})
-    return reports
+def espn_scoreboard_fetcher(session=None):
+    session = session or requests.Session()
+
+    def fetch_day(day: str) -> tuple[bytes, str, str]:
+        url = ESPN_SCOREBOARD.format(d=day)
+        got = fetch("espn_scoreboard", f"scoreboard_{day}", url, context={"audit": "fc_nfl_004"},
+                    session=session)
+        if got.outcome != CHECKED_AND_FOUND:
+            raise RuntimeError(f"{got.outcome} {got.failure_reason}")
+        return got.body, url, got.observed_at
+    return fetch_day
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("mode", choices=("freeze", "grade"))
+    ap.add_argument("mode", choices=("freeze", "grade", "replay", "fetch-prior", "verify-slate"))
     ap.add_argument("--ledger", type=Path, default=Path(os.environ.get("FC_NFL_LEDGER") or DEFAULT_LEDGER))
     ap.add_argument("--artifact-dir", type=Path, default=Path("data/nfl_game_market_research/slates"))
     ap.add_argument("--raw-dir", type=Path)
     ap.add_argument("--window-days", type=float, default=8.0)
+    ap.add_argument("--sources", type=Path, nargs="*", default=[])
+    ap.add_argument("--dest", type=Path)
+    ap.add_argument("--slate", type=Path)
+    ap.add_argument("--root", type=Path, help="archived FanDuel root (.gz or raw)")
     args = ap.parse_args()
     if args.mode == "freeze":
         code_sha = str(os.environ.get("FULL_COUNT_CODE_SHA") or "").strip()
         art = freeze_slate(ledger=args.ledger, artifact_dir=args.artifact_dir, code_sha=code_sha,
                            window_days=args.window_days, raw_dir=args.raw_dir)
-        print(json.dumps({"discovered": art["discovered_events"], "frozen": sum(e["status"] == "FROZEN" for e in art["events"]),
-                          "artifact_sha256": art["artifact_sha256"]}))
+        print(json.dumps({"slate_status": art["slate_status"], "processed": art["discovered_events"],
+                          "frozen": art["frozen_events"], "artifact_sha256": art["artifact_sha256"]}))
+    elif args.mode == "grade":
+        print(json.dumps(grade_ledger(ledger=args.ledger, fetch_scoreboard=espn_scoreboard_fetcher()), indent=2))
+    elif args.mode == "replay":
+        print(json.dumps(merge_ledgers(args.sources, args.ledger)))
+    elif args.mode == "fetch-prior":
+        manifest = fetch_prior_ledgers(
+            repo=os.environ["GITHUB_REPOSITORY"], branch=os.environ["LEDGER_BRANCH"],
+            token=os.environ["GITHUB_TOKEN"], dest=args.dest, session=requests.Session())
+        args.dest.mkdir(parents=True, exist_ok=True)
+        (args.dest / "sources_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+        print(json.dumps({"prior_ledgers": len(manifest)}))
     else:
-        print(json.dumps(grade_ledger(ledger=args.ledger), indent=2))
+        raw = args.root.read_bytes()
+        raw = gzip.decompress(raw) if args.root.suffix == ".gz" else raw
+        artifact = json.loads(args.slate.read_text())
+        print(verify_slate_artifact(artifact, raw, fanduel_nfl.discover_events))
 
 
 if __name__ == "__main__":

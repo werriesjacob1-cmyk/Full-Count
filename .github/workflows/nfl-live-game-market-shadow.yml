@@ -33,16 +33,25 @@ on:
       - nfl/research/game_score_distribution.py
       - nfl/research/game_market_models.py
       - nfl/research/game_market_v1_params.json
+      - nfl/research/game_market_v1_1_params.json
+      - nfl/prospective/game_market_slate.py
+      - nfl/prospective/game_market_research_lifecycle.py
       - .github/workflows/nfl-live-game-market-shadow.yml
   workflow_dispatch:
     inputs:
       target_local_date:
-        description: 'Chicago local slate date (YYYY-MM-DD); blank = upcoming Sunday'
+        description: 'Chicago local slate date (YYYY-MM-DD); blank = upcoming Sunday (B0 control board only)'
         required: false
         default: ''
+      research_window_days:
+        description: 'FC-NFL-004 research freeze window in days from FanDuel root observation'
+        required: false
+        default: '8'
 
 permissions:
   contents: read
+  # Read-only: download this workflow's prior rolling research-ledger artifacts.
+  actions: read
 
 concurrency:
   group: nfl-live-game-market-shadow-${{ github.ref }}
@@ -73,6 +82,7 @@ jobs:
           PYTHONPATH=. python3 nfl/tests/test_scoring_prior_features.py
           PYTHONPATH=. python3 nfl/tests/test_game_identity.py
           PYTHONPATH=. python3 nfl/tests/test_game_market_research_pathway.py
+          PYTHONPATH=. python3 nfl/tests/test_game_market_research_lifecycle.py
 
       - name: Build live full-slate shadow board
         # Sunday-only B0 control board; the research freeze below covers every slate.
@@ -124,24 +134,61 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      # FC-NFL-004: probabilistic research freeze (B0/F1/M0/C1 distributions,
-      # no-vig/EV, fail-closed gates). Research only; never public; never a pick.
-      - name: Freeze spread/total research records
-        # Independent of the B0 control board's outcome, never of the unit tests.
+      # FC-NFL-004: probabilistic research freeze + lifecycle (replay prior
+      # rolling ledger artifacts, freeze new vintages, grade finals). Artifact
+      # storage only; no repository writes. Research only; never public.
+      - name: Fetch prior research ledgers (read-only)
+        id: fetch_prior
         if: ${{ !cancelled() && steps.unit_tests.outcome == 'success' }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          LEDGER_BRANCH: ${{ github.ref_name }}
+        run: |
+          PYTHONPATH=. python3 -m nfl.prospective.live_game_market_research fetch-prior \
+            --dest /tmp/nfl-gm-prior
+
+      - name: Replay prior ledgers
+        id: replay
+        if: ${{ !cancelled() && steps.fetch_prior.outcome == 'success' }}
+        run: |
+          PYTHONPATH=. python3 -m nfl.prospective.live_game_market_research replay \
+            --ledger /tmp/nfl-gm-ledger --sources $(ls -d /tmp/nfl-gm-prior/artifact_* 2>/dev/null)
+
+      - name: Freeze spread/total research records
+        id: research_freeze
+        if: ${{ !cancelled() && steps.replay.outcome == 'success' }}
         env:
           FULL_COUNT_CODE_SHA: ${{ github.sha }}
         run: |
           PYTHONPATH=. python3 -m nfl.prospective.live_game_market_research freeze \
-            --ledger /tmp/nfl-game-market-research/frozen \
+            --ledger /tmp/nfl-gm-ledger \
             --artifact-dir /tmp/nfl-game-market-research/slates \
-            --raw-dir /tmp/nfl-game-market-research/raw
+            --raw-dir /tmp/nfl-game-market-research/raw \
+            --window-days "${{ inputs.research_window_days || '8' }}"
 
-      - name: Upload research freeze evidence
+      - name: Grade completed games in the replayed ledger
+        if: ${{ !cancelled() && steps.replay.outcome == 'success' }}
+        run: |
+          PYTHONPATH=. python3 -m nfl.prospective.live_game_market_research grade \
+            --ledger /tmp/nfl-gm-ledger | tee /tmp/nfl-game-market-research/grade_report.json
+
+      - name: Upload per-run research evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: nfl-game-market-research-${{ github.run_id }}
-          path: /tmp/nfl-game-market-research
+          path: |
+            /tmp/nfl-game-market-research
+            /tmp/nfl-gm-prior/sources_manifest.json
+          if-no-files-found: warn
+          retention-days: 90
+
+      - name: Upload rolling research ledger
+        # Superset of every replayed ledger plus this run's freezes/grades.
+        if: ${{ !cancelled() && steps.replay.outcome == 'success' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: nfl-game-market-research-ledger
+          path: /tmp/nfl-gm-ledger
           if-no-files-found: warn
           retention-days: 90

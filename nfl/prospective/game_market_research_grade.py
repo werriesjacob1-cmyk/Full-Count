@@ -11,8 +11,10 @@ Three things are measured separately and must not be conflated:
    probabilities, and point error of expected margin/total;
 2. price performance: units at the captured price (research leans and the
    full counterfactual population, reported separately);
-3. market timing: closing-line value against a LATER pre-kickoff sealed
-   snapshot of the same event, when one exists.
+3. market timing: line/price movement against a LATER pre-kickoff sealed
+   snapshot of the same event, when one exists. That reference is only the
+   latest later research vintage; it is NOT a verified closing price unless a
+   separate near-kickoff observation proves it (``reference_basis`` says so).
 """
 
 from __future__ import annotations
@@ -41,7 +43,7 @@ EPS = 1e-12
 
 
 class GameMarketResearchGradeError(ValueError):
-    """Raised when a freeze/outcome/closing pairing is unsafe."""
+    """Raised when a freeze/outcome/later-vintage pairing is unsafe."""
 
 
 def _dt(value: str) -> datetime:
@@ -63,25 +65,29 @@ def _verify_outcome(record: Mapping[str, Any], outcome: Mapping[str, Any]) -> No
         raise GameMarketResearchGradeError("outcome not FINAL")
 
 
-def _closing_markets(record: Mapping[str, Any], closing: Mapping[str, Any] | None) -> dict:
-    if closing is None:
+REFERENCE_BASIS = "LATEST_LATER_PRE_KICKOFF_RESEARCH_VINTAGE_NOT_A_VERIFIED_CLOSE"
+
+
+def _later_markets(record: Mapping[str, Any], later: Mapping[str, Any] | None) -> dict:
+    if later is None:
         return {}
-    verify_game_market_snapshot(closing)
-    if str(closing.get("event_id")) != str(record["event_id"]):
-        raise GameMarketResearchGradeError("closing snapshot is for a different event")
-    if _dt(closing["sealed_at"]) <= _dt(record["frozen_at"]):
-        raise GameMarketResearchGradeError("closing snapshot must be sealed after the freeze")
+    verify_game_market_snapshot(later)
+    if str(later.get("event_id")) != str(record["event_id"]):
+        raise GameMarketResearchGradeError("later snapshot is for a different event")
+    if _dt(later["sealed_at"]) <= _dt(record["frozen_at"]):
+        raise GameMarketResearchGradeError("later snapshot must be sealed after the freeze")
     kickoff = _dt(record["scheduled_kickoff"])
     out = {}
-    for row in closing.get("records") or []:
+    for row in later.get("records") or []:
         if _dt(row["captured_at"]) >= kickoff:
-            raise GameMarketResearchGradeError("closing quote observed at/after kickoff")
+            raise GameMarketResearchGradeError("later quote observed at/after kickoff")
         out[str(row["market"]).lower()] = row
     return out
 
 
-def _clv(sel: Mapping[str, Any], closing_market: Mapping[str, Any] | None) -> dict | None:
-    if closing_market is None:
+def _movement(sel: Mapping[str, Any], reference_market: Mapping[str, Any] | None,
+              kickoff: datetime) -> dict | None:
+    if reference_market is None:
         return None
     gi = sel["grading_identity"]
     side, family = gi["side"], gi["market"]
@@ -89,41 +95,70 @@ def _clv(sel: Mapping[str, Any], closing_market: Mapping[str, Any] | None) -> di
     a, b = {"spread": ("home", "away"), "game_total": ("over", "under"),
             "moneyline": ("home", "away")}[family]
     try:
-        nv = no_vig_pair(closing_market.get(f"{a}_odds"), closing_market.get(f"{b}_odds"))
-        closing_nv = nv[0] if prefix == a else nv[1]
+        nv = no_vig_pair(reference_market.get(f"{a}_odds"), reference_market.get(f"{b}_odds"))
+        reference_nv = nv[0] if prefix == a else nv[1]
     except GameMarketPricingError:
-        closing_nv = None
-    out: dict[str, Any] = {"closing_captured_at": closing_market["captured_at"],
-                           "closing_odds": closing_market.get(f"{prefix}_odds")}
+        reference_nv = None
+    out: dict[str, Any] = {
+        "reference_basis": REFERENCE_BASIS,
+        "reference_captured_at": reference_market["captured_at"],
+        "reference_minutes_before_kickoff": round(
+            (kickoff - _dt(reference_market["captured_at"])).total_seconds() / 60.0, 3),
+        "reference_odds": reference_market.get(f"{prefix}_odds"),
+    }
     if family == "spread":
-        later = closing_market.get(f"{prefix}_line")
-        out["closing_line"] = later
-        out["clv_points"] = None if later is None else float(gi["line"]) - float(later)
+        later = reference_market.get(f"{prefix}_line")
+        out["reference_line"] = later
+        out["line_movement_points"] = None if later is None else float(gi["line"]) - float(later)
     elif family == "game_total":
-        later = closing_market.get("line")
-        out["closing_line"] = later
+        later = reference_market.get("line")
+        out["reference_line"] = later
         if later is not None:
             delta = float(later) - float(gi["line"])
-            out["clv_points"] = delta if side == "OVER" else -delta
-    same_line = family == "moneyline" or out.get("closing_line") == gi["line"]
-    out["clv_no_vig_probability"] = (
-        None if closing_nv is None or not same_line or sel.get("no_vig_probability") is None
-        else round(closing_nv - sel["no_vig_probability"], 6))
+            out["line_movement_points"] = delta if side == "OVER" else -delta
+    same_line = family == "moneyline" or out.get("reference_line") == gi["line"]
+    out["no_vig_probability_change"] = (
+        None if reference_nv is None or not same_line or sel.get("no_vig_probability") is None
+        else round(reference_nv - sel["no_vig_probability"], 6))
     return out
+
+
+def _check_grading_identity(record: Mapping[str, Any], market: Mapping[str, Any],
+                            gi: Mapping[str, Any]) -> None:
+    """The frozen selection must equal the embedded sealed offer, field by field."""
+    prefix = gi["side"].lower()
+    family = gi["market"]
+    expected_line = (market.get(f"{prefix}_line") if family == "spread"
+                     else market.get("line") if family == "game_total" else None)
+    checks = {
+        "event_id": (str(gi["event_id"]), str(record["event_id"])),
+        "market_id": (gi["market_id"], str(market["market_id"])),
+        "selection_id": (gi["selection_id"], market.get(f"{prefix}_selection_id")),
+        "line": (gi["line"], expected_line),
+        "american_odds": (gi["american_odds"], market.get(f"{prefix}_odds")),
+        "captured_at": (gi["captured_at"], market.get("captured_at")),
+    }
+    binding = record.get("identity_binding") or {}
+    checks["nflverse_game_id"] = (gi.get("nflverse_game_id"), binding.get("nflverse_game_id"))
+    checks["espn_event_id"] = (gi.get("espn_event_id"), binding.get("nflverse_espn"))
+    for field, (frozen, sealed) in checks.items():
+        if frozen != sealed:
+            raise GameMarketResearchGradeError(f"grading identity {field} mismatch")
 
 
 def grade_research_freeze(
     record: Mapping[str, Any],
     outcome: Mapping[str, Any],
     *,
-    closing_snapshot: Mapping[str, Any] | None = None,
+    later_snapshot: Mapping[str, Any] | None = None,
     graded_at: str,
 ) -> dict[str, Any]:
     record_sha = verify_research_freeze(record)
     before = canonical_sha256(record)
     _verify_outcome(record, outcome)
     markets = {str(r["market"]).lower(): r for r in record["market_snapshot"]["records"]}
-    closing = _closing_markets(record, closing_snapshot)
+    later = _later_markets(record, later_snapshot)
+    kickoff = _dt(record["scheduled_kickoff"])
     home, away = int(outcome["home_score"]), int(outcome["away_score"])
 
     point = {}
@@ -147,8 +182,7 @@ def grade_research_freeze(
         market = markets[gi["market"]]
         if str(market["market_id"]) != gi["market_id"]:
             raise GameMarketResearchGradeError("grading identity market_id mismatch")
-        if market.get(f"{gi['side'].lower()}_selection_id") != gi["selection_id"]:
-            raise GameMarketResearchGradeError("grading identity selection_id mismatch")
+        _check_grading_identity(record, market, gi)
         settled = grade_game_market(market, outcome, side=gi["side"])
         s = settled["settlement"]
         idx = {"HIT": 0, "PUSH": 1, "UNRESOLVED_TIE": 1, "MISS": 2}[s]
@@ -168,7 +202,7 @@ def grade_research_freeze(
             "settlement": s, "settlement_grade_sha256": settled["grade_sha256"],
             "units_at_captured_price": None if units is None else round(units, 6),
             "realised_logloss": logloss,
-            "clv": _clv(sel, closing.get(gi["market"])),
+            "later_vintage_comparison": _movement(sel, later.get(gi["market"]), kickoff),
         })
 
     leans = [g for g in graded if g.get("decision") == RESEARCH_LEAN]
@@ -176,7 +210,8 @@ def grade_research_freeze(
         "schema": SCHEMA, "research_only": True, "public_eligible": False,
         "event_id": record["event_id"], "freeze_record_sha256": record_sha,
         "outcome_sha256": outcome["outcome_sha256"], "outcome": dict(outcome),
-        "closing_snapshot_sha256": None if closing_snapshot is None else closing_snapshot["snapshot_sha256"],
+        "later_snapshot_sha256": None if later_snapshot is None else later_snapshot["snapshot_sha256"],
+        "later_reference_basis": None if later_snapshot is None else REFERENCE_BASIS,
         "graded_at": graded_at,
         "final": {"home_score": home, "away_score": away, "margin": home - away, "total": home + away},
         "prediction_quality": {"point_error": point},

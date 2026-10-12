@@ -43,6 +43,9 @@ from nfl.research.game_market_models import (
 )
 
 SCHEMA = "fc-nfl-004-game-market-research-freeze-v1"
+SCHEMA_V2 = "fc-nfl-004-game-market-research-freeze-v2"  # adds the slate discovery binding
+DISCOVERY_KEYS = ("root_sha256", "root_bytes", "root_observed_at", "root_url",
+                  "process_event_ids", "process_event_ids_sha256", "discovery_sha256")
 FAMILIES = ("spread", "game_total", "moneyline")
 SIDES = {"spread": ("HOME", "AWAY"), "game_total": ("OVER", "UNDER"), "moneyline": ("HOME", "AWAY")}
 
@@ -116,8 +119,13 @@ def build_research_freeze(
     code_sha: str,
     schedule_source: Mapping[str, Any],
     frozen_at: str,
+    discovery: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Build one immutable research freeze for one sealed event snapshot."""
+    """Build one immutable research freeze for one sealed event snapshot.
+
+    ``discovery`` (schema v2) binds the record to the archived FanDuel root
+    response that discovered this event; the event must be in its window.
+    """
     snapshot_sha = verify_game_market_snapshot(market_snapshot)
     event_id = str(market_snapshot["event_id"])
     frozen_dt = _dt(frozen_at, "frozen_at")
@@ -299,6 +307,20 @@ def build_research_freeze(
         "config_summaries": summaries,
         "selections": selections,
     }
+    if discovery is not None:
+        missing = [k for k in DISCOVERY_KEYS if k not in discovery]
+        if missing:
+            raise GameMarketFreezeError(f"discovery binding missing: {missing}")
+        if canonical_sha256(sorted(str(e) for e in discovery["process_event_ids"])) != discovery[
+                "process_event_ids_sha256"]:
+            raise GameMarketFreezeError("discovery processing event ids do not match their hash")
+        if event_id not in [str(e) for e in discovery["process_event_ids"]]:
+            raise GameMarketFreezeError("event was not discovered in the bound slate window")
+        if _dt(discovery["root_observed_at"], "discovery.root_observed_at") > _dt(
+                market_snapshot.get("captured_at"), "snapshot.captured_at"):
+            raise GameMarketFreezeError("event payload captured before slate discovery")
+        body["schema"] = SCHEMA_V2
+        body["discovery"] = {k: discovery[k] for k in DISCOVERY_KEYS}
     body["input_state_sha256"] = canonical_sha256(body["input_state"])
     return {**body, "record_sha256": canonical_sha256(body)}
 

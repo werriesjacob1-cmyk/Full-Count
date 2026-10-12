@@ -364,8 +364,8 @@ class GradeTests(unittest.TestCase):
         self.binding = _binding(self.snap)
         self.rec = _freeze(snapshot=self.snap, binding=self.binding)
 
-    def _grade(self, outcome, closing=None):
-        return grade_research_freeze(self.rec, outcome, closing_snapshot=closing,
+    def _grade(self, outcome, later=None):
+        return grade_research_freeze(self.rec, outcome, later_snapshot=later,
                                      graded_at="2026-09-20T21:05:00Z")
 
     def test_spread_push_on_three_and_total_settlement(self):
@@ -403,19 +403,23 @@ class GradeTests(unittest.TestCase):
         with self.assertRaises(GameMarketFreezeError):
             self._grade(_outcome(self.binding))
 
-    def test_clv_against_later_presnapshot_and_ordering(self):
+    def test_movement_against_later_presnapshot_and_ordering(self):
         later_rows = [_record("moneyline", captured_at="2026-09-20T16:50:00Z"),
                       _record("spread", captured_at="2026-09-20T16:50:00Z", home_line=-4.0,
                               away_line=4.0),
                       _record("game_total", captured_at="2026-09-20T16:50:00Z", line=46.0)]
         later = _snapshot(later_rows, sealed_at="2026-09-20T16:51:00Z")
-        g = self._grade(_outcome(self.binding), closing=later)
+        g = self._grade(_outcome(self.binding), later=later)
         by = {(s["market"], s.get("side")): s for s in g["selections"]}
-        self.assertEqual(by[("spread", "HOME")]["clv"]["clv_points"], 1.0)
-        self.assertEqual(by[("spread", "AWAY")]["clv"]["clv_points"], -1.0)
-        self.assertEqual(by[("game_total", "OVER")]["clv"]["clv_points"], 1.0)
+        self.assertEqual(by[("spread", "HOME")]["later_vintage_comparison"]["line_movement_points"], 1.0)
+        self.assertEqual(by[("spread", "AWAY")]["later_vintage_comparison"]["line_movement_points"], -1.0)
+        self.assertEqual(by[("game_total", "OVER")]["later_vintage_comparison"]["line_movement_points"], 1.0)
+        ref = by[("spread", "HOME")]["later_vintage_comparison"]
+        self.assertIn("NOT_A_VERIFIED_CLOSE", ref["reference_basis"])
+        self.assertEqual(ref["reference_minutes_before_kickoff"], 10.0)
+        self.assertIn("NOT_A_VERIFIED_CLOSE", g["later_reference_basis"])
         with self.assertRaises(GameMarketResearchGradeError):
-            self._grade(_outcome(self.binding), closing=_snapshot())  # sealed before freeze
+            self._grade(_outcome(self.binding), later=_snapshot())  # sealed before freeze
 
     def test_grade_create_only(self):
         g = self._grade(_outcome(self.binding))

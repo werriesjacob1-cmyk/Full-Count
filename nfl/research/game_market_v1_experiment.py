@@ -24,6 +24,8 @@ from nfl.research.game_market_b0 import build_b0_predictions
 from nfl.research.game_market_b0_research import PINNED_SCHEDULE_SOURCE, load_pinned_historical_rows
 from nfl.research.game_market_models import (
     CONFIGS,
+    FIT_PROCEDURE_D1,
+    FIT_PROCEDURE_ORIGINAL,
     GameMarketParams,
     centers,
     distribution,
@@ -333,7 +335,20 @@ def _why(dev: list[dict], params: GameMarketParams) -> dict:
     return out
 
 
-def run(pinned_csv: Path, current_csv: Path | None) -> tuple[dict, GameMarketParams]:
+CLASSIFICATION = {
+    FIT_PROCEDURE_ORIGINAL: (
+        "SUPERSEDED_INCONSISTENT: pre-registered line-centered fit evaluated with the "
+        "D1 solved M0; M0/C1 fit and evaluation definitions differ (Codex P1)"),
+    FIT_PROCEDURE_D1: (
+        "AMENDED_EXPLORATORY_POST_D1: fit and evaluation both use the solved M0; "
+        "amendment made after D1 was found; validation/held were viewed before the "
+        "amendment and held 2023-2025 was also inspected by PR #222; NOT a virgin "
+        "holdout and NOT promotion evidence"),
+}
+
+
+def run(pinned_csv: Path, current_csv: Path | None,
+        procedure: str = FIT_PROCEDURE_D1) -> tuple[dict, GameMarketParams]:
     scoring, market, counts = load_pinned_historical_rows(pinned_csv)
     rows = _matched(scoring, market, _extras(pinned_csv))
     parts = {n: [r for r in rows if lo <= r["season"] <= hi] for n, (lo, hi) in PARTITIONS.items()}
@@ -343,10 +358,12 @@ def run(pinned_csv: Path, current_csv: Path | None) -> tuple[dict, GameMarketPar
         "source_commit": PINNED_SCHEDULE_SOURCE["commit"],
         "prereg": "engineering/nfl_game_market_pathway_20261012/PREREG.md",
         "prereg_commit": "35a6cb032c5f6ac5ced37ba3a86716a57e1123e8",
-    })
+    }, procedure=procedure)
     report: dict[str, Any] = {
         "schema": "fc-nfl-004-benchmark-v1",
         "status": "RESEARCH_ONLY_NOT_PROMOTED_NOT_A_PICK",
+        "fit_procedure": procedure,
+        "result_classification": CLASSIFICATION[procedure],
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "prereg_commit": "35a6cb032c5f6ac5ced37ba3a86716a57e1123e8",
         "source": PINNED_SCHEDULE_SOURCE, "source_counts": counts,
@@ -375,8 +392,9 @@ def main() -> None:
     ap.add_argument("--current-csv", type=Path)
     ap.add_argument("--report", type=Path, required=True)
     ap.add_argument("--params", type=Path, required=True)
+    ap.add_argument("--procedure", choices=sorted(CLASSIFICATION), default=FIT_PROCEDURE_D1)
     args = ap.parse_args()
-    report, params = run(args.pinned_csv, args.current_csv)
+    report, params = run(args.pinned_csv, args.current_csv, args.procedure)
     args.params.write_text(json.dumps(params.to_json(), indent=2, sort_keys=True) + "\n", encoding="utf-8")
     args.report.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps({"params_sha256": report["params_sha256"], "matched": report["matched_games"]}))
