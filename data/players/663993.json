@@ -3249,6 +3249,111 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-10-12",
+      "evaluations": [
+        {
+          "prop": "Over 0.5 Hits+Runs+RBIs",
+          "type": "batter",
+          "score": 50.4,
+          "notable_signals": 2,
+          "matchup": "Cleveland Guardians @ Tampa Bay Rays",
+          "game_pk": 849820,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "platoon": 80.0,
+            "sp_era_weak": 4.8571,
+            "pitch_exploit": 19.4286,
+            "l7_avg_ev": 25.3409,
+            "l7_barrel_pct": 100.0,
+            "park_hr_index": 50.0,
+            "season_barrel_pct": 35.3333,
+            "lineup_slot": 50.0,
+            "bullpen_fatigue": 33.3333,
+            "platoon_barrel_pct": 1.92,
+            "platoon_xwoba": 2.16,
+            "park_hand_index": -1.5,
+            "opp_catcher_framing": 0.96,
+            "days_rest": 4.0,
+            "woba_ahead": 15.4545,
+            "woba_behind": 34.5455,
+            "pull_park_synergy": -0.5828,
+            "hard_hit_105_rate": 0.47,
+            "team_total_move": 0.0,
+            "team_total_open": -6.0,
+            "getaway_day": 0.0,
+            "series_game": 0.0,
+            "sp_rp_ops_gap": -2.184,
+            "vs_rp_ops": -0.78,
+            "ump_k_pct": -0.012,
+            "ump_bb_pct": 0.108
+          },
+          "hit_probability": 0.6386,
+          "raw_hit_probability": 0.6181,
+          "lift": -0.0307,
+          "reliability": "A",
+          "sample_n": 123,
+          "projection": {
+            "stat": "hits_runs_rbis",
+            "value": 0.5,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Laser (105+ MPH)",
+          "type": "batter",
+          "score": 9.3,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Tampa Bay Rays",
+          "game_pk": 849820,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "hard_hit_rate": 0.0654
+          },
+          "hit_probability": 0.0654,
+          "raw_hit_probability": null,
+          "lift": 0.018,
+          "reliability": "A",
+          "sample_n": 123,
+          "projection": {
+            "stat": "hard_hit_105",
+            "value": 1,
+            "needs": 1
+          }
+        },
+        {
+          "prop": "To Hit a Moonshot (420+ FT)",
+          "type": "batter",
+          "score": 4.2,
+          "notable_signals": 0,
+          "matchup": "Cleveland Guardians @ Tampa Bay Rays",
+          "game_pk": 849820,
+          "team": "Cleveland Guardians",
+          "side": null,
+          "lean": null,
+          "combo_player_ids": null,
+          "signals": {
+            "moonshot_rate": 0.029
+          },
+          "hit_probability": 0.029,
+          "raw_hit_probability": null,
+          "lift": 0.0086,
+          "reliability": "A",
+          "sample_n": 123,
+          "projection": {
+            "stat": "moonshot_420",
+            "value": 1,
+            "needs": 1
+          }
+        }
+      ]
     }
   ]
 }
