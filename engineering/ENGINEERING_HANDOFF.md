@@ -6307,3 +6307,55 @@ are all untouched. Draft PR opened against `main`, not merged -- this
 workstream does not merge its own PR.
 
 Alligator
+
+## 2026-10-12 -- FC-NFL-004: NFL spread/total research pathway (Claude)
+
+Branch `claude/trusting-tesla-71g8mc`, base main `1eec042e`. Pre-registration
+`35a6cb03`; code `cb731be0`. Claim: Issue #91 comment 6128647971.
+
+**Reconciled first.** Main already had real FanDuel capture/normalisation, a
+sealed per-event snapshot, nflverse identity binding, ESPN-final extraction and
+an outcome grader. The live B0 board only compared a point estimate's sign with
+the line. Missing were a distribution, probabilities, no-vig/EV/gates, a durable
+probabilistic freeze, and the freeze -> final -> grade chain. #196/#199
+(player-prop prices), #202/#204 (unmerged factors) and #222 were not depended
+on.
+
+**Built.** The full chain is
+`live_game_market_research freeze` -> `seal_game_market_snapshot` ->
+`bind_nflverse_game_identity` -> B0 -> F1/M0/C1 (`game_market_models`) ->
+discrete margin/total pmfs (`game_score_distribution`) -> no-vig/break-even/
+edge/EV and gates (`game_market_pricing`) -> create-only
+`game_market_research_freeze` -> `grade` mode -> ESPN final ->
+`game_market_research_grade`, which reuses `grade_game_market` and adds CLV
+against the latest later pre-kickoff vintage.
+
+**Live bug found.** FanDuel `marketTime` = kickoff + 1 minute, so the exact-minute
+identity binder failed for 14 of 15 live events. `game_identity` gained an opt-in
+`kickoff_tolerance_minutes` (default 0 is byte-identical behaviour); the binding
+then carries the nflverse kickoff, which also matches ESPN.
+
+**Science.** `engineering/nfl_game_market_pathway_20261012/RESULTS.md`.
+- Market dominates. Recalibrated football-only F1 loses about +0.025
+  log loss to the close on validation and held, with intervals excluding 0.
+- Market-anchored C1 collapses onto M0: the k weights are about 0.
+- B0 lacks home field (+2.57 pts) and is over-dispersed (total slope 0.53),
+  but fixing that does not help. Given the close, B0's coefficient is about 0.
+- Deviation D1 (M0 must be solved so its line is 50/50) was caught by an
+  invariant check and documented.
+
+**Real evidence.** 15 Week 5 MNF / Week 6 events frozen at 2026-10-12T17:01Z
+under `data/nfl_game_market_research/` with raw payloads. Of 60 spread/total
+sides: 0 RESEARCH_LEAN, 56 NO_LEAN, 4 QUARANTINED (BAL@CLE QB change).
+
+**Not done.** Durable automatic ledger persistence: the workflow is
+`contents: read` and uploads 90-day artifacts. Committing generated research
+evidence from CI needs Jacob's decision. Only one book is captured, so cross-book
+consensus is unavailable.
+
+Tests: `nfl/tests/test_game_market_research_pathway.py` 32 OK; full NFL suite
+87 files / 1,088 tests OK.
+
+Nothing merged, deployed, promoted, or public.
+
+Alligator

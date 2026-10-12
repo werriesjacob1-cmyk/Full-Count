@@ -1,0 +1,660 @@
+{
+  "config_summaries": {
+    "B0": {
+      "available": true,
+      "expected_home_margin": -4.421956,
+      "expected_total": 45.193047,
+      "fair_home_spread": 3.5,
+      "fair_home_win_probability": 0.386708,
+      "fair_total": 44.5,
+      "margin_center": -4.3,
+      "total_center": 44.7
+    },
+    "C1": {
+      "available": true,
+      "expected_home_margin": -3.203094,
+      "expected_total": 42.294951,
+      "fair_home_spread": 3.0,
+      "fair_home_win_probability": 0.413281,
+      "fair_total": 42.0,
+      "margin_center": -3.14809,
+      "total_center": 41.917695
+    },
+    "F1": {
+      "available": true,
+      "expected_home_margin": -1.089004,
+      "expected_total": 44.724349,
+      "fair_home_spread": 1.5,
+      "fair_home_win_probability": 0.476256,
+      "fair_total": 44.0,
+      "margin_center": -0.99836,
+      "total_center": 44.295605
+    },
+    "M0": {
+      "available": true,
+      "expected_home_margin": -3.10564,
+      "expected_total": 42.122076,
+      "fair_home_spread": 3.0,
+      "fair_home_win_probability": 0.416099,
+      "fair_total": 41.5,
+      "margin_center": -3.050146,
+      "total_center": 41.73617
+    }
+  },
+  "event_id": "36160506",
+  "evidence_class": "PROSPECTIVE_RESEARCH_FREEZE",
+  "frozen_at": "2026-10-12T17:01:26Z",
+  "identity_binding": {
+    "away_score": null,
+    "away_team": "SEA",
+    "away_team_name": "Seattle Seahawks",
+    "binding_basis": "AWAY_HOME_TEAMS_PLUS_ET_KICKOFF_WITHIN_TOLERANCE",
+    "binding_sha256": "cb7813930d608108adb6813700ab5d9a2d3754864adfe7c5ae9ee5a8d97c24e2",
+    "final_status": null,
+    "finality_proven": false,
+    "game_type": "REG",
+    "home_score": null,
+    "home_team": "DEN",
+    "home_team_name": "Denver Broncos",
+    "kickoff_tolerance_minutes": 2,
+    "nflverse_espn": "401872995",
+    "nflverse_game_id": "2026_06_SEA_DEN",
+    "nflverse_gsis": null,
+    "scheduled_kickoff": "2026-10-16T00:15:00+00:00",
+    "schema_version": 1,
+    "score_state": "UNSETTLED",
+    "season": 2026,
+    "source": "nflverse_schedules",
+    "source_observed_at": "2026-10-12T17:01:25+00:00",
+    "source_sha256": "9380292232901e4321c99992c7efca0c567a0a801dcb292662a3f78a9a101c49",
+    "source_url": "https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv",
+    "sportsbook": "FANDUEL",
+    "sportsbook_event_id": "36160506",
+    "sportsbook_market_time": "2026-10-16T00:16:00+00:00",
+    "sportsbook_snapshot_sha256": "2fdb3c0569d6079e2ae63e7c603a0598963818e5eb7bf4b8283671ae707d994c",
+    "week": 6
+  },
+  "input_state": {
+    "b0_prediction": {
+      "away_prior_games_n": 5,
+      "away_team": "SEA",
+      "away_team_full": "Seattle Seahawks",
+      "baseline_name": "GAME_MARKET_B0_PRIOR_SCORING_BLEND",
+      "eligibility": "ELIGIBLE",
+      "event_id": "36160506",
+      "game_id": "2026_06_SEA_DEN",
+      "game_type": "REG",
+      "home_field_adjustment": 0.0,
+      "home_prior_games_n": 5,
+      "home_team": "DEN",
+      "home_team_full": "Denver Broncos",
+      "min_prior_games": 3,
+      "predicted_away_points": 24.5,
+      "predicted_home_margin": -4.300000000000001,
+      "predicted_home_points": 20.2,
+      "predicted_total": 44.7,
+      "same_week_completed_games_deliberately_excluded": true,
+      "schedule_local_date": "2026-10-15",
+      "season": 2026,
+      "target_final_status": "PREGAME",
+      "uses_current_game_outcome_as_feature": false,
+      "uses_market_line_as_feature": false,
+      "week": 6
+    },
+    "qb_state": {
+      "away": {
+        "basis": "NFLVERSE_PREPOPULATED_EXPECTED_STARTER_UNTIMESTAMPED",
+        "expected_qb_id": "00-0035704",
+        "expected_qb_name": "Drew Lock",
+        "previous_game_id": "2026_05_SF_SEA",
+        "previous_qb_id": "00-0035704",
+        "status": "UNCHANGED",
+        "team": "SEA"
+      },
+      "home": {
+        "basis": "NFLVERSE_PREPOPULATED_EXPECTED_STARTER_UNTIMESTAMPED",
+        "expected_qb_id": "00-0039732",
+        "expected_qb_name": "Bo Nix",
+        "previous_game_id": "2026_05_DEN_LAC",
+        "previous_qb_id": "00-0039732",
+        "status": "UNCHANGED",
+        "team": "DEN"
+      }
+    },
+    "schedule_source": {
+      "bytes": 2184055,
+      "observed_at": "2026-10-12T17:01:25Z",
+      "sha256": "9380292232901e4321c99992c7efca0c567a0a801dcb292662a3f78a9a101c49",
+      "url": "https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv"
+    }
+  },
+  "input_state_sha256": "4ee14ba3fe369fb8e7e451f68f20ed8adecda2c59cc9a441a3b43d71cdae6079",
+  "market_snapshot": {
+    "captured_at": "2026-10-12T17:01:26Z",
+    "event_id": "36160506",
+    "failures": [],
+    "public_eligible": false,
+    "records": [
+      {
+        "away_team": "Seattle Seahawks",
+        "captured_at": "2026-10-12T17:01:26Z",
+        "event_id": "36160506",
+        "event_name": "Seattle Seahawks @ Denver Broncos",
+        "event_open_date": "2026-10-16T00:16:00.000Z",
+        "home_team": "Denver Broncos",
+        "in_play": false,
+        "line": 41.5,
+        "market": "game_total",
+        "market_id": "734.190243425",
+        "market_name": "Total Points",
+        "market_status": "OPEN",
+        "market_time": "2026-10-16T00:16:00.000Z",
+        "market_type": "TOTAL_POINTS_(OVER/UNDER)",
+        "over_odds": -105,
+        "over_selection_id": "7017916",
+        "source": "fanduel_nfl",
+        "source_artifact": "event_36160506_no_tab",
+        "source_payload_sha256": "bb7ec818d0dc9f40adfbe61dd45216a48ed8cae6343d4958e4586908096b49a9",
+        "source_url": "https://sbapi.nj.sportsbook.fanduel.com/api/event-page?eventId=36160506&_ak=FhMFpcPWXMeyZxOx",
+        "sport": "NFL",
+        "sportsbook": "FANDUEL",
+        "under_odds": -115,
+        "under_selection_id": "7017917"
+      },
+      {
+        "away_odds": -156,
+        "away_selection_id": "50213",
+        "away_team": "Seattle Seahawks",
+        "captured_at": "2026-10-12T17:01:26Z",
+        "event_id": "36160506",
+        "event_name": "Seattle Seahawks @ Denver Broncos",
+        "event_open_date": "2026-10-16T00:16:00.000Z",
+        "home_odds": 132,
+        "home_selection_id": "50211",
+        "home_team": "Denver Broncos",
+        "in_play": false,
+        "market": "moneyline",
+        "market_id": "734.190243429",
+        "market_name": "Moneyline",
+        "market_status": "OPEN",
+        "market_time": "2026-10-16T00:16:00.000Z",
+        "market_type": "MONEY_LINE",
+        "source": "fanduel_nfl",
+        "source_artifact": "event_36160506_no_tab",
+        "source_payload_sha256": "bb7ec818d0dc9f40adfbe61dd45216a48ed8cae6343d4958e4586908096b49a9",
+        "source_url": "https://sbapi.nj.sportsbook.fanduel.com/api/event-page?eventId=36160506&_ak=FhMFpcPWXMeyZxOx",
+        "sport": "NFL",
+        "sportsbook": "FANDUEL"
+      },
+      {
+        "away_line": -3.0,
+        "away_odds": -106,
+        "away_selection_id": "50213",
+        "away_team": "Seattle Seahawks",
+        "captured_at": "2026-10-12T17:01:26Z",
+        "event_id": "36160506",
+        "event_name": "Seattle Seahawks @ Denver Broncos",
+        "event_open_date": "2026-10-16T00:16:00.000Z",
+        "home_line": 3.0,
+        "home_odds": -114,
+        "home_selection_id": "50211",
+        "home_team": "Denver Broncos",
+        "in_play": false,
+        "market": "spread",
+        "market_id": "734.190243426",
+        "market_name": "Spread",
+        "market_status": "OPEN",
+        "market_time": "2026-10-16T00:16:00.000Z",
+        "market_type": "MATCH_HANDICAP_(2-WAY)",
+        "source": "fanduel_nfl",
+        "source_artifact": "event_36160506_no_tab",
+        "source_payload_sha256": "bb7ec818d0dc9f40adfbe61dd45216a48ed8cae6343d4958e4586908096b49a9",
+        "source_url": "https://sbapi.nj.sportsbook.fanduel.com/api/event-page?eventId=36160506&_ak=FhMFpcPWXMeyZxOx",
+        "sport": "NFL",
+        "sportsbook": "FANDUEL"
+      }
+    ],
+    "research_only": true,
+    "schema_version": 1,
+    "sealed_at": "2026-10-12T17:01:26Z",
+    "snapshot_sha256": "2fdb3c0569d6079e2ae63e7c603a0598963818e5eb7bf4b8283671ae707d994c",
+    "source_payload_sha256": "bb7ec818d0dc9f40adfbe61dd45216a48ed8cae6343d4958e4586908096b49a9",
+    "sport": "NFL"
+  },
+  "market_snapshot_sha256": "2fdb3c0569d6079e2ae63e7c603a0598963818e5eb7bf4b8283671ae707d994c",
+  "model": {
+    "code_sha": "cb731be0c8a43692fc985bdb2cd2485e992fb17c",
+    "configs": [
+      "B0",
+      "F1",
+      "M0",
+      "C1"
+    ],
+    "lean_config": "C1",
+    "params_provenance": {
+      "fit_partition": "development_2000_2019",
+      "fit_rows": 5095,
+      "prereg": "engineering/nfl_game_market_pathway_20261012/PREREG.md",
+      "prereg_commit": "35a6cb032c5f6ac5ced37ba3a86716a57e1123e8",
+      "source_commit": "8ed09b2fe3ea42332b2249a995737e13dd931ff3",
+      "source_sha256": "26332ae5d8d8d0481f0670cf5e3849497a415351d4026ae5bee15a5aab96d188"
+    },
+    "params_sha256": "c1dbd52ee5232a882b9d91278261af66b54f5902b0ad1eeead28888eefb34fb5"
+  },
+  "public_eligible": false,
+  "record_sha256": "55e1150e0abfc54cc6609394581d6d06386f41b9d6e8a400bdf9bd7f6b4daef1",
+  "research_only": true,
+  "scheduled_kickoff": "2026-10-16T00:15:00+00:00",
+  "schema": "fc-nfl-004-game-market-research-freeze-v1",
+  "selections": [
+    {
+      "decimal_odds": 1.877193,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -114,
+        "captured_at": "2026-10-12T17:01:26Z",
+        "espn_event_id": "401872995",
+        "event_id": "36160506",
+        "line": 3.0,
+        "market": "spread",
+        "market_id": "734.190243426",
+        "nflverse_game_id": "2026_06_SEA_DEN",
+        "selection_id": "50211",
+        "side": "HOME"
+      },
+      "implied_probability": 0.53271,
+      "lean_config": "C1",
+      "market": "spread",
+      "model_market_gap_points": 0.14809,
+      "models": {
+        "B0": {
+          "break_even": 0.53271,
+          "edge": -0.070794,
+          "ev_per_unit": -0.123256,
+          "p_lose": 0.499063,
+          "p_push": 0.072517,
+          "p_win": 0.42842,
+          "p_win_conditional": 0.461917
+        },
+        "C1": {
+          "break_even": 0.53271,
+          "edge": -0.035788,
+          "ev_per_unit": -0.061953,
+          "p_lose": 0.463923,
+          "p_push": 0.07783,
+          "p_win": 0.458246,
+          "p_win_conditional": 0.496922
+        },
+        "F1": {
+          "break_even": 0.53271,
+          "edge": 0.027747,
+          "ev_per_unit": 0.048252,
+          "p_lose": 0.407191,
+          "p_push": 0.073604,
+          "p_win": 0.519205,
+          "p_win_conditional": 0.560457
+        },
+        "M0": {
+          "break_even": 0.53271,
+          "edge": -0.03271,
+          "ev_per_unit": -0.056625,
+          "p_lose": 0.461086,
+          "p_push": 0.077828,
+          "p_win": 0.461086,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.508664,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047273,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:3d2eab815185f01e7423703eff5b2d0e",
+      "source_payload_sha256": "bb7ec818d0dc9f40adfbe61dd45216a48ed8cae6343d4958e4586908096b49a9",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.943396,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -106,
+        "captured_at": "2026-10-12T17:01:26Z",
+        "espn_event_id": "401872995",
+        "event_id": "36160506",
+        "line": -3.0,
+        "market": "spread",
+        "market_id": "734.190243426",
+        "nflverse_game_id": "2026_06_SEA_DEN",
+        "selection_id": "50213",
+        "side": "AWAY"
+      },
+      "implied_probability": 0.514563,
+      "lean_config": "C1",
+      "market": "spread",
+      "model_market_gap_points": 0.14809,
+      "models": {
+        "B0": {
+          "break_even": 0.514563,
+          "edge": 0.02352,
+          "ev_per_unit": 0.042395,
+          "p_lose": 0.42842,
+          "p_push": 0.072517,
+          "p_win": 0.499063,
+          "p_win_conditional": 0.538083
+        },
+        "C1": {
+          "break_even": 0.514563,
+          "edge": -0.011485,
+          "ev_per_unit": -0.020583,
+          "p_lose": 0.458246,
+          "p_push": 0.07783,
+          "p_win": 0.463923,
+          "p_win_conditional": 0.503078
+        },
+        "F1": {
+          "break_even": 0.514563,
+          "edge": -0.07502,
+          "ev_per_unit": -0.135062,
+          "p_lose": 0.519205,
+          "p_push": 0.073604,
+          "p_win": 0.407191,
+          "p_win_conditional": 0.439543
+        },
+        "M0": {
+          "break_even": 0.514563,
+          "edge": -0.014563,
+          "ev_per_unit": -0.026099,
+          "p_lose": 0.461086,
+          "p_push": 0.077828,
+          "p_win": 0.461086,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.491336,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047273,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:39160202be538b049c6182063c24e6f5",
+      "source_payload_sha256": "bb7ec818d0dc9f40adfbe61dd45216a48ed8cae6343d4958e4586908096b49a9",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.952381,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -105,
+        "captured_at": "2026-10-12T17:01:26Z",
+        "espn_event_id": "401872995",
+        "event_id": "36160506",
+        "line": 41.5,
+        "market": "game_total",
+        "market_id": "734.190243425",
+        "nflverse_game_id": "2026_06_SEA_DEN",
+        "selection_id": "7017916",
+        "side": "OVER"
+      },
+      "implied_probability": 0.512195,
+      "lean_config": "C1",
+      "market": "game_total",
+      "model_market_gap_points": 0.417695,
+      "models": {
+        "B0": {
+          "break_even": 0.512195,
+          "edge": 0.071772,
+          "ev_per_unit": 0.140127,
+          "p_lose": 0.416033,
+          "p_push": 0.0,
+          "p_win": 0.583967,
+          "p_win_conditional": 0.583967
+        },
+        "C1": {
+          "break_even": 0.512195,
+          "edge": -0.006969,
+          "ev_per_unit": -0.013605,
+          "p_lose": 0.494773,
+          "p_push": 0.0,
+          "p_win": 0.505227,
+          "p_win_conditional": 0.505227
+        },
+        "F1": {
+          "break_even": 0.512195,
+          "edge": 0.060955,
+          "ev_per_unit": 0.119007,
+          "p_lose": 0.42685,
+          "p_push": 0.0,
+          "p_win": 0.57315,
+          "p_win_conditional": 0.57315
+        },
+        "M0": {
+          "break_even": 0.512195,
+          "edge": -0.012195,
+          "ev_per_unit": -0.02381,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.489166,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047079,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:8101862227a698b8fcc99701e8e83f69",
+      "source_payload_sha256": "bb7ec818d0dc9f40adfbe61dd45216a48ed8cae6343d4958e4586908096b49a9",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.869565,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -115,
+        "captured_at": "2026-10-12T17:01:26Z",
+        "espn_event_id": "401872995",
+        "event_id": "36160506",
+        "line": 41.5,
+        "market": "game_total",
+        "market_id": "734.190243425",
+        "nflverse_game_id": "2026_06_SEA_DEN",
+        "selection_id": "7017917",
+        "side": "UNDER"
+      },
+      "implied_probability": 0.534884,
+      "lean_config": "C1",
+      "market": "game_total",
+      "model_market_gap_points": 0.417695,
+      "models": {
+        "B0": {
+          "break_even": 0.534884,
+          "edge": -0.118851,
+          "ev_per_unit": -0.2222,
+          "p_lose": 0.583967,
+          "p_push": 0.0,
+          "p_win": 0.416033,
+          "p_win_conditional": 0.416033
+        },
+        "C1": {
+          "break_even": 0.534884,
+          "edge": -0.04011,
+          "ev_per_unit": -0.074989,
+          "p_lose": 0.505227,
+          "p_push": 0.0,
+          "p_win": 0.494773,
+          "p_win_conditional": 0.494773
+        },
+        "F1": {
+          "break_even": 0.534884,
+          "edge": -0.108034,
+          "ev_per_unit": -0.201976,
+          "p_lose": 0.57315,
+          "p_push": 0.0,
+          "p_win": 0.42685,
+          "p_win_conditional": 0.42685
+        },
+        "M0": {
+          "break_even": 0.534884,
+          "edge": -0.034884,
+          "ev_per_unit": -0.065217,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.510834,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047079,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:4582f2b4253b1a8269c545bf104ead0a",
+      "source_payload_sha256": "bb7ec818d0dc9f40adfbe61dd45216a48ed8cae6343d4958e4586908096b49a9",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 2.32,
+      "decision": "MEASUREMENT_ONLY",
+      "grading_identity": {
+        "american_odds": 132,
+        "captured_at": "2026-10-12T17:01:26Z",
+        "espn_event_id": "401872995",
+        "event_id": "36160506",
+        "line": null,
+        "market": "moneyline",
+        "market_id": "734.190243429",
+        "nflverse_game_id": "2026_06_SEA_DEN",
+        "selection_id": "50211",
+        "side": "HOME"
+      },
+      "implied_probability": 0.431034,
+      "lean_config": "C1",
+      "market": "moneyline",
+      "model_market_gap_points": null,
+      "models": {
+        "B0": {
+          "break_even": 0.431034,
+          "edge": -0.044327,
+          "ev_per_unit": -0.102293,
+          "p_lose": 0.610043,
+          "p_push": 0.005298,
+          "p_win": 0.384659,
+          "p_win_conditional": 0.386708
+        },
+        "C1": {
+          "break_even": 0.431034,
+          "edge": -0.017753,
+          "ev_per_unit": -0.04095,
+          "p_lose": 0.583337,
+          "p_push": 0.005764,
+          "p_win": 0.410899,
+          "p_win_conditional": 0.413281
+        },
+        "F1": {
+          "break_even": 0.431034,
+          "edge": 0.045222,
+          "ev_per_unit": 0.104322,
+          "p_lose": 0.520786,
+          "p_push": 0.005648,
+          "p_win": 0.473566,
+          "p_win_conditional": 0.476256
+        },
+        "M0": {
+          "break_even": 0.431034,
+          "edge": -0.014936,
+          "ev_per_unit": -0.034451,
+          "p_lose": 0.58053,
+          "p_push": 0.005774,
+          "p_win": 0.413696,
+          "p_win_conditional": 0.416099
+        }
+      },
+      "no_vig_probability": 0.414293,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.040409,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "MARKET_NOT_IN_LEAN_SCOPE"
+      ],
+      "selection_key": "fcnfl004:6639d9ee0119e57046cfa272c1c60b30",
+      "source_payload_sha256": "bb7ec818d0dc9f40adfbe61dd45216a48ed8cae6343d4958e4586908096b49a9",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.641026,
+      "decision": "MEASUREMENT_ONLY",
+      "grading_identity": {
+        "american_odds": -156,
+        "captured_at": "2026-10-12T17:01:26Z",
+        "espn_event_id": "401872995",
+        "event_id": "36160506",
+        "line": null,
+        "market": "moneyline",
+        "market_id": "734.190243429",
+        "nflverse_game_id": "2026_06_SEA_DEN",
+        "selection_id": "50213",
+        "side": "AWAY"
+      },
+      "implied_probability": 0.609375,
+      "lean_config": "C1",
+      "market": "moneyline",
+      "model_market_gap_points": null,
+      "models": {
+        "B0": {
+          "break_even": 0.609375,
+          "edge": 0.003917,
+          "ev_per_unit": 0.006394,
+          "p_lose": 0.384659,
+          "p_push": 0.005298,
+          "p_win": 0.610043,
+          "p_win_conditional": 0.613292
+        },
+        "C1": {
+          "break_even": 0.609375,
+          "edge": -0.022656,
+          "ev_per_unit": -0.036965,
+          "p_lose": 0.410899,
+          "p_push": 0.005764,
+          "p_win": 0.583337,
+          "p_win_conditional": 0.586719
+        },
+        "F1": {
+          "break_even": 0.609375,
+          "edge": -0.085631,
+          "ev_per_unit": -0.139729,
+          "p_lose": 0.473566,
+          "p_push": 0.005648,
+          "p_win": 0.520786,
+          "p_win_conditional": 0.523744
+        },
+        "M0": {
+          "break_even": 0.609375,
+          "edge": -0.025474,
+          "ev_per_unit": -0.041562,
+          "p_lose": 0.413696,
+          "p_push": 0.005774,
+          "p_win": 0.58053,
+          "p_win_conditional": 0.583901
+        }
+      },
+      "no_vig_probability": 0.585707,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.040409,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "MARKET_NOT_IN_LEAN_SCOPE"
+      ],
+      "selection_key": "fcnfl004:5d80e5fc1da7233f748be75967878aff",
+      "source_payload_sha256": "bb7ec818d0dc9f40adfbe61dd45216a48ed8cae6343d4958e4586908096b49a9",
+      "sportsbook": "FANDUEL"
+    }
+  ],
+  "sport": "NFL"
+}

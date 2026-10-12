@@ -1,0 +1,660 @@
+{
+  "config_summaries": {
+    "B0": {
+      "available": true,
+      "expected_home_margin": -2.706164,
+      "expected_total": 46.099125,
+      "fair_home_spread": 3.0,
+      "fair_home_win_probability": 0.432553,
+      "fair_total": 45.5,
+      "margin_center": -2.6,
+      "total_center": 45.6
+    },
+    "C1": {
+      "available": true,
+      "expected_home_margin": -4.629658,
+      "expected_total": 48.834601,
+      "fair_home_spread": 3.5,
+      "fair_home_win_probability": 0.372849,
+      "fair_total": 48.5,
+      "margin_center": -4.574735,
+      "total_center": 48.415504
+    },
+    "F1": {
+      "available": true,
+      "expected_home_margin": 0.307619,
+      "expected_total": 45.200091,
+      "fair_home_spread": -1.0,
+      "fair_home_win_probability": 0.515444,
+      "fair_total": 44.5,
+      "margin_center": 0.397471,
+      "total_center": 44.772865
+    },
+    "M0": {
+      "available": true,
+      "expected_home_margin": -4.438422,
+      "expected_total": 49.091128,
+      "fair_home_spread": 3.5,
+      "fair_home_win_probability": 0.378202,
+      "fair_total": 48.5,
+      "margin_center": -4.384024,
+      "total_center": 48.657515
+    }
+  },
+  "event_id": "36160514",
+  "evidence_class": "PROSPECTIVE_RESEARCH_FREEZE",
+  "frozen_at": "2026-10-12T17:01:27Z",
+  "identity_binding": {
+    "away_score": null,
+    "away_team": "CHI",
+    "away_team_name": "Chicago Bears",
+    "binding_basis": "AWAY_HOME_TEAMS_PLUS_ET_KICKOFF_WITHIN_TOLERANCE",
+    "binding_sha256": "281647255da53955fa01ad99bd32647003bf8dfc170fb961be3ae57430fb6bb5",
+    "final_status": null,
+    "finality_proven": false,
+    "game_type": "REG",
+    "home_score": null,
+    "home_team": "ATL",
+    "home_team_name": "Atlanta Falcons",
+    "kickoff_tolerance_minutes": 2,
+    "nflverse_espn": "401872999",
+    "nflverse_game_id": "2026_06_CHI_ATL",
+    "nflverse_gsis": null,
+    "scheduled_kickoff": "2026-10-18T17:00:00+00:00",
+    "schema_version": 1,
+    "score_state": "UNSETTLED",
+    "season": 2026,
+    "source": "nflverse_schedules",
+    "source_observed_at": "2026-10-12T17:01:25+00:00",
+    "source_sha256": "9380292232901e4321c99992c7efca0c567a0a801dcb292662a3f78a9a101c49",
+    "source_url": "https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv",
+    "sportsbook": "FANDUEL",
+    "sportsbook_event_id": "36160514",
+    "sportsbook_market_time": "2026-10-18T17:01:00+00:00",
+    "sportsbook_snapshot_sha256": "f9d6b46fab66b5c343bb8e8d7493bd7388725b35c6f8b8cefd674b2920ab0e84",
+    "week": 6
+  },
+  "input_state": {
+    "b0_prediction": {
+      "away_prior_games_n": 5,
+      "away_team": "CHI",
+      "away_team_full": "Chicago Bears",
+      "baseline_name": "GAME_MARKET_B0_PRIOR_SCORING_BLEND",
+      "eligibility": "ELIGIBLE",
+      "event_id": "36160514",
+      "game_id": "2026_06_CHI_ATL",
+      "game_type": "REG",
+      "home_field_adjustment": 0.0,
+      "home_prior_games_n": 5,
+      "home_team": "ATL",
+      "home_team_full": "Atlanta Falcons",
+      "min_prior_games": 3,
+      "predicted_away_points": 24.1,
+      "predicted_home_margin": -2.6000000000000014,
+      "predicted_home_points": 21.5,
+      "predicted_total": 45.6,
+      "same_week_completed_games_deliberately_excluded": true,
+      "schedule_local_date": "2026-10-18",
+      "season": 2026,
+      "target_final_status": "PREGAME",
+      "uses_current_game_outcome_as_feature": false,
+      "uses_market_line_as_feature": false,
+      "week": 6
+    },
+    "qb_state": {
+      "away": {
+        "basis": "NFLVERSE_PREPOPULATED_EXPECTED_STARTER_UNTIMESTAMPED",
+        "expected_qb_id": "00-0038416",
+        "expected_qb_name": "Tyson Bagent",
+        "previous_game_id": "2026_05_CHI_GB",
+        "previous_qb_id": "00-0038416",
+        "status": "UNCHANGED",
+        "team": "CHI"
+      },
+      "home": {
+        "basis": "NFLVERSE_PREPOPULATED_EXPECTED_STARTER_UNTIMESTAMPED",
+        "expected_qb_id": "00-0039917",
+        "expected_qb_name": "Michael Penix Jr.",
+        "previous_game_id": "2026_05_BAL_ATL",
+        "previous_qb_id": "00-0039917",
+        "status": "UNCHANGED",
+        "team": "ATL"
+      }
+    },
+    "schedule_source": {
+      "bytes": 2184055,
+      "observed_at": "2026-10-12T17:01:25Z",
+      "sha256": "9380292232901e4321c99992c7efca0c567a0a801dcb292662a3f78a9a101c49",
+      "url": "https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv"
+    }
+  },
+  "input_state_sha256": "6ab168f2f5d7a05f9214fae2a0bb1da557a00e7b9dc3265f64ee6af28815f6c5",
+  "market_snapshot": {
+    "captured_at": "2026-10-12T17:01:27Z",
+    "event_id": "36160514",
+    "failures": [],
+    "public_eligible": false,
+    "records": [
+      {
+        "away_team": "Chicago Bears",
+        "captured_at": "2026-10-12T17:01:27Z",
+        "event_id": "36160514",
+        "event_name": "Chicago Bears @ Atlanta Falcons",
+        "event_open_date": "2026-10-18T17:01:00.000Z",
+        "home_team": "Atlanta Falcons",
+        "in_play": false,
+        "line": 48.5,
+        "market": "game_total",
+        "market_id": "734.190243421",
+        "market_name": "Total Points",
+        "market_status": "OPEN",
+        "market_time": "2026-10-18T17:01:00.000Z",
+        "market_type": "TOTAL_POINTS_(OVER/UNDER)",
+        "over_odds": -110,
+        "over_selection_id": "7017916",
+        "source": "fanduel_nfl",
+        "source_artifact": "event_36160514_no_tab",
+        "source_payload_sha256": "0cc2b69053073cfd9a2b1944a4ed809f552506ef9729024bad47650c2d36febc",
+        "source_url": "https://sbapi.nj.sportsbook.fanduel.com/api/event-page?eventId=36160514&_ak=FhMFpcPWXMeyZxOx",
+        "sport": "NFL",
+        "sportsbook": "FANDUEL",
+        "under_odds": -110,
+        "under_selection_id": "7017917"
+      },
+      {
+        "away_odds": -188,
+        "away_selection_id": "50194",
+        "away_team": "Chicago Bears",
+        "captured_at": "2026-10-12T17:01:27Z",
+        "event_id": "36160514",
+        "event_name": "Chicago Bears @ Atlanta Falcons",
+        "event_open_date": "2026-10-18T17:01:00.000Z",
+        "home_odds": 158,
+        "home_selection_id": "50199",
+        "home_team": "Atlanta Falcons",
+        "in_play": false,
+        "market": "moneyline",
+        "market_id": "734.190243423",
+        "market_name": "Moneyline",
+        "market_status": "OPEN",
+        "market_time": "2026-10-18T17:01:00.000Z",
+        "market_type": "MONEY_LINE",
+        "source": "fanduel_nfl",
+        "source_artifact": "event_36160514_no_tab",
+        "source_payload_sha256": "0cc2b69053073cfd9a2b1944a4ed809f552506ef9729024bad47650c2d36febc",
+        "source_url": "https://sbapi.nj.sportsbook.fanduel.com/api/event-page?eventId=36160514&_ak=FhMFpcPWXMeyZxOx",
+        "sport": "NFL",
+        "sportsbook": "FANDUEL"
+      },
+      {
+        "away_line": -3.5,
+        "away_odds": -106,
+        "away_selection_id": "50194",
+        "away_team": "Chicago Bears",
+        "captured_at": "2026-10-12T17:01:27Z",
+        "event_id": "36160514",
+        "event_name": "Chicago Bears @ Atlanta Falcons",
+        "event_open_date": "2026-10-18T17:01:00.000Z",
+        "home_line": 3.5,
+        "home_odds": -114,
+        "home_selection_id": "50199",
+        "home_team": "Atlanta Falcons",
+        "in_play": false,
+        "market": "spread",
+        "market_id": "734.190243424",
+        "market_name": "Spread",
+        "market_status": "OPEN",
+        "market_time": "2026-10-18T17:01:00.000Z",
+        "market_type": "MATCH_HANDICAP_(2-WAY)",
+        "source": "fanduel_nfl",
+        "source_artifact": "event_36160514_no_tab",
+        "source_payload_sha256": "0cc2b69053073cfd9a2b1944a4ed809f552506ef9729024bad47650c2d36febc",
+        "source_url": "https://sbapi.nj.sportsbook.fanduel.com/api/event-page?eventId=36160514&_ak=FhMFpcPWXMeyZxOx",
+        "sport": "NFL",
+        "sportsbook": "FANDUEL"
+      }
+    ],
+    "research_only": true,
+    "schema_version": 1,
+    "sealed_at": "2026-10-12T17:01:27Z",
+    "snapshot_sha256": "f9d6b46fab66b5c343bb8e8d7493bd7388725b35c6f8b8cefd674b2920ab0e84",
+    "source_payload_sha256": "0cc2b69053073cfd9a2b1944a4ed809f552506ef9729024bad47650c2d36febc",
+    "sport": "NFL"
+  },
+  "market_snapshot_sha256": "f9d6b46fab66b5c343bb8e8d7493bd7388725b35c6f8b8cefd674b2920ab0e84",
+  "model": {
+    "code_sha": "cb731be0c8a43692fc985bdb2cd2485e992fb17c",
+    "configs": [
+      "B0",
+      "F1",
+      "M0",
+      "C1"
+    ],
+    "lean_config": "C1",
+    "params_provenance": {
+      "fit_partition": "development_2000_2019",
+      "fit_rows": 5095,
+      "prereg": "engineering/nfl_game_market_pathway_20261012/PREREG.md",
+      "prereg_commit": "35a6cb032c5f6ac5ced37ba3a86716a57e1123e8",
+      "source_commit": "8ed09b2fe3ea42332b2249a995737e13dd931ff3",
+      "source_sha256": "26332ae5d8d8d0481f0670cf5e3849497a415351d4026ae5bee15a5aab96d188"
+    },
+    "params_sha256": "c1dbd52ee5232a882b9d91278261af66b54f5902b0ad1eeead28888eefb34fb5"
+  },
+  "public_eligible": false,
+  "record_sha256": "7a9446e000aafde61ddeff5d47a9a0f85824903e5d31d9e1e34884af63fc8982",
+  "research_only": true,
+  "scheduled_kickoff": "2026-10-18T17:00:00+00:00",
+  "schema": "fc-nfl-004-game-market-research-freeze-v1",
+  "selections": [
+    {
+      "decimal_odds": 1.877193,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -114,
+        "captured_at": "2026-10-12T17:01:27Z",
+        "espn_event_id": "401872999",
+        "event_id": "36160514",
+        "line": 3.5,
+        "market": "spread",
+        "market_id": "734.190243424",
+        "nflverse_game_id": "2026_06_CHI_ATL",
+        "selection_id": "50199",
+        "side": "HOME"
+      },
+      "implied_probability": 0.53271,
+      "lean_config": "C1",
+      "market": "spread",
+      "model_market_gap_points": 1.074735,
+      "models": {
+        "B0": {
+          "break_even": 0.53271,
+          "edge": 0.014919,
+          "ev_per_unit": 0.028005,
+          "p_lose": 0.452371,
+          "p_push": 0.0,
+          "p_win": 0.547629,
+          "p_win_conditional": 0.547629
+        },
+        "C1": {
+          "break_even": 0.53271,
+          "edge": -0.038296,
+          "ev_per_unit": -0.071888,
+          "p_lose": 0.505585,
+          "p_push": 0.0,
+          "p_win": 0.494415,
+          "p_win_conditional": 0.494415
+        },
+        "F1": {
+          "break_even": 0.53271,
+          "edge": 0.097393,
+          "ev_per_unit": 0.182825,
+          "p_lose": 0.369897,
+          "p_push": 0.0,
+          "p_win": 0.630103,
+          "p_win_conditional": 0.630103
+        },
+        "M0": {
+          "break_even": 0.53271,
+          "edge": -0.03271,
+          "ev_per_unit": -0.061404,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.508664,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047273,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:daa0b0fbefcaef557dfa94e8ad9448a4",
+      "source_payload_sha256": "0cc2b69053073cfd9a2b1944a4ed809f552506ef9729024bad47650c2d36febc",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.943396,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -106,
+        "captured_at": "2026-10-12T17:01:27Z",
+        "espn_event_id": "401872999",
+        "event_id": "36160514",
+        "line": -3.5,
+        "market": "spread",
+        "market_id": "734.190243424",
+        "nflverse_game_id": "2026_06_CHI_ATL",
+        "selection_id": "50194",
+        "side": "AWAY"
+      },
+      "implied_probability": 0.514563,
+      "lean_config": "C1",
+      "market": "spread",
+      "model_market_gap_points": 1.074735,
+      "models": {
+        "B0": {
+          "break_even": 0.514563,
+          "edge": -0.062192,
+          "ev_per_unit": -0.120864,
+          "p_lose": 0.547629,
+          "p_push": 0.0,
+          "p_win": 0.452371,
+          "p_win_conditional": 0.452371
+        },
+        "C1": {
+          "break_even": 0.514563,
+          "edge": -0.008978,
+          "ev_per_unit": -0.017447,
+          "p_lose": 0.494415,
+          "p_push": 0.0,
+          "p_win": 0.505585,
+          "p_win_conditional": 0.505585
+        },
+        "F1": {
+          "break_even": 0.514563,
+          "edge": -0.144666,
+          "ev_per_unit": -0.281144,
+          "p_lose": 0.630103,
+          "p_push": 0.0,
+          "p_win": 0.369897,
+          "p_win_conditional": 0.369897
+        },
+        "M0": {
+          "break_even": 0.514563,
+          "edge": -0.014563,
+          "ev_per_unit": -0.028302,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.491336,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047273,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:78ff2abaf19c178c6c59af1da2d641b3",
+      "source_payload_sha256": "0cc2b69053073cfd9a2b1944a4ed809f552506ef9729024bad47650c2d36febc",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.909091,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -110,
+        "captured_at": "2026-10-12T17:01:27Z",
+        "espn_event_id": "401872999",
+        "event_id": "36160514",
+        "line": 48.5,
+        "market": "game_total",
+        "market_id": "734.190243421",
+        "nflverse_game_id": "2026_06_CHI_ATL",
+        "selection_id": "7017916",
+        "side": "OVER"
+      },
+      "implied_probability": 0.52381,
+      "lean_config": "C1",
+      "market": "game_total",
+      "model_market_gap_points": 0.084496,
+      "models": {
+        "B0": {
+          "break_even": 0.52381,
+          "edge": -0.108614,
+          "ev_per_unit": -0.207354,
+          "p_lose": 0.584805,
+          "p_push": 0.0,
+          "p_win": 0.415195,
+          "p_win_conditional": 0.415195
+        },
+        "C1": {
+          "break_even": 0.52381,
+          "edge": -0.031164,
+          "ev_per_unit": -0.059495,
+          "p_lose": 0.507355,
+          "p_push": 0.0,
+          "p_win": 0.492645,
+          "p_win_conditional": 0.492645
+        },
+        "F1": {
+          "break_even": 0.52381,
+          "edge": -0.134149,
+          "ev_per_unit": -0.256102,
+          "p_lose": 0.610339,
+          "p_push": 0.0,
+          "p_win": 0.389661,
+          "p_win_conditional": 0.389661
+        },
+        "M0": {
+          "break_even": 0.52381,
+          "edge": -0.02381,
+          "ev_per_unit": -0.045455,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.5,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047619,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:fd2adbb01ebeba90552c8b832406df01",
+      "source_payload_sha256": "0cc2b69053073cfd9a2b1944a4ed809f552506ef9729024bad47650c2d36febc",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.909091,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -110,
+        "captured_at": "2026-10-12T17:01:27Z",
+        "espn_event_id": "401872999",
+        "event_id": "36160514",
+        "line": 48.5,
+        "market": "game_total",
+        "market_id": "734.190243421",
+        "nflverse_game_id": "2026_06_CHI_ATL",
+        "selection_id": "7017917",
+        "side": "UNDER"
+      },
+      "implied_probability": 0.52381,
+      "lean_config": "C1",
+      "market": "game_total",
+      "model_market_gap_points": 0.084496,
+      "models": {
+        "B0": {
+          "break_even": 0.52381,
+          "edge": 0.060995,
+          "ev_per_unit": 0.116445,
+          "p_lose": 0.415195,
+          "p_push": 0.0,
+          "p_win": 0.584805,
+          "p_win_conditional": 0.584805
+        },
+        "C1": {
+          "break_even": 0.52381,
+          "edge": -0.016455,
+          "ev_per_unit": -0.031414,
+          "p_lose": 0.492645,
+          "p_push": 0.0,
+          "p_win": 0.507355,
+          "p_win_conditional": 0.507355
+        },
+        "F1": {
+          "break_even": 0.52381,
+          "edge": 0.086529,
+          "ev_per_unit": 0.165193,
+          "p_lose": 0.389661,
+          "p_push": 0.0,
+          "p_win": 0.610339,
+          "p_win_conditional": 0.610339
+        },
+        "M0": {
+          "break_even": 0.52381,
+          "edge": -0.02381,
+          "ev_per_unit": -0.045455,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.5,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047619,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:6649e82191201e78a12086eac792e3bd",
+      "source_payload_sha256": "0cc2b69053073cfd9a2b1944a4ed809f552506ef9729024bad47650c2d36febc",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 2.58,
+      "decision": "MEASUREMENT_ONLY",
+      "grading_identity": {
+        "american_odds": 158,
+        "captured_at": "2026-10-12T17:01:27Z",
+        "espn_event_id": "401872999",
+        "event_id": "36160514",
+        "line": null,
+        "market": "moneyline",
+        "market_id": "734.190243423",
+        "nflverse_game_id": "2026_06_CHI_ATL",
+        "selection_id": "50199",
+        "side": "HOME"
+      },
+      "implied_probability": 0.387597,
+      "lean_config": "C1",
+      "market": "moneyline",
+      "model_market_gap_points": null,
+      "models": {
+        "B0": {
+          "break_even": 0.387597,
+          "edge": 0.044956,
+          "ev_per_unit": 0.115354,
+          "p_lose": 0.56435,
+          "p_push": 0.005458,
+          "p_win": 0.430192,
+          "p_win_conditional": 0.432553
+        },
+        "C1": {
+          "break_even": 0.387597,
+          "edge": -0.014748,
+          "ev_per_unit": -0.037838,
+          "p_lose": 0.623648,
+          "p_push": 0.005586,
+          "p_win": 0.370766,
+          "p_win_conditional": 0.372849
+        },
+        "F1": {
+          "break_even": 0.387597,
+          "edge": 0.127847,
+          "ev_per_unit": 0.327977,
+          "p_lose": 0.481812,
+          "p_push": 0.005663,
+          "p_win": 0.512525,
+          "p_win_conditional": 0.515444
+        },
+        "M0": {
+          "break_even": 0.387597,
+          "edge": -0.009395,
+          "ev_per_unit": -0.024103,
+          "p_lose": 0.618308,
+          "p_push": 0.005613,
+          "p_win": 0.376079,
+          "p_win_conditional": 0.378202
+        }
+      },
+      "no_vig_probability": 0.372555,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.040375,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "MARKET_NOT_IN_LEAN_SCOPE"
+      ],
+      "selection_key": "fcnfl004:d5e8439681f3d3cd8d4dcdfb167576c9",
+      "source_payload_sha256": "0cc2b69053073cfd9a2b1944a4ed809f552506ef9729024bad47650c2d36febc",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.531915,
+      "decision": "MEASUREMENT_ONLY",
+      "grading_identity": {
+        "american_odds": -188,
+        "captured_at": "2026-10-12T17:01:27Z",
+        "espn_event_id": "401872999",
+        "event_id": "36160514",
+        "line": null,
+        "market": "moneyline",
+        "market_id": "734.190243423",
+        "nflverse_game_id": "2026_06_CHI_ATL",
+        "selection_id": "50194",
+        "side": "AWAY"
+      },
+      "implied_probability": 0.652778,
+      "lean_config": "C1",
+      "market": "moneyline",
+      "model_market_gap_points": null,
+      "models": {
+        "B0": {
+          "break_even": 0.652778,
+          "edge": -0.085331,
+          "ev_per_unit": -0.130006,
+          "p_lose": 0.430192,
+          "p_push": 0.005458,
+          "p_win": 0.56435,
+          "p_win_conditional": 0.567447
+        },
+        "C1": {
+          "break_even": 0.652778,
+          "edge": -0.025626,
+          "ev_per_unit": -0.039038,
+          "p_lose": 0.370766,
+          "p_push": 0.005586,
+          "p_win": 0.623648,
+          "p_win_conditional": 0.627151
+        },
+        "F1": {
+          "break_even": 0.652778,
+          "edge": -0.168222,
+          "ev_per_unit": -0.256242,
+          "p_lose": 0.512525,
+          "p_push": 0.005663,
+          "p_win": 0.481812,
+          "p_win_conditional": 0.484556
+        },
+        "M0": {
+          "break_even": 0.652778,
+          "edge": -0.03098,
+          "ev_per_unit": -0.047192,
+          "p_lose": 0.376079,
+          "p_push": 0.005613,
+          "p_win": 0.618308,
+          "p_win_conditional": 0.621798
+        }
+      },
+      "no_vig_probability": 0.627445,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.040375,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "MARKET_NOT_IN_LEAN_SCOPE"
+      ],
+      "selection_key": "fcnfl004:9e4cc134abf0924236f9f6e917907770",
+      "source_payload_sha256": "0cc2b69053073cfd9a2b1944a4ed809f552506ef9729024bad47650c2d36febc",
+      "sportsbook": "FANDUEL"
+    }
+  ],
+  "sport": "NFL"
+}
