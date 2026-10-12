@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-10-12T20:13:10.541800+00:00",
+  "updated_at": "2026-10-12T20:28:04.614005+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -60582,6 +60582,104 @@
         "lineup_assumed": null,
         "base_rate": 0.6837,
         "lift": -0.0497,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "09f7e2244",
+          "prediction_timestamp": "2026-10-12T20:08:22.783525+00:00",
+          "odds_fetched_at": "2026-10-12T20:08:21.033088+00:00",
+          "board_generated_at": "2026-10-12T20:08:22.777423+00:00"
+        },
+        "qualification_timestamp": "2026-10-12T20:08:22.783525+00:00",
+        "board_timestamp": "2026-10-12T20:08:22.777423+00:00",
+        "slate_date": "2026-10-12"
+      }
+    },
+    "fc2:849820:player-663993:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:849820:player-663993:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "849820",
+        [
+          "player",
+          "663993"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-10-12",
+      "first_published_at": "2026-10-12T20:28:04.614005+00:00",
+      "publication_provenance": {
+        "artifact_id": "8205d97764191e9a570f51dd1d59876efc213a52e7cd0d5b1d543a31bb99d847",
+        "source_commit": "b652c3c6dfa133d17d085aebf296e72c78a44cad",
+        "workflow_run_id": "38304270864",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-10-12T20:27:53.040919+00:00",
+        "data_hash": "efd94d13cdf28ffd59810e9ed9f4205af5cc6432c7842b3281f761738de01461",
+        "live_hash": "573750f5bf9e3b02f9a21ff031c64f7937351989e2be2367a642232fa1419494"
+      },
+      "snapshot": {
+        "id": "fc2:849820:player-663993:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 849820,
+        "player_id": 663993,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Nathaniel Lowe",
+        "team": "Cleveland Guardians",
+        "matchup": "Cleveland Guardians @ Tampa Bay Rays",
+        "game_start": "2026-10-13T00:00:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6511,
+        "market_odds": -160,
+        "market_implied": 0.6154,
+        "market_edge": 0.0357,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.1 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 36.4 \u2014 hot recent contact",
+          "Platoon: L bat vs RHP (favorable)",
+          "Projected 3.98 PA (batting slot 5)",
+          "Pitch-type exploit: RV/100 +4.9 vs FC (opposing SP throws it 28.9% of the time)",
+          "Season barrel% 8.3",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "L7 avg EV 87.0mph (league ~88.5) \u2014 cold recent contact",
+          "Opposing SP ERA 2.67 \u2014 elite pitcher, tough matchup",
+          "Hitters batting ahead of him: 0.307 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.328 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 2.86 runs (league avg 4.245; line 2.5, game total 6.5) \u2014 a weak offensive environment",
+          "Opposing bullpen fatigue: 1/5 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6402,
+          0.6743
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 123,
+        "lineup_assumed": null,
+        "base_rate": 0.6837,
+        "lift": -0.0326,
         "lift_reference_rate": null,
         "stable_lift": null,
         "versions": {
