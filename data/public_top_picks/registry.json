@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-10-05T22:37:31.498494+00:00",
+  "updated_at": "2026-10-12T20:07:00.901233+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -59606,6 +59606,602 @@
         "qualification_timestamp": "2026-10-05T22:32:08.605229+00:00",
         "board_timestamp": "2026-10-05T22:32:08.601042+00:00",
         "slate_date": "2026-10-05"
+      }
+    },
+    "fc2:849820:player-656492:strikeouts:4:over": {
+      "canonical_id": "fc2:849820:player-656492:strikeouts:4:over",
+      "settlement_identity": [
+        "849820",
+        [
+          "player",
+          "656492"
+        ],
+        "strikeouts",
+        "4",
+        "over"
+      ],
+      "slate_date": "2026-10-12",
+      "first_published_at": "2026-10-12T20:07:00.901233+00:00",
+      "publication_provenance": {
+        "artifact_id": "f2371a3574bca6b0f0ec435b9f2d1d6a272a8ff2e80940360aba7a2f744c00bb",
+        "source_commit": "0d7fa171a7400cab80cb0b539d37735974acb4a5",
+        "workflow_run_id": "38301593329",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-10-12T20:06:47.510217+00:00",
+        "data_hash": "21dc8002585bd387c62c834d1da071625eeac0b6ee0f5ff279217710dda8cc21",
+        "live_hash": "34e678cec3d915e57e4e681798e24136e65cd85afa09d918a178e6be2a3041bd"
+      },
+      "snapshot": {
+        "id": "fc2:849820:player-656492:strikeouts:4:over",
+        "identity_version": 2,
+        "game_pk": 849820,
+        "player_id": 656492,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Foster Griffin",
+        "team": "Cleveland Guardians",
+        "matchup": "Cleveland Guardians @ Tampa Bay Rays",
+        "game_start": "2026-10-13T00:00:00Z",
+        "stat": "strikeouts",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "strikeouts",
+          "value": 3.5,
+          "needs": 4
+        },
+        "prop": "Over 3.5 Strikeouts",
+        "hit_probability": 0.6113,
+        "market_odds": -122,
+        "market_implied": 0.5188,
+        "market_edge": 0.0925,
+        "market_hold": 0.0594,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Expected workload 19.8 batters faced (his own 11.0/start over 1 real start, shrunk toward the 23.1 league mean)",
+          "L14 K% 63.6 (11 PA)",
+          "Recency-weighted K rate 21.0% (exp. decay, halflife 30d, 31 real starts / 721 BF) \u2014 drives the strikeout probability model"
+        ],
+        "watchouts": [
+          "L14 Statcast sample too thin \u2014 recent-form read falls back to season K%",
+          "Workload estimate rests on only 1 start in the L14 window \u2014 most start-to-start variation in batters faced is noise, so this is shrunk heavily toward league average",
+          "Short-outing profile (19.8 expected batters faced) \u2014 caps the realistic strikeout ceiling regardless of K rate",
+          "Opposing team K% 18.8 \u2014 contact-oriented lineup, tougher matchup",
+          "Platoon disadvantage: 2 of 8 projected hitters bat left-handed against this LHP (mostly opposite-handed lineup)"
+        ],
+        "prob_ci": [
+          0.5903,
+          0.7105
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 31,
+        "lineup_assumed": null,
+        "base_rate": 0.7074,
+        "lift": -0.0961,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "bd4c07925",
+          "prediction_timestamp": "2026-10-12T17:39:14.995006+00:00",
+          "odds_fetched_at": "2026-10-12T17:39:13.286241+00:00",
+          "board_generated_at": "2026-10-12T17:39:14.988019+00:00"
+        },
+        "qualification_timestamp": "2026-10-12T17:39:14.995006+00:00",
+        "board_timestamp": "2026-10-12T17:39:14.988019+00:00",
+        "slate_date": "2026-10-12"
+      }
+    },
+    "fc2:849812:player-663656:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:849812:player-663656:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "849812",
+        [
+          "player",
+          "663656"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-10-12",
+      "first_published_at": "2026-10-12T20:07:00.901233+00:00",
+      "publication_provenance": {
+        "artifact_id": "f2371a3574bca6b0f0ec435b9f2d1d6a272a8ff2e80940360aba7a2f744c00bb",
+        "source_commit": "0d7fa171a7400cab80cb0b539d37735974acb4a5",
+        "workflow_run_id": "38301593329",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-10-12T20:06:47.510217+00:00",
+        "data_hash": "21dc8002585bd387c62c834d1da071625eeac0b6ee0f5ff279217710dda8cc21",
+        "live_hash": "34e678cec3d915e57e4e681798e24136e65cd85afa09d918a178e6be2a3041bd"
+      },
+      "snapshot": {
+        "id": "fc2:849812:player-663656:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 849812,
+        "player_id": 663656,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Kyle Tucker",
+        "team": "Los Angeles Dodgers",
+        "matchup": "Los Angeles Dodgers @ Milwaukee Brewers",
+        "game_start": "2026-10-12T21:00:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6838,
+        "market_odds": -165,
+        "market_implied": 0.6226,
+        "market_edge": 0.0612,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Platoon: L bat vs RHP (favorable)",
+          "Hitters batting ahead of him: 0.352 wOBA (league ~.320)",
+          "AVG vs xBA: 0.233 vs 0.256 (-0.023) \u2014 underperforming his contact quality, positive regression candidate",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "L7 avg EV 76.7mph (league ~88.5) \u2014 cold recent contact",
+          "L7 barrel% 0.0 \u2014 cold recent contact",
+          "Opposing SP ERA 2.47 \u2014 elite pitcher, tough matchup",
+          "Projected 3.7 PA (batting slot 8) \u2014 a tough lineup slot for plate appearances",
+          "Hitter batting behind him: 0.320 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.79 runs (league avg 4.245; line 3.5, game total 7) \u2014 a weak offensive environment",
+          "L7 sample is thin (6 PA) \u2014 treat recent-form read with caution",
+          "Public heavy on Los Angeles Dodgers (money% trails tickets% by 12 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 6.3 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 1/6 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Los Angeles Dodgers (money% -12 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.6729,
+          0.7069
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 153,
+        "lineup_assumed": null,
+        "base_rate": 0.688,
+        "lift": -0.0042,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "bd4c07925",
+          "prediction_timestamp": "2026-10-12T17:39:14.995006+00:00",
+          "odds_fetched_at": "2026-10-12T17:39:13.286241+00:00",
+          "board_generated_at": "2026-10-12T17:39:14.988019+00:00"
+        },
+        "qualification_timestamp": "2026-10-12T17:39:14.995006+00:00",
+        "board_timestamp": "2026-10-12T17:39:14.988019+00:00",
+        "slate_date": "2026-10-12"
+      }
+    },
+    "fc2:849812:player-641343:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:849812:player-641343:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "849812",
+        [
+          "player",
+          "641343"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-10-12",
+      "first_published_at": "2026-10-12T20:07:00.901233+00:00",
+      "publication_provenance": {
+        "artifact_id": "f2371a3574bca6b0f0ec435b9f2d1d6a272a8ff2e80940360aba7a2f744c00bb",
+        "source_commit": "0d7fa171a7400cab80cb0b539d37735974acb4a5",
+        "workflow_run_id": "38301593329",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-10-12T20:06:47.510217+00:00",
+        "data_hash": "21dc8002585bd387c62c834d1da071625eeac0b6ee0f5ff279217710dda8cc21",
+        "live_hash": "34e678cec3d915e57e4e681798e24136e65cd85afa09d918a178e6be2a3041bd"
+      },
+      "snapshot": {
+        "id": "fc2:849812:player-641343:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 849812,
+        "player_id": 641343,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Jake Bauers",
+        "team": "Milwaukee Brewers",
+        "matchup": "Los Angeles Dodgers @ Milwaukee Brewers",
+        "game_start": "2026-10-12T21:00:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6845,
+        "market_odds": -170,
+        "market_implied": 0.6296,
+        "market_edge": 0.0549,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 96.2mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 50.0 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+1.1mph 2nd-half vs 1st-half)",
+          "Platoon: L bat vs RHP (favorable)",
+          "Projected 4.13 PA (batting slot 4)",
+          "Hitters batting ahead of him: 0.330 wOBA (league ~.320)",
+          "Pitch-type exploit: RV/100 +2.0 vs FF (opposing SP throws it 26.2% of the time)",
+          "Season barrel% 13.9 \u2014 well above-average barrel rate",
+          "Dome \u2014 weather neutral",
+          "Sharp money backing Milwaukee Brewers (money% +12 pts vs ticket%)"
+        ],
+        "watchouts": [
+          "Opposing SP ERA 2.53 \u2014 elite pitcher, tough matchup",
+          "Hitter batting behind him: 0.305 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.21 runs (league avg 4.245; line 3.5, game total 7) \u2014 a weak offensive environment",
+          "L7 sample is thin (2 PA) \u2014 treat recent-form read with caution",
+          "Opposing bullpen fatigue: 0/5 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6737,
+          0.7076
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 144,
+        "lineup_assumed": null,
+        "base_rate": 0.688,
+        "lift": -0.0035,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "bd4c07925",
+          "prediction_timestamp": "2026-10-12T17:39:14.995006+00:00",
+          "odds_fetched_at": "2026-10-12T17:39:13.286241+00:00",
+          "board_generated_at": "2026-10-12T17:39:14.988019+00:00"
+        },
+        "qualification_timestamp": "2026-10-12T17:39:14.995006+00:00",
+        "board_timestamp": "2026-10-12T17:39:14.988019+00:00",
+        "slate_date": "2026-10-12"
+      }
+    },
+    "fc2:849812:player-669003:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:849812:player-669003:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "849812",
+        [
+          "player",
+          "669003"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-10-12",
+      "first_published_at": "2026-10-12T20:07:00.901233+00:00",
+      "publication_provenance": {
+        "artifact_id": "f2371a3574bca6b0f0ec435b9f2d1d6a272a8ff2e80940360aba7a2f744c00bb",
+        "source_commit": "0d7fa171a7400cab80cb0b539d37735974acb4a5",
+        "workflow_run_id": "38301593329",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-10-12T20:06:47.510217+00:00",
+        "data_hash": "21dc8002585bd387c62c834d1da071625eeac0b6ee0f5ff279217710dda8cc21",
+        "live_hash": "34e678cec3d915e57e4e681798e24136e65cd85afa09d918a178e6be2a3041bd"
+      },
+      "snapshot": {
+        "id": "fc2:849812:player-669003:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 849812,
+        "player_id": 669003,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Garrett Mitchell",
+        "team": "Milwaukee Brewers",
+        "matchup": "Los Angeles Dodgers @ Milwaukee Brewers",
+        "game_start": "2026-10-12T21:00:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6766,
+        "market_odds": -160,
+        "market_implied": 0.6154,
+        "market_edge": 0.0612,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 89.3mph (league ~88.5)",
+          "L7 barrel% 28.6 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+1.2mph 2nd-half vs 1st-half)",
+          "Platoon: L bat vs RHP (favorable)",
+          "Projected 3.87 PA (batting slot 6)",
+          "Season barrel% 11.7",
+          "Dome \u2014 weather neutral",
+          "Sharp money backing Milwaukee Brewers (money% +12 pts vs ticket%)"
+        ],
+        "watchouts": [
+          "Opposing SP ERA 2.53 \u2014 elite pitcher, tough matchup",
+          "Hitters batting ahead of him: 0.305 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Hitter batting behind him: 0.320 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.21 runs (league avg 4.245; line 3.5, game total 7) \u2014 a weak offensive environment",
+          "L7 sample is thin (7 PA) \u2014 treat recent-form read with caution",
+          "Opposing bullpen fatigue: 0/5 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6658,
+          0.6997
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 144,
+        "lineup_assumed": null,
+        "base_rate": 0.688,
+        "lift": -0.0114,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "bd4c07925",
+          "prediction_timestamp": "2026-10-12T17:39:14.995006+00:00",
+          "odds_fetched_at": "2026-10-12T17:39:13.286241+00:00",
+          "board_generated_at": "2026-10-12T17:39:14.988019+00:00"
+        },
+        "qualification_timestamp": "2026-10-12T17:39:14.995006+00:00",
+        "board_timestamp": "2026-10-12T17:39:14.988019+00:00",
+        "slate_date": "2026-10-12"
+      }
+    },
+    "fc2:849812:player-666152:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:849812:player-666152:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "849812",
+        [
+          "player",
+          "666152"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-10-12",
+      "first_published_at": "2026-10-12T20:07:00.901233+00:00",
+      "publication_provenance": {
+        "artifact_id": "f2371a3574bca6b0f0ec435b9f2d1d6a272a8ff2e80940360aba7a2f744c00bb",
+        "source_commit": "0d7fa171a7400cab80cb0b539d37735974acb4a5",
+        "workflow_run_id": "38301593329",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-10-12T20:06:47.510217+00:00",
+        "data_hash": "21dc8002585bd387c62c834d1da071625eeac0b6ee0f5ff279217710dda8cc21",
+        "live_hash": "34e678cec3d915e57e4e681798e24136e65cd85afa09d918a178e6be2a3041bd"
+      },
+      "snapshot": {
+        "id": "fc2:849812:player-666152:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 849812,
+        "player_id": 666152,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "David Hamilton",
+        "team": "Milwaukee Brewers",
+        "matchup": "Los Angeles Dodgers @ Milwaukee Brewers",
+        "game_start": "2026-10-12T21:00:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6367,
+        "market_odds": -145,
+        "market_implied": 0.5918,
+        "market_edge": 0.0449,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.9 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Platoon: L bat vs RHP (favorable)",
+          "Hitter batting behind him: 0.361 wOBA (league ~.320)",
+          "Dome \u2014 weather neutral",
+          "Sharp money backing Milwaukee Brewers (money% +12 pts vs ticket%)"
+        ],
+        "watchouts": [
+          "L7 avg EV 83.5mph (league ~88.5) \u2014 cold recent contact",
+          "L7 barrel% 0.0 \u2014 cold recent contact",
+          "Opposing SP ERA 2.53 \u2014 elite pitcher, tough matchup",
+          "Projected 3.49 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Hitters batting ahead of him: 0.275 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+          "Team implied for 3.21 runs (league avg 4.245; line 3.5, game total 7) \u2014 a weak offensive environment",
+          "L7 sample is thin (1 PA) \u2014 treat recent-form read with caution",
+          "Season barrel% 3.4 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 0/5 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6234,
+          0.6683
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 114,
+        "lineup_assumed": null,
+        "base_rate": 0.688,
+        "lift": -0.0513,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "bd4c07925",
+          "prediction_timestamp": "2026-10-12T17:39:14.995006+00:00",
+          "odds_fetched_at": "2026-10-12T17:39:13.286241+00:00",
+          "board_generated_at": "2026-10-12T17:39:14.988019+00:00"
+        },
+        "qualification_timestamp": "2026-10-12T17:39:14.995006+00:00",
+        "board_timestamp": "2026-10-12T17:39:14.988019+00:00",
+        "slate_date": "2026-10-12"
+      }
+    },
+    "fc2:849812:player-681624:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:849812:player-681624:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "849812",
+        [
+          "player",
+          "681624"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-10-12",
+      "first_published_at": "2026-10-12T20:07:00.901233+00:00",
+      "publication_provenance": {
+        "artifact_id": "f2371a3574bca6b0f0ec435b9f2d1d6a272a8ff2e80940360aba7a2f744c00bb",
+        "source_commit": "0d7fa171a7400cab80cb0b539d37735974acb4a5",
+        "workflow_run_id": "38301593329",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-10-12T20:06:47.510217+00:00",
+        "data_hash": "21dc8002585bd387c62c834d1da071625eeac0b6ee0f5ff279217710dda8cc21",
+        "live_hash": "34e678cec3d915e57e4e681798e24136e65cd85afa09d918a178e6be2a3041bd"
+      },
+      "snapshot": {
+        "id": "fc2:849812:player-681624:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 849812,
+        "player_id": 681624,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Andy Pages",
+        "team": "Los Angeles Dodgers",
+        "matchup": "Los Angeles Dodgers @ Milwaukee Brewers",
+        "game_start": "2026-10-12T21:00:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.7027,
+        "market_odds": -180,
+        "market_implied": 0.6429,
+        "market_edge": 0.0598,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (10.7 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 avg EV 95.8mph (league ~88.5) \u2014 hot recent contact",
+          "L7 barrel% 44.4 \u2014 hot recent contact",
+          "Hitters batting ahead of him: 0.361 wOBA (league ~.320)",
+          "Pitch-type exploit: RV/100 +1.8 vs FC (opposing SP throws it 15.2% of the time)",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "Platoon: R bat vs RHP (unfavorable)",
+          "Opposing SP ERA 2.47 \u2014 elite pitcher, tough matchup",
+          "Projected 3.82 PA (batting slot 7) \u2014 a tough lineup slot for plate appearances",
+          "Hitter batting behind him: 0.318 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+          "Team implied for 3.79 runs (league avg 4.245; line 3.5, game total 7) \u2014 a weak offensive environment",
+          "Activated from the 10-day injured list 21 day(s) ago \u2014 early performance back can be inconsistent",
+          "Public heavy on Los Angeles Dodgers (money% trails tickets% by 12 pts) \u2014 sharp money is fading this side",
+          "Season barrel% 7.9 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 1/6 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "Sharp money fading Los Angeles Dodgers (money% -12 pts vs ticket%) \u2014 smart money moving away from this side"
+        ],
+        "prob_ci": [
+          0.686,
+          0.7447
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 133,
+        "lineup_assumed": null,
+        "base_rate": 0.688,
+        "lift": 0.0147,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "bd4c07925",
+          "prediction_timestamp": "2026-10-12T17:39:14.995006+00:00",
+          "odds_fetched_at": "2026-10-12T17:39:13.286241+00:00",
+          "board_generated_at": "2026-10-12T17:39:14.988019+00:00"
+        },
+        "qualification_timestamp": "2026-10-12T17:39:14.995006+00:00",
+        "board_timestamp": "2026-10-12T17:39:14.988019+00:00",
+        "slate_date": "2026-10-12"
       }
     }
   }
