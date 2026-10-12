@@ -9,9 +9,11 @@
   create-only write under the ledger root -> slate artifact (JSON + Markdown).
   Every discovered event is accounted FROZEN or NOT_FROZEN with a reason.
 
-``fetch-prior`` / ``replay`` / ``grade`` (lifecycle, see
-``game_market_research_lifecycle``): download prior rolling ledger artifacts
-(read-only), replay them byte-for-byte into the working ledger, then grade
+``chain-load`` / ``chain-seal`` (``game_market_research_chain``): load the
+anchored, hash-linked rolling ledger (fail closed on missing/expired/tampered
+history; explicit bootstrap only), and seal the next monotonic link.
+``replay`` / ``grade`` (``game_market_research_lifecycle``): replay ledgers
+byte-for-byte into a working ledger, then grade
 every ungraded freeze from an explicit ESPN final (or write an explicit
 terminal disposition). The movement reference is the latest LATER pre-kickoff
 research vintage, which is not a verified closing price.
@@ -45,13 +47,21 @@ from nfl.prospective.game_market_research_freeze import (
     qb_state_from_schedule,
     write_research_freeze,
 )
+from nfl.prospective.game_market_research_chain import (
+    ChainError,
+    GitHubArtifacts,
+    build_anchor,
+    load_anchor,
+    load_chain,
+    seal_chain,
+)
 from nfl.prospective.game_market_research_lifecycle import (
     ESPN_SCOREBOARD,
-    fetch_prior_ledgers,
     grade_ledger,
     merge_ledgers,
 )
 from nfl.prospective.game_market_slate import (
+    COVERAGE_TOLERANCE_MINUTES,
     DISCOVERY_FAILURE,
     artifact_sha,
     build_discovery,
@@ -72,7 +82,8 @@ from nfl.research.game_market_models import load_params, params_sha256
 
 ET = ZoneInfo("America/New_York")
 # Live FanDuel NFL marketTime trails the scheduled kickoff by one minute.
-FANDUEL_KICKOFF_LAG_TOLERANCE_MINUTES = 2
+FANDUEL_KICKOFF_LAG_TOLERANCE_MINUTES = COVERAGE_TOLERANCE_MINUTES
+DEFAULT_ANCHOR = Path("data/nfl_game_market_research/LEDGER_ANCHOR.json")
 DEFAULT_LEDGER = Path("data/nfl_game_market_research/frozen")
 
 
@@ -186,7 +197,7 @@ def freeze_slate(*, ledger: Path, artifact_dir: Path, code_sha: str, window_days
     artifact_dir.mkdir(parents=True, exist_ok=True)
     (artifact_dir / f"slate_{stamp}.json").write_text(json.dumps(artifact, indent=2, sort_keys=True) + "\n")
     (artifact_dir / f"slate_{stamp}.md").write_text(render_markdown(artifact))
-    verify_slate_artifact(artifact, root.body, fanduel_nfl.discover_events)
+    verify_slate_artifact(artifact, root.body, sched_body, fanduel_nfl.discover_events)
     if status == DISCOVERY_FAILURE:
         raise SystemExit(f"DISCOVERY_FAILURE: {len(coverage['expected_games'])} scheduled games, 0 discovered")
     return artifact
@@ -269,17 +280,28 @@ def espn_scoreboard_fetcher(session=None):
     return fetch_day
 
 
+def _read_maybe_gz(path: Path) -> bytes:
+    raw = Path(path).read_bytes()
+    return gzip.decompress(raw) if Path(path).suffix == ".gz" else raw
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("mode", choices=("freeze", "grade", "replay", "fetch-prior", "verify-slate"))
+    ap.add_argument("mode", choices=("freeze", "grade", "replay", "verify-slate",
+                                     "chain-load", "chain-seal", "anchor-build"))
     ap.add_argument("--ledger", type=Path, default=Path(os.environ.get("FC_NFL_LEDGER") or DEFAULT_LEDGER))
     ap.add_argument("--artifact-dir", type=Path, default=Path("data/nfl_game_market_research/slates"))
     ap.add_argument("--raw-dir", type=Path)
     ap.add_argument("--window-days", type=float, default=8.0)
     ap.add_argument("--sources", type=Path, nargs="*", default=[])
-    ap.add_argument("--dest", type=Path)
     ap.add_argument("--slate", type=Path)
     ap.add_argument("--root", type=Path, help="archived FanDuel root (.gz or raw)")
+    ap.add_argument("--schedule", type=Path, help="archived nflverse schedule (.gz or raw)")
+    ap.add_argument("--work", type=Path, help="chain working dir (ledger/ + manifest)")
+    ap.add_argument("--state", type=Path, help="chain state file written by chain-load")
+    ap.add_argument("--anchor", type=Path, default=DEFAULT_ANCHOR)
+    ap.add_argument("--epoch-id")
+    ap.add_argument("--reason")
     args = ap.parse_args()
     if args.mode == "freeze":
         code_sha = str(os.environ.get("FULL_COUNT_CODE_SHA") or "").strip()
@@ -291,18 +313,44 @@ def main() -> None:
         print(json.dumps(grade_ledger(ledger=args.ledger, fetch_scoreboard=espn_scoreboard_fetcher()), indent=2))
     elif args.mode == "replay":
         print(json.dumps(merge_ledgers(args.sources, args.ledger)))
-    elif args.mode == "fetch-prior":
-        manifest = fetch_prior_ledgers(
-            repo=os.environ["GITHUB_REPOSITORY"], branch=os.environ["LEDGER_BRANCH"],
-            token=os.environ["GITHUB_TOKEN"], dest=args.dest, session=requests.Session())
-        args.dest.mkdir(parents=True, exist_ok=True)
-        (args.dest / "sources_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
-        print(json.dumps({"prior_ledgers": len(manifest)}))
+    elif args.mode == "anchor-build":
+        anchor = build_anchor(args.ledger, epoch_id=args.epoch_id, reason=args.reason,
+                              created_at=_now(), baseline_path=args.ledger.as_posix())
+        args.anchor.write_text(json.dumps(anchor, indent=2, sort_keys=True) + "\n")
+        print(json.dumps({"epoch_id": anchor["epoch_id"], "file_count": anchor["file_count"],
+                          "anchor_sha256": anchor["anchor_sha256"]}))
+    elif args.mode == "chain-load":
+        anchor = load_anchor(args.anchor, Path("."))
+        api = GitHubArtifacts(repo=os.environ["GITHUB_REPOSITORY"], token=os.environ["GITHUB_TOKEN"],
+                              session=requests.Session())
+        try:
+            state = load_chain(api=api, anchor=anchor, repo_root=Path("."),
+                               branch=os.environ["LEDGER_BRANCH"],
+                               current_run_id=os.environ.get("GITHUB_RUN_ID", ""),
+                               bootstrap_epoch=os.environ.get("BOOTSTRAP_EPOCH", ""), work=args.work)
+        except ChainError as exc:
+            print(f"::error::EVIDENCE CHAIN BLOCKED -- {exc}")
+            raise SystemExit(2)
+        args.state.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n")
+        print(json.dumps({k: state[k] for k in ("mode", "epoch_id", "sequence", "head_artifact_id")}
+                         | {"files": len(state["files"])}))
+    elif args.mode == "chain-seal":
+        anchor = load_anchor(args.anchor, Path("."))
+        state = json.loads(args.state.read_text())
+        run = {k: os.environ.get(v) for k, v in (("run_id", "GITHUB_RUN_ID"),
+               ("run_attempt", "GITHUB_RUN_ATTEMPT"), ("head_sha", "GITHUB_SHA"),
+               ("branch", "LEDGER_BRANCH"))}
+        try:
+            manifest = seal_chain(state=state, anchor=anchor, work=args.work, run=run)
+        except ChainError as exc:
+            print(f"::error::EVIDENCE CHAIN SEAL REFUSED -- {exc}")
+            raise SystemExit(2)
+        print(json.dumps({"sequence": manifest["sequence"], "files": manifest["file_count"],
+                          "manifest_sha256": manifest["manifest_sha256"]}))
     else:
-        raw = args.root.read_bytes()
-        raw = gzip.decompress(raw) if args.root.suffix == ".gz" else raw
         artifact = json.loads(args.slate.read_text())
-        print(verify_slate_artifact(artifact, raw, fanduel_nfl.discover_events))
+        print(verify_slate_artifact(artifact, _read_maybe_gz(args.root), _read_maybe_gz(args.schedule),
+                                    fanduel_nfl.discover_events))
 
 
 if __name__ == "__main__":

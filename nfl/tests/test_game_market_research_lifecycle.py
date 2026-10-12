@@ -1,14 +1,11 @@
 """FC-NFL-004 Codex P1/P2 repairs: D1-consistent fit, slate provenance, lifecycle."""
-import gzip
 import hashlib
-import io
 import json
 import random
 import tempfile
 import unittest
-import zipfile
 from copy import deepcopy
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 
 from nfl.prospective.game_market_research_freeze import (
@@ -20,7 +17,6 @@ from nfl.prospective.game_market_research_freeze import (
 from nfl.prospective.game_market_research_grade import GameMarketResearchGradeError, grade_research_freeze
 from nfl.prospective.game_market_research_lifecycle import (
     LedgerLifecycleError,
-    fetch_prior_ledgers,
     grade_ledger,
     merge_ledgers,
 )
@@ -152,28 +148,57 @@ class SlateProvenanceTests(unittest.TestCase):
         cov = reconcile_expected(d, SCHEDULE, ALIASES, tolerance_minutes=2)
         self.assertEqual(cov["process_event_ids"], ["35601246"])
 
-    def _artifact(self, root, status=None, drop=False):
-        d, cov = self._cov([EV_MIA_BUF])
+    def _artifact(self, root, status=None, drop=False, schedule=SCHEDULE):
+        d, cov = self._cov([EV_MIA_BUF], schedule=schedule)
         events = [] if drop else [{"event_id": "35601246", "status": "FROZEN",
                                    "discovery_sha256": d["discovery_sha256"]}]
+        sched = _schedule_csv(schedule)
         body = {"discovery": d, "coverage": cov, "events": events,
-                "slate_status": status or slate_status(len(cov["expected_games"]), 1, 0)}
+                "schedule_source": {"sha256": hashlib.sha256(sched).hexdigest(), "bytes": len(sched)},
+                "slate_status": status or slate_status(len(cov["expected_games"]), 1,
+                                                       len(cov["expected_not_discovered"]))}
         return {**body, "artifact_sha256": artifact_sha(body)}
 
     def test_verify_slate_rederives_from_archived_root(self):
-        root = _root([EV_MIA_BUF])
+        root, sched = _root([EV_MIA_BUF]), _schedule_csv(SCHEDULE)
         art = self._artifact(root)
-        self.assertEqual(verify_slate_artifact(art, root, _discover), art["artifact_sha256"])
+        self.assertEqual(verify_slate_artifact(art, root, sched, _discover), art["artifact_sha256"])
         with self.assertRaises(GameMarketSlateError):  # root bytes swapped
-            verify_slate_artifact(art, _root([EV_MIA_BUF, {**EV_MIA_BUF, "event_id": 9}]), _discover)
+            verify_slate_artifact(art, _root([EV_MIA_BUF, {**EV_MIA_BUF, "event_id": 9}]), sched, _discover)
         with self.assertRaises(GameMarketSlateError):  # an event silently dropped
-            verify_slate_artifact(self._artifact(root, drop=True), root, _discover)
+            verify_slate_artifact(self._artifact(root, drop=True), root, sched, _discover)
         with self.assertRaises(GameMarketSlateError):  # status lies
-            verify_slate_artifact(self._artifact(root, status=NO_EVENTS), root, _discover)
+            verify_slate_artifact(self._artifact(root, status=NO_EVENTS), root, sched, _discover)
         tampered = deepcopy(art)
         tampered["events"][0]["status"] = "FROZEN_LATER"
         with self.assertRaises(GameMarketSlateError):
-            verify_slate_artifact(tampered, root, _discover)
+            verify_slate_artifact(tampered, root, sched, _discover)
+        with self.assertRaises(GameMarketSlateError):  # schedule bytes swapped
+            verify_slate_artifact(art, root, sched + b"\n", _discover)
+
+    def test_codex_forged_coverage_with_recomputed_self_hash_is_rejected(self):
+        # Codex P1 (review 6129802534), exact manipulation: empty expected_games and
+        # expected_not_discovered, recompute the artifact self-hash. With one more
+        # scheduled game than discovered, the honest status is PARTIAL_COVERAGE.
+        extra = deepcopy(SCHEDULE) + [{**SCHEDULE[2], "game_id": "2026_03_NYJ_NE", "away_team": "NYJ",
+                                       "home_team": "NE", "espn": "402"}]
+        root, sched = _root([EV_MIA_BUF]), _schedule_csv(extra)
+        honest = self._artifact(root, schedule=extra)
+        self.assertEqual(honest["slate_status"], PARTIAL_COVERAGE)
+        self.assertEqual(verify_slate_artifact(honest, root, sched, _discover), honest["artifact_sha256"])
+        for mutate in (
+            lambda a: (a["coverage"].__setitem__("expected_games", []),
+                       a["coverage"].__setitem__("expected_not_discovered", [])),
+            lambda a: (a["coverage"].__setitem__("expected_not_discovered", []),
+                       a.__setitem__("slate_status", COMPLETE)),
+            lambda a: a["coverage"]["expected_games"].pop(),
+        ):
+            forged = deepcopy(honest)
+            mutate(forged)
+            body = {k: v for k, v in forged.items() if k != "artifact_sha256"}
+            forged["artifact_sha256"] = artifact_sha(body)
+            with self.assertRaises(GameMarketSlateError):
+                verify_slate_artifact(forged, root, sched, _discover)
 
     def test_freeze_binds_discovery(self):
         d, cov = self._cov([EV_MIA_BUF])
@@ -309,63 +334,11 @@ class LifecycleTests(unittest.TestCase):
             grade_research_freeze(bad, _outcome(_binding(_snapshot())), graded_at="2026-09-20T21:05:00Z")
 
 
-def _zip(files):
-    buf = io.BytesIO()
-    with zipfile.ZipFile(buf, "w") as zf:
-        for name, data in files.items():
-            zf.writestr(name, data)
-    return buf.getvalue()
-
-
-class _Resp:
-    def __init__(self, payload=None, content=b""):
-        self._payload, self.content = payload, content
-
-    def raise_for_status(self):
-        pass
-
-    def json(self):
-        return self._payload
-
-
-class _Session:
-    def __init__(self, artifacts, blobs):
-        self.artifacts, self.blobs, self.urls = artifacts, blobs, []
-
-    def get(self, url, **kw):
-        self.urls.append(url)
-        if url.endswith("/actions/artifacts"):
-            return _Resp({"artifacts": self.artifacts})
-        return _Resp(content=self.blobs[url])
-
-
-def _art(i, blob, branch="b", expired=False, digest=None, created="2026-10-12T00:00:00Z"):
-    return {"id": i, "name": "nfl-game-market-research-ledger", "expired": expired, "created_at": created,
-            "archive_download_url": f"https://dl/{i}", "expires_at": "2027-01-10T00:00:00Z",
-            "digest": digest or "sha256:" + hashlib.sha256(blob).hexdigest(),
-            "workflow_run": {"id": 100 + i, "head_branch": branch, "head_sha": "abc"}}
-
-
-class FetchPriorTests(unittest.TestCase):
-    def test_filters_and_verifies_digest(self):
-        good = _zip({"2026/week_3/x.json": "{}"})
-        arts = [_art(1, good), _art(2, good, branch="other"), _art(3, good, expired=True)]
-        with tempfile.TemporaryDirectory() as tmp:
-            m = fetch_prior_ledgers(repo="o/r", branch="b", token="t", dest=Path(tmp),
-                                    session=_Session(arts, {"https://dl/1": good}))
-            self.assertEqual([x["artifact_id"] for x in m], [1])
-            self.assertTrue((Path(tmp) / "artifact_1/2026/week_3/x.json").exists())
-            with self.assertRaises(LedgerLifecycleError):
-                fetch_prior_ledgers(repo="o/r", branch="b", token="t", dest=Path(tmp) / "x",
-                                    session=_Session([_art(4, good, digest="sha256:" + "0" * 64)],
-                                                     {"https://dl/4": good}))
-
-    def test_zip_slip_rejected(self):
-        evil = _zip({"../../escape.json": "{}"})
-        with tempfile.TemporaryDirectory() as tmp:
-            with self.assertRaises(LedgerLifecycleError):
-                fetch_prior_ledgers(repo="o/r", branch="b", token="t", dest=Path(tmp),
-                                    session=_Session([_art(5, evil)], {"https://dl/5": evil}))
+def _schedule_csv(rows):
+    cols = ["game_id", "season", "game_type", "week", "gameday", "gametime", "away_team", "away_score",
+            "home_team", "home_score", "result", "total", "espn", "away_qb_id", "home_qb_id"]
+    lines = [",".join(cols)] + [",".join(str(r.get(c, "")) for c in cols) for r in rows]
+    return ("\n".join(lines) + "\n").encode()
 
 
 class RealEvidenceReplayTests(unittest.TestCase):

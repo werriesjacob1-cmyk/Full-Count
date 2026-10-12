@@ -25,6 +25,8 @@ COMPLETE = "COMPLETE"
 PARTIAL_COVERAGE = "PARTIAL_COVERAGE"
 NO_EVENTS = "NO_EVENTS"
 DISCOVERY_FAILURE = "DISCOVERY_FAILURE"
+# Live FanDuel NFL marketTime trails the scheduled kickoff by one minute.
+COVERAGE_TOLERANCE_MINUTES = 2
 
 
 class GameMarketSlateError(ValueError):
@@ -154,9 +156,20 @@ def slate_status(expected_count: int, discovered_count: int, missing_count: int)
 def verify_slate_artifact(
     artifact: Mapping[str, Any],
     root_body: bytes,
+    schedule_body: bytes,
     discover: Callable[[bytes], list[dict]],
 ) -> str:
-    """Rebuild discovery from archived root bytes and check every invariant."""
+    """Re-derive the WHOLE slate from archived source bytes and check every invariant.
+
+    Codex P1 (review 6129802534): trusting ``coverage`` from the artifact let a
+    copy with emptied ``expected_games``/``expected_not_discovered`` and a
+    recomputed self-hash pass. Discovery is rebuilt from the archived FanDuel
+    root bytes and coverage from the hash-verified archived schedule bytes; the
+    artifact's own coverage, status and counts must equal the rebuilt ones.
+    The self-hash is checked too but is never sufficient on its own.
+    """
+    from nfl.prospective.live_game_market_shadow import TEAM_FULL_TO_ABBR, _load_games_csv
+
     body = {k: v for k, v in artifact.items() if k != "artifact_sha256"}
     if _sha(body) != artifact.get("artifact_sha256"):
         raise GameMarketSlateError("slate artifact hash mismatch")
@@ -165,16 +178,28 @@ def verify_slate_artifact(
                               root_url=d["root_url"], window_days=d["window_days"], discover=discover)
     if rebuilt != d:
         raise GameMarketSlateError("discovery does not re-derive from archived root bytes")
-    process = artifact["coverage"]["process_event_ids"]
+    sched = artifact.get("schedule_source") or {}
+    if hashlib.sha256(schedule_body).hexdigest() != sched.get("sha256") or len(schedule_body) != sched.get("bytes"):
+        raise GameMarketSlateError("archived schedule bytes do not match the bound schedule digest")
+    coverage = reconcile_expected(rebuilt, _load_games_csv(schedule_body), TEAM_FULL_TO_ABBR,
+                                  tolerance_minutes=COVERAGE_TOLERANCE_MINUTES)
+    if artifact.get("coverage") != coverage:
+        raise GameMarketSlateError("coverage does not re-derive from archived schedule and root bytes")
+    process = coverage["process_event_ids"]
     accounted = sorted(e["event_id"] for e in artifact["events"])
-    if accounted != sorted(process):
+    if accounted != sorted(process) or len(set(accounted)) != len(accounted):
         raise GameMarketSlateError("accounted events differ from the discovery processing set")
     if any(e["status"] not in ("FROZEN", "NOT_FROZEN") for e in artifact["events"]):
         raise GameMarketSlateError("unaccounted event state")
-    cov = artifact["coverage"]
-    expected = slate_status(len(cov["expected_games"]), len(process), len(cov["expected_not_discovered"]))
+    expected = slate_status(len(coverage["expected_games"]), len(process),
+                            len(coverage["expected_not_discovered"]))
     if artifact["slate_status"] != expected:
-        raise GameMarketSlateError("slate status inconsistent with coverage")
+        raise GameMarketSlateError("slate status inconsistent with re-derived coverage")
+    counts = {"discovered_events": len(process), "accounted_events": len(artifact["events"]),
+              "frozen_events": sum(e["status"] == "FROZEN" for e in artifact["events"])}
+    for key, value in counts.items():
+        if key in artifact and artifact[key] != value:
+            raise GameMarketSlateError(f"{key} inconsistent with accounted events")
     for e in artifact["events"]:
         if e["status"] == "FROZEN" and e.get("discovery_sha256") != d["discovery_sha256"]:
             raise GameMarketSlateError("frozen event not bound to this discovery")

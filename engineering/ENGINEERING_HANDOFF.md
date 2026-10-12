@@ -6396,3 +6396,49 @@ earlier `1eec042e` "base" was misstated. Repair code is `9644db45`.
   1,103 tests OK.
 
 Alligator
+
+## 2026-10-12 -- FC-NFL-004 final integrity repair (Codex review 6129802534) (Claude)
+
+**P1 rolling continuity.**
+- New `nfl/prospective/game_market_research_chain.py`.
+- A committed `data/nfl_game_market_research/LEDGER_ANCHOR.json` covers the 30
+  committed freezes byte-for-byte: epoch `fc-nfl-004-epoch-1`, sha `25e816a5…`.
+- Chain artifacts are epoch-named, with a hash-linked monotonic
+  `LEDGER_MANIFEST.json`.
+- `chain-load` fails closed with an explicit code on any of:
+
+  | Code | Meaning |
+  |---|---|
+  | NO_CHAIN | no chain and no explicit bootstrap |
+  | BOOTSTRAP_REFUSED | bootstrap requested when a chain exists |
+  | EXPIRED_CHAIN_HEAD | the chain head artifact has expired |
+  | MISSING_EXPECTED_ARTIFACT | the latest successful run's link is gone |
+  | DIGEST_MISMATCH, MANIFEST_INVALID, TAMPERED, INCOMPLETE, UNLISTED_FILE | artifact or manifest integrity failure |
+  | NON_MONOTONIC | baseline or prior evidence dropped or changed |
+  | CHAIN_FORK | two links branch from the same predecessor |
+  | DUPLICATE_OBSERVATION | the same snapshot frozen twice |
+  | ANCHOR_MISMATCH | the committed baseline changed |
+
+- `chain-seal` requires a byte-identical superset.
+- A new epoch is possible only through a committed anchor plus a
+  `bootstrap_epoch` dispatch.
+- The workflow now queues runs (`cancel-in-progress: false`) to prevent forks.
+- Permissions are unchanged (`contents: read`, `actions: read`).
+- The `fetch_prior_ledgers` silent-restart path has been removed.
+
+**P1 verify-slate.** Coverage, status and counts are now re-derived from the
+hash-verified archived schedule bytes plus the archived root bytes. Codex's
+exact forgery (empty `expected_games`/`expected_not_discovered`, recomputed
+self-hash) is rejected, both on the real 17:34Z slate and in unit tests.
+
+**P2.**
+- RESULTS.md CLV wording is corrected; erratum E1 adds the finite three-iteration
+  fit caveat using Codex's fourth-iteration numbers.
+- Erratum to my earlier entry above, which said the grade "adds CLV": it measures
+  later pre-kickoff price movement against the latest later research vintage
+  (NOT_A_VERIFIED_CLOSE), not closing-line value.
+
+**Tests.** Chain 19, lifecycle 14, pathway 32; NFL suite 89 files / 1,121
+tests OK.
+
+Alligator

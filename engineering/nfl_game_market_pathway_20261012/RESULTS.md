@@ -55,7 +55,7 @@ Paired season-week bootstrap 95% intervals (config − M0 log loss):
    - QB-change games make B0 *worse* relative to the market: dev spread log loss +0.053 vs +0.037. B0 cannot see a starter change; the market can.
    - This supports the live `QB_CHANGE_UNMODELLED` quarantine gate. It is not a source of edge.
 4. **The closing line may be too strong a comparator for an earlier decision window.** This **cannot be tested** from this source, which has no timestamped or opening lines.
-5. **Timing.** The live pathway now freezes multiple pre-kickoff vintages, and the grader measures closing-line value (CLV) against the latest later vintage. This is the first legitimate test of the "earlier timing" hypothesis, and it starts now. It is prospective only.
+5. **Timing.** The live pathway now freezes multiple pre-kickoff vintages, and the grader measures **later pre-kickoff price movement** against the latest later research vintage (`reference_basis = LATEST_LATER_PRE_KICKOFF_RESEARCH_VINTAGE_NOT_A_VERIFIED_CLOSE`). That is **not** closing-line value: no verified sportsbook closing quote is captured. This is a first, prospective-only probe of the "earlier timing" hypothesis.
 
 ## Fresh 2026 Weeks 1–5 (virgin, n=78) — read with caution
 
@@ -71,7 +71,7 @@ Paired season-week bootstrap 95% intervals (config − M0 log loss):
 
 ## What remains unknown
 
-- Opening/early-line efficiency, and the size of CLV obtainable at capture time. This is now being measured prospectively.
+- Opening/early-line efficiency, and the size of later pre-kickoff price movement at capture time. This is now being measured prospectively. True closing-line value remains unmeasured until a verified near-kickoff closing quote is captured.
 - Whether independent point-in-time information carries signal the market misses at capture time: confirmed inactives, QB/OL availability, weather changes.
 - Cross-book price dispersion: only FanDuel is captured, so M0 = one book's line and its no-vig EV is always ≈ −vig.
 
@@ -147,5 +147,17 @@ The joint fixed point is not converged at the declared count. Centers and key we
 These are small, unstable and below break-even overall.
 
 **Conclusion unchanged.** Football-only F1 is decisively worse than the market. Market-anchored C1 is statistically indistinguishable from M0. The B0-family negative result stands and is strengthened by the consistent fit.
+
+Alligator
+
+---
+
+## Erratum E1 (2026-10-12, Codex review 6129802534)
+
+- **Wording correction.** Items 5 and "What remains unknown" previously said "closing-line value (CLV)". Corrected to *later pre-kickoff price movement*. The grader's reference is the latest later research vintage, explicitly `NOT_A_VERIFIED_CLOSE`.
+- **Finite-fit limitation, stated explicitly.**
+  - The amended D1 parameters (`acc53f4d…`) are a **finite three-iteration exploratory estimator, not a converged calibration**.
+  - Codex independently ran a fourth iteration. Mean M0 centers shifted 0.237 pts (margin) and 0.070 (total). Validation/held M0 and C1 log loss changed by < 0.000035, and the negative/inconclusive comparison did not reverse.
+  - Nothing was refit or retuned in response. The classification stays **AMENDED_EXPLORATORY_POST_D1**: validation/held were viewed earlier and held was inspected by #222. It is not promotion evidence.
 
 Alligator

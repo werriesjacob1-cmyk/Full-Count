@@ -3,10 +3,10 @@
 Storage is GitHub Actions artifacts only (existing mechanism; ``contents: read``
 plus read-only ``actions: read``). Each scheduled run:
 
-1. ``fetch_prior_ledgers``: download the newest non-expired rolling ledger
-   artifacts of this workflow/branch by exact artifact id and verify the
-   GitHub-reported digest;
-2. ``merge_ledgers``: replay their frozen records/grades/dispositions into a
+1. ``game_market_research_chain.load_chain``: load the anchored, hash-linked
+   chain head (fail closed on missing/expired/wrong-epoch/tampered history;
+   explicit bootstrap only -- Codex P1, review 6129802534);
+2. ``merge_ledgers``: replay frozen records/grades/dispositions into a
    working ledger. Every file is re-verified; identical files dedupe; a
    same-path/different-bytes collision fails closed. Frozen records are copied
    byte-for-byte, never rewritten;
@@ -15,22 +15,22 @@ plus read-only ``actions: read``). Each scheduled run:
    STATUS_FINAL bound to the same identity hash), using the latest LATER
    pre-kickoff vintage of the same event as the movement reference, or write an
    explicit terminal disposition;
-5. the merged ledger is re-uploaded as the next rolling artifact.
+5. ``seal_chain`` writes the next monotonic manifest; the ledger is uploaded
+   as the next chain artifact.
 
-Durability limit (NOT solved here): artifacts expire after 90 days. The chain
-survives only while a run happens at least every 90 days and the artifact API
-is reachable. Permanent retention needs a write-capable persistence path, which
+Durability limit (NOT solved here): artifacts expire after 90 days. An expired
+chain head now BLOCKS the workflow (EXPIRED_CHAIN_HEAD) instead of restarting;
+continuity therefore needs a successful run at least every 90 days and a
+reachable artifact API. Permanent retention needs a write-capable persistence path, which
 requires Jacob's separate authorization (see LIFECYCLE_DESIGN.md).
 """
 from __future__ import annotations
 
 import hashlib
-import io
 import json
 import shutil
-import zipfile
 from datetime import datetime, timedelta, timezone
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 from typing import Any, Callable, Mapping
 from zoneinfo import ZoneInfo
 
@@ -90,48 +90,6 @@ def merge_ledgers(sources: list[Path], dest: Path) -> dict[str, Any]:
             shutil.copyfile(path, target)
             counts[kind] += 1
     return counts
-
-
-def _safe_extract(blob: bytes, dest: Path) -> None:
-    with zipfile.ZipFile(io.BytesIO(blob)) as zf:
-        for info in zf.infolist():
-            name = PurePosixPath(info.filename)
-            if name.is_absolute() or ".." in name.parts:
-                raise LedgerLifecycleError(f"unsafe path in artifact: {info.filename}")
-        zf.extractall(dest)
-
-
-def fetch_prior_ledgers(*, repo: str, branch: str, token: str, dest: Path, session,
-                        limit: int = 3) -> list[dict[str, Any]]:
-    """Download the newest ``limit`` non-expired rolling ledgers for ``branch``.
-
-    Read-only REST calls. Each zip's sha256 must equal the API-reported digest.
-    Returns the source manifest (artifact id, run id, head sha, digest, dir).
-    """
-    headers = {"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json"}
-    resp = session.get(f"https://api.github.com/repos/{repo}/actions/artifacts",
-                       params={"name": LEDGER_ARTIFACT, "per_page": 100}, headers=headers, timeout=60)
-    resp.raise_for_status()
-    found = [a for a in resp.json().get("artifacts", [])
-             if a.get("name") == LEDGER_ARTIFACT and not a.get("expired")
-             and (a.get("workflow_run") or {}).get("head_branch") == branch]
-    found.sort(key=lambda a: a.get("created_at") or "", reverse=True)
-    manifest = []
-    for art in found[:limit]:
-        digest = str(art.get("digest") or "")
-        if not digest.startswith("sha256:"):
-            raise LedgerLifecycleError(f"artifact {art['id']} has no sha256 digest")
-        blob = session.get(art["archive_download_url"], headers=headers, timeout=120)
-        blob.raise_for_status()
-        if hashlib.sha256(blob.content).hexdigest() != digest.split(":", 1)[1]:
-            raise LedgerLifecycleError(f"artifact {art['id']} digest mismatch")
-        out = Path(dest) / f"artifact_{art['id']}"
-        _safe_extract(blob.content, out)
-        manifest.append({"artifact_id": art["id"], "run_id": art["workflow_run"].get("id"),
-                         "head_sha": art["workflow_run"].get("head_sha"), "digest": digest,
-                         "created_at": art.get("created_at"), "expires_at": art.get("expires_at"),
-                         "dir": str(out)})
-    return manifest
 
 
 def _write_disposition(path: Path, record: Mapping[str, Any], disposition: str, detail: str) -> Path:
