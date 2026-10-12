@@ -173,14 +173,17 @@ jobs:
 
       - name: Grade completed games in the chained ledger
         id: research_grade
-        if: ${{ !cancelled() && steps.chain_load.outcome == 'success' }}
+        # Never grade on top of a failed/partial freeze (Codex P1 review 6133401456).
+        if: ${{ !cancelled() && steps.chain_load.outcome == 'success' && steps.research_freeze.outcome == 'success' }}
         run: |
           PYTHONPATH=. python3 -m nfl.prospective.live_game_market_research grade \
             --ledger /tmp/nfl-gm-chain/ledger | tee /tmp/nfl-game-market-research/grade_report.json
 
       - name: Seal next chain link (monotonic superset)
         id: chain_seal
-        if: ${{ !cancelled() && steps.chain_load.outcome == 'success' }}
+        # Seal ONLY when load, freeze and grade all succeeded; a failed or partial
+        # step can never be certified into the chain (Codex P1 review 6133401456).
+        if: ${{ !cancelled() && steps.chain_load.outcome == 'success' && steps.research_freeze.outcome == 'success' && steps.research_grade.outcome == 'success' }}
         env:
           LEDGER_BRANCH: ${{ github.ref_name }}
         run: |
@@ -197,8 +200,10 @@ jobs:
           if-no-files-found: warn
           retention-days: 90
 
-      - name: Upload sealed evidence-chain link
-        if: ${{ !cancelled() && steps.chain_seal.outcome == 'success' }}
+      # The step NAME is the durable run-history marker of a sealed upload; it must
+      # equal game_market_research_chain.upload_step_name(anchor epoch_id).
+      - name: Upload sealed evidence-chain link [fc-nfl-004-epoch-1]
+        if: ${{ !cancelled() && steps.chain_load.outcome == 'success' && steps.research_freeze.outcome == 'success' && steps.research_grade.outcome == 'success' && steps.chain_seal.outcome == 'success' }}
         uses: actions/upload-artifact@v4
         with:
           # Must equal game_market_research_chain.artifact_name(anchor epoch_id).

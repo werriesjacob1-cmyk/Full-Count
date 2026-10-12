@@ -20,18 +20,23 @@ Chain state
 ``load_chain`` (start of a run) fails closed with an explicit code:
   NO_CHAIN                no chain artifact for this epoch/branch and no
                           explicit bootstrap requested
-  BOOTSTRAP_REFUSED       bootstrap requested but a chain (even expired) exists
+  BOOTSTRAP_REFUSED       bootstrap requested but the epoch has ANY sealed history
+                          (artifacts or run history), or a non-anchor epoch
   EXPIRED_CHAIN_HEAD      newest chain artifact has expired
-  MISSING_EXPECTED_ARTIFACT  the latest successful run after the epoch began
-                          has no (or an expired/newer-than-head) chain artifact
+  MISSING_EXPECTED_ARTIFACT  run history shows a sealed upload whose link is
+                          no longer listed (incl. ALL artifacts deleted)
+  SEQUENCE_GAP            head sequence != number of sealed uploads in history
+  HISTORY_UNVERIFIABLE    run/step history cannot be read (never permits restart)
   DIGEST_MISMATCH / UNSAFE_ARTIFACT / MANIFEST_INVALID / TAMPERED /
   INCOMPLETE / UNLISTED_FILE / NON_MONOTONIC / CHAIN_FORK /
   DUPLICATE_OBSERVATION / ANCHOR_MISMATCH
 
-A new epoch is possible ONLY by (1) committing a new anchor ``epoch_id``
-(reviewed code change) and (2) a ``workflow_dispatch`` with
-``bootstrap_epoch`` equal to it; both are auditable. Scheduled runs never
-bootstrap.
+A new epoch is possible ONLY by (1) committing a new anchor ``epoch_id`` and
+the matching artifact/step names in the workflow (reviewed code change) and
+(2) a ``workflow_dispatch`` with ``bootstrap_epoch`` equal to it; both are
+auditable. An existing epoch is NEVER restarted. Scheduled runs never
+bootstrap. Artifact/run retention is finite: this guarantees fail-closed
+behaviour, not permanent durability.
 
 ``seal_chain`` (end of a run) re-verifies the working ledger, requires it to
 be a byte-identical superset of the loaded state, and writes the next manifest.
@@ -56,6 +61,22 @@ ARTIFACT_PREFIX = "nfl-game-market-research-ledger"
 MANIFEST_NAME = "LEDGER_MANIFEST.json"
 WORKFLOW_FILE = "nfl-live-game-market-shadow.yml"
 LINK_DEPTH = 3
+UPLOAD_STEP_PREFIX = "Upload sealed evidence-chain link"
+# The two 2026-10-12 PR-branch drill uploads (runs 38310850808, 38311050193)
+# predate epoch-tagged step names; they are honoured for epoch-1 only.
+LEGACY_UPLOAD_STEP_EPOCH = "fc-nfl-004-epoch-1"
+
+
+def upload_step_name(epoch_id: str) -> str:
+    """Workflow step whose success in ANY run proves a sealed link was uploaded."""
+    return f"{UPLOAD_STEP_PREFIX} [{epoch_id}]"
+
+
+def _upload_markers(epoch_id: str) -> set[str]:
+    names = {upload_step_name(epoch_id)}
+    if epoch_id == LEGACY_UPLOAD_STEP_EPOCH:
+        names.add(UPLOAD_STEP_PREFIX)
+    return names
 
 
 class ChainError(RuntimeError):
@@ -191,10 +212,33 @@ class GitHubArtifacts:
                 return out
             page += 1
 
-    def successful_runs(self, branch: str) -> list[dict]:
-        data = self._get(f"https://api.github.com/repos/{self.repo}/actions/workflows/{WORKFLOW_FILE}/runs",
-                         branch=branch, status="success", per_page=20).json()
-        return data.get("workflow_runs", [])
+    def sealed_runs(self, branch: str, epoch_id: str, since: str) -> list[dict]:
+        """Runs (any conclusion) on ``branch`` since ``since`` whose epoch upload step
+        succeeded. Run/step history survives artifact deletion and expiry."""
+        markers = _upload_markers(epoch_id)
+        out, page = [], 1
+        try:
+            while True:
+                data = self._get(
+                    f"https://api.github.com/repos/{self.repo}/actions/workflows/{WORKFLOW_FILE}/runs",
+                    branch=branch, per_page=100, page=page, created=f">={since[:10]}").json()
+                runs = data.get("workflow_runs", [])
+                for r in runs:
+                    if (r.get("created_at") or "") < since or r.get("status") != "completed":
+                        continue
+                    jobs = self._get(f"https://api.github.com/repos/{self.repo}/actions/runs/{r['id']}/jobs",
+                                     per_page=100).json().get("jobs", [])
+                    if any(st.get("name") in markers and st.get("conclusion") == "success"
+                           for j in jobs for st in j.get("steps", [])):
+                        out.append({"id": r["id"], "created_at": r.get("created_at"),
+                                    "conclusion": r.get("conclusion")})
+                if len(runs) < 100:
+                    return out
+                page += 1
+        except ChainError:
+            raise
+        except Exception as exc:  # noqa: BLE001 - unknown history must never permit a restart
+            raise ChainError("HISTORY_UNVERIFIABLE", f"workflow run history unreadable: {exc}") from exc
 
     def run_artifacts(self, run_id) -> list[dict]:
         return self._get(f"https://api.github.com/repos/{self.repo}/actions/runs/{run_id}/artifacts",
@@ -228,56 +272,74 @@ def _seed_baseline(anchor, repo_root: Path, ledger: Path) -> None:
 
 def load_chain(*, api: GitHubArtifacts, anchor: Mapping[str, Any], repo_root: Path, branch: str,
                current_run_id: str, bootstrap_epoch: str, work: Path) -> dict[str, Any]:
-    """Prepare ``work/ledger`` from the verified chain head (or an explicit bootstrap)."""
-    name = artifact_name(anchor["epoch_id"])
+    """Prepare ``work/ledger`` from the verified chain head (or an explicit bootstrap).
+
+    Run history is consulted FIRST (Codex P1, review 6133401456): a successful
+    epoch upload step in any past run on this branch proves sealed evidence
+    existed, even if every artifact has since been deleted or has expired.
+    """
+    epoch = anchor["epoch_id"]
+    name = artifact_name(epoch)
     ledger = Path(work) / "ledger"
     if ledger.exists() and any(ledger.rglob("*")):
         raise ChainError("NON_MONOTONIC", "working ledger is not empty")
     ledger.mkdir(parents=True, exist_ok=True)
+    history = [r for r in api.sealed_runs(branch, epoch, anchor["created_at"])
+               if str(r["id"]) != str(current_run_id)]
     arts = [a for a in api.chain_artifacts(name)
             if (a.get("workflow_run") or {}).get("head_branch") == branch
             and str((a.get("workflow_run") or {}).get("id")) != str(current_run_id)]
     arts.sort(key=lambda a: (a.get("created_at") or "", a.get("id") or 0), reverse=True)
     bootstrap_epoch = (bootstrap_epoch or "").strip()
 
-    if not arts:
-        if bootstrap_epoch != anchor["epoch_id"]:
-            raise ChainError("NO_CHAIN", (
-                f"no '{name}' artifact for branch {branch!r}. Refusing to start a new chain "
-                f"silently. To start epoch {anchor['epoch_id']} explicitly, dispatch the workflow "
-                f"with bootstrap_epoch={anchor['epoch_id']}."))
+    if bootstrap_epoch:
+        if bootstrap_epoch != epoch:
+            raise ChainError("BOOTSTRAP_REFUSED", (
+                f"bootstrap_epoch {bootstrap_epoch!r} is not the committed anchor epoch {epoch!r}"))
+        if arts or history:
+            raise ChainError("BOOTSTRAP_REFUSED", (
+                f"epoch {epoch} already has sealed evidence on {branch!r} "
+                f"({len(history)} sealed run(s), {len(arts)} artifact(s) listed). An epoch is "
+                f"never restarted, even if its artifacts are gone: commit a NEW anchor epoch_id "
+                f"(LIFECYCLE_DESIGN.md, new-epoch recovery) and bootstrap that."))
         _seed_baseline(anchor, repo_root, ledger)
-        return {"mode": "BOOTSTRAP", "epoch_id": anchor["epoch_id"], "sequence": 0,
+        return {"mode": "BOOTSTRAP", "epoch_id": epoch, "sequence": 0,
                 "previous_manifest_sha256": anchor["anchor_sha256"], "head_artifact_id": None,
                 "files": ledger_files(ledger)}
 
-    if bootstrap_epoch:
-        raise ChainError("BOOTSTRAP_REFUSED", (
-            f"{len(arts)} chain artifact(s) already exist for epoch {anchor['epoch_id']} on "
-            f"{branch!r}; a new epoch requires a new committed anchor epoch_id"))
+    if not arts:
+        if history:
+            raise ChainError("MISSING_EXPECTED_ARTIFACT", (
+                f"{len(history)} sealed run(s) of epoch {epoch} on {branch!r} exist but no chain "
+                f"artifact remains (deleted or purged). Evidence was lost; continuing or "
+                f"re-bootstrapping this epoch is refused."))
+        raise ChainError("NO_CHAIN", (
+            f"no '{name}' artifact for branch {branch!r}. Refusing to start a new chain "
+            f"silently. To start epoch {epoch} explicitly, dispatch the workflow "
+            f"with bootstrap_epoch={epoch}."))
     head = arts[0]
     if head.get("expired"):
         raise ChainError("EXPIRED_CHAIN_HEAD", (
             f"newest chain artifact {head['id']} ({head.get('created_at')}) has expired; the "
             f"chain cannot be continued without losing evidence"))
-
-    # The latest successful run after the epoch began must have produced the head (or
-    # an older link): a deleted/expired artifact from a successful run is missing evidence.
-    epoch_start = min(a.get("created_at") or "" for a in arts)
-    for r in api.successful_runs(branch):
-        if str(r.get("id")) == str(current_run_id) or (r.get("created_at") or "") < epoch_start:
-            continue
-        mine = [a for a in api.run_artifacts(r["id"]) if a.get("name") == name]
-        if not mine or any(a.get("expired") for a in mine):
+    listed_runs = {str((a.get("workflow_run") or {}).get("id")) for a in arts}
+    for r in history:  # every sealed upload must still be listed (expired allowed below the head)
+        if str(r["id"]) not in listed_runs:
             raise ChainError("MISSING_EXPECTED_ARTIFACT", (
-                f"successful run {r['id']} ({r.get('created_at')}) has no live '{name}' artifact"))
-        if max(a.get("created_at") or "" for a in mine) > (head.get("created_at") or ""):
-            raise ChainError("MISSING_EXPECTED_ARTIFACT", (
-                f"run {r['id']} produced a chain artifact newer than the visible head"))
-        break
+                f"sealed run {r['id']} ({r.get('created_at')}, {r.get('conclusion')}) uploaded a "
+                f"chain link that is no longer listed (deleted)"))
+    newest_sealed = max((r.get("created_at") or "" for r in history), default="")
+    if newest_sealed and str((head.get("workflow_run") or {}).get("id")) not in {
+            str(r["id"]) for r in history if (r.get("created_at") or "") == newest_sealed}:
+        raise ChainError("MISSING_EXPECTED_ARTIFACT", (
+            "the newest sealed run did not produce the visible chain head"))
 
     head_dir = api.download(head, Path(work) / "prior")
     manifest = verify_chain_dir(head_dir, anchor)
+    if manifest["sequence"] != len(history):
+        raise ChainError("SEQUENCE_GAP", (
+            f"head sequence {manifest['sequence']} != {len(history)} sealed upload(s) in run "
+            f"history: links or runs are missing"))
 
     # Linear, monotonic links over the newest live artifacts.
     newer = manifest
@@ -294,7 +356,7 @@ def load_chain(*, api: GitHubArtifacts, anchor: Mapping[str, Any], repo_root: Pa
 
     shutil.copytree(head_dir / "ledger", ledger, dirs_exist_ok=True)
     check_duplicate_observations(ledger)
-    return {"mode": "CONTINUE", "epoch_id": anchor["epoch_id"], "sequence": manifest["sequence"],
+    return {"mode": "CONTINUE", "epoch_id": epoch, "sequence": manifest["sequence"],
             "previous_manifest_sha256": manifest["manifest_sha256"], "head_artifact_id": head["id"],
             "files": manifest["files"]}
 

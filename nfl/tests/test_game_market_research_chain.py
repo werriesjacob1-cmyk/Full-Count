@@ -20,6 +20,7 @@ from nfl.prospective.game_market_research_chain import (
     load_anchor,
     load_chain,
     seal_chain,
+    upload_step_name,
 )
 from nfl.prospective.game_market_research_freeze import write_research_freeze
 from nfl.tests.test_game_market_research_pathway import _binding, _freeze, _snapshot
@@ -36,31 +37,29 @@ def _rec(sealed="2026-09-20T16:01:00Z", frozen="2026-09-20T16:02:00Z", captured=
 
 
 class FakeAPI:
-    """Duck-typed GitHubArtifacts over local chain dirs."""
+    """Duck-typed GitHubArtifacts over local chain dirs. ``history`` models run/step
+    history, which (unlike artifacts) survives artifact deletion and expiry."""
 
     def __init__(self):
-        self.artifacts, self.dirs, self.runs, self.run_arts = [], {}, [], {}
+        self.artifacts, self.dirs, self.history = [], {}, []
 
-    def publish(self, work, *, aid, run_id, created, branch=BRANCH, expired=False, success=True):
+    def publish(self, work, *, aid, run_id, created, branch=BRANCH, expired=False, conclusion="success"):
         dest = Path(tempfile.mkdtemp()) / "src"
         shutil.copytree(work, dest)
         art = {"id": aid, "name": artifact_name(self.epoch), "expired": expired, "created_at": created,
                "workflow_run": {"id": run_id, "head_branch": branch}}
         self.artifacts.append(art)
         self.dirs[aid] = dest
-        self.run_arts.setdefault(run_id, []).append(art)
-        if success:
-            self.runs.append({"id": run_id, "created_at": created})
+        self.history.append({"id": run_id, "created_at": created, "conclusion": conclusion,
+                             "branch": branch, "epoch": self.epoch})
         return art
+
+    def sealed_runs(self, branch, epoch_id, since):
+        return [r for r in self.history
+                if r["branch"] == branch and r["epoch"] == epoch_id and r["created_at"] >= since]
 
     def chain_artifacts(self, name):
         return [a for a in self.artifacts if a["name"] == name]
-
-    def successful_runs(self, branch):
-        return sorted(self.runs, key=lambda r: r["created_at"], reverse=True)
-
-    def run_artifacts(self, run_id):
-        return [a for a in self.run_arts.get(run_id, []) if a in self.artifacts]
 
     def download(self, art, dest):
         out = Path(dest) / f"artifact_{art['id']}"
@@ -121,10 +120,10 @@ class ChainTests(unittest.TestCase):
         self.assertEqual(m["previous_manifest_sha256"], self.anchor["anchor_sha256"])
         self.assertEqual({k: m["files"][k] for k in self.anchor["files"]}, self.anchor["files"])
 
-    def test_wrong_epoch_bootstrap_value_is_not_a_bootstrap(self):
+    def test_wrong_epoch_bootstrap_value_is_explicitly_refused(self):
         with self.assertRaises(ChainError) as cm:
             self.load(bootstrap="some-other-epoch")
-        self.assertEqual(cm.exception.code, "NO_CHAIN")
+        self.assertEqual(cm.exception.code, "BOOTSTRAP_REFUSED")
 
     def test_bootstrap_refused_when_chain_exists_even_if_expired(self):
         self.bootstrap()
@@ -179,12 +178,103 @@ class ChainTests(unittest.TestCase):
             self.load()
         self.assertEqual(cm.exception.code, "MISSING_EXPECTED_ARTIFACT")
 
-    def test_successful_run_without_chain_artifact_is_missing_evidence(self):
+    def test_sealed_run_without_listed_artifact_is_missing_evidence(self):
         self.bootstrap()
-        self.api.runs.append({"id": "103", "created_at": "2026-10-12T22:00:00Z"})
+        self.api.history.append({"id": "103", "created_at": "2026-10-12T22:00:00Z", "conclusion": "failure",
+                                 "branch": BRANCH, "epoch": "epoch-test"})
         with self.assertRaises(ChainError) as cm:
             self.load()
         self.assertEqual(cm.exception.code, "MISSING_EXPECTED_ARTIFACT")
+
+    # --- Codex P1 (review 6133401456): total deletion / same-epoch restart ------
+    def _two_links(self):
+        self.bootstrap()
+        return self.run_and_seal(run_id="101", created="2026-10-12T21:10:00Z",
+                                 add=_rec(sealed="2026-09-20T16:21:00Z", frozen="2026-09-20T16:22:00Z",
+                                          captured="2026-09-20T16:20:00Z"))
+
+    def test_total_artifact_deletion_blocks_continue_and_same_epoch_restart(self):
+        self._two_links()
+        self.api.artifacts = []  # every chain artifact deleted
+        for bootstrap, code in (("", "MISSING_EXPECTED_ARTIFACT"), ("epoch-test", "BOOTSTRAP_REFUSED")):
+            with self.assertRaises(ChainError) as cm:
+                self.load(bootstrap=bootstrap)
+            self.assertEqual(cm.exception.code, code)
+
+    def test_failed_run_history_alone_blocks_same_epoch_restart(self):
+        # A failed run that nevertheless uploaded a link, whose artifact was then deleted.
+        self.api.history.append({"id": "99", "created_at": "2026-10-12T20:00:00Z", "conclusion": "failure",
+                                 "branch": BRANCH, "epoch": "epoch-test"})
+        with self.assertRaises(ChainError) as cm:
+            self.load(bootstrap="epoch-test")
+        self.assertEqual(cm.exception.code, "BOOTSTRAP_REFUSED")
+        with self.assertRaises(ChainError) as cm:
+            self.load()
+        self.assertEqual(cm.exception.code, "MISSING_EXPECTED_ARTIFACT")
+
+    def test_fully_expired_history_never_restarts(self):
+        self._two_links()
+        for a in self.api.artifacts:
+            a["expired"] = True
+        with self.assertRaises(ChainError) as cm:
+            self.load()
+        self.assertEqual(cm.exception.code, "EXPIRED_CHAIN_HEAD")
+        with self.assertRaises(ChainError) as cm:
+            self.load(bootstrap="epoch-test")
+        self.assertEqual(cm.exception.code, "BOOTSTRAP_REFUSED")
+
+    def test_deleted_intermediate_link_and_deleted_failed_run_link_cannot_roll_back(self):
+        self._two_links()
+        self.api.artifacts = [a for a in self.api.artifacts if a["id"] != 100]  # oldest link gone
+        with self.assertRaises(ChainError) as cm:
+            self.load()
+        self.assertEqual(cm.exception.code, "MISSING_EXPECTED_ARTIFACT")
+
+    def test_failed_run_link_deleted_after_upload_cannot_roll_back(self):
+        self.bootstrap()
+        new = _rec(sealed="2026-09-20T16:21:00Z", frozen="2026-09-20T16:22:00Z", captured="2026-09-20T16:20:00Z")
+        self.run_and_seal(run_id="101", created="2026-10-12T21:10:00Z", add=new, conclusion="failure")
+        self.api.artifacts = [a for a in self.api.artifacts if a["id"] != 101]
+        with self.assertRaises(ChainError) as cm:
+            self.load()
+        self.assertEqual(cm.exception.code, "MISSING_EXPECTED_ARTIFACT")
+
+    def test_deleted_run_history_is_a_sequence_gap(self):
+        self._two_links()
+        self.api.history = [r for r in self.api.history if r["id"] != "100"]  # run record purged
+        with self.assertRaises(ChainError) as cm:
+            self.load()
+        self.assertEqual(cm.exception.code, "SEQUENCE_GAP")
+
+    def test_new_epoch_authorization_boundaries(self):
+        self._two_links()
+        with self.assertRaises(ChainError) as cm:  # wrong epoch value is never a bootstrap
+            self.load(bootstrap="epoch-test-2")
+        self.assertEqual(cm.exception.code, "BOOTSTRAP_REFUSED")
+        # A reviewed NEW anchor epoch may bootstrap exactly once; old evidence untouched.
+        new_anchor = build_anchor(self.root / self.base_rel, epoch_id="epoch-test-2", reason="recovery",
+                                  created_at="2026-10-12T23:00:00Z", baseline_path=self.base_rel)
+        old_anchor, self.anchor, self.api.epoch = self.anchor, new_anchor, "epoch-test-2"
+        m = self.run_and_seal(run_id="200", created="2026-10-12T23:05:00Z", bootstrap="epoch-test-2")
+        self.assertEqual((m["epoch_id"], m["sequence"]), ("epoch-test-2", 1))
+        with self.assertRaises(ChainError) as cm:
+            self.load(bootstrap="epoch-test-2")
+        self.assertEqual(cm.exception.code, "BOOTSTRAP_REFUSED")
+        self.assertEqual(len([a for a in self.api.artifacts if a["name"] == artifact_name("epoch-test")]), 2)
+        self.anchor, self.api.epoch = old_anchor, "epoch-test"
+        self.assertEqual(self.load()[1]["sequence"], 2)  # epoch-1 chain still intact
+
+    # --- failure injection: partial evidence can never be sealed ---------------
+    def test_partially_written_freeze_or_grade_is_refused_at_seal(self):
+        self.bootstrap()
+        for rel in ("2026/week_3/event_x/partial.json", "2026/week_3/event_x/grades/partial.grade.json"):
+            w, state = self.load(run_id="101")
+            p = w / "ledger" / rel
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text('{"schema": "fc-nfl-004-game-market-research-freeze-v2", "event_id": ')  # truncated
+            with self.assertRaises(ChainError) as cm:
+                seal_chain(state=state, anchor=self.anchor, work=w, run={})
+            self.assertEqual(cm.exception.code, "TAMPERED")
 
     # --- tamper / incomplete / conflict / fork / duplicate ---------------------
     def _head_dir(self):
@@ -245,7 +335,9 @@ class ChainTests(unittest.TestCase):
         self.api.publish(w2, aid=102, run_id="102", created="2026-10-12T21:11:00Z")
         with self.assertRaises(ChainError) as cm:
             self.load()
-        self.assertIn(cm.exception.code, {"CHAIN_FORK", "NON_MONOTONIC"})
+        # Two sealed links from one predecessor: history (3 uploads) exceeds the head
+        # sequence (2), so the fork is refused at the history check, before link checks.
+        self.assertIn(cm.exception.code, {"SEQUENCE_GAP", "CHAIN_FORK", "NON_MONOTONIC"})
 
     def test_duplicate_observation_rejected(self):
         self.bootstrap()
@@ -330,15 +422,83 @@ class RealAnchorTests(unittest.TestCase):
         wf = yaml.safe_load(WORKFLOW.read_text())
         steps = wf["jobs"]["shadow"]["steps"]
         names = {s.get("name"): s for s in steps}
-        upload = names["Upload sealed evidence-chain link"]
+        upload = names[upload_step_name(anchor["epoch_id"])]  # durable run-history marker
         self.assertEqual(upload["with"]["name"], artifact_name(anchor["epoch_id"]))
         self.assertEqual(upload["with"]["if-no-files-found"], "error")
-        self.assertIn("chain_seal", upload["if"])
         self.assertFalse(wf["concurrency"]["cancel-in-progress"])
         self.assertEqual(wf["permissions"], {"contents": "read", "actions": "read"})
-        for step in ("Freeze spread/total research records", "Grade completed games in the chained ledger",
-                     "Seal next chain link (monotonic superset)"):
-            self.assertIn("chain_load", names[step]["if"])
+
+    def test_failure_injection_gating_seal_and_upload_need_every_upstream_success(self):
+        # Codex P1 (review 6133401456): evaluate each step's `if` under injected
+        # upstream outcomes; a failed freeze or grade must never seal or upload.
+        wf = yaml.safe_load(WORKFLOW.read_text())
+        steps = {s.get("id") or s.get("name"): s for s in wf["jobs"]["shadow"]["steps"]}
+        anchor = json.loads(REAL_ANCHOR.read_text())
+        upload_if = steps[upload_step_name(anchor["epoch_id"])]["if"]
+
+        def runs(cond, outcomes):
+            expr = cond.strip()
+            assert expr.startswith("${{") and expr.endswith("}}"), cond
+            expr = expr[3:-2].replace("!cancelled()", "True").replace("&&", " and ").replace("||", " or ")
+            for sid, outcome in outcomes.items():
+                expr = expr.replace(f"steps.{sid}.outcome", repr(outcome))
+            return eval(expr, {"__builtins__": {}})  # noqa: S307 - test-only, fixed workflow text
+
+        ok = {"unit_tests": "success", "chain_load": "success", "research_freeze": "success",
+              "research_grade": "success", "chain_seal": "success"}
+        self.assertTrue(runs(steps["chain_seal"]["if"], ok))
+        self.assertTrue(runs(upload_if, ok))
+        for failed in ("chain_load", "research_freeze", "research_grade"):
+            for outcome in ("failure", "skipped"):
+                state = {**ok, failed: outcome}
+                self.assertFalse(runs(steps["chain_seal"]["if"], state), (failed, outcome))
+                self.assertFalse(runs(upload_if, state), (failed, outcome))
+        self.assertFalse(runs(steps["research_grade"]["if"], {**ok, "research_freeze": "failure"}))
+        self.assertFalse(runs(upload_if, {**ok, "chain_seal": "failure"}))
+
+
+class SealedRunHistoryTests(unittest.TestCase):
+    class _JSONResp:
+        def __init__(self, payload):
+            self._p = payload
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return self._p
+
+    def _api(self, runs, jobs):
+        test = self
+
+        class S:
+            def get(self, url, **kw):
+                if url.endswith("/runs"):
+                    return test._JSONResp({"workflow_runs": runs})
+                rid = url.rstrip("/").split("/")[-2]
+                return test._JSONResp({"jobs": jobs[rid]})
+        return GitHubArtifacts(repo="o/r", token="t", session=S())
+
+    def test_markers_survive_artifact_loss_and_ignore_other_epochs(self):
+        runs = [{"id": i, "created_at": "2026-10-12T21:%02d:00Z" % i, "status": "completed",
+                 "conclusion": c} for i, c in ((1, "success"), (2, "failure"), (3, "failure"), (4, "success"))]
+        step = lambda n, c: {"steps": [{"name": n, "conclusion": c}]}  # noqa: E731
+        jobs = {"1": [step("Upload sealed evidence-chain link", "success")],            # legacy epoch-1
+                "2": [step(upload_step_name("fc-nfl-004-epoch-1"), "success")],         # failed run, uploaded
+                "3": [step(upload_step_name("fc-nfl-004-epoch-1"), "skipped")],         # never uploaded
+                "4": [step(upload_step_name("fc-nfl-004-epoch-2"), "success")]}         # other epoch
+        got = self._api(runs, jobs).sealed_runs("b", "fc-nfl-004-epoch-1", "2026-10-12T00:00:00Z")
+        self.assertEqual([r["id"] for r in got], [1, 2])
+        got2 = self._api(runs, jobs).sealed_runs("b", "fc-nfl-004-epoch-2", "2026-10-12T00:00:00Z")
+        self.assertEqual([r["id"] for r in got2], [4])  # legacy name is epoch-1 only
+
+    def test_unreadable_history_fails_closed(self):
+        class Boom:
+            def get(self, *a, **k):
+                raise OSError("api down")
+        with self.assertRaises(ChainError) as cm:
+            GitHubArtifacts(repo="o/r", token="t", session=Boom()).sealed_runs("b", "e", "2026-01-01")
+        self.assertEqual(cm.exception.code, "HISTORY_UNVERIFIABLE")
 
 
 if __name__ == "__main__":

@@ -6442,3 +6442,30 @@ self-hash) is rejected, both on the real 17:34Z slate and in unit tests.
 tests OK.
 
 Alligator
+
+## 2026-10-12 -- FC-NFL-004 final two P1 corrections (Codex review 6133401456) (Claude)
+
+**P1 same-epoch restart after total artifact deletion.**
+- `load_chain` now reads run/step history first. In the epoch's chain, a successful
+  `Upload sealed evidence-chain link [<epoch>]` step marks a sealed link; the legacy
+  name is honoured for epoch-1 only.
+- Bootstrap is refused when any sealed history exists, even with zero artifacts.
+- No artifacts plus history → MISSING_EXPECTED_ARTIFACT. Every historical upload
+  must still be listed, including uploads from failed runs.
+- Head sequence must equal the count of sealed uploads (SEQUENCE_GAP).
+- Unreadable history → HISTORY_UNVERIFIABLE.
+- A wrong-epoch bootstrap value → BOOTSTRAP_REFUSED.
+
+**P1 seal after upstream failure.** Grade requires a successful freeze. Seal and
+upload require load, freeze and grade all to succeed. `seal_chain` refuses truncated
+or partial files.
+
+**Docs.** `LIFECYCLE_DESIGN.md` gains the new-epoch recovery procedure, the
+baseline (30 committed) vs PR-branch drill (30 artifact-only) boundary, the main
+bootstrap path after a merge, and the retention limits.
+
+**Tests.** Chain 30, lifecycle 14, pathway 32 OK. A read-only dry run against the
+real PR-branch history: CONTINUE at seq 2; same-epoch bootstrap refused;
+no-chain branch NO_CHAIN.
+
+Alligator
