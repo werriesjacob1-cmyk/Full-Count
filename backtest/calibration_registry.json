@@ -1,0 +1,80 @@
+{
+  "schema": "full-count-calibration-registry-v1",
+  "policy": "Production backtest/calibrators_by_market.json must equal an APPROVED entry below, market-for-market (method, params, supported region), and recommendation.CALIBRATION_VERSION must equal that entry's version. Changing production calibration requires a reviewed PR that adds a new approved entry with a bumped version, held-out AND forward evidence, and Jacob's authorization (engineering/AUDIT/README.md). The weekly recheck may only write candidates (backtest/calibrator_candidates.json).",
+  "approved": [
+    {
+      "calibration_version": "1.0.0",
+      "source_commit": "a052e79aae98e000751bf026261ca5ff37dd245a",
+      "source_file_sha256": "435765993301e212e2b9db2b0348bafa49b3d9ecf4face483990e67cafc1c877",
+      "fixture": "backtest/fixtures/calibrators_by_market_v1.0.0_a052e79a.json",
+      "basis": "Last human-reviewed calibrator artifact (2026-08-19, PR #57 era); the H1 audit's materiality numbers (test_h1_ci_calibration_scale_integrity.py section 6) were computed against exactly these coefficients.",
+      "markets": {
+        "hits": {
+          "method": "platt",
+          "params": {
+            "A": 5.6923075992789025,
+            "B": -3.0162887832417584
+          },
+          "supported_region": [
+            0.55,
+            0.7
+          ]
+        },
+        "hits_runs_rbis": {
+          "method": "platt",
+          "params": {
+            "A": 2.6016350036383287,
+            "B": -1.0387400219330867
+          },
+          "supported_region": [
+            0.55,
+            0.8
+          ]
+        },
+        "strikeouts": {
+          "method": "platt",
+          "params": {
+            "A": 0.8432830444169422,
+            "B": -0.1259493893243091
+          },
+          "supported_region": [
+            0.55,
+            0.8
+          ]
+        }
+      }
+    }
+  ],
+  "unapproved_history": [
+    {
+      "commit": "9e820aab47",
+      "date": "2026-09-14",
+      "author": "mlb-pipeline-bot (calibration-recheck.yml)",
+      "change": "ADDED pitcher_outs calibrator (market previously rejected by manual review)"
+    },
+    {
+      "commit": "b87e01a6df",
+      "date": "2026-09-21",
+      "author": "mlb-pipeline-bot (calibration-recheck.yml)",
+      "change": "refit pitcher_outs"
+    },
+    {
+      "commit": "ea4f992089",
+      "date": "2026-09-28",
+      "author": "mlb-pipeline-bot (calibration-recheck.yml)",
+      "change": "refit pitcher_outs"
+    },
+    {
+      "commit": "8a5901521f",
+      "date": "2026-10-05",
+      "author": "mlb-pipeline-bot (calibration-recheck.yml)",
+      "change": "refit strikeouts (beat shipped by 0.0006 Brier on 236 held-out rows) and pitcher_outs"
+    },
+    {
+      "commit": "34382f8af2",
+      "date": "2026-10-12",
+      "author": "mlb-pipeline-bot (calibration-recheck.yml)",
+      "change": "refit strikeouts (support narrowed to [0.55,0.75)) and pitcher_outs"
+    }
+  ]
+}

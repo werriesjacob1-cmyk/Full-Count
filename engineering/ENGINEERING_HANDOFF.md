@@ -6307,3 +6307,27 @@ are all untouched. Draft PR opened against `main`, not merged -- this
 workstream does not merge its own PR.
 
 Alligator
+
+## 2026-10-12 -- MLB calibration governance audit: weekly recheck bot
+## promoted unversioned calibrators; candidate-only + approved registry
+
+Root cause of the two red root tests (`test_h1_ci_calibration_scale_integrity.py`,
+`test_strikeout_alternatives_stat_fix.py`): the weekly `calibration-recheck`
+bot committed refits `8a5901521f` (Oct 5) and `34382f8af2` (Oct 12) directly
+into production `backtest/calibrators_by_market.json`, with no version bump,
+no review and no forward evidence, contrary to `engineering/AUDIT/README.md`.
+Full findings, evidence tables and Jacob's options:
+`engineering/mlb_calibration_governance_20261012/AUDIT.md`.
+
+Changed: approved calibration registry + byte-exact v1.0.0 fixture; new
+`test_calibration_governance.py` (intentionally FAILS until Jacob chooses
+which calibrators production ships); recheck workflow is candidate-only
+(`--dry-run --candidates-out`); the two old tests read the approved fixture.
+No calibrator value, threshold, model or published record changed. The
+published Top Pick ledger was read only. Kept separate from NFL PR #223.
+
+Tests: h1 41/41, strikeout alternatives 43/43, refit 26/26, support boundary
+33/33, audit 8/8, apply 45/45; root suite (minus browser e2e) 146 pass,
+1 intentional fail (governance).
+
+Alligator
