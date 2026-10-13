@@ -61,22 +61,87 @@ def load_public():
 
 
 def load_freezes():
-    """Regime B: sealed prospective full-candidate board freezes + their grades."""
+    """Regime B: sealed prospective full-candidate board freezes + their grades.
+
+    Amendment A1 (Codex review 6151131715, P2): every board is re-verified with
+    the production ``board_freeze.verify_board_seal`` (rebuild, never trust the
+    stored hash), and a graded file MUST carry ``source_board_sha256`` equal to
+    that verified hash. A missing binding now fails closed."""
+    import sys
+    if ROOT not in sys.path:
+        sys.path.insert(0, ROOT)
+    from board_freeze import verify_board_seal
     boards, prov = [], []
     for f in sorted(glob.glob(os.path.join(ROOT, "output/board_freeze_2026-*.json"))):
         b = json.load(open(f))
+        sealed = verify_board_seal(b)
         g_path = f.replace("board_freeze_", "board_freeze_graded_")
         grades = {}
         if os.path.exists(g_path):
             g = json.load(open(g_path))
-            if g.get("source_board_sha256") not in (None, b["board_sha256"]):
-                raise ValueError(f"graded file {g_path} does not bind board {f}")
+            if g.get("source_board_sha256") != sealed:
+                raise ValueError(f"graded file {g_path} does not bind verified board {f}")
             grades = {r["candidate_id"]: r for r in g["records"]}
         boards.append((b, grades))
         prov.append({"board": f[len(ROOT) + 1:], "sha256": sha256_file(f),
                      "graded": g_path[len(ROOT) + 1:] if grades else None,
                      "graded_sha256": sha256_file(g_path) if grades else None})
     return boards, prov
+
+
+def break_even_raw(odds):
+    """Offered-price break-even probability (vig INCLUDED), from the American odds
+    actually offered. Uniform across every market."""
+    return None if odds is None else implied(odds)
+
+
+def fair_novig(market):
+    """No-vig fair probability, ONLY where the stored value is one. In the frozen
+    boards ``market_implied`` is mixed: two-sided markets (strikeouts,
+    pitcher_outs, nrfi_combined; ``market_hold`` present) store a de-vigged fair
+    probability, one-sided batter props store the raw break-even. One-sided
+    markets have no opposing price, so their fair probability is UNKNOWN (None),
+    never imputed."""
+    if market.get("market_hold") is None or market.get("market_implied") is None:
+        return None
+    return market["market_implied"]
+
+
+def load_public_reconciled():
+    """Regime A, amended (A1): the public registry joined to grades from BOTH the
+    rolling 45-day ``docs/history.json`` and the retained per-day
+    ``results/grades_*.json`` files. Every grade source is read; any
+    disagreement between sources raises. Nothing is imputed: picks with no
+    hit/miss in any source stay ungraded/void and are counted."""
+    rows, prov = load_public()
+    sources = {}
+    hist = json.load(open(os.path.join(ROOT, "docs/history.json")))["days"]
+    for day in hist:
+        for p in day["picks"]:
+            sources.setdefault((day["date"], p["id"]), {})["history"] = p.get("grade")
+    files = sorted(glob.glob(os.path.join(ROOT, "results/grades_*.json")))
+    for f in files:
+        d = json.load(open(f))
+        for p in d.get("public_top_picks") or []:
+            k = (d["date"], p["id"])
+            prev = sources.setdefault(k, {}).get("results")
+            if prev is not None and prev != p.get("grade"):
+                raise ValueError(f"conflicting grades within results files for {k}")
+            sources[k]["results"] = p.get("grade")
+    recon = {"history_only": 0, "results_only": 0, "both_agree": 0, "conflict": 0, "none": 0}
+    for r in rows:
+        src = sources.get((r["date"], r["id"]), {})
+        h, g = src.get("history"), src.get("results")
+        if h is not None and g is not None and h != g:
+            recon["conflict"] += 1
+            raise ValueError(f"history and results disagree for {(r['date'], r['id'])}: {h} vs {g}")
+        r["grade_history"], r["grade_results"] = h, g
+        r["grade"] = g if g is not None else h
+        recon["both_agree" if (h is not None and g is not None) else
+              "history_only" if h is not None else "results_only" if g is not None else "none"] += 1
+    prov = dict(prov, results_files=len(files),
+                results_sha256={os.path.basename(f): sha256_file(f) for f in files})
+    return rows, prov, recon
 
 
 def write(name, obj):

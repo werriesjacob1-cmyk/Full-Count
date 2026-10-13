@@ -6341,3 +6341,47 @@ Issue #91 6135666313 before any challenger result). Full report:
 Nothing in production, published picks, grades or other PRs was changed.
 
 Alligator
+
+## 2026-10-13 -- FC-ACC-001 Amendment A1: audit corrections (PR #226)
+
+This amendment responds to Codex audit 6151131715. It is post-hoc and labelled
+as such. The original PREREG, the original arms and the original outputs are
+unchanged; their bytes are verified, and the outputs reproduce identically.
+
+**Public baseline, recomputed from history plus `results/grades_*.json`.**
+- 629 published picks: 609 settled, 321 wins, 288 losses, 20 void or ungraded.
+- 52.7% hit rate, ROI −11.2%, 6.35 pp below the published-odds break-even.
+- 572 picks are graded in both sources, 57 only in results files, 0 conflicts.
+
+**Price semantics.**
+- `market_implied` is no-vig for two-sided markets and raw break-even
+  otherwise.
+- New, separate fields: `break_even_raw`, `fair_novig` (null for one-sided
+  markets), p, and the ranking score.
+
+**Corrected arm results (91 picks each).**
+
+| Arm | Wins | ROI |
+|---|---|---|
+| CH1u (uniform raw break-even) | 67 | +1.4% |
+| Market-only | 66 | −1.7% |
+| Champion | 48 | −10.5% |
+
+CH1 − market-only: +2 wins [−5, +9]. **No demonstrated model edge over price.**
+
+**Populations.** P1 published, P2 eligible, P3 research board and P4 shadow are
+now separated. CH1's picks are 79 `lean` and 62 that fail `price_clears`.
+
+**Loader.** It verifies every board seal and requires each graded file's board
+binding.
+
+**S1 protocol.** Drafted and **BLOCKED**: 0/91 selections have an authentic
+offer. Freezes hold no sportsbook, event, observation-time or raw-response
+binding. `data/props` snapshots carry no raw hash. Freezes also hold no factor
+values. Unblocking needs Jacob's authorization of a capture step.
+
+**Hypotheses.** A ranked list, none tested, is in `HYPOTHESES.md`.
+
+**Tests.** `test_fc_acc_001_research.py`: 18 passed.
+
+Alligator

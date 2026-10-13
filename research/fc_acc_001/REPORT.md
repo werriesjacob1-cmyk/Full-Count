@@ -1,5 +1,28 @@
 # FC-ACC-001: winning-pick accuracy, first findings (2026-10-13)
 
+> **CORRECTION NOTICE (Amendment A1, 2026-10-13).** This is the ORIGINAL
+> report. It is kept unchanged below as historical evidence. Codex's audit
+> ([PR #226 comment 6151131715](https://github.com/werriesjacob1-cmyk/Full-Count/pull/226#issuecomment-6151131715))
+> found errors, and these statements are superseded by `AMENDMENT_A1.md`:
+> - **Public baseline.** It is **321/609 = 52.7%, ROI −11.2%**, 6.35 pp below
+>   the break-even of the published odds, not 298/552 = 54.0%. All 57
+>   "ungraded" picks have retained grades in `results/grades_*.json`.
+> - **`market_implied` has mixed meaning.** It is no-vig fair for two-sided
+>   markets and raw break-even otherwise. With a uniform raw break-even, CH1 is
+>   **67/91** (+1.4% ROI). The original 68/91 stays visible as an exploratory
+>   observation.
+> - **CH1 against market-only** is only **+2 wins, 90% CI [−5, +9]**. There is
+>   **no demonstrated model advantage over sportsbook prices.**
+> - **Eligibility.** CH arms share the research pool, **not** the existing Top
+>   Pick eligibility: 79/91 of CH1's picks are `lean` and 62 fail
+>   `price_clears`. "+20 winners" is a shadow-reranking observation, not 20
+>   more published or eligible winners.
+> - **"Adverse selection"** is descriptive, not a demonstrated causal
+>   mechanism.
+> - **The S1 protocol in §7** is replaced by `S1_PROTOCOL.md`, which is
+>   currently **BLOCKED** on authentic offer provenance.
+
+
 Research only. Nothing here is promoted, deployed or merged. Preregistration:
 `PREREG.md`, commit `bb8600e8f5`, sha256 `e6466a71…dbbb`, anchored on Issue #91
 (comment 6135666313) before any challenger result was computed.
