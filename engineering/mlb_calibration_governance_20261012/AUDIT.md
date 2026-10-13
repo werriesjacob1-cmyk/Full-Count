@@ -4,7 +4,9 @@ Status: **Jacob approved Option A (restore v1.0.0) on 2026-10-12, subject to
 independent verification before merge.** This PR now restores production
 `backtest/calibrators_by_market.json` byte-for-byte to the v1.0.0 artifact
 (sha256 `435765993301e212e2b9db2b0348bafa49b3d9ecf4face483990e67cafc1c877`).
-This is a restoration of the last approved state. It is **not** a newly
+This restores the last pre-bot, manually curated artifact, now explicitly
+authorized by Jacob for restoration (no separate written approval existed in
+August). It is **not** a newly
 demonstrated predictive improvement (see Impact and Unresolved risks).
 
 ## Failing tests on main and their cause
@@ -76,7 +78,8 @@ attributed by date. Nothing in this PR rewrites them.
 ## What this PR does
 
 1. `backtest/calibration_registry.json` + byte-exact fixture of the last
-   human-approved set (v1.0.0, `a052e79a`, sha256 `43576599...c877`).
+   pre-bot, manually curated set (v1.0.0, `a052e79a`, sha256 `43576599...c877`),
+   now explicitly authorized for restoration.
    The five bot commits are listed under `unapproved_history`.
 2. `test_calibration_governance.py`: production must equal an approved entry
    market for market (method, params, supported region) and
@@ -201,6 +204,10 @@ refits.
   Their mean displayed probability is 0.621; the Oct 12 set would have shown
   0.533.
 - **Picks removed:** 3, of which 2 hit.
+- **Selected-set outcomes:** Oct 12 set 76 selected / 75 graded / 39 hits
+  (52.0%); v1.0.0 83 / 81 / 41 (50.6%). This is an unequal-volume
+  retrospective comparison on frozen odds. Codex reproduced these figures
+  independently (review 6135014770).
 - **Classification level** (status, not board selection): pitcher_outs gains
   4 top_pick and 27 lean statuses; strikeouts gains 3 top_pick.
 
@@ -224,6 +231,28 @@ no reliable evidence either way for strikeouts.**
 mean raw 0.619 against a 0.460 hit rate (n=139). Where raw is >= 0.70, it
 averages 0.788 against a 0.600 hit rate.
 
+## Independent review and merge condition
+
+Codex review [6135014770](https://github.com/werriesjacob1-cmyk/Full-Count/pull/225#issuecomment-6135014770)
+on head `911b44d5` returned **CONDITIONAL GO**, with no P0 or P1 defects.
+
+Codex independently confirmed:
+- the byte identity of every artifact;
+- the 80/80 replay of recorded selections;
+- the counterfactual counts.
+
+The condition: Jacob explicitly accepts the quantified pitcher_outs exposure
+under Option A. That exposure is about +10 board picks per 20 slates, at raw,
+overconfident displayed probabilities.
+
+The review also holds any claim of predictive improvement, and any change to
+Top Pick eligibility. If Jacob does not accept the exposure, a separate policy
+decision is needed. Neither exclusion nor the unapproved refit is substituted
+here.
+
+The Oct 12 pitcher_outs curve is kept only as an unapproved research
+challenger, in `backtest/fixtures/unapproved/`.
+
 ## Unresolved risks
 
 1. **pitcher_outs ships raw, and raw looks overconfident on live data.**
@@ -243,7 +272,16 @@ averages 0.788 against a 0.600 hit rate.
    to 10-12 carry `calibration_version 1.0.0` while bot sets were in effect.
    They stay unaltered and can be attributed to a version by date, through
    the registry only.
-4. **Counterfactual limits.** The quality score, odds and CIs are held fixed
+4. **Approval is not cryptographically authenticated.** The registry's
+   `authorization` is a reviewed text field; CI cannot prove Jacob approved a
+   future entry if code and registry are edited together in one PR. The
+   standalone `refit_calibrators.py` CLI also keeps an explicit
+   production-write mode for manual use. The scheduled bot has no
+   production-write path, and any production change still fails
+   `test_calibration_governance.py` unless a registry entry is added in a
+   reviewed PR, so approval rests on PR review and Jacob's merge control
+   (Codex review 6135014770, P2).
+5. **Counterfactual limits.** The quality score, odds and CIs are held fixed
    as frozen. Only primary lines are covered; alternate-line effects are not
    simulated.
 
