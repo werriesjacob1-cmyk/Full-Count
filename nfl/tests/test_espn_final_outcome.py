@@ -1,7 +1,11 @@
 import unittest
 
 from nfl.normalize.fanduel_game_lines import normalize_payload
-from nfl.prospective.espn_final_outcome import EspnFinalOutcomeError, extract_espn_final_outcome
+from nfl.prospective.espn_final_outcome import (
+    ESPN_TO_NFLVERSE_TEAM,
+    EspnFinalOutcomeError,
+    extract_espn_final_outcome,
+)
 from nfl.prospective.game_identity import bind_nflverse_game_identity
 from nfl.prospective.game_market_grader import grade_game_market
 from nfl.prospective.game_market_snapshot import seal_game_market_snapshot
@@ -145,6 +149,66 @@ class EspnFinalOutcomeTests(unittest.TestCase):
         value["competitions"][0]["competitors"][1]["homeAway"] = "home"
         with self.assertRaisesRegex(EspnFinalOutcomeError, "unique home/away roles"):
             extract(event_value=value)
+
+    def _teams(self, home, away):
+        value = event()
+        value["competitions"][0]["competitors"][0]["team"]["abbreviation"] = home
+        value["competitions"][0]["competitors"][1]["team"]["abbreviation"] = away
+        return value
+
+    def test_alias_map_is_closed_and_exact(self):
+        self.assertEqual(ESPN_TO_NFLVERSE_TEAM, {"LAR": "LA", "WSH": "WAS"})
+
+    def test_espn_lar_grades_nflverse_la(self):
+        # The real 2026-10-12 BUF@LA case: ESPN reported BUF@LAR.
+        out = extract(binding_value=binding(away_team="BUF", home_team="LA"),
+                      event_value=self._teams("LAR", "BUF"))
+        self.assertEqual((out["away_team"], out["home_team"]), ("BUF", "LA"))
+        self.assertEqual((out["away_score"], out["home_score"]), (24, 27))
+
+    def test_espn_wsh_grades_nflverse_was(self):
+        out = extract(binding_value=binding(away_team="WAS", home_team="KC"),
+                      event_value=self._teams("KC", "WSH"))
+        self.assertEqual((out["away_team"], out["home_team"]), ("WAS", "KC"))
+
+    def test_lowercase_alias_is_normalized(self):
+        out = extract(binding_value=binding(away_team="BUF", home_team="LA"),
+                      event_value=self._teams("lar", "BUF"))
+        self.assertEqual(out["home_team"], "LA")
+
+    def test_identical_codes_still_match_without_alias(self):
+        out = extract(binding_value=binding(away_team="BUF", home_team="LA"),
+                      event_value=self._teams("LA", "BUF"))
+        self.assertEqual(out["home_team"], "LA")
+
+    def test_alias_never_bridges_different_teams(self):
+        cases = [
+            (binding(away_team="BUF", home_team="LAC"), ("LAR", "BUF")),  # Rams are not Chargers
+            (binding(away_team="BUF", home_team="LA"), ("LAC", "BUF")),   # Chargers are not Rams
+            (binding(away_team="WAS", home_team="KC"), ("KC", "WAS2")),   # unknown code
+            (binding(away_team="BUF", home_team="LA"), ("LAR", "NYJ")),   # wrong opponent
+            (binding(away_team="BUF", home_team="LA"), ("BUF", "LAR")),   # home/away roles swapped
+            (binding(away_team="BUF", home_team="LA"), ("LV", "BUF")),    # unrelated mismatch
+        ]
+        for bind, (home, away) in cases:
+            with self.subTest(binding=(bind["away_team"], bind["home_team"]), espn=(away, home)):
+                with self.assertRaisesRegex(EspnFinalOutcomeError, "team identity mismatch"):
+                    extract(binding_value=bind, event_value=self._teams(home, away))
+
+    def test_alias_does_not_relax_other_identity_checks(self):
+        bind = binding(away_team="BUF", home_team="LA")
+        value = self._teams("LAR", "BUF")
+        value["id"] = "other"
+        with self.assertRaisesRegex(EspnFinalOutcomeError, "event id does not match"):
+            extract(binding_value=bind, event_value=value)
+        value = self._teams("LAR", "BUF")
+        value["date"] = "2026-09-15T00:20:00Z"
+        with self.assertRaisesRegex(EspnFinalOutcomeError, "kickoff does not match"):
+            extract(binding_value=bind, event_value=value)
+        value = self._teams("LAR", "BUF")
+        value["status"] = {"type": {"name": "STATUS_IN_PROGRESS", "completed": False}}
+        with self.assertRaises(EspnFinalOutcomeError):
+            extract(binding_value=bind, event_value=value)
 
     def test_competition_and_competitor_cardinality_fail_closed(self):
         with self.assertRaisesRegex(EspnFinalOutcomeError, "exactly one competition"):

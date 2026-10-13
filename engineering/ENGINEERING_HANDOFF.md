@@ -6469,3 +6469,33 @@ real PR-branch history: CONTINUE at seq 2; same-epoch bootstrap refused;
 no-chain branch NO_CHAIN.
 
 Alligator
+
+## 2026-10-13 -- FC-NFL-004: ESPN team-code alias repair (Jacob-authorized)
+
+The first real final-game grading run (38346795026, BUF@LA, ESPN STATUS_FINAL
+BUF 37 - LAR 34) failed closed. Every BUF@LA freeze stayed PENDING with "ESPN
+team identity mismatch: expected BUF@LA, got BUF@LAR".
+
+**Cause.** ESPN and nflverse codes differ for 2 of the 32 teams: LAR vs LA, and
+WSH vs WAS.
+
+**Fix.** A closed alias map, `ESPN_TO_NFLVERSE_TEAM = {LAR: LA, WSH: WAS}`, in
+`nfl/prospective/espn_final_outcome.py`. It is applied to the ESPN side before
+the comparison. All other identity checks are unchanged: event id, competition
+id, kickoff, roles, STATUS_FINAL/completed. Any other mismatch still fails
+closed. The outcome body and hash schema are unchanged.
+
+**Tests.** 7 regression tests in `nfl/tests/test_espn_final_outcome.py`:
+- both aliases grade;
+- lowercase input is normalized;
+- the alias never bridges LA/LAC, wrong opponents, swapped roles or unknown
+  codes;
+- the other identity checks still fail closed.
+
+Three of them fail when the normalization is removed. NFL suite: 1139 passed.
+
+**Local replay** on a copy of chain link 5: 6/6 BUF@LA freezes grade, and the
+settlements were checked independently. Real-run verification follows in the
+PR #223 comments.
+
+Alligator
