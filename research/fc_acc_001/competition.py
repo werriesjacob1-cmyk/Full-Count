@@ -64,7 +64,9 @@ def grade_of(grades, r):
 
 
 def build():
-    boards, prov = common.load_freezes()
+    # Window pinned to the preregistered evaluation (09-20..10-11, the slates
+    # graded when the competition ran); later-graded boards are new evidence.
+    boards, prov = common.load_freezes(through=common.EVIDENCE_CUTOFF)
     slates, excluded = [], []
     for b, grades in boards:
         for g, t in b["game_start_times"].items():
@@ -263,7 +265,7 @@ def pool_test(slates, rng, core_only):
 def main():
     rng = random.Random(SEED)
     slates, excluded, prov = build()
-    boards, _ = common.load_freezes()
+    boards, _ = common.load_freezes(through=common.EVIDENCE_CUTOFF)
     Umap = {b["date"]: [r for r in b["records"] if eligible(r)] for b, _ in boards}
     for s in slates:
         s["_U"] = Umap[s["date"]]

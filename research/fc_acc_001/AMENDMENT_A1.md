@@ -24,14 +24,23 @@ files.
 **Correction.** `common.load_public_reconciled()` reads both sources. It raises
 on any disagreement and imputes nothing.
 
+**Evidence window (pinned).** Published slates and frozen boards **≤ 2026-10-11**,
+all with final grades: `common.EVIDENCE_CUTOFF`. Later data never shifts these
+numbers; it is reported separately. Since the audit, `main` has appended picks
+and graded the 2026-10-12 slate.
+
+The audit counted 629 picks. The 20 it reported as not settled were 9 voids
+plus the 11 then-ungraded 2026-10-12 picks.
+
 | | Value |
 |---|---|
-| Registered public Top Picks | 629 |
-| Grade source: both agree | 572 |
+| Registered public Top Picks, ≤ 2026-10-11 | 618 |
+| Grade source: both agree | 561 |
 | Grade source: results files only | 57 |
 | Grade source: conflicts | **0** |
 | Settled | **609**: 321 wins, 288 losses |
-| Not settled | 20: 9 void, 11 ungraded (2026-10-12) |
+| Void | 9 |
+| **Post-window (new evidence, not in the audit)** | 2026-10-12+: 12 published, 11 settled, **6–5**, ROI −11.1%, 1 ungraded |
 | Realized hit rate | **52.7%** |
 | ROI at published odds, flat 1 unit | **−11.2%** (−68.0 units) |
 | Mean offered-price break-even at published odds | **59.1%** |
@@ -123,14 +132,24 @@ The "+20 winners" is an exploratory P4-versus-P2 reranking result on late-day
 frozen boards. It is **not** 20 additional published winners, and it is **not**
 20 additional currently eligible winners.
 
-## A1.5 Loader hardening
+## A1.5 Loader hardening and window pin
 
 `common.load_freezes()` now:
 - re-verifies every board with the production `board_freeze.verify_board_seal`;
 - **requires** each graded file's `source_board_sha256` to equal the verified
   hash. A missing binding fails closed.
 
-All 19 graded boards pass. Results are unchanged.
+All 19 graded boards pass.
+
+**Window pin.** `competition.py` and `amendment_a1.py` now load boards only
+through `EVIDENCE_CUTOFF`. `main` now also holds a graded 2026-10-12 board, which
+was ungraded when the preregistered run happened. The amendment refuses to run
+unless its board and grade files are byte-identical to those recorded in the
+original `out/competition.json`.
+
+Every preregistered arm result reproduces exactly. The test
+`OriginalResultsReproduce` checks selected, settled, hits and units for all
+arms. The committed original output files themselves are left untouched.
 
 ## A1.6 What is withdrawn or qualified from the original report
 

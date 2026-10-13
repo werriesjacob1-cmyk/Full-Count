@@ -18,14 +18,17 @@ PUB, PROV, RECON = common.load_public_reconciled()
 
 
 class GradeReconciliation(unittest.TestCase):
-    def test_public_counts_from_authoritative_sources(self):
+    def test_public_counts_in_audited_window(self):
+        # Window <= 2026-10-11 (final grades): the audited 321/609 + 9 void.
         g = [r["grade"] for r in PUB]
-        self.assertEqual(len(PUB), 629)
-        self.assertEqual((g.count("hit"), g.count("miss")), (321, 288))
-        self.assertEqual(g.count("void") + sum(x not in ("hit", "miss", "void") for x in g), 20)
+        self.assertEqual(len(PUB), 618)
+        self.assertEqual((g.count("hit"), g.count("miss"), g.count("void")), (321, 288, 9))
 
     def test_history_gap_is_filled_from_results_files_without_conflict(self):
-        self.assertEqual(RECON, {"both_agree": 572, "results_only": 57, "history_only": 0, "conflict": 0, "none": 0})
+        # Rolling history ages out, so only the invariants are pinned.
+        self.assertEqual((RECON["conflict"], RECON["none"]), (0, 0))
+        self.assertEqual(sum(RECON.values()), len(PUB))
+        self.assertGreaterEqual(RECON["results_only"], 57)
         for r in PUB:
             if r["grade_history"] is not None and r["grade_results"] is not None:
                 self.assertEqual(r["grade_history"], r["grade_results"])
@@ -84,7 +87,7 @@ class PopulationBoundaries(unittest.TestCase):
         cls.pop = out["populations"]
 
     def test_four_populations_are_distinct_and_labelled(self):
-        self.assertEqual(self.pop["P1_published_customer_top_picks"]["count"], 629)
+        self.assertEqual(self.pop["P1_published_customer_top_picks"]["count"], 618)  # window <= 2026-10-11
         p2 = self.pop["P2_publication_eligible_candidate_top_picks_in_freezes"]
         self.assertEqual((p2["count"], p2["actually_published"], p2["not_published"]), (91, 60, 31))
         self.assertEqual(self.pop["P3_research_board_selections"]["count"], 80)
@@ -97,7 +100,9 @@ class PopulationBoundaries(unittest.TestCase):
 
     def test_published_set_is_registry_only(self):
         reg = json.load(open(os.path.join(HERE, "data/public_top_picks/registry.json")))["entries"]
-        self.assertEqual({r["id"] for r in PUB}, set(reg))
+        self.assertEqual({r["id"] for r in PUB},
+                         {k for k, e in reg.items() if e["slate_date"] <= common.EVIDENCE_CUTOFF})
+        self.assertTrue(all(r["date"] <= common.EVIDENCE_CUTOFF for r in PUB))
 
 
 class OfferRequirements(unittest.TestCase):
@@ -163,6 +168,17 @@ class HardenedLoader(unittest.TestCase):
         b["records"][0]["market"]["market_odds"] = 999
         with self.assertRaises(BoardFreezeError):
             verify_board_seal(b)
+
+
+class OriginalResultsReproduce(unittest.TestCase):
+    def test_preregistered_arm_results_reproduce_in_pinned_window(self):
+        import competition as C
+        orig = json.load(open(os.path.join(HERE, "research/fc_acc_001/out/competition.json")))
+        slates, _, _ = C.build()
+        for arm in ("CHAMPION", "CH1_BLEND", "CH2_MARKET", "CH3_CAPPED_MODEL", "CH4_DEPTH"):
+            got = C.agg(slates, arm)
+            for k in ("selected", "settled", "hits", "units"):
+                self.assertEqual(got[k], orig["arms"][arm]["all_slates"][k], (arm, k))
 
 
 class PreregImmutable(unittest.TestCase):

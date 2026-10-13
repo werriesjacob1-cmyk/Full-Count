@@ -60,7 +60,7 @@ def load_public():
     return rows, prov
 
 
-def load_freezes():
+def load_freezes(through=None):
     """Regime B: sealed prospective full-candidate board freezes + their grades.
 
     Amendment A1 (Codex review 6151131715, P2): every board is re-verified with
@@ -73,7 +73,11 @@ def load_freezes():
     from board_freeze import verify_board_seal
     boards, prov = [], []
     for f in sorted(glob.glob(os.path.join(ROOT, "output/board_freeze_2026-*.json"))):
+        if "graded" in os.path.basename(f):
+            continue
         b = json.load(open(f))
+        if through is not None and b["date"] > through:
+            continue
         sealed = verify_board_seal(b)
         g_path = f.replace("board_freeze_", "board_freeze_graded_")
         grades = {}
@@ -107,13 +111,21 @@ def fair_novig(market):
     return market["market_implied"]
 
 
-def load_public_reconciled():
+# A1 evidence window. Slates on or before this date have final grades and are
+# the audited window (Codex 6151131715). Later slates (appended picks, newly
+# graded boards) never shift the audited numbers; they are reported separately.
+EVIDENCE_CUTOFF = "2026-10-11"
+
+
+def load_public_reconciled(cutoff=EVIDENCE_CUTOFF):
     """Regime A, amended (A1): the public registry joined to grades from BOTH the
     rolling 45-day ``docs/history.json`` and the retained per-day
     ``results/grades_*.json`` files. Every grade source is read; any
     disagreement between sources raises. Nothing is imputed: picks with no
     hit/miss in any source stay ungraded/void and are counted."""
     rows, prov = load_public()
+    excluded_after_cutoff = sum(r["date"] > cutoff for r in rows)
+    rows = [r for r in rows if r["date"] <= cutoff]
     sources = {}
     hist = json.load(open(os.path.join(ROOT, "docs/history.json")))["days"]
     for day in hist:
@@ -139,7 +151,8 @@ def load_public_reconciled():
         r["grade"] = g if g is not None else h
         recon["both_agree" if (h is not None and g is not None) else
               "history_only" if h is not None else "results_only" if g is not None else "none"] += 1
-    prov = dict(prov, results_files=len(files),
+    prov = dict(prov, evidence_cutoff=cutoff, excluded_after_cutoff=excluded_after_cutoff,
+                results_files=len(files),
                 results_sha256={os.path.basename(f): sha256_file(f) for f in files})
     return rows, prov, recon
 

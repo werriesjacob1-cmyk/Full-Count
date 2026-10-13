@@ -54,7 +54,7 @@ def be_of(r):
 
 def arms_amended(slates):
     """Uniform-price arms on the SAME research pool U_d, same N_d, same tie rule."""
-    boards, _ = common.load_freezes()
+    boards, _ = common.load_freezes(through=common.EVIDENCE_CUTOFF)
     U = {b["date"]: [r for r in b["records"] if C.eligible(r)] for b, _ in boards}
     sealed = {b["date"]: b["sealed_at"] for b, _ in boards}
     for s in slates:
@@ -174,15 +174,26 @@ def pool_test_uniform(slates, rng):
 def main():
     rng = random.Random(SEED)
     pub_rows, pub_prov, recon = common.load_public_reconciled()
+    post_rows, _, _ = common.load_public_reconciled(cutoff="9999-12-31")
+    post = [r for r in post_rows if r["date"] > common.EVIDENCE_CUTOFF]
     by_market = collections.defaultdict(list)
     for r in pub_rows:
         by_market[r["stat"]].append(r)
     res = {"label": "AMENDMENT_A1_POST_HOC_CORRECTIONS", "prereg_unchanged_sha256": C.PREREG_SHA256,
            "public_inputs": pub_prov, "grade_reconciliation": recon,
            "P1_public_baseline": public_summary(pub_rows),
-           "P1_public_by_market": {k: public_summary(v) for k, v in sorted(by_market.items())}}
+           "P1_public_by_market": {k: public_summary(v) for k, v in sorted(by_market.items())},
+           "P1_post_window_new_evidence": public_summary(post) if [r for r in post if r["grade"] in ("hit", "miss")] else
+                                          {"published": len(post), "settled": 0}}
     slates, excluded, prov = C.build()
-    boards, _ = common.load_freezes()
+    # Immutability: the boards/grade files used must be byte-identical to the
+    # ones recorded by the original preregistered run.
+    import json as _json
+    orig = _json.load(open(__import__("os").path.join(common.OUT, "competition.json")))["inputs"]
+    if [(i["board"], i["sha256"], i["graded_sha256"]) for i in orig if i["graded"]] != \
+            [(i["board"], i["sha256"], i["graded_sha256"]) for i in prov if i["graded"]]:
+        raise SystemExit("evidence window differs from the original preregistered run")
+    boards, _ = common.load_freezes(through=common.EVIDENCE_CUTOFF)
     allrec = {b["date"]: b["records"] for b, _ in boards}
     U = {b["date"]: [r for r in b["records"] if C.eligible(r)] for b, _ in boards}
     for s in slates:

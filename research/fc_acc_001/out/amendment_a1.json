@@ -1,14 +1,28 @@
 {
+ "P1_post_window_new_evidence": {
+  "hit_minus_break_even_pp": -6.34,
+  "hit_rate": 0.5455,
+  "losses": 5,
+  "mean_break_even_raw_at_published_odds": 0.6089,
+  "mean_stored_market_implied_MIXED": 0.6061,
+  "published": 12,
+  "roi": -0.1108,
+  "settled": 11,
+  "ungraded": 1,
+  "units": -1.22,
+  "void": 0,
+  "wins": 6
+ },
  "P1_public_baseline": {
   "hit_minus_break_even_pp": -6.35,
   "hit_rate": 0.5271,
   "losses": 288,
   "mean_break_even_raw_at_published_odds": 0.5906,
   "mean_stored_market_implied_MIXED": 0.5831,
-  "published": 629,
+  "published": 618,
   "roi": -0.1117,
   "settled": 609,
-  "ungraded": 11,
+  "ungraded": 0,
   "units": -68.03,
   "void": 9,
   "wins": 321
@@ -34,10 +48,10 @@
    "losses": 162,
    "mean_break_even_raw_at_published_odds": 0.6124,
    "mean_stored_market_implied_MIXED": 0.6124,
-   "published": 373,
+   "published": 363,
    "roi": -0.1035,
    "settled": 360,
-   "ungraded": 10,
+   "ungraded": 0,
    "units": -37.26,
    "void": 3,
    "wins": 198
@@ -62,10 +76,10 @@
    "losses": 54,
    "mean_break_even_raw_at_published_odds": 0.5402,
    "mean_stored_market_implied_MIXED": 0.5095,
-   "published": 99,
+   "published": 98,
    "roi": -0.1984,
    "settled": 96,
-   "ungraded": 1,
+   "ungraded": 0,
    "units": -19.05,
    "void": 2,
    "wins": 42
@@ -121,7 +135,7 @@
   }
  },
  "grade_reconciliation": {
-  "both_agree": 572,
+  "both_agree": 561,
   "conflict": 0,
   "history_only": 0,
   "none": 0,
@@ -241,12 +255,6 @@
    "graded": "output/board_freeze_graded_2026-10-11.json",
    "graded_sha256": "728ee6b288b5dc44c4e6e77341646b15f9128f9cc83bd24ddb744ff092145cba",
    "sha256": "64f065b222f30047cd3407545186ec56ee0bbad0debbef42aaa09737e36777e6"
-  },
-  {
-   "board": "output/board_freeze_2026-10-12.json",
-   "graded": null,
-   "graded_sha256": null,
-   "sha256": "be6cefbb4e83b82c9e4247611b98b0d5f0342e3beabf051afca259595f708647"
   }
  ],
  "label": "AMENDMENT_A1_POST_HOC_CORRECTIONS",
@@ -343,7 +351,7 @@
  },
  "populations": {
   "P1_published_customer_top_picks": {
-   "count": 629,
+   "count": 618,
    "definition": "public registry entries (customer-facing)"
   },
   "P2_publication_eligible_candidate_top_picks_in_freezes": {
@@ -421,11 +429,13 @@
  },
  "prereg_unchanged_sha256": "e6466a71cdbacb86ce0f10af1cd89e353c20aa8f99ac8c3df59a616d5905dbbb",
  "public_inputs": {
+  "evidence_cutoff": "2026-10-11",
+  "excluded_after_cutoff": 12,
   "history": "docs/history.json",
-  "history_sha256": "e9a95b654873c619a8afbc1f74e89750d391a7d649a1ceda6443cbb0e851c043",
+  "history_sha256": "b84c091387a12511b65d0c469b4dc8d970298153afc39f70c36dec14d758ad7f",
   "registry": "data/public_top_picks/registry.json",
-  "registry_sha256": "be2daaa0c330c7b103fefa9724baff4acf83354d5a49828f1b5d42293550b88b",
-  "results_files": 66,
+  "registry_sha256": "81df7d4d7298beb725cb9cc781ac40b7da7e4cccf481fa383b03337f3ffd0fb1",
+  "results_files": 67,
   "results_sha256": {
    "grades_2026-08-04.json": "71fa69d91894b7caea3465b271815d9b59d5ee9c741afc14b14523e05de7a25c",
    "grades_2026-08-05.json": "d079c441e196b7efb4f87c384942e1540f09694f0ff58d61a49d4c28267a995a",
@@ -492,7 +502,8 @@
    "grades_2026-10-08.json": "32c0532fc2fe159654ee05ab9b8c4aca8e98006a6cd0a967f342b22025526050",
    "grades_2026-10-10.json": "3ebd2defb7526a3bd7a08f477663dd61b90ba057df8880438c3f6cf3817762fb",
    "grades_2026-10-11.json": "3aa18c37c51ae471767011210a048c7706d2fa270b7ab326aa62116b51944d13",
-   "grades_2026-10-12.json": "7434d2b45339aeffcaa826535ec3599e2b78d49646d94f7a9edbb01bb7d1629d"
+   "grades_2026-10-12.json": "5a8d4140324be80b56626e948bfeb01d74028a9f5086dc5261b403297c547fdb",
+   "grades_2026-10-13.json": "702eb02f87df17e7f7ed41498c51b7abe8d3da8606d983498dd7ed62d83c0e5f"
   }
  }
 }
