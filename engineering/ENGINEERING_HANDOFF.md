@@ -6433,3 +6433,40 @@ needs one authorized measured capture.
 change.
 
 Alligator
+
+## 2026-10-13 -- FC-ACC-001-S1: full-candidate export design (design only, PR #226)
+
+The design is in `research/fc_acc_001/s1/EXPORT_DESIGN.md`. No production file
+was changed.
+
+**Recommended insertion point.**
+- A new, flag-gated (`FC_ACC_EXPORT`) and fail-isolated `try` block in
+  `generate_picks.main()`, immediately after the existing `board_freeze` block.
+- It writes extension rows keyed by `candidate_id`: signals, every
+  `line_options` threshold, lineup slot and basis, opposing starter, run
+  identity, and excluded started games.
+- The export's id set must equal the sealed freeze's id set exactly.
+
+**Bindings.** Authentication comes from the S1 capture step that runs after
+picks are pushed:
+- raw FanDuel;
+- raw statsapi schedule, lineups and probable pitchers.
+
+Nothing is teed from production fetchers.
+
+**Finding.** `board_freeze_{date}.json` is overwritten by each of the 6 daily
+runs, and every run scores only games not yet started. A late run therefore
+replaces a full-slate freeze. For example, `board_freeze_2026-09-20.json` holds
+1 game and 72 records, generated at 22:33 UTC. The export must be per run and
+write-once, with a fixed rule that picks, for each game, the last pregame run.
+
+**Storage.**
+- Measured: the freeze is 65 KB gzip for 985 records.
+- Export (estimated): about 0.1–0.25 MB gzip per full-slate run, roughly
+  70–180 MB a season.
+- Raw FanDuel archive (unmeasured): about 0.4–1.8 GB a season.
+- Proposed location: an append-only evidence branch, with no nesting.
+
+**Waiting on:** Codex review and Jacob's authorization.
+
+Alligator
