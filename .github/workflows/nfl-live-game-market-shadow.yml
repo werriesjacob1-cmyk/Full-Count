@@ -189,7 +189,7 @@ jobs:
         run: |
           PYTHONPATH=. python3 -m nfl.prospective.live_game_market_research chain-seal \
             --work /tmp/nfl-gm-chain --state /tmp/nfl-game-market-research/chain_state.json
-          cp /tmp/nfl-gm-chain/LEDGER_MANIFEST.json /tmp/nfl-game-market-research/
+          cp /tmp/nfl-gm-chain/package/LEDGER_MANIFEST.json /tmp/nfl-game-market-research/
 
       - name: Upload per-run research evidence
         if: always()
@@ -208,6 +208,9 @@ jobs:
         with:
           # Must equal game_market_research_chain.artifact_name(anchor epoch_id).
           name: nfl-game-market-research-ledger-fc-nfl-004-epoch-1
-          path: /tmp/nfl-gm-chain
+          # ONLY the sealed package (manifest + ledger/). Uploading the whole
+          # work dir re-published prior/ (every earlier link, recursively) and
+          # doubled the artifact each run. Must equal chain.PACKAGE_DIR.
+          path: /tmp/nfl-gm-chain/package
           if-no-files-found: error
           retention-days: 90

@@ -59,6 +59,15 @@ ANCHOR_SCHEMA = "fc-nfl-004-ledger-anchor-v1"
 MANIFEST_SCHEMA = "fc-nfl-004-ledger-manifest-v1"
 ARTIFACT_PREFIX = "nfl-game-market-research-ledger"
 MANIFEST_NAME = "LEDGER_MANIFEST.json"
+# Sealed-link packaging (2026-10-13). Links 1-7 uploaded the whole working dir,
+# including ``prior/`` (every downloaded earlier link, each with its own
+# ``prior/``), so artifacts nested recursively and doubled every run. A sealed
+# link is now ONLY the manifest plus ``ledger/``, built in a clean ``package/``
+# dir, and the manifest declares that layout. Legacy links (no declaration) stay
+# loadable byte-for-byte; a link that declares the layout must satisfy it, and a
+# later link may never drop the declaration.
+PACKAGE_DIR = "package"
+ARTIFACT_LAYOUT = "MANIFEST_AND_LEDGER_ONLY_V1"
 WORKFLOW_FILE = "nfl-live-game-market-shadow.yml"
 LINK_DEPTH = 3
 UPLOAD_STEP_PREFIX = "Upload sealed evidence-chain link"
@@ -144,7 +153,8 @@ def build_manifest(*, ledger: Path, anchor: Mapping[str, Any], sequence: int,
     body = {"schema": MANIFEST_SCHEMA, "epoch_id": anchor["epoch_id"],
             "anchor_sha256": anchor["anchor_sha256"], "sequence": sequence,
             "previous_manifest_sha256": previous_manifest_sha256, "run": dict(run),
-            "sealed_at": _now(), "file_count": len(files), "files": files}
+            "sealed_at": _now(), "file_count": len(files), "files": files,
+            "artifact_layout": ARTIFACT_LAYOUT}
     return {**body, "manifest_sha256": canonical_sha256(body)}
 
 
@@ -172,6 +182,31 @@ def verify_chain_dir(chain_dir: Path, anchor: Mapping[str, Any]) -> dict[str, An
     for rel, sha in anchor["files"].items():
         if manifest["files"].get(rel) != sha:
             raise ChainError("NON_MONOTONIC", f"anchored baseline record absent or changed: {rel}")
+    if manifest.get("artifact_layout") is not None:
+        _check_layout(Path(chain_dir), manifest)
+    return manifest
+
+
+def _check_layout(chain_dir: Path, manifest: Mapping[str, Any]) -> None:
+    """A link that declares the packaged layout holds exactly the manifest and
+    ``ledger/`` -- no ``prior/`` copies, no stray files, no symlinks."""
+    if manifest.get("artifact_layout") != ARTIFACT_LAYOUT:
+        raise ChainError("ARTIFACT_LAYOUT", f"unknown artifact layout {manifest.get('artifact_layout')!r}")
+    top = sorted(p.name for p in chain_dir.iterdir())
+    if top != sorted([MANIFEST_NAME, "ledger"]):
+        raise ChainError("ARTIFACT_LAYOUT", f"sealed link must contain only {MANIFEST_NAME} and ledger/, got {top}")
+    for p in (chain_dir / "ledger").rglob("*"):
+        if p.is_symlink() or not (p.is_dir() or p.is_file()):
+            raise ChainError("ARTIFACT_LAYOUT", f"unexpected entry in sealed ledger: {p}")
+        if p.is_dir() and p.name == "prior":
+            raise ChainError("ARTIFACT_LAYOUT", f"nested prior-chain copy in sealed ledger: {p}")
+
+
+def verify_sealed_package(package: Path, anchor: Mapping[str, Any]) -> dict[str, Any]:
+    """Strict check for a link this code seals: verified AND in the packaged layout."""
+    manifest = verify_chain_dir(package, anchor)
+    if manifest.get("artifact_layout") != ARTIFACT_LAYOUT:
+        raise ChainError("ARTIFACT_LAYOUT", "newly sealed link must declare the packaged layout")
     return manifest
 
 
@@ -349,6 +384,9 @@ def load_chain(*, api: GitHubArtifacts, anchor: Mapping[str, Any], repo_root: Pa
             raise ChainError("CHAIN_FORK", f"sequence not increasing: {older['sequence']} -> {newer['sequence']}")
         if older["sequence"] == newer["sequence"] - 1 and newer["previous_manifest_sha256"] != older["manifest_sha256"]:
             raise ChainError("CHAIN_FORK", f"link {newer['sequence']} does not point at {older['sequence']}")
+        if older.get("artifact_layout") and not newer.get("artifact_layout"):
+            raise ChainError("ARTIFACT_LAYOUT", (
+                f"link {newer['sequence']} dropped the packaged layout declared by link {older['sequence']}"))
         for rel, sha in older["files"].items():
             if newer["files"].get(rel) != sha:
                 raise ChainError("NON_MONOTONIC", f"evidence dropped or changed after seq {older['sequence']}: {rel}")
@@ -372,7 +410,12 @@ def seal_chain(*, state: Mapping[str, Any], anchor: Mapping[str, Any], work: Pat
     check_duplicate_observations(ledger)
     manifest = build_manifest(ledger=ledger, anchor=anchor, sequence=int(state["sequence"]) + 1,
                               previous_manifest_sha256=state["previous_manifest_sha256"], run=run)
-    (Path(work) / MANIFEST_NAME).write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n",
-                                            encoding="utf-8")
-    verify_chain_dir(work, anchor)
+    package = Path(work) / PACKAGE_DIR
+    if package.exists():
+        raise ChainError("ARTIFACT_LAYOUT", f"package dir already exists: {package}")
+    package.mkdir()
+    shutil.copytree(ledger, package / "ledger")
+    (package / MANIFEST_NAME).write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+                                         encoding="utf-8")
+    verify_sealed_package(package, anchor)
     return manifest

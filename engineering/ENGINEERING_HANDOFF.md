@@ -6499,3 +6499,28 @@ settlements were checked independently. Real-run verification follows in the
 PR #223 comments.
 
 Alligator
+
+## 2026-10-13 -- FC-NFL-004: evidence-chain artifact packaging repair (Jacob-authorized)
+
+**Problem.** Chain links 1-7 uploaded the whole `/tmp/nfl-gm-chain` work dir,
+including `prior/`, which holds every downloaded earlier link, each with its own
+`prior/`. Artifacts nested recursively and doubled each run: `prior/` measured
+9.5 -> 20 -> 40 -> 77 MB over links 4-7, against a 3.2 MB ledger.
+
+**Fix.**
+- `seal_chain` builds a clean `package/` containing only `LEDGER_MANIFEST.json`
+  and `ledger/`, and checks it with `verify_sealed_package`.
+- New manifests declare `artifact_layout: MANIFEST_AND_LEDGER_ONLY_V1`.
+- `verify_chain_dir` enforces that layout on any link that declares it: no
+  `prior/`, no stray top-level files, no symlinks.
+- `load_chain` refuses a later link that drops the declaration.
+- Legacy links 1-7 are immutable and still load unchanged.
+- The workflow uploads only `/tmp/nfl-gm-chain/package`.
+
+**Not changed:** research data, grading logic, records, hashes.
+
+**Tests.** 11 packaging regression tests; a mutant that re-packages `prior/` is
+caught by 7 of them. NFL suite: 1150 passed. Real continuation and replay runs
+are reported in the PR #223 comments.
+
+Alligator

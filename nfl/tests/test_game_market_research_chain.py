@@ -11,7 +11,11 @@ from pathlib import Path
 import yaml
 
 from nfl.prospective.game_market_research_chain import (
+    ARTIFACT_LAYOUT,
     MANIFEST_NAME,
+    PACKAGE_DIR,
+    verify_chain_dir,
+    verify_sealed_package,
     ChainError,
     GitHubArtifacts,
     artifact_name,
@@ -44,8 +48,10 @@ class FakeAPI:
         self.artifacts, self.dirs, self.history = [], {}, []
 
     def publish(self, work, *, aid, run_id, created, branch=BRANCH, expired=False, conclusion="success"):
+        # Mirrors the workflow: only the sealed package is uploaded (PACKAGE_DIR).
+        src = Path(work) / PACKAGE_DIR if (Path(work) / PACKAGE_DIR).exists() else Path(work)
         dest = Path(tempfile.mkdtemp()) / "src"
-        shutil.copytree(work, dest)
+        shutil.copytree(src, dest)
         art = {"id": aid, "name": artifact_name(self.epoch), "expired": expired, "created_at": created,
                "workflow_run": {"id": run_id, "head_branch": branch}}
         self.artifacts.append(art)
@@ -499,6 +505,143 @@ class SealedRunHistoryTests(unittest.TestCase):
         with self.assertRaises(ChainError) as cm:
             GitHubArtifacts(repo="o/r", token="t", session=Boom()).sealed_runs("b", "e", "2026-01-01")
         self.assertEqual(cm.exception.code, "HISTORY_UNVERIFIABLE")
+
+
+class PackagingTests(unittest.TestCase):
+    """Sealed links are only manifest + ledger/ (no recursive prior/ copies).
+
+    Before this repair, links 1-7 uploaded the whole work dir, including
+    prior/ (every earlier link, each with its own prior/). The artifact
+    doubled every run: real chain prior/ grew 9.5 -> 20 -> 40 -> 77 MB.
+    """
+
+    setUp = ChainTests.setUp
+    tearDown = ChainTests.tearDown
+    work = ChainTests.work
+    load = ChainTests.load
+    run_and_seal = ChainTests.run_and_seal
+    bootstrap = ChainTests.bootstrap
+
+    def _legacy_publish(self, run_id, created, bootstrap=""):
+        """Publish a link the way links 1-7 were published: whole work dir, prior/
+        included, manifest without the layout declaration."""
+        w, state = self.load(run_id=run_id, bootstrap=bootstrap)
+        seal_chain(state=state, anchor=self.anchor, work=w, run={"run_id": run_id})
+        legacy = Path(tempfile.mkdtemp()) / "legacy"
+        shutil.copytree(w, legacy, ignore=shutil.ignore_patterns(PACKAGE_DIR))
+        m = json.loads((w / PACKAGE_DIR / MANIFEST_NAME).read_text())
+        m.pop("artifact_layout")
+        body = {k: v for k, v in m.items() if k != "manifest_sha256"}
+        m["manifest_sha256"] = canonical_sha256(body)
+        (legacy / MANIFEST_NAME).write_text(json.dumps(m))
+        self.api.publish(legacy, aid=int(run_id), run_id=run_id, created=created)
+        return m
+
+    def test_sealed_package_contains_only_manifest_and_ledger(self):
+        self.bootstrap()
+        w, state = self.load(run_id="101")
+        m = seal_chain(state=state, anchor=self.anchor, work=w, run={"run_id": "101"})
+        pkg = w / PACKAGE_DIR
+        self.assertEqual(sorted(p.name for p in pkg.iterdir()), sorted([MANIFEST_NAME, "ledger"]))
+        self.assertEqual(m["artifact_layout"], ARTIFACT_LAYOUT)
+        self.assertTrue((w / "prior").exists())          # prior/ exists in work ...
+        self.assertFalse((pkg / "prior").exists())       # ... but never in the package
+        files = [p for p in pkg.rglob("*") if p.is_file()]
+        self.assertEqual(len(files), m["file_count"] + 1)  # ledger files + manifest, nothing else
+
+    def test_artifact_grows_linearly_not_exponentially(self):
+        self.bootstrap()
+        sizes = []
+        for i in range(5):
+            rid = str(101 + i)
+            rec = _rec(sealed=f"2026-09-20T16:{21 + 5 * i}:00Z", frozen=f"2026-09-20T16:{22 + 5 * i}:00Z",
+                       captured=f"2026-09-20T16:{20 + 5 * i}:00Z")
+            self.run_and_seal(run_id=rid, created=f"2026-10-12T22:0{i}:00Z", add=rec)
+            pub = self.api.dirs[int(rid)]
+            sizes.append(sum(p.stat().st_size for p in pub.rglob("*") if p.is_file()))
+            self.assertFalse(any(p.name == "prior" for p in pub.rglob("*")))
+        steps = [b - a for a, b in zip(sizes, sizes[1:])]
+        self.assertLess(max(steps), 2 * min(steps) + 4096)   # ~constant increment per new record
+        self.assertLess(sizes[-1], 2 * sizes[1])             # nowhere near doubling per run
+
+    def test_package_with_nested_prior_copy_is_rejected(self):
+        self.bootstrap()
+        w, state = self.load(run_id="101")
+        seal_chain(state=state, anchor=self.anchor, work=w, run={"run_id": "101"})
+        pkg = w / PACKAGE_DIR
+        shutil.copytree(w / "prior", pkg / "prior")
+        with self.assertRaises(ChainError) as cm:
+            verify_sealed_package(pkg, self.anchor)
+        self.assertEqual(cm.exception.code, "ARTIFACT_LAYOUT")
+
+    def test_package_with_unexpected_top_level_file_is_rejected(self):
+        self.bootstrap()
+        w, state = self.load(run_id="101")
+        seal_chain(state=state, anchor=self.anchor, work=w, run={"run_id": "101"})
+        (w / PACKAGE_DIR / "notes.txt").write_text("x")
+        with self.assertRaises(ChainError) as cm:
+            verify_chain_dir(w / PACKAGE_DIR, self.anchor)
+        self.assertEqual(cm.exception.code, "ARTIFACT_LAYOUT")
+
+    def test_package_with_unlisted_ledger_file_is_rejected(self):
+        self.bootstrap()
+        w, state = self.load(run_id="101")
+        seal_chain(state=state, anchor=self.anchor, work=w, run={"run_id": "101"})
+        (w / PACKAGE_DIR / "ledger" / "stray.json").write_text("{}")
+        with self.assertRaises(ChainError) as cm:
+            verify_sealed_package(w / PACKAGE_DIR, self.anchor)
+        self.assertIn(cm.exception.code, {"UNLISTED_FILE", "TAMPERED"})
+
+    def test_prior_dir_hidden_inside_ledger_is_rejected(self):
+        self.bootstrap()
+        w, state = self.load(run_id="101")
+        seal_chain(state=state, anchor=self.anchor, work=w, run={"run_id": "101"})
+        (w / PACKAGE_DIR / "ledger" / "prior").mkdir()
+        with self.assertRaises(ChainError) as cm:
+            verify_sealed_package(w / PACKAGE_DIR, self.anchor)
+        self.assertEqual(cm.exception.code, "ARTIFACT_LAYOUT")
+
+    def test_seal_refuses_preexisting_package_dir(self):
+        self.bootstrap()
+        w, state = self.load(run_id="101")
+        (w / PACKAGE_DIR).mkdir()
+        with self.assertRaises(ChainError) as cm:
+            seal_chain(state=state, anchor=self.anchor, work=w, run={"run_id": "101"})
+        self.assertEqual(cm.exception.code, "ARTIFACT_LAYOUT")
+
+    def test_loaded_link_declaring_layout_but_carrying_prior_fails_closed(self):
+        self.bootstrap()
+        self.run_and_seal(run_id="101", created="2026-10-12T22:00:00Z")
+        shutil.copytree(self.api.dirs[100], self.api.dirs[101] / "prior" / "artifact_100")
+        with self.assertRaises(ChainError) as cm:
+            self.load(run_id="102")
+        self.assertEqual(cm.exception.code, "ARTIFACT_LAYOUT")
+
+    def test_legacy_links_without_declaration_still_load_and_continue(self):
+        # Real links 1-7 are immutable and carry prior/; they must stay loadable.
+        self._legacy_publish("100", "2026-10-12T21:00:00Z", bootstrap="epoch-test")
+        m_legacy = self._legacy_publish("101", "2026-10-12T22:00:00Z")
+        self.assertTrue((self.api.dirs[101] / "prior").exists())   # legacy shape, as real links 1-7
+        self.assertIsNone(m_legacy.get("artifact_layout"))
+        m = self.run_and_seal(run_id="102", created="2026-10-12T23:00:00Z")
+        self.assertEqual(m["sequence"], 3)
+        self.assertEqual(m["previous_manifest_sha256"], m_legacy["manifest_sha256"])
+        self.assertEqual(m["artifact_layout"], ARTIFACT_LAYOUT)
+        self.assertFalse((self.api.dirs[102] / "prior").exists())
+
+    def test_layout_declaration_can_never_be_dropped_later(self):
+        self.bootstrap()                                  # packaged link (declares layout)
+        self._legacy_publish("101", "2026-10-12T22:00:00Z")  # later link without declaration
+        with self.assertRaises(ChainError) as cm:
+            self.load(run_id="102")
+        self.assertEqual(cm.exception.code, "ARTIFACT_LAYOUT")
+
+    def test_workflow_uploads_only_the_package(self):
+        wf = yaml.safe_load(WORKFLOW.read_text())
+        steps = wf["jobs"]["shadow"]["steps"]
+        up = [s for s in steps if s.get("name") == upload_step_name("fc-nfl-004-epoch-1")]
+        self.assertEqual(len(up), 1)
+        self.assertEqual(up[0]["with"]["path"], f"/tmp/nfl-gm-chain/{PACKAGE_DIR}")
 
 
 if __name__ == "__main__":
