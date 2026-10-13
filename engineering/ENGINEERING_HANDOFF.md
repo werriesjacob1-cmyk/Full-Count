@@ -6470,3 +6470,66 @@ write-once, with a fixed rule that picks, for each game, the last pregame run.
 **Waiting on:** Codex review and Jacob's authorization.
 
 Alligator
+
+## 2026-10-13 -- FC-ACC-001-S1 capture integrity repair (v2, PR #226; research only, inactive)
+
+This responds to Codex HOLD 6154204021 on `d316593c`. All five attacks were
+reproduced first, with 8 of 8 sub-cases VULNERABLE, using
+`research/fc_acc_001/s1/attacks/pre_repair_attacks.py` against a `d316593c`
+worktree. After the repair, `post_repair_attacks.py` rejects all 19 variants.
+Both results are in `research/fc_acc_001/out/s1_codex_attacks_before_after.json`.
+
+**What changed** (details in `research/fc_acc_001/s1/S1_CAPTURE.md`):
+- **Event lineage.** Events are re-derived from the archived root, tab paths
+  are bound to each eventId, and each market's eventId must match. Event and
+  capture statuses are recomputed, and the budget is checked before every
+  request.
+- **Exact join.** The join is on game, player, market, side and line.
+  - A name shared by two MLB ids is `AMBIGUOUS_PLAYER_NAME`.
+  - Batters must appear in a raw confirmed lineup and pitchers must be the raw
+    probable starter, with the team matching.
+  - Selection ids must be consistent, and `validate_offer` is now actually
+    called.
+- **Two-sided markets.** Only a coherent single-player, single-line OVER/UNDER
+  pair is accepted.
+- **Availability.** Non-OPEN markets and non-ACTIVE runners are rejected. When
+  those fields are absent, the offer is marked unverified (a blocker), never
+  treated as open.
+- **Point in time.**
+  - Candidates come from the sealed production board (`verify_board_seal`).
+  - The schedule comes from archived raw statsapi.
+  - Workload is bound to its source observation time and is re-derived inside
+    feature snapshots.
+  - Snapshots captured after the decision are rejected.
+- **Equal volume.** N comes from board `top_pick` decisions before offer
+  filtering. Units are `COMPARABLE`, `NON_COMPARABLE` or `ZERO_CHAMPION`, and
+  `MATCHED` appears only in a COMPARABLE unit. A price change gives
+  `POLICY_PRICE_CHANGED_UNREVALIDATED`.
+- **Ledger.**
+  - A hash-chained, append-only chain with an O_EXCL index and an `fcntl` lock;
+    a race test shows exactly one sealer wins.
+  - A deleted index gives `MISSING_LINK`; `restore_index` rewrites it
+    byte-identically.
+  - PROSPECTIVE seals must extend the externally anchored head.
+- **`anchor.py`.** Defines the external anchor statement and its verification,
+  but **does not publish**.
+- **Archive.** It refuses a root inside a git work tree and has a size bound.
+- **Certification.** `certification.certified_prospective` is always false.
+
+**Real-data finding (no fabrication).** `board_freeze_2026-09-22` re-verifies,
+and its 965 in-scope single-player records parse exactly. The 14
+`nrfi_combined` and 6 `combined_strikeouts` records are game-level markets, so
+they are out of S1 scope and make any unit containing such a champion pick
+NON_COMPARABLE.
+
+**Tests.** `test_fc_acc_001_s1_capture.py`: 30 passed. Also passing:
+`test_fc_acc_001_research.py` (19), `test_board_freeze.py` and
+`test_mlb_fullboard_snapshot_wiring.py`.
+
+**Not done:**
+- no production or workflow change;
+- no live capture, export implementation or anchor publication;
+- no merge or deployment;
+- no historical record change.
+
+Alligator

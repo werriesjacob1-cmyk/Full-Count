@@ -1,23 +1,39 @@
 {
- "real_candidates_no_capture": {
+ "real_board_without_sources": {
   "board": "board_freeze_2026-10-13.json",
   "candidates": 70,
-  "reason": "sportsbook root discovery failed: no authenticated offer universe",
+  "reason": "schedule source not verifiable: source record not OK: FAILED: RuntimeError: no live fetch in dry run",
   "result": "FAIL_CLOSED"
  },
  "synthetic": {
   "accounting": {
-   "candidate_price_differs": 1,
    "candidates": 10,
-   "champion_unauthenticated": [],
-   "feature_snapshots": 8,
-   "feature_snapshots_missing_required": 2,
+   "champion_not_selected": {},
+   "champion_opportunities": 3,
+   "champion_selected": 3,
+   "feature_snapshots_admitted": {
+    "c1": "COMPLETE",
+    "c2": "COMPLETE",
+    "c3": "MISSING_REQUIRED",
+    "c4": "COMPLETE",
+    "c5": "COMPLETE",
+    "c6": "COMPLETE",
+    "c7": "COMPLETE"
+   },
+   "feature_snapshots_rejected": {},
    "offer_status": {
     "AUTHENTICATED": 8,
     "MISSING_QUOTE": 2
+   },
+   "parser_rejections": {
+    "IN_PLAY": 1
    }
   },
-  "archive_bytes": 1620,
+  "anchor_statement_unpublished": "FC-ACC-001-S1-ANCHOR v1 kind=DRY_RUN seq=1 entry=39d31135647b27f8c4d41dfc8036a756fc44cd4d010e94459e33c5c2ff54f247 unit=2031-05-01_NIGHT manifest=7f777545d6f3c2e5315c5352408b25847ff4847099d0ee7ae2aa75513d025c7d",
+  "anchor_status_without_external_anchor": {
+   "2031-05-01_NIGHT": "UNANCHORED"
+  },
+  "archive_bytes": 7216,
   "arms": {
    "BLEND_50_50": {
     "n_selected": 3,
@@ -54,12 +70,23 @@
    }
   },
   "capture_status": "COMPLETE",
+  "certification": {
+   "blockers": [
+    "CANDIDATE_POOL_LIMITED_TO_FREEZE_CHOSEN_LINES",
+    "DRY_RUN_MODE",
+    "MODEL_FEATURE_VALUES_UNVERIFIED_PRODUCTION",
+    "REMOTE_ANCHOR_NOT_VERIFIED"
+   ],
+   "certified_prospective": false
+  },
   "label": "DRY_RUN_NONCONFIRMATORY_SYNTHETIC",
-  "manifest_bytes": 23562,
-  "manifest_sha256": "d0efe95c5bccd16c4339e66d252db0fbe48fd2d0f346fc035b440ff1dc35b5a9",
+  "manifest_bytes": 23870,
+  "manifest_sha256": "7f777545d6f3c2e5315c5352408b25847ff4847099d0ee7ae2aa75513d025c7d",
+  "non_comparable_reasons": [],
   "offers_parsed": 10,
   "reseal": "IDEMPOTENT_NOOP",
   "seal": "SEALED",
+  "unit_status": "COMPARABLE",
   "workload_example": {
    "days_rest": 5,
    "documented_pitch_limit": "UNKNOWN_NO_VERIFIED_SOURCE",
@@ -81,7 +108,9 @@
      "pitches": 98
     }
    ],
+   "player_id": "9",
    "source": "mlb_statsapi_gamelog",
+   "source_observed_at": "2031-05-01T21:10:02.000000Z",
    "source_raw_sha256": "0fef64ea7fd619350a06f12d7998866f999dedd4df7c38497f8a7565cc83d16d",
    "starts_available": 3,
    "status": "COMPLETE"

@@ -1,159 +1,217 @@
-# FC-ACC-001-S1: research-only evidence capture
+# FC-ACC-001-S1: research-only evidence capture (v2, integrity repair)
 
-**Status: implemented and tested. Not active.** No schedule, workflow or
-production path calls this package. Any live capture, prospective ledger
-location, or forward experiment needs Jacob's explicit authorization and Codex
-certification first. The only output so far is a synthetic dry run,
-`research/fc_acc_001/out/s1_dry_run_NONCONFIRMATORY.json`. It is **not forward
-evidence.**
+**Status: implemented and tested. Not active, and NOT certified.**
+
+- No schedule, workflow or production path calls this package.
+- Nothing has been captured live.
+- No external anchor has been published.
+
+Every manifest carries `certification.certified_prospective: false` with its
+blockers listed. The only outputs are synthetic and non-confirmatory:
+- `out/s1_dry_run_NONCONFIRMATORY.json`
+- `out/s1_codex_attacks_before_after.json`
+
+## Revision history
+
+- **v1, `d316593c`, defective.** Codex's audit (PR #226 comment 6154204021)
+  reproduced five defects, all of which also reproduce here: 8 of 8
+  sub-attacks were VULNERABLE.
+  1. Event identity in the capture record was not re-derived from the archived
+     root.
+  2. The join ignored the exact line and player identity.
+  3. Two-sided runners from different players were combined.
+  4. Feature and source times were not bound to the decision, and the champion
+     N was set after offer filtering.
+  5. The local seal could be contradicted after deleting its file.
+
+  Those results are preserved in `out/s1_codex_attacks_before_after.json`.
+- **v2 (this version).** All 19 attack variants are rejected. See "Adversarial
+  results" below.
 
 ## Pipeline
 
 ```
-FanDuel sweep ─► raw_archive (gzip, keyed by sha256 of the original bytes)
-      │                    ▲
-      ▼                    │ re-read and re-hashed
-capture record ──► parse_offers ──► offers (each bound to raw_response_sha256)
-                                         │
-MLB game log (archived raw) ─► workload ─┤
-generate_picks candidate ───► features ──┤
-games + decision_at ─────────────────────┴─► manifest.build ─► ledger.seal
+sealed production board_freeze ──► verify_board_seal ──► archive object (by sha)
+raw statsapi schedule (lineups, probable SP) ──► schedule.load (observed ≤ cutoff)
+raw FanDuel root ─► discover_events ─► exact tab paths ─► archived pages ─► parse_offers
+raw statsapi game log ─► workload (observed ≤ cutoff, prior starts only)
+                                     │
+                      manifest.build (identity join, equal volume, comparability)
+                                     │
+                ledger.seal (hash chain, lock, O_EXCL, anchored head) ─► anchor statement
 ```
 
-| Module | Purpose |
+| Module | Integrity rule |
 |---|---|
-| `raw_archive.py` | Write-once, content-addressed store. Re-hashes on every read, so a corrupt object raises an error. Identical bytes are stored once. |
-| `fanduel.py` | The sweep:<br>• records per-request start and completion timestamps, host, raw sha and byte count;<br>• works to a time budget;<br>• gives each event a status;<br>• parses offers **only from the archived bytes**, skipping in-play markets. |
-| `workload.py` | Pitcher starts from the archived statsapi game log. Uses only starts strictly before the game date; relief appearances are ignored. |
-| `features.py` | A minimal pregame snapshot per candidate. A missing value is `UNKNOWN`, never imputed. |
-| `manifest.py` | Joins candidates to offers on the full identity:<br>• game, player, stat, side and needs;<br>• games that started before the decision are excluded;<br>• an event must map uniquely to a game by matchup and start time within ±90 minutes.<br><br>It records separate eligibility for the existing and alternative policies and builds the three matched arms. Inputs are embedded, so the manifest can be re-derived. |
-| `ledger.py` | Write-once seal per (date, window).<br>• PROSPECTIVE seals require `decision_at ≤ sealed_at < first pitch`.<br>• A dry-run manifest can never enter a PROSPECTIVE ledger.<br>• Replaying identical content returns `IDEMPOTENT_NOOP`; different content raises. |
+| `raw_archive.py` | Content-addressed and write-once via `os.link`, with re-hash on every read. Refuses a root inside a git work tree. Has an optional `max_bytes` bound. |
+| `sources.py` | One archived observation per request: exact request string, host, sha256 of the delivered body (`requests.Response.content`, the decoded body rather than the wire bytes), and start and completion time. `verify` checks source, request, sha, size, chronology and `completed_at ≤ cutoff`. |
+| `fanduel.py` | Lineage is **re-derived**:<br>• events from the archived root;<br>• each event's five tab paths must equal `event-page?eventId=<id>&tab=<tab>`;<br>• each market's `eventId` must equal the request's event (`MARKET_EVENT_ID_ABSENT` or `_MISMATCH` otherwise).<br><br>The budget is checked before **every** request, and `live_fetch_bytes` takes a deadline. Event and capture statuses are recomputed during verification. |
+| `fanduel.parse_offers` | **One-sided:** duplicate runner names give `AMBIGUOUS_RUNNER_NAME`; a missing selection id or malformed odds is rejected.<br>**Two-sided:** exactly two runners, one player, one line, one OVER and one UNDER; anything else is `INCOHERENT_TWO_SIDED_MARKET`. No-vig is derived only from a coherent pair.<br>**Availability:** `marketStatus` must be OPEN and `runnerStatus` ACTIVE when present, and `inPlay: true` is rejected. An **absent** field gives `availability_verified: false` plus the `SPORTSBOOK_AVAILABILITY_SCHEMA_UNMEASURED` blocker, never "open". |
+| `schedule.py` | Games, start time, `abstractGameState`, confirmed lineups and probable starters, all from archived raw statsapi only. An empty lineup array means **not confirmed**. |
+| `workload.py` | The game-log source must match the exact request for that pitcher and season and be observed by the decision cutoff. Only starts before the game date are used. The output carries its source record. |
+| `features.py` | `captured_at` is required and timezone-aware. `check()` rejects:<br>• a mismatched identity;<br>• `captured_at` after the decision;<br>• a workload observed after the decision;<br>• a workload that does not **re-derive** from its archived source.<br><br>Model values are labelled `UNVERIFIED_PRODUCTION_VALUES`. |
+| `manifest.py` | See "Join" and "Equal volume" below. It is re-derivable: `verify_manifest` rebuilds from the archived board, schedule record, capture and snapshots. |
+| `ledger.py` | Hash-chained `chain.jsonl`, an O_EXCL unit index and an `fcntl` lock. See "Durable seal". |
+| `anchor.py` | Defines the external anchor statement and its verification. It never publishes. |
 
-### Architecture reused
+## Join (candidate ⇄ offer), all exact
 
-From production `odds_fanduel.py`:
-- the `HOSTS`, `UA` and `AK` constants;
-- `MARKET_MAP` and `TWO_SIDED_MARKETS`;
-- `_parse_two_sided` and `_parse_outs_runner`;
-- `normalize_name`.
+The candidate must come from the sealed board (`verify_board_seal`), with
+`board_generated_at` and `sealed_at` at or before the decision.
 
-From `prop_probability.py`:
-- `implied_probability`;
-- `devig_two_sided`.
+| Check | Fail-closed code |
+|---|---|
+| Unit game pregame in raw schedule and after decision | `GAME_STARTED_BEFORE_DECISION`, `GAME_NOT_PREGAME_IN_RAW` |
+| Board start time equals the raw schedule start time | `BOARD_MISSING_GAME`, `BOARD_SCHEDULE_MISMATCH` |
+| Exactly one FanDuel event (matchup ± 90 min), fully captured | `MISSING_EVENT`, `AMBIGUOUS_EVENT`, `INCOMPLETE_CAPTURE` |
+| Single-player market S1 can price | `NO_SINGLE_PLAYER_OFFER`, `MARKET_NOT_IN_S1_SCOPE` |
+| Normalized name maps to one MLB player id in the unit | `AMBIGUOUS_PLAYER_NAME` |
+| Batter in a confirmed raw lineup on the side matching `team` | `LINEUP_NOT_CONFIRMED_IN_RAW`, `PLAYER_NOT_IN_RAW_LINEUP`, `TEAM_MISMATCH` |
+| Pitcher is the raw probable starter, with matching `team` | `STARTER_NOT_PROBABLE_IN_RAW`, `TEAM_MISMATCH` |
+| Exact (game, player, market, side, **line**); needs agree | `MISSING_QUOTE`, `LINE_NEEDS_INCONSISTENT` |
+| One price, selection and market; selection id never reused for another identity | `CONFLICTING_OFFERS` |
+| Observed at or before the decision, at most 45 minutes old | `OBSERVED_AFTER_DECISION`, `STALE_QUOTE` |
+| `offer_provenance.validate_offer` (now actually called) | `OFFER_PROVENANCE_INVALID` |
 
-From PR #220 (v3 `capture.py`), the sweep structure is mirrored but not
-imported:
-- root discovery;
-- the five tabs;
-- per-request timestamps;
-- the time budget;
-- the status vocabulary.
+FanDuel runners carry no MLB player id. Player identity is therefore the
+raw-lineup/raw-starter membership of the board's MLB id, plus a name that is
+unique in the unit. This is stated, not hidden.
 
-PR #220 is **unaltered** and is not treated as production-ready.
+## Equal volume and comparability
 
-**Changed relative to both.** Production `_get()` returns `r.json()` and #220
-stores parsed JSON, so the original bytes, and with them any hash binding, are
-lost. Here the raw response bytes are archived **before** parsing, and every
-offer is re-derived from those archived bytes.
+- **N** is the number of board `top_pick` decisions in the unit's pregame
+  games, de-duplicated per (player, stat, side). It is computed **before** any
+  offer filtering.
+- **Champion opportunity status** is one of:
+  - `SELECTED`;
+  - any offer code;
+  - `POLICY_PRICE_CHANGED_UNREVALIDATED`, when the captured price differs from
+    the price the policy decided at.
 
-## Comparable selections
+  The old label is never carried over to a new price.
+- **Unit status:**
+  - `ZERO_CHAMPION` when N = 0;
+  - `COMPARABLE` only when the capture is COMPLETE, no game coverage issue
+    exists, and the champion and both alternative arms each have N;
+  - otherwise `NON_COMPARABLE`, with the reasons listed.
+- **Arm status:** `ZERO_CHAMPION`, `SHORTFALL`, `NON_COMPARABLE`, or `MATCHED`.
+  `MATCHED` is used only inside a COMPARABLE unit.
+- **Labelling:** `publication_eligible` is false on every arm. Alternative arms
+  are labelled `policy: ALTERNATIVE`.
 
-All arms draw from one shared offer manifest. N comes from the champion arm.
+## Durable seal (local) and anchoring (defined, not deployed)
 
-| Arm | Population | Rule |
-|---|---|---|
-| `CHAMPION_EXISTING_POLICY` | `existing_policy_eligible` (the selector marked it `top_pick`) **and** it has an authenticated offer | The existing policy, deduplicated per (player, stat, side). Defines N. |
-| `MARKET_ONLY` | `alternative_policy_eligible`: an authenticated offer, QC kept, lineup not assumed, reliability A, B or C, and p present | Top N by raw break-even. |
-| `BLEND_50_50` | Same as `MARKET_ONLY` | Top N by 0.5·p + 0.5·break-even. The weight is fixed. |
-| Future factor challengers | Same as `MARKET_ONLY` | Must be preregistered, then added as an arm with its own fixed rule. |
+### Local ledger
 
-**Rules:**
-- Ties break on `candidate_id`.
-- Arm status is `ZERO_CHAMPION`, `SHORTFALL` or `MATCHED`, and is recorded per slate.
-- A top pick without an authenticated offer is listed in `champion_unauthenticated`. It is never priced from a later quote.
-- If the model candidate's odds differ from the captured offer, `candidate_price_differs` is flagged and the **captured** price is used.
+- **Chain.** Every entry carries:
+  - `seq` and `prev_entry_sha256`;
+  - the manifest hashes;
+  - `sealed_at` and `first_pitch_utc_min`;
+  - `evidence_status: LOCAL_SEAL_UNANCHORED`.
 
-## Capturable versus unavailable evidence
+  Manifests are archive objects referenced by hash. Nothing nests.
+- **One manifest per unit.** Identical replay returns `IDEMPOTENT_NOOP`;
+  different content raises.
+- **Deleted index file.** Gives `MISSING_LINK`, which blocks all sealing.
+  `restore_index` rewrites the file byte-identically from the intact chain
+  entry and never re-seals.
+- **Orphan index or truncated chain.** Blocks sealing, and is not locally
+  recoverable.
+- **Concurrency.** An `fcntl` lock covers check-and-append, and the O_EXCL index
+  create is a second barrier. In a two-process race test, exactly one seals.
+- **PROSPECTIVE seals require `anchored_head`.** This is the chain head last
+  published externally. If the local head differs (a deleted, forked or
+  unanchored local ledger), sealing is refused.
 
-| Field | Capturable now | Source / status |
-|---|---|---|
-| Sportsbook identity | Yes | `fanduel`, with host and request path |
-| Raw response and sha256 | Yes | Gzip archive, verified on every read |
-| Observation started / completed | Yes | Per request, UTC |
-| Event identity | Yes | FanDuel eventId and name, plus a unique mapping to game_pk (otherwise `UNMAPPED_EVENT` or `AMBIGUOUS_EVENT`) |
-| Player identity | Yes | Runner name, normalized. No FanDuel player id is used. |
-| Market, side, exact line | Yes | Hits, HRR and SB are one-sided "over"; K and outs are two-sided |
-| American odds and raw break-even | Yes | |
-| No-vig fair price | Two-sided markets only | Null for one-sided markets; never imputed |
-| Projected PA, lineup_assumed | Yes | From the model candidate at decision time |
-| Batting order (slot) | Scaled only | `lineup_slot` signal from 0 to 100; the raw slot is not retained in production |
-| Confirmed-lineup raw source | **No** | No raw lineup response is archived or bound yet |
-| Pitcher recent outs, pitches, rest | Yes | Archived statsapi game log, prior starts only |
-| Documented workload restriction | **No** | `UNKNOWN_NO_VERIFIED_SOURCE`; no reliable source exists |
-| Opponent K and contact indicators | Scaled only | `opp_team_k_pct`, `platoon_xwoba` and `platoon_barrel_pct`, 0 to 100; raw values are not retained |
-| Model and policy versions | Yes | Passed into the manifest |
-| Historical offers (before today) | **Never** | No backfill; PROSPECTIVE seals after first pitch are refused |
+### External anchor (`anchor.py`)
 
-## Fail-closed conditions
+- **What gets anchored.** After each seal, a one-line statement:
+  `FC-ACC-001-S1-ANCHOR v1 kind=… seq=… entry=<sha> unit=… manifest=<sha>`.
+  A head covers all earlier entries.
+- **Proposed log (not provisioned).** A comment on a dedicated GitHub issue,
+  whose `created_at` is server-assigned and whose edits are visible in its
+  history.
+- **Verification.** The verifier fetches the anchors itself, then calls
+  `verify_anchors`. It returns `ANCHORED_PREGAME` only when an anchor covering
+  the entry was created after `sealed_at` and before that unit's first pitch;
+  otherwise `ANCHORED_LATE` or `UNANCHORED`. An anchor naming an entry that the
+  local chain lacks raises `CONFLICT`.
+- **Status.** **No anchor has been published or verified.** No S1 result may
+  be called "prospective immutable".
 
-**Whole manifest:**
-- the capture record does not verify against the archive;
-- root discovery failed;
-- capture completed after `decision_at`;
-- no game starts after `decision_at`;
-- a timestamp is naive or malformed.
+## Adversarial results (`out/s1_codex_attacks_before_after.json`)
 
-**Per candidate:**
-- `GAME_STARTED_BEFORE_DECISION`
-- `GAME_NOT_IN_UNIT`
-- `NO_SINGLE_PLAYER_OFFER`
-- `MISSING_EVENT`
-- `INCOMPLETE_CAPTURE`
-- `MISSING_QUOTE`
-- `CONFLICTING_OFFERS`
-- `OBSERVED_AFTER_DECISION`
-- `STALE_QUOTE` (older than 45 minutes)
+**Before:** all 8 sub-attacks VULNERABLE at `d316593c`.
 
-All of these are counted in `accounting`.
+**After:** all 19 variants REJECTED.
 
-## Tests
+| Attack | After repair |
+|---|---|
+| Forged event id with recomputed self-hash | `CaptureError`: identities differ from the archived root |
+| Tab request rebound to another event | `CaptureError`: tab requests not bound to eventId |
+| Market with a foreign `eventId` inside a page | `MARKET_EVENT_ID_MISMATCH` |
+| Wrong line (1.5 vs 0.5) | `MISSING_QUOTE` |
+| Same name, two MLB ids | `AMBIGUOUS_PLAYER_NAME` (both) |
+| Wrong player id / wrong team | `PLAYER_NOT_IN_RAW_LINEUP` / `TEAM_MISMATCH` |
+| "Ace Arm Over" + "Other Arm Under" | `INCOHERENT_TWO_SIDED_MARKET`; c5 `MISSING_QUOTE` |
+| Two-sided split lines / suspended market | `INCOHERENT_TWO_SIDED_MARKET` / `MARKET_NOT_OPEN:SUSPENDED` |
+| Feature snapshot after first pitch | `FEATURE_AFTER_DECISION` |
+| Workload observed after the decision / edited workload | `WorkloadError` / `WORKLOAD_NOT_REDERIVABLE` |
+| Schedule observed after the decision | `ManifestError` |
+| 4 top picks, 1 unquoted | N = 4: champion `SHORTFALL`, alternatives `NON_COMPARABLE` |
+| Partial sweep | unit `NON_COMPARABLE` (`CAPTURE_INCOMPLETE`) |
+| Captured price differs from the policy price | `POLICY_PRICE_CHANGED_UNREVALIDATED` |
+| Delete the index file, then reseal different content | `MISSING_LINK` |
+| Delete the whole ledger, then a PROSPECTIVE reseal | refused: local head GENESIS ≠ anchored head |
 
-`test_fc_acc_001_s1_capture.py` holds 24 tests and uses synthetic fixtures
-only, with no network. It covers:
-- offer binding and tamper detection;
-- source identity, including conflicts, ambiguous events, partial capture and the wrong sportsbook;
-- timestamps;
-- candidate/offer mismatches;
-- missing features;
-- prior-start-only workload;
-- eligibility populations;
-- matched, shortfall and zero-champion slates;
-- determinism and re-derivation;
-- idempotent replay and immutability;
-- no backfill;
-- bounded growth.
+## Real-data checks (non-live, no fabrication)
 
-## Blockers to safe activation
+- **`board_freeze_2026-09-22.json`.** Its seal re-verifies, and all 965
+  in-scope single-player records yield exact line, needs and MLB id.
+- **Out-of-scope records.** The 14 `nrfi_combined` and 6
+  `combined_strikeouts` records are game-level markets (the NRFI "player id"
+  is synthetic). They are recorded as `MARKET_NOT_IN_S1_SCOPE`, or
+  `NO_SINGLE_PLAYER_OFFER` for combos. A champion pick
+  in those markets counts toward N and makes the unit `NON_COMPARABLE`.
+- **Latest board, `2026-10-13`.** Its seal verifies; with no raw schedule the
+  build fails closed.
 
-1. **Hook into the scored candidate pool.**
-   - Today `generate_picks` keeps only scaled signals and writes no per-slate candidate pool with features.
-   - The capture needs a read-only export of the full scored pool, with `projected_pa`, signals, p and selector status, at decision time.
-   - That needs a production touch, which is not authorized.
-2. **Schedule binding.** `games[]` (game_pk, matchup, first pitch) should come from an archived raw statsapi schedule response, not a pre-parsed list.
-3. **Lineup raw source.** Confirmed lineup and batting order should be bound to an archived raw response.
-4. **Where it runs and where it is stored.** The scheduler, the ledger location and retention need a decision. That location is append-only storage outside `output/`.
-5. **Pre-registration anchor.** A PROSPECTIVE start date and the stopping rule must be committed before the first seal.
-6. **One measured live capture.** This settles the storage and time estimates below, and needs authorization.
-7. **Codex certification** and **Jacob's activation**.
+## Capturable versus unavailable
 
-## Overhead and storage (estimate, not measured)
+| Field | Status |
+|---|---|
+| Sportsbook, event, market, selection, line, odds, raw sha, observation times | Captured; lineage re-derived |
+| Market and runner availability | Enforced when the fields are present. **Absence is unverified**, because the live MLB prop schema is unmeasured by S1. |
+| Schedule, game state, confirmed lineup, probable starter | Captured from raw statsapi (code ready; not live-tested) |
+| Pitcher prior-start outs, pitches, rest | Captured from raw game log |
+| Documented pitch limit | `UNKNOWN_NO_VERIFIED_SOURCE` |
+| Model probability and policy status | Bound to the sealed board |
+| Model feature values (projected PA, scaled signals) | `UNVERIFIED_PRODUCTION_VALUES` |
+| Non-chosen thresholds, full candidate pool | Not available (`CANDIDATE_POOL_LIMITED_TO_FREEZE_CHOSEN_LINES`); see `EXPORT_DESIGN.md` |
+| Historical offers | Never |
 
-- **Requests.** One root request plus 5 tabs per event. A 15-game slate is about 76 requests, which is about 1 to 3 minutes against the 900 s budget.
-- **Synthetic sizes.** Archive 1.6 KB; manifest 23.6 KB for 10 candidates.
-- **Real raw payloads (unmeasured assumption).** FanDuel event-page JSON is commonly 50 to 400 KB, and gzip shrinks it about 8 to 12 times. That gives roughly 1 to 5 MB per sweep.
-- **Season total.** At about 2 windows a day over about 180 days, that is about 0.4 to 1.8 GB a season. Content addressing removes identical repeats.
-- **Manifest.** Grows linearly with the candidate pool: about 2.3 KB per candidate, or about 0.2 MB for a 70-candidate slate.
+## Remaining blockers to activation
 
-All of these numbers must be replaced by one measured capture before activation.
+1. A separately authorized, isolated **live diagnostic capture**: shape,
+   status fields, latency and size only. It must not score picks.
+2. **The full-candidate export** (`EXPORT_DESIGN.md`), so the pool is not
+   limited to freeze-chosen lines.
+3. Fixing the **daily freeze overwrite**, or using per-run exports: the
+   partial-slate bias reported in `EXPORT_DESIGN.md`.
+4. Choosing an **external anchor log**, and an independent verifier that fetches
+   it. This needs authorization and provisioning.
+5. A **scheduler**, with retention for raw objects outside git.
+6. A **PROSPECTIVE start date and stopping rule**, committed and anchored first.
+7. **Codex certification and Jacob's activation.**
+
+## Overhead (measured on fixtures only; live sizes unmeasured)
+
+The synthetic dry run produces:
+- a 7.2 KB raw archive (two events, plus the schedule and game log);
+- a 23.9 KB manifest;
+- chain entries of under 1 KB each.
+
+The live estimates in `EXPORT_DESIGN.md` §8 remain **unmeasured** until the
+diagnostic capture.
 
 Alligator
