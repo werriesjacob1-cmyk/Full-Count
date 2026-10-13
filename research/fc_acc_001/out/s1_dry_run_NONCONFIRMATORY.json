@@ -1,0 +1,90 @@
+{
+ "real_candidates_no_capture": {
+  "board": "board_freeze_2026-10-13.json",
+  "candidates": 70,
+  "reason": "sportsbook root discovery failed: no authenticated offer universe",
+  "result": "FAIL_CLOSED"
+ },
+ "synthetic": {
+  "accounting": {
+   "candidate_price_differs": 1,
+   "candidates": 10,
+   "champion_unauthenticated": [],
+   "feature_snapshots": 8,
+   "feature_snapshots_missing_required": 2,
+   "offer_status": {
+    "AUTHENTICATED": 8,
+    "MISSING_QUOTE": 2
+   }
+  },
+  "archive_bytes": 1620,
+  "arms": {
+   "BLEND_50_50": {
+    "n_selected": 3,
+    "n_target": 3,
+    "policy": "ALTERNATIVE",
+    "selections": [
+     "c4",
+     "c1",
+     "c7"
+    ],
+    "status": "MATCHED"
+   },
+   "CHAMPION_EXISTING_POLICY": {
+    "n_selected": 3,
+    "n_target": 3,
+    "policy": "EXISTING",
+    "selections": [
+     "c2",
+     "c3",
+     "c5"
+    ],
+    "status": "MATCHED"
+   },
+   "MARKET_ONLY": {
+    "n_selected": 3,
+    "n_target": 3,
+    "policy": "ALTERNATIVE",
+    "selections": [
+     "c4",
+     "c1",
+     "c7"
+    ],
+    "status": "MATCHED"
+   }
+  },
+  "capture_status": "COMPLETE",
+  "label": "DRY_RUN_NONCONFIRMATORY_SYNTHETIC",
+  "manifest_bytes": 23562,
+  "manifest_sha256": "d0efe95c5bccd16c4339e66d252db0fbe48fd2d0f346fc035b440ff1dc35b5a9",
+  "offers_parsed": 10,
+  "reseal": "IDEMPOTENT_NOOP",
+  "seal": "SEALED",
+  "workload_example": {
+   "days_rest": 5,
+   "documented_pitch_limit": "UNKNOWN_NO_VERIFIED_SOURCE",
+   "game_date": "2031-05-01",
+   "last_starts": [
+    {
+     "date": "2031-04-26",
+     "outs": 17,
+     "pitches": 87
+    },
+    {
+     "date": "2031-04-20",
+     "outs": 15,
+     "pitches": 91
+    },
+    {
+     "date": "2031-04-14",
+     "outs": 18,
+     "pitches": 98
+    }
+   ],
+   "source": "mlb_statsapi_gamelog",
+   "source_raw_sha256": "0fef64ea7fd619350a06f12d7998866f999dedd4df7c38497f8a7565cc83d16d",
+   "starts_available": 3,
+   "status": "COMPLETE"
+  }
+ }
+}

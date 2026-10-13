@@ -6385,3 +6385,51 @@ values. Unblocking needs Jacob's authorization of a capture step.
 **Tests.** `test_fc_acc_001_research.py`: 18 passed.
 
 Alligator
+
+## 2026-10-13 -- FC-ACC-001-S1: research-only evidence capture implemented (PR #226, not active)
+
+Jacob authorized implementing and testing a minimal research-only capture for
+S1. He did not authorize activating it, scheduling it, or starting the forward
+experiment.
+
+**What was built.** The package `research/fc_acc_001/s1/`, about 840 lines,
+is documented in `S1_CAPTURE.md`:
+- a content-addressed raw archive;
+- a FanDuel sweep that archives the **raw bytes** and parses offers only from
+  the archive;
+- a prior-start-only pitcher workload from the archived statsapi game log;
+- minimal feature snapshots, where missing values are `UNKNOWN`;
+- a re-derivable offer manifest with three matched arms: champion,
+  market-only, and a fixed 50/50 blend;
+- a write-once ledger that blocks backfill and returns `IDEMPOTENT_NOOP` on
+  identical replay.
+
+**Reuse.**
+- Production `odds_fanduel` market maps and parsers.
+- `prop_probability` implied-probability and devig functions.
+- The sweep structure of PR #220's `capture.py`, mirrored only. PR #220 is
+  untouched.
+
+**Tests.** `test_fc_acc_001_s1_capture.py`: 24 passed, synthetic and offline.
+
+**Dry run.** `research/fc_acc_001/out/s1_dry_run_NONCONFIRMATORY.json` is
+synthetic and not evidence.
+- The synthetic slate sealed, and re-sealing returned `IDEMPOTENT_NOOP`.
+- The real board `board_freeze_2026-10-13` (70 candidates) with no capture
+  fails closed.
+
+**Still unavailable:**
+- the raw confirmed-lineup source;
+- the raw schedule binding;
+- any documented pitch-limit source;
+- raw (unscaled) signal values;
+- a read-only export of the scored candidate pool from `generate_picks`, which
+  needs a production change.
+
+**Storage.** The estimate is unmeasured at about 1 to 5 MB per sweep, and
+needs one authorized measured capture.
+
+**Not done:** no merge, deploy, schedule, live capture, or production selector
+change.
+
+Alligator
