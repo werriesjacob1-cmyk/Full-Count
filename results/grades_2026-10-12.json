@@ -1,10 +1,10 @@
 {
   "date": "2026-10-12",
   "hits": 27,
-  "misses": 34,
-  "ungraded": 10,
+  "misses": 40,
+  "ungraded": 4,
   "fair_hits": 26,
-  "fair_misses": 33,
+  "fair_misses": 39,
   "by_category": {
     "moonshot": {
       "hits": 1,
@@ -13,30 +13,30 @@
     },
     "moonshot_420": {
       "hits": 0,
-      "misses": 0,
-      "ungraded": 5
+      "misses": 1,
+      "ungraded": 4
     },
     "best_of_category": {
       "hits": 26,
-      "misses": 30,
-      "ungraded": 5
+      "misses": 35,
+      "ungraded": 0
     }
   },
   "by_recommendation_status": {
     "lean": {
       "hits": 22,
-      "misses": 20,
-      "ungraded": 5
+      "misses": 22,
+      "ungraded": 3
     },
     "neutral": {
       "hits": 5,
-      "misses": 14,
-      "ungraded": 4
+      "misses": 17,
+      "ungraded": 1
     },
     "value": {
       "hits": 0,
-      "misses": 0,
-      "ungraded": 1
+      "misses": 1,
+      "ungraded": 0
     },
     "top_pick": {
       "hits": 6,
@@ -1211,8 +1211,8 @@
     },
     "hard_hit_110@1": {
       "hits": 0,
-      "misses": 0,
-      "ungraded": 1
+      "misses": 1,
+      "ungraded": 0
     },
     "hits@1": {
       "hits": 1,
@@ -1311,8 +1311,8 @@
     },
     "hard_hit_105@1": {
       "hits": 0,
-      "misses": 0,
-      "ungraded": 1
+      "misses": 1,
+      "ungraded": 0
     },
     "combined_strikeouts@10": {
       "hits": 1,
@@ -2220,8 +2220,17 @@
       "prediction_timestamp": "2026-10-12T23:39:32.695604+00:00",
       "odds_timestamp": "2026-10-12T23:39:32.691784+00:00",
       "lineup_checked_at": "2026-10-12T23:39:32.691784+00:00",
-      "grade": "ungraded",
-      "reason": "no batted-ball Statcast data for this game"
+      "grade": "miss",
+      "actual": false,
+      "actual_stat": "moonshot_420",
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 5,
+      "was_substitute": false,
+      "batting_order": 3,
+      "fair_test": true,
+      "opportunity": "full (5 PA)"
     },
     {
       "rank": 10,
@@ -8331,8 +8340,17 @@
       "prediction_timestamp": "2026-10-12T23:39:32.695604+00:00",
       "odds_timestamp": "2026-10-12T23:39:32.691784+00:00",
       "lineup_checked_at": "2026-10-12T23:39:32.691784+00:00",
-      "grade": "ungraded",
-      "reason": "no batted-ball Statcast data for this game"
+      "grade": "miss",
+      "actual": false,
+      "actual_stat": "hr_at_exit_velocity",
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 3,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     },
     {
       "rank": 62,
@@ -8417,8 +8435,17 @@
       "prediction_timestamp": "2026-10-12T23:39:32.695604+00:00",
       "odds_timestamp": "2026-10-12T23:39:32.691784+00:00",
       "lineup_checked_at": "2026-10-12T23:39:32.691784+00:00",
-      "grade": "ungraded",
-      "reason": "no batted-ball Statcast data for this game"
+      "grade": "miss",
+      "actual": false,
+      "actual_stat": "hr_at_exit_velocity",
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 5,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     },
     {
       "rank": 63,
@@ -8503,8 +8530,17 @@
       "prediction_timestamp": "2026-10-12T23:39:32.695604+00:00",
       "odds_timestamp": "2026-10-12T23:39:32.691784+00:00",
       "lineup_checked_at": "2026-10-12T23:39:32.691784+00:00",
-      "grade": "ungraded",
-      "reason": "no batted-ball Statcast data for this game"
+      "grade": "miss",
+      "actual": false,
+      "actual_stat": "hr_at_exit_velocity",
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 5,
+      "actual_pa_est": 5,
+      "was_substitute": false,
+      "batting_order": 4,
+      "fair_test": true,
+      "opportunity": "full (5 PA)"
     },
     {
       "rank": 64,
@@ -8589,8 +8625,17 @@
       "prediction_timestamp": "2026-10-12T23:39:32.695604+00:00",
       "odds_timestamp": "2026-10-12T23:39:32.691784+00:00",
       "lineup_checked_at": "2026-10-12T23:39:32.691784+00:00",
-      "grade": "ungraded",
-      "reason": "no batted-ball Statcast data for this game"
+      "grade": "miss",
+      "actual": false,
+      "actual_stat": "hr_at_exit_velocity",
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 2,
+      "actual_pa_est": 3,
+      "was_substitute": false,
+      "batting_order": 4,
+      "fair_test": true,
+      "opportunity": "full (3 PA)"
     },
     {
       "rank": 65,
@@ -8677,8 +8722,17 @@
       "prediction_timestamp": "2026-10-12T23:39:32.695604+00:00",
       "odds_timestamp": "2026-10-12T23:39:32.691784+00:00",
       "lineup_checked_at": "2026-10-12T23:39:32.691784+00:00",
-      "grade": "ungraded",
-      "reason": "no batted-ball Statcast data for this game"
+      "grade": "miss",
+      "actual": false,
+      "actual_stat": "hr_at_exit_velocity",
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 5,
+      "actual_pa_est": 5,
+      "was_substitute": false,
+      "batting_order": 5,
+      "fair_test": true,
+      "opportunity": "full (5 PA)"
     },
     {
       "rank": 66,
@@ -9771,8 +9825,17 @@
       "prediction_timestamp": "2026-10-12T23:39:32.695604+00:00",
       "odds_timestamp": "2026-10-12T23:39:32.691784+00:00",
       "lineup_checked_at": "2026-10-12T23:39:32.691784+00:00",
-      "grade": "ungraded",
-      "reason": "no batted-ball Statcast data for this game"
+      "grade": "miss",
+      "actual": false,
+      "actual_stat": "hr_at_exit_velocity",
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 5,
+      "actual_pa_est": 5,
+      "was_substitute": false,
+      "batting_order": 4,
+      "fair_test": true,
+      "opportunity": "full (5 PA)"
     },
     {
       "rank": 5,
@@ -11653,8 +11716,17 @@
       "prediction_timestamp": "2026-10-12T23:39:32.695604+00:00",
       "odds_timestamp": "2026-10-12T23:39:32.691784+00:00",
       "lineup_checked_at": "2026-10-12T23:39:32.691784+00:00",
-      "grade": "ungraded",
-      "reason": "no batted-ball Statcast data for this game"
+      "grade": "miss",
+      "actual": false,
+      "actual_stat": "hr_at_exit_velocity",
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 3,
+      "fair_test": true,
+      "opportunity": "full (4 PA)"
     },
     {
       "rank": 25,
