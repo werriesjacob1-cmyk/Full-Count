@@ -6307,3 +6307,37 @@ are all untouched. Draft PR opened against `main`, not merged -- this
 workstream does not merge its own PR.
 
 Alligator
+
+## 2026-10-13 -- FC-ACC-001: winning-pick accuracy, first findings (research only)
+
+Branch: `claude/fc-acc-001-winning-pick-accuracy`.
+Preregistration: `research/fc_acc_001/PREREG.md` (commit bb8600e8f5, anchored on
+Issue #91 6135666313 before any challenger result). Full report:
+`research/fc_acc_001/REPORT.md`.
+
+**Findings**
+
+- **The champion Top Pick selector loses against its own prices.**
+  - Public ledger: 298/552 = 54.0% against a mean implied 0.583 (−4.3 pp),
+    ROI −8.8%.
+  - Sealed freezes: 48/91 = 52.7% (−5.9 pp), ROI −10.5%.
+  - Cause: adverse selection on model-over-market disagreement.
+- **Equal-volume competition on 19 sealed freezes (09-20..10-11).** The
+  primary arm CH1 ranks the same eligible pool by (p+q)/2.
+  - CH1: 68/91 = 74.7%, ROI +2.7%, i.e. +20 net winners.
+  - Verdict: EXPLORATORY_POSITIVE. Not promotable: prior exposure, late-day
+    partial slates, and mostly chalk (median −260).
+  - The pure chalk benchmark gets 72.5% but only matches the market.
+- **Pool test.** The model's disagreement with the price carries no
+  demonstrated information. AUC(q) ≥ AUC(p).
+
+**Recommendation**
+
+- Run a sealed forward shadow (spec in REPORT §7) with CH1 as primary.
+- Measure hits together with excess-over-market and ROI.
+- Pursue residual-over-price model research (PR #220 V3 C2).
+- Activation is Jacob's decision.
+
+Nothing in production, published picks, grades or other PRs was changed.
+
+Alligator
