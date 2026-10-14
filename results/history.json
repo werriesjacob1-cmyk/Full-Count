@@ -11532,10 +11532,15 @@
       "date": "2026-10-14",
       "hits": 0,
       "misses": 0,
-      "ungraded": 5,
+      "ungraded": 6,
       "fair_hits": 0,
       "fair_misses": 0,
       "by_category": {
+        "main": {
+          "hits": 0,
+          "misses": 0,
+          "ungraded": 1
+        },
         "best_of_category": {
           "hits": 0,
           "misses": 0,
@@ -11543,21 +11548,21 @@
         }
       },
       "by_recommendation_status": {
+        "lean": {
+          "hits": 0,
+          "misses": 0,
+          "ungraded": 3
+        },
         "top_pick": {
           "hits": 0,
           "misses": 0,
           "voids": 0,
           "ungraded": 1
         },
-        "lean": {
-          "hits": 0,
-          "misses": 0,
-          "ungraded": 1
-        },
         "neutral": {
           "hits": 0,
           "misses": 0,
-          "ungraded": 3
+          "ungraded": 2
         }
       },
       "public_top_pick_counts": {
@@ -11582,11 +11587,6 @@
           "misses": 0,
           "ungraded": 1
         },
-        "pitcher_outs@12": {
-          "hits": 0,
-          "misses": 0,
-          "ungraded": 1
-        },
         "pitcher_outs@13": {
           "hits": 0,
           "misses": 0,
@@ -11597,12 +11597,17 @@
           "misses": 0,
           "ungraded": 1
         },
+        "pitcher_outs@15": {
+          "hits": 0,
+          "misses": 0,
+          "ungraded": 1
+        },
         "strikeouts@4": {
           "hits": 0,
           "misses": 0,
           "ungraded": 1
         },
-        "pitcher_outs@15": {
+        "pitcher_outs@12": {
           "hits": 0,
           "misses": 0,
           "ungraded": 1
@@ -11618,7 +11623,7 @@
   "totals": {
     "hits": 1675,
     "misses": 2906,
-    "ungraded": 336
+    "ungraded": 337
   },
   "overall_hit_rate": 0.366,
   "last_14_days_hit_rate": 0.313,
@@ -11631,7 +11636,7 @@
     "main": {
       "hits": 165,
       "misses": 194,
-      "ungraded": 1
+      "ungraded": 2
     },
     "moonshot": {
       "hits": 69,
@@ -11866,12 +11871,12 @@
     "lean": {
       "hits": 1190,
       "misses": 1790,
-      "ungraded": 241
+      "ungraded": 243
     },
     "neutral": {
       "hits": 274,
       "misses": 760,
-      "ungraded": 70
+      "ungraded": 69
     },
     "top_pick": {
       "hits": 343,
