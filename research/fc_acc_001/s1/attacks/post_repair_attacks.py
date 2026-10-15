@@ -27,7 +27,8 @@ def _arch():
 
 def _build(a, cap=None, recs=None, snaps=None, mode="DRY_RUN_NONCONFIRMATORY", **sched):
     return M.build(unit=X.UNIT, board=X.board(recs), schedule_source=X.schedule_source(a, **sched),
-                   capture=cap or X.capture(a), archive=a, feature_snapshots=snaps or {}, mode=mode)
+                   capture=cap or X.capture(a), archive=a, feature_snapshots=snaps or {}, mode=mode,
+                   cutoff_commitment=X.commitment(a))
 
 
 def _row(m, cid):
@@ -155,7 +156,7 @@ def a4a4_schedule_observed_after_decision():
             unit=X.UNIT, board=X.board(), capture=X.capture(a), archive=a, feature_snapshots={},
             schedule_source=X.S.fetch(a, lambda r: ("statsapi", X.schedule_bytes()), X.make_clock(22, 0),
                                       source=X.SCH.SOURCE, request=X.SCH.request_for(X.DATE)),
-            mode="DRY_RUN_NONCONFIRMATORY")
+            mode="DRY_RUN_NONCONFIRMATORY", cutoff_commitment=X.commitment(a))
     except M.ManifestError as e:
         return f"REJECTED: {e}"
     return "VULNERABLE"
@@ -203,9 +204,11 @@ def a5_reseal_after_deleting_index():
 def a5b_reseal_after_deleting_whole_ledger():
     a = _arch(); led = tempfile.mkdtemp()
     pm = _build(a, mode="PROSPECTIVE")
+    L.record_cutoff(led, X.commitment(a), a, now=f"{X.DATE}T18:30:00Z")
     L.seal(led, pm, a, ledger_kind="PROSPECTIVE", anchored_head=L.GENESIS, now=f"{X.DATE}T21:35:00Z")
     anchored = L.head(led)                                   # what the external anchor would hold
     shutil.rmtree(led); os.makedirs(led)
+    L.record_cutoff(led, X.commitment(a), a, now=f"{X.DATE}T18:30:00Z")   # attacker re-records the cutoff too
     other = _build(a, cap=X.capture(a, overrides={"slugger_hit": -260}), mode="PROSPECTIVE")
     try:
         L.seal(led, other, a, ledger_kind="PROSPECTIVE", anchored_head=anchored, now=f"{X.DATE}T21:36:00Z")

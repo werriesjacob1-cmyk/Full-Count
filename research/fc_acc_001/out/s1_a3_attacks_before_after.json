@@ -1,0 +1,21 @@
+{
+ "codex_audit": "https://github.com/werriesjacob1-cmyk/Full-Count/pull/226#issuecomment-6195082449",
+ "label": "SYNTHETIC_ADVERSARIAL_NONCONFIRMATORY",
+ "post_repair": {
+  "u1_cutoff_extended_by_delayed_schedule": "REJECTED: decision_at 2031-05-01T21:50:00Z is not the committed unit cutoff 2031-05-01T21:30:00+00:00",
+  "u1b_fresh_commitment_from_delayed_schedule": "REJECTED: CutoffError: no admissible commitment schedule (observed by the NIGHT deadline 2031-05-01T19:00:00Z): schedule source not verifiable: source observation completed 2031-05-01T21:35:02.000000Z after cutoff 2031-05-01T19:00:00Z",
+  "u1c_no_earlier_cutoff_evidence": "REJECTED: unit NON_COMPARABLE ['MISSING_CUTOFF_EVIDENCE']",
+  "u2_missing_game_reported_as_zero_champion": "REJECTED: unit NON_COMPARABLE ['GAME_BOARD_MISSING_GAME']",
+  "u3_incomplete_capture_reported_as_zero_champion": "REJECTED: unit NON_COMPARABLE ['CAPTURE_INCOMPLETE', 'GAME_INCOMPLETE_CAPTURE']"
+ },
+ "post_repair_command": "python3 research/fc_acc_001/s1/attacks/a3_attacks.py",
+ "pre_repair": {
+  "u1_cutoff_extended_by_delayed_schedule": "VULNERABLE: COMPARABLE unit decided at 2031-05-01T21:50:00Z (cutoff moved later)",
+  "u1b_fresh_commitment_from_delayed_schedule": "VULNERABLE: COMPARABLE unit decided at 2031-05-01T21:50:00Z (cutoff moved later)",
+  "u1c_no_earlier_cutoff_evidence": "VULNERABLE: COMPARABLE unit decided at 2031-05-01T21:50:00Z (cutoff moved later)",
+  "u2_missing_game_reported_as_zero_champion": "VULNERABLE: board missing game 900001 reported unit ZERO_CHAMPION with reasons ['GAME_BOARD_MISSING_GAME']",
+  "u3_incomplete_capture_reported_as_zero_champion": "VULNERABLE: incomplete capture reported unit ZERO_CHAMPION with reasons ['CAPTURE_INCOMPLETE', 'GAME_INCOMPLETE_CAPTURE']"
+ },
+ "pre_repair_command": "git worktree add <dir> 0a4d23d0 && python3 research/fc_acc_001/s1/attacks/a3_attacks.py <dir>/research/fc_acc_001/s1",
+ "pre_repair_head": "0a4d23d0aaaea9074b3d57aeb595d40aacb31451"
+}

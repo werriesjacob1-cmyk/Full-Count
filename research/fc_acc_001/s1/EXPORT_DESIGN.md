@@ -216,6 +216,14 @@ pitch in the archived schedule minus 30 minutes:
 Every included candidate, offer, schedule observation and feature observation
 must be available by `unit_cutoff`. Nothing observed later can enter the unit.
 
+**A3.** `unit_cutoff` is the **committed** cutoff (`../AMENDMENT_A3.md`). It is
+fixed from a schedule observed by 09:00 (DAY) or 15:00 (NIGHT) New York time,
+recorded write-once, and never moved later by a newer schedule. The decision
+run is the last run completed by that committed cutoff. A missing commitment
+gives `MISSING_CUTOFF_EVIDENCE`, so the unit is `NON_COMPARABLE`. This design
+adds a cutoff-commitment step: a schedule fetch before the commitment deadline,
+recorded and anchored. That step is not implemented as a workflow.
+
 ## 5. When it executes, and the risks
 
 | Risk | Control |

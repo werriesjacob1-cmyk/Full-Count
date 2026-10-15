@@ -16,7 +16,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 S1 = os.path.join(HERE, "research", "fc_acc_001", "s1")
 sys.path.insert(0, S1)
 sys.path.insert(0, os.path.join(S1, "attacks"))
+import a3_attacks as A3ATT  # noqa: E402
 import anchor as AN  # noqa: E402
+import cutoff as CT  # noqa: E402
 import fanduel as FDC  # noqa: E402
 import features as F  # noqa: E402
 import fixtures as X  # noqa: E402
@@ -29,6 +31,11 @@ import schedule as SCH  # noqa: E402
 import workload as W  # noqa: E402
 
 LATE = f"{X.DATE}T21:35:00Z"
+COMMIT_AT = f"{X.DATE}T18:30:00Z"                 # before the 19:00Z (15:00 EDT) NIGHT commitment deadline
+
+
+def record(led, arch):
+    return L.record_cutoff(led, X.commitment(arch), arch, now=COMMIT_AT)
 
 
 class Base(unittest.TestCase):
@@ -42,10 +49,15 @@ class Base(unittest.TestCase):
     def cap(self, **kw):
         return X.capture(self.arch, **kw)
 
-    def build(self, cap=None, recs=None, snaps=None, mode="DRY_RUN_NONCONFIRMATORY", unit=None, sched=None, **kw):
+    def build(self, cap=None, recs=None, snaps=None, mode="DRY_RUN_NONCONFIRMATORY", unit=None, sched=None,
+              commitment="ORIGINAL", **kw):
+        """Default: the A3 cutoff commitment from the ORIGINAL (unmodified) schedule observed 14:00 EDT;
+        schedule overrides in **kw change only the later decision-time schedule."""
+        if commitment == "ORIGINAL":
+            commitment = X.commitment(self.arch)
         return M.build(unit=unit or X.UNIT, board=kw.pop("board", None) or X.board(recs),
                        schedule_source=sched or X.schedule_source(self.arch, **kw), capture=cap or self.cap(),
-                       archive=self.arch, feature_snapshots=snaps or {}, mode=mode)
+                       archive=self.arch, feature_snapshots=snaps or {}, mode=mode, cutoff_commitment=commitment)
 
     def row(self, m, cid):
         return next(c for c in m["candidates"] if c["candidate_id"] == cid)
@@ -210,13 +222,18 @@ class UnitTiming(Base):
             self.w("2026-07-15T21:00:00Z", "2026-7-15x")
 
     def test_unit_membership_follows_new_york_time(self):
-        # 900001 moved to 13:05 EDT -> DAY; the NIGHT unit then holds only 900002 and its cutoff moves
-        with self.assertRaisesRegex(M.ManifestError, "not the unit cutoff"):
-            self.build(first_pitch={"900001": f"{X.DATE}T17:05:00Z"})
+        # 900001 later moved to 13:05 EDT -> DAY: it leaves the NIGHT unit's decision schedule, but the committed
+        # cutoff (21:30) does not move and the committed game is not dropped: the unit is NON_COMPARABLE
+        m = self.build(first_pitch={"900001": f"{X.DATE}T17:05:00Z"})
+        self.assertEqual(m["game_issues"]["900001"], "MISSING_FROM_DECISION_SCHEDULE")
+        self.assertIn("UNIT_GAMES_CHANGED_SINCE_COMMITMENT", m["non_comparable_reasons"])
+        self.assertEqual((m["unit_status"], m["arms"][ARMS0]["n_target"]), ("NON_COMPARABLE", 3))
+        with self.assertRaisesRegex(M.ManifestError, "unit cutoff"):                  # A2 fallback: cutoff moves
+            self.build(first_pitch={"900001": f"{X.DATE}T17:05:00Z"}, commitment=None)
 
     def test_decision_must_be_the_single_unit_cutoff(self):
         for t in ("21:29:00", "21:31:00", "22:10:00", "22:45:00"):        # off-rule, or after the earliest pitch
-            with self.assertRaisesRegex(M.ManifestError, "not the unit cutoff"):
+            with self.assertRaisesRegex(M.ManifestError, "unit cutoff"):
                 self.build(unit=dict(X.UNIT, decision_at=f"{X.DATE}T{t}Z"))
         m = self.build()
         self.assertEqual(m["decision_rule"]["unit_earliest_first_pitch_utc"], X.FIRST_PITCH["900001"])
@@ -234,6 +251,7 @@ class UnitTiming(Base):
             self.build(sched=X.S.fetch(self.arch, lambda r: ("statsapi", X.schedule_bytes()), X.make_clock(22, 5),
                                        source=SCH.SOURCE, request=SCH.request_for(X.DATE)))
         led = os.path.join(self.tmp.name, "led")
+        record(led, self.arch)
         L.seal(led, self.build(mode="PROSPECTIVE"), self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.GENESIS,
                now=LATE)
         later = self.build(cap=self.cap(overrides={"slugger_hit": -260}), mode="PROSPECTIVE")
@@ -253,6 +271,137 @@ class UnitTiming(Base):
         self.assertEqual({k: v for k, v in res.items() if not v.startswith("REJECTED")}, {})
 
 
+D = X.DATE
+DELAYED = {"900001": f"{D}T22:20:00Z", "900002": X.FIRST_PITCH["900002"]}
+
+
+class CutoffCommitment(Base):
+    """AMENDMENT_A3: a committed cutoff never moves later; missing evidence is never certified."""
+
+    def test_a3_attacks_rejected(self):
+        res = A3ATT.run()
+        self.assertEqual(len(res), 5)
+        self.assertEqual({k: v for k, v in res.items() if not v.startswith("REJECTED")}, {})
+
+    def test_commitment_deadlines_follow_new_york_time(self):
+        self.assertEqual(CT.deadline_utc("2026-07-15", "DAY").isoformat(), "2026-07-15T13:00:00+00:00")    # 09:00 EDT
+        self.assertEqual(CT.deadline_utc("2026-07-15", "NIGHT").isoformat(), "2026-07-15T19:00:00+00:00")  # 15:00 EDT
+        self.assertEqual(CT.deadline_utc("2027-01-15", "NIGHT").isoformat(), "2027-01-15T20:00:00+00:00")  # 15:00 EST
+
+    def test_delay_never_moves_the_cutoff_later(self):
+        board = X.board(starts=DELAYED)
+        m = self.build(board=board, first_pitch=DELAYED)                       # decision schedule shows the delay
+        self.assertEqual((m["unit"]["decision_at"], m["unit_status"]), (X.DECISION, "COMPARABLE"))
+        self.assertEqual(m["decision_rule"]["decision_cutoff_utc"], X.DECISION)
+        with self.assertRaisesRegex(M.ManifestError, "committed unit cutoff"):
+            self.build(board=board, first_pitch=DELAYED, unit=dict(X.UNIT, decision_at=f"{D}T21:50:00Z"))
+
+    def test_game_moved_earlier_shortens_or_invalidates(self):
+        earlier = {"900001": f"{D}T21:50:00Z", "900002": X.FIRST_PITCH["900002"]}
+        m = self.build(board=X.board(starts=earlier), first_pitch=earlier)
+        self.assertEqual(m["unit_status"], "NON_COMPARABLE")
+        self.assertIn("CUTOFF_LEAD_SHORTENED", m["non_comparable_reasons"])
+        before = {"900001": f"{D}T21:20:00Z", "900002": X.FIRST_PITCH["900002"]}
+        with self.assertRaisesRegex(M.ManifestError, "at or before the decision cutoff"):
+            self.build(board=X.board(starts=before, sealed_at=f"{D}T20:56:00Z"), first_pitch=before)
+
+    def test_missing_earlier_schedule_is_missing_cutoff_evidence(self):
+        m = self.build(commitment=None)
+        self.assertEqual((m["unit_status"], m["non_comparable_reasons"]), ("NON_COMPARABLE", ["MISSING_CUTOFF_EVIDENCE"]))
+        self.assertIn("MISSING_CUTOFF_EVIDENCE", m["certification"]["blockers"])
+        self.assertTrue(all(a["status"] != "MATCHED" for a in m["arms"].values()))
+
+    def test_commitment_must_be_timely_authentic_and_for_this_unit(self):
+        with self.assertRaisesRegex(CT.CutoffError, "deadline"):
+            X.commitment(self.arch, hour=19, minute=5)                          # 15:05 EDT: after the deadline
+        c = X.commitment(self.arch)
+        forged = dict(c, cutoff_utc=f"{D}T21:50:00Z")
+        forged["commitment_sha256"] = M.FDC.canonical_sha256({k: v for k, v in forged.items()
+                                                              if k != "commitment_sha256"})
+        with self.assertRaisesRegex(M.ManifestError, "cutoff commitment rejected"):
+            self.build(commitment=forged)
+        with self.assertRaises(CT.CutoffError):
+            CT.verify(c, self.arch, {"date": D, "window": "DAY"})
+
+    def test_commitment_log_is_write_once_and_binds_the_seal(self):
+        led = os.path.join(self.tmp.name, "led")
+        pm = self.build(mode="PROSPECTIVE")
+        with self.assertRaisesRegex(L.LedgerError, "never recorded"):
+            L.seal(led, pm, self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.GENESIS, now=LATE)
+        with self.assertRaisesRegex(L.LedgerError, "after its commitment deadline"):
+            L.record_cutoff(led, X.commitment(self.arch), self.arch, now=f"{D}T19:30:00Z")
+        self.assertEqual(record(led, self.arch), "RECORDED")
+        self.assertEqual(record(led, self.arch), "IDEMPOTENT_NOOP")
+        other = X.commitment(self.arch, first_pitch=DELAYED)                     # same unit, different evidence
+        with self.assertRaisesRegex(L.LedgerError, "cutoffs never move"):
+            L.record_cutoff(led, other, self.arch, now=COMMIT_AT)
+        with self.assertRaisesRegex(L.LedgerError, "logged cutoff commitment"):
+            L.seal(led, self.build(mode="PROSPECTIVE", commitment=None), self.arch, ledger_kind="PROSPECTIVE",
+                   anchored_head=L.GENESIS, now=LATE)
+        self.assertEqual(L.seal(led, pm, self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.GENESIS,
+                                now=LATE)[1], "SEALED")
+
+    def test_commitment_anchor_verification(self):
+        c = X.commitment(self.arch)
+        st = AN.commitment_statement(c)
+        self.assertEqual(AN.verify_commitment_anchor(c, []), "UNANCHORED")
+        self.assertEqual(AN.verify_commitment_anchor(c, [{"statement": st, "external_created_at": f"{D}T18:40:00Z"}]),
+                         "ANCHORED_BEFORE_DEADLINE")
+        self.assertEqual(AN.verify_commitment_anchor(c, [{"statement": st, "external_created_at": f"{D}T19:40:00Z"}]),
+                         "ANCHORED_LATE")
+        self.assertIn("CUTOFF_COMMITMENT_NOT_EXTERNALLY_ANCHORED", self.build()["certification"]["blockers"])
+
+
+class ZeroChampion(Base):
+    """AMENDMENT_A3: ZERO_CHAMPION only with verified complete coverage."""
+
+    def lean(self, recs):
+        for r in recs:
+            r["selector"]["recommendation_status"] = "lean"
+        return recs
+
+    def test_complete_zero_pick_slate_is_zero_champion(self):
+        m = self.build(recs=self.lean(X.records()))
+        self.assertEqual((m["unit_status"], m["non_comparable_reasons"]), ("ZERO_CHAMPION", []))
+        self.assertTrue(all(a["status"] == "ZERO_CHAMPION" for a in m["arms"].values()))
+
+    def test_incomplete_zero_pick_slates_are_non_comparable(self):
+        cases = {
+            "missing game": dict(board=X.board(self.lean([r for r in X.records() if r["game_pk"] == "900002"]),
+                                               starts={"900002": X.FIRST_PITCH["900002"]})),
+            "failed capture": dict(recs=self.lean(X.records()), cap=FDC.sweep(
+                self.arch, X.make_fetch(fail_paths=("eventId=E1&tab=moonshots",)), clock=X.make_clock())),
+            "no cutoff evidence": dict(recs=self.lean(X.records()), commitment=None),
+            "non-pregame game": dict(recs=self.lean(X.records()), state={"900002": "Live"}),
+        }
+        for label, kw in cases.items():
+            m = self.build(**kw)
+            self.assertEqual(m["unit_status"], "NON_COMPARABLE", label)
+            self.assertTrue(m["non_comparable_reasons"], label)
+            self.assertTrue(all(a["status"] == "NON_COMPARABLE" for a in m["arms"].values()), label)
+
+    def test_downstream_tally_cannot_override_unit_state(self):
+        good = self.build(recs=self.lean(X.records()))
+        bad = self.build(recs=self.lean(X.records()), commitment=None)
+        t = M.unit_tally([good, bad], self.arch)
+        self.assertEqual((t["ZERO_CHAMPION"], t["NON_COMPARABLE"]), (1, 1))
+        forged = copy.deepcopy(bad)
+        for a in forged["arms"].values():
+            a["status"] = "ZERO_CHAMPION"
+        forged["unit_status"] = "ZERO_CHAMPION"
+        forged["manifest_sha256"] = FDC.canonical_sha256({k: v for k, v in forged.items() if k != "manifest_sha256"})
+        with self.assertRaises(M.ManifestError):
+            M.unit_tally([forged], self.arch)
+
+    def test_deterministic_replay_with_commitment(self):
+        cap, sched, c = self.cap(), X.schedule_source(self.arch), X.commitment(self.arch)
+        a = self.build(cap=cap, sched=sched, commitment=c)
+        b = self.build(cap=cap, sched=sched, commitment=c)
+        self.assertEqual(a["manifest_sha256"], b["manifest_sha256"])
+        self.assertEqual(M.verify_manifest(a, self.arch), a["manifest_sha256"])
+        self.assertEqual(a["inputs"]["cutoff_commitment"]["commitment_sha256"], c["commitment_sha256"])
+
+
 class EvidencePreservation(unittest.TestCase):
     FROZEN = {"research/fc_acc_001/S1_PROTOCOL.md": "736bc944ada1bdb88cd6d0fb77780206dd75a47d566b66d45a233b57d1d8b42b",
               "research/fc_acc_001/PREREG.md": "e6466a71cdbacb86ce0f10af1cd89e353c20aa8f99ac8c3df59a616d5905dbbb",
@@ -260,7 +409,9 @@ class EvidencePreservation(unittest.TestCase):
               "research/fc_acc_001/out/amendment_a1.json":
                   "d09e7e343720d27fb5558e5e02e1478ea3bc6fd46632ff2adef74f4e81f60185",
               "research/fc_acc_001/out/s1_codex_attacks_before_after.json":
-                  "9814b6ec5f7053fcad9531eb217b20ac37f6e4c695670316c8be4e9dc638d7c9"}
+                  "9814b6ec5f7053fcad9531eb217b20ac37f6e4c695670316c8be4e9dc638d7c9",
+              "research/fc_acc_001/AMENDMENT_A2.md": "87df0289be2cac0e66abb062369a57f58988fba9ccd640ac6c4e9876c5cbd9d0",
+              "research/fc_acc_001/out/s1_a2_timing_attacks_before_after.json": "06e66983fbeb4a71f187c2f4de2b52003c6559a90b89ce9292e47766ea502da4"}
 
     def test_frozen_protocol_and_prior_evidence_bytes_unchanged(self):
         import hashlib
@@ -333,7 +484,7 @@ def _race_seal(ledger_dir, archive_root, slugger, q):
     a = RA.RawArchive(archive_root)
     m = M.build(unit=X.UNIT, board=X.board(), schedule_source=X.schedule_source(a),
                 capture=X.capture(a, overrides={"slugger_hit": slugger}), archive=a, feature_snapshots={},
-                mode="DRY_RUN_NONCONFIRMATORY")
+                mode="DRY_RUN_NONCONFIRMATORY", cutoff_commitment=X.commitment(a))
     try:
         q.put(L.seal(ledger_dir, m, a, ledger_kind="DRY_RUN", now=X.DECISION)[1])
     except L.LedgerError:
@@ -355,6 +506,7 @@ class Ledger(Base):
 
     def test_no_backfill_dry_run_barred_and_anchor_head_required(self):
         led = self.led()
+        record(led, self.arch)
         with self.assertRaises(L.LedgerError):
             L.seal(led, self.build(), self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.GENESIS, now=LATE)
         pm = self.build(mode="PROSPECTIVE")
@@ -398,6 +550,7 @@ class Ledger(Base):
 
     def test_external_anchor_verification(self):
         led = self.led()
+        record(led, self.arch)
         L.seal(led, self.build(mode="PROSPECTIVE"), self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.GENESIS,
                now=LATE)
         st = AN.head_statement(led)

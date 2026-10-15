@@ -29,11 +29,11 @@
     "IN_PLAY": 1
    }
   },
-  "anchor_statement_unpublished": "FC-ACC-001-S1-ANCHOR v1 kind=DRY_RUN seq=1 entry=f2105d03fcc099d038fd7f8edb506fdf073624a00b018cf8bd54d591259f5e18 unit=2031-05-01_NIGHT manifest=9e3d5853cc60ed84260845badbee0e6efa389434e4a50d100a055a087ac4ce42",
+  "anchor_statement_unpublished": "FC-ACC-001-S1-ANCHOR v1 kind=DRY_RUN seq=1 entry=590b6ac49a28dae8495ff89243c1119d55f66516c0840a29d9064b6b386e837e unit=2031-05-01_NIGHT manifest=0e00051072b5903b61c2adc57dbb76a56a68ea3e081f3955022371cf0d09eaff",
   "anchor_status_without_external_anchor": {
    "2031-05-01_NIGHT": "UNANCHORED"
   },
-  "archive_bytes": 7320,
+  "archive_bytes": 7480,
   "arms": {
    "BLEND_50_50": {
     "n_selected": 3,
@@ -73,15 +73,23 @@
   "certification": {
    "blockers": [
     "CANDIDATE_POOL_LIMITED_TO_FREEZE_CHOSEN_LINES",
+    "CUTOFF_COMMITMENT_NOT_EXTERNALLY_ANCHORED",
     "DRY_RUN_MODE",
     "MODEL_FEATURE_VALUES_UNVERIFIED_PRODUCTION",
     "REMOTE_ANCHOR_NOT_VERIFIED"
    ],
    "certified_prospective": false
   },
+  "cutoff_commitment": {
+   "anchor_status": "UNANCHORED",
+   "commitment_deadline_utc": "2031-05-01T19:00:00Z",
+   "cutoff_utc": "2031-05-01T21:30:00Z",
+   "recorded": "RECORDED",
+   "statement_unpublished": "FC-ACC-001-S1-CUTOFF-COMMITMENT v1 unit=2031-05-01_NIGHT cutoff=2031-05-01T21:30:00Z commitment=2be21a40e01cdf796687d4ce9965268e264726e10407827f370a8e641bcb290d"
+  },
   "label": "DRY_RUN_NONCONFIRMATORY_SYNTHETIC",
-  "manifest_bytes": 24061,
-  "manifest_sha256": "9e3d5853cc60ed84260845badbee0e6efa389434e4a50d100a055a087ac4ce42",
+  "manifest_bytes": 25132,
+  "manifest_sha256": "0e00051072b5903b61c2adc57dbb76a56a68ea3e081f3955022371cf0d09eaff",
   "non_comparable_reasons": [],
   "offers_parsed": 10,
   "reseal": "IDEMPOTENT_NOOP",

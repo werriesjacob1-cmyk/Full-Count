@@ -71,3 +71,24 @@ def verify_anchors(ledger_dir, anchors, archive=None):
         ok = [t for t in covered[e["seq"]] if M._ts(e["sealed_at"]) <= t < M._ts(e["first_pitch_utc_min"])]
         out[e["unit_key"]] = ("ANCHORED_PREGAME" if ok else "ANCHORED_LATE" if covered[e["seq"]] else "UNANCHORED")
     return out
+
+
+COMMIT_PREFIX = "FC-ACC-001-S1-CUTOFF-COMMITMENT v1"
+
+
+def commitment_statement(commitment):
+    u = commitment["unit"]
+    return (f"{COMMIT_PREFIX} unit={u['date']}_{u['window']} cutoff={commitment['cutoff_utc']} "
+            f"commitment={commitment['commitment_sha256']}")
+
+
+def verify_commitment_anchor(commitment, anchors):
+    """ANCHORED_BEFORE_DEADLINE | ANCHORED_LATE | UNANCHORED for one cutoff commitment.
+    Anchors are retrieved independently by the verifier ({"statement","external_created_at"})."""
+    want = commitment_statement(commitment)
+    times = [M._ts(a["external_created_at"], "external_created_at") for a in anchors
+             if a.get("statement", "").strip() == want]
+    if not times:
+        return "UNANCHORED"
+    deadline = min(M._ts(commitment["commitment_deadline_utc"]), M._ts(commitment["cutoff_utc"]))
+    return "ANCHORED_BEFORE_DEADLINE" if min(times) <= deadline else "ANCHORED_LATE"

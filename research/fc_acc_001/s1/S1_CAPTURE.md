@@ -32,13 +32,30 @@ blockers listed. The only outputs are synthetic and non-confirmatory:
     PROSPECTIVE-sealed, after its earliest first pitch.
 
   Both reproduced: 5 of 5 VULNERABLE in `out/s1_a2_timing_attacks_before_after.json`.
-- **v3 (this version, `../AMENDMENT_A2.md`).**
+- **v3, `0a4d23d0` (`../AMENDMENT_A2.md`).**
   - DAY/NIGHT uses 17:00 America/New_York, converted with the IANA zone.
   - Each unit has one rule-determined cutoff: its earliest scheduled first
     pitch minus 30 minutes.
   - No game is ever dropped from a unit.
   - Result: 5 of 5 timing attacks REJECTED, and the 19 earlier attacks are
     still rejected.
+
+  Codex's final A2 audit (6195082449) then found two more P1s:
+  - a later schedule showing a delay moved the cutoff later (21:30 → 21:50);
+  - a game missing from the board, or an incomplete capture, with N = 0 was
+    labelled `ZERO_CHAMPION`.
+
+  Both reproduced: 5 of 5 VULNERABLE in `out/s1_a3_attacks_before_after.json`.
+- **v4 (this version, `../AMENDMENT_A3.md`).**
+  - A `cutoff.py` commitment is made from a schedule observed by a fixed New York
+    deadline: 09:00 for DAY, 15:00 for NIGHT. It is recorded write-once and binds
+    the PROSPECTIVE seal.
+  - The decision must equal the committed cutoff, so a delay never moves it
+    later. A game moved earlier, or a change in the unit's games, makes the unit
+    `NON_COMPARABLE`. No commitment means `MISSING_CUTOFF_EVIDENCE`.
+  - Any coverage failure forces `NON_COMPARABLE` regardless of N, and
+    `unit_tally` refuses contradictory arm labels.
+  - All 29 attacks (19 + 5 + 5) are rejected.
 
 ## Pipeline
 

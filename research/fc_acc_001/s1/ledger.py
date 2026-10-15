@@ -102,6 +102,48 @@ def read_chain(ledger_dir, archive=None, *, kind=None):
     return entries
 
 
+def _cutoff_path(ledger_dir, key):
+    return os.path.join(ledger_dir, "cutoffs", key + ".json")
+
+
+def logged_cutoff(ledger_dir, key):
+    p = _cutoff_path(ledger_dir, key)
+    if not os.path.exists(p):
+        return None
+    with open(p, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def record_cutoff(ledger_dir, commitment, archive, *, now=None):
+    """A3: write-once cutoff commitment per unit, recorded no later than its
+    commitment deadline. The first commitment wins; a different later one is
+    refused. (A local log is not proof: anchor.verify_commitment_anchor is.)"""
+    import cutoff as CT
+    unit = commitment.get("unit") or {}
+    CT.verify(commitment, archive, unit)
+    now = now or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+    if _ts(now) > _ts(commitment["commitment_deadline_utc"]):
+        raise LedgerError("cutoff commitment recorded after its commitment deadline")
+    key = unit_key(unit)
+    _, _, lock_path = _paths(ledger_dir)
+    os.makedirs(os.path.join(ledger_dir, "cutoffs"), exist_ok=True)
+    with open(lock_path, "a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        prior = logged_cutoff(ledger_dir, key)
+        if prior is not None:
+            if prior["commitment"]["commitment_sha256"] == commitment["commitment_sha256"]:
+                return "IDEMPOTENT_NOOP"
+            raise LedgerError(f"unit {key} already has a different cutoff commitment; cutoffs never move")
+        rec = {"unit_key": key, "recorded_at": now, "commitment": commitment,
+               "evidence_status": "LOCAL_COMMITMENT_UNANCHORED"}
+        fd = os.open(_cutoff_path(ledger_dir, key), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o444)
+        with os.fdopen(fd, "wb") as fh:
+            fh.write(RA.canonical_bytes(rec))
+            fh.flush()
+            os.fsync(fh.fileno())
+    return "RECORDED"
+
+
 def head(ledger_dir):
     entries = read_chain(ledger_dir)
     return entries[-1]["entry_sha256"] if entries else GENESIS
@@ -130,6 +172,12 @@ def seal(ledger_dir, manifest, archive, *, ledger_kind, anchored_head=None, now=
             if prior["manifest_sha256"] == manifest["manifest_sha256"]:
                 return os.path.join(units_dir, key + ".json"), "IDEMPOTENT_NOOP"
             raise LedgerError(f"unit {key} already sealed with different content")
+        logged = logged_cutoff(ledger_dir, key)
+        mc = (manifest["inputs"].get("cutoff_commitment") or {}).get("commitment_sha256")
+        if logged is not None and logged["commitment"]["commitment_sha256"] != mc:
+            raise LedgerError(f"unit {key}: manifest does not carry the logged cutoff commitment")
+        if logged is None and mc is not None and ledger_kind == "PROSPECTIVE":
+            raise LedgerError(f"unit {key}: cutoff commitment was never recorded before its deadline")
         current = entries[-1]["entry_sha256"] if entries else GENESIS
         if anchored_head is not None and anchored_head != current:
             raise LedgerError(f"local chain head {current} != externally anchored head {anchored_head}: "

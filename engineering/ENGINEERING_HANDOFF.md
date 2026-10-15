@@ -6584,3 +6584,48 @@ still kept, but only for completeness.
 anchor publication, activation, merge, deploy or promotion.
 
 Alligator
+
+## 2026-10-15 -- FC-ACC-001-S1 Amendment A3: pinned cutoffs and complete-coverage zero slates (PR #226; research only)
+
+This responds to Codex's final A2 audit, 6195082449 (HOLD), on `0a4d23d0`.
+
+**Reproduced before the repair.** `s1/attacks/a3_attacks.py`, run against a
+`0a4d23d0` worktree, gave 5 of 5 VULNERABLE:
+- the cutoff was extended from 21:30 to 21:50 by a delayed schedule observed at
+  21:35, via three variants: the delayed schedule alone, a fresh commitment,
+  and no earlier evidence;
+- a board missing a game was reported `ZERO_CHAMPION`;
+- an incomplete capture was reported `ZERO_CHAMPION`.
+
+**After the repair:** 5 of 5 REJECTED. The record is in
+`out/s1_a3_attacks_before_after.json`.
+
+**Fix** (`research/fc_acc_001/AMENDMENT_A3.md`):
+- **`cutoff.py`.** The cutoff commitment comes from an archived schedule
+  observed by a fixed New York deadline: 09:00 for DAY, 15:00 for NIGHT. It is
+  content-addressed and re-derivable.
+- **`ledger.record_cutoff`.** Write-once per unit, by the deadline. The
+  PROSPECTIVE seal must carry exactly the logged commitment.
+- **`manifest.build(cutoff_commitment=…)`.**
+  - `decision_at` must equal the committed cutoff, so a delay never moves it
+    later.
+  - A game moved earlier gives `CUTOFF_LEAD_SHORTENED` and makes the unit
+    `NON_COMPARABLE`; a game at or before the cutoff is refused.
+  - A membership change gives `UNIT_GAMES_CHANGED_SINCE_COMMITMENT` and keeps
+    the game in N.
+  - A missing commitment gives `MISSING_CUTOFF_EVIDENCE`, makes the unit
+    `NON_COMPARABLE`, and adds a certification blocker.
+- **Coverage precedence.** Any coverage failure gives `NON_COMPARABLE`
+  regardless of N; `ZERO_CHAMPION` requires verified complete coverage.
+  `arm_status` and `unit_tally` prevent downstream overrides.
+- **Anchoring.** `anchor.commitment_statement` and `verify_commitment_anchor`
+  are defined; nothing is published.
+
+**Tests.** `test_fc_acc_001_s1_capture.py`: 53 passed. All 29 attacks are
+rejected (19 + 5 + 5). The A2 amendment and A2 attack record are byte-pinned.
+The dry run replays byte-identically.
+
+**Not done:** no export implementation, production or workflow change, live
+capture, anchor publication, activation, merge, deploy or promotion.
+
+Alligator

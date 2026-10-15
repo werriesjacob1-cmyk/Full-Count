@@ -28,6 +28,7 @@ import re
 import sys
 from datetime import timedelta
 
+import cutoff as CT
 import fanduel as FDC
 import features as F
 import schedule as SCH
@@ -42,9 +43,10 @@ MANIFEST_VERSION = "fc-acc-001-s1-manifest-2"
 BLEND_WEIGHT_MODEL = 0.5          # FIXED by S1_PROTOCOL.md; never tuned
 MAX_QUOTE_AGE = timedelta(minutes=45)
 # AMENDMENT_A2: one common, rule-determined decision cutoff per DAY/NIGHT unit,
-# exactly DECISION_LEAD before the unit's earliest scheduled first pitch in the
-# archived pregame schedule. No per-game cutoffs, no operator-chosen times.
-DECISION_LEAD = timedelta(minutes=30)
+# exactly DECISION_LEAD before the unit's earliest scheduled first pitch.
+# AMENDMENT_A3: that cutoff is pinned by a cutoff commitment (cutoff.py) made
+# from a schedule observed by a fixed deadline; later schedules never move it later.
+DECISION_LEAD = CT.DECISION_LEAD
 MODES = ("PROSPECTIVE", "DRY_RUN_NONCONFIRMATORY")
 STAT_ALIAS = {"stolen_base": "stolen_bases"}
 PITCHER_STATS = ("strikeouts", "pitcher_outs")
@@ -110,7 +112,7 @@ def _verified_board(board, unit, decision_at):
     return board
 
 
-def build(*, unit, board, schedule_source, capture, archive, feature_snapshots, mode):
+def build(*, unit, board, schedule_source, capture, archive, feature_snapshots, mode, cutoff_commitment=None):
     if mode not in MODES:
         raise ManifestError(f"unknown mode {mode!r}")
     if unit.get("window") not in ("DAY", "NIGHT"):
@@ -134,11 +136,31 @@ def build(*, unit, board, schedule_source, capture, archive, feature_snapshots, 
     # one common cutoff for the whole unit, before its EARLIEST first pitch; a
     # decision after any unit game starts is refused outright (no game is ever
     # dropped to make a late decision "pregame")
-    earliest = min(unit_games.values(), key=lambda g: _ts(g["first_pitch_utc"]))["first_pitch_utc"]
-    required_cutoff = _ts(earliest) - DECISION_LEAD
+    earliest_now = min(unit_games.values(), key=lambda g: _ts(g["first_pitch_utc"]))["first_pitch_utc"]
+    cutoff_issues, missing_games = [], set()
+    if cutoff_commitment is None:
+        # A2 fallback for accounting only: never certifiable, never COMPARABLE
+        required_cutoff = _ts(earliest_now) - DECISION_LEAD
+        cutoff_issues.append("MISSING_CUTOFF_EVIDENCE")
+        earliest = earliest_now
+    else:
+        try:
+            CT.verify(cutoff_commitment, archive, unit)
+        except CT.CutoffError as exc:
+            raise ManifestError(f"cutoff commitment rejected: {exc}") from exc
+        required_cutoff = _ts(cutoff_commitment["cutoff_utc"])          # pinned: a delay never moves it later
+        earliest = min((earliest_now, cutoff_commitment["earliest_first_pitch_utc"]), key=_ts)
+        if _ts(earliest_now) - DECISION_LEAD < required_cutoff:
+            cutoff_issues.append("CUTOFF_LEAD_SHORTENED")                 # a game moved earlier: no rescue
+        committed = set(cutoff_commitment["unit_games"])
+        missing_games = committed - set(unit_games)
+        if missing_games or set(unit_games) - committed:
+            cutoff_issues.append("UNIT_GAMES_CHANGED_SINCE_COMMITMENT")
     if decision_at != required_cutoff:
-        raise ManifestError(f"decision_at {unit['decision_at']} is not the unit cutoff "
-                            f"{required_cutoff.isoformat()} (earliest first pitch {earliest} minus {DECISION_LEAD})")
+        raise ManifestError(f"decision_at {unit['decision_at']} is not the "
+                            f"{'committed' if cutoff_commitment else 'A2'} unit cutoff {required_cutoff.isoformat()}")
+    if _ts(earliest_now) <= decision_at:
+        raise ManifestError(f"a unit game now starts at {earliest_now}, at or before the decision cutoff")
     active = unit_games                        # every unit game stays in the unit and in N
 
     # ---- authenticated sportsbook capture ----
@@ -178,6 +200,8 @@ def build(*, unit, board, schedule_source, capture, archive, feature_snapshots, 
             game_issue[pk] = "AMBIGUOUS_EVENT"
         elif ev_status[evs[0]] != "COMPLETE":
             game_issue[pk] = "INCOMPLETE_CAPTURE"
+    for pk in missing_games:
+        game_issue[pk] = "MISSING_FROM_DECISION_SCHEDULE"
 
     # ---- offer index on exact identity; selection-id consistency ----
     by_key, sel_ident = {}, {}
@@ -202,7 +226,9 @@ def build(*, unit, board, schedule_source, capture, archive, feature_snapshots, 
     for r in records:
         c = _cand_min(r)
         code, offer, g = None, None, active.get(c["game_pk"])
-        if g is None:
+        if c["game_pk"] in missing_games:
+            code = "MISSING_FROM_DECISION_SCHEDULE"
+        elif g is None:
             code = "GAME_NOT_IN_UNIT"
         elif c["combo"]:
             code = "NO_SINGLE_PLAYER_OFFER"
@@ -270,7 +296,8 @@ def build(*, unit, board, schedule_source, capture, archive, feature_snapshots, 
         return out
 
     # champion opportunities are fixed from the frozen policy decisions BEFORE offer filtering
-    opportunities = dedup([c for c in rows if c["game_pk"] in active and c["recommendation_status"] == "top_pick"],
+    unit_pks = set(active) | missing_games
+    opportunities = dedup([c for c in rows if c["game_pk"] in unit_pks and c["recommendation_status"] == "top_pick"],
                           lambda c: c["p"] or 0.0)
     n = len(opportunities)
     for c in rows:
@@ -285,19 +312,22 @@ def build(*, unit, board, schedule_source, capture, archive, feature_snapshots, 
             "BLEND_50_50": dedup(alt, lambda c: BLEND_WEIGHT_MODEL * c["p"]
                                  + (1 - BLEND_WEIGHT_MODEL) * c["offer"]["break_even_raw"])[:n]}
 
-    reasons = []
+    # A3: any coverage gap (capture, game, board, cutoff evidence) forces NON_COMPARABLE,
+    # whatever N is; ZERO_CHAMPION only for a fully covered unit with N = 0
+    coverage = list(cutoff_issues)
     if capture["status"] != "COMPLETE":
-        reasons.append(f"CAPTURE_{capture['status']}")
-    reasons += sorted({f"GAME_{code}" for code in game_issue.values()})
+        coverage.append(f"CAPTURE_{capture['status']}")
+    coverage += sorted({f"GAME_{code}" for code in game_issue.values()})
+    shortfall = []
     if len(champion) < n:
-        reasons.append("CHAMPION_SHORTFALL")
+        shortfall.append("CHAMPION_SHORTFALL")
     if any(len(arms[a]) < n for a in ARMS[1:]):
-        reasons.append("ALTERNATIVE_SHORTFALL")
-    unit_status = "ZERO_CHAMPION" if n == 0 else ("COMPARABLE" if not reasons else "NON_COMPARABLE")
+        shortfall.append("ALTERNATIVE_SHORTFALL")
+    reasons = coverage + shortfall
+    unit_status = ("NON_COMPARABLE" if reasons else "ZERO_CHAMPION" if n == 0 else "COMPARABLE")
     arm_out = {}
     for name, sel in arms.items():
-        status = ("ZERO_CHAMPION" if n == 0 else "SHORTFALL" if len(sel) < n
-                  else "MATCHED" if unit_status == "COMPARABLE" else "NON_COMPARABLE")
+        status = arm_status(unit_status, n, len(sel))
         arm_out[name] = {"policy": "EXISTING" if name.startswith("CHAMPION") else "ALTERNATIVE",
                          "publication_eligible": False, "n_target": n, "n_selected": len(sel), "status": status,
                          "selections": [{"candidate_id": c["candidate_id"], "offer_id": c["offer"]["offer_id"],
@@ -310,6 +340,8 @@ def build(*, unit, board, schedule_source, capture, archive, feature_snapshots, 
                 "CANDIDATE_POOL_LIMITED_TO_FREEZE_CHOSEN_LINES"}
     if mode != "PROSPECTIVE":
         blockers.add("DRY_RUN_MODE")
+    blockers.add("MISSING_CUTOFF_EVIDENCE" if cutoff_commitment is None
+                 else "CUTOFF_COMMITMENT_NOT_EXTERNALLY_ANCHORED")
     if unit_status != "COMPARABLE":
         blockers.add(f"UNIT_{unit_status}")
     if any(not c["offer"]["availability_verified"] for c in used):
@@ -326,11 +358,17 @@ def build(*, unit, board, schedule_source, capture, archive, feature_snapshots, 
             "unit": dict(unit), "model_versions": dict(board.get("provenance") or {}),
             "blend_weight_model": BLEND_WEIGHT_MODEL,
             "inputs": {"board_object_sha256": board_sha, "schedule_source": schedule_source, "capture": capture,
+                       "cutoff_commitment": cutoff_commitment,
                        "feature_snapshots": {k: feature_snapshots[k] for k in sorted(feature_snapshots or {})}},
-            "unit_games": sorted(unit_games), "game_issues": game_issue,
-            "decision_rule": {"rule": "AMENDMENT_A2_UNIT_EARLIEST_FIRST_PITCH_MINUS_LEAD",
+            "unit_games": sorted(unit_pks), "game_issues": game_issue,
+            "decision_rule": {"rule": ("AMENDMENT_A3_COMMITTED_CUTOFF" if cutoff_commitment
+                                       else "AMENDMENT_A2_FALLBACK_MISSING_CUTOFF_EVIDENCE"),
                               "lead_minutes": int(DECISION_LEAD.total_seconds() // 60),
-                              "unit_earliest_first_pitch_utc": earliest, "unit_tz": "America/New_York",
+                              "decision_cutoff_utc": unit["decision_at"],
+                              "cutoff_commitment_sha256": (cutoff_commitment or {}).get("commitment_sha256"),
+                              "unit_earliest_first_pitch_utc": earliest,
+                              "decision_schedule_earliest_first_pitch_utc": earliest_now,
+                              "cutoff_issues": cutoff_issues, "unit_tz": "America/New_York",
                               "day_night_split_local_hour": SCH.DAY_NIGHT_SPLIT_LOCAL_HOUR},
             "event_mapping_issues": event_issue, "candidates": rows, "arms": arm_out,
             "unit_status": unit_status, "non_comparable_reasons": reasons,
@@ -346,6 +384,34 @@ def build(*, unit, board, schedule_source, capture, archive, feature_snapshots, 
     return {**body, "manifest_sha256": FDC.canonical_sha256(body)}
 
 
+def arm_status(unit_status, n_target, n_selected):
+    """The only mapping from unit status to arm status: an arm can never report a
+    better state than its unit (no MATCHED or ZERO_CHAMPION in a NON_COMPARABLE unit)."""
+    if unit_status == "ZERO_CHAMPION":
+        return "ZERO_CHAMPION"
+    if n_selected < n_target:
+        return "SHORTFALL"
+    return "MATCHED" if unit_status == "COMPARABLE" else "NON_COMPARABLE"
+
+
+def unit_tally(manifests, archive):
+    """Downstream summary: re-verifies every manifest and refuses any arm whose
+    status is inconsistent with its unit. Zero-pick units are counted only when
+    their coverage was verified complete (ZERO_CHAMPION)."""
+    tally = {"COMPARABLE": 0, "NON_COMPARABLE": 0, "ZERO_CHAMPION": 0, "units": []}
+    for m in manifests:
+        verify_manifest(m, archive)
+        for name, a in m["arms"].items():
+            if a["status"] != arm_status(m["unit_status"], a["n_target"], a["n_selected"]):
+                raise ManifestError(f"{name} status {a['status']} contradicts unit {m['unit_status']}")
+        if m["unit_status"] == "ZERO_CHAMPION" and m["non_comparable_reasons"]:
+            raise ManifestError("ZERO_CHAMPION unit carries coverage reasons")
+        tally[m["unit_status"]] += 1
+        tally["units"].append({"unit": f"{m['unit']['date']}_{m['unit']['window']}", "status": m["unit_status"],
+                               "reasons": m["non_comparable_reasons"]})
+    return tally
+
+
 def verify_manifest(m, archive):
     body = {k: v for k, v in m.items() if k != "manifest_sha256"}
     if FDC.canonical_sha256(body) != m.get("manifest_sha256"):
@@ -353,7 +419,8 @@ def verify_manifest(m, archive):
     inp = m["inputs"]
     rebuilt = build(unit=m["unit"], board=archive.get_json(inp["board_object_sha256"]),
                     schedule_source=inp["schedule_source"], capture=inp["capture"], archive=archive,
-                    feature_snapshots=inp["feature_snapshots"], mode=m["mode"])
+                    feature_snapshots=inp["feature_snapshots"], mode=m["mode"],
+                    cutoff_commitment=inp.get("cutoff_commitment"))
     if rebuilt["manifest_sha256"] != m["manifest_sha256"]:
         raise ManifestError("manifest does not re-derive from its inputs and the raw archive")
     return m["manifest_sha256"]

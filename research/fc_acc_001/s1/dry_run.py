@@ -35,9 +35,11 @@ def synthetic(work):
     stat = {r["candidate_id"]: r["stat"] for r in X.records()}
     snaps = {cid: F.snapshot(cid, stat[cid], raw, wl if cid in ("c5", "c6") else None, captured_at=X.DECISION,
                              model_versions=X.VERSIONS) for cid, raw in X.raw_candidates().items()}
+    commitment = X.commitment(arch)
     m = M.build(unit=X.UNIT, board=X.board(), schedule_source=X.schedule_source(arch), capture=cap, archive=arch,
-                feature_snapshots=snaps, mode="DRY_RUN_NONCONFIRMATORY")
+                feature_snapshots=snaps, mode="DRY_RUN_NONCONFIRMATORY", cutoff_commitment=commitment)
     led = os.path.join(work, "ledger")
+    cutoff_status = L.record_cutoff(led, commitment, arch, now=f"{X.DATE}T18:30:00Z")
     _, status = L.seal(led, m, arch, ledger_kind="DRY_RUN", now=f"{X.DATE}T21:31:00Z")
     _, again = L.seal(led, m, arch, ledger_kind="DRY_RUN", now=f"{X.DATE}T21:32:00Z")
     return {"label": "DRY_RUN_NONCONFIRMATORY_SYNTHETIC", "capture_status": cap["status"],
@@ -46,6 +48,11 @@ def synthetic(work):
             "accounting": m["accounting"], "certification": m["certification"],
             "arms": {k: {kk: v[kk] for kk in ("policy", "n_target", "n_selected", "status")} | {
                 "selections": [s["candidate_id"] for s in v["selections"]]} for k, v in m["arms"].items()},
+            "cutoff_commitment": {"cutoff_utc": commitment["cutoff_utc"],
+                                  "commitment_deadline_utc": commitment["commitment_deadline_utc"],
+                                  "recorded": cutoff_status,
+                                  "statement_unpublished": AN.commitment_statement(commitment),
+                                  "anchor_status": AN.verify_commitment_anchor(commitment, [])},
             "seal": status, "reseal": again, "anchor_statement_unpublished": AN.head_statement(led),
             "anchor_status_without_external_anchor": AN.verify_anchors(led, [], arch),
             "archive_bytes": arch.size_bytes(),

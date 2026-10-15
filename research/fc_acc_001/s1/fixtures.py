@@ -12,6 +12,7 @@ import copy
 import json
 import sys
 
+import cutoff as CT
 import fanduel as FDC
 import schedule as SCH
 import sources as S
@@ -130,6 +131,13 @@ def schedule_bytes(**over):
 def schedule_source(archive, *, minute=5, **over):
     fetch = lambda req: ("statsapi", schedule_bytes(**over))  # noqa: E731
     return S.fetch(archive, fetch, make_clock(21, minute), source=SCH.SOURCE, request=SCH.request_for(DATE))
+
+
+def commitment(archive, *, hour=18, minute=0, **over):
+    """A3 cutoff commitment from a schedule observed 14:00 EDT (before the 15:00 NIGHT deadline)."""
+    src = S.fetch(archive, lambda req: ("statsapi", schedule_bytes(**over)), make_clock(hour, minute),
+                  source=SCH.SOURCE, request=SCH.request_for(DATE))
+    return CT.make(archive, src, {"date": DATE, "window": "NIGHT"})
 
 
 def gamelog_bytes():

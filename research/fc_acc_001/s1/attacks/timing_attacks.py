@@ -32,8 +32,9 @@ EARLIEST = min(S.ts(v) for v in X.FIRST_PITCH.values())
 
 def _build(a, decision, **sched):
     unit = dict(X.UNIT, decision_at=decision)
+    kw = {"cutoff_commitment": X.commitment(a)} if hasattr(X, "commitment") else {}   # A3+; A2 has no commitment
     return M.build(unit=unit, board=X.board(), schedule_source=X.schedule_source(a, **sched),
-                   capture=X.capture(a), archive=a, feature_snapshots={}, mode="PROSPECTIVE")
+                   capture=X.capture(a), archive=a, feature_snapshots={}, mode="PROSPECTIVE", **kw)
 
 
 def t1_edt_window_boundary():
