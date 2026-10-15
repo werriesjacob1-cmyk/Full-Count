@@ -1,0 +1,37 @@
+{
+  "player_id": "nrfi_849810",
+  "name": "Milwaukee Brewers @ Los Angeles Dodgers \u2014 1st Inning (Both Teams)",
+  "snapshots": [
+    {
+      "date": "2026-10-15",
+      "evaluations": [
+        {
+          "prop": "No runs in the 1st (both teams)",
+          "type": "game",
+          "score": 64.8,
+          "notable_signals": 0,
+          "matchup": "Milwaukee Brewers @ Los Angeles Dodgers",
+          "game_pk": 849810,
+          "team": null,
+          "side": "both",
+          "lean": "NRFI",
+          "combo_player_ids": null,
+          "signals": {
+            "home_team_scores_p": 0.254,
+            "away_team_scores_p": 0.2836,
+            "fi_n_starts": 16.0
+          },
+          "hit_probability": 0.5344,
+          "raw_hit_probability": null,
+          "lift": 0.036,
+          "reliability": "A",
+          "sample_n": 16,
+          "projection": {
+            "stat": "nrfi_combined",
+            "value": 53.4
+          }
+        }
+      ]
+    }
+  ]
+}
