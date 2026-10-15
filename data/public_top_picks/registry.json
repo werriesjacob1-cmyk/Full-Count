@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-10-15T21:52:49.593689+00:00",
+  "updated_at": "2026-10-15T23:37:44.756813+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -62276,6 +62276,105 @@
         },
         "qualification_timestamp": "2026-10-15T21:42:40.824844+00:00",
         "board_timestamp": "2026-10-15T21:42:40.820163+00:00",
+        "slate_date": "2026-10-15"
+      }
+    },
+    "fc2:849810:player-592885:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:849810:player-592885:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "849810",
+        [
+          "player",
+          "592885"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-10-15",
+      "first_published_at": "2026-10-15T23:37:44.756813+00:00",
+      "publication_provenance": {
+        "artifact_id": "a05abf544214cb959a9ec8c10a97f88816cf565dc61a3952bd23c89b7dc29fe1",
+        "source_commit": "9a768aa5fb70c068f419428a77d63d6612d34fbc",
+        "workflow_run_id": "38824593504",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-10-15T23:37:31.317438+00:00",
+        "data_hash": "5928f4f0e8476fe5c48c41bb88107b5d1183d30058d6aa23a81567ca97ac1ee6",
+        "live_hash": "0cac49c9bb5e8ab1ca4e83b9562f63904d14fbb869390f29e222b3a3a98a6f69"
+      },
+      "snapshot": {
+        "id": "fc2:849810:player-592885:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 849810,
+        "player_id": 592885,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "Christian Yelich",
+        "team": "Milwaukee Brewers",
+        "matchup": "Milwaukee Brewers @ Los Angeles Dodgers",
+        "game_start": "2026-10-16T00:00:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6945,
+        "market_odds": -195,
+        "market_implied": 0.661,
+        "market_edge": 0.0335,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (8.2 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Platoon: L bat vs RHP (favorable)",
+          "Projected 4.07 PA (batting slot 5)",
+          "Hitters batting ahead of him: 0.381 wOBA (league ~.320) \u2014 real RBI opportunity on base ahead of him",
+          "Hitter batting behind him: 0.340 wOBA (league ~.320)",
+          "Season barrel% 9.6"
+        ],
+        "watchouts": [
+          "L7 avg EV 77.8mph (league ~88.5) \u2014 cold recent contact",
+          "L7 barrel% 0.0 \u2014 cold recent contact",
+          "Opposing SP ERA 3.53 \u2014 elite pitcher, tough matchup",
+          "Team implied for 3.72 runs (league avg 4.245; line 3.5, game total 8) \u2014 a weak offensive environment",
+          "L7 sample is thin (4 PA) \u2014 treat recent-form read with caution",
+          "Wind blowing IN (10mph) \u2014 power suppressed",
+          "Opposing bullpen fatigue: 0/8 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)",
+          "BvP: 1-for-14 vs Tyler Glasnow (standard error \u00b17 pts on a 14-AB career sample -- weighted lightly on that basis, not just because the count looks small)"
+        ],
+        "prob_ci": [
+          0.6837,
+          0.7176
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 117,
+        "lineup_assumed": null,
+        "base_rate": 0.6971,
+        "lift": -0.0026,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "8798c1819",
+          "prediction_timestamp": "2026-10-15T23:31:42.245459+00:00",
+          "odds_fetched_at": "2026-10-15T23:31:40.632137+00:00",
+          "board_generated_at": "2026-10-15T23:31:42.241105+00:00"
+        },
+        "qualification_timestamp": "2026-10-15T23:31:42.245459+00:00",
+        "board_timestamp": "2026-10-15T23:31:42.241105+00:00",
         "slate_date": "2026-10-15"
       }
     }
