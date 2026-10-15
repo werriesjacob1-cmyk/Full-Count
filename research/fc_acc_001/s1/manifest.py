@@ -41,6 +41,10 @@ import offer_provenance as OP  # noqa: E402
 MANIFEST_VERSION = "fc-acc-001-s1-manifest-2"
 BLEND_WEIGHT_MODEL = 0.5          # FIXED by S1_PROTOCOL.md; never tuned
 MAX_QUOTE_AGE = timedelta(minutes=45)
+# AMENDMENT_A2: one common, rule-determined decision cutoff per DAY/NIGHT unit,
+# exactly DECISION_LEAD before the unit's earliest scheduled first pitch in the
+# archived pregame schedule. No per-game cutoffs, no operator-chosen times.
+DECISION_LEAD = timedelta(minutes=30)
 MODES = ("PROSPECTIVE", "DRY_RUN_NONCONFIRMATORY")
 STAT_ALIAS = {"stolen_base": "stolen_bases"}
 PITCHER_STATS = ("strikeouts", "pitcher_outs")
@@ -120,19 +124,22 @@ def build(*, unit, board, schedule_source, capture, archive, feature_snapshots, 
         sched = SCH.load(schedule_source, archive, unit["date"], not_after=unit["decision_at"])
     except SCH.ScheduleError as exc:
         raise ManifestError(str(exc)) from exc
-    unit_games = {pk: g for pk, g in sched.items() if SCH.window_of(g["first_pitch_utc"], unit["date"]) == unit["window"]}
+    try:
+        unit_games = {pk: g for pk, g in sched.items()
+                      if SCH.window_of(g["first_pitch_utc"], unit["date"]) == unit["window"]}
+    except SCH.ScheduleError as exc:
+        raise ManifestError(str(exc)) from exc
     if not unit_games:
         raise ManifestError("no scheduled games in this unit")
-    active, excluded_games = {}, {}
-    for pk, g in unit_games.items():
-        if _ts(g["first_pitch_utc"]) <= decision_at:
-            excluded_games[pk] = "GAME_STARTED_BEFORE_DECISION"
-        elif g["abstract_state"] != SCH.PREGAME_STATE:
-            excluded_games[pk] = "GAME_NOT_PREGAME_IN_RAW"
-        else:
-            active[pk] = g
-    if not active:
-        raise ManifestError("no unit game is pregame at the decision cutoff")
+    # one common cutoff for the whole unit, before its EARLIEST first pitch; a
+    # decision after any unit game starts is refused outright (no game is ever
+    # dropped to make a late decision "pregame")
+    earliest = min(unit_games.values(), key=lambda g: _ts(g["first_pitch_utc"]))["first_pitch_utc"]
+    required_cutoff = _ts(earliest) - DECISION_LEAD
+    if decision_at != required_cutoff:
+        raise ManifestError(f"decision_at {unit['decision_at']} is not the unit cutoff "
+                            f"{required_cutoff.isoformat()} (earliest first pitch {earliest} minus {DECISION_LEAD})")
+    active = unit_games                        # every unit game stays in the unit and in N
 
     # ---- authenticated sportsbook capture ----
     try:
@@ -159,7 +166,9 @@ def build(*, unit, board, schedule_source, capture, archive, feature_snapshots, 
     game_issue = {}
     for pk, g in active.items():
         evs = [eid for eid, gpk in event_game.items() if gpk == pk]
-        if pk not in board_starts:
+        if g["abstract_state"] != SCH.PREGAME_STATE:
+            game_issue[pk] = "GAME_NOT_PREGAME_IN_RAW"
+        elif pk not in board_starts:
             game_issue[pk] = "BOARD_MISSING_GAME"
         elif _ts(board_starts[pk]) != _ts(g["first_pitch_utc"]):
             game_issue[pk] = "BOARD_SCHEDULE_MISMATCH"
@@ -193,9 +202,7 @@ def build(*, unit, board, schedule_source, capture, archive, feature_snapshots, 
     for r in records:
         c = _cand_min(r)
         code, offer, g = None, None, active.get(c["game_pk"])
-        if c["game_pk"] in excluded_games:
-            code = excluded_games[c["game_pk"]]
-        elif g is None:
+        if g is None:
             code = "GAME_NOT_IN_UNIT"
         elif c["combo"]:
             code = "NO_SINGLE_PLAYER_OFFER"
@@ -320,7 +327,11 @@ def build(*, unit, board, schedule_source, capture, archive, feature_snapshots, 
             "blend_weight_model": BLEND_WEIGHT_MODEL,
             "inputs": {"board_object_sha256": board_sha, "schedule_source": schedule_source, "capture": capture,
                        "feature_snapshots": {k: feature_snapshots[k] for k in sorted(feature_snapshots or {})}},
-            "unit_games": sorted(unit_games), "excluded_games": excluded_games, "game_issues": game_issue,
+            "unit_games": sorted(unit_games), "game_issues": game_issue,
+            "decision_rule": {"rule": "AMENDMENT_A2_UNIT_EARLIEST_FIRST_PITCH_MINUS_LEAD",
+                              "lead_minutes": int(DECISION_LEAD.total_seconds() // 60),
+                              "unit_earliest_first_pitch_utc": earliest, "unit_tz": "America/New_York",
+                              "day_night_split_local_hour": SCH.DAY_NIGHT_SPLIT_LOCAL_HOUR},
             "event_mapping_issues": event_issue, "candidates": rows, "arms": arm_out,
             "unit_status": unit_status, "non_comparable_reasons": reasons,
             "accounting": {"candidates": len(rows), "offer_status": dict(sorted(acct.items())),
@@ -331,7 +342,7 @@ def build(*, unit, board, schedule_source, capture, archive, feature_snapshots, 
                            "feature_snapshots_admitted": dict(sorted(snaps_ok.items())),
                            "feature_snapshots_rejected": dict(sorted(snaps_rejected.items()))},
             "certification": {"certified_prospective": False, "blockers": sorted(blockers)},
-            "first_pitch_utc_min": min(active[pk]["first_pitch_utc"] for pk in active)}
+            "first_pitch_utc_min": earliest}
     return {**body, "manifest_sha256": FDC.canonical_sha256(body)}
 
 

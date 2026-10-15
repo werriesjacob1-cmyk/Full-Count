@@ -1,5 +1,23 @@
 # FC-ACC-001-S1: full-candidate export, design (not implemented)
 
+> **Revision A2 (2026-10-15).** This revision follows Codex re-audit
+> 6194240381 and `../AMENDMENT_A2.md`.
+>
+> **Superseded rule.** The original §5 rule said: "for each game, the last
+> run with a sealed capture before **that game's** first pitch". It also used a
+> fixed 22:00 UTC DAY/NIGHT split.
+>
+> **Why it was wrong.** A later game's last run can postdate an earlier game's
+> start, so the combined DAY/NIGHT unit could not be sealed before its first
+> pitch. The fixed UTC split misassigns games under daylight saving time.
+>
+> **What replaces it.** Every unit now uses ONE common cutoff:
+> - the unit's earliest scheduled first pitch from the archived schedule,
+>   minus 30 minutes;
+> - DAY/NIGHT taken at 17:00 America/New_York.
+>
+> The superseded text is kept in git history at `73e4f601`.
+
 **Status: DESIGN ONLY.** No production file has been changed. Implementation
 waits on independent Codex review and Jacob's explicit authorization.
 
@@ -184,13 +202,19 @@ None of these require touching production fetchers.
 | Binding | Mechanism | Fail-closed result |
 |---|---|---|
 | **Offer** | Offers are re-derived from archived FanDuel bytes and joined on (game_pk via a unique event map, player, stat, side, needs). Every `options[]` entry is joinable, not only the chosen line. The production price is never used as the decision price; any difference is flagged. | `MISSING_QUOTE`, `CONFLICTING_OFFERS`, `STALE_QUOTE`, `OBSERVED_AFTER_DECISION`, `INCOMPLETE_CAPTURE` (already implemented) |
-| **Schedule** | Each export `game_pk`/`game_start_utc` must match the archived raw schedule. The status must be pregame at capture. | `SCHEDULE_UNVERIFIED` / `GAME_STARTED_BEFORE_DECISION` |
+| **Schedule** | Each export `game_pk`/`game_start_utc` must match the archived raw schedule. The status must be pregame at capture. | `SCHEDULE_UNVERIFIED` / `GAME_NOT_PREGAME_IN_RAW` (the game stays in the unit; the unit becomes NON_COMPARABLE) |
 | **Lineup** | For batter rows, the export's `lineup_basis` slot and provenance must equal the archived raw lineup (player id at slot, both sides). Production's own lineup bytes stay unarchived; this is **independent corroboration**, not a tee, and the doc says so. | `LINEUP_UNCONFIRMED_AT_CAPTURE` (not confirmed in raw), `LINEUP_CHANGED_AFTER_RUN` (slot or player differs, or scratched). The row is excluded from alternative eligibility and the champion's exposure is recorded. |
 | **Starter** | `opp_sp_id` and pitcher candidates must match `probablePitcher` in the raw schedule. | `STARTER_CHANGED_AFTER_RUN` |
 | **Freeze** | `freeze_sha256` must verify with `board_freeze.verify_board_seal`. | Whole run rejected |
 
-**Chronology rule.** A run is usable for a game only when
-`board_generated_at ≤ exported_at < capture_started ≤ capture_completed < first pitch`.
+**Chronology rule (A2).** A run is usable for a unit only when the
+following holds, where `unit_cutoff` is the unit's earliest scheduled first
+pitch in the archived schedule minus 30 minutes:
+
+`board_generated_at ≤ exported_at < capture_started ≤ capture_completed ≤ unit_cutoff`
+
+Every included candidate, offer, schedule observation and feature observation
+must be available by `unit_cutoff`. Nothing observed later can enter the unit.
 
 ## 5. When it executes, and the risks
 
@@ -200,7 +224,7 @@ None of these require touching production fetchers.
 | Changed customer selections | The export is read-only after selection. A wiring test diffs `rank_for_board`/`select_main_board`/`write_json` output with the export forced on, forced off and forced to raise; all must be identical. A source test asserts the call site comes after `write_json` and sits inside its own `try`. |
 | Postgame leakage | Started games are already removed by `bettable_games()` and recorded in `games_excluded_started`. The export seal requires `exported_at < first pitch`. The capture rejects any game not pregame in the raw schedule. Grading never reads the export until the ledger seal predates first pitch. |
 | Missing or duplicate candidates | The id set must equal the sealed freeze's id set. `options[]` ids must be unique within a run. The count is recorded. Any mismatch raises. |
-| Partial-slate selection bias | Exports are per run and write-once, never overwritten. The evaluation unit is (date, window): DAY for first pitch before 22:00 UTC, NIGHT otherwise. For each game, the **last run with a sealed capture before that game's first pitch** is used. That rule is fixed in advance, so outcomes cannot choose it. A game without such a run is `NO_PREGAME_RUN`, counted and never filled from a later run. The champion arm's N per unit comes from that same run set. |
+| Partial-slate selection bias | Exports are per run, append-only and write-once; they are never overwritten, and every run is kept for completeness.<br><br>The evaluation unit is (date, window): DAY is first pitch before 17:00 America/New_York (IANA conversion), NIGHT otherwise.<br><br>Each unit has **one** decision run: the last run whose export **and** capture completed at or before the common `unit_cutoff`. All unit games and all challenger selections are frozen from that single run. The rule is fixed in advance, so neither outcomes nor per-game timing can choose it.<br><br>Runs after the cutoff are retained but can **never** be selected into, or combined with, a sealed unit. A unit game absent from that run, or not pregame in the raw schedule, stays in the unit, counts toward the champion's N, and makes the unit `NON_COMPARABLE`. A unit with no qualifying run is `NO_PREGAME_RUN`. |
 | Synthetic or unverifiable offers | Offers come only from archived raw bytes. The production price is labelled `UNAUTHENTICATED_PRODUCTION_NAME_KEYED`. A dry-run manifest can never enter the PROSPECTIVE ledger (already enforced). |
 | Late-scratch step | The existing "Re-check the board for late scratches" step can alter the board after generation. The export reflects the generation-time decision. The capture's raw lineup check catches scratches (`LINEUP_CHANGED_AFTER_RUN`). |
 
@@ -245,7 +269,7 @@ harness is needed.
     - a projected raw lineup gives `LINEUP_UNCONFIRMED_AT_CAPTURE`;
     - a changed starter gives `STARTER_CHANGED_AFTER_RUN`;
     - a started game gives `GAME_STARTED_BEFORE_DECISION`.
-12. **Per-game run choice.** With runs at 15:30, 20:00 and 22:30 and games at 17:05 and 23:10, the 17:05 game uses the 15:30 run and the 23:10 game uses the 22:30 run. A game with no prior run gives `NO_PREGAME_RUN`.
+12. **Unit run choice (A2).** Runs at 15:30, 20:00 and 22:30 UTC, with EDT NIGHT games at 23:10 and 23:40 UTC, give a NIGHT cutoff of 22:40. The decision run is 22:30, provided its capture completed by 22:40. The run at 23:20 (after 23:10) is retained but rejected for the unit. With a DAY game at 17:05 UTC (13:05 EDT), the DAY cutoff is 16:35, so the decision run is 15:30. A unit with no run by its cutoff gives `NO_PREGAME_RUN`.
 13. **Bounded growth.** Repeating an identical run adds zero bytes. The export never embeds `prior/` or earlier exports.
 
 ### Exact non-live verification procedure
@@ -299,7 +323,7 @@ cutoffs, it is about 0.4–1.8 GB a season.
   Every commit only **adds** new content-addressed files. There is no `prior/`,
   no nesting of earlier artifacts and no rewriting, which follows the lesson of
   the NFL link-7 growth.
-- **Capture frequency.** Only for the last run before each window cutoff, not
+- **Capture frequency.** Only for the last run before each unit's A2 cutoff, not
   all 6 runs. Exports are tiny and are kept for every run.
 - **Retention.**
   - Ledger, manifests and exports: permanent (small).
@@ -324,7 +348,7 @@ cutoffs, it is about 0.4–1.8 GB a season.
    - `schedule.py` (archive raw schedule; verify the lineup, starter and start
      time), about 120 lines;
    - `manifest.build` accepting export rows plus `options[]`;
-   - the per-game run-selection rule.
+   - the A2 unit run-selection rule (one run per unit, completed by the unit cutoff).
 
 **Separately authorized activation, later:**
 - one workflow step;

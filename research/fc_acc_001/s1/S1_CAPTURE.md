@@ -25,8 +25,20 @@ blockers listed. The only outputs are synthetic and non-confirmatory:
   5. The local seal could be contradicted after deleting its file.
 
   Those results are preserved in `out/s1_codex_attacks_before_after.json`.
-- **v2 (this version).** All 19 attack variants are rejected. See "Adversarial
-  results" below.
+- **v2, `4e6a1f04`.** All 19 attack variants were rejected. See "Adversarial
+  results" below. Codex re-audit 6194240381 then found two timing P1s:
+  - a fixed 22:00 UTC DAY/NIGHT split;
+  - per-game exclusion of started games, which let a unit be decided, and even
+    PROSPECTIVE-sealed, after its earliest first pitch.
+
+  Both reproduced: 5 of 5 VULNERABLE in `out/s1_a2_timing_attacks_before_after.json`.
+- **v3 (this version, `../AMENDMENT_A2.md`).**
+  - DAY/NIGHT uses 17:00 America/New_York, converted with the IANA zone.
+  - Each unit has one rule-determined cutoff: its earliest scheduled first
+    pitch minus 30 minutes.
+  - No game is ever dropped from a unit.
+  - Result: 5 of 5 timing attacks REJECTED, and the 19 earlier attacks are
+    still rejected.
 
 ## Pipeline
 
@@ -47,7 +59,7 @@ raw statsapi game log ─► workload (observed ≤ cutoff, prior starts only)
 | `sources.py` | One archived observation per request: exact request string, host, sha256 of the delivered body (`requests.Response.content`, the decoded body rather than the wire bytes), and start and completion time. `verify` checks source, request, sha, size, chronology and `completed_at ≤ cutoff`. |
 | `fanduel.py` | Lineage is **re-derived**:<br>• events from the archived root;<br>• each event's five tab paths must equal `event-page?eventId=<id>&tab=<tab>`;<br>• each market's `eventId` must equal the request's event (`MARKET_EVENT_ID_ABSENT` or `_MISMATCH` otherwise).<br><br>The budget is checked before **every** request, and `live_fetch_bytes` takes a deadline. Event and capture statuses are recomputed during verification. |
 | `fanduel.parse_offers` | **One-sided:** duplicate runner names give `AMBIGUOUS_RUNNER_NAME`; a missing selection id or malformed odds is rejected.<br>**Two-sided:** exactly two runners, one player, one line, one OVER and one UNDER; anything else is `INCOHERENT_TWO_SIDED_MARKET`. No-vig is derived only from a coherent pair.<br>**Availability:** `marketStatus` must be OPEN and `runnerStatus` ACTIVE when present, and `inPlay: true` is rejected. An **absent** field gives `availability_verified: false` plus the `SPORTSBOOK_AVAILABILITY_SCHEMA_UNMEASURED` blocker, never "open". |
-| `schedule.py` | Games, start time, `abstractGameState`, confirmed lineups and probable starters, all from archived raw statsapi only. An empty lineup array means **not confirmed**. |
+| `schedule.py` | Games, start time, `abstractGameState`, confirmed lineups and probable starters, all from archived raw statsapi only. An empty lineup array means **not confirmed**.<br><br>`window_of` maps a start to DAY/NIGHT at 17:00 `America/New_York` (IANA). Naive, malformed or before-official-date times are rejected. |
 | `workload.py` | The game-log source must match the exact request for that pitcher and season and be observed by the decision cutoff. Only starts before the game date are used. The output carries its source record. |
 | `features.py` | `captured_at` is required and timezone-aware. `check()` rejects:<br>• a mismatched identity;<br>• `captured_at` after the decision;<br>• a workload observed after the decision;<br>• a workload that does not **re-derive** from its archived source.<br><br>Model values are labelled `UNVERIFIED_PRODUCTION_VALUES`. |
 | `manifest.py` | See "Join" and "Equal volume" below. It is re-derivable: `verify_manifest` rebuilds from the archived board, schedule record, capture and snapshots. |
@@ -61,7 +73,8 @@ The candidate must come from the sealed board (`verify_board_seal`), with
 
 | Check | Fail-closed code |
 |---|---|
-| Unit game pregame in raw schedule and after decision | `GAME_STARTED_BEFORE_DECISION`, `GAME_NOT_PREGAME_IN_RAW` |
+| `decision_at` is exactly the A2 unit cutoff (earliest unit first pitch − 30 min) | whole manifest refused |
+| Unit game pregame in raw schedule (the game stays in the unit and in N) | `GAME_NOT_PREGAME_IN_RAW` (unit `NON_COMPARABLE`) |
 | Board start time equals the raw schedule start time | `BOARD_MISSING_GAME`, `BOARD_SCHEDULE_MISMATCH` |
 | Exactly one FanDuel event (matchup ± 90 min), fully captured | `MISSING_EVENT`, `AMBIGUOUS_EVENT`, `INCOMPLETE_CAPTURE` |
 | Single-player market S1 can price | `NO_SINGLE_PLAYER_OFFER`, `MARKET_NOT_IN_S1_SCOPE` |
@@ -79,9 +92,10 @@ unique in the unit. This is stated, not hidden.
 
 ## Equal volume and comparability
 
-- **N** is the number of board `top_pick` decisions in the unit's pregame
+- **N** is the number of board `top_pick` decisions across **all** of the unit's
   games, de-duplicated per (player, stat, side). It is computed **before** any
-  offer filtering.
+  offer filtering. Under Amendment A2 a unit is decided once, at its common
+  cutoff before the earliest first pitch, and no game is dropped from it.
 - **Champion opportunity status** is one of:
   - `SELECTED`;
   - any offer code;

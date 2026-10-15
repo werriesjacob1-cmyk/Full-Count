@@ -23,7 +23,9 @@ import fixtures as X  # noqa: E402
 import ledger as L  # noqa: E402
 import manifest as M  # noqa: E402
 import post_repair_attacks as ATT  # noqa: E402
+import timing_attacks as TA  # noqa: E402
 import raw_archive as RA  # noqa: E402
+import schedule as SCH  # noqa: E402
 import workload as W  # noqa: E402
 
 LATE = f"{X.DATE}T21:35:00Z"
@@ -114,17 +116,20 @@ class SourceLineage(Base):
 
 class PointInTime(Base):
     def test_capture_after_decision_and_naive_time_fail_closed(self):
-        with self.assertRaises(M.ManifestError):
-            self.build(unit=dict(X.UNIT, decision_at=f"{X.DATE}T21:00:00Z"))
+        late = FDC.sweep(self.arch, X.make_fetch(), clock=X.make_clock(21, 40))      # completes 21:40 > cutoff
+        with self.assertRaisesRegex(M.ManifestError, "capture completed after"):
+            self.build(cap=late)
         with self.assertRaises(M.ManifestError):
             self.build(unit=dict(X.UNIT, decision_at=f"{X.DATE}T21:30:00"))
 
-    def test_started_or_non_pregame_games_excluded(self):
+    def test_non_pregame_game_stays_in_unit_and_volume(self):
         m = self.build(state={"900001": "Live"})
-        self.assertEqual(m["excluded_games"], {"900001": "GAME_NOT_PREGAME_IN_RAW"})
+        self.assertEqual(m["game_issues"], {"900001": "GAME_NOT_PREGAME_IN_RAW"})
         self.assertEqual(self.row(m, "c1")["offer_status"], "GAME_NOT_PREGAME_IN_RAW")
-        with self.assertRaises(M.ManifestError):
-            self.build(state={"900001": "Live", "900002": "Final"})
+        champ = m["arms"][ARMS0]
+        self.assertEqual((champ["n_target"], champ["n_selected"], champ["status"]), (3, 0, "SHORTFALL"))
+        self.assertEqual(m["unit_status"], "NON_COMPARABLE")
+        self.assertNotIn("excluded_games", m)
 
     def test_lineup_must_be_confirmed_in_raw(self):
         m = self.build(lineups={"900001": ([], []), "900002": X.LINEUPS["900002"]})
@@ -136,8 +141,8 @@ class PointInTime(Base):
         self.assertEqual(self.row(m, "c5")["offer_status"], "STARTER_NOT_PROBABLE_IN_RAW")
 
     def test_board_must_match_schedule_and_be_sealed_pregame(self):
-        m = self.build(first_pitch={"900001": f"{X.DATE}T23:20:00Z"})
-        self.assertEqual(m["game_issues"], {"900001": "BOARD_SCHEDULE_MISMATCH"})
+        m = self.build(first_pitch={"900002": f"{X.DATE}T22:50:00Z"})          # earliest (cutoff) unchanged
+        self.assertEqual(m["game_issues"], {"900002": "BOARD_SCHEDULE_MISMATCH"})
         self.assertEqual(m["unit_status"], "NON_COMPARABLE")
         with self.assertRaises(M.ManifestError):                       # board sealed after the decision
             self.build(board=X.board(sealed_at=f"{X.DATE}T21:40:00Z"))
@@ -164,6 +169,104 @@ class PointInTime(Base):
         self.assertEqual(s["model_values_provenance"], "UNVERIFIED_PRODUCTION_VALUES")
         with self.assertRaises(Exception):
             F.snapshot("x", "hits", None, None, captured_at=None, model_versions=X.VERSIONS)
+
+
+class UnitTiming(Base):
+    """AMENDMENT_A2: New York DAY/NIGHT boundary and one common unit cutoff."""
+
+    def w(self, t, d):
+        return SCH.window_of(t, d)
+
+    def test_daylight_saving_boundary(self):
+        self.assertEqual(self.w("2026-07-15T20:59:59Z", "2026-07-15"), "DAY")      # 16:59:59 EDT
+        self.assertEqual(self.w("2026-07-15T21:00:00Z", "2026-07-15"), "NIGHT")    # 17:00:00 EDT
+        self.assertEqual(self.w("2026-10-15T21:30:00Z", "2026-10-15"), "NIGHT")    # Codex probe: 17:30 EDT
+        self.assertEqual(self.w("2026-07-15T16:59:59-04:00", "2026-07-15"), "DAY")  # explicit offset accepted
+
+    def test_standard_time_boundary(self):
+        self.assertEqual(self.w("2026-04-01T20:59:59Z", "2026-04-01"), "DAY")      # EDT already (sanity)
+        self.assertEqual(self.w("2027-03-03T21:59:59Z", "2027-03-03"), "DAY")      # 16:59:59 EST
+        self.assertEqual(self.w("2027-03-03T22:00:00Z", "2027-03-03"), "NIGHT")    # 17:00:00 EST
+        self.assertEqual(self.w("2027-03-03T21:30:00Z", "2027-03-03"), "DAY")      # 16:30 EST
+
+    def test_transition_days(self):
+        self.assertEqual(self.w("2026-03-08T20:59:59Z", "2026-03-08"), "DAY")      # spring forward: EDT from 02:00
+        self.assertEqual(self.w("2026-03-08T21:00:00Z", "2026-03-08"), "NIGHT")
+        self.assertEqual(self.w("2026-11-01T21:59:59Z", "2026-11-01"), "DAY")      # fall back: EST from 02:00
+        self.assertEqual(self.w("2026-11-01T22:00:00Z", "2026-11-01"), "NIGHT")
+
+    def test_utc_date_transitions(self):
+        self.assertEqual(self.w("2026-07-16T00:10:00Z", "2026-07-15"), "NIGHT")    # 20:10 EDT on the 15th
+        self.assertEqual(self.w("2026-07-16T04:30:00Z", "2026-07-15"), "NIGHT")    # 00:30 EDT next local day
+        self.assertEqual(self.w("2026-07-15T13:05:00Z", "2026-07-15"), "DAY")      # 09:05 EDT
+        with self.assertRaises(SCH.ScheduleError):                                 # 23:00 EDT on the 14th
+            self.w("2026-07-15T03:00:00Z", "2026-07-15")
+
+    def test_invalid_and_ambiguous_timestamps_rejected(self):
+        for bad in ("2026-11-01T01:30:00", "2026-07-15T21:00:00", "", None, "not-a-time", "2026-13-01T00:00:00Z"):
+            with self.assertRaises(SCH.ScheduleError):
+                self.w(bad, "2026-11-01")
+        with self.assertRaises(SCH.ScheduleError):
+            self.w("2026-07-15T21:00:00Z", "2026-7-15x")
+
+    def test_unit_membership_follows_new_york_time(self):
+        # 900001 moved to 13:05 EDT -> DAY; the NIGHT unit then holds only 900002 and its cutoff moves
+        with self.assertRaisesRegex(M.ManifestError, "not the unit cutoff"):
+            self.build(first_pitch={"900001": f"{X.DATE}T17:05:00Z"})
+
+    def test_decision_must_be_the_single_unit_cutoff(self):
+        for t in ("21:29:00", "21:31:00", "22:10:00", "22:45:00"):        # off-rule, or after the earliest pitch
+            with self.assertRaisesRegex(M.ManifestError, "not the unit cutoff"):
+                self.build(unit=dict(X.UNIT, decision_at=f"{X.DATE}T{t}Z"))
+        m = self.build()
+        self.assertEqual(m["decision_rule"]["unit_earliest_first_pitch_utc"], X.FIRST_PITCH["900001"])
+        self.assertEqual(m["first_pitch_utc_min"], X.FIRST_PITCH["900001"])
+        self.assertEqual(sorted(m["unit_games"]), ["900001", "900002"])
+
+    def test_no_later_per_game_information_enters_the_unit(self):
+        # a later production run (after 900001 started) only covers 900002; it can never enter this unit
+        later_run = X.board([r for r in X.records() if r["game_pk"] == "900002"],
+                            generated_at=f"{X.DATE}T22:20:00Z", sealed_at=f"{X.DATE}T22:21:00Z",
+                            starts={"900002": X.FIRST_PITCH["900002"]})
+        with self.assertRaisesRegex(M.ManifestError, "after the decision cutoff"):
+            self.build(board=later_run)
+        with self.assertRaises(M.ManifestError):                                     # schedule seen after cutoff
+            self.build(sched=X.S.fetch(self.arch, lambda r: ("statsapi", X.schedule_bytes()), X.make_clock(22, 5),
+                                       source=SCH.SOURCE, request=SCH.request_for(X.DATE)))
+        led = os.path.join(self.tmp.name, "led")
+        L.seal(led, self.build(mode="PROSPECTIVE"), self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.GENESIS,
+               now=LATE)
+        later = self.build(cap=self.cap(overrides={"slugger_hit": -260}), mode="PROSPECTIVE")
+        with self.assertRaises(L.LedgerError):                                       # unit already sealed
+            L.seal(led, later, self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.head(led), now=LATE)
+
+    def test_no_seal_at_or_after_unit_first_pitch(self):
+        pm = self.build(mode="PROSPECTIVE")
+        for when in (X.FIRST_PITCH["900001"], f"{X.DATE}T22:20:00Z"):
+            with self.assertRaises(L.LedgerError):
+                L.seal(os.path.join(self.tmp.name, "led"), pm, self.arch, ledger_kind="PROSPECTIVE",
+                       anchored_head=L.GENESIS, now=when)
+
+    def test_timing_attacks_rejected(self):
+        res = TA.run()
+        self.assertEqual(len(res), 5)
+        self.assertEqual({k: v for k, v in res.items() if not v.startswith("REJECTED")}, {})
+
+
+class EvidencePreservation(unittest.TestCase):
+    FROZEN = {"research/fc_acc_001/S1_PROTOCOL.md": "736bc944ada1bdb88cd6d0fb77780206dd75a47d566b66d45a233b57d1d8b42b",
+              "research/fc_acc_001/PREREG.md": "e6466a71cdbacb86ce0f10af1cd89e353c20aa8f99ac8c3df59a616d5905dbbb",
+              "research/fc_acc_001/AMENDMENT_A1.md": "36b6f32a5d44139c0ee6bb8e2c892326cacb66fe7f1994ddd214664ef80e180c",
+              "research/fc_acc_001/out/amendment_a1.json":
+                  "d09e7e343720d27fb5558e5e02e1478ea3bc6fd46632ff2adef74f4e81f60185",
+              "research/fc_acc_001/out/s1_codex_attacks_before_after.json":
+                  "9814b6ec5f7053fcad9531eb217b20ac37f6e4c695670316c8be4e9dc638d7c9"}
+
+    def test_frozen_protocol_and_prior_evidence_bytes_unchanged(self):
+        import hashlib
+        for rel, sha in self.FROZEN.items():
+            with open(os.path.join(HERE, rel), "rb") as fh:
+                self.assertEqual(hashlib.sha256(fh.read()).hexdigest(), sha, rel)
 
 
 class EqualVolume(Base):

@@ -25,10 +25,10 @@ SYNTHETIC = True
 DATE = "2031-05-01"                                     # far-future: cannot be confused with real slates
 DECISION = f"{DATE}T21:30:00Z"
 UNIT = {"date": DATE, "window": "NIGHT", "decision_at": DECISION}
-FIRST_PITCH = {"900001": f"{DATE}T23:10:00Z", "900002": f"{DATE}T23:40:00Z"}
+FIRST_PITCH = {"900001": f"{DATE}T22:00:00Z", "900002": f"{DATE}T22:40:00Z"}   # 18:00 / 18:40 EDT: NIGHT
 TEAMS = {"900001": ("Alpha Aces", "Beta Bears"), "900002": ("Gamma Goats", "Delta Dogs")}
-EVENTS = {"E1": ("Alpha Aces (A Pitcher) @ Beta Bears (Ace Arm)", f"{DATE}T23:11:00Z"),
-          "E2": ("Gamma Goats (C Pitcher) @ Delta Dogs (D Pitcher)", f"{DATE}T23:41:00Z")}
+EVENTS = {"E1": ("Alpha Aces (A Pitcher) @ Beta Bears (Ace Arm)", f"{DATE}T22:01:00Z"),
+          "E2": ("Gamma Goats (C Pitcher) @ Delta Dogs (D Pitcher)", f"{DATE}T22:41:00Z")}
 VERSIONS = {"model_version": "2031.05.01-synthetic", "selection_policy_version": "1.0.0",
             "calibration_version": "1.0.0", "feature_version": "1.0.0", "git_sha": "SYNTHETIC"}
 

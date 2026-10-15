@@ -9,14 +9,20 @@ are flat {"id","fullName"} objects in batting order; probablePitcher is
 lineup -- never "assumed".
 """
 import json
-from datetime import timedelta
+from datetime import date as _date, timedelta
+from zoneinfo import ZoneInfo
 
 import sources as S
 
 SOURCE = "mlb_statsapi_schedule"
 HYDRATE = "lineups,probablePitcher"
 PREGAME_STATE = "Preview"
-DAY_NIGHT_SPLIT_UTC_HOUR = 22          # DAY = first pitch before 22:00Z on the unit date; else NIGHT
+# S1_PROTOCOL.md §3 (frozen): DAY is first pitch before 17:00 America/New_York;
+# NIGHT is the rest. Converted with the IANA zone, so EDT/EST are both handled.
+# (v2 used a fixed 22:00 UTC split, which is only correct under EST -- Codex
+# re-audit 6194240381; see AMENDMENT_A2.md.)
+UNIT_TZ = ZoneInfo("America/New_York")
+DAY_NIGHT_SPLIT_LOCAL_HOUR = 17
 
 
 class ScheduleError(ValueError):
@@ -28,9 +34,24 @@ def request_for(date):
 
 
 def window_of(first_pitch_utc, unit_date):
-    t = S.ts(first_pitch_utc, "first_pitch_utc")
-    split = S.ts(f"{unit_date}T{DAY_NIGHT_SPLIT_UTC_HOUR:02d}:00:00Z")
-    return "DAY" if t < split else "NIGHT"
+    """DAY/NIGHT for a game whose MLB official date is ``unit_date``.
+
+    The timestamp must be timezone-aware (naive or local wall-clock times --
+    including DST-ambiguous ones such as 01:30 on the fall-back date -- are
+    rejected; an aware instant is never ambiguous). A start that falls after
+    local midnight (a late game whose official date is the previous day) is
+    NIGHT; a local date before the official date is malformed."""
+    try:
+        t = S.ts(first_pitch_utc, "first_pitch_utc")
+        official = _date.fromisoformat(unit_date)
+    except (S.SourceError, ValueError, TypeError) as exc:
+        raise ScheduleError(f"invalid first pitch or unit date: {exc}") from exc
+    local = t.astimezone(UNIT_TZ)
+    if local.date() < official:
+        raise ScheduleError(f"first pitch {first_pitch_utc} is before its official date {unit_date} in New York")
+    if local.date() > official:
+        return "NIGHT"
+    return "DAY" if local.hour < DAY_NIGHT_SPLIT_LOCAL_HOUR else "NIGHT"
 
 
 def _ids(players):

@@ -6533,3 +6533,54 @@ NON_COMPARABLE.
 - no historical record change.
 
 Alligator
+
+## 2026-10-15 -- FC-ACC-001-S1 Amendment A2: unit timing and seal correction (PR #226; research only, inactive)
+
+This responds to Codex re-audit 6194240381 on `4e6a1f04`. That review gave a
+conditional pass for the inactive capture contract and raised two new P1s.
+
+**Reproduced before the repair.** `s1/attacks/timing_attacks.py`, run against a
+`4e6a1f04` worktree, gave 5 of 5 VULNERABLE:
+- 17:30 EDT was classified DAY, both on an ordinary day and on the DST-start
+  day;
+- a unit was decided after its earliest pitch by dropping the started game;
+- a PROSPECTIVE unit was SEALED after its earliest first pitch;
+- a game that was not pregame was silently dropped, leaving N=0.
+
+**After the repair:** 5 of 5 REJECTED. The record is in
+`out/s1_a2_timing_attacks_before_after.json`.
+
+**Fix.** The rule is set out in `research/fc_acc_001/AMENDMENT_A2.md`, a
+labelled post-hoc amendment made before any unit existed.
+- **Window.** `schedule.window_of` uses the IANA zone `America/New_York`: DAY
+  is before 17:00 local, NIGHT is at or after it. A start after midnight on an
+  official date counts as NIGHT. Naive or malformed times are rejected.
+- **Cutoff.** `manifest.build` requires `decision_at` to equal the unit's
+  earliest scheduled first pitch (from the archived schedule) minus 30
+  minutes, one cutoff for the whole unit.
+- **No dropped games.** A game is never dropped. A game that is not pregame
+  stays in the unit and in N, and makes the unit `NON_COMPARABLE`.
+- **Late information.** Boards from later runs and late observations are
+  rejected. The ledger refuses a second manifest for a unit that is already
+  sealed.
+
+**`EXPORT_DESIGN.md`.** Its per-game "last pregame run" rule is replaced by
+one decision run per unit, completed by the unit cutoff. Per-run snapshots are
+still kept, but only for completeness.
+
+**Frozen evidence.** `S1_PROTOCOL.md`, `PREREG.md`, `AMENDMENT_A1.md`,
+`out/amendment_a1.json` and the v2 attack record are pinned by sha256 in
+`EvidencePreservation`.
+
+**Tests:**
+- `test_fc_acc_001_s1_capture.py`: 41 passed. The new tests cover the
+  window, both DST regimes, the transition days, UTC date rollovers, invalid
+  and ambiguous times, the unit cutoff, late information, seals after first
+  pitch, and evidence hashes.
+- `test_fc_acc_001_research.py`: 19 passed.
+- The dry run replays byte-identically.
+
+**Not done:** no production change, export implementation, live capture,
+anchor publication, activation, merge, deploy or promotion.
+
+Alligator
