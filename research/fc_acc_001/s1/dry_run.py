@@ -39,7 +39,7 @@ def synthetic(work):
     m = M.build(unit=X.UNIT, board=X.board(), schedule_source=X.schedule_source(arch), capture=cap, archive=arch,
                 feature_snapshots=snaps, mode="DRY_RUN_NONCONFIRMATORY", cutoff_commitment=commitment)
     led = os.path.join(work, "ledger")
-    cutoff_status = L.record_cutoff(led, commitment, arch, now=f"{X.DATE}T18:30:00Z")
+    cutoff_status = L.record_cutoff(led, commitment, arch, ledger_kind="DRY_RUN", now=f"{X.DATE}T18:30:00Z")
     _, status = L.seal(led, m, arch, ledger_kind="DRY_RUN", now=f"{X.DATE}T21:31:00Z")
     _, again = L.seal(led, m, arch, ledger_kind="DRY_RUN", now=f"{X.DATE}T21:32:00Z")
     return {"label": "DRY_RUN_NONCONFIRMATORY_SYNTHETIC", "capture_status": cap["status"],

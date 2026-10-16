@@ -46,7 +46,7 @@ blockers listed. The only outputs are synthetic and non-confirmatory:
     labelled `ZERO_CHAMPION`.
 
   Both reproduced: 5 of 5 VULNERABLE in `out/s1_a3_attacks_before_after.json`.
-- **v4 (this version, `../AMENDMENT_A3.md`).**
+- **v4, `9df0520c` (`../AMENDMENT_A3.md`).**
   - A `cutoff.py` commitment is made from a schedule observed by a fixed New York
     deadline: 09:00 for DAY, 15:00 for NIGHT. It is recorded write-once and binds
     the PROSPECTIVE seal.
@@ -56,6 +56,17 @@ blockers listed. The only outputs are synthetic and non-confirmatory:
   - Any coverage failure forces `NON_COMPARABLE` regardless of N, and
     `unit_tally` refuses contradictory arm labels.
   - All 29 attacks (19 + 5 + 5) are rejected.
+
+  Codex's A3 certification HOLD (6197211757) then found that a commitment survived
+  only as a standalone local file: deletion, replacement, recovery,
+  idempotent re-seal and a commitment-free PROSPECTIVE seal all slipped through.
+  Reproduced: 7 of 8 VULNERABLE in `out/s1_a4_attacks_before_after.json`.
+- **v5 (this version, `../AMENDMENT_A4.md`).**
+  - Cutoff commitments are `CUTOFF_COMMITMENT` entries in the same hash chain as
+    seals; `cutoffs/<unit>.json` is only a verified index.
+  - A PROSPECTIVE commitment extends the externally anchored head; a PROSPECTIVE
+    seal requires the chained commitment and validates it before any NOOP.
+  - All 8 A4 attacks and the 29 earlier ones are rejected. Science is unchanged.
 
 ## Pipeline
 
@@ -134,25 +145,30 @@ unique in the unit. This is stated, not hidden.
 
 ### Local ledger
 
-- **Chain.** Every entry carries:
-  - `seq` and `prev_entry_sha256`;
-  - the manifest hashes;
-  - `sealed_at` and `first_pitch_utc_min`;
-  - `evidence_status: LOCAL_SEAL_UNANCHORED`.
+- **Chain.** Every entry carries `seq` and `prev_entry_sha256`. There are two kinds:
+  - **cutoff commitment** (A4): `commitment_sha256`, the commitment object hash,
+    `cutoff_utc`, `commitment_deadline_utc`, `recorded_at`,
+    `evidence_status: LOCAL_COMMITMENT_UNANCHORED`;
+  - **seal**: the manifest hashes, `sealed_at`, `first_pitch_utc_min`,
+    `evidence_status: LOCAL_SEAL_UNANCHORED`.
 
-  Manifests are archive objects referenced by hash. Nothing nests.
+  Manifests and commitments are archive objects referenced by hash. Nothing nests.
+  A unit's commitment must precede its seal in the chain.
 - **One manifest per unit.** Identical replay returns `IDEMPOTENT_NOOP`;
   different content raises.
-- **Deleted index file.** Gives `MISSING_LINK`, which blocks all sealing.
+- **Deleted or replaced index file** (seal or commitment). Gives `MISSING_LINK`
+  or a mismatch, which blocks all recording and sealing and fails `verify_ledger`.
   `restore_index` rewrites the file byte-identically from the intact chain
-  entry and never re-seals.
+  entry and never re-seals; the chain's first commitment always stands.
 - **Orphan index or truncated chain.** Blocks sealing, and is not locally
   recoverable.
 - **Concurrency.** An `fcntl` lock covers check-and-append, and the O_EXCL index
   create is a second barrier. In a two-process race test, exactly one seals.
-- **PROSPECTIVE seals require `anchored_head`.** This is the chain head last
-  published externally. If the local head differs (a deleted, forked or
-  unanchored local ledger), sealing is refused.
+- **PROSPECTIVE commitments and seals require `anchored_head`.** This is the
+  chain head last published externally. If the local head differs (a deleted,
+  forked or unanchored local ledger), recording and sealing are refused.
+- **PROSPECTIVE seal contract (A4).** The unit's chained commitment must exist and
+  equal the manifest's; this is checked before an idempotent NOOP.
 
 ### External anchor (`anchor.py`)
 
@@ -165,8 +181,13 @@ unique in the unit. This is stated, not hidden.
 - **Verification.** The verifier fetches the anchors itself, then calls
   `verify_anchors`. It returns `ANCHORED_PREGAME` only when an anchor covering
   the entry was created after `sealed_at` and before that unit's first pitch;
-  otherwise `ANCHORED_LATE` or `UNANCHORED`. An anchor naming an entry that the
-  local chain lacks raises `CONFLICT`.
+  otherwise `ANCHORED_LATE` or `UNANCHORED`. A commitment entry is
+  `ANCHORED_BEFORE_DEADLINE` only when a covering anchor was created between its
+  `recorded_at` and the earlier of its deadline and cutoff. An anchor naming an
+  entry that the local chain lacks raises `CONFLICT`.
+- **Local versus prospective.** `unit_evidence` returns
+  `EXTERNALLY_ANCHORED_PROSPECTIVE` only when both the commitment and the seal are
+  anchored in time; otherwise `LOCAL_ONLY`.
 - **Status.** **No anchor has been published or verified.** No S1 result may
   be called "prospective immutable".
 
@@ -230,7 +251,10 @@ unique in the unit. This is stated, not hidden.
 3. Fixing the **daily freeze overwrite**, or using per-run exports: the
    partial-slate bias reported in `EXPORT_DESIGN.md`.
 4. Choosing an **external anchor log**, and an independent verifier that fetches
-   it. This needs authorization and provisioning.
+   it. This needs authorization and provisioning. Until then every unit is
+   `LOCAL_ONLY` (A4).
+4a. An early **schedule-only observer** able to commit before 09:00 ET (DAY);
+   the production workflow's first run is after the EDT DAY deadline.
 5. A **scheduler**, with retention for raw objects outside git.
 6. A **PROSPECTIVE start date and stopping rule**, committed and anchored first.
 7. **Codex certification and Jacob's activation.**

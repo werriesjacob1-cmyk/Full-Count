@@ -201,14 +201,31 @@ def a5_reseal_after_deleting_index():
     return "VULNERABLE"
 
 
+def _rec_cutoff(led, c, a, anchored):
+    """Works on the A3 (unchained cutoffs) and A4 (chained, anchored-head) ledgers."""
+    import inspect
+    kw = ({"ledger_kind": "PROSPECTIVE", "anchored_head": anchored}
+          if "ledger_kind" in inspect.signature(L.record_cutoff).parameters else {})
+    return L.record_cutoff(led, c, a, now=f"{X.DATE}T18:30:00Z", **kw)
+
+
+def _head_or_genesis(led):
+    import inspect
+    return L.head(led) if "ledger_kind" in inspect.signature(L.record_cutoff).parameters else L.GENESIS
+
+
 def a5b_reseal_after_deleting_whole_ledger():
     a = _arch(); led = tempfile.mkdtemp()
     pm = _build(a, mode="PROSPECTIVE")
-    L.record_cutoff(led, X.commitment(a), a, now=f"{X.DATE}T18:30:00Z")
-    L.seal(led, pm, a, ledger_kind="PROSPECTIVE", anchored_head=L.GENESIS, now=f"{X.DATE}T21:35:00Z")
+    _rec_cutoff(led, X.commitment(a), a, L.GENESIS)
+    L.seal(led, pm, a, ledger_kind="PROSPECTIVE", anchored_head=_head_or_genesis(led), now=f"{X.DATE}T21:35:00Z")
     anchored = L.head(led)                                   # what the external anchor would hold
     shutil.rmtree(led); os.makedirs(led)
-    L.record_cutoff(led, X.commitment(a), a, now=f"{X.DATE}T18:30:00Z")   # attacker re-records the cutoff too
+    try:                                                     # attacker re-records the cutoff too
+        _rec_cutoff(led, X.commitment(a), a, L.GENESIS)
+    except L.LedgerError as e:
+        shutil.rmtree(led)
+        return f"REJECTED: {e}"
     other = _build(a, cap=X.capture(a, overrides={"slugger_hit": -260}), mode="PROSPECTIVE")
     try:
         L.seal(led, other, a, ledger_kind="PROSPECTIVE", anchored_head=anchored, now=f"{X.DATE}T21:36:00Z")

@@ -6629,3 +6629,26 @@ The dry run replays byte-identically.
 capture, anchor publication, activation, merge, deploy or promotion.
 
 Alligator
+
+## 2026-10-16 — FC-ACC-001-S1 Amendment A4: cutoff commitments chained into the ledger (research only, not activated)
+
+**Trigger:** Codex A3 certification HOLD on PR #226 (comment 6197211757). The A3 cutoff commitment was a standalone local file, so deleting, replacing or recovering it went undetected, an idempotent re-seal skipped the cutoff check, and a PROSPECTIVE seal was allowed with no commitment.
+
+**Reproduction:** `s1/attacks/a4_attacks.py` against a clean `9df0520c` worktree gave 7 of 8 VULNERABLE (the concurrent-writer case was already serialized). Record: `out/s1_a4_attacks_before_after.json`.
+
+**Fix** (`research/fc_acc_001/AMENDMENT_A4.md`; reuses the existing hash chain, no new storage):
+- `ledger.record_cutoff` appends a `CUTOFF_COMMITMENT` chain entry. `cutoffs/<unit>.json` is only an index, verified by `read_chain` the same way as `units/`.
+- PROSPECTIVE commitments extend the externally anchored head.
+- The PROSPECTIVE seal requires the chained commitment, and it is validated before any NOOP.
+- `restore_index` restores commitment indexes byte-identically.
+- `anchor.verify_anchors` covers commitment entries (`ANCHORED_BEFORE_DEADLINE`). `anchor.unit_evidence` separates `LOCAL_ONLY` from `EXTERNALLY_ANCHORED_PROSPECTIVE`.
+
+**Results:**
+- All 8 A4 attacks and the 29 earlier ones are rejected.
+- `test_fc_acc_001_s1_capture.py`: 64 OK (11 new `ChainedCutoff` tests). `test_fc_acc_001_research.py`: 19 OK.
+- The A3 amendment and attack record are now byte-pinned.
+- The dry-run `manifest_sha256` is unchanged (`0e000510…`). Only the ledger shape changed: the seal is now seq 2, after the chained commitment.
+
+**Not done:** no anchor publication or certification, no live capture, production or workflow change, activation, merge, deploy or promotion.
+
+Alligator

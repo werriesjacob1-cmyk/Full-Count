@@ -17,6 +17,7 @@ S1 = os.path.join(HERE, "research", "fc_acc_001", "s1")
 sys.path.insert(0, S1)
 sys.path.insert(0, os.path.join(S1, "attacks"))
 import a3_attacks as A3ATT  # noqa: E402
+import a4_attacks as A4ATT  # noqa: E402
 import anchor as AN  # noqa: E402
 import cutoff as CT  # noqa: E402
 import fanduel as FDC  # noqa: E402
@@ -34,8 +35,10 @@ LATE = f"{X.DATE}T21:35:00Z"
 COMMIT_AT = f"{X.DATE}T18:30:00Z"                 # before the 19:00Z (15:00 EDT) NIGHT commitment deadline
 
 
-def record(led, arch):
-    return L.record_cutoff(led, X.commitment(arch), arch, now=COMMIT_AT)
+def record(led, arch, commitment=None):
+    """A4: the commitment is chained into a PROSPECTIVE ledger, extending its (simulated) anchored head."""
+    return L.record_cutoff(led, commitment or X.commitment(arch), arch, ledger_kind="PROSPECTIVE",
+                           anchored_head=L.head(led), now=COMMIT_AT)
 
 
 class Base(unittest.TestCase):
@@ -252,7 +255,7 @@ class UnitTiming(Base):
                                        source=SCH.SOURCE, request=SCH.request_for(X.DATE)))
         led = os.path.join(self.tmp.name, "led")
         record(led, self.arch)
-        L.seal(led, self.build(mode="PROSPECTIVE"), self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.GENESIS,
+        L.seal(led, self.build(mode="PROSPECTIVE"), self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.head(led),
                now=LATE)
         later = self.build(cap=self.cap(overrides={"slugger_hit": -260}), mode="PROSPECTIVE")
         with self.assertRaises(L.LedgerError):                                       # unit already sealed
@@ -326,19 +329,20 @@ class CutoffCommitment(Base):
     def test_commitment_log_is_write_once_and_binds_the_seal(self):
         led = os.path.join(self.tmp.name, "led")
         pm = self.build(mode="PROSPECTIVE")
-        with self.assertRaisesRegex(L.LedgerError, "never recorded"):
-            L.seal(led, pm, self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.GENESIS, now=LATE)
+        with self.assertRaisesRegex(L.LedgerError, "no cutoff commitment was chained"):
+            L.seal(led, pm, self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.head(led), now=LATE)
         with self.assertRaisesRegex(L.LedgerError, "after its commitment deadline"):
-            L.record_cutoff(led, X.commitment(self.arch), self.arch, now=f"{D}T19:30:00Z")
+            L.record_cutoff(led, X.commitment(self.arch), self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.GENESIS,
+                            now=f"{D}T19:30:00Z")
         self.assertEqual(record(led, self.arch), "RECORDED")
         self.assertEqual(record(led, self.arch), "IDEMPOTENT_NOOP")
         other = X.commitment(self.arch, first_pitch=DELAYED)                     # same unit, different evidence
         with self.assertRaisesRegex(L.LedgerError, "cutoffs never move"):
-            L.record_cutoff(led, other, self.arch, now=COMMIT_AT)
-        with self.assertRaisesRegex(L.LedgerError, "logged cutoff commitment"):
+            record(led, self.arch, other)
+        with self.assertRaisesRegex(L.LedgerError, "manifest carries no cutoff commitment"):
             L.seal(led, self.build(mode="PROSPECTIVE", commitment=None), self.arch, ledger_kind="PROSPECTIVE",
-                   anchored_head=L.GENESIS, now=LATE)
-        self.assertEqual(L.seal(led, pm, self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.GENESIS,
+                   anchored_head=L.head(led), now=LATE)
+        self.assertEqual(L.seal(led, pm, self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.head(led),
                                 now=LATE)[1], "SEALED")
 
     def test_commitment_anchor_verification(self):
@@ -411,7 +415,9 @@ class EvidencePreservation(unittest.TestCase):
               "research/fc_acc_001/out/s1_codex_attacks_before_after.json":
                   "9814b6ec5f7053fcad9531eb217b20ac37f6e4c695670316c8be4e9dc638d7c9",
               "research/fc_acc_001/AMENDMENT_A2.md": "87df0289be2cac0e66abb062369a57f58988fba9ccd640ac6c4e9876c5cbd9d0",
-              "research/fc_acc_001/out/s1_a2_timing_attacks_before_after.json": "06e66983fbeb4a71f187c2f4de2b52003c6559a90b89ce9292e47766ea502da4"}
+              "research/fc_acc_001/out/s1_a2_timing_attacks_before_after.json": "06e66983fbeb4a71f187c2f4de2b52003c6559a90b89ce9292e47766ea502da4",
+              "research/fc_acc_001/AMENDMENT_A3.md": "e9640b2281637a2255a7097a0f551fccff0d242e9df636dc786fa4e0afbb1304",                 # A4 pins A3
+              "research/fc_acc_001/out/s1_a3_attacks_before_after.json": "6473bf165f2467ae5bd10298cdfcc60645745ecd4adbed3b8eb74d9d9fe4d9f6"}
 
     def test_frozen_protocol_and_prior_evidence_bytes_unchanged(self):
         import hashlib
@@ -508,14 +514,14 @@ class Ledger(Base):
         led = self.led()
         record(led, self.arch)
         with self.assertRaises(L.LedgerError):
-            L.seal(led, self.build(), self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.GENESIS, now=LATE)
+            L.seal(led, self.build(), self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.head(led), now=LATE)
         pm = self.build(mode="PROSPECTIVE")
         with self.assertRaises(L.LedgerError):
             L.seal(led, pm, self.arch, ledger_kind="PROSPECTIVE", now=LATE)                 # no anchored head
         for when in (f"{X.DATE}T23:15:00Z", f"{X.DATE}T21:00:00Z"):                       # after pitch / before decision
             with self.assertRaises(L.LedgerError):
-                L.seal(led, pm, self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.GENESIS, now=when)
-        self.assertEqual(L.seal(led, pm, self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.GENESIS,
+                L.seal(led, pm, self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.head(led), now=when)
+        self.assertEqual(L.seal(led, pm, self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.head(led),
                                 now=LATE)[1], "SEALED")
         with self.assertRaises(L.LedgerError):                                            # kinds never mix
             L.seal(led, self.build(), self.arch, ledger_kind="DRY_RUN", now=X.DECISION)
@@ -551,18 +557,234 @@ class Ledger(Base):
     def test_external_anchor_verification(self):
         led = self.led()
         record(led, self.arch)
-        L.seal(led, self.build(mode="PROSPECTIVE"), self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.GENESIS,
+        cut_st = AN.head_statement(led)                                   # head = the chained cutoff commitment
+        L.seal(led, self.build(mode="PROSPECTIVE"), self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.head(led),
                now=LATE)
         st = AN.head_statement(led)
-        key = f"{X.DATE}_NIGHT"
-        self.assertEqual(AN.verify_anchors(led, []), {key: "UNANCHORED"})
+        key, ck = f"{X.DATE}_NIGHT", f"cutoff:{X.DATE}_NIGHT"
+        self.assertEqual(AN.verify_anchors(led, []), {key: "UNANCHORED", ck: "UNANCHORED"})
         self.assertEqual(AN.verify_anchors(led, [{"statement": st, "external_created_at": f"{X.DATE}T21:40:00Z"}]),
-                         {key: "ANCHORED_PREGAME"})
+                         {key: "ANCHORED_PREGAME", ck: "ANCHORED_LATE"})          # head anchor after the deadline
         self.assertEqual(AN.verify_anchors(led, [{"statement": st, "external_created_at": f"{X.DATE}T23:30:00Z"}]),
-                         {key: "ANCHORED_LATE"})
+                         {key: "ANCHORED_LATE", ck: "ANCHORED_LATE"})
+        pre = {"statement": cut_st, "external_created_at": f"{X.DATE}T18:45:00Z"}      # before the 19:00Z deadline
+        post = {"statement": st, "external_created_at": f"{X.DATE}T21:40:00Z"}
+        self.assertEqual(AN.verify_anchors(led, [pre, post]), {key: "ANCHORED_PREGAME", ck: "ANCHORED_BEFORE_DEADLINE"})
+        # A4: local validity is never prospective evidence; both anchors are required
+        self.assertEqual(AN.unit_evidence(led, [], self.arch), {key: "LOCAL_ONLY"})
+        self.assertEqual(AN.unit_evidence(led, [post], self.arch), {key: "LOCAL_ONLY"})
+        self.assertEqual(AN.unit_evidence(led, [pre], self.arch), {key: "LOCAL_ONLY"})
+        self.assertEqual(AN.unit_evidence(led, [pre, post], self.arch), {key: "EXTERNALLY_ANCHORED_PROSPECTIVE"})
         forged = st.replace(st.split("entry=")[1][:64], "0" * 64)
         with self.assertRaises(AN.AnchorError):
             AN.verify_anchors(led, [{"statement": forged, "external_created_at": f"{X.DATE}T21:40:00Z"}])
+
+
+def _race_record(ledger_dir, archive_root, delayed, q):
+    sys.path.insert(0, S1)
+    a = RA.RawArchive(archive_root)
+    c = X.commitment(a, first_pitch=A4ATT.DELAYED) if delayed else X.commitment(a)
+    try:
+        q.put(L.record_cutoff(ledger_dir, c, a, ledger_kind="PROSPECTIVE", anchored_head=L.GENESIS, now=COMMIT_AT))
+    except L.LedgerError:
+        q.put("REFUSED")
+
+
+def _race_seal_prospective(ledger_dir, archive_root, q):
+    sys.path.insert(0, S1)
+    a = RA.RawArchive(archive_root)
+    m = M.build(unit=X.UNIT, board=X.board(), schedule_source=X.schedule_source(a), capture=X.capture(a), archive=a,
+                feature_snapshots={}, mode="PROSPECTIVE", cutoff_commitment=X.commitment(a))
+    try:
+        q.put(L.seal(ledger_dir, m, a, ledger_kind="PROSPECTIVE", anchored_head=L.head(ledger_dir), now=LATE)[1])
+    except L.LedgerError as e:
+        q.put("REFUSED: " + str(e)[:40])
+
+
+class ChainedCutoff(Base):
+    """Amendment A4 (Codex A3 HOLD 6197211757): cutoff commitments are hash-chained ledger entries."""
+
+    KEY = f"{X.DATE}_NIGHT"
+
+    def led(self):
+        return os.path.join(self.tmp.name, "led")
+
+    def cutoff_file(self):
+        return os.path.join(self.led(), "cutoffs", self.KEY + ".json")
+
+    def sealed(self):
+        led = self.led()
+        self.assertEqual(record(led, self.arch), "RECORDED")
+        self.assertEqual(L.seal(led, self.build(mode="PROSPECTIVE"), self.arch, ledger_kind="PROSPECTIVE",
+                                anchored_head=L.head(led), now=LATE)[1], "SEALED")
+        return led
+
+    def test_a4_attacks_rejected(self):
+        res = A4ATT.run()
+        self.assertEqual(len(res), 8)
+        self.assertEqual({k: v for k, v in res.items() if not v.startswith("REJECTED")}, {})
+
+    def test_commitment_is_a_chain_entry_and_the_seal_extends_it(self):
+        led = self.sealed()
+        cut, seal_e = L.read_chain(led, self.arch)
+        self.assertEqual((cut["entry_type"], cut["seq"], seal_e["seq"]), (L.CUTOFF, 1, 2))
+        self.assertEqual(seal_e["prev_entry_sha256"], cut["entry_sha256"])
+        self.assertEqual(cut["commitment_sha256"], X.commitment(self.arch)["commitment_sha256"])
+        self.assertEqual(L.logged_cutoff(led, self.KEY, self.arch)["commitment"], X.commitment(self.arch))
+        self.assertEqual(L.verify_ledger(led, self.arch), [self.KEY])
+        self.assertEqual(cut["evidence_status"], "LOCAL_COMMITMENT_UNANCHORED")
+
+    def test_deletion_fails_closed_and_recovery_restores_the_same_first_commitment(self):
+        led = self.sealed()
+        with open(self.cutoff_file(), "rb") as fh:
+            original = fh.read()
+        os.chmod(self.cutoff_file(), 0o644)
+        os.remove(self.cutoff_file())
+        for check in (lambda: L.verify_ledger(led, self.arch), lambda: L.head(led),
+                      lambda: L.logged_cutoff(led, self.KEY),
+                      lambda: record(led, self.arch, X.commitment(self.arch, first_pitch=A4ATT.DELAYED))):
+            with self.assertRaisesRegex(L.LedgerError, "MISSING_LINK"):
+                check()
+        self.assertEqual(L.restore_index(led), [f"cutoff:{self.KEY}"])
+        with open(self.cutoff_file(), "rb") as fh:
+            self.assertEqual(fh.read(), original)                                    # byte-identical, from the chain
+        self.assertEqual(L.verify_ledger(led, self.arch), [self.KEY])
+        with self.assertRaisesRegex(L.LedgerError, "cutoffs never move"):           # still the first commitment
+            record(led, self.arch, X.commitment(self.arch, first_pitch=A4ATT.DELAYED))
+
+    def test_replacement_and_tampering_fail_closed(self):
+        led = self.sealed()
+        rec = json.load(open(self.cutoff_file()))
+        for field, value in (("commitment_sha256", "0" * 64), ("cutoff_utc", f"{X.DATE}T21:50:00Z"),
+                             ("recorded_at", f"{X.DATE}T18:59:00Z")):
+            bad = dict(rec, **{field: value})
+            os.chmod(self.cutoff_file(), 0o644)
+            with open(self.cutoff_file(), "wb") as fh:
+                fh.write(RA.canonical_bytes(bad))
+            with self.subTest(field), self.assertRaisesRegex(L.LedgerError, "does not match its chain entry"):
+                L.verify_ledger(led, self.arch)
+        os.chmod(self.cutoff_file(), 0o644)
+        with open(self.cutoff_file(), "wb") as fh:
+            fh.write(RA.canonical_bytes(rec))
+        lines = open(os.path.join(led, "chain.jsonl")).read().splitlines()
+        e = json.loads(lines[0])
+        e["cutoff_utc"] = f"{X.DATE}T21:50:00Z"                                    # rewrite the chain entry itself
+        with open(os.path.join(led, "chain.jsonl"), "w") as fh:
+            fh.write("\n".join([json.dumps(e, sort_keys=True, separators=(",", ":"))] + lines[1:]) + "\n")
+        with self.assertRaisesRegex(L.LedgerError, "chain broken at seq 1"):
+            L.verify_ledger(led, self.arch)
+
+    def test_unverifiable_commitment_object_fails_closed(self):
+        led = self.sealed()
+        cut = L.read_chain(led)[0]
+        p = self.arch._path(cut["commitment_object_sha256"])
+        os.chmod(p, 0o644)
+        os.remove(p)
+        with self.assertRaises(Exception):
+            L.verify_ledger(led, self.arch)
+
+    def test_missing_links_and_orphans(self):
+        led = self.sealed()
+        lines = open(os.path.join(led, "chain.jsonl")).read().splitlines()
+        with open(os.path.join(led, "chain.jsonl"), "w") as fh:                   # drop the seal: orphan unit index
+            fh.write(lines[0] + "\n")
+        with self.assertRaisesRegex(L.LedgerError, "ORPHAN unit index"):
+            L.read_chain(led)
+        with open(os.path.join(led, "chain.jsonl"), "w") as fh:                   # drop everything: orphan cutoff too
+            fh.write("")
+        with self.assertRaisesRegex(L.LedgerError, "ORPHAN"):
+            L.read_chain(led)
+        with self.assertRaises(L.LedgerError):                                     # not locally recoverable
+            L.restore_index(led)
+
+    def test_prospective_seal_requires_the_chained_commitment(self):
+        led = self.led()
+        pm = self.build(mode="PROSPECTIVE")
+        with self.assertRaisesRegex(L.LedgerError, "no cutoff commitment was chained"):          # missing
+            L.seal(led, pm, self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.head(led), now=LATE)
+        with self.assertRaisesRegex(L.LedgerError, "after its commitment deadline"):             # late
+            L.record_cutoff(led, X.commitment(self.arch), self.arch, ledger_kind="PROSPECTIVE",
+                            anchored_head=L.GENESIS, now=f"{X.DATE}T19:00:01Z")
+        with self.assertRaisesRegex(L.LedgerError, "anchored chain head"):                       # no anchor named
+            L.record_cutoff(led, X.commitment(self.arch), self.arch, ledger_kind="PROSPECTIVE", now=COMMIT_AT)
+        record(led, self.arch)
+        with self.assertRaisesRegex(L.LedgerError, "manifest carries no cutoff commitment"):     # manifest lacks it
+            L.seal(led, self.build(mode="PROSPECTIVE", commitment=None), self.arch, ledger_kind="PROSPECTIVE",
+                   anchored_head=L.head(led), now=LATE)
+        other = X.commitment(self.arch, first_pitch=A4ATT.DELAYED)                               # different
+        with self.assertRaises((L.LedgerError, M.ManifestError)):
+            L.seal(led, A4ATT._build(self.arch, commitment=other, delayed=True), self.arch,
+                   ledger_kind="PROSPECTIVE", anchored_head=L.head(led), now=f"{X.DATE}T21:55:00Z")
+        with self.assertRaisesRegex(L.LedgerError, "externally anchored head"):                  # stale anchor
+            L.seal(led, pm, self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.GENESIS, now=LATE)
+        self.assertEqual(L.seal(led, pm, self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.head(led),
+                                now=LATE)[1], "SEALED")
+
+    def test_idempotent_reseal_validates_the_commitment_first(self):
+        led = self.sealed()
+        pm = self.build(mode="PROSPECTIVE")
+        self.assertEqual(L.seal(led, pm, self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.head(led),
+                                now=LATE)[1], "IDEMPOTENT_NOOP")
+        # DRY_RUN: a unit sealed without a commitment can never acquire one, and its re-seal still validates
+        dled = os.path.join(self.tmp.name, "dry")
+        dm = self.build(commitment=None)
+        self.assertEqual(L.seal(dled, dm, self.arch, ledger_kind="DRY_RUN", now=X.DECISION)[1], "SEALED")
+        with self.assertRaisesRegex(L.LedgerError, "already sealed"):
+            L.record_cutoff(dled, X.commitment(self.arch), self.arch, ledger_kind="DRY_RUN", now=COMMIT_AT)
+        self.assertEqual(L.seal(dled, dm, self.arch, ledger_kind="DRY_RUN", now=X.DECISION)[1], "IDEMPOTENT_NOOP")
+        # tampered commitment index: the re-seal is refused, not NOOP
+        rec = json.load(open(self.cutoff_file()))
+        os.chmod(self.cutoff_file(), 0o644)
+        with open(self.cutoff_file(), "wb") as fh:
+            fh.write(RA.canonical_bytes(dict(rec, commitment_sha256="1" * 64)))
+        with self.assertRaises(L.LedgerError):
+            L.seal(led, pm, self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.GENESIS, now=LATE)
+
+    def test_wholesale_deletion_cannot_silently_restart_with_a_different_first_commitment(self):
+        led = self.led()
+        record(led, self.arch)
+        anchored = L.head(led)
+        published = [{"statement": AN.head_statement(led), "external_created_at": f"{X.DATE}T18:45:00Z",
+                      "external_ref": "synthetic"}]
+        import shutil
+        shutil.rmtree(led)
+        other = X.commitment(self.arch, first_pitch=A4ATT.DELAYED)
+        with self.assertRaisesRegex(L.LedgerError, "externally anchored head"):          # honest anchored head
+            L.record_cutoff(led, other, self.arch, ledger_kind="PROSPECTIVE", anchored_head=anchored, now=COMMIT_AT)
+        L.record_cutoff(led, other, self.arch, ledger_kind="PROSPECTIVE", anchored_head=L.GENESIS, now=COMMIT_AT)
+        with self.assertRaisesRegex(AN.AnchorError, "CONFLICT"):                            # the verifier detects it
+            AN.verify_anchors(led, published, self.arch)
+
+    def test_concurrent_conflicting_commitments_record_exactly_one(self):
+        ctx = multiprocessing.get_context("fork")
+        for i in range(3):
+            led = os.path.join(self.tmp.name, f"race{i}")
+            q = ctx.Queue()
+            procs = [ctx.Process(target=_race_record, args=(led, self.arch.root, d, q)) for d in (False, True, False, True)]
+            for p in procs:
+                p.start()
+            for p in procs:
+                p.join(60)
+            got = sorted(q.get(timeout=5) for p in procs)
+            # one writer wins; its twin is a NOOP; both writers of the other commitment are refused
+            self.assertEqual(got, ["IDEMPOTENT_NOOP", "RECORDED", "REFUSED", "REFUSED"])
+            cuts = [e for e in L.read_chain(led, self.arch) if L.is_cutoff(e)]
+            self.assertEqual(len(cuts), 1)
+
+    def test_concurrent_record_and_seal_keep_the_chain_consistent(self):
+        ctx = multiprocessing.get_context("fork")
+        led = self.led()
+        record(led, self.arch)
+        q = ctx.Queue()
+        procs = [ctx.Process(target=_race_seal_prospective, args=(led, self.arch.root, q)) for _ in range(3)]
+        for p in procs:
+            p.start()
+        for p in procs:
+            p.join(60)
+        got = [q.get(timeout=5) for _ in procs]
+        self.assertEqual(got.count("SEALED"), 1, got)
+        entries = L.read_chain(led, self.arch)
+        self.assertEqual([e.get("entry_type", "SEAL") for e in entries], [L.CUTOFF, "SEAL"])
 
 
 class RealBoardShape(unittest.TestCase):
