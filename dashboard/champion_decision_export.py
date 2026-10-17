@@ -78,6 +78,9 @@ def build_export(pre_data, pre_live, registry, preliminary, final_data, final_li
                      if row.get("recommendation_status") == "top_pick")
     candidate_ids = sorted(candidate["canonical_id"] for candidate in preliminary["candidates"])
     candidate_set = set(candidate_ids)
+    staged_ids = sorted(candidate["canonical_id"] for candidate in manifest["candidates"])
+    if not set(staged_ids).issubset(candidate_set):
+        raise ValueError("staged publication candidate was absent from original dashboard decision")
     known_set = set(registry["entries"])
     decision_rows = []
     for row in rows:
@@ -112,9 +115,12 @@ def build_export(pre_data, pre_live, registry, preliminary, final_data, final_li
                                "DEPLOYMENT_EXPOSURE_REQUIRES_PUBLIC_REGISTRY"],
         "counts": {"dashboard_rows": len(rows), "dashboard_top_picks": len(top_ids),
                    "new_publication_policy_N": len(candidate_ids),
+                   "staged_publication_candidates": len(staged_ids),
                    "already_public_ids": len(registry["entries"])},
         "decision_ids": {"dashboard_top_picks": top_ids,
-                         "new_publication_candidates": candidate_ids},
+                         "new_publication_candidates": candidate_ids,
+                         "staged_manifest_candidates": staged_ids,
+                         "withheld_after_preparation": sorted(candidate_set - set(staged_ids))},
         "decision_rows": decision_rows,
         "observed_games": sorted({str(row["game_pk"]) for row in rows}),
         "coverage_status": "UNVERIFIED",

@@ -66,6 +66,27 @@ class ExportTests(unittest.TestCase):
         self.assertEqual(record["counts"]["new_publication_policy_N"], 12)
         self.assertEqual(record["decision_ids"]["new_publication_candidates"],
                          sorted(c["canonical_id"] for c in manifest["candidates"]))
+        self.assertEqual(record["decision_ids"]["staged_manifest_candidates"],
+                         record["decision_ids"]["new_publication_candidates"])
+        self.assertEqual(record["decision_ids"]["withheld_after_preparation"], [])
+        self.assertEqual(record["publication_status"], "INTENDED_NOT_EXPOSURE_PROVEN")
+        self.assertTrue(verify_export(record, manifest, final, overlay))
+
+    def test_withheld_intended_pick_is_not_claimed_as_staged_or_exposed(self):
+        data, overlay, registry, pre, final, _ = specimen([row(101), row(102)])
+        final["props"][1]["recommendation_status"] = "lean"
+        final["props"][1].pop("publication_candidate_token")
+        manifest = build_publication_manifest(
+            final, overlay, registry, "test-sha", T,
+            publication_cutoff_at="2026-08-17T17:20:00+00:00",
+        )
+        record = build_export(data, overlay, registry, pre, final, overlay, manifest)
+        self.assertEqual(record["counts"]["new_publication_policy_N"], 2)
+        self.assertEqual(record["counts"]["staged_publication_candidates"], 1)
+        self.assertEqual(record["decision_ids"]["staged_manifest_candidates"],
+                         [final["props"][0]["id"]])
+        self.assertEqual(record["decision_ids"]["withheld_after_preparation"],
+                         [final["props"][1]["id"]])
         self.assertEqual(record["publication_status"], "INTENDED_NOT_EXPOSURE_PROVEN")
         self.assertTrue(verify_export(record, manifest, final, overlay))
 
