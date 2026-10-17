@@ -1,0 +1,13 @@
+{
+ "label": "DRILL_NONCONFIRMATORY (pre-V3-boundary; never sealed to the evidence ref; never evaluable)",
+ "unit": "2026-10-01 NIGHT",
+ "runner": "runner.py --mode drill --with-tsa (repaired implementation), 2026-10-01T20:02:16Z..20:05:29Z",
+ "checks_performed_from_sealed_artifacts_only": {
+  "artifact_sha256_match_DRILL_SUMMARY": true,
+  "manifest_rebuilt_from_sealed_board_capture_schedule_identical": true,
+  "shadow_board_replay_equivalent_from_sealed_tape_and_overlay": true,
+  "replay_seconds": 82,
+  "replay_network_requests": 0
+ },
+ "earlier_record_replay_drill": "2026-10-01T19:46Z: 296 recorded HTTP exchanges, 0 replay misses, 0 unconsumed; boards differ only in board_generated_at, sealed_at, generation_timestamp and the board hash over them"
+}
