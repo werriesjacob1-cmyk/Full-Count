@@ -228,7 +228,18 @@ def refresh(data_path, live_path=None, registry_path=DEFAULT_REGISTRY_PATH):
         all_published_snapshots(registry), payload, live, stamp,
     )
     if not snapshots:
+        # 2026-10-12 incident: returning here WITHOUT a heartbeat made a
+        # correctly idle grader (no deployment-proven pick awaiting
+        # settlement) indistinguishable from a dead one -- grades_checked_at
+        # froze at 2026-10-09 and the freshness watchdog went red for days on
+        # a non-problem, while the real outage (Pages deploys stalled since
+        # 2026-10-06) went unnoticed. Consulting the registry and finding no
+        # active published pick IS a completed settlement check, exactly as
+        # refresh_prices records one when no pregame prop remains. Only the
+        # heartbeat moves; grades_updated_at (facts changed) does not.
         print("No active/recent deployment-proven Top Picks require live grading.")
+        touch_heartbeat(live, "grades", stamp)
+        atomic_write_json(live_path, live)
         return apply_live_overlay(payload, live)
 
     published_payload = {
