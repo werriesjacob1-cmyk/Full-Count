@@ -409,6 +409,27 @@ def prepare(source, destination, registry_path=DEFAULT_REGISTRY_PATH,
             data, live, registry, source_commit, prepared_at,
             publication_cutoff_at=publication_cutoff_at,
         )
+        # Inactive research export needs the original uncapped decision set,
+        # before this deployment-safety withholding changes the staged rows.
+        # These copies are made only when a separate research directory was
+        # explicitly supplied; no production workflow sets that variable.
+        _research_dir = os.environ.get("FC_ACC_009_EXPORT_DIR")
+        if _research_dir:
+            try:
+                export_real = os.path.realpath(_research_dir)
+                if any(os.path.commonpath((export_real, os.path.realpath(root)))
+                       == os.path.realpath(root) for root in (source, destination)):
+                    raise ValueError("research export directory overlaps a Pages directory")
+            except (OSError, ValueError) as exc:
+                print(f"::warning::Inactive FC-ACC-009 research path rejected: {exc}")
+                _research_dir = None
+        if _research_dir:
+            try:
+                _research_pre_data = copy.deepcopy(data)
+                _research_pre_live = copy.deepcopy(live)
+            except Exception as exc:
+                print(f"::warning::Inactive FC-ACC-009 research snapshot failed: {exc}")
+                _research_dir = None
         candidate_ids = {candidate["canonical_id"] for candidate in preliminary["candidates"]}
         known_ids = set(registry["entries"])
         # A local Top Pick too close to first pitch or lacking a structured
@@ -457,6 +478,21 @@ def prepare(source, destination, registry_path=DEFAULT_REGISTRY_PATH,
         atomic_write_json(os.path.join(destination, "data.json"), data)
         atomic_write_json(os.path.join(destination, "live.json"), live)
         atomic_write_json(os.path.join(destination, "publication_manifest.json"), manifest, indent=2)
+        if _research_dir:
+            try:
+                try:
+                    from .champion_decision_export import build_export, write_once
+                except ImportError:  # direct script execution
+                    from champion_decision_export import build_export, write_once
+                record = build_export(
+                    _research_pre_data, _research_pre_live, registry, preliminary,
+                    data, live, manifest, run_id=os.environ.get("GITHUB_RUN_ID"),
+                )
+                write_once(record, _research_dir)
+            except Exception as exc:
+                # The staged customer artifact has already been finalized.
+                # Research instrumentation must not change its bytes or exit.
+                print(f"::warning::Inactive FC-ACC-009 research export failed: {exc}")
         return manifest
     except Exception:
         # The caller's source tree and last deployed Pages artifact remain
