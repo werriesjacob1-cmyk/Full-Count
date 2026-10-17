@@ -1,0 +1,27 @@
+{
+ "codex_audit": "https://github.com/werriesjacob1-cmyk/Full-Count/pull/226#issuecomment-6197211757",
+ "label": "SYNTHETIC_ADVERSARIAL_NONCONFIRMATORY",
+ "post_repair": {
+  "c1_delete_cutoff_then_record_a_different_one": "REJECTED: MISSING_LINK: cutoff commitment index for 2031-05-01_NIGHT is missing (recover with restore_index)",
+  "c2_delete_cutoff_after_seal_ledger_still_verifies": "REJECTED: MISSING_LINK: cutoff commitment index for 2031-05-01_NIGHT is missing (recover with restore_index)",
+  "c3_recovery_does_not_restore_the_first_commitment": "REJECTED: first commitment restored byte-identically from the chain (['cutoff:2031-05-01_NIGHT'])",
+  "c4_replace_cutoff_then_seal_a_manifest_with_the_replacement": "REJECTED: cutoff commitment index for 2031-05-01_NIGHT does not match its chain entry",
+  "c5_idempotent_reseal_skips_cutoff_validation": "REJECTED: cutoff commitment index for 2031-05-01_NIGHT does not match its chain entry",
+  "c6_prospective_seal_with_no_cutoff_commitment_at_all": "REJECTED: unit 2031-05-01_NIGHT: no cutoff commitment was chained before its deadline; a PROSPECTIVE seal requires one",
+  "c7_wholesale_deletion_then_a_different_first_commitment": "REJECTED: AnchorError: CONFLICT: external anchor seq 1 is not in the local chain (synthetic)",
+  "c8_concurrent_conflicting_commitments": "REJECTED: ['RECORDED', 'REFUSED']"
+ },
+ "post_repair_command": "python3 research/fc_acc_001/s1/attacks/a4_attacks.py",
+ "pre_repair": {
+  "c1_delete_cutoff_then_record_a_different_one": "VULNERABLE: a different cutoff commitment was RECORDED after deleting the first",
+  "c2_delete_cutoff_after_seal_ledger_still_verifies": "VULNERABLE: verify_ledger passed ['2031-05-01_NIGHT'] with the cutoff commitment deleted",
+  "c3_recovery_does_not_restore_the_first_commitment": "VULNERABLE: restore_index returned []; the first commitment is gone",
+  "c4_replace_cutoff_then_seal_a_manifest_with_the_replacement": "VULNERABLE: SEALED a NON_COMPARABLE manifest against a replaced cutoff commitment",
+  "c5_idempotent_reseal_skips_cutoff_validation": "VULNERABLE: IDEMPOTENT_NOOP although the logged cutoff no longer matches the sealed manifest",
+  "c6_prospective_seal_with_no_cutoff_commitment_at_all": "VULNERABLE: SEALED a PROSPECTIVE NON_COMPARABLE manifest with no cutoff commitment",
+  "c7_wholesale_deletion_then_a_different_first_commitment": "VULNERABLE: different first commitment RECORDED; external check reports UNANCHORED (no CONFLICT)",
+  "c8_concurrent_conflicting_commitments": "REJECTED: ['RECORDED', 'REFUSED']"
+ },
+ "pre_repair_command": "git worktree add <dir> 9df0520c && python3 research/fc_acc_001/s1/attacks/a4_attacks.py <dir>/research/fc_acc_001/s1",
+ "pre_repair_head": "9df0520cfa768dd8d77875c70f0e03a4e8383f42"
+}

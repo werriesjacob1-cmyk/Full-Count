@@ -1,0 +1,128 @@
+{
+ "real_board_without_sources": {
+  "board": "board_freeze_2026-10-13.json",
+  "candidates": 70,
+  "reason": "schedule source not verifiable: source record not OK: FAILED: RuntimeError: no live fetch in dry run",
+  "result": "FAIL_CLOSED"
+ },
+ "synthetic": {
+  "accounting": {
+   "candidates": 10,
+   "champion_not_selected": {},
+   "champion_opportunities": 3,
+   "champion_selected": 3,
+   "feature_snapshots_admitted": {
+    "c1": "COMPLETE",
+    "c2": "COMPLETE",
+    "c3": "MISSING_REQUIRED",
+    "c4": "COMPLETE",
+    "c5": "COMPLETE",
+    "c6": "COMPLETE",
+    "c7": "COMPLETE"
+   },
+   "feature_snapshots_rejected": {},
+   "offer_status": {
+    "AUTHENTICATED": 8,
+    "MISSING_QUOTE": 2
+   },
+   "parser_rejections": {
+    "IN_PLAY": 1
+   }
+  },
+  "anchor_statement_unpublished": "FC-ACC-001-S1-ANCHOR v1 kind=DRY_RUN seq=2 entry=482054f18f931841e1e45b9c4e448ef09acf5dcb565e5280b6f9f4f20cfb2360 unit=2031-05-01_NIGHT manifest=0e00051072b5903b61c2adc57dbb76a56a68ea3e081f3955022371cf0d09eaff",
+  "anchor_status_without_external_anchor": {
+   "2031-05-01_NIGHT": "UNANCHORED",
+   "cutoff:2031-05-01_NIGHT": "UNANCHORED"
+  },
+  "archive_bytes": 8012,
+  "arms": {
+   "BLEND_50_50": {
+    "n_selected": 3,
+    "n_target": 3,
+    "policy": "ALTERNATIVE",
+    "selections": [
+     "c4",
+     "c1",
+     "c7"
+    ],
+    "status": "MATCHED"
+   },
+   "CHAMPION_EXISTING_POLICY": {
+    "n_selected": 3,
+    "n_target": 3,
+    "policy": "EXISTING",
+    "selections": [
+     "c2",
+     "c3",
+     "c5"
+    ],
+    "status": "MATCHED"
+   },
+   "MARKET_ONLY": {
+    "n_selected": 3,
+    "n_target": 3,
+    "policy": "ALTERNATIVE",
+    "selections": [
+     "c4",
+     "c1",
+     "c7"
+    ],
+    "status": "MATCHED"
+   }
+  },
+  "capture_status": "COMPLETE",
+  "certification": {
+   "blockers": [
+    "CANDIDATE_POOL_LIMITED_TO_FREEZE_CHOSEN_LINES",
+    "CUTOFF_COMMITMENT_NOT_EXTERNALLY_ANCHORED",
+    "DRY_RUN_MODE",
+    "MODEL_FEATURE_VALUES_UNVERIFIED_PRODUCTION",
+    "REMOTE_ANCHOR_NOT_VERIFIED"
+   ],
+   "certified_prospective": false
+  },
+  "cutoff_commitment": {
+   "anchor_status": "UNANCHORED",
+   "commitment_deadline_utc": "2031-05-01T19:00:00Z",
+   "cutoff_utc": "2031-05-01T21:30:00Z",
+   "recorded": "RECORDED",
+   "statement_unpublished": "FC-ACC-001-S1-CUTOFF-COMMITMENT v1 unit=2031-05-01_NIGHT cutoff=2031-05-01T21:30:00Z commitment=2be21a40e01cdf796687d4ce9965268e264726e10407827f370a8e641bcb290d"
+  },
+  "label": "DRY_RUN_NONCONFIRMATORY_SYNTHETIC",
+  "manifest_bytes": 25132,
+  "manifest_sha256": "0e00051072b5903b61c2adc57dbb76a56a68ea3e081f3955022371cf0d09eaff",
+  "non_comparable_reasons": [],
+  "offers_parsed": 10,
+  "reseal": "IDEMPOTENT_NOOP",
+  "seal": "SEALED",
+  "unit_status": "COMPARABLE",
+  "workload_example": {
+   "days_rest": 5,
+   "documented_pitch_limit": "UNKNOWN_NO_VERIFIED_SOURCE",
+   "game_date": "2031-05-01",
+   "last_starts": [
+    {
+     "date": "2031-04-26",
+     "outs": 17,
+     "pitches": 87
+    },
+    {
+     "date": "2031-04-20",
+     "outs": 15,
+     "pitches": 91
+    },
+    {
+     "date": "2031-04-14",
+     "outs": 18,
+     "pitches": 98
+    }
+   ],
+   "player_id": "9",
+   "source": "mlb_statsapi_gamelog",
+   "source_observed_at": "2031-05-01T21:10:02.000000Z",
+   "source_raw_sha256": "0fef64ea7fd619350a06f12d7998866f999dedd4df7c38497f8a7565cc83d16d",
+   "starts_available": 3,
+   "status": "COMPLETE"
+  }
+ }
+}

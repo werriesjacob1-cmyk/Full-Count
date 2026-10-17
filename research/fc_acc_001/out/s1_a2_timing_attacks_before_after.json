@@ -1,0 +1,21 @@
+{
+ "codex_audit": "https://github.com/werriesjacob1-cmyk/Full-Count/pull/226#issuecomment-6194240381",
+ "label": "SYNTHETIC_ADVERSARIAL_NONCONFIRMATORY",
+ "post_repair": {
+  "t1_edt_window_boundary": "REJECTED: NIGHT",
+  "t2_dst_start_day_boundary": "REJECTED: NIGHT",
+  "t3_decision_after_unit_earliest_pitch": "REJECTED: decision_at 2031-05-01T22:10:00Z is not the unit cutoff 2031-05-01T21:30:00+00:00 (earliest first pitch 2031-05-01T22:00:00Z minus 0:30:00)",
+  "t4_prospective_seal_after_unit_earliest_pitch": "REJECTED: ManifestError: decision_at 2031-05-01T22:10:00Z is not the unit cutoff 2031-05-01T21:30:00+00:00 (earliest first pitch 2031-05-01T22:00:00Z minus 0:30:00)",
+  "t5_unpregame_game_silently_dropped": "REJECTED: NON_COMPARABLE, N=3, champion SHORTFALL"
+ },
+ "post_repair_command": "python3 research/fc_acc_001/s1/attacks/timing_attacks.py",
+ "pre_repair": {
+  "t1_edt_window_boundary": "VULNERABLE: 17:30 EDT classified DAY",
+  "t2_dst_start_day_boundary": "VULNERABLE: 17:30 EDT on DST-start day classified DAY",
+  "t3_decision_after_unit_earliest_pitch": "VULNERABLE: built a unit decision after its earliest pitch; dropped games {'900001': 'GAME_STARTED_BEFORE_DECISION'}; unit first pitch now 2031-05-01T23:40:00Z",
+  "t4_prospective_seal_after_unit_earliest_pitch": "VULNERABLE: PROSPECTIVE unit SEALED after its earliest first pitch 2031-05-01T23:10:00Z",
+  "t5_unpregame_game_silently_dropped": "VULNERABLE: unit ZERO_CHAMPION with N=0 after dropping game 900001"
+ },
+ "pre_repair_command": "git worktree add <dir> 4e6a1f04 && python3 research/fc_acc_001/s1/attacks/timing_attacks.py <dir>/research/fc_acc_001/s1",
+ "pre_repair_head": "4e6a1f04beabdd61be368ba0ff3dfa78fdd91a02"
+}
