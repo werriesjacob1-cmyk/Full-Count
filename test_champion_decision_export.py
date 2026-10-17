@@ -184,3 +184,7 @@ class WiringTests(unittest.TestCase):
             with open(os.path.join(export_path, os.listdir(export_path)[0]), encoding="utf-8") as handle:
                 record = json.load(handle)
             self.assertEqual(record["counts"]["new_publication_policy_N"], 1)
+
+
+if __name__ == "__main__":
+    unittest.main()
