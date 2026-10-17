@@ -35,6 +35,7 @@ _calibrate_one() call.
     /tmp/mlbvenv/bin/python3 test_strikeout_alternatives_stat_fix.py
 """
 import copy
+import os
 import sys
 
 sys.path.insert(0, __file__.rsplit("/", 1)[0] if "/" in __file__ else ".")
@@ -79,18 +80,28 @@ def pitcher_cand(name, pid, bf, k_rate):
             "confidence": "Medium", "signals": {}}
 
 
-# Real, current shipped strikeouts calibrator support region (backtest/
-# calibrators_by_market.json, merged in PR #57): [0.55, 0.80).
-_cal = gp.load_calibrator()
-check(_cal is not None, "the real shipped calibrator loads from disk (backtest/calibrators_by_market.json)")
+# The APPROVED strikeouts calibrator (v1.0.0, the PR #57-era artifact this
+# test was written against), loaded from its committed fixture -- support
+# region [0.55, 0.80). 2026-10-12 governance audit: this test used to read the
+# LIVE backtest/calibrators_by_market.json, so the weekly bot's unreviewed
+# refits broke it while leaving the behaviour it tests (stat stamping,
+# half-open support boundaries, raw passthrough out of support) unexercised
+# against a known curve. The live artifact is now governed by
+# test_calibration_governance.py (approved, versioned registry).
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "backtest"))
+import calibration as _calibration  # noqa: E402
+_FIXTURE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "backtest", "fixtures",
+                        "calibrators_by_market_v1.0.0_a052e79a.json")
+_cal = (_calibration.load_calibrators(_FIXTURE), None)
+check(bool(_cal[0]), "the approved v1.0.0 calibrator fixture loads (backtest/fixtures/)")
 _per_market, _glob = _cal
 _strikeout_fn = _per_market.get("strikeouts")
-check(_strikeout_fn is not None, "a real, fitted strikeouts calibrator exists in the shipped artifact")
+check(_strikeout_fn is not None, "a real, fitted strikeouts calibrator exists in the approved fixture")
 _support = _strikeout_fn.meta["support_bins"]
 _supported_lo = min(b["lo"] for b in _support if b["supported"])
 _supported_hi = max(b["hi"] for b in _support if b["supported"])
 check(abs(_supported_lo - 0.55) < 1e-9 and abs(_supported_hi - 0.80) < 1e-9,
-      "sanity: the real shipped strikeouts support region is [0.55, 0.80), matching the "
+      "sanity: the approved v1.0.0 strikeouts support region is [0.55, 0.80), matching the "
       "accepted PR #57 report", f"got [{_supported_lo}, {_supported_hi})")
 
 
