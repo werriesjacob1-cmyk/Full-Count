@@ -1,0 +1,133 @@
+{
+  "date": "2026-10-18",
+  "hits": 0,
+  "misses": 0,
+  "ungraded": 0,
+  "fair_hits": 0,
+  "fair_misses": 0,
+  "by_category": {},
+  "by_recommendation_status": {
+    "top_pick": {
+      "hits": 0,
+      "misses": 1,
+      "voids": 0,
+      "ungraded": 0
+    }
+  },
+  "public_top_pick_counts": {
+    "hits": 0,
+    "misses": 1,
+    "voids": 0,
+    "ungraded": 0
+  },
+  "public_top_picks": [
+    {
+      "id": "fc2:849817:player-690984:hits_runs_rbis:1:over",
+      "identity_version": 2,
+      "game_pk": 849817,
+      "player_id": 690984,
+      "combo_player_ids": null,
+      "type": "batter",
+      "name": "Petey Halpin",
+      "team": "Cleveland Guardians",
+      "matchup": "Tampa Bay Rays @ Cleveland Guardians",
+      "game_start": "2026-10-18T21:08:00Z",
+      "stat": "hits_runs_rbis",
+      "market_side": "over",
+      "lean": null,
+      "projection": {
+        "stat": "hits_runs_rbis",
+        "value": 0.5,
+        "needs": 1
+      },
+      "prop": "Over 0.5 Hits+Runs+RBIs",
+      "hit_probability": 0.6017,
+      "market_odds": -130,
+      "market_implied": 0.5652,
+      "market_edge": 0.0365,
+      "market_hold": null,
+      "price_clears": true,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (B), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (7.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "why": [
+        "L7 avg EV 93.4mph (league ~88.5) \u2014 hot recent contact",
+        "L7 barrel% 20.0 \u2014 hot recent contact",
+        "Platoon: L bat vs RHP (favorable)",
+        "AVG vs xBA: 0.225 vs 0.252 (-0.027) \u2014 underperforming his contact quality, positive regression candidate",
+        "wOBA vs xwOBA: 0.264 vs 0.295 (-0.031) \u2014 underperforming his contact quality, positive regression candidate",
+        "Sharp money backing Cleveland Guardians (money% +11 pts vs ticket%)"
+      ],
+      "watchouts": [
+        "Opposing SP ERA 2.67 \u2014 elite pitcher, tough matchup",
+        "Projected 3.61 PA (batting slot 8) \u2014 a tough lineup slot for plate appearances",
+        "Hitters batting ahead of him: 0.271 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+        "Hitter batting behind him: 0.311 wOBA (league ~.320) \u2014 little lineup protection, an easier batter to pitch around",
+        "Team implied for 2.91 runs (league avg 4.245; line 2.5, game total 6.5) \u2014 a weak offensive environment",
+        "L7 sample is thin (5 PA) \u2014 treat recent-form read with caution",
+        "Season barrel% 5.4 \u2014 below-average barrel rate",
+        "Opposing bullpen fatigue: 0/8 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+      ],
+      "prob_ci": [
+        0.5884,
+        0.6333
+      ],
+      "reliability": "B",
+      "reliability_note": null,
+      "sample_n": 67,
+      "lineup_assumed": null,
+      "base_rate": 0.6766,
+      "lift": -0.0749,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "versions": {
+        "model_version": "2026.08.15",
+        "selection_policy_version": "1.0.0",
+        "calibration_version": "1.0.0",
+        "feature_version": "1.0.0",
+        "git_sha": "687106ac5",
+        "prediction_timestamp": "2026-10-18T17:12:57.555360+00:00",
+        "odds_fetched_at": "2026-10-18T17:12:56.703318+00:00",
+        "board_generated_at": "2026-10-18T17:12:57.550915+00:00"
+      },
+      "qualification_timestamp": "2026-10-18T17:12:57.555360+00:00",
+      "board_timestamp": "2026-10-18T17:12:57.550915+00:00",
+      "slate_date": "2026-10-18",
+      "published_top_pick_at": "2026-10-18T17:17:32.558768+00:00",
+      "publication_artifact_id": "b1fb5d2aa1616a04dfee4fc33089cbd49ad50cd4746e0432db995432d115256a",
+      "publication_source_commit": "119a19edb243c0e609f0cbbcd7c4f4d297ac79bc",
+      "publication_run_id": "39148800819",
+      "publication_deployment_id": null,
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "hits_runs_rbis",
+      "threshold": 0.5,
+      "game_innings": 9,
+      "shortened_game": false,
+      "actual_ab": 2,
+      "actual_pa_est": 2,
+      "was_substitute": false,
+      "batting_order": 8,
+      "fair_test": false,
+      "opportunity": "limited \u2014 only 2 PA (early exit, shortened game, or removed for a pinch hitter)",
+      "eligibility": {
+        "eligibility": "eligible",
+        "reason_code": "batter_started_and_recorded_plate_appearance",
+        "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
+        "plate_appearances": 2,
+        "was_starter": true,
+        "scheduled_innings": 9,
+        "innings_played": 9
+      },
+      "settlement_state": "miss",
+      "settlement_authority": "official_final",
+      "settlement_observed_at": "2026-10-19T09:57:29.053453+00:00",
+      "settlement_source": "durable_morning_grader"
+    }
+  ],
+  "shadow_by_category": {},
+  "picks": [],
+  "shadow_tracking": []
+}
