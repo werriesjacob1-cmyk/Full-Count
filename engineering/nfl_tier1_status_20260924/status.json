@@ -1,0 +1,169 @@
+{
+  "as_of": "2026-09-24T21:45Z",
+  "basis": "coordinator verdicts after independent adversarial review (all headline numbers reproduced exactly)",
+  "note": "No factor is LIVE_RESEARCH or prospectively validated. 2023-2025 holdout was previously inspected (exploratory). Status criteria were written after each workstream's holdout run (review finding 3); consumers/params were frozen before.",
+  "factors": [
+    {
+      "factor_id": "F1_GAME_CONTEXT",
+      "name": "Sportsbook game context (spread, total, implied team total)",
+      "workstream": "C",
+      "layer": "game_context",
+      "milestone": "BUILT",
+      "consumer": "team_context_challenger (claude/nfl-tier1-team-context-20260924@40d842c9a9)",
+      "evidence": "Historical lines are nflverse CLOSING lines (CLOSING_LINE_PROXY_RETROSPECTIVE); pass-yds gain over volume base -0.85 [-1.35,-0.29] cannot be credited to a pregame prediction. Live FanDuel lines captured for all 16 week-3 games. uses_market_input=True.",
+      "blockers": [
+        "no historical timestamped pregame game lines"
+      ],
+      "activation": {},
+      "evaluation": {}
+    },
+    {
+      "factor_id": "F2_SNAP_SHARE_ROLE",
+      "name": "Snap share, trends and role changes",
+      "workstream": "B",
+      "layer": "player_share",
+      "milestone": "BUILT",
+      "consumer": "player_opportunity_challenger (claude/nfl-tier1-player-opportunity-20260924@8aa8067fbc)",
+      "evidence": "Small holdout gains, worse on FRESH_2026 in all three markets; only scenario 'backup RB rising while top RB OUT' is sharp (rushing -3.58 [-5.51,-1.83], n=55).",
+      "blockers": [],
+      "activation": {},
+      "evaluation": {}
+    },
+    {
+      "factor_id": "F3_TARGET_AIR_YARDS",
+      "name": "Target share, air-yards share, aDOT, WOPR",
+      "workstream": "B",
+      "layer": "player_share",
+      "milestone": "VALIDATED",
+      "consumer": "player_opportunity_challenger (claude/nfl-tier1-player-opportunity-20260924@8aa8067fbc)",
+      "evidence": "Historically supported, NOT prospectively validated, and NARROWED by independent review: the gain is target share x team targets with shrunk catch rate and yards/target. aDOT adds nothing (holdout diff ~0, CI spans 0); WOPR and air_yards_share are computed but unused. Beats zero-target-inclusive and team-volume mechanical controls (receptions -0.0071 [-0.0093,-0.0046]).",
+      "blockers": [],
+      "activation": {},
+      "evaluation": {
+        "receptions_vs_scale_holdout": [
+          -0.0089,
+          [
+            -0.0119,
+            -0.0056
+          ]
+        ],
+        "receiving_yards_vs_scale_holdout": [
+          -0.194,
+          [
+            -0.25,
+            -0.14
+          ]
+        ],
+        "fresh_2026": {
+          "receptions": -0.0077,
+          "receiving_yards": -0.169
+        }
+      }
+    },
+    {
+      "factor_id": "F4_RED_ZONE",
+      "name": "Red-zone and goal-line opportunity",
+      "workstream": "D",
+      "layer": "player_share",
+      "milestone": "VALIDATED",
+      "consumer": "touchdown_opportunity_challenger (claude/nfl-tier1-touchdown-20260924@76b42547c3)",
+      "evidence": "Historically supported, NOT prospectively validated, narrow: only the volume_only comparison is informative (-0.00170 [-0.00212,-0.00131] log loss holdout; FRESH -0.0021, CI spans 0). The 'vs scale control' test was vacuous (B0 exactly 0 on ~36% of rows; fixed in harness). Gain ~4x larger on holdout than DEV; probabilities too flat by decile; 2+ TD research distribution underpredicts.",
+      "blockers": [],
+      "activation": {},
+      "evaluation": {
+        "vs_volume_only_holdout": [
+          -0.0017,
+          [
+            -0.00212,
+            -0.00131
+          ]
+        ]
+      }
+    },
+    {
+      "factor_id": "F5_PASS_TENDENCY_PACE",
+      "name": "Team pass rate over expected, neutral pass rate, pace",
+      "workstream": "C",
+      "layer": "team_opportunity",
+      "milestone": "REJECTED",
+      "consumer": "team_context_challenger (claude/nfl-tier1-team-context-20260924@40d842c9a9)",
+      "evidence": "PROE, neutral dropback rate, plays/game, sec/play add nothing measurable over the strictly-prior team-volume base (pass -0.085 [-0.205,+0.032]).",
+      "blockers": [],
+      "activation": {},
+      "evaluation": {}
+    },
+    {
+      "factor_id": "F6_ENVIRONMENT",
+      "name": "Weather forecast, roof, surface",
+      "workstream": "C",
+      "layer": "game_context",
+      "milestone": "VALIDATED",
+      "consumer": "team_context_challenger (claude/nfl-tier1-team-context-20260924@40d842c9a9)",
+      "evidence": "receiving_yards ONLY: historically supported, NOT prospectively validated (gain over volume base -0.021 [-0.035,-0.008], z~3.1). passing_yards DOWNGRADED to BUILT by review (z~2.3, does not survive ~12 incremental tests; same team volume model, FRESH n=71). GFS MOS forecasts from IEM, run >=25.5h before kickoff for all 1,816 rows; observed game weather never used. Open-Meteo blocked (daily limit).",
+      "blockers": [
+        "Sunday/Monday week-3 forecast runs not yet issued"
+      ],
+      "activation": {},
+      "evaluation": {
+        "receiving_yards_gain_over_volume_holdout": [
+          -0.021,
+          [
+            -0.035,
+            -0.008
+          ]
+        ]
+      }
+    },
+    {
+      "factor_id": "F7_REST_TRAVEL",
+      "name": "Rest, short week, bye, travel, time zone",
+      "workstream": "C",
+      "layer": "game_context",
+      "milestone": "REJECTED",
+      "consumer": "team_context_challenger (claude/nfl-tier1-team-context-20260924@40d842c9a9)",
+      "evidence": "Rest, short week, bye, travel km, time zones, west-to-east early kickoff, international: no incremental value (pass +0.023 [-0.086,+0.126]).",
+      "blockers": [],
+      "activation": {},
+      "evaluation": {}
+    },
+    {
+      "factor_id": "F8_INJURY_PRACTICE",
+      "name": "Official injury and practice reports",
+      "workstream": "B",
+      "layer": "availability",
+      "milestone": "PARTIAL",
+      "consumer": "player_opportunity_challenger (claude/nfl-tier1-player-opportunity-20260924@8aa8067fbc)",
+      "evidence": "REJECTED as a workload adjustment among players who played (no gain; receiving yards worse on FRESH). Its value as an availability forecast was never tested (review), so overall PARTIAL. Official inactives gate unchanged (fail-closed).",
+      "blockers": [
+        "availability-forecast use untested",
+        "week-3 final reports: only ATL/GB filed"
+      ],
+      "activation": {},
+      "evaluation": {}
+    },
+    {
+      "factor_id": "F9_ABSENCE_REDISTRIBUTION",
+      "name": "Teammate-absence opportunity redistribution",
+      "workstream": "B",
+      "layer": "availability",
+      "milestone": "BUILT",
+      "consumer": "player_opportunity_challenger (claude/nfl-tier1-player-opportunity-20260924@8aa8067fbc)",
+      "evidence": "Receptions holdout -0.0035 [-0.0059,-0.0011] and FRESH -0.0039; rushing worse on FRESH (+0.122). Mass balance never over-allocates (cap 0.5; 36-39% of vacated budget unallocated).",
+      "blockers": [],
+      "activation": {},
+      "evaluation": {}
+    },
+    {
+      "factor_id": "F10_OPPONENT_POSITION",
+      "name": "Opponent allowed-by-position and matchup context",
+      "workstream": "C",
+      "layer": "team_opportunity",
+      "milestone": "BUILT",
+      "consumer": "team_context_challenger (claude/nfl-tier1-team-context-20260924@40d842c9a9)",
+      "evidence": "Passing yards meets the declared rule (holdout -0.421 [-0.754,-0.097], FRESH -0.05) but WS-C applied a stricter local DEV-CI rule; kept BUILT conservatively. Receptions worse on FRESH. Allowed-by-position only; not WR-vs-CB, no slot/wide split.",
+      "blockers": [],
+      "activation": {},
+      "evaluation": {}
+    }
+  ]
+}
