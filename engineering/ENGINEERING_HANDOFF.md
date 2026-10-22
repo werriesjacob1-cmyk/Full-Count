@@ -6307,3 +6307,34 @@ are all untouched. Draft PR opened against `main`, not merged -- this
 workstream does not merge its own PR.
 
 Alligator
+
+## 2026-10-22 -- FC-ACC-014 market-specific algorithm tournament (research only)
+
+Branch `claude/fc-acc-014-market-algorithm-tournament-20261022`, base main
+`99372287`. Research-only; no production, calibration, workflow, scoring,
+public-pick or public-evidence change. Files: `research/fc_acc_014/`.
+
+- Design frozen in `PREREG.md` at `d2185cb4`; data/feature/runner code
+  committed at `ff03d6a8` before the single evaluation run. Report
+  `out/report.json` sha `c9685d70...` (byte-identical on a
+  rerun with PYTHONHASHSEED=7).
+- Data: canonical-v2 research view (artifact 9776400325, rows sha
+  `8ca01064...`, generation code `bbbe4683`; `prop_probability.py` and
+  `mlb_sources.py` unchanged to `99372287`) for batter 1+ hits (121,554) and
+  2+ TB (121,566); FC-ACC-013's strikeout universe (vendored builder) for
+  4+/5+/6+; StatsAPI game logs/schedules for strictly-prior features.
+- Models: M0 production raw, M1 Platt control (production order), M2 ridge
+  GLM, M3 market distribution model, M4 HistGradientBoosting. Folds
+  2024->2025, 2024-25->2026.
+- Verdicts (frozen rule): **hits GO, total bases GO, strikeouts MODIFY**
+  (log loss beats M1 at all thresholds; equal-N wins established only at
+  4+). GO = eligible for prospective matched-volume validation with
+  authentic offers, NOT promotion. ROI NOT MEASURABLE (no historical offers).
+- Headline: equal-N top-5% per date, hits +126 [72,177] / +55 [5,102] extra
+  winners; TB +99 [44,158] / +145 [91,197]. Gain comes mostly from slot/
+  opponent, season skill, park -- market-known information. Hits and TB
+  weights differ modestly (3/4 cross-direction tests significant); same
+  family (GLM) best for both. Raw production probabilities are
+  miscalibrated (hits logit slope .59/.51).
+- Exposure: all seasons previously used by earlier studies; not a
+  confirmatory holdout. Details and limitations: `research/fc_acc_014/REPORT.md`.
