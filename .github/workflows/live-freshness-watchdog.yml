@@ -43,7 +43,9 @@ jobs:
           filter: blob:none
           sparse-checkout: |
             docs/live.json
+            docs/data.json
             dashboard/check_live_freshness.py
+            dashboard/check_public_deployment.py
           sparse-checkout-cone-mode: true
 
       - name: Check docs/live.json freshness
@@ -68,4 +70,27 @@ jobs:
         if: steps.freshness.outputs.stale == 'true'
         run: |
           echo "::error::LIVE DATA STALE -- docs/live.json exceeded the freshness SLA. A recovery dispatch was sent to Dashboard Live Update; this watchdog run is marked failed so the condition is visible (Actions tab / badge) until the next successful check confirms recovery."
+          exit 1
+
+      # 2026-10-12 incident: repo docs/*.json stayed fresh while the PUBLIC
+      # site was frozen for six days behind one deploy run stuck 'waiting'
+      # at the github-pages environment gate. Check what customers actually
+      # receive, and any deploy run holding the concurrency group. Detection
+      # only: it never cancels, approves, or deploys (operator action).
+      - name: Check public Pages deployment
+        id: public
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if python3 dashboard/check_public_deployment.py docs/data.json; then
+            echo "stale=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "stale=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Fail visibly on a stale public deployment
+        if: always() && steps.public.outputs.stale == 'true'
+        run: |
+          echo "::error::PUBLIC SITE STALE OR DEPLOY STUCK -- customers are not receiving current main. See the findings above for the exact run id and recovery step."
           exit 1

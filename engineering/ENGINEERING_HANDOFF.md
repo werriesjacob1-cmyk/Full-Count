@@ -6307,3 +6307,61 @@ are all untouched. Draft PR opened against `main`, not merged -- this
 workstream does not merge its own PR.
 
 Alligator
+
+## 2026-10-12 -- MLB publication incident: public Pages frozen since 2026-10-06 (Claude)
+
+Branch `claude/mlb-pages-deploy-stall-20261012`, base main `82beb373`.
+
+**Root cause.**
+- Dashboard Pages Deploy run 37486111588 entered `waiting` at the github-pages
+  environment gate at 2026-10-06T15:16:47Z and never left it. Its pending
+  deployment has no reviewers and `wait_timer` 0. The previous deploy passed
+  the same gate in 1 second.
+- `concurrency: dashboard-pages-deployment` with `cancel-in-progress: false`
+  means that one run holds the group. Every later deploy (1,100+ checked,
+  Oct 7–11, all `cancelled`; a second run 37642347599 is stuck `queued`) waits
+  behind it and is superseded.
+- The public site has served the 2026-10-06T15:13Z artifact (commit
+  `c5dee664`) for six days.
+
+**Consequences.** No deploy means no publication confirmation, so
+`data/public_top_picks/registry.json` stops at 2026-10-05. That correctly
+means:
+- 0 public Top Picks graded Oct 6–11 (daily `results/grades_*` still ran);
+- no History rows after Oct 5;
+- `grades_updated_at` stuck at Oct 6.
+
+**Reconciliation.**
+- Registry = graded public picks = History, with identical canonical IDs,
+  through Oct 5 (16/5/14 on Oct 3/4/5).
+- 0 published picks were lost or altered.
+- 18 Top Picks generated Oct 6–11 (2/2/3/0/3/8) never reached the public site.
+  They are not backfilled.
+
+**Why it went unnoticed.**
+- The freshness watchdog read the REPO's docs/live.json, not the public site,
+  so it stayed green Oct 6–8.
+- From Oct 9 it went red on an ambiguous signal: `refresh_grades` returned
+  without a heartbeat once no published pick remained, so an idle grader looked
+  dead. Its re-dispatch remediation could not help.
+
+**Fix (detection only; no auto-cancel or deploy).**
+- `dashboard/refresh_grades.py` records the grades heartbeat when the published
+  population is empty.
+- New `dashboard/check_public_deployment.py` finds STALE_PUBLICATION and
+  STUCK_DEPLOY (with run ids and the operator recovery step). It is wired into
+  `live-freshness-watchdog.yml`.
+- Tests: `test_check_public_deployment.py`; the new heartbeat test fails on the
+  old code.
+
+**Operator action required (Jacob).** Cancel runs 37486111588 and 37642347599
+(force-cancel if needed), then dispatch Dashboard Pages Deploy. Not done here:
+it re-enables production deployment.
+
+**Separate finding.** Root CI `test_h1_ci_calibration_scale_integrity.py` has
+been red since the 2026-10-05 Calibration recheck bot (`8a5901521f`) refit
+strikeouts (A 0.843→1.224, B −0.126→−0.359; data 08-29..09-19) against the
+test's pinned August values. It is unrelated to the deploy stall. Needs a
+decision on calibration policy.
+
+Alligator
