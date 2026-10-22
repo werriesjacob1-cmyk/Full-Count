@@ -6338,3 +6338,29 @@ public-pick or public-evidence change. Files: `research/fc_acc_014/`.
   miscalibrated (hits logit slope .59/.51).
 - Exposure: all seasons previously used by earlier studies; not a
   confirmatory holdout. Details and limitations: `research/fc_acc_014/REPORT.md`.
+
+## 2026-10-22 -- FC-ACC-015 adversarial validation of FC-ACC-014 (research only)
+
+Branch `claude/fc-acc-015-independent-validation-20261022` (stacked on PR #233
+head `c3f3362d`). Files: `research/fc_acc_015/` only; FC-ACC-014 frozen files
+untouched. Plan frozen at `1650dadf` before any variant was scored.
+
+- Reproduction: fresh StatsAPI pull byte-identical (210/210 raw files);
+  features and FC-ACC-014 `report.json` (`c9685d70...`) reproduce exactly.
+- Leakage: outcome-scramble test on 6 dates (2,520 batter + 119 K rows)
+  bit-identical, no D leakage. Schedule `probablePitcher` equals the actual
+  starter in 99.89% of games (post-game resolution, class C); lineups,
+  game-time weather, the K universe and `base_logit` are class C.
+- Sensitivity: hits and TB keep log-loss gains under every restriction; TB
+  keeps matched-count gains everywhere; the hits 2026 gain is thin and is lost
+  when BASE or run-environment proxies are also removed (V6/V7) and at ~1
+  pick/day. K strict (K3) passes the frozen GO rule at 3/3, but on small
+  margins.
+- Verdicts: hits GO (forward shadow only), TB GO (forward shadow),
+  strikeouts MODIFY (explicit, documented departure from the frozen rule).
+  Frozen forward contracts are in `out/frozen_models.json`.
+- Corrections recorded: FC-ACC-014's "no empirical blend" engine gap was
+  wrong (`bbbe4683` replays the blend). A first-run player-cluster estimator
+  was invalid and was replaced before reporting. The 5 failing tests are
+  inherited generated-state drift (calibration-recheck commits 2026-10-05 and
+  10-12; empty off-season board), identical on main `99372287`, unresolved.
