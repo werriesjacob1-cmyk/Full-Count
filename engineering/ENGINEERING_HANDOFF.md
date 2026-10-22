@@ -6307,3 +6307,20 @@ are all untouched. Draft PR opened against `main`, not merged -- this
 workstream does not merge its own PR.
 
 Alligator
+
+## 2026-10-22 — FC-ACC-013 pitcher workload-distribution experiment (research only) — STOP
+
+**Branch and design:** `claude/fc-acc-013-workload-distribution-20261022`. Design frozen at `0ace5fbb` before evaluation.
+
+**Result:**
+- On the production strikeout path (main `5e6deaee19`), the challenger averages over a strictly-prior, pitcher-specific BF distribution at the same mean. It does not improve 2025.
+- 6+ is significantly worse: log loss +0.00078, CI [+0.00037, +0.00121]. It is no better under production Platt or a 2024-fitted Platt.
+- It only removes Overs and does not make early exits pregame-visible.
+- Diagnostic: dispersion strongly improves the unshrunk binomial, but production's 50% league shrink already absorbs it.
+- Separately labelled, not tested: a mean-level E[BF] overstatement of 0.44–0.71 BF.
+
+**Data:** FC-ACC-004 starts re-retrieved; the parsed population and eligibility are identical (3,883 / 3,907 / 3,891).
+
+**Not done:** no production, calibration, workflow or outs-model change.
+
+Alligator
