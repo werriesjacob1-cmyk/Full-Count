@@ -6307,3 +6307,18 @@ are all untouched. Draft PR opened against `main`, not merged -- this
 workstream does not merge its own PR.
 
 Alligator
+
+# 2026-10-17 — FC-ACC-006 hitter early-exit diagnostic (research only)
+
+Codex's isolated research branch `codex/fc-acc-006-early-exit-20261016`
+validated official MLB starter/replacement encoding against six real
+play-by-play logs, collected 2024–26 regular-season box scores, and ran a
+single frozen, chronological prior-start replacement-risk comparison. Two
+rain-cancelled games whose schedule abstract state said `Final` were excluded;
+7,288 played games and 131,184 starting hitters were parsed. Substitution
+risk and PA error improved in both 2025 and 2026, but the 1+ hit-probability
+gain was tiny and no authentic offered-price or matched-volume winner test is
+available. The recommendation is inactive prospective shadow research only;
+no production model, selector, workflow, or evidence chain changed. Exact
+definitions, paired uncertainty, source hashes and reproduction commands are
+in `research/mlb_engine/fc_acc_006/REPORT.md`.
