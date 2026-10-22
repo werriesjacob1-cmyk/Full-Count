@@ -179,7 +179,7 @@ def parse_archived_page(raw_bytes, *, expected_sha256, source_request, source_ho
         proposed = []
         for runner, name, side, line, stat, needs in parsed:
             player_id = None if stat == "nrfi_combined" else player_ids.get(name)
-            if stat != "nrfi_combined" and (player_id is None or isinstance(player_id, (list, tuple, set))):
+            if stat != "nrfi_combined" and (player_id in (None, "") or isinstance(player_id, (list, tuple, set))):
                 fail("PLAYER_ID_UNVERIFIED", market)
                 proposed = []
                 break
@@ -230,7 +230,7 @@ def join_champion_decision(decision, offer, *, cutoff, verified_source):
         return "GAME_MISMATCH"
     if str(decision.get("player_id")) != str(offer.get("player_id")):
         return "PLAYER_MISMATCH"
-    if decision.get("team") != offer.get("team") and offer.get("team") is not None:
+    if not decision.get("team") or not offer.get("team") or decision.get("team") != offer.get("team"):
         return "TEAM_MISMATCH"
     if decision.get("market") != offer.get("market") or str(decision.get("wager_side")).lower() != offer.get("side"):
         return "MARKET_OR_SIDE_MISMATCH"

@@ -139,6 +139,7 @@ class ResearchParserTests(unittest.TestCase):
         for item in variants:
             self.assertFalse(parse([item])[0])
         self.assertEqual(parse(player_ids={})[1][0]["reason"], "PLAYER_ID_UNVERIFIED")
+        self.assertEqual(parse(player_ids={"alice": ""})[1][0]["reason"], "PLAYER_ID_UNVERIFIED")
 
     def test_duplicate_one_sided_names_rejected(self):
         m = market("PLAYER_TO_RECORD_A_HIT", [runner("Alice", "S1"), runner("Alice", "S2")])
@@ -190,8 +191,12 @@ class CrossPrContractTests(unittest.TestCase):
 
     def test_join_identity_price_timing_and_eligibility_mutants(self):
         offer = next(o for o in parse()[0] if o["side"] == "over")
+        self.assertEqual(join_champion_decision(decision(), offer, cutoff=CUTOFF,
+                                                verified_source=True), "TEAM_MISMATCH")
+        offer = dict(offer, team="T1")
         variants = [(dict(game_pk="G2"), "GAME_MISMATCH"),
                     (dict(player_id="P2"), "PLAYER_MISMATCH"),
+                    (dict(team="T2"), "TEAM_MISMATCH"),
                     (dict(sportsbook="other"), "SPORTSBOOK_MISMATCH"),
                     (dict(market="hits"), "MARKET_OR_SIDE_MISMATCH"),
                     (dict(side="under"), "MARKET_OR_SIDE_MISMATCH"),
