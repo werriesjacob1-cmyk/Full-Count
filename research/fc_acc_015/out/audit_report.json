@@ -1,0 +1,6118 @@
+{
+ "identity": {
+  "fc014_runner_sha256": "f2587649010567921d029bc3fc6e36546ae4c69514fe2945598dfddcdb056e1b",
+  "fc014_features_sha256": "52493ed3ab5a3b8ee1933e5854d7e69c66a0406d66cebafec2a68b88bca5d4af",
+  "fc014_data_sha256": "8d0dba730166b2a96c096282390debf0b3be02cbd04b7e599adf3672dbbc0fce",
+  "fc014_fc013_build_sha256": "c3617153f829af8d24cf770688ed606d74cc1814b4ddbd92e08de52194d01a7f",
+  "features": {
+   "features_hits.jsonl": "6f3dd141d6bfcbb9ca3dac925019f19bbac8c331e7f56df83c3301ab0a97ed3d",
+   "features_tb.jsonl": "460c40cd412a49556fb0f322cf917c2c0cb023e78a0339c7ddcbdfe309bc46a0",
+   "features_k.jsonl": "2f58ace9c68591d9a5ef5ba17da1c45a7a3d6dbaae7f335d4cc2f35849bb899c"
+  },
+  "features_manifest_expected": {
+   "features_hits.jsonl": "6f3dd141d6bfcbb9ca3dac925019f19bbac8c331e7f56df83c3301ab0a97ed3d",
+   "features_tb.jsonl": "460c40cd412a49556fb0f322cf917c2c0cb023e78a0339c7ddcbdfe309bc46a0",
+   "features_k.jsonl": "2f58ace9c68591d9a5ef5ba17da1c45a7a3d6dbaae7f335d4cc2f35849bb899c"
+  },
+  "audit_plan_commit": "1650dadfa29e62d06ceada998e63d775eef915ea",
+  "features_match_manifest": true
+ },
+ "markets": {
+  "hits": {
+   "V0_ORIGINAL": {
+    "fold1_2024_to_2025": {
+     "n_test": 43476,
+     "n_features": 54,
+     "M1": {
+      "logloss": 0.666082162235666,
+      "brier": 0.23664320425164065,
+      "auc": 0.5467342543471327,
+      "slope": 0.7841369023621875,
+      "ece": 0.002580327946220385
+     },
+     "M2": {
+      "logloss": 0.6620338220492,
+      "brier": 0.23467341541129078,
+      "auc": 0.5692402125964224,
+      "slope": 0.8052086668516683,
+      "ece": 0.015208710002334907
+     },
+     "vs_M1": {
+      "brier": -0.0019697888403498944,
+      "brier_ci_date": [
+       -0.00259087563024913,
+       -0.001363738965094653
+      ],
+      "logloss": -0.004048340186465899,
+      "logloss_ci_date": [
+       -0.005293201120144148,
+       -0.0027599391276879846
+      ],
+      "logloss_ci_player": [
+       -0.005242514095996956,
+       -0.002870172536834683
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 2224,
+       "dates": 206,
+       "baseline_wins": 1474,
+       "challenger_wins": 1600,
+       "added": 1741,
+       "added_wins": 1255,
+       "removed": 1741,
+       "removed_wins": 1129,
+       "net_wins": 126,
+       "net_ci_date": [
+        73.975,
+        181.0
+       ],
+       "net_ci_player": [
+        75.79001465704377,
+        180.1889726679723
+       ],
+       "tie_averaged": {
+        "baseline_wins": 1477.9901109530188,
+        "challenger_wins": 1600.0,
+        "net": 122.00988904698124,
+        "dates_with_boundary_tie_in_baseline": 17
+       },
+       "random_tiebreak_net": {
+        "reps": 200,
+        "mean": 122.395,
+        "min": 111,
+        "p2_5": 114.0,
+        "p97_5": 132.0
+       }
+      },
+      "top1_per_date": {
+       "selected_per_arm": 206,
+       "dates": 206,
+       "baseline_wins": 131,
+       "challenger_wins": 147,
+       "added": 197,
+       "added_wins": 140,
+       "removed": 197,
+       "removed_wins": 124,
+       "net_wins": 16,
+       "net_ci_date": [
+        -1.0,
+        34.024999999999864
+       ],
+       "net_ci_player": [
+        -4.288459535256406,
+        35.773501144208524
+       ],
+       "tie_averaged": {
+        "baseline_wins": 132.7848595848596,
+        "challenger_wins": 147.0,
+        "net": 14.21514041514041,
+        "dates_with_boundary_tie_in_baseline": 9
+       }
+      },
+      "top2_per_date": {
+       "selected_per_arm": 412,
+       "dates": 206,
+       "baseline_wins": 270,
+       "challenger_wins": 302,
+       "added": 386,
+       "added_wins": 282,
+       "removed": 386,
+       "removed_wins": 250,
+       "net_wins": 32,
+       "net_ci_date": [
+        8.0,
+        56.0
+       ],
+       "net_ci_player": [
+        6.69664783469798,
+        56.86482596030924
+       ],
+       "tie_averaged": {
+        "baseline_wins": 272.2363858363858,
+        "challenger_wins": 302.0,
+        "net": 29.763614163614193,
+        "dates_with_boundary_tie_in_baseline": 9
+       }
+      },
+      "top3_per_date": {
+       "selected_per_arm": 618,
+       "dates": 206,
+       "baseline_wins": 406,
+       "challenger_wins": 456,
+       "added": 562,
+       "added_wins": 415,
+       "removed": 562,
+       "removed_wins": 365,
+       "net_wins": 50,
+       "net_ci_date": [
+        21.0,
+        81.0
+       ],
+       "net_ci_player": [
+        20.156451797344538,
+        79.35532884875964
+       ],
+       "tie_averaged": {
+        "baseline_wins": 408.1879120879121,
+        "challenger_wins": 456.0,
+        "net": 47.81208791208792,
+        "dates_with_boundary_tie_in_baseline": 10
+       }
+      },
+      "floor_matched_M1_ge_0.6": {
+       "selected_per_arm": 29803,
+       "dates": 198,
+       "baseline_wins": 18847,
+       "challenger_wins": 19025,
+       "added": 4105,
+       "added_wins": 2480,
+       "removed": 4105,
+       "removed_wins": 2302,
+       "net_wins": 178,
+       "net_ci_date": [
+        99.0,
+        261.02499999999986
+       ],
+       "net_ci_player": [
+        87.15628013450711,
+        260.5227613402888
+       ],
+       "tie_averaged": {
+        "baseline_wins": 18847.0,
+        "challenger_wins": 19025.0,
+        "net": 178.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 35542,
+     "n_features": 54,
+     "M1": {
+      "logloss": 0.6689946862347252,
+      "brier": 0.23806080243584413,
+      "auc": 0.5397771328936348,
+      "slope": 0.7610323412562119,
+      "ece": 0.00249061517769887
+     },
+     "M2": {
+      "logloss": 0.66407535059759,
+      "brier": 0.2356903888561587,
+      "auc": 0.5667954639218253,
+      "slope": 0.8637985784001516,
+      "ece": 0.008349498234120498
+     },
+     "vs_M1": {
+      "brier": -0.0023704135796854438,
+      "brier_ci_date": [
+       -0.002938707676305066,
+       -0.0018506244540929305
+      ],
+      "logloss": -0.004919335637135154,
+      "logloss_ci_date": [
+       -0.006135596257695317,
+       -0.003800216581121349
+      ],
+      "logloss_ci_player": [
+       -0.00608343785079047,
+       -0.003667161557456015
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 1818,
+       "dates": 150,
+       "baseline_wins": 1212,
+       "challenger_wins": 1267,
+       "added": 1363,
+       "added_wins": 946,
+       "removed": 1363,
+       "removed_wins": 891,
+       "net_wins": 55,
+       "net_ci_date": [
+        7.0,
+        103.0
+       ],
+       "net_ci_player": [
+        6.798848959881606,
+        103.9862160917612
+       ],
+       "tie_averaged": {
+        "baseline_wins": 1210.2840548340548,
+        "challenger_wins": 1267.0,
+        "net": 56.715945165945186,
+        "dates_with_boundary_tie_in_baseline": 12
+       },
+       "random_tiebreak_net": {
+        "reps": 200,
+        "mean": 56.925,
+        "min": 45,
+        "p2_5": 47.0,
+        "p97_5": 66.0
+       }
+      },
+      "top1_per_date": {
+       "selected_per_arm": 150,
+       "dates": 150,
+       "baseline_wins": 105,
+       "challenger_wins": 103,
+       "added": 141,
+       "added_wins": 98,
+       "removed": 141,
+       "removed_wins": 100,
+       "net_wins": -2,
+       "net_ci_date": [
+        -17.0,
+        13.0
+       ],
+       "net_ci_player": [
+        -16.25664164329319,
+        15.496524642915013
+       ],
+       "tie_averaged": {
+        "baseline_wins": 105.40113035113035,
+        "challenger_wins": 103.0,
+        "net": -2.401130351130348,
+        "dates_with_boundary_tie_in_baseline": 9
+       }
+      },
+      "top2_per_date": {
+       "selected_per_arm": 300,
+       "dates": 150,
+       "baseline_wins": 199,
+       "challenger_wins": 215,
+       "added": 271,
+       "added_wins": 196,
+       "removed": 271,
+       "removed_wins": 180,
+       "net_wins": 16,
+       "net_ci_date": [
+        -4.0,
+        37.0
+       ],
+       "net_ci_player": [
+        -4.723415040049202,
+        39.13090235205778
+       ],
+       "tie_averaged": {
+        "baseline_wins": 198.8022607022607,
+        "challenger_wins": 215.0,
+        "net": 16.197739297739304,
+        "dates_with_boundary_tie_in_baseline": 9
+       }
+      },
+      "top3_per_date": {
+       "selected_per_arm": 450,
+       "dates": 150,
+       "baseline_wins": 297,
+       "challenger_wins": 318,
+       "added": 389,
+       "added_wins": 276,
+       "removed": 389,
+       "removed_wins": 255,
+       "net_wins": 21,
+       "net_ci_date": [
+        -5.0,
+        45.0
+       ],
+       "net_ci_player": [
+        -2.3350282098993835,
+        48.65664900322151
+       ],
+       "tie_averaged": {
+        "baseline_wins": 293.70339105339104,
+        "challenger_wins": 318.0,
+        "net": 24.296608946608956,
+        "dates_with_boundary_tie_in_baseline": 10
+       }
+      },
+      "floor_matched_M1_ge_0.6": {
+       "selected_per_arm": 21962,
+       "dates": 141,
+       "baseline_wins": 13830,
+       "challenger_wins": 14017,
+       "added": 3792,
+       "added_wins": 2320,
+       "removed": 3792,
+       "removed_wins": 2133,
+       "net_wins": 187,
+       "net_ci_date": [
+        104.975,
+        268.0
+       ],
+       "net_ci_player": [
+        96.88258219507016,
+        280.0256853967323
+       ],
+       "tie_averaged": {
+        "baseline_wins": 13830.0,
+        "challenger_wins": 14017.0,
+        "net": 187.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "dropped_features": [],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 1.0,
+     "fold2_2024_25_to_2026": 1.0
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   },
+   "V1_NO_WX": {
+    "fold1_2024_to_2025": {
+     "n_test": 43476,
+     "n_features": 49,
+     "M1": {
+      "logloss": 0.666082162235666,
+      "brier": 0.23664320425164065,
+      "auc": 0.5467342543471327,
+      "slope": 0.7841369023621875,
+      "ece": 0.002580327946220385
+     },
+     "M2": {
+      "logloss": 0.6618786991623933,
+      "brier": 0.23460454863850566,
+      "auc": 0.5696079552696953,
+      "slope": 0.8162654321525352,
+      "ece": 0.015123633582155007
+     },
+     "vs_M1": {
+      "brier": -0.002038655613134978,
+      "brier_ci_date": [
+       -0.0026185862377678865,
+       -0.0014625716585148147
+      ],
+      "logloss": -0.0042034630732727535,
+      "logloss_ci_date": [
+       -0.005484044594611518,
+       -0.0029497244056690968
+      ],
+      "logloss_ci_player": [
+       -0.005353339693137472,
+       -0.0030256737135034364
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 2224,
+       "dates": 206,
+       "baseline_wins": 1474,
+       "challenger_wins": 1602,
+       "added": 1733,
+       "added_wins": 1255,
+       "removed": 1733,
+       "removed_wins": 1127,
+       "net_wins": 128,
+       "net_ci_date": [
+        75.975,
+        182.0
+       ],
+       "net_ci_player": [
+        77.5907922281242,
+        183.90215087676006
+       ],
+       "tie_averaged": {
+        "baseline_wins": 1477.9901109530188,
+        "challenger_wins": 1602.0,
+        "net": 124.00988904698124,
+        "dates_with_boundary_tie_in_baseline": 17
+       },
+       "random_tiebreak_net": {
+        "reps": 200,
+        "mean": 123.52,
+        "min": 111,
+        "p2_5": 114.0,
+        "p97_5": 132.0
+       }
+      },
+      "top1_per_date": {
+       "selected_per_arm": 206,
+       "dates": 206,
+       "baseline_wins": 131,
+       "challenger_wins": 151,
+       "added": 197,
+       "added_wins": 144,
+       "removed": 197,
+       "removed_wins": 124,
+       "net_wins": 20,
+       "net_ci_date": [
+        2.0,
+        38.0
+       ],
+       "net_ci_player": [
+        -1.110395377173872,
+        38.949436952819745
+       ],
+       "tie_averaged": {
+        "baseline_wins": 132.7848595848596,
+        "challenger_wins": 151.0,
+        "net": 18.21514041514041,
+        "dates_with_boundary_tie_in_baseline": 9
+       }
+      },
+      "top2_per_date": {
+       "selected_per_arm": 412,
+       "dates": 206,
+       "baseline_wins": 270,
+       "challenger_wins": 297,
+       "added": 386,
+       "added_wins": 278,
+       "removed": 386,
+       "removed_wins": 251,
+       "net_wins": 27,
+       "net_ci_date": [
+        3.0,
+        51.024999999999864
+       ],
+       "net_ci_player": [
+        0.7740173155365724,
+        54.1130024722204
+       ],
+       "tie_averaged": {
+        "baseline_wins": 272.2363858363858,
+        "challenger_wins": 297.0,
+        "net": 24.763614163614193,
+        "dates_with_boundary_tie_in_baseline": 9
+       }
+      },
+      "top3_per_date": {
+       "selected_per_arm": 618,
+       "dates": 206,
+       "baseline_wins": 406,
+       "challenger_wins": 454,
+       "added": 564,
+       "added_wins": 414,
+       "removed": 564,
+       "removed_wins": 366,
+       "net_wins": 48,
+       "net_ci_date": [
+        15.0,
+        79.0
+       ],
+       "net_ci_player": [
+        17.763398263664875,
+        78.91256072400334
+       ],
+       "tie_averaged": {
+        "baseline_wins": 408.1879120879121,
+        "challenger_wins": 454.0,
+        "net": 45.81208791208792,
+        "dates_with_boundary_tie_in_baseline": 10
+       }
+      },
+      "floor_matched_M1_ge_0.6": {
+       "selected_per_arm": 29803,
+       "dates": 198,
+       "baseline_wins": 18847,
+       "challenger_wins": 19024,
+       "added": 4040,
+       "added_wins": 2441,
+       "removed": 4040,
+       "removed_wins": 2264,
+       "net_wins": 177,
+       "net_ci_date": [
+        100.0,
+        261.0
+       ],
+       "net_ci_player": [
+        93.95187354233998,
+        260.8516083066269
+       ],
+       "tie_averaged": {
+        "baseline_wins": 18847.0,
+        "challenger_wins": 19024.0,
+        "net": 177.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 35542,
+     "n_features": 49,
+     "M1": {
+      "logloss": 0.6689946862347252,
+      "brier": 0.23806080243584413,
+      "auc": 0.5397771328936348,
+      "slope": 0.7610323412562119,
+      "ece": 0.00249061517769887
+     },
+     "M2": {
+      "logloss": 0.664269857945869,
+      "brier": 0.23578260242518065,
+      "auc": 0.565881316862548,
+      "slope": 0.8550034191358855,
+      "ece": 0.008508291038887467
+     },
+     "vs_M1": {
+      "brier": -0.002278200010663485,
+      "brier_ci_date": [
+       -0.00283189328770451,
+       -0.0017331060691268005
+      ],
+      "logloss": -0.004724828288856287,
+      "logloss_ci_date": [
+       -0.0058976178846411815,
+       -0.0035715736112802918
+      ],
+      "logloss_ci_player": [
+       -0.005841555393155495,
+       -0.0035810006554517887
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 1818,
+       "dates": 150,
+       "baseline_wins": 1212,
+       "challenger_wins": 1264,
+       "added": 1345,
+       "added_wins": 927,
+       "removed": 1345,
+       "removed_wins": 875,
+       "net_wins": 52,
+       "net_ci_date": [
+        3.0,
+        101.0
+       ],
+       "net_ci_player": [
+        2.315887104969884,
+        105.99796074490393
+       ],
+       "tie_averaged": {
+        "baseline_wins": 1210.2840548340548,
+        "challenger_wins": 1264.0,
+        "net": 53.715945165945186,
+        "dates_with_boundary_tie_in_baseline": 12
+       },
+       "random_tiebreak_net": {
+        "reps": 200,
+        "mean": 54.205,
+        "min": 41,
+        "p2_5": 45.975,
+        "p97_5": 63.0
+       }
+      },
+      "top1_per_date": {
+       "selected_per_arm": 150,
+       "dates": 150,
+       "baseline_wins": 105,
+       "challenger_wins": 106,
+       "added": 141,
+       "added_wins": 101,
+       "removed": 141,
+       "removed_wins": 100,
+       "net_wins": 1,
+       "net_ci_date": [
+        -13.0,
+        16.0
+       ],
+       "net_ci_player": [
+        -12.88551803347248,
+        17.627115679475054
+       ],
+       "tie_averaged": {
+        "baseline_wins": 105.40113035113035,
+        "challenger_wins": 106.0,
+        "net": 0.5988696488696519,
+        "dates_with_boundary_tie_in_baseline": 9
+       }
+      },
+      "top2_per_date": {
+       "selected_per_arm": 300,
+       "dates": 150,
+       "baseline_wins": 199,
+       "challenger_wins": 214,
+       "added": 276,
+       "added_wins": 198,
+       "removed": 276,
+       "removed_wins": 183,
+       "net_wins": 15,
+       "net_ci_date": [
+        -6.0,
+        35.0
+       ],
+       "net_ci_player": [
+        -3.999202137466703,
+        37.207459836875884
+       ],
+       "tie_averaged": {
+        "baseline_wins": 198.8022607022607,
+        "challenger_wins": 214.0,
+        "net": 15.197739297739304,
+        "dates_with_boundary_tie_in_baseline": 9
+       }
+      },
+      "top3_per_date": {
+       "selected_per_arm": 450,
+       "dates": 150,
+       "baseline_wins": 297,
+       "challenger_wins": 322,
+       "added": 391,
+       "added_wins": 280,
+       "removed": 391,
+       "removed_wins": 255,
+       "net_wins": 25,
+       "net_ci_date": [
+        0.0,
+        50.0
+       ],
+       "net_ci_player": [
+        2.2673424531940096,
+        53.251984536874424
+       ],
+       "tie_averaged": {
+        "baseline_wins": 293.70339105339104,
+        "challenger_wins": 322.0,
+        "net": 28.296608946608956,
+        "dates_with_boundary_tie_in_baseline": 10
+       }
+      },
+      "floor_matched_M1_ge_0.6": {
+       "selected_per_arm": 21962,
+       "dates": 141,
+       "baseline_wins": 13830,
+       "challenger_wins": 13993,
+       "added": 3755,
+       "added_wins": 2291,
+       "removed": 3755,
+       "removed_wins": 2128,
+       "net_wins": 163,
+       "net_ci_date": [
+        79.0,
+        248.0
+       ],
+       "net_ci_player": [
+        74.07608796205695,
+        250.86214462964335
+       ],
+       "tie_averaged": {
+        "baseline_wins": 13830.0,
+        "challenger_wins": 13993.0,
+        "net": 163.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "wx_roof",
+     "wx_temp",
+     "wx_wind_in",
+     "wx_wind_mph",
+     "wx_wind_out"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 1.0158730158730158,
+     "fold2_2024_25_to_2026": 0.9454545454545454
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   },
+   "V2_NO_SP_IDENTITY": {
+    "fold1_2024_to_2025": {
+     "n_test": 43476,
+     "n_features": 44,
+     "M1": {
+      "logloss": 0.666082162235666,
+      "brier": 0.23664320425164065,
+      "auc": 0.5467342543471327,
+      "slope": 0.7841369023621875,
+      "ece": 0.002580327946220385
+     },
+     "M2": {
+      "logloss": 0.6621378436662174,
+      "brier": 0.23473488401638307,
+      "auc": 0.5673970241477313,
+      "slope": 0.8552972711929673,
+      "ece": 0.01408668878139674
+     },
+     "vs_M1": {
+      "brier": -0.001908320235257555,
+      "brier_ci_date": [
+       -0.002476123740053115,
+       -0.0013858940558442523
+      ],
+      "logloss": -0.003944318569448566,
+      "logloss_ci_date": [
+       -0.005079233348629749,
+       -0.002801854780113297
+      ],
+      "logloss_ci_player": [
+       -0.005000067842986797,
+       -0.0028456448011312547
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 2224,
+       "dates": 206,
+       "baseline_wins": 1474,
+       "challenger_wins": 1570,
+       "added": 1650,
+       "added_wins": 1168,
+       "removed": 1650,
+       "removed_wins": 1072,
+       "net_wins": 96,
+       "net_ci_date": [
+        41.0,
+        150.0
+       ],
+       "net_ci_player": [
+        38.0165018993325,
+        151.90659337341293
+       ],
+       "tie_averaged": {
+        "baseline_wins": 1477.9901109530188,
+        "challenger_wins": 1570.0,
+        "net": 92.00988904698124,
+        "dates_with_boundary_tie_in_baseline": 17
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 35542,
+     "n_features": 44,
+     "M1": {
+      "logloss": 0.6689946862347252,
+      "brier": 0.23806080243584413,
+      "auc": 0.5397771328936348,
+      "slope": 0.7610323412562119,
+      "ece": 0.00249061517769887
+     },
+     "M2": {
+      "logloss": 0.664402336645219,
+      "brier": 0.23584766612145783,
+      "auc": 0.5655622353008046,
+      "slope": 0.888512355202194,
+      "ece": 0.005078155569516367
+     },
+     "vs_M1": {
+      "brier": -0.0022131363143863343,
+      "brier_ci_date": [
+       -0.0027713274814639764,
+       -0.0016719844526630033
+      ],
+      "logloss": -0.00459234958950627,
+      "logloss_ci_date": [
+       -0.005746133617940526,
+       -0.0034298105221036153
+      ],
+      "logloss_ci_player": [
+       -0.005727389620071971,
+       -0.003468253587513274
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 1818,
+       "dates": 150,
+       "baseline_wins": 1212,
+       "challenger_wins": 1270,
+       "added": 1318,
+       "added_wins": 919,
+       "removed": 1318,
+       "removed_wins": 861,
+       "net_wins": 58,
+       "net_ci_date": [
+        11.0,
+        104.0
+       ],
+       "net_ci_player": [
+        10.748415915192531,
+        110.00011294228274
+       ],
+       "tie_averaged": {
+        "baseline_wins": 1210.2840548340548,
+        "challenger_wins": 1270.0,
+        "net": 59.715945165945186,
+        "dates_with_boundary_tie_in_baseline": 12
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "match_same_hand",
+     "opp_sp_bb",
+     "opp_sp_hit",
+     "opp_sp_hr",
+     "opp_sp_k",
+     "opp_sp_starts",
+     "opp_sp_tba",
+     "sig_pitch_exploit",
+     "sig_platoon",
+     "sig_sp_era_weak"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 0.7619047619047619,
+     "fold2_2024_25_to_2026": 1.0545454545454545
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   },
+   "V3_NO_SLOT": {
+    "fold1_2024_to_2025": {
+     "n_test": 43476,
+     "n_features": 51,
+     "M1": {
+      "logloss": 0.666082162235666,
+      "brier": 0.23664320425164065,
+      "auc": 0.5467342543471327,
+      "slope": 0.7841369023621875,
+      "ece": 0.002580327946220385
+     },
+     "M2": {
+      "logloss": 0.6633579902527382,
+      "brier": 0.2353119865925943,
+      "auc": 0.5629644662343996,
+      "slope": 0.7743665058239716,
+      "ece": 0.016710060484831705
+     },
+     "vs_M1": {
+      "brier": -0.0013312176590463156,
+      "brier_ci_date": [
+       -0.0018729308857747865,
+       -0.0007876358792658004
+      ],
+      "logloss": -0.002724171982927836,
+      "logloss_ci_date": [
+       -0.003879013586401411,
+       -0.0014674903825579644
+      ],
+      "logloss_ci_player": [
+       -0.0037868373342277474,
+       -0.001628945216830568
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 2224,
+       "dates": 206,
+       "baseline_wins": 1474,
+       "challenger_wins": 1591,
+       "added": 1768,
+       "added_wins": 1262,
+       "removed": 1768,
+       "removed_wins": 1145,
+       "net_wins": 117,
+       "net_ci_date": [
+        67.0,
+        172.0
+       ],
+       "net_ci_player": [
+        61.56499912829461,
+        170.10751390206283
+       ],
+       "tie_averaged": {
+        "baseline_wins": 1477.9901109530188,
+        "challenger_wins": 1591.0,
+        "net": 113.00988904698124,
+        "dates_with_boundary_tie_in_baseline": 17
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 35542,
+     "n_features": 51,
+     "M1": {
+      "logloss": 0.6689946862347252,
+      "brier": 0.23806080243584413,
+      "auc": 0.5397771328936348,
+      "slope": 0.7610323412562119,
+      "ece": 0.00249061517769887
+     },
+     "M2": {
+      "logloss": 0.6652554060398348,
+      "brier": 0.23625507752311503,
+      "auc": 0.5603743817832036,
+      "slope": 0.8567678926811186,
+      "ece": 0.00843927082115364
+     },
+     "vs_M1": {
+      "brier": -0.001805724912729152,
+      "brier_ci_date": [
+       -0.002363458032463751,
+       -0.0012918923354127252
+      ],
+      "logloss": -0.0037392801948904694,
+      "logloss_ci_date": [
+       -0.004871180302912158,
+       -0.0026232327373255392
+      ],
+      "logloss_ci_player": [
+       -0.004813016196829583,
+       -0.002684423899716344
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 1818,
+       "dates": 150,
+       "baseline_wins": 1212,
+       "challenger_wins": 1264,
+       "added": 1388,
+       "added_wins": 966,
+       "removed": 1388,
+       "removed_wins": 914,
+       "net_wins": 52,
+       "net_ci_date": [
+        5.0,
+        103.0
+       ],
+       "net_ci_player": [
+        -0.7515242748499281,
+        109.10367177301542
+       ],
+       "tie_averaged": {
+        "baseline_wins": 1210.2840548340548,
+        "challenger_wins": 1264.0,
+        "net": 53.715945165945186,
+        "dates_with_boundary_tie_in_baseline": 12
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "opp_slot",
+     "sig_woba_ahead",
+     "sig_woba_behind"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 0.9285714285714286,
+     "fold2_2024_25_to_2026": 0.9454545454545454
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   },
+   "V4_PRIOR_SLOT": {
+    "fold1_2024_to_2025": {
+     "n_test": 43476,
+     "n_features": 52,
+     "M1": {
+      "logloss": 0.666082162235666,
+      "brier": 0.23664320425164065,
+      "auc": 0.5467342543471327,
+      "slope": 0.7841369023621875,
+      "ece": 0.002580327946220385
+     },
+     "M2": {
+      "logloss": 0.6627651834322275,
+      "brier": 0.2350220116867458,
+      "auc": 0.5658665860670944,
+      "slope": 0.7869436231536285,
+      "ece": 0.01644965024779283
+     },
+     "vs_M1": {
+      "brier": -0.0016211925648948289,
+      "brier_ci_date": [
+       -0.002203969351816219,
+       -0.0010766747481915503
+      ],
+      "logloss": -0.0033169788034384624,
+      "logloss_ci_date": [
+       -0.004585864505118776,
+       -0.0021761237942906552
+      ],
+      "logloss_ci_player": [
+       -0.004532385622609563,
+       -0.0022213629354787654
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 2224,
+       "dates": 206,
+       "baseline_wins": 1474,
+       "challenger_wins": 1595,
+       "added": 1738,
+       "added_wins": 1248,
+       "removed": 1738,
+       "removed_wins": 1127,
+       "net_wins": 121,
+       "net_ci_date": [
+        69.0,
+        176.0
+       ],
+       "net_ci_player": [
+        65.14010019247573,
+        174.72279095360824
+       ],
+       "tie_averaged": {
+        "baseline_wins": 1477.9901109530188,
+        "challenger_wins": 1595.0,
+        "net": 117.00988904698124,
+        "dates_with_boundary_tie_in_baseline": 17
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 35542,
+     "n_features": 52,
+     "M1": {
+      "logloss": 0.6689946862347252,
+      "brier": 0.23806080243584413,
+      "auc": 0.5397771328936348,
+      "slope": 0.7610323412562119,
+      "ece": 0.00249061517769887
+     },
+     "M2": {
+      "logloss": 0.664556983941253,
+      "brier": 0.23592121635617272,
+      "auc": 0.5645535917238236,
+      "slope": 0.8639500651764481,
+      "ece": 0.006563657182783106
+     },
+     "vs_M1": {
+      "brier": -0.0021395860796714077,
+      "brier_ci_date": [
+       -0.002684670826955989,
+       -0.0015851816053469663
+      ],
+      "logloss": -0.004437702293472195,
+      "logloss_ci_date": [
+       -0.005589098121195866,
+       -0.003236619845932138
+      ],
+      "logloss_ci_player": [
+       -0.005547136955977542,
+       -0.003337594294731814
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 1818,
+       "dates": 150,
+       "baseline_wins": 1212,
+       "challenger_wins": 1273,
+       "added": 1387,
+       "added_wins": 966,
+       "removed": 1387,
+       "removed_wins": 905,
+       "net_wins": 61,
+       "net_ci_date": [
+        10.0,
+        112.0
+       ],
+       "net_ci_player": [
+        10.522351029573839,
+        115.92430525453831
+       ],
+       "tie_averaged": {
+        "baseline_wins": 1210.2840548340548,
+        "challenger_wins": 1273.0,
+        "net": 62.715945165945186,
+        "dates_with_boundary_tie_in_baseline": 12
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "opp_slot",
+     "sig_woba_ahead",
+     "sig_woba_behind"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 0.9603174603174603,
+     "fold2_2024_25_to_2026": 1.1090909090909091
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   },
+   "V5_SAMEDAY_STRICT": {
+    "fold1_2024_to_2025": {
+     "n_test": 43476,
+     "n_features": 36,
+     "M1": {
+      "logloss": 0.666082162235666,
+      "brier": 0.23664320425164065,
+      "auc": 0.5467342543471327,
+      "slope": 0.7841369023621875,
+      "ece": 0.002580327946220385
+     },
+     "M2": {
+      "logloss": 0.6632276453113473,
+      "brier": 0.2352662087114967,
+      "auc": 0.561833929080338,
+      "slope": 0.8389820464921129,
+      "ece": 0.014828107075836495
+     },
+     "vs_M1": {
+      "brier": -0.0013769955401439573,
+      "brier_ci_date": [
+       -0.0018432711446253038,
+       -0.0009283922407174283
+      ],
+      "logloss": -0.0028545169243186404,
+      "logloss_ci_date": [
+       -0.003863432683565893,
+       -0.0018708314046936819
+      ],
+      "logloss_ci_player": [
+       -0.0038036873280206077,
+       -0.00195312291690861
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 2224,
+       "dates": 206,
+       "baseline_wins": 1474,
+       "challenger_wins": 1552,
+       "added": 1696,
+       "added_wins": 1176,
+       "removed": 1696,
+       "removed_wins": 1098,
+       "net_wins": 78,
+       "net_ci_date": [
+        29.0,
+        126.02499999999986
+       ],
+       "net_ci_player": [
+        18.217695980880418,
+        140.96578944818626
+       ],
+       "tie_averaged": {
+        "baseline_wins": 1477.9901109530188,
+        "challenger_wins": 1552.0,
+        "net": 74.00988904698124,
+        "dates_with_boundary_tie_in_baseline": 17
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 35542,
+     "n_features": 36,
+     "M1": {
+      "logloss": 0.6689946862347252,
+      "brier": 0.23806080243584413,
+      "auc": 0.5397771328936348,
+      "slope": 0.7610323412562119,
+      "ece": 0.00249061517769887
+     },
+     "M2": {
+      "logloss": 0.6656983520643397,
+      "brier": 0.23646972968959648,
+      "auc": 0.5580466557991031,
+      "slope": 0.8736774396696103,
+      "ece": 0.005149414971577875
+     },
+     "vs_M1": {
+      "brier": -0.001591072746247655,
+      "brier_ci_date": [
+       -0.002112225915253279,
+       -0.001072793155709295
+      ],
+      "logloss": -0.003296334170385499,
+      "logloss_ci_date": [
+       -0.00440065424807385,
+       -0.0021818503758081137
+      ],
+      "logloss_ci_player": [
+       -0.004229591108785989,
+       -0.002390780129406899
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 1818,
+       "dates": 150,
+       "baseline_wins": 1212,
+       "challenger_wins": 1267,
+       "added": 1336,
+       "added_wins": 928,
+       "removed": 1336,
+       "removed_wins": 873,
+       "net_wins": 55,
+       "net_ci_date": [
+        4.0,
+        105.0
+       ],
+       "net_ci_player": [
+        5.081937415379222,
+        107.48773169529325
+       ],
+       "tie_averaged": {
+        "baseline_wins": 1210.2840548340548,
+        "challenger_wins": 1267.0,
+        "net": 56.715945165945186,
+        "dates_with_boundary_tie_in_baseline": 12
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "match_same_hand",
+     "opp_slot",
+     "opp_sp_bb",
+     "opp_sp_hit",
+     "opp_sp_hr",
+     "opp_sp_k",
+     "opp_sp_starts",
+     "opp_sp_tba",
+     "sig_pitch_exploit",
+     "sig_platoon",
+     "sig_sp_era_weak",
+     "sig_woba_ahead",
+     "sig_woba_behind",
+     "wx_roof",
+     "wx_temp",
+     "wx_wind_in",
+     "wx_wind_mph",
+     "wx_wind_out"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 0.6190476190476191,
+     "fold2_2024_25_to_2026": 1.0
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   },
+   "V6_SAMEDAY_STRICT_NO_BASE": {
+    "fold1_2024_to_2025": {
+     "n_test": 43476,
+     "n_features": 35,
+     "M1": {
+      "logloss": 0.666082162235666,
+      "brier": 0.23664320425164065,
+      "auc": 0.5467342543471327,
+      "slope": 0.7841369023621875,
+      "ece": 0.002580327946220385
+     },
+     "M2": {
+      "logloss": 0.6631482438852733,
+      "brier": 0.23522047588104428,
+      "auc": 0.5619579155777188,
+      "slope": 0.8633616196011343,
+      "ece": 0.014704549375606864
+     },
+     "vs_M1": {
+      "brier": -0.0014227283705963304,
+      "brier_ci_date": [
+       -0.0019199896954065398,
+       -0.0009291352914846185
+      ],
+      "logloss": -0.002933918350392709,
+      "logloss_ci_date": [
+       -0.004057773247787363,
+       -0.0018891149384165677
+      ],
+      "logloss_ci_player": [
+       -0.003936284435546636,
+       -0.001956157090897968
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 2224,
+       "dates": 206,
+       "baseline_wins": 1474,
+       "challenger_wins": 1562,
+       "added": 1680,
+       "added_wins": 1171,
+       "removed": 1680,
+       "removed_wins": 1083,
+       "net_wins": 88,
+       "net_ci_date": [
+        40.975,
+        138.0
+       ],
+       "net_ci_player": [
+        26.3570129860366,
+        148.95547810078253
+       ],
+       "tie_averaged": {
+        "baseline_wins": 1477.9901109530188,
+        "challenger_wins": 1562.0,
+        "net": 84.00988904698124,
+        "dates_with_boundary_tie_in_baseline": 17
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 35542,
+     "n_features": 35,
+     "M1": {
+      "logloss": 0.6689946862347252,
+      "brier": 0.23806080243584413,
+      "auc": 0.5397771328936348,
+      "slope": 0.7610323412562119,
+      "ece": 0.00249061517769887
+     },
+     "M2": {
+      "logloss": 0.6657459468349556,
+      "brier": 0.23649086566169436,
+      "auc": 0.557770691754524,
+      "slope": 0.8744023243911093,
+      "ece": 0.00544658085667664
+     },
+     "vs_M1": {
+      "brier": -0.0015699367741497821,
+      "brier_ci_date": [
+       -0.002087799303223104,
+       -0.0010307511847992318
+      ],
+      "logloss": -0.003248739399769717,
+      "logloss_ci_date": [
+       -0.004360323880038089,
+       -0.002124971180699926
+      ],
+      "logloss_ci_player": [
+       -0.004253599552316549,
+       -0.0022996010578619306
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 1818,
+       "dates": 150,
+       "baseline_wins": 1212,
+       "challenger_wins": 1248,
+       "added": 1344,
+       "added_wins": 919,
+       "removed": 1344,
+       "removed_wins": 883,
+       "net_wins": 36,
+       "net_ci_date": [
+        -11.0,
+        87.0
+       ],
+       "net_ci_player": [
+        -15.232657461388337,
+        89.54856979414838
+       ],
+       "tie_averaged": {
+        "baseline_wins": 1210.2840548340548,
+        "challenger_wins": 1248.0,
+        "net": 37.715945165945186,
+        "dates_with_boundary_tie_in_baseline": 12
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "match_same_hand",
+     "opp_slot",
+     "opp_sp_bb",
+     "opp_sp_hit",
+     "opp_sp_hr",
+     "opp_sp_k",
+     "opp_sp_starts",
+     "opp_sp_tba",
+     "sig_pitch_exploit",
+     "sig_platoon",
+     "sig_sp_era_weak",
+     "sig_woba_ahead",
+     "sig_woba_behind",
+     "wx_roof",
+     "wx_temp",
+     "wx_wind_in",
+     "wx_wind_mph",
+     "wx_wind_out",
+     "base_logit"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 0.6984126984126984,
+     "fold2_2024_25_to_2026": 0.6545454545454545
+    },
+    "logloss_rule": true,
+    "equal_n_rule": false
+   },
+   "V7_FIDELITY": {
+    "fold1_2024_to_2025": {
+     "n_test": 43476,
+     "n_features": 44,
+     "M1": {
+      "logloss": 0.666082162235666,
+      "brier": 0.23664320425164065,
+      "auc": 0.5467342543471327,
+      "slope": 0.7841369023621875,
+      "ece": 0.002580327946220385
+     },
+     "M2": {
+      "logloss": 0.6624016437457096,
+      "brier": 0.2348450898095653,
+      "auc": 0.5673488513336418,
+      "slope": 0.8150936267889205,
+      "ece": 0.014743403939469083
+     },
+     "vs_M1": {
+      "brier": -0.0017981144420753557,
+      "brier_ci_date": [
+       -0.002310218856111994,
+       -0.0012958314247999343
+      ],
+      "logloss": -0.003680518489956277,
+      "logloss_ci_date": [
+       -0.004845461951885163,
+       -0.002546946401580885
+      ],
+      "logloss_ci_player": [
+       -0.004870413163364668,
+       -0.0025987378376157695
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 2224,
+       "dates": 206,
+       "baseline_wins": 1474,
+       "challenger_wins": 1561,
+       "added": 1711,
+       "added_wins": 1202,
+       "removed": 1711,
+       "removed_wins": 1115,
+       "net_wins": 87,
+       "net_ci_date": [
+        34.975,
+        141.0
+       ],
+       "net_ci_player": [
+        25.622420945338458,
+        148.7140348411407
+       ],
+       "tie_averaged": {
+        "baseline_wins": 1477.9901109530188,
+        "challenger_wins": 1561.0,
+        "net": 83.00988904698124,
+        "dates_with_boundary_tie_in_baseline": 17
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 35542,
+     "n_features": 44,
+     "M1": {
+      "logloss": 0.6689946862347252,
+      "brier": 0.23806080243584413,
+      "auc": 0.5397771328936348,
+      "slope": 0.7610323412562119,
+      "ece": 0.00249061517769887
+     },
+     "M2": {
+      "logloss": 0.6648849466106243,
+      "brier": 0.23607325830346448,
+      "auc": 0.5625571903424387,
+      "slope": 0.8577168716662485,
+      "ece": 0.008471143703566934
+     },
+     "vs_M1": {
+      "brier": -0.0019875441323796064,
+      "brier_ci_date": [
+       -0.002530711842458715,
+       -0.0014577202463291672
+      ],
+      "logloss": -0.004109739624101035,
+      "logloss_ci_date": [
+       -0.005275358865772261,
+       -0.002882564622271989
+      ],
+      "logloss_ci_player": [
+       -0.005248566556077741,
+       -0.0029748799627770696
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 1818,
+       "dates": 150,
+       "baseline_wins": 1212,
+       "challenger_wins": 1256,
+       "added": 1270,
+       "added_wins": 861,
+       "removed": 1270,
+       "removed_wins": 817,
+       "net_wins": 44,
+       "net_ci_date": [
+        -3.0,
+        91.0
+       ],
+       "net_ci_player": [
+        -3.2036980576764376,
+        95.85841232622423
+       ],
+       "tie_averaged": {
+        "baseline_wins": 1210.2840548340548,
+        "challenger_wins": 1256.0,
+        "net": 45.715945165945186,
+        "dates_with_boundary_tie_in_baseline": 12
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "lin_team_hit",
+     "opp_home",
+     "opp_team_rpg",
+     "park_hit",
+     "park_tb",
+     "wx_roof",
+     "wx_temp",
+     "wx_wind_in",
+     "wx_wind_mph",
+     "wx_wind_out"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 0.6904761904761905,
+     "fold2_2024_25_to_2026": 0.8
+    },
+    "logloss_rule": true,
+    "equal_n_rule": false
+   }
+  },
+  "total_bases": {
+   "V0_ORIGINAL": {
+    "fold1_2024_to_2025": {
+     "n_test": 43480,
+     "n_features": 54,
+     "M1": {
+      "logloss": 0.6479874030672487,
+      "brier": 0.22779612004144467,
+      "auc": 0.5490678270184975,
+      "slope": 0.8079483213330854,
+      "ece": 0.006302051635378435
+     },
+     "M2": {
+      "logloss": 0.6431630591930262,
+      "brier": 0.22562934987171876,
+      "auc": 0.5749244233068602,
+      "slope": 0.8338995133403699,
+      "ece": 0.012830967087034496
+     },
+     "vs_M1": {
+      "brier": -0.002166770169725884,
+      "brier_ci_date": [
+       -0.0028019730700947093,
+       -0.0015418358865246207
+      ],
+      "logloss": -0.004824343874222513,
+      "logloss_ci_date": [
+       -0.006254875424660024,
+       -0.003438541450484957
+      ],
+      "logloss_ci_player": [
+       -0.005998353276076478,
+       -0.0036181242625076475
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 2222,
+       "dates": 206,
+       "baseline_wins": 923,
+       "challenger_wins": 1022,
+       "added": 1717,
+       "added_wins": 779,
+       "removed": 1717,
+       "removed_wins": 680,
+       "net_wins": 99,
+       "net_ci_date": [
+        41.975,
+        153.0
+       ],
+       "net_ci_player": [
+        42.152333662423985,
+        156.67690748067378
+       ],
+       "tie_averaged": {
+        "baseline_wins": 921.9789338210971,
+        "challenger_wins": 1022.0,
+        "net": 100.02106617890286,
+        "dates_with_boundary_tie_in_baseline": 22
+       },
+       "random_tiebreak_net": {
+        "reps": 200,
+        "mean": 100.005,
+        "min": 84,
+        "p2_5": 92.0,
+        "p97_5": 107.025
+       }
+      },
+      "top1_per_date": {
+       "selected_per_arm": 206,
+       "dates": 206,
+       "baseline_wins": 81,
+       "challenger_wins": 110,
+       "added": 192,
+       "added_wins": 104,
+       "removed": 192,
+       "removed_wins": 75,
+       "net_wins": 29,
+       "net_ci_date": [
+        9.0,
+        48.0
+       ],
+       "net_ci_player": [
+        14.029207119755476,
+        50.31551300532272
+       ],
+       "tie_averaged": {
+        "baseline_wins": 82.23537776718388,
+        "challenger_wins": 110.0,
+        "net": 27.764622232816123,
+        "dates_with_boundary_tie_in_baseline": 9
+       }
+      },
+      "top2_per_date": {
+       "selected_per_arm": 412,
+       "dates": 206,
+       "baseline_wins": 179,
+       "challenger_wins": 215,
+       "added": 370,
+       "added_wins": 194,
+       "removed": 370,
+       "removed_wins": 158,
+       "net_wins": 36,
+       "net_ci_date": [
+        9.0,
+        64.0
+       ],
+       "net_ci_player": [
+        6.88135689270381,
+        68.5844717690656
+       ],
+       "tie_averaged": {
+        "baseline_wins": 179.47075553436775,
+        "challenger_wins": 215.0,
+        "net": 35.529244465632246,
+        "dates_with_boundary_tie_in_baseline": 9
+       }
+      },
+      "top3_per_date": {
+       "selected_per_arm": 618,
+       "dates": 206,
+       "baseline_wins": 269,
+       "challenger_wins": 307,
+       "added": 549,
+       "added_wins": 271,
+       "removed": 549,
+       "removed_wins": 233,
+       "net_wins": 38,
+       "net_ci_date": [
+        5.0,
+        72.0
+       ],
+       "net_ci_player": [
+        1.6863784957302579,
+        77.04277537108649
+       ],
+       "tie_averaged": {
+        "baseline_wins": 268.70613330155163,
+        "challenger_wins": 307.0,
+        "net": 38.29386669844837,
+        "dates_with_boundary_tie_in_baseline": 9
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 35545,
+     "n_features": 54,
+     "M1": {
+      "logloss": 0.6447171626886717,
+      "brier": 0.22622084589478733,
+      "auc": 0.5453279777014505,
+      "slope": 0.8054073492067225,
+      "ece": 0.006113073515274267
+     },
+     "M2": {
+      "logloss": 0.6396803180279027,
+      "brier": 0.22398692539447354,
+      "auc": 0.5724661692051417,
+      "slope": 0.8891179753104465,
+      "ece": 0.0045772281013669956
+     },
+     "vs_M1": {
+      "brier": -0.0022339205003138033,
+      "brier_ci_date": [
+       -0.002830951311059893,
+       -0.0016269249954268016
+      ],
+      "logloss": -0.00503684466076903,
+      "logloss_ci_date": [
+       -0.006291200437954814,
+       -0.003713575865651053
+      ],
+      "logloss_ci_player": [
+       -0.0061738943467141375,
+       -0.0038949687095622488
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 1819,
+       "dates": 150,
+       "baseline_wins": 699,
+       "challenger_wins": 844,
+       "added": 1392,
+       "added_wins": 646,
+       "removed": 1392,
+       "removed_wins": 501,
+       "net_wins": 145,
+       "net_ci_date": [
+        94.0,
+        199.0
+       ],
+       "net_ci_player": [
+        96.45560874389108,
+        194.80184004664716
+       ],
+       "tie_averaged": {
+        "baseline_wins": 697.1862400651203,
+        "challenger_wins": 844.0,
+        "net": 146.81375993487973,
+        "dates_with_boundary_tie_in_baseline": 14
+       },
+       "random_tiebreak_net": {
+        "reps": 200,
+        "mean": 147.23,
+        "min": 132,
+        "p2_5": 137.0,
+        "p97_5": 156.025
+       }
+      },
+      "top1_per_date": {
+       "selected_per_arm": 150,
+       "dates": 150,
+       "baseline_wins": 53,
+       "challenger_wins": 78,
+       "added": 147,
+       "added_wins": 76,
+       "removed": 147,
+       "removed_wins": 51,
+       "net_wins": 25,
+       "net_ci_date": [
+        7.0,
+        43.0
+       ],
+       "net_ci_player": [
+        10.350643375680574,
+        40.91042282763532
+       ],
+       "tie_averaged": {
+        "baseline_wins": 51.92647021427357,
+        "challenger_wins": 78.0,
+        "net": 26.07352978572643,
+        "dates_with_boundary_tie_in_baseline": 10
+       }
+      },
+      "top2_per_date": {
+       "selected_per_arm": 300,
+       "dates": 150,
+       "baseline_wins": 120,
+       "challenger_wins": 147,
+       "added": 281,
+       "added_wins": 137,
+       "removed": 281,
+       "removed_wins": 110,
+       "net_wins": 27,
+       "net_ci_date": [
+        4.0,
+        50.0
+       ],
+       "net_ci_player": [
+        5.531652877522131,
+        49.48398740691195
+       ],
+       "tie_averaged": {
+        "baseline_wins": 116.85294042854714,
+        "challenger_wins": 147.0,
+        "net": 30.147059571452857,
+        "dates_with_boundary_tie_in_baseline": 10
+       }
+      },
+      "top3_per_date": {
+       "selected_per_arm": 450,
+       "dates": 150,
+       "baseline_wins": 168,
+       "challenger_wins": 224,
+       "added": 417,
+       "added_wins": 209,
+       "removed": 417,
+       "removed_wins": 153,
+       "net_wins": 56,
+       "net_ci_date": [
+        29.0,
+        83.0
+       ],
+       "net_ci_player": [
+        33.13983073650239,
+        84.52065222406793
+       ],
+       "tie_averaged": {
+        "baseline_wins": 166.77941064282072,
+        "challenger_wins": 224.0,
+        "net": 57.22058935717928,
+        "dates_with_boundary_tie_in_baseline": 11
+       }
+      }
+     }
+    },
+    "dropped_features": [],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 1.0,
+     "fold2_2024_25_to_2026": 1.0
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   },
+   "V1_NO_WX": {
+    "fold1_2024_to_2025": {
+     "n_test": 43480,
+     "n_features": 49,
+     "M1": {
+      "logloss": 0.6479874030672487,
+      "brier": 0.22779612004144467,
+      "auc": 0.5490678270184975,
+      "slope": 0.8079483213330854,
+      "ece": 0.006302051635378435
+     },
+     "M2": {
+      "logloss": 0.6432974091558914,
+      "brier": 0.22570082752558743,
+      "auc": 0.5743345916961982,
+      "slope": 0.8387273693288458,
+      "ece": 0.012528958822921122
+     },
+     "vs_M1": {
+      "brier": -0.0020952925158572574,
+      "brier_ci_date": [
+       -0.0027030286383010883,
+       -0.0015048219850640116
+      ],
+      "logloss": -0.00468999391135729,
+      "logloss_ci_date": [
+       -0.006063178716112582,
+       -0.0033509423577660043
+      ],
+      "logloss_ci_player": [
+       -0.005854401295420439,
+       -0.0035869617130408183
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 2222,
+       "dates": 206,
+       "baseline_wins": 923,
+       "challenger_wins": 1030,
+       "added": 1700,
+       "added_wins": 787,
+       "removed": 1700,
+       "removed_wins": 680,
+       "net_wins": 107,
+       "net_ci_date": [
+        48.0,
+        167.0
+       ],
+       "net_ci_player": [
+        52.78245520906565,
+        160.64468240559384
+       ],
+       "tie_averaged": {
+        "baseline_wins": 921.9789338210971,
+        "challenger_wins": 1030.0,
+        "net": 108.02106617890286,
+        "dates_with_boundary_tie_in_baseline": 22
+       },
+       "random_tiebreak_net": {
+        "reps": 200,
+        "mean": 107.56,
+        "min": 98,
+        "p2_5": 99.975,
+        "p97_5": 115.0
+       }
+      },
+      "top1_per_date": {
+       "selected_per_arm": 206,
+       "dates": 206,
+       "baseline_wins": 81,
+       "challenger_wins": 105,
+       "added": 193,
+       "added_wins": 100,
+       "removed": 193,
+       "removed_wins": 76,
+       "net_wins": 24,
+       "net_ci_date": [
+        4.0,
+        43.0
+       ],
+       "net_ci_player": [
+        10.164017647894408,
+        46.322430367858566
+       ],
+       "tie_averaged": {
+        "baseline_wins": 82.23537776718388,
+        "challenger_wins": 105.0,
+        "net": 22.764622232816123,
+        "dates_with_boundary_tie_in_baseline": 9
+       }
+      },
+      "top2_per_date": {
+       "selected_per_arm": 412,
+       "dates": 206,
+       "baseline_wins": 179,
+       "challenger_wins": 201,
+       "added": 375,
+       "added_wins": 183,
+       "removed": 375,
+       "removed_wins": 161,
+       "net_wins": 22,
+       "net_ci_date": [
+        -5.024999999999999,
+        50.0
+       ],
+       "net_ci_player": [
+        -2.7383635075275623,
+        51.99818503188535
+       ],
+       "tie_averaged": {
+        "baseline_wins": 179.47075553436775,
+        "challenger_wins": 201.0,
+        "net": 21.529244465632246,
+        "dates_with_boundary_tie_in_baseline": 9
+       }
+      },
+      "top3_per_date": {
+       "selected_per_arm": 618,
+       "dates": 206,
+       "baseline_wins": 269,
+       "challenger_wins": 303,
+       "added": 553,
+       "added_wins": 269,
+       "removed": 553,
+       "removed_wins": 235,
+       "net_wins": 34,
+       "net_ci_date": [
+        0.0,
+        68.0
+       ],
+       "net_ci_player": [
+        0.07729441705030969,
+        71.21280606520335
+       ],
+       "tie_averaged": {
+        "baseline_wins": 268.70613330155163,
+        "challenger_wins": 303.0,
+        "net": 34.29386669844837,
+        "dates_with_boundary_tie_in_baseline": 9
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 35545,
+     "n_features": 49,
+     "M1": {
+      "logloss": 0.6447171626886717,
+      "brier": 0.22622084589478733,
+      "auc": 0.5453279777014505,
+      "slope": 0.8054073492067225,
+      "ece": 0.006113073515274267
+     },
+     "M2": {
+      "logloss": 0.6399980214816967,
+      "brier": 0.22413086508572844,
+      "auc": 0.5706736189211057,
+      "slope": 0.8787059043930647,
+      "ece": 0.007212991407303738
+     },
+     "vs_M1": {
+      "brier": -0.0020899808090589036,
+      "brier_ci_date": [
+       -0.0026562918622209703,
+       -0.0015183352901825065
+      ],
+      "logloss": -0.004719141206975146,
+      "logloss_ci_date": [
+       -0.005993730507951903,
+       -0.00350876896760658
+      ],
+      "logloss_ci_player": [
+       -0.005773593833870846,
+       -0.0036421238405810897
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 1819,
+       "dates": 150,
+       "baseline_wins": 699,
+       "challenger_wins": 818,
+       "added": 1383,
+       "added_wins": 630,
+       "removed": 1383,
+       "removed_wins": 511,
+       "net_wins": 119,
+       "net_ci_date": [
+        68.0,
+        173.0
+       ],
+       "net_ci_player": [
+        70.22670304998866,
+        169.4929510496761
+       ],
+       "tie_averaged": {
+        "baseline_wins": 697.1862400651203,
+        "challenger_wins": 818.0,
+        "net": 120.81375993487973,
+        "dates_with_boundary_tie_in_baseline": 14
+       },
+       "random_tiebreak_net": {
+        "reps": 200,
+        "mean": 120.4,
+        "min": 109,
+        "p2_5": 111.975,
+        "p97_5": 128.0
+       }
+      },
+      "top1_per_date": {
+       "selected_per_arm": 150,
+       "dates": 150,
+       "baseline_wins": 53,
+       "challenger_wins": 81,
+       "added": 146,
+       "added_wins": 78,
+       "removed": 146,
+       "removed_wins": 50,
+       "net_wins": 28,
+       "net_ci_date": [
+        10.0,
+        46.0
+       ],
+       "net_ci_player": [
+        13.75265607626476,
+        42.874836734693865
+       ],
+       "tie_averaged": {
+        "baseline_wins": 51.92647021427357,
+        "challenger_wins": 81.0,
+        "net": 29.07352978572643,
+        "dates_with_boundary_tie_in_baseline": 10
+       }
+      },
+      "top2_per_date": {
+       "selected_per_arm": 300,
+       "dates": 150,
+       "baseline_wins": 120,
+       "challenger_wins": 154,
+       "added": 282,
+       "added_wins": 144,
+       "removed": 282,
+       "removed_wins": 110,
+       "net_wins": 34,
+       "net_ci_date": [
+        12.975000000000001,
+        58.0
+       ],
+       "net_ci_player": [
+        14.062661444988239,
+        56.9312773196982
+       ],
+       "tie_averaged": {
+        "baseline_wins": 116.85294042854714,
+        "challenger_wins": 154.0,
+        "net": 37.14705957145286,
+        "dates_with_boundary_tie_in_baseline": 10
+       }
+      },
+      "top3_per_date": {
+       "selected_per_arm": 450,
+       "dates": 150,
+       "baseline_wins": 168,
+       "challenger_wins": 222,
+       "added": 414,
+       "added_wins": 205,
+       "removed": 414,
+       "removed_wins": 151,
+       "net_wins": 54,
+       "net_ci_date": [
+        27.0,
+        80.0
+       ],
+       "net_ci_player": [
+        28.481387753520014,
+        81.42252960391991
+       ],
+       "tie_averaged": {
+        "baseline_wins": 166.77941064282072,
+        "challenger_wins": 222.0,
+        "net": 55.22058935717928,
+        "dates_with_boundary_tie_in_baseline": 11
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "wx_roof",
+     "wx_temp",
+     "wx_wind_in",
+     "wx_wind_mph",
+     "wx_wind_out"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 1.0808080808080809,
+     "fold2_2024_25_to_2026": 0.8206896551724138
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   },
+   "V2_NO_SP_IDENTITY": {
+    "fold1_2024_to_2025": {
+     "n_test": 43480,
+     "n_features": 44,
+     "M1": {
+      "logloss": 0.6479874030672487,
+      "brier": 0.22779612004144467,
+      "auc": 0.5490678270184975,
+      "slope": 0.8079483213330854,
+      "ece": 0.006302051635378435
+     },
+     "M2": {
+      "logloss": 0.6434605105146846,
+      "brier": 0.22580447555691918,
+      "auc": 0.5723394162365485,
+      "slope": 0.8754732649572238,
+      "ece": 0.00892481105560494
+     },
+     "vs_M1": {
+      "brier": -0.001991644484525458,
+      "brier_ci_date": [
+       -0.00257242862602854,
+       -0.0014214076287623377
+      ],
+      "logloss": -0.004526892552564117,
+      "logloss_ci_date": [
+       -0.005774151431202697,
+       -0.003370494438140837
+      ],
+      "logloss_ci_player": [
+       -0.0055950180454854385,
+       -0.00347065864790358
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 2222,
+       "dates": 206,
+       "baseline_wins": 923,
+       "challenger_wins": 997,
+       "added": 1604,
+       "added_wins": 700,
+       "removed": 1604,
+       "removed_wins": 626,
+       "net_wins": 74,
+       "net_ci_date": [
+        14.0,
+        133.0
+       ],
+       "net_ci_player": [
+        13.003139472006078,
+        133.06791828710337
+       ],
+       "tie_averaged": {
+        "baseline_wins": 921.9789338210971,
+        "challenger_wins": 997.0,
+        "net": 75.02106617890286,
+        "dates_with_boundary_tie_in_baseline": 22
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 35545,
+     "n_features": 44,
+     "M1": {
+      "logloss": 0.6447171626886717,
+      "brier": 0.22622084589478733,
+      "auc": 0.5453279777014505,
+      "slope": 0.8054073492067225,
+      "ece": 0.006113073515274267
+     },
+     "M2": {
+      "logloss": 0.6400744895671406,
+      "brier": 0.22415952207653936,
+      "auc": 0.5705638514686573,
+      "slope": 0.9056306311059811,
+      "ece": 0.0056238677198388225
+     },
+     "vs_M1": {
+      "brier": -0.0020613238182479745,
+      "brier_ci_date": [
+       -0.002663234673791767,
+       -0.0015182018830636732
+      ],
+      "logloss": -0.004642673121531079,
+      "logloss_ci_date": [
+       -0.005919933603409297,
+       -0.0033523678527137136
+      ],
+      "logloss_ci_player": [
+       -0.005790587854267456,
+       -0.00356086425784054
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 1819,
+       "dates": 150,
+       "baseline_wins": 699,
+       "challenger_wins": 831,
+       "added": 1372,
+       "added_wins": 625,
+       "removed": 1372,
+       "removed_wins": 493,
+       "net_wins": 132,
+       "net_ci_date": [
+        81.0,
+        182.02499999999986
+       ],
+       "net_ci_player": [
+        83.36935582649937,
+        181.02887018044765
+       ],
+       "tie_averaged": {
+        "baseline_wins": 697.1862400651203,
+        "challenger_wins": 831.0,
+        "net": 133.81375993487973,
+        "dates_with_boundary_tie_in_baseline": 14
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "match_same_hand",
+     "opp_sp_bb",
+     "opp_sp_hit",
+     "opp_sp_hr",
+     "opp_sp_k",
+     "opp_sp_starts",
+     "opp_sp_tba",
+     "sig_pitch_exploit",
+     "sig_platoon",
+     "sig_sp_era_weak"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 0.7474747474747475,
+     "fold2_2024_25_to_2026": 0.9103448275862069
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   },
+   "V3_NO_SLOT": {
+    "fold1_2024_to_2025": {
+     "n_test": 43480,
+     "n_features": 51,
+     "M1": {
+      "logloss": 0.6479874030672487,
+      "brier": 0.22779612004144467,
+      "auc": 0.5490678270184975,
+      "slope": 0.8079483213330854,
+      "ece": 0.006302051635378435
+     },
+     "M2": {
+      "logloss": 0.6442637209123817,
+      "brier": 0.22609882003418258,
+      "auc": 0.5693194894757172,
+      "slope": 0.8266163635603629,
+      "ece": 0.013339529412993443
+     },
+     "vs_M1": {
+      "brier": -0.0016973000072620776,
+      "brier_ci_date": [
+       -0.0022831281485333793,
+       -0.0011212640790760633
+      ],
+      "logloss": -0.0037236821548669893,
+      "logloss_ci_date": [
+       -0.004954083810862208,
+       -0.0024717207265536
+      ],
+      "logloss_ci_player": [
+       -0.004737265021961921,
+       -0.0026983505023579417
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 2222,
+       "dates": 206,
+       "baseline_wins": 923,
+       "challenger_wins": 1052,
+       "added": 1641,
+       "added_wins": 775,
+       "removed": 1641,
+       "removed_wins": 646,
+       "net_wins": 129,
+       "net_ci_date": [
+        71.975,
+        186.02499999999986
+       ],
+       "net_ci_player": [
+        79.38816169527712,
+        180.04539101441082
+       ],
+       "tie_averaged": {
+        "baseline_wins": 921.9789338210971,
+        "challenger_wins": 1052.0,
+        "net": 130.02106617890286,
+        "dates_with_boundary_tie_in_baseline": 22
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 35545,
+     "n_features": 51,
+     "M1": {
+      "logloss": 0.6447171626886717,
+      "brier": 0.22622084589478733,
+      "auc": 0.5453279777014505,
+      "slope": 0.8054073492067225,
+      "ece": 0.006113073515274267
+     },
+     "M2": {
+      "logloss": 0.6408885024457686,
+      "brier": 0.22451606594464854,
+      "auc": 0.5667370437783292,
+      "slope": 0.8838880987549737,
+      "ece": 0.0032872612530806186
+     },
+     "vs_M1": {
+      "brier": -0.0017047799501388107,
+      "brier_ci_date": [
+       -0.002239024958558944,
+       -0.0011601354903714408
+      ],
+      "logloss": -0.0038286602429032667,
+      "logloss_ci_date": [
+       -0.005084885953266677,
+       -0.002633583286871296
+      ],
+      "logloss_ci_player": [
+       -0.004872341532775002,
+       -0.00278404564233362
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 1819,
+       "dates": 150,
+       "baseline_wins": 699,
+       "challenger_wins": 802,
+       "added": 1361,
+       "added_wins": 613,
+       "removed": 1361,
+       "removed_wins": 510,
+       "net_wins": 103,
+       "net_ci_date": [
+        52.0,
+        154.02499999999986
+       ],
+       "net_ci_player": [
+        53.348455468197095,
+        151.29397835100508
+       ],
+       "tie_averaged": {
+        "baseline_wins": 697.1862400651203,
+        "challenger_wins": 802.0,
+        "net": 104.81375993487973,
+        "dates_with_boundary_tie_in_baseline": 14
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "opp_slot",
+     "sig_woba_ahead",
+     "sig_woba_behind"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 1.303030303030303,
+     "fold2_2024_25_to_2026": 0.7103448275862069
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   },
+   "V4_PRIOR_SLOT": {
+    "fold1_2024_to_2025": {
+     "n_test": 43480,
+     "n_features": 52,
+     "M1": {
+      "logloss": 0.6479874030672487,
+      "brier": 0.22779612004144467,
+      "auc": 0.5490678270184975,
+      "slope": 0.8079483213330854,
+      "ece": 0.006302051635378435
+     },
+     "M2": {
+      "logloss": 0.6435252748491819,
+      "brier": 0.22577815336571094,
+      "auc": 0.5729156216030235,
+      "slope": 0.8454811954857913,
+      "ece": 0.011866986819944676
+     },
+     "vs_M1": {
+      "brier": -0.002017966675733706,
+      "brier_ci_date": [
+       -0.0026401518111279563,
+       -0.0014439435958218635
+      ],
+      "logloss": -0.004462128218066802,
+      "logloss_ci_date": [
+       -0.005801301230564052,
+       -0.0031850499391819975
+      ],
+      "logloss_ci_player": [
+       -0.005585840343826854,
+       -0.003347549200783064
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 2222,
+       "dates": 206,
+       "baseline_wins": 923,
+       "challenger_wins": 1042,
+       "added": 1681,
+       "added_wins": 786,
+       "removed": 1681,
+       "removed_wins": 667,
+       "net_wins": 119,
+       "net_ci_date": [
+        60.0,
+        176.0
+       ],
+       "net_ci_player": [
+        70.10443071637005,
+        177.161107652144
+       ],
+       "tie_averaged": {
+        "baseline_wins": 921.9789338210971,
+        "challenger_wins": 1042.0,
+        "net": 120.02106617890286,
+        "dates_with_boundary_tie_in_baseline": 22
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 35545,
+     "n_features": 52,
+     "M1": {
+      "logloss": 0.6447171626886717,
+      "brier": 0.22622084589478733,
+      "auc": 0.5453279777014505,
+      "slope": 0.8054073492067225,
+      "ece": 0.006113073515274267
+     },
+     "M2": {
+      "logloss": 0.6402135909034293,
+      "brier": 0.2242078973183793,
+      "auc": 0.5703546294659908,
+      "slope": 0.8856070019880009,
+      "ece": 0.004743543989546819
+     },
+     "vs_M1": {
+      "brier": -0.0020129485764080568,
+      "brier_ci_date": [
+       -0.002552798290398629,
+       -0.0014535083327128966
+      ],
+      "logloss": -0.004503571785242395,
+      "logloss_ci_date": [
+       -0.005745176370830082,
+       -0.003196792747444515
+      ],
+      "logloss_ci_player": [
+       -0.0055639388261046205,
+       -0.0033842813915593213
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 1819,
+       "dates": 150,
+       "baseline_wins": 699,
+       "challenger_wins": 830,
+       "added": 1396,
+       "added_wins": 641,
+       "removed": 1396,
+       "removed_wins": 510,
+       "net_wins": 131,
+       "net_ci_date": [
+        79.0,
+        183.0
+       ],
+       "net_ci_player": [
+        81.3155737883728,
+        184.83684168162824
+       ],
+       "tie_averaged": {
+        "baseline_wins": 697.1862400651203,
+        "challenger_wins": 830.0,
+        "net": 132.81375993487973,
+        "dates_with_boundary_tie_in_baseline": 14
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "opp_slot",
+     "sig_woba_ahead",
+     "sig_woba_behind"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 1.202020202020202,
+     "fold2_2024_25_to_2026": 0.903448275862069
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   },
+   "V5_SAMEDAY_STRICT": {
+    "fold1_2024_to_2025": {
+     "n_test": 43480,
+     "n_features": 36,
+     "M1": {
+      "logloss": 0.6479874030672487,
+      "brier": 0.22779612004144467,
+      "auc": 0.5490678270184975,
+      "slope": 0.8079483213330854,
+      "ece": 0.006302051635378435
+     },
+     "M2": {
+      "logloss": 0.6447954506071053,
+      "brier": 0.22638150031371732,
+      "auc": 0.5662282027669386,
+      "slope": 0.866231578673416,
+      "ece": 0.01181122326844436
+     },
+     "vs_M1": {
+      "brier": -0.0014146197277273627,
+      "brier_ci_date": [
+       -0.0018907455079840338,
+       -0.0009714879451684417
+      ],
+      "logloss": -0.0031919524601434885,
+      "logloss_ci_date": [
+       -0.004237215256160677,
+       -0.0022121099170984886
+      ],
+      "logloss_ci_player": [
+       -0.004025347549298098,
+       -0.002359536426196107
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 2222,
+       "dates": 206,
+       "baseline_wins": 923,
+       "challenger_wins": 1004,
+       "added": 1521,
+       "added_wins": 672,
+       "removed": 1521,
+       "removed_wins": 591,
+       "net_wins": 81,
+       "net_ci_date": [
+        28.975,
+        137.0
+       ],
+       "net_ci_player": [
+        30.40408514937453,
+        135.8377175800369
+       ],
+       "tie_averaged": {
+        "baseline_wins": 921.9789338210971,
+        "challenger_wins": 1004.0,
+        "net": 82.02106617890286,
+        "dates_with_boundary_tie_in_baseline": 22
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 35545,
+     "n_features": 36,
+     "M1": {
+      "logloss": 0.6447171626886717,
+      "brier": 0.22622084589478733,
+      "auc": 0.5453279777014505,
+      "slope": 0.8054073492067225,
+      "ece": 0.006113073515274267
+     },
+     "M2": {
+      "logloss": 0.6415856048212772,
+      "brier": 0.22482773838160083,
+      "auc": 0.5626916729155331,
+      "slope": 0.892065745628606,
+      "ece": 0.004710459628918985
+     },
+     "vs_M1": {
+      "brier": -0.0013931075131865265,
+      "brier_ci_date": [
+       -0.001902013103636211,
+       -0.0009005202077655475
+      ],
+      "logloss": -0.0031315578673944745,
+      "logloss_ci_date": [
+       -0.004319995541165007,
+       -0.0020405519839750024
+      ],
+      "logloss_ci_player": [
+       -0.0040796678386539305,
+       -0.0022096828445524077
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 1819,
+       "dates": 150,
+       "baseline_wins": 699,
+       "challenger_wins": 821,
+       "added": 1349,
+       "added_wins": 627,
+       "removed": 1349,
+       "removed_wins": 505,
+       "net_wins": 122,
+       "net_ci_date": [
+        73.0,
+        171.0
+       ],
+       "net_ci_player": [
+        76.41082010352743,
+        172.4445340986421
+       ],
+       "tie_averaged": {
+        "baseline_wins": 697.1862400651203,
+        "challenger_wins": 821.0,
+        "net": 123.81375993487973,
+        "dates_with_boundary_tie_in_baseline": 14
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "match_same_hand",
+     "opp_slot",
+     "opp_sp_bb",
+     "opp_sp_hit",
+     "opp_sp_hr",
+     "opp_sp_k",
+     "opp_sp_starts",
+     "opp_sp_tba",
+     "sig_pitch_exploit",
+     "sig_platoon",
+     "sig_sp_era_weak",
+     "sig_woba_ahead",
+     "sig_woba_behind",
+     "wx_roof",
+     "wx_temp",
+     "wx_wind_in",
+     "wx_wind_mph",
+     "wx_wind_out"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 0.8181818181818182,
+     "fold2_2024_25_to_2026": 0.8413793103448276
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   },
+   "V6_SAMEDAY_STRICT_NO_BASE": {
+    "fold1_2024_to_2025": {
+     "n_test": 43480,
+     "n_features": 35,
+     "M1": {
+      "logloss": 0.6479874030672487,
+      "brier": 0.22779612004144467,
+      "auc": 0.5490678270184975,
+      "slope": 0.8079483213330854,
+      "ece": 0.006302051635378435
+     },
+     "M2": {
+      "logloss": 0.6446896534029711,
+      "brier": 0.226351364389894,
+      "auc": 0.5658224686438411,
+      "slope": 0.900482839209723,
+      "ece": 0.011034206396682815
+     },
+     "vs_M1": {
+      "brier": -0.0014447556515506776,
+      "brier_ci_date": [
+       -0.0019812560292124,
+       -0.0009032955995339556
+      ],
+      "logloss": -0.00329774966427758,
+      "logloss_ci_date": [
+       -0.0044789908206700965,
+       -0.0021347492711374537
+      ],
+      "logloss_ci_player": [
+       -0.004191596585398841,
+       -0.002372135245898108
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 2222,
+       "dates": 206,
+       "baseline_wins": 923,
+       "challenger_wins": 1001,
+       "added": 1535,
+       "added_wins": 672,
+       "removed": 1535,
+       "removed_wins": 594,
+       "net_wins": 78,
+       "net_ci_date": [
+        22.0,
+        131.0
+       ],
+       "net_ci_player": [
+        27.687511645377434,
+        126.61849387699857
+       ],
+       "tie_averaged": {
+        "baseline_wins": 921.9789338210971,
+        "challenger_wins": 1001.0,
+        "net": 79.02106617890286,
+        "dates_with_boundary_tie_in_baseline": 22
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 35545,
+     "n_features": 35,
+     "M1": {
+      "logloss": 0.6447171626886717,
+      "brier": 0.22622084589478733,
+      "auc": 0.5453279777014505,
+      "slope": 0.8054073492067225,
+      "ece": 0.006113073515274267
+     },
+     "M2": {
+      "logloss": 0.6416890309290284,
+      "brier": 0.224878183200401,
+      "auc": 0.5619198004219018,
+      "slope": 0.8963675821664668,
+      "ece": 0.005361079540977823
+     },
+     "vs_M1": {
+      "brier": -0.001342662694386364,
+      "brier_ci_date": [
+       -0.0018704280730843445,
+       -0.0008095723086631719
+      ],
+      "logloss": -0.0030281317596433342,
+      "logloss_ci_date": [
+       -0.004239360349714292,
+       -0.0018967193745950323
+      ],
+      "logloss_ci_player": [
+       -0.00401668082517849,
+       -0.002018649143962639
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 1819,
+       "dates": 150,
+       "baseline_wins": 699,
+       "challenger_wins": 809,
+       "added": 1353,
+       "added_wins": 619,
+       "removed": 1353,
+       "removed_wins": 509,
+       "net_wins": 110,
+       "net_ci_date": [
+        61.0,
+        160.0
+       ],
+       "net_ci_player": [
+        56.254829457329556,
+        164.37442254093864
+       ],
+       "tie_averaged": {
+        "baseline_wins": 697.1862400651203,
+        "challenger_wins": 809.0,
+        "net": 111.81375993487973,
+        "dates_with_boundary_tie_in_baseline": 14
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "match_same_hand",
+     "opp_slot",
+     "opp_sp_bb",
+     "opp_sp_hit",
+     "opp_sp_hr",
+     "opp_sp_k",
+     "opp_sp_starts",
+     "opp_sp_tba",
+     "sig_pitch_exploit",
+     "sig_platoon",
+     "sig_sp_era_weak",
+     "sig_woba_ahead",
+     "sig_woba_behind",
+     "wx_roof",
+     "wx_temp",
+     "wx_wind_in",
+     "wx_wind_mph",
+     "wx_wind_out",
+     "base_logit"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 0.7878787878787878,
+     "fold2_2024_25_to_2026": 0.7586206896551724
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   },
+   "V7_FIDELITY": {
+    "fold1_2024_to_2025": {
+     "n_test": 43480,
+     "n_features": 44,
+     "M1": {
+      "logloss": 0.6479874030672487,
+      "brier": 0.22779612004144467,
+      "auc": 0.5490678270184975,
+      "slope": 0.8079483213330854,
+      "ece": 0.006302051635378435
+     },
+     "M2": {
+      "logloss": 0.6436676297570958,
+      "brier": 0.22589053776777987,
+      "auc": 0.5722339190826136,
+      "slope": 0.8371380832326153,
+      "ece": 0.013413269468526732
+     },
+     "vs_M1": {
+      "brier": -0.0019055822736648122,
+      "brier_ci_date": [
+       -0.002444857942251484,
+       -0.0013309285477835686
+      ],
+      "logloss": -0.0043197733101529604,
+      "logloss_ci_date": [
+       -0.005693545318145523,
+       -0.0030410426281343435
+      ],
+      "logloss_ci_player": [
+       -0.005473273275413264,
+       -0.0032533631203901865
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 2222,
+       "dates": 206,
+       "baseline_wins": 923,
+       "challenger_wins": 1066,
+       "added": 1653,
+       "added_wins": 800,
+       "removed": 1653,
+       "removed_wins": 657,
+       "net_wins": 143,
+       "net_ci_date": [
+        85.975,
+        197.02499999999986
+       ],
+       "net_ci_player": [
+        88.39011938305065,
+        202.61533839052942
+       ],
+       "tie_averaged": {
+        "baseline_wins": 921.9789338210971,
+        "challenger_wins": 1066.0,
+        "net": 144.02106617890286,
+        "dates_with_boundary_tie_in_baseline": 22
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 35545,
+     "n_features": 44,
+     "M1": {
+      "logloss": 0.6447171626886717,
+      "brier": 0.22622084589478733,
+      "auc": 0.5453279777014505,
+      "slope": 0.8054073492067225,
+      "ece": 0.006113073515274267
+     },
+     "M2": {
+      "logloss": 0.6407065016380407,
+      "brier": 0.22445628698267142,
+      "auc": 0.5674224111883057,
+      "slope": 0.870362684048226,
+      "ece": 0.007533720909939452
+     },
+     "vs_M1": {
+      "brier": -0.0017645589121159367,
+      "brier_ci_date": [
+       -0.0022858107179171347,
+       -0.001214656792340715
+      ],
+      "logloss": -0.004010661050631186,
+      "logloss_ci_date": [
+       -0.005150936937799446,
+       -0.0028373049850675645
+      ],
+      "logloss_ci_player": [
+       -0.00513937669036317,
+       -0.0029409201327167517
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 1819,
+       "dates": 150,
+       "baseline_wins": 699,
+       "challenger_wins": 811,
+       "added": 1367,
+       "added_wins": 618,
+       "removed": 1367,
+       "removed_wins": 506,
+       "net_wins": 112,
+       "net_ci_date": [
+        56.0,
+        167.0
+       ],
+       "net_ci_player": [
+        66.57247409618384,
+        164.5385600411752
+       ],
+       "tie_averaged": {
+        "baseline_wins": 697.1862400651203,
+        "challenger_wins": 811.0,
+        "net": 113.81375993487973,
+        "dates_with_boundary_tie_in_baseline": 14
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "lin_team_hit",
+     "opp_home",
+     "opp_team_rpg",
+     "park_hit",
+     "park_tb",
+     "wx_roof",
+     "wx_temp",
+     "wx_wind_in",
+     "wx_wind_mph",
+     "wx_wind_out"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 1.4444444444444444,
+     "fold2_2024_25_to_2026": 0.7724137931034483
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   }
+  },
+  "strikeouts_4": {
+   "K0_ORIGINAL": {
+    "fold1_2024_to_2025": {
+     "n_test": 3907,
+     "n_features": 19,
+     "M1": {
+      "logloss": 0.5885439277785944,
+      "brier": 0.2009006143525142,
+      "auc": 0.644620162641494,
+      "slope": 1.1090626353308233,
+      "ece": 0.02099233087706811
+     },
+     "M2": {
+      "logloss": 0.574787347497096,
+      "brier": 0.19590152431561306,
+      "auc": 0.6698903340131733,
+      "slope": 0.8354836092921682,
+      "ece": 0.02912755474092863
+     },
+     "vs_M1": {
+      "brier": -0.004999090036901113,
+      "brier_ci_date": [
+       -0.00843683196013026,
+       -0.0017282514271503165
+      ],
+      "logloss": -0.013756580281498317,
+      "logloss_ci_date": [
+       -0.021630309009374942,
+       -0.005851451290822165
+      ],
+      "logloss_ci_player": [
+       -0.022488993157683056,
+       -0.004957260090248124
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 402,
+       "dates": 169,
+       "baseline_wins": 331,
+       "challenger_wins": 368,
+       "added": 187,
+       "added_wins": 173,
+       "removed": 187,
+       "removed_wins": 136,
+       "net_wins": 37,
+       "net_ci_date": [
+        24.0,
+        50.024999999999864
+       ],
+       "net_ci_player": [
+        24.782260130414542,
+        49.46296764572389
+       ],
+       "tie_averaged": {
+        "baseline_wins": 331.0,
+        "challenger_wins": 368.0,
+        "net": 37.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       },
+       "random_tiebreak_net": {
+        "reps": 200,
+        "mean": 37.0,
+        "min": 37,
+        "p2_5": 37.0,
+        "p97_5": 37.0
+       }
+      },
+      "top1_per_date": {
+       "selected_per_arm": 169,
+       "dates": 169,
+       "baseline_wins": 140,
+       "challenger_wins": 158,
+       "added": 88,
+       "added_wins": 82,
+       "removed": 88,
+       "removed_wins": 64,
+       "net_wins": 18,
+       "net_ci_date": [
+        8.0,
+        28.0
+       ],
+       "net_ci_player": [
+        9.150350950079801,
+        28.656464835622128
+       ],
+       "tie_averaged": {
+        "baseline_wins": 140.0,
+        "challenger_wins": 158.0,
+        "net": 18.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "top2_per_date": {
+       "selected_per_arm": 334,
+       "dates": 169,
+       "baseline_wins": 277,
+       "challenger_wins": 311,
+       "added": 171,
+       "added_wins": 158,
+       "removed": 171,
+       "removed_wins": 124,
+       "net_wins": 34,
+       "net_ci_date": [
+        21.0,
+        46.0
+       ],
+       "net_ci_player": [
+        21.145518571744756,
+        47.61170202040567
+       ],
+       "tie_averaged": {
+        "baseline_wins": 277.0,
+        "challenger_wins": 311.0,
+        "net": 34.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "floor_matched_M1_ge_0.6": {
+       "selected_per_arm": 3214,
+       "dates": 168,
+       "baseline_wins": 2333,
+       "challenger_wins": 2375,
+       "added": 319,
+       "added_wins": 217,
+       "removed": 319,
+       "removed_wins": 175,
+       "net_wins": 42,
+       "net_ci_date": [
+        17.975,
+        67.0
+       ],
+       "net_ci_player": [
+        14.652058454334117,
+        68.06537145663945
+       ],
+       "tie_averaged": {
+        "baseline_wins": 2333.0,
+        "challenger_wins": 2375.0,
+        "net": 42.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 3891,
+     "n_features": 19,
+     "M1": {
+      "logloss": 0.5928810677948817,
+      "brier": 0.2027752859786156,
+      "auc": 0.6417904271318764,
+      "slope": 1.0626523263091192,
+      "ece": 0.01914816580806038
+     },
+     "M2": {
+      "logloss": 0.5636004478159955,
+      "brier": 0.19058330686412317,
+      "auc": 0.6945088338567869,
+      "slope": 0.9932055913940058,
+      "ece": 0.010831707462800875
+     },
+     "vs_M1": {
+      "brier": -0.012191979114492425,
+      "brier_ci_date": [
+       -0.015519444802791915,
+       -0.008837798128011066
+      ],
+      "logloss": -0.0292806199788862,
+      "logloss_ci_date": [
+       -0.03708025015384852,
+       -0.021701479426713122
+      ],
+      "logloss_ci_player": [
+       -0.03990670467163469,
+       -0.019815190724222755
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 394,
+       "dates": 167,
+       "baseline_wins": 330,
+       "challenger_wins": 346,
+       "added": 189,
+       "added_wins": 162,
+       "removed": 189,
+       "removed_wins": 146,
+       "net_wins": 16,
+       "net_ci_date": [
+        0.0,
+        31.0
+       ],
+       "net_ci_player": [
+        -0.6384442111664391,
+        32.379530132803794
+       ],
+       "tie_averaged": {
+        "baseline_wins": 330.0,
+        "challenger_wins": 346.0,
+        "net": 16.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       },
+       "random_tiebreak_net": {
+        "reps": 200,
+        "mean": 16.0,
+        "min": 16,
+        "p2_5": 16.0,
+        "p97_5": 16.0
+       }
+      },
+      "top1_per_date": {
+       "selected_per_arm": 167,
+       "dates": 167,
+       "baseline_wins": 142,
+       "challenger_wins": 147,
+       "added": 93,
+       "added_wins": 81,
+       "removed": 93,
+       "removed_wins": 76,
+       "net_wins": 5,
+       "net_ci_date": [
+        -5.0,
+        15.0
+       ],
+       "net_ci_player": [
+        -4.972817118118777,
+        16.703875811602877
+       ],
+       "tie_averaged": {
+        "baseline_wins": 142.0,
+        "challenger_wins": 147.0,
+        "net": 5.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "top2_per_date": {
+       "selected_per_arm": 334,
+       "dates": 167,
+       "baseline_wins": 284,
+       "challenger_wins": 294,
+       "added": 173,
+       "added_wins": 152,
+       "removed": 173,
+       "removed_wins": 142,
+       "net_wins": 10,
+       "net_ci_date": [
+        -5.0,
+        23.0
+       ],
+       "net_ci_player": [
+        -5.443620306436841,
+        26.577176405183657
+       ],
+       "tie_averaged": {
+        "baseline_wins": 284.0,
+        "challenger_wins": 294.0,
+        "net": 10.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "floor_matched_M1_ge_0.6": {
+       "selected_per_arm": 3263,
+       "dates": 167,
+       "baseline_wins": 2366,
+       "challenger_wins": 2405,
+       "added": 299,
+       "added_wins": 175,
+       "removed": 299,
+       "removed_wins": 136,
+       "net_wins": 39,
+       "net_ci_date": [
+        17.0,
+        63.0
+       ],
+       "net_ci_player": [
+        12.843695230030447,
+        64.1440348205506
+       ],
+       "tie_averaged": {
+        "baseline_wins": 2366.0,
+        "challenger_wins": 2405.0,
+        "net": 39.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "dropped_features": [],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 1.0,
+     "fold2_2024_25_to_2026": 1.0
+    },
+    "logloss_rule": true,
+    "equal_n_rule": false
+   },
+   "K1_NO_WX": {
+    "fold1_2024_to_2025": {
+     "n_test": 3907,
+     "n_features": 17,
+     "M1": {
+      "logloss": 0.5885439277785944,
+      "brier": 0.2009006143525142,
+      "auc": 0.644620162641494,
+      "slope": 1.1090626353308233,
+      "ece": 0.02099233087706811
+     },
+     "M2": {
+      "logloss": 0.5752601253868438,
+      "brier": 0.19609522351688932,
+      "auc": 0.6690269124987771,
+      "slope": 0.8299980651636332,
+      "ece": 0.03183811597462254
+     },
+     "vs_M1": {
+      "brier": -0.004805390835624852,
+      "brier_ci_date": [
+       -0.008154424401165827,
+       -0.0013462666900080395
+      ],
+      "logloss": -0.01328380239175063,
+      "logloss_ci_date": [
+       -0.0210155133354187,
+       -0.004994984730873257
+      ],
+      "logloss_ci_player": [
+       -0.022057357799588985,
+       -0.004162029653036584
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 402,
+       "dates": 169,
+       "baseline_wins": 331,
+       "challenger_wins": 366,
+       "added": 189,
+       "added_wins": 174,
+       "removed": 189,
+       "removed_wins": 139,
+       "net_wins": 35,
+       "net_ci_date": [
+        23.0,
+        48.0
+       ],
+       "net_ci_player": [
+        23.24685444399839,
+        48.07282743765461
+       ],
+       "tie_averaged": {
+        "baseline_wins": 331.0,
+        "challenger_wins": 366.0,
+        "net": 35.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 3891,
+     "n_features": 17,
+     "M1": {
+      "logloss": 0.5928810677948817,
+      "brier": 0.2027752859786156,
+      "auc": 0.6417904271318764,
+      "slope": 1.0626523263091192,
+      "ece": 0.01914816580806038
+     },
+     "M2": {
+      "logloss": 0.5631887577686828,
+      "brier": 0.19052201987147363,
+      "auc": 0.6952098600726967,
+      "slope": 0.9972800540317485,
+      "ece": 0.012985791127016475
+     },
+     "vs_M1": {
+      "brier": -0.012253266107141978,
+      "brier_ci_date": [
+       -0.015506851253654098,
+       -0.009075099071230932
+      ],
+      "logloss": -0.029692310026198786,
+      "logloss_ci_date": [
+       -0.03691697721319159,
+       -0.02187758481441708
+      ],
+      "logloss_ci_player": [
+       -0.04073957616470353,
+       -0.020123261836815343
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 394,
+       "dates": 167,
+       "baseline_wins": 330,
+       "challenger_wins": 348,
+       "added": 187,
+       "added_wins": 160,
+       "removed": 187,
+       "removed_wins": 142,
+       "net_wins": 18,
+       "net_ci_date": [
+        3.0,
+        34.0
+       ],
+       "net_ci_player": [
+        2.9835324302134696,
+        34.721389530750095
+       ],
+       "tie_averaged": {
+        "baseline_wins": 330.0,
+        "challenger_wins": 348.0,
+        "net": 18.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "wx_roof",
+     "wx_temp"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 0.9459459459459459,
+     "fold2_2024_25_to_2026": 1.125
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   },
+   "K2_NO_OPP_LINEUP": {
+    "fold1_2024_to_2025": {
+     "n_test": 3907,
+     "n_features": 16,
+     "M1": {
+      "logloss": 0.5885439277785944,
+      "brier": 0.2009006143525142,
+      "auc": 0.644620162641494,
+      "slope": 1.1090626353308233,
+      "ece": 0.02099233087706811
+     },
+     "M2": {
+      "logloss": 0.574812169689651,
+      "brier": 0.1957353899221869,
+      "auc": 0.6678368829895127,
+      "slope": 0.873773755254787,
+      "ece": 0.020883428028641873
+     },
+     "vs_M1": {
+      "brier": -0.005165224430327289,
+      "brier_ci_date": [
+       -0.008032963791477377,
+       -0.0023979976095792575
+      ],
+      "logloss": -0.013731758088943516,
+      "logloss_ci_date": [
+       -0.020570368654293042,
+       -0.006697448595714945
+      ],
+      "logloss_ci_player": [
+       -0.02139116990850779,
+       -0.005105370694883987
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 402,
+       "dates": 169,
+       "baseline_wins": 331,
+       "challenger_wins": 368,
+       "added": 191,
+       "added_wins": 176,
+       "removed": 191,
+       "removed_wins": 139,
+       "net_wins": 37,
+       "net_ci_date": [
+        25.0,
+        50.0
+       ],
+       "net_ci_player": [
+        22.7196465379359,
+        51.1643045112782
+       ],
+       "tie_averaged": {
+        "baseline_wins": 331.0,
+        "challenger_wins": 368.0,
+        "net": 37.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 3891,
+     "n_features": 16,
+     "M1": {
+      "logloss": 0.5928810677948817,
+      "brier": 0.2027752859786156,
+      "auc": 0.6417904271318764,
+      "slope": 1.0626523263091192,
+      "ece": 0.01914816580806038
+     },
+     "M2": {
+      "logloss": 0.5684892746429993,
+      "brier": 0.19262193793900134,
+      "auc": 0.684786495826269,
+      "slope": 0.980118461194801,
+      "ece": 0.01920726769930157
+     },
+     "vs_M1": {
+      "brier": -0.01015334803961431,
+      "brier_ci_date": [
+       -0.013298655916914724,
+       -0.007369603201708661
+      ],
+      "logloss": -0.024391793151882356,
+      "logloss_ci_date": [
+       -0.03189516087277183,
+       -0.017177912496510333
+      ],
+      "logloss_ci_player": [
+       -0.03446188330507658,
+       -0.014990227512926543
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 394,
+       "dates": 167,
+       "baseline_wins": 330,
+       "challenger_wins": 349,
+       "added": 178,
+       "added_wins": 155,
+       "removed": 178,
+       "removed_wins": 136,
+       "net_wins": 19,
+       "net_ci_date": [
+        4.975000000000001,
+        34.0
+       ],
+       "net_ci_player": [
+        5.029706290229721,
+        34.21326950563837
+       ],
+       "tie_averaged": {
+        "baseline_wins": 330.0,
+        "challenger_wins": 349.0,
+        "net": 19.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "match_lineup_k",
+     "match_lineup_n",
+     "match_same_hand"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 1.0,
+     "fold2_2024_25_to_2026": 1.1875
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   },
+   "K3_SAMEDAY_STRICT": {
+    "fold1_2024_to_2025": {
+     "n_test": 3907,
+     "n_features": 14,
+     "M1": {
+      "logloss": 0.5885439277785944,
+      "brier": 0.2009006143525142,
+      "auc": 0.644620162641494,
+      "slope": 1.1090626353308233,
+      "ece": 0.02099233087706811
+     },
+     "M2": {
+      "logloss": 0.5752869399698518,
+      "brier": 0.19592215120484052,
+      "auc": 0.6669406458851108,
+      "slope": 0.8676996039935433,
+      "ece": 0.02094584476558258
+     },
+     "vs_M1": {
+      "brier": -0.004978463147673667,
+      "brier_ci_date": [
+       -0.00797411154651336,
+       -0.0019614403615661954
+      ],
+      "logloss": -0.013256987808742663,
+      "logloss_ci_date": [
+       -0.02048337111801885,
+       -0.006170238991241721
+      ],
+      "logloss_ci_player": [
+       -0.021334610418826283,
+       -0.005333455093915175
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 402,
+       "dates": 169,
+       "baseline_wins": 331,
+       "challenger_wins": 368,
+       "added": 191,
+       "added_wins": 176,
+       "removed": 191,
+       "removed_wins": 139,
+       "net_wins": 37,
+       "net_ci_date": [
+        25.0,
+        50.0
+       ],
+       "net_ci_player": [
+        23.056689797059338,
+        51.90633374522495
+       ],
+       "tie_averaged": {
+        "baseline_wins": 331.0,
+        "challenger_wins": 368.0,
+        "net": 37.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       },
+       "random_tiebreak_net": {
+        "reps": 200,
+        "mean": 37.0,
+        "min": 37,
+        "p2_5": 37.0,
+        "p97_5": 37.0
+       }
+      },
+      "top1_per_date": {
+       "selected_per_arm": 169,
+       "dates": 169,
+       "baseline_wins": 140,
+       "challenger_wins": 155,
+       "added": 96,
+       "added_wins": 88,
+       "removed": 96,
+       "removed_wins": 73,
+       "net_wins": 15,
+       "net_ci_date": [
+        5.0,
+        25.0
+       ],
+       "net_ci_player": [
+        4.66335849408256,
+        26.722188666873098
+       ],
+       "tie_averaged": {
+        "baseline_wins": 140.0,
+        "challenger_wins": 155.0,
+        "net": 15.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "top2_per_date": {
+       "selected_per_arm": 334,
+       "dates": 169,
+       "baseline_wins": 277,
+       "challenger_wins": 305,
+       "added": 167,
+       "added_wins": 151,
+       "removed": 167,
+       "removed_wins": 123,
+       "net_wins": 28,
+       "net_ci_date": [
+        16.0,
+        41.0
+       ],
+       "net_ci_player": [
+        14.467243189550178,
+        41.7066430125535
+       ],
+       "tie_averaged": {
+        "baseline_wins": 277.0,
+        "challenger_wins": 305.0,
+        "net": 28.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "floor_matched_M1_ge_0.6": {
+       "selected_per_arm": 3214,
+       "dates": 168,
+       "baseline_wins": 2333,
+       "challenger_wins": 2371,
+       "added": 301,
+       "added_wins": 205,
+       "removed": 301,
+       "removed_wins": 167,
+       "net_wins": 38,
+       "net_ci_date": [
+        15.0,
+        61.024999999999864
+       ],
+       "net_ci_player": [
+        11.217727684453253,
+        62.86107595768284
+       ],
+       "tie_averaged": {
+        "baseline_wins": 2333.0,
+        "challenger_wins": 2371.0,
+        "net": 38.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 3891,
+     "n_features": 14,
+     "M1": {
+      "logloss": 0.5928810677948817,
+      "brier": 0.2027752859786156,
+      "auc": 0.6417904271318764,
+      "slope": 1.0626523263091192,
+      "ece": 0.01914816580806038
+     },
+     "M2": {
+      "logloss": 0.5680971804375065,
+      "brier": 0.19253824027754876,
+      "auc": 0.6854872132200573,
+      "slope": 0.9838007527166585,
+      "ece": 0.017387434097493788
+     },
+     "vs_M1": {
+      "brier": -0.010237045701066882,
+      "brier_ci_date": [
+       -0.013224211313438724,
+       -0.0072291267429314505
+      ],
+      "logloss": -0.024783887357375134,
+      "logloss_ci_date": [
+       -0.03210996168959505,
+       -0.01723680774947157
+      ],
+      "logloss_ci_player": [
+       -0.03569493699434476,
+       -0.01554816569232469
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 394,
+       "dates": 167,
+       "baseline_wins": 330,
+       "challenger_wins": 350,
+       "added": 177,
+       "added_wins": 154,
+       "removed": 177,
+       "removed_wins": 134,
+       "net_wins": 20,
+       "net_ci_date": [
+        6.0,
+        34.0
+       ],
+       "net_ci_player": [
+        5.964812167450792,
+        36.06612600322168
+       ],
+       "tie_averaged": {
+        "baseline_wins": 330.0,
+        "challenger_wins": 350.0,
+        "net": 20.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       },
+       "random_tiebreak_net": {
+        "reps": 200,
+        "mean": 20.0,
+        "min": 20,
+        "p2_5": 20.0,
+        "p97_5": 20.0
+       }
+      },
+      "top1_per_date": {
+       "selected_per_arm": 167,
+       "dates": 167,
+       "baseline_wins": 142,
+       "challenger_wins": 143,
+       "added": 92,
+       "added_wins": 76,
+       "removed": 92,
+       "removed_wins": 75,
+       "net_wins": 1,
+       "net_ci_date": [
+        -9.0,
+        10.0
+       ],
+       "net_ci_player": [
+        -8.786671087533163,
+        13.572693007417053
+       ],
+       "tie_averaged": {
+        "baseline_wins": 142.0,
+        "challenger_wins": 143.0,
+        "net": 1.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "top2_per_date": {
+       "selected_per_arm": 334,
+       "dates": 167,
+       "baseline_wins": 284,
+       "challenger_wins": 295,
+       "added": 160,
+       "added_wins": 137,
+       "removed": 160,
+       "removed_wins": 126,
+       "net_wins": 11,
+       "net_ci_date": [
+        -2.0,
+        25.0
+       ],
+       "net_ci_player": [
+        -2.537143979187517,
+        26.710877026152477
+       ],
+       "tie_averaged": {
+        "baseline_wins": 284.0,
+        "challenger_wins": 295.0,
+        "net": 11.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "floor_matched_M1_ge_0.6": {
+       "selected_per_arm": 3263,
+       "dates": 167,
+       "baseline_wins": 2366,
+       "challenger_wins": 2394,
+       "added": 273,
+       "added_wins": 157,
+       "removed": 273,
+       "removed_wins": 129,
+       "net_wins": 28,
+       "net_ci_date": [
+        5.0,
+        50.0
+       ],
+       "net_ci_player": [
+        3.3856372378923076,
+        51.29871530994215
+       ],
+       "tie_averaged": {
+        "baseline_wins": 2366.0,
+        "challenger_wins": 2394.0,
+        "net": 28.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "match_lineup_k",
+     "match_lineup_n",
+     "match_same_hand",
+     "wx_roof",
+     "wx_temp"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 1.0,
+     "fold2_2024_25_to_2026": 1.25
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   },
+   "K4_SAMEDAY_STRICT_NO_BASE": {
+    "fold1_2024_to_2025": {
+     "n_test": 3907,
+     "n_features": 13,
+     "M1": {
+      "logloss": 0.5885439277785944,
+      "brier": 0.2009006143525142,
+      "auc": 0.644620162641494,
+      "slope": 1.1090626353308233,
+      "ece": 0.02099233087706811
+     },
+     "M2": {
+      "logloss": 0.5752844286621316,
+      "brier": 0.19590743902834676,
+      "auc": 0.6672347478710112,
+      "slope": 0.8715638173430447,
+      "ece": 0.021904710479410644
+     },
+     "vs_M1": {
+      "brier": -0.0049931753241674,
+      "brier_ci_date": [
+       -0.007743303086507613,
+       -0.002102088187381765
+      ],
+      "logloss": -0.013259499116462797,
+      "logloss_ci_date": [
+       -0.02014747754090262,
+       -0.006140869097890754
+      ],
+      "logloss_ci_player": [
+       -0.02142899698575689,
+       -0.005287979637413048
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 402,
+       "dates": 169,
+       "baseline_wins": 331,
+       "challenger_wins": 368,
+       "added": 196,
+       "added_wins": 180,
+       "removed": 196,
+       "removed_wins": 143,
+       "net_wins": 37,
+       "net_ci_date": [
+        25.0,
+        49.024999999999864
+       ],
+       "net_ci_player": [
+        22.56354345863404,
+        50.1226942740421
+       ],
+       "tie_averaged": {
+        "baseline_wins": 331.0,
+        "challenger_wins": 368.0,
+        "net": 37.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 3891,
+     "n_features": 13,
+     "M1": {
+      "logloss": 0.5928810677948817,
+      "brier": 0.2027752859786156,
+      "auc": 0.6417904271318764,
+      "slope": 1.0626523263091192,
+      "ece": 0.01914816580806038
+     },
+     "M2": {
+      "logloss": 0.5680244662600782,
+      "brier": 0.19250722618139454,
+      "auc": 0.6856196979102007,
+      "slope": 0.9861292008065068,
+      "ece": 0.014561925426397207
+     },
+     "vs_M1": {
+      "brier": -0.010268059797221092,
+      "brier_ci_date": [
+       -0.013225146200431442,
+       -0.007243651777083696
+      ],
+      "logloss": -0.024856601534803378,
+      "logloss_ci_date": [
+       -0.032147344961748835,
+       -0.017540292099946196
+      ],
+      "logloss_ci_player": [
+       -0.034834060454329234,
+       -0.015549531020251717
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 394,
+       "dates": 167,
+       "baseline_wins": 330,
+       "challenger_wins": 350,
+       "added": 178,
+       "added_wins": 155,
+       "removed": 178,
+       "removed_wins": 135,
+       "net_wins": 20,
+       "net_ci_date": [
+        5.0,
+        35.0
+       ],
+       "net_ci_player": [
+        5.82813639760837,
+        36.1679781021898
+       ],
+       "tie_averaged": {
+        "baseline_wins": 330.0,
+        "challenger_wins": 350.0,
+        "net": 20.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "match_lineup_k",
+     "match_lineup_n",
+     "match_same_hand",
+     "wx_roof",
+     "wx_temp",
+     "base_logit4"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 1.0,
+     "fold2_2024_25_to_2026": 1.25
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   }
+  },
+  "strikeouts_5": {
+   "K0_ORIGINAL": {
+    "fold1_2024_to_2025": {
+     "n_test": 3907,
+     "n_features": 19,
+     "M1": {
+      "logloss": 0.6551699649063246,
+      "brier": 0.2314836199859649,
+      "auc": 0.6531814488900144,
+      "slope": 1.1513534318751497,
+      "ece": 0.021239416328733517
+     },
+     "M2": {
+      "logloss": 0.6303216272292145,
+      "brier": 0.22074186082794153,
+      "auc": 0.6906289566978983,
+      "slope": 1.0055560174281852,
+      "ece": 0.021712334337333113
+     },
+     "vs_M1": {
+      "brier": -0.01074175915802338,
+      "brier_ci_date": [
+       -0.014243056066237677,
+       -0.006908532039403966
+      ],
+      "logloss": -0.024848337677110133,
+      "logloss_ci_date": [
+       -0.032693235163560944,
+       -0.017013349273485478
+      ],
+      "logloss_ci_player": [
+       -0.03327599126512978,
+       -0.016102863823280997
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 402,
+       "dates": 169,
+       "baseline_wins": 282,
+       "challenger_wins": 331,
+       "added": 190,
+       "added_wins": 162,
+       "removed": 190,
+       "removed_wins": 113,
+       "net_wins": 49,
+       "net_ci_date": [
+        35.0,
+        64.0
+       ],
+       "net_ci_player": [
+        31.732054472274328,
+        65.9550421032256
+       ],
+       "tie_averaged": {
+        "baseline_wins": 282.0,
+        "challenger_wins": 331.0,
+        "net": 49.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       },
+       "random_tiebreak_net": {
+        "reps": 200,
+        "mean": 49.0,
+        "min": 49,
+        "p2_5": 49.0,
+        "p97_5": 49.0
+       }
+      },
+      "top1_per_date": {
+       "selected_per_arm": 169,
+       "dates": 169,
+       "baseline_wins": 118,
+       "challenger_wins": 145,
+       "added": 91,
+       "added_wins": 80,
+       "removed": 91,
+       "removed_wins": 53,
+       "net_wins": 27,
+       "net_ci_date": [
+        16.0,
+        38.0
+       ],
+       "net_ci_player": [
+        15.928292156522492,
+        38.477646313346156
+       ],
+       "tie_averaged": {
+        "baseline_wins": 118.0,
+        "challenger_wins": 145.0,
+        "net": 27.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "top2_per_date": {
+       "selected_per_arm": 334,
+       "dates": 169,
+       "baseline_wins": 237,
+       "challenger_wins": 281,
+       "added": 170,
+       "added_wins": 145,
+       "removed": 170,
+       "removed_wins": 101,
+       "net_wins": 44,
+       "net_ci_date": [
+        28.0,
+        59.0
+       ],
+       "net_ci_player": [
+        28.23204991525888,
+        59.350629010592996
+       ],
+       "tie_averaged": {
+        "baseline_wins": 237.0,
+        "challenger_wins": 281.0,
+        "net": 44.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "floor_matched_M1_ge_0.6": {
+       "selected_per_arm": 1303,
+       "dates": 166,
+       "baseline_wins": 911,
+       "challenger_wins": 956,
+       "added": 416,
+       "added_wins": 278,
+       "removed": 416,
+       "removed_wins": 233,
+       "net_wins": 45,
+       "net_ci_date": [
+        16.0,
+        73.0
+       ],
+       "net_ci_player": [
+        17.17852313938525,
+        72.97703053167034
+       ],
+       "tie_averaged": {
+        "baseline_wins": 911.0,
+        "challenger_wins": 956.0,
+        "net": 45.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 3891,
+     "n_features": 19,
+     "M1": {
+      "logloss": 0.6573084582387578,
+      "brier": 0.23258940397710173,
+      "auc": 0.6502878065982083,
+      "slope": 1.0617914527502756,
+      "ece": 0.02180800627284131
+     },
+     "M2": {
+      "logloss": 0.6302167939147463,
+      "brier": 0.22033507010438733,
+      "auc": 0.6939885407635424,
+      "slope": 0.9709159477711337,
+      "ece": 0.01794959291172187
+     },
+     "vs_M1": {
+      "brier": -0.012254333872714433,
+      "brier_ci_date": [
+       -0.01582412986678503,
+       -0.008328292456305014
+      ],
+      "logloss": -0.027091664324011663,
+      "logloss_ci_date": [
+       -0.035366477428716805,
+       -0.018605454013643122
+      ],
+      "logloss_ci_player": [
+       -0.036544698165213794,
+       -0.017750994115200484
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 394,
+       "dates": 167,
+       "baseline_wins": 293,
+       "challenger_wins": 310,
+       "added": 192,
+       "added_wins": 144,
+       "removed": 192,
+       "removed_wins": 127,
+       "net_wins": 17,
+       "net_ci_date": [
+        0.0,
+        35.0
+       ],
+       "net_ci_player": [
+        1.2503559926113248,
+        32.758994897467964
+       ],
+       "tie_averaged": {
+        "baseline_wins": 293.0,
+        "challenger_wins": 310.0,
+        "net": 17.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       },
+       "random_tiebreak_net": {
+        "reps": 200,
+        "mean": 17.0,
+        "min": 17,
+        "p2_5": 17.0,
+        "p97_5": 17.0
+       }
+      },
+      "top1_per_date": {
+       "selected_per_arm": 167,
+       "dates": 167,
+       "baseline_wins": 129,
+       "challenger_wins": 134,
+       "added": 95,
+       "added_wins": 73,
+       "removed": 95,
+       "removed_wins": 68,
+       "net_wins": 5,
+       "net_ci_date": [
+        -6.0,
+        16.0
+       ],
+       "net_ci_player": [
+        -7.304799768744703,
+        16.99792011031973
+       ],
+       "tie_averaged": {
+        "baseline_wins": 129.0,
+        "challenger_wins": 134.0,
+        "net": 5.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "top2_per_date": {
+       "selected_per_arm": 334,
+       "dates": 167,
+       "baseline_wins": 249,
+       "challenger_wins": 264,
+       "added": 178,
+       "added_wins": 133,
+       "removed": 178,
+       "removed_wins": 118,
+       "net_wins": 15,
+       "net_ci_date": [
+        -1.0,
+        31.0
+       ],
+       "net_ci_player": [
+        -1.3862550277128034,
+        31.32369290777707
+       ],
+       "tie_averaged": {
+        "baseline_wins": 249.0,
+        "challenger_wins": 264.0,
+        "net": 15.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "floor_matched_M1_ge_0.6": {
+       "selected_per_arm": 1369,
+       "dates": 166,
+       "baseline_wins": 941,
+       "challenger_wins": 968,
+       "added": 369,
+       "added_wins": 228,
+       "removed": 369,
+       "removed_wins": 201,
+       "net_wins": 27,
+       "net_ci_date": [
+        3.0,
+        52.0
+       ],
+       "net_ci_player": [
+        0.6222648722754365,
+        55.89225636255832
+       ],
+       "tie_averaged": {
+        "baseline_wins": 941.0,
+        "challenger_wins": 968.0,
+        "net": 27.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "dropped_features": [],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 1.0,
+     "fold2_2024_25_to_2026": 1.0
+    },
+    "logloss_rule": true,
+    "equal_n_rule": false
+   },
+   "K1_NO_WX": {
+    "fold1_2024_to_2025": {
+     "n_test": 3907,
+     "n_features": 17,
+     "M1": {
+      "logloss": 0.6551699649063246,
+      "brier": 0.2314836199859649,
+      "auc": 0.6531814488900144,
+      "slope": 1.1513534318751497,
+      "ece": 0.021239416328733517
+     },
+     "M2": {
+      "logloss": 0.6309882029348662,
+      "brier": 0.22105579933580893,
+      "auc": 0.6893203448130328,
+      "slope": 0.9975986779402325,
+      "ece": 0.02036329510781403
+     },
+     "vs_M1": {
+      "brier": -0.010427820650155984,
+      "brier_ci_date": [
+       -0.01395258375347963,
+       -0.006737354808918588
+      ],
+      "logloss": -0.02418176197145818,
+      "logloss_ci_date": [
+       -0.03201513758173245,
+       -0.01653255603593328
+      ],
+      "logloss_ci_player": [
+       -0.032156555206638224,
+       -0.01621553864925639
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 402,
+       "dates": 169,
+       "baseline_wins": 282,
+       "challenger_wins": 328,
+       "added": 190,
+       "added_wins": 160,
+       "removed": 190,
+       "removed_wins": 114,
+       "net_wins": 46,
+       "net_ci_date": [
+        31.0,
+        61.0
+       ],
+       "net_ci_player": [
+        29.92672959070521,
+        61.80702946808598
+       ],
+       "tie_averaged": {
+        "baseline_wins": 282.0,
+        "challenger_wins": 328.0,
+        "net": 46.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 3891,
+     "n_features": 17,
+     "M1": {
+      "logloss": 0.6573084582387578,
+      "brier": 0.23258940397710173,
+      "auc": 0.6502878065982083,
+      "slope": 1.0617914527502756,
+      "ece": 0.02180800627284131
+     },
+     "M2": {
+      "logloss": 0.6293881426240597,
+      "brier": 0.21998085790521785,
+      "auc": 0.6952124147914828,
+      "slope": 0.9789314898902259,
+      "ece": 0.008963867546359448
+     },
+     "vs_M1": {
+      "brier": -0.01260854607188389,
+      "brier_ci_date": [
+       -0.01614020404317658,
+       -0.00907681129005791
+      ],
+      "logloss": -0.0279203156146981,
+      "logloss_ci_date": [
+       -0.03577313815331454,
+       -0.019440336207731185
+      ],
+      "logloss_ci_player": [
+       -0.03758009234638199,
+       -0.018820518124291207
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 394,
+       "dates": 167,
+       "baseline_wins": 293,
+       "challenger_wins": 305,
+       "added": 194,
+       "added_wins": 141,
+       "removed": 194,
+       "removed_wins": 129,
+       "net_wins": 12,
+       "net_ci_date": [
+        -5.0,
+        31.0
+       ],
+       "net_ci_player": [
+        -4.2180563415228685,
+        29.110404957529546
+       ],
+       "tie_averaged": {
+        "baseline_wins": 293.0,
+        "challenger_wins": 305.0,
+        "net": 12.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "wx_roof",
+     "wx_temp"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 0.9387755102040817,
+     "fold2_2024_25_to_2026": 0.7058823529411765
+    },
+    "logloss_rule": true,
+    "equal_n_rule": false
+   },
+   "K2_NO_OPP_LINEUP": {
+    "fold1_2024_to_2025": {
+     "n_test": 3907,
+     "n_features": 16,
+     "M1": {
+      "logloss": 0.6551699649063246,
+      "brier": 0.2314836199859649,
+      "auc": 0.6531814488900144,
+      "slope": 1.1513534318751497,
+      "ece": 0.021239416328733517
+     },
+     "M2": {
+      "logloss": 0.632814492908657,
+      "brier": 0.2217287557109306,
+      "auc": 0.6869423693762133,
+      "slope": 1.0311293863217312,
+      "ece": 0.016376930167471573
+     },
+     "vs_M1": {
+      "brier": -0.009754864275034292,
+      "brier_ci_date": [
+       -0.012747102888775695,
+       -0.006557670675843702
+      ],
+      "logloss": -0.02235547199766754,
+      "logloss_ci_date": [
+       -0.028968803850928596,
+       -0.015469266328061008
+      ],
+      "logloss_ci_player": [
+       -0.030061778605348612,
+       -0.01474289459727691
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 402,
+       "dates": 169,
+       "baseline_wins": 282,
+       "challenger_wins": 333,
+       "added": 195,
+       "added_wins": 166,
+       "removed": 195,
+       "removed_wins": 115,
+       "net_wins": 51,
+       "net_ci_date": [
+        36.0,
+        66.0
+       ],
+       "net_ci_player": [
+        32.95356761884926,
+        69.00363925749383
+       ],
+       "tie_averaged": {
+        "baseline_wins": 282.0,
+        "challenger_wins": 333.0,
+        "net": 51.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 3891,
+     "n_features": 16,
+     "M1": {
+      "logloss": 0.6573084582387578,
+      "brier": 0.23258940397710173,
+      "auc": 0.6502878065982083,
+      "slope": 1.0617914527502756,
+      "ece": 0.02180800627284131
+     },
+     "M2": {
+      "logloss": 0.6346842977109441,
+      "brier": 0.222496068078602,
+      "auc": 0.6859946495281881,
+      "slope": 0.9710839425881284,
+      "ece": 0.016014529020202777
+     },
+     "vs_M1": {
+      "brier": -0.010093335898499723,
+      "brier_ci_date": [
+       -0.013604854754603575,
+       -0.00672706892454898
+      ],
+      "logloss": -0.0226241605278137,
+      "logloss_ci_date": [
+       -0.029915108629800805,
+       -0.014797027007192619
+      ],
+      "logloss_ci_player": [
+       -0.03200383637232539,
+       -0.013522368322625591
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 394,
+       "dates": 167,
+       "baseline_wins": 293,
+       "challenger_wins": 312,
+       "added": 181,
+       "added_wins": 139,
+       "removed": 181,
+       "removed_wins": 120,
+       "net_wins": 19,
+       "net_ci_date": [
+        1.0,
+        36.0
+       ],
+       "net_ci_player": [
+        1.2230369343489238,
+        37.38422178757458
+       ],
+       "tie_averaged": {
+        "baseline_wins": 293.0,
+        "challenger_wins": 312.0,
+        "net": 19.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "match_lineup_k",
+     "match_lineup_n",
+     "match_same_hand"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 1.0408163265306123,
+     "fold2_2024_25_to_2026": 1.1176470588235294
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   },
+   "K3_SAMEDAY_STRICT": {
+    "fold1_2024_to_2025": {
+     "n_test": 3907,
+     "n_features": 14,
+     "M1": {
+      "logloss": 0.6551699649063246,
+      "brier": 0.2314836199859649,
+      "auc": 0.6531814488900144,
+      "slope": 1.1513534318751497,
+      "ece": 0.021239416328733517
+     },
+     "M2": {
+      "logloss": 0.6335238977923905,
+      "brier": 0.22206710121222628,
+      "auc": 0.6853918713598379,
+      "slope": 1.022476170241136,
+      "ece": 0.017163088473871036
+     },
+     "vs_M1": {
+      "brier": -0.00941651877373862,
+      "brier_ci_date": [
+       -0.012653830906995105,
+       -0.006262380998182121
+      ],
+      "logloss": -0.021646067113934023,
+      "logloss_ci_date": [
+       -0.028441958980704854,
+       -0.014989031333510448
+      ],
+      "logloss_ci_player": [
+       -0.02908243596749405,
+       -0.013775668771591382
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 402,
+       "dates": 169,
+       "baseline_wins": 282,
+       "challenger_wins": 330,
+       "added": 192,
+       "added_wins": 163,
+       "removed": 192,
+       "removed_wins": 115,
+       "net_wins": 48,
+       "net_ci_date": [
+        33.0,
+        63.0
+       ],
+       "net_ci_player": [
+        30.899846613095544,
+        65.39384856367329
+       ],
+       "tie_averaged": {
+        "baseline_wins": 282.0,
+        "challenger_wins": 330.0,
+        "net": 48.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       },
+       "random_tiebreak_net": {
+        "reps": 200,
+        "mean": 48.0,
+        "min": 48,
+        "p2_5": 48.0,
+        "p97_5": 48.0
+       }
+      },
+      "top1_per_date": {
+       "selected_per_arm": 169,
+       "dates": 169,
+       "baseline_wins": 118,
+       "challenger_wins": 137,
+       "added": 95,
+       "added_wins": 76,
+       "removed": 95,
+       "removed_wins": 57,
+       "net_wins": 19,
+       "net_ci_date": [
+        7.0,
+        31.024999999999864
+       ],
+       "net_ci_player": [
+        4.968185772694049,
+        32.59575871844002
+       ],
+       "tie_averaged": {
+        "baseline_wins": 118.0,
+        "challenger_wins": 137.0,
+        "net": 19.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "top2_per_date": {
+       "selected_per_arm": 334,
+       "dates": 169,
+       "baseline_wins": 237,
+       "challenger_wins": 276,
+       "added": 168,
+       "added_wins": 142,
+       "removed": 168,
+       "removed_wins": 103,
+       "net_wins": 39,
+       "net_ci_date": [
+        24.0,
+        54.0
+       ],
+       "net_ci_player": [
+        23.15471187624438,
+        54.15063912115595
+       ],
+       "tie_averaged": {
+        "baseline_wins": 237.0,
+        "challenger_wins": 276.0,
+        "net": 39.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "floor_matched_M1_ge_0.6": {
+       "selected_per_arm": 1303,
+       "dates": 166,
+       "baseline_wins": 911,
+       "challenger_wins": 931,
+       "added": 391,
+       "added_wins": 242,
+       "removed": 391,
+       "removed_wins": 222,
+       "net_wins": 20,
+       "net_ci_date": [
+        -7.0,
+        48.0
+       ],
+       "net_ci_player": [
+        -8.6408293182321,
+        49.4763229313368
+       ],
+       "tie_averaged": {
+        "baseline_wins": 911.0,
+        "challenger_wins": 931.0,
+        "net": 20.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 3891,
+     "n_features": 14,
+     "M1": {
+      "logloss": 0.6573084582387578,
+      "brier": 0.23258940397710173,
+      "auc": 0.6502878065982083,
+      "slope": 1.0617914527502756,
+      "ece": 0.02180800627284131
+     },
+     "M2": {
+      "logloss": 0.6339404103913675,
+      "brier": 0.2221692043583472,
+      "auc": 0.6871037190816703,
+      "slope": 0.9785750498669945,
+      "ece": 0.017230702544990484
+     },
+     "vs_M1": {
+      "brier": -0.01042019961875458,
+      "brier_ci_date": [
+       -0.013715602847007024,
+       -0.006977663216565833
+      ],
+      "logloss": -0.023368047847390366,
+      "logloss_ci_date": [
+       -0.030990335966667,
+       -0.015964857583094853
+      ],
+      "logloss_ci_player": [
+       -0.03277461473070708,
+       -0.014458925611266915
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 394,
+       "dates": 167,
+       "baseline_wins": 293,
+       "challenger_wins": 315,
+       "added": 179,
+       "added_wins": 137,
+       "removed": 179,
+       "removed_wins": 115,
+       "net_wins": 22,
+       "net_ci_date": [
+        5.0,
+        40.0
+       ],
+       "net_ci_player": [
+        4.264956683577236,
+        41.24239868474813
+       ],
+       "tie_averaged": {
+        "baseline_wins": 293.0,
+        "challenger_wins": 315.0,
+        "net": 22.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       },
+       "random_tiebreak_net": {
+        "reps": 200,
+        "mean": 22.0,
+        "min": 22,
+        "p2_5": 22.0,
+        "p97_5": 22.0
+       }
+      },
+      "top1_per_date": {
+       "selected_per_arm": 167,
+       "dates": 167,
+       "baseline_wins": 129,
+       "challenger_wins": 131,
+       "added": 97,
+       "added_wins": 72,
+       "removed": 97,
+       "removed_wins": 70,
+       "net_wins": 2,
+       "net_ci_date": [
+        -9.0,
+        13.0
+       ],
+       "net_ci_player": [
+        -9.791160102357658,
+        13.700520983645971
+       ],
+       "tie_averaged": {
+        "baseline_wins": 129.0,
+        "challenger_wins": 131.0,
+        "net": 2.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "top2_per_date": {
+       "selected_per_arm": 334,
+       "dates": 167,
+       "baseline_wins": 249,
+       "challenger_wins": 270,
+       "added": 162,
+       "added_wins": 124,
+       "removed": 162,
+       "removed_wins": 103,
+       "net_wins": 21,
+       "net_ci_date": [
+        5.0,
+        37.0
+       ],
+       "net_ci_player": [
+        4.048153839647462,
+        38.09118443725805
+       ],
+       "tie_averaged": {
+        "baseline_wins": 249.0,
+        "challenger_wins": 270.0,
+        "net": 21.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "floor_matched_M1_ge_0.6": {
+       "selected_per_arm": 1369,
+       "dates": 166,
+       "baseline_wins": 941,
+       "challenger_wins": 956,
+       "added": 347,
+       "added_wins": 207,
+       "removed": 347,
+       "removed_wins": 192,
+       "net_wins": 15,
+       "net_ci_date": [
+        -11.0,
+        42.0
+       ],
+       "net_ci_player": [
+        -11.615765036175604,
+        44.343239835760315
+       ],
+       "tie_averaged": {
+        "baseline_wins": 941.0,
+        "challenger_wins": 956.0,
+        "net": 15.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "match_lineup_k",
+     "match_lineup_n",
+     "match_same_hand",
+     "wx_roof",
+     "wx_temp"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 0.9795918367346939,
+     "fold2_2024_25_to_2026": 1.2941176470588236
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   },
+   "K4_SAMEDAY_STRICT_NO_BASE": {
+    "fold1_2024_to_2025": {
+     "n_test": 3907,
+     "n_features": 13,
+     "M1": {
+      "logloss": 0.6551699649063246,
+      "brier": 0.2314836199859649,
+      "auc": 0.6531814488900144,
+      "slope": 1.1513534318751497,
+      "ece": 0.021239416328733517
+     },
+     "M2": {
+      "logloss": 0.6333167422712861,
+      "brier": 0.22197503345909342,
+      "auc": 0.6859094074449228,
+      "slope": 1.0271301606156897,
+      "ece": 0.018224649494991182
+     },
+     "vs_M1": {
+      "brier": -0.009508586526871475,
+      "brier_ci_date": [
+       -0.012600265055925205,
+       -0.006431315499461871
+      ],
+      "logloss": -0.02185322263503838,
+      "logloss_ci_date": [
+       -0.028389598135689285,
+       -0.015072971519013136
+      ],
+      "logloss_ci_player": [
+       -0.029032245180667004,
+       -0.014262685094629156
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 402,
+       "dates": 169,
+       "baseline_wins": 282,
+       "challenger_wins": 331,
+       "added": 200,
+       "added_wins": 170,
+       "removed": 200,
+       "removed_wins": 121,
+       "net_wins": 49,
+       "net_ci_date": [
+        34.0,
+        64.0
+       ],
+       "net_ci_player": [
+        31.268040326994726,
+        66.76639308573169
+       ],
+       "tie_averaged": {
+        "baseline_wins": 282.0,
+        "challenger_wins": 331.0,
+        "net": 49.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 3891,
+     "n_features": 13,
+     "M1": {
+      "logloss": 0.6573084582387578,
+      "brier": 0.23258940397710173,
+      "auc": 0.6502878065982083,
+      "slope": 1.0617914527502756,
+      "ece": 0.02180800627284131
+     },
+     "M2": {
+      "logloss": 0.6340652890421546,
+      "brier": 0.22223268022226003,
+      "auc": 0.6869064568899919,
+      "slope": 0.9764497183225406,
+      "ece": 0.017286477619002344
+     },
+     "vs_M1": {
+      "brier": -0.010356723754841706,
+      "brier_ci_date": [
+       -0.013758747424340394,
+       -0.007077295567632584
+      ],
+      "logloss": -0.023243169196603217,
+      "logloss_ci_date": [
+       -0.03126600254201856,
+       -0.015723963847914836
+      ],
+      "logloss_ci_player": [
+       -0.032528869060309704,
+       -0.014449162956320703
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 394,
+       "dates": 167,
+       "baseline_wins": 293,
+       "challenger_wins": 315,
+       "added": 178,
+       "added_wins": 136,
+       "removed": 178,
+       "removed_wins": 114,
+       "net_wins": 22,
+       "net_ci_date": [
+        6.0,
+        40.0
+       ],
+       "net_ci_player": [
+        4.17222125377241,
+        40.481461394131244
+       ],
+       "tie_averaged": {
+        "baseline_wins": 293.0,
+        "challenger_wins": 315.0,
+        "net": 22.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "match_lineup_k",
+     "match_lineup_n",
+     "match_same_hand",
+     "wx_roof",
+     "wx_temp",
+     "base_logit5"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 1.0,
+     "fold2_2024_25_to_2026": 1.2941176470588236
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   }
+  },
+  "strikeouts_6": {
+   "K0_ORIGINAL": {
+    "fold1_2024_to_2025": {
+     "n_test": 3907,
+     "n_features": 19,
+     "M1": {
+      "logloss": 0.6209443908940915,
+      "brier": 0.21554982268860742,
+      "auc": 0.6700672991921198,
+      "slope": 1.0983983453159658,
+      "ece": 0.014077481804886627
+     },
+     "M2": {
+      "logloss": 0.5960789167292703,
+      "brier": 0.20481249646591843,
+      "auc": 0.707603013915783,
+      "slope": 0.9876327976334042,
+      "ece": 0.01976515291132251
+     },
+     "vs_M1": {
+      "brier": -0.010737326222689,
+      "brier_ci_date": [
+       -0.014111643724338117,
+       -0.007500057036559778
+      ],
+      "logloss": -0.024865474164821322,
+      "logloss_ci_date": [
+       -0.032506702852403625,
+       -0.017069448832369372
+      ],
+      "logloss_ci_player": [
+       -0.03276451246327151,
+       -0.01721722913826892
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 402,
+       "dates": 169,
+       "baseline_wins": 244,
+       "challenger_wins": 278,
+       "added": 192,
+       "added_wins": 127,
+       "removed": 192,
+       "removed_wins": 93,
+       "net_wins": 34,
+       "net_ci_date": [
+        16.0,
+        51.0
+       ],
+       "net_ci_player": [
+        13.853182142554164,
+        53.417247466603335
+       ],
+       "tie_averaged": {
+        "baseline_wins": 244.0,
+        "challenger_wins": 278.0,
+        "net": 34.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       },
+       "random_tiebreak_net": {
+        "reps": 200,
+        "mean": 34.0,
+        "min": 34,
+        "p2_5": 34.0,
+        "p97_5": 34.0
+       }
+      },
+      "top1_per_date": {
+       "selected_per_arm": 169,
+       "dates": 169,
+       "baseline_wins": 103,
+       "challenger_wins": 131,
+       "added": 92,
+       "added_wins": 72,
+       "removed": 92,
+       "removed_wins": 44,
+       "net_wins": 28,
+       "net_ci_date": [
+        16.0,
+        40.0
+       ],
+       "net_ci_player": [
+        17.170831305127095,
+        38.65100016855582
+       ],
+       "tie_averaged": {
+        "baseline_wins": 103.0,
+        "challenger_wins": 131.0,
+        "net": 28.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "top2_per_date": {
+       "selected_per_arm": 334,
+       "dates": 169,
+       "baseline_wins": 207,
+       "challenger_wins": 247,
+       "added": 167,
+       "added_wins": 119,
+       "removed": 167,
+       "removed_wins": 79,
+       "net_wins": 40,
+       "net_ci_date": [
+        22.0,
+        58.0
+       ],
+       "net_ci_player": [
+        21.050723954421642,
+        58.83981848452791
+       ],
+       "tie_averaged": {
+        "baseline_wins": 207.0,
+        "challenger_wins": 247.0,
+        "net": 40.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "floor_matched_M1_ge_0.6": {
+       "selected_per_arm": 247,
+       "dates": 121,
+       "baseline_wins": 163,
+       "challenger_wins": 183,
+       "added": 101,
+       "added_wins": 69,
+       "removed": 101,
+       "removed_wins": 49,
+       "net_wins": 20,
+       "net_ci_date": [
+        7.975000000000001,
+        33.0
+       ],
+       "net_ci_player": [
+        5.0468172268907505,
+        33.07664115646258
+       ],
+       "tie_averaged": {
+        "baseline_wins": 163.0,
+        "challenger_wins": 183.0,
+        "net": 20.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 3891,
+     "n_features": 19,
+     "M1": {
+      "logloss": 0.6203781584127731,
+      "brier": 0.21539760188063178,
+      "auc": 0.6682295934566869,
+      "slope": 1.0345658481239608,
+      "ece": 0.012559266032572656
+     },
+     "M2": {
+      "logloss": 0.599398352532616,
+      "brier": 0.20670773744103826,
+      "auc": 0.7032722205272031,
+      "slope": 0.9116085074290518,
+      "ece": 0.017405517349685894
+     },
+     "vs_M1": {
+      "brier": -0.008689864439593567,
+      "brier_ci_date": [
+       -0.011872113942945423,
+       -0.00532443665487912
+      ],
+      "logloss": -0.020979805880157257,
+      "logloss_ci_date": [
+       -0.028283181449630466,
+       -0.013348201409807426
+      ],
+      "logloss_ci_player": [
+       -0.02957589874404942,
+       -0.01231440738105143
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 394,
+       "dates": 167,
+       "baseline_wins": 249,
+       "challenger_wins": 264,
+       "added": 185,
+       "added_wins": 109,
+       "removed": 185,
+       "removed_wins": 94,
+       "net_wins": 15,
+       "net_ci_date": [
+        -2.0,
+        33.0
+       ],
+       "net_ci_player": [
+        -2.663569059984128,
+        31.511541670082206
+       ],
+       "tie_averaged": {
+        "baseline_wins": 249.0,
+        "challenger_wins": 264.0,
+        "net": 15.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       },
+       "random_tiebreak_net": {
+        "reps": 200,
+        "mean": 15.0,
+        "min": 15,
+        "p2_5": 15.0,
+        "p97_5": 15.0
+       }
+      },
+      "top1_per_date": {
+       "selected_per_arm": 167,
+       "dates": 167,
+       "baseline_wins": 114,
+       "challenger_wins": 122,
+       "added": 94,
+       "added_wins": 63,
+       "removed": 94,
+       "removed_wins": 55,
+       "net_wins": 8,
+       "net_ci_date": [
+        -5.0,
+        21.0
+       ],
+       "net_ci_player": [
+        -4.868655082861685,
+        20.895499095557795
+       ],
+       "tie_averaged": {
+        "baseline_wins": 114.0,
+        "challenger_wins": 122.0,
+        "net": 8.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "top2_per_date": {
+       "selected_per_arm": 334,
+       "dates": 167,
+       "baseline_wins": 213,
+       "challenger_wins": 230,
+       "added": 169,
+       "added_wins": 107,
+       "removed": 169,
+       "removed_wins": 90,
+       "net_wins": 17,
+       "net_ci_date": [
+        -1.0,
+        35.0
+       ],
+       "net_ci_player": [
+        -2.803534371828327,
+        36.372075731497425
+       ],
+       "tie_averaged": {
+        "baseline_wins": 213.0,
+        "challenger_wins": 230.0,
+        "net": 17.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "floor_matched_M1_ge_0.6": {
+       "selected_per_arm": 318,
+       "dates": 135,
+       "baseline_wins": 204,
+       "challenger_wins": 214,
+       "added": 119,
+       "added_wins": 74,
+       "removed": 119,
+       "removed_wins": 64,
+       "net_wins": 10,
+       "net_ci_date": [
+        -4.024999999999999,
+        25.0
+       ],
+       "net_ci_player": [
+        -5.620858004385971,
+        26.278427001759148
+       ],
+       "tie_averaged": {
+        "baseline_wins": 204.0,
+        "challenger_wins": 214.0,
+        "net": 10.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "dropped_features": [],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 1.0,
+     "fold2_2024_25_to_2026": 1.0
+    },
+    "logloss_rule": true,
+    "equal_n_rule": false
+   },
+   "K1_NO_WX": {
+    "fold1_2024_to_2025": {
+     "n_test": 3907,
+     "n_features": 17,
+     "M1": {
+      "logloss": 0.6209443908940915,
+      "brier": 0.21554982268860742,
+      "auc": 0.6700672991921198,
+      "slope": 1.0983983453159658,
+      "ece": 0.014077481804886627
+     },
+     "M2": {
+      "logloss": 0.5966741774925911,
+      "brier": 0.20506211944606761,
+      "auc": 0.7064458735907804,
+      "slope": 0.9810556332554456,
+      "ece": 0.020598408276223827
+     },
+     "vs_M1": {
+      "brier": -0.01048770324253982,
+      "brier_ci_date": [
+       -0.013767482545653697,
+       -0.0072330322614044505
+      ],
+      "logloss": -0.024270213401500606,
+      "logloss_ci_date": [
+       -0.03206769310807777,
+       -0.017067689231247917
+      ],
+      "logloss_ci_player": [
+       -0.0327941069155814,
+       -0.01645381173346811
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 402,
+       "dates": 169,
+       "baseline_wins": 244,
+       "challenger_wins": 283,
+       "added": 194,
+       "added_wins": 132,
+       "removed": 194,
+       "removed_wins": 93,
+       "net_wins": 39,
+       "net_ci_date": [
+        22.0,
+        57.0
+       ],
+       "net_ci_player": [
+        18.781389691670405,
+        58.85071861954598
+       ],
+       "tie_averaged": {
+        "baseline_wins": 244.0,
+        "challenger_wins": 283.0,
+        "net": 39.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 3891,
+     "n_features": 17,
+     "M1": {
+      "logloss": 0.6203781584127731,
+      "brier": 0.21539760188063178,
+      "auc": 0.6682295934566869,
+      "slope": 1.0345658481239608,
+      "ece": 0.012559266032572656
+     },
+     "M2": {
+      "logloss": 0.5985183725651585,
+      "brier": 0.20630167406741262,
+      "auc": 0.7041680742219156,
+      "slope": 0.9200515442905379,
+      "ece": 0.017401275913393067
+     },
+     "vs_M1": {
+      "brier": -0.009095927813219145,
+      "brier_ci_date": [
+       -0.012677425182396642,
+       -0.00581599663749638
+      ],
+      "logloss": -0.021859785847614707,
+      "logloss_ci_date": [
+       -0.029337517331769033,
+       -0.013953906761185452
+      ],
+      "logloss_ci_player": [
+       -0.030631532573794366,
+       -0.014271262124938091
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 394,
+       "dates": 167,
+       "baseline_wins": 249,
+       "challenger_wins": 263,
+       "added": 179,
+       "added_wins": 107,
+       "removed": 179,
+       "removed_wins": 93,
+       "net_wins": 14,
+       "net_ci_date": [
+        -6.0,
+        32.0
+       ],
+       "net_ci_player": [
+        -1.556284348401598,
+        31.76425345725143
+       ],
+       "tie_averaged": {
+        "baseline_wins": 249.0,
+        "challenger_wins": 263.0,
+        "net": 14.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "wx_roof",
+     "wx_temp"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 1.1470588235294117,
+     "fold2_2024_25_to_2026": 0.9333333333333333
+    },
+    "logloss_rule": true,
+    "equal_n_rule": false
+   },
+   "K2_NO_OPP_LINEUP": {
+    "fold1_2024_to_2025": {
+     "n_test": 3907,
+     "n_features": 16,
+     "M1": {
+      "logloss": 0.6209443908940915,
+      "brier": 0.21554982268860742,
+      "auc": 0.6700672991921198,
+      "slope": 1.0983983453159658,
+      "ece": 0.014077481804886627
+     },
+     "M2": {
+      "logloss": 0.6012873377353556,
+      "brier": 0.20712340457197254,
+      "auc": 0.6996518546016394,
+      "slope": 0.9921676632579312,
+      "ece": 0.005912045987054285
+     },
+     "vs_M1": {
+      "brier": -0.00842641811663488,
+      "brier_ci_date": [
+       -0.01132169953456788,
+       -0.005496153322254271
+      ],
+      "logloss": -0.01965705315873591,
+      "logloss_ci_date": [
+       -0.026434759238670155,
+       -0.013191984420345146
+      ],
+      "logloss_ci_player": [
+       -0.02724401395965884,
+       -0.012387594302083325
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 402,
+       "dates": 169,
+       "baseline_wins": 244,
+       "challenger_wins": 273,
+       "added": 191,
+       "added_wins": 124,
+       "removed": 191,
+       "removed_wins": 95,
+       "net_wins": 29,
+       "net_ci_date": [
+        12.0,
+        47.0
+       ],
+       "net_ci_player": [
+        8.857957863271396,
+        47.882069355641875
+       ],
+       "tie_averaged": {
+        "baseline_wins": 244.0,
+        "challenger_wins": 273.0,
+        "net": 29.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 3891,
+     "n_features": 16,
+     "M1": {
+      "logloss": 0.6203781584127731,
+      "brier": 0.21539760188063178,
+      "auc": 0.6682295934566869,
+      "slope": 1.0345658481239608,
+      "ece": 0.012559266032572656
+     },
+     "M2": {
+      "logloss": 0.6032529576557301,
+      "brier": 0.20832735079932024,
+      "auc": 0.6951934643567533,
+      "slope": 0.924584845120251,
+      "ece": 0.013808438141416152
+     },
+     "vs_M1": {
+      "brier": -0.007070251081311563,
+      "brier_ci_date": [
+       -0.01016013329229709,
+       -0.003838953759400022
+      ],
+      "logloss": -0.017125200757043088,
+      "logloss_ci_date": [
+       -0.024699002279295744,
+       -0.009913741684297898
+      ],
+      "logloss_ci_player": [
+       -0.024891897868245683,
+       -0.009793135341042572
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 394,
+       "dates": 167,
+       "baseline_wins": 249,
+       "challenger_wins": 264,
+       "added": 172,
+       "added_wins": 106,
+       "removed": 172,
+       "removed_wins": 91,
+       "net_wins": 15,
+       "net_ci_date": [
+        -4.0,
+        33.0
+       ],
+       "net_ci_player": [
+        -4.7095066376009935,
+        34.32826679888849
+       ],
+       "tie_averaged": {
+        "baseline_wins": 249.0,
+        "challenger_wins": 264.0,
+        "net": 15.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "match_lineup_k",
+     "match_lineup_n",
+     "match_same_hand"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 0.8529411764705882,
+     "fold2_2024_25_to_2026": 1.0
+    },
+    "logloss_rule": true,
+    "equal_n_rule": false
+   },
+   "K3_SAMEDAY_STRICT": {
+    "fold1_2024_to_2025": {
+     "n_test": 3907,
+     "n_features": 14,
+     "M1": {
+      "logloss": 0.6209443908940915,
+      "brier": 0.21554982268860742,
+      "auc": 0.6700672991921198,
+      "slope": 1.0983983453159658,
+      "ece": 0.014077481804886627
+     },
+     "M2": {
+      "logloss": 0.6019571452350393,
+      "brier": 0.20741747875256394,
+      "auc": 0.6983355796124807,
+      "slope": 0.984954809367708,
+      "ece": 0.014397350590585124
+     },
+     "vs_M1": {
+      "brier": -0.008132343936043462,
+      "brier_ci_date": [
+       -0.011053460623702745,
+       -0.0052864704289596436
+      ],
+      "logloss": -0.018987245659052354,
+      "logloss_ci_date": [
+       -0.02558546053813186,
+       -0.012460566695086446
+      ],
+      "logloss_ci_player": [
+       -0.02646256075077286,
+       -0.01174561850680789
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 402,
+       "dates": 169,
+       "baseline_wins": 244,
+       "challenger_wins": 275,
+       "added": 190,
+       "added_wins": 125,
+       "removed": 190,
+       "removed_wins": 94,
+       "net_wins": 31,
+       "net_ci_date": [
+        13.0,
+        48.0
+       ],
+       "net_ci_player": [
+        11.260078016366016,
+        50.64168308899405
+       ],
+       "tie_averaged": {
+        "baseline_wins": 244.0,
+        "challenger_wins": 275.0,
+        "net": 31.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       },
+       "random_tiebreak_net": {
+        "reps": 200,
+        "mean": 31.0,
+        "min": 31,
+        "p2_5": 31.0,
+        "p97_5": 31.0
+       }
+      },
+      "top1_per_date": {
+       "selected_per_arm": 169,
+       "dates": 169,
+       "baseline_wins": 103,
+       "challenger_wins": 122,
+       "added": 93,
+       "added_wins": 66,
+       "removed": 93,
+       "removed_wins": 47,
+       "net_wins": 19,
+       "net_ci_date": [
+        6.0,
+        33.0
+       ],
+       "net_ci_player": [
+        7.156238050699415,
+        31.751831679526685
+       ],
+       "tie_averaged": {
+        "baseline_wins": 103.0,
+        "challenger_wins": 122.0,
+        "net": 19.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "top2_per_date": {
+       "selected_per_arm": 334,
+       "dates": 169,
+       "baseline_wins": 207,
+       "challenger_wins": 233,
+       "added": 167,
+       "added_wins": 112,
+       "removed": 167,
+       "removed_wins": 86,
+       "net_wins": 26,
+       "net_ci_date": [
+        8.0,
+        44.0
+       ],
+       "net_ci_player": [
+        9.360584451266522,
+        42.96817336957738
+       ],
+       "tie_averaged": {
+        "baseline_wins": 207.0,
+        "challenger_wins": 233.0,
+        "net": 26.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "floor_matched_M1_ge_0.6": {
+       "selected_per_arm": 247,
+       "dates": 121,
+       "baseline_wins": 163,
+       "challenger_wins": 175,
+       "added": 95,
+       "added_wins": 61,
+       "removed": 95,
+       "removed_wins": 49,
+       "net_wins": 12,
+       "net_ci_date": [
+        -1.0,
+        25.0
+       ],
+       "net_ci_player": [
+        -4.630336835677051,
+        27.772288919837475
+       ],
+       "tie_averaged": {
+        "baseline_wins": 163.0,
+        "challenger_wins": 175.0,
+        "net": 12.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 3891,
+     "n_features": 14,
+     "M1": {
+      "logloss": 0.6203781584127731,
+      "brier": 0.21539760188063178,
+      "auc": 0.6682295934566869,
+      "slope": 1.0345658481239608,
+      "ece": 0.012559266032572656
+     },
+     "M2": {
+      "logloss": 0.6024595260586221,
+      "brier": 0.20795081831863466,
+      "auc": 0.6961668628314617,
+      "slope": 0.9328019471073887,
+      "ece": 0.01440725232143184
+     },
+     "vs_M1": {
+      "brier": -0.0074467835619971435,
+      "brier_ci_date": [
+       -0.010564847107503914,
+       -0.004394455873934598
+      ],
+      "logloss": -0.017918632354151053,
+      "logloss_ci_date": [
+       -0.024813130711092982,
+       -0.010408101096735225
+      ],
+      "logloss_ci_player": [
+       -0.025716041317996596,
+       -0.010334063770966408
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 394,
+       "dates": 167,
+       "baseline_wins": 249,
+       "challenger_wins": 271,
+       "added": 170,
+       "added_wins": 107,
+       "removed": 170,
+       "removed_wins": 85,
+       "net_wins": 22,
+       "net_ci_date": [
+        4.0,
+        41.0
+       ],
+       "net_ci_player": [
+        2.2061367589496843,
+        41.62284527655086
+       ],
+       "tie_averaged": {
+        "baseline_wins": 249.0,
+        "challenger_wins": 271.0,
+        "net": 22.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       },
+       "random_tiebreak_net": {
+        "reps": 200,
+        "mean": 22.0,
+        "min": 22,
+        "p2_5": 22.0,
+        "p97_5": 22.0
+       }
+      },
+      "top1_per_date": {
+       "selected_per_arm": 167,
+       "dates": 167,
+       "baseline_wins": 114,
+       "challenger_wins": 122,
+       "added": 93,
+       "added_wins": 62,
+       "removed": 93,
+       "removed_wins": 54,
+       "net_wins": 8,
+       "net_ci_date": [
+        -4.0,
+        21.0
+       ],
+       "net_ci_player": [
+        -4.130944849077373,
+        19.92944243256743
+       ],
+       "tie_averaged": {
+        "baseline_wins": 114.0,
+        "challenger_wins": 122.0,
+        "net": 8.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "top2_per_date": {
+       "selected_per_arm": 334,
+       "dates": 167,
+       "baseline_wins": 213,
+       "challenger_wins": 236,
+       "added": 152,
+       "added_wins": 98,
+       "removed": 152,
+       "removed_wins": 75,
+       "net_wins": 23,
+       "net_ci_date": [
+        7.0,
+        40.0
+       ],
+       "net_ci_player": [
+        5.797305604073306,
+        40.552477496086354
+       ],
+       "tie_averaged": {
+        "baseline_wins": 213.0,
+        "challenger_wins": 236.0,
+        "net": 23.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      },
+      "floor_matched_M1_ge_0.6": {
+       "selected_per_arm": 318,
+       "dates": 135,
+       "baseline_wins": 204,
+       "challenger_wins": 223,
+       "added": 112,
+       "added_wins": 69,
+       "removed": 112,
+       "removed_wins": 50,
+       "net_wins": 19,
+       "net_ci_date": [
+        5.0,
+        34.0
+       ],
+       "net_ci_player": [
+        4.712067551622426,
+        32.6957692990075
+       ],
+       "tie_averaged": {
+        "baseline_wins": 204.0,
+        "challenger_wins": 223.0,
+        "net": 19.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "match_lineup_k",
+     "match_lineup_n",
+     "match_same_hand",
+     "wx_roof",
+     "wx_temp"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 0.9117647058823529,
+     "fold2_2024_25_to_2026": 1.4666666666666666
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   },
+   "K4_SAMEDAY_STRICT_NO_BASE": {
+    "fold1_2024_to_2025": {
+     "n_test": 3907,
+     "n_features": 13,
+     "M1": {
+      "logloss": 0.6209443908940915,
+      "brier": 0.21554982268860742,
+      "auc": 0.6700672991921198,
+      "slope": 1.0983983453159658,
+      "ece": 0.014077481804886627
+     },
+     "M2": {
+      "logloss": 0.6019929722779921,
+      "brier": 0.2074281243796393,
+      "auc": 0.6983060379760524,
+      "slope": 0.9846987548531893,
+      "ece": 0.012871944335671754
+     },
+     "vs_M1": {
+      "brier": -0.008121698308968084,
+      "brier_ci_date": [
+       -0.010853727035478966,
+       -0.0053114546036521
+      ],
+      "logloss": -0.01895141861609952,
+      "logloss_ci_date": [
+       -0.025392193301417728,
+       -0.012556754134787504
+      ],
+      "logloss_ci_player": [
+       -0.02639241103303227,
+       -0.011315732254776325
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 402,
+       "dates": 169,
+       "baseline_wins": 244,
+       "challenger_wins": 275,
+       "added": 190,
+       "added_wins": 125,
+       "removed": 190,
+       "removed_wins": 94,
+       "net_wins": 31,
+       "net_ci_date": [
+        13.0,
+        49.0
+       ],
+       "net_ci_player": [
+        11.074705058892146,
+        50.66157960981749
+       ],
+       "tie_averaged": {
+        "baseline_wins": 244.0,
+        "challenger_wins": 275.0,
+        "net": 31.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "fold2_2024_25_to_2026": {
+     "n_test": 3891,
+     "n_features": 13,
+     "M1": {
+      "logloss": 0.6203781584127731,
+      "brier": 0.21539760188063178,
+      "auc": 0.6682295934566869,
+      "slope": 1.0345658481239608,
+      "ece": 0.012559266032572656
+     },
+     "M2": {
+      "logloss": 0.602621000923494,
+      "brier": 0.2080428967954812,
+      "auc": 0.6959319726433295,
+      "slope": 0.9306757532132897,
+      "ece": 0.015284681479033845
+     },
+     "vs_M1": {
+      "brier": -0.007354705085150593,
+      "brier_ci_date": [
+       -0.010463776556110926,
+       -0.0040581001378188234
+      ],
+      "logloss": -0.017757157489279203,
+      "logloss_ci_date": [
+       -0.025047240621761332,
+       -0.010748659064324168
+      ],
+      "logloss_ci_player": [
+       -0.024865330452687844,
+       -0.010104955395307329
+      ]
+     },
+     "equal_n": {
+      "frac": {
+       "selected_per_arm": 394,
+       "dates": 167,
+       "baseline_wins": 249,
+       "challenger_wins": 270,
+       "added": 169,
+       "added_wins": 105,
+       "removed": 169,
+       "removed_wins": 84,
+       "net_wins": 21,
+       "net_ci_date": [
+        3.0,
+        40.0
+       ],
+       "net_ci_player": [
+        2.2225653757033976,
+        40.97692325352296
+       ],
+       "tie_averaged": {
+        "baseline_wins": 249.0,
+        "challenger_wins": 270.0,
+        "net": 21.0,
+        "dates_with_boundary_tie_in_baseline": 0
+       }
+      }
+     }
+    },
+    "dropped_features": [
+     "match_lineup_k",
+     "match_lineup_n",
+     "match_same_hand",
+     "wx_roof",
+     "wx_temp",
+     "base_logit6"
+    ],
+    "retained_net_share": {
+     "fold1_2024_to_2025": 0.9117647058823529,
+     "fold2_2024_25_to_2026": 1.4
+    },
+    "logloss_rule": true,
+    "equal_n_rule": true
+   }
+  }
+ },
+ "population": {
+  "hits": {
+   "rows": 121554,
+   "dates": 555,
+   "per_date_min_median_max": [
+    18,
+    270.0,
+    306
+   ],
+   "duplicate_game_player": 0,
+   "same_date_player_multiple_games": 819,
+   "fair_test_share": 0.9485167086233279,
+   "ungraded_skipped_by_builder": null,
+   "p0_distinct_values": 3198,
+   "slot_provenance": {
+    "slot_present": 121554,
+    "in_schedule_starting_lineup": 119937,
+    "slot_equals_schedule_lineup_index": 119937,
+    "not_in_schedule_starting_lineup": 1617
+   }
+  },
+  "total_bases": {
+   "rows": 121566,
+   "dates": 555,
+   "per_date_min_median_max": [
+    18,
+    270.0,
+    306
+   ],
+   "duplicate_game_player": 0,
+   "same_date_player_multiple_games": 847,
+   "fair_test_share": 0.9485300166164882,
+   "ungraded_skipped_by_builder": null,
+   "p0_distinct_values": 3165,
+   "slot_provenance": {
+    "slot_present": 121566,
+    "in_schedule_starting_lineup": 119949,
+    "slot_equals_schedule_lineup_index": 119949,
+    "not_in_schedule_starting_lineup": 1617
+   }
+  },
+  "strikeouts": {
+   "rows": 11681,
+   "dates": 506,
+   "per_date_min_median_max": [
+    1,
+    25.0,
+    32
+   ],
+   "duplicate_game_player": 0,
+   "same_date_player_multiple_games": 0,
+   "fair_test_share": null,
+   "ungraded_skipped_by_builder": null,
+   "p0_distinct_values": null
+  }
+ },
+ "verdicts": {
+  "hits": {
+   "V1_go_rule": true,
+   "V5_survives": true,
+   "V1_tie_averaged_positive": true,
+   "verdict_before_leakage_gate": "GO"
+  },
+  "total_bases": {
+   "V1_go_rule": true,
+   "V5_survives": true,
+   "V1_tie_averaged_positive": true,
+   "verdict_before_leakage_gate": "GO"
+  },
+  "strikeouts": {
+   "K3_thresholds_go": 3,
+   "K3_thresholds_logloss": 3,
+   "verdict_before_leakage_gate": "GO"
+  }
+ }
+}
