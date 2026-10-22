@@ -30,4 +30,3 @@ The prior backtest engine uses cutoff-filtered season/game-log statistics and a 
 `python backtest/hrrbi_pa_diagnostic.py backtest/rows_canonical.jsonl`
 
 If the historical JSONL is missing, the script fails. A future operator must supply and hash the authentic canonical data, audit its row/code provenance, then run this frozen code unchanged. The source report must include the input SHA-256 emitted by the script. Until then, no numerical accuracy or selection-lift conclusion is supportable.
-
