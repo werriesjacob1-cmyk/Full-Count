@@ -1,0 +1,94 @@
+{
+ "floor": 0.6,
+ "outcomes_read": false,
+ "markets": {
+  "total_bases": {
+   "2024": {
+    "rows": 42541,
+    "challenger_scored": 42541,
+    "challenger_quantiles_50_95_99_max": [
+     0.3507,
+     0.4564,
+     0.4967,
+     0.6186
+    ],
+    "challenger_share_ge_floor": 7.052020403845702e-05,
+    "challenger_rows_ge_floor": 3,
+    "production_raw_max": 0.5495,
+    "production_raw_share_ge_floor": 0.0
+   },
+   "2025": {
+    "rows": 43480,
+    "challenger_scored": 43480,
+    "challenger_quantiles_50_95_99_max": [
+     0.3563,
+     0.465,
+     0.5068,
+     0.6272
+    ],
+    "challenger_share_ge_floor": 0.00013799448022079117,
+    "challenger_rows_ge_floor": 6,
+    "production_raw_max": 0.5502,
+    "production_raw_share_ge_floor": 0.0
+   },
+   "2026": {
+    "rows": 35545,
+    "challenger_scored": 35545,
+    "challenger_quantiles_50_95_99_max": [
+     0.3498,
+     0.4551,
+     0.4957,
+     0.6027
+    ],
+    "challenger_share_ge_floor": 2.8133352088901393e-05,
+    "challenger_rows_ge_floor": 1,
+    "production_raw_max": 0.5548,
+    "production_raw_share_ge_floor": 0.0
+   }
+  },
+  "hits": {
+   "2024": {
+    "rows": 42536,
+    "challenger_scored": 42536,
+    "challenger_quantiles_50_95_99_max": [
+     0.6123,
+     0.7105,
+     0.7451,
+     0.8301
+    ],
+    "challenger_share_ge_floor": 0.5713748354335152,
+    "challenger_rows_ge_floor": 24304,
+    "production_raw_max": 0.7446,
+    "production_raw_share_ge_floor": 0.5082518337408313
+   },
+   "2025": {
+    "rows": 43476,
+    "challenger_scored": 43476,
+    "challenger_quantiles_50_95_99_max": [
+     0.6155,
+     0.714,
+     0.7488,
+     0.8319
+    ],
+    "challenger_share_ge_floor": 0.5839083632348883,
+    "challenger_rows_ge_floor": 25386,
+    "production_raw_max": 0.7436,
+    "production_raw_share_ge_floor": 0.5175039102033305
+   },
+   "2026": {
+    "rows": 35542,
+    "challenger_scored": 35542,
+    "challenger_quantiles_50_95_99_max": [
+     0.6092,
+     0.7076,
+     0.7409,
+     0.8382
+    ],
+    "challenger_share_ge_floor": 0.5512070226773957,
+    "challenger_rows_ge_floor": 19591,
+    "production_raw_max": 0.7635,
+    "production_raw_share_ge_floor": 0.42473693095492654
+   }
+  }
+ }
+}

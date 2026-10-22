@@ -6364,3 +6364,27 @@ untouched. Plan frozen at `1650dadf` before any variant was scored.
   was invalid and was replaced before reporting. The 5 failing tests are
   inherited generated-state drift (calibration-recheck commits 2026-10-05 and
   10-12; empty off-season board), identical on main `99372287`, unresolved.
+
+## 2026-10-22 -- FC-ACC-016 prospective portfolio-challenge protocol (research only, inactive)
+
+Branch `claude/fc-acc-016-prospective-protocol-20261022` (stacked on FC-ACC-015
+`84b294fc`). Files: `research/fc_acc_016/` only. No production, selector,
+capture, workflow, ledger or Codex FC-OPS file was touched, and nothing was fitted.
+
+- Preregistered protocol (`PROTOCOL.md`, `protocol.json`) and model lock
+  (`model_lock.json`: frozen artifact `07115a54...`, TB entry `68f2e65d...`,
+  hits entry `f64c9594...`, feature order and coefficient hashes, 18 critical
+  inputs).
+- Reference checker `checker.py`: arms A champion / B champion+challenger /
+  C market-only per decision unit, using production gate functions read-only
+  (sha-pinned). It is outcome-blind, and the labeled synthetic suite (19 cases)
+  plus 7 tests pass.
+- Structural finding (`floor_reach.py`, prediction-only): the frozen TB
+  challenger reaches the 0.60 Top Pick floor on 3/6/1 rows per season
+  (2024-26), so the mandated TB-vs-Top-Pick primary is expected to be
+  NOT_EVALUABLE. Lane V (production `value`) is preregistered as the
+  alternative TB primary, pending governance choice G0. TB can serve ROI, not
+  the 72% hit-rate goal; H2-HITS is the hit-rate test.
+- Verdict MODIFY. Next: G0 decision; Codex adds the bundle fields to the
+  FC-OPS-002 replay fixture; then an authorized decision-time feature builder
+  and the outcome-free parity check.
