@@ -16,6 +16,9 @@ on:
     - cron: '15 20 * * 0'
     - cron: '0 23 * * 0'
     - cron: '10 0 * * 1'
+    # FC-NFL-004 research freeze also covers Thursday/Monday night kickoffs.
+    - cron: '30 23 * * 4'
+    - cron: '30 23 * * 1'
   push:
     branches:
       - superchad/nfl-live-game-market-shadow-20260918
@@ -23,20 +26,44 @@ on:
       - nfl/prospective/game_market_shadow_board.py
       - nfl/prospective/live_game_market_shadow.py
       - nfl/tests/test_game_market_shadow_board.py
+      - nfl/prospective/live_game_market_research.py
+      - nfl/prospective/game_market_research_freeze.py
+      - nfl/prospective/game_market_research_grade.py
+      - nfl/prospective/game_market_pricing.py
+      - nfl/research/game_score_distribution.py
+      - nfl/research/game_market_models.py
+      - nfl/research/game_market_v1_params.json
+      - nfl/research/game_market_v1_1_params.json
+      - nfl/prospective/game_market_slate.py
+      - nfl/prospective/game_market_research_lifecycle.py
+      - nfl/prospective/game_market_research_chain.py
+      - data/nfl_game_market_research/LEDGER_ANCHOR.json
       - .github/workflows/nfl-live-game-market-shadow.yml
   workflow_dispatch:
     inputs:
       target_local_date:
-        description: 'Chicago local slate date (YYYY-MM-DD); blank = upcoming Sunday'
+        description: 'Chicago local slate date (YYYY-MM-DD); blank = upcoming Sunday (B0 control board only)'
+        required: false
+        default: ''
+      research_window_days:
+        description: 'FC-NFL-004 research freeze window in days from FanDuel root observation'
+        required: false
+        default: '8'
+      bootstrap_epoch:
+        description: 'EXPLICIT evidence-chain bootstrap: set to the committed anchor epoch_id ONLY to start that epoch on this branch (refused if a chain exists). Leave blank for normal runs.'
         required: false
         default: ''
 
 permissions:
   contents: read
+  # Read-only: download this workflow's prior rolling research-ledger artifacts.
+  actions: read
 
 concurrency:
   group: nfl-live-game-market-shadow-${{ github.ref }}
-  cancel-in-progress: true
+  # Queue, never cancel: a cancelled run could upload a chain link that a
+  # concurrent run did not load, forking the evidence chain (Codex P1).
+  cancel-in-progress: false
 
 jobs:
   shadow:
@@ -55,13 +82,20 @@ jobs:
           python3 -m pip install 'requests~=2.34.2'
 
       - name: Run bridge unit tests
+        id: unit_tests
         run: |
           PYTHONPATH=. python3 nfl/tests/test_game_market_snapshot.py
           PYTHONPATH=. python3 nfl/tests/test_game_market_shadow_board.py
           PYTHONPATH=. python3 nfl/tests/test_game_market_b0.py
           PYTHONPATH=. python3 nfl/tests/test_scoring_prior_features.py
+          PYTHONPATH=. python3 nfl/tests/test_game_identity.py
+          PYTHONPATH=. python3 nfl/tests/test_game_market_research_pathway.py
+          PYTHONPATH=. python3 nfl/tests/test_game_market_research_lifecycle.py
+          PYTHONPATH=. python3 nfl/tests/test_game_market_research_chain.py
 
       - name: Build live full-slate shadow board
+        # Sunday-only B0 control board; the research freeze below covers every slate.
+        if: github.event_name != 'schedule' || github.event.schedule != '30 23 * * 4' && github.event.schedule != '30 23 * * 1'
         env:
           FULL_COUNT_CODE_SHA: ${{ github.sha }}
           TARGET_LOCAL_DATE: ${{ inputs.target_local_date }}
@@ -70,6 +104,7 @@ jobs:
           PYTHONPATH=. python3 nfl/prospective/live_game_market_shadow.py
 
       - name: Assert full-slate accounting
+        if: github.event_name != 'schedule' || github.event.schedule != '30 23 * * 4' && github.event.schedule != '30 23 * * 1'
         run: |
           python3 - <<'PY'
           import json
@@ -100,10 +135,82 @@ jobs:
           PY
 
       - name: Upload prospective evidence
-        if: always()
+        if: always() && (github.event_name != 'schedule' || github.event.schedule != '30 23 * * 4' && github.event.schedule != '30 23 * * 1')
         uses: actions/upload-artifact@v4
         with:
           name: nfl-game-market-shadow-${{ github.run_id }}
           path: /tmp/nfl-game-market-shadow
           if-no-files-found: error
           retention-days: 30
+
+      # FC-NFL-004: probabilistic research freeze + fail-closed evidence chain
+      # (game_market_research_chain). Load the anchored, hash-linked chain head
+      # (or explicit bootstrap), freeze new vintages, grade finals, seal the next
+      # monotonic link. Artifact storage only; no repository writes.
+      - name: Load evidence chain (fail closed)
+        id: chain_load
+        if: ${{ !cancelled() && steps.unit_tests.outcome == 'success' }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          LEDGER_BRANCH: ${{ github.ref_name }}
+          BOOTSTRAP_EPOCH: ${{ inputs.bootstrap_epoch }}
+        run: |
+          mkdir -p /tmp/nfl-game-market-research
+          PYTHONPATH=. python3 -m nfl.prospective.live_game_market_research chain-load \
+            --work /tmp/nfl-gm-chain --state /tmp/nfl-game-market-research/chain_state.json
+
+      - name: Freeze spread/total research records
+        id: research_freeze
+        if: ${{ !cancelled() && steps.chain_load.outcome == 'success' }}
+        env:
+          FULL_COUNT_CODE_SHA: ${{ github.sha }}
+        run: |
+          PYTHONPATH=. python3 -m nfl.prospective.live_game_market_research freeze \
+            --ledger /tmp/nfl-gm-chain/ledger \
+            --artifact-dir /tmp/nfl-game-market-research/slates \
+            --raw-dir /tmp/nfl-game-market-research/raw \
+            --window-days "${{ inputs.research_window_days || '8' }}"
+
+      - name: Grade completed games in the chained ledger
+        id: research_grade
+        # Never grade on top of a failed/partial freeze (Codex P1 review 6133401456).
+        if: ${{ !cancelled() && steps.chain_load.outcome == 'success' && steps.research_freeze.outcome == 'success' }}
+        run: |
+          PYTHONPATH=. python3 -m nfl.prospective.live_game_market_research grade \
+            --ledger /tmp/nfl-gm-chain/ledger | tee /tmp/nfl-game-market-research/grade_report.json
+
+      - name: Seal next chain link (monotonic superset)
+        id: chain_seal
+        # Seal ONLY when load, freeze and grade all succeeded; a failed or partial
+        # step can never be certified into the chain (Codex P1 review 6133401456).
+        if: ${{ !cancelled() && steps.chain_load.outcome == 'success' && steps.research_freeze.outcome == 'success' && steps.research_grade.outcome == 'success' }}
+        env:
+          LEDGER_BRANCH: ${{ github.ref_name }}
+        run: |
+          PYTHONPATH=. python3 -m nfl.prospective.live_game_market_research chain-seal \
+            --work /tmp/nfl-gm-chain --state /tmp/nfl-game-market-research/chain_state.json
+          cp /tmp/nfl-gm-chain/package/LEDGER_MANIFEST.json /tmp/nfl-game-market-research/
+
+      - name: Upload per-run research evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nfl-game-market-research-${{ github.run_id }}
+          path: /tmp/nfl-game-market-research
+          if-no-files-found: warn
+          retention-days: 90
+
+      # The step NAME is the durable run-history marker of a sealed upload; it must
+      # equal game_market_research_chain.upload_step_name(anchor epoch_id).
+      - name: Upload sealed evidence-chain link [fc-nfl-004-epoch-1]
+        if: ${{ !cancelled() && steps.chain_load.outcome == 'success' && steps.research_freeze.outcome == 'success' && steps.research_grade.outcome == 'success' && steps.chain_seal.outcome == 'success' }}
+        uses: actions/upload-artifact@v4
+        with:
+          # Must equal game_market_research_chain.artifact_name(anchor epoch_id).
+          name: nfl-game-market-research-ledger-fc-nfl-004-epoch-1
+          # ONLY the sealed package (manifest + ledger/). Uploading the whole
+          # work dir re-published prior/ (every earlier link, recursively) and
+          # doubled the artifact each run. Must equal chain.PACKAGE_DIR.
+          path: /tmp/nfl-gm-chain/package
+          if-no-files-found: error
+          retention-days: 90

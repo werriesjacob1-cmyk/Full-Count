@@ -1,0 +1,660 @@
+{
+  "config_summaries": {
+    "B0": {
+      "available": true,
+      "expected_home_margin": -2.907648,
+      "expected_total": 50.92974,
+      "fair_home_spread": 3.0,
+      "fair_home_win_probability": 0.427105,
+      "fair_total": 50.5,
+      "margin_center": -2.8,
+      "total_center": 50.2
+    },
+    "C1": {
+      "available": true,
+      "expected_home_margin": 4.694597,
+      "expected_total": 54.455318,
+      "fair_home_spread": -3.5,
+      "fair_home_win_probability": 0.642356,
+      "fair_total": 54.0,
+      "margin_center": 4.805805,
+      "total_center": 53.563754
+    },
+    "F1": {
+      "available": true,
+      "expected_home_margin": 0.143278,
+      "expected_total": 47.688264,
+      "fair_home_spread": -1.0,
+      "fair_home_win_probability": 0.510835,
+      "fair_total": 47.0,
+      "margin_center": 0.233256,
+      "total_center": 47.212196
+    },
+    "M0": {
+      "available": true,
+      "expected_home_margin": 4.533897,
+      "expected_total": 54.989074,
+      "fair_home_spread": -3.5,
+      "fair_home_win_probability": 0.637943,
+      "fair_total": 54.5,
+      "margin_center": 4.645956,
+      "total_center": 54.036967
+    }
+  },
+  "event_id": "36132650",
+  "evidence_class": "PROSPECTIVE_RESEARCH_FREEZE",
+  "frozen_at": "2026-10-12T17:01:25Z",
+  "identity_binding": {
+    "away_score": null,
+    "away_team": "BUF",
+    "away_team_name": "Buffalo Bills",
+    "binding_basis": "AWAY_HOME_TEAMS_PLUS_ET_KICKOFF_WITHIN_TOLERANCE",
+    "binding_sha256": "3ee4db69663ed0d316f0f4db9965a4b47ca607867e6c9033cb1c046d696408e0",
+    "final_status": null,
+    "finality_proven": false,
+    "game_type": "REG",
+    "home_score": null,
+    "home_team": "LA",
+    "home_team_name": "Los Angeles Rams",
+    "kickoff_tolerance_minutes": 2,
+    "nflverse_espn": "401872994",
+    "nflverse_game_id": "2026_05_BUF_LA",
+    "nflverse_gsis": "60256",
+    "scheduled_kickoff": "2026-10-13T00:15:00+00:00",
+    "schema_version": 1,
+    "score_state": "UNSETTLED",
+    "season": 2026,
+    "source": "nflverse_schedules",
+    "source_observed_at": "2026-10-12T17:01:25+00:00",
+    "source_sha256": "9380292232901e4321c99992c7efca0c567a0a801dcb292662a3f78a9a101c49",
+    "source_url": "https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv",
+    "sportsbook": "FANDUEL",
+    "sportsbook_event_id": "36132650",
+    "sportsbook_market_time": "2026-10-13T00:16:00+00:00",
+    "sportsbook_snapshot_sha256": "4451293e5bf7241f1f1ad261f2d1848a5498b3cd4147497c8f2d93097aea6949",
+    "week": 5
+  },
+  "input_state": {
+    "b0_prediction": {
+      "away_prior_games_n": 5,
+      "away_team": "BUF",
+      "away_team_full": "Buffalo Bills",
+      "baseline_name": "GAME_MARKET_B0_PRIOR_SCORING_BLEND",
+      "eligibility": "ELIGIBLE",
+      "event_id": "36132650",
+      "game_id": "2026_05_BUF_LA",
+      "game_type": "REG",
+      "home_field_adjustment": 0.0,
+      "home_prior_games_n": 5,
+      "home_team": "LA",
+      "home_team_full": "Los Angeles Rams",
+      "min_prior_games": 3,
+      "predicted_away_points": 26.5,
+      "predicted_home_margin": -2.8000000000000007,
+      "predicted_home_points": 23.7,
+      "predicted_total": 50.2,
+      "same_week_completed_games_deliberately_excluded": true,
+      "schedule_local_date": "2026-10-12",
+      "season": 2026,
+      "target_final_status": "PREGAME",
+      "uses_current_game_outcome_as_feature": false,
+      "uses_market_line_as_feature": false,
+      "week": 5
+    },
+    "qb_state": {
+      "away": {
+        "basis": "NFLVERSE_PREPOPULATED_EXPECTED_STARTER_UNTIMESTAMPED",
+        "expected_qb_id": "00-0034857",
+        "expected_qb_name": "Josh Allen",
+        "previous_game_id": "2026_04_NE_BUF",
+        "previous_qb_id": "00-0034857",
+        "status": "UNCHANGED",
+        "team": "BUF"
+      },
+      "home": {
+        "basis": "NFLVERSE_PREPOPULATED_EXPECTED_STARTER_UNTIMESTAMPED",
+        "expected_qb_id": "00-0026498",
+        "expected_qb_name": "Matthew Stafford",
+        "previous_game_id": "2026_04_LA_PHI",
+        "previous_qb_id": "00-0026498",
+        "status": "UNCHANGED",
+        "team": "LA"
+      }
+    },
+    "schedule_source": {
+      "bytes": 2184055,
+      "observed_at": "2026-10-12T17:01:25Z",
+      "sha256": "9380292232901e4321c99992c7efca0c567a0a801dcb292662a3f78a9a101c49",
+      "url": "https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv"
+    }
+  },
+  "input_state_sha256": "e5242b53e538dcf03a4dce2042f224b1af64d34982b3694aed7d966f2b1f1dc4",
+  "market_snapshot": {
+    "captured_at": "2026-10-12T17:01:25Z",
+    "event_id": "36132650",
+    "failures": [],
+    "public_eligible": false,
+    "records": [
+      {
+        "away_team": "Buffalo Bills",
+        "captured_at": "2026-10-12T17:01:25Z",
+        "event_id": "36132650",
+        "event_name": "Buffalo Bills @ Los Angeles Rams",
+        "event_open_date": "2026-10-13T00:16:00.000Z",
+        "home_team": "Los Angeles Rams",
+        "in_play": false,
+        "line": 54.5,
+        "market": "game_total",
+        "market_id": "734.188988435",
+        "market_name": "Total Points",
+        "market_status": "OPEN",
+        "market_time": "2026-10-13T00:16:00.000Z",
+        "market_type": "TOTAL_POINTS_(OVER/UNDER)",
+        "over_odds": -110,
+        "over_selection_id": "7017916",
+        "source": "fanduel_nfl",
+        "source_artifact": "event_36132650_no_tab",
+        "source_payload_sha256": "a4921e73004048f9c1bbaf78843211ba9e3034d6395dbb61b284ab35e85767b9",
+        "source_url": "https://sbapi.nj.sportsbook.fanduel.com/api/event-page?eventId=36132650&_ak=FhMFpcPWXMeyZxOx",
+        "sport": "NFL",
+        "sportsbook": "FANDUEL",
+        "under_odds": -110,
+        "under_selection_id": "7017917"
+      },
+      {
+        "away_odds": 148,
+        "away_selection_id": "50203",
+        "away_team": "Buffalo Bills",
+        "captured_at": "2026-10-12T17:01:25Z",
+        "event_id": "36132650",
+        "event_name": "Buffalo Bills @ Los Angeles Rams",
+        "event_open_date": "2026-10-13T00:16:00.000Z",
+        "home_odds": -176,
+        "home_selection_id": "10782388",
+        "home_team": "Los Angeles Rams",
+        "in_play": false,
+        "market": "moneyline",
+        "market_id": "734.188988423",
+        "market_name": "Moneyline",
+        "market_status": "OPEN",
+        "market_time": "2026-10-13T00:16:00.000Z",
+        "market_type": "MONEY_LINE",
+        "source": "fanduel_nfl",
+        "source_artifact": "event_36132650_no_tab",
+        "source_payload_sha256": "a4921e73004048f9c1bbaf78843211ba9e3034d6395dbb61b284ab35e85767b9",
+        "source_url": "https://sbapi.nj.sportsbook.fanduel.com/api/event-page?eventId=36132650&_ak=FhMFpcPWXMeyZxOx",
+        "sport": "NFL",
+        "sportsbook": "FANDUEL"
+      },
+      {
+        "away_line": 3.5,
+        "away_odds": -115,
+        "away_selection_id": "50203",
+        "away_team": "Buffalo Bills",
+        "captured_at": "2026-10-12T17:01:25Z",
+        "event_id": "36132650",
+        "event_name": "Buffalo Bills @ Los Angeles Rams",
+        "event_open_date": "2026-10-13T00:16:00.000Z",
+        "home_line": -3.5,
+        "home_odds": -105,
+        "home_selection_id": "10782388",
+        "home_team": "Los Angeles Rams",
+        "in_play": false,
+        "market": "spread",
+        "market_id": "734.188988424",
+        "market_name": "Spread",
+        "market_status": "OPEN",
+        "market_time": "2026-10-13T00:16:00.000Z",
+        "market_type": "MATCH_HANDICAP_(2-WAY)",
+        "source": "fanduel_nfl",
+        "source_artifact": "event_36132650_no_tab",
+        "source_payload_sha256": "a4921e73004048f9c1bbaf78843211ba9e3034d6395dbb61b284ab35e85767b9",
+        "source_url": "https://sbapi.nj.sportsbook.fanduel.com/api/event-page?eventId=36132650&_ak=FhMFpcPWXMeyZxOx",
+        "sport": "NFL",
+        "sportsbook": "FANDUEL"
+      }
+    ],
+    "research_only": true,
+    "schema_version": 1,
+    "sealed_at": "2026-10-12T17:01:25Z",
+    "snapshot_sha256": "4451293e5bf7241f1f1ad261f2d1848a5498b3cd4147497c8f2d93097aea6949",
+    "source_payload_sha256": "a4921e73004048f9c1bbaf78843211ba9e3034d6395dbb61b284ab35e85767b9",
+    "sport": "NFL"
+  },
+  "market_snapshot_sha256": "4451293e5bf7241f1f1ad261f2d1848a5498b3cd4147497c8f2d93097aea6949",
+  "model": {
+    "code_sha": "cb731be0c8a43692fc985bdb2cd2485e992fb17c",
+    "configs": [
+      "B0",
+      "F1",
+      "M0",
+      "C1"
+    ],
+    "lean_config": "C1",
+    "params_provenance": {
+      "fit_partition": "development_2000_2019",
+      "fit_rows": 5095,
+      "prereg": "engineering/nfl_game_market_pathway_20261012/PREREG.md",
+      "prereg_commit": "35a6cb032c5f6ac5ced37ba3a86716a57e1123e8",
+      "source_commit": "8ed09b2fe3ea42332b2249a995737e13dd931ff3",
+      "source_sha256": "26332ae5d8d8d0481f0670cf5e3849497a415351d4026ae5bee15a5aab96d188"
+    },
+    "params_sha256": "c1dbd52ee5232a882b9d91278261af66b54f5902b0ad1eeead28888eefb34fb5"
+  },
+  "public_eligible": false,
+  "record_sha256": "11dcdf87c24fbd3332b3c8eea6eac964bc3288a9c7c72a83abe7d94f0c24a8ab",
+  "research_only": true,
+  "scheduled_kickoff": "2026-10-13T00:15:00+00:00",
+  "schema": "fc-nfl-004-game-market-research-freeze-v1",
+  "selections": [
+    {
+      "decimal_odds": 1.952381,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -105,
+        "captured_at": "2026-10-12T17:01:25Z",
+        "espn_event_id": "401872994",
+        "event_id": "36132650",
+        "line": -3.5,
+        "market": "spread",
+        "market_id": "734.188988424",
+        "nflverse_game_id": "2026_05_BUF_LA",
+        "selection_id": "10782388",
+        "side": "HOME"
+      },
+      "implied_probability": 0.512195,
+      "lean_config": "C1",
+      "market": "spread",
+      "model_market_gap_points": 1.305805,
+      "models": {
+        "B0": {
+          "break_even": 0.512195,
+          "edge": -0.205956,
+          "ev_per_unit": -0.402105,
+          "p_lose": 0.693761,
+          "p_push": 0.0,
+          "p_win": 0.306239,
+          "p_win_conditional": 0.306239
+        },
+        "C1": {
+          "break_even": 0.512195,
+          "edge": -0.007553,
+          "ev_per_unit": -0.014746,
+          "p_lose": 0.495358,
+          "p_push": 0.0,
+          "p_win": 0.504642,
+          "p_win_conditional": 0.504642
+        },
+        "F1": {
+          "break_even": 0.512195,
+          "edge": -0.1322,
+          "ev_per_unit": -0.258105,
+          "p_lose": 0.620005,
+          "p_push": 0.0,
+          "p_win": 0.379995,
+          "p_win_conditional": 0.379995
+        },
+        "M0": {
+          "break_even": 0.512195,
+          "edge": -0.012195,
+          "ev_per_unit": -0.02381,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.489166,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047079,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:c6c7db46a08346fb8c9353c40cf40765",
+      "source_payload_sha256": "a4921e73004048f9c1bbaf78843211ba9e3034d6395dbb61b284ab35e85767b9",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.869565,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -115,
+        "captured_at": "2026-10-12T17:01:25Z",
+        "espn_event_id": "401872994",
+        "event_id": "36132650",
+        "line": 3.5,
+        "market": "spread",
+        "market_id": "734.188988424",
+        "nflverse_game_id": "2026_05_BUF_LA",
+        "selection_id": "50203",
+        "side": "AWAY"
+      },
+      "implied_probability": 0.534884,
+      "lean_config": "C1",
+      "market": "spread",
+      "model_market_gap_points": 1.305805,
+      "models": {
+        "B0": {
+          "break_even": 0.534884,
+          "edge": 0.158877,
+          "ev_per_unit": 0.297032,
+          "p_lose": 0.306239,
+          "p_push": 0.0,
+          "p_win": 0.693761,
+          "p_win_conditional": 0.693761
+        },
+        "C1": {
+          "break_even": 0.534884,
+          "edge": -0.039526,
+          "ev_per_unit": -0.073897,
+          "p_lose": 0.504642,
+          "p_push": 0.0,
+          "p_win": 0.495358,
+          "p_win_conditional": 0.495358
+        },
+        "F1": {
+          "break_even": 0.534884,
+          "edge": 0.085122,
+          "ev_per_unit": 0.15914,
+          "p_lose": 0.379995,
+          "p_push": 0.0,
+          "p_win": 0.620005,
+          "p_win_conditional": 0.620005
+        },
+        "M0": {
+          "break_even": 0.534884,
+          "edge": -0.034884,
+          "ev_per_unit": -0.065217,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.510834,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047079,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:95be29e6f466b4ce144fa529f7438b45",
+      "source_payload_sha256": "a4921e73004048f9c1bbaf78843211ba9e3034d6395dbb61b284ab35e85767b9",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.909091,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -110,
+        "captured_at": "2026-10-12T17:01:25Z",
+        "espn_event_id": "401872994",
+        "event_id": "36132650",
+        "line": 54.5,
+        "market": "game_total",
+        "market_id": "734.188988435",
+        "nflverse_game_id": "2026_05_BUF_LA",
+        "selection_id": "7017916",
+        "side": "OVER"
+      },
+      "implied_probability": 0.52381,
+      "lean_config": "C1",
+      "market": "game_total",
+      "model_market_gap_points": 0.936246,
+      "models": {
+        "B0": {
+          "break_even": 0.52381,
+          "edge": -0.133931,
+          "ev_per_unit": -0.255686,
+          "p_lose": 0.610121,
+          "p_push": 0.0,
+          "p_win": 0.389879,
+          "p_win_conditional": 0.389879
+        },
+        "C1": {
+          "break_even": 0.52381,
+          "edge": -0.038795,
+          "ev_per_unit": -0.074062,
+          "p_lose": 0.514985,
+          "p_push": 0.0,
+          "p_win": 0.485015,
+          "p_win_conditional": 0.485015
+        },
+        "F1": {
+          "break_even": 0.52381,
+          "edge": -0.219748,
+          "ev_per_unit": -0.419519,
+          "p_lose": 0.695939,
+          "p_push": 0.0,
+          "p_win": 0.304061,
+          "p_win_conditional": 0.304061
+        },
+        "M0": {
+          "break_even": 0.52381,
+          "edge": -0.02381,
+          "ev_per_unit": -0.045455,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.5,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047619,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:9de9c7c19c605f946511be6e3dd530f5",
+      "source_payload_sha256": "a4921e73004048f9c1bbaf78843211ba9e3034d6395dbb61b284ab35e85767b9",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.909091,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -110,
+        "captured_at": "2026-10-12T17:01:25Z",
+        "espn_event_id": "401872994",
+        "event_id": "36132650",
+        "line": 54.5,
+        "market": "game_total",
+        "market_id": "734.188988435",
+        "nflverse_game_id": "2026_05_BUF_LA",
+        "selection_id": "7017917",
+        "side": "UNDER"
+      },
+      "implied_probability": 0.52381,
+      "lean_config": "C1",
+      "market": "game_total",
+      "model_market_gap_points": 0.936246,
+      "models": {
+        "B0": {
+          "break_even": 0.52381,
+          "edge": 0.086312,
+          "ev_per_unit": 0.164777,
+          "p_lose": 0.389879,
+          "p_push": 0.0,
+          "p_win": 0.610121,
+          "p_win_conditional": 0.610121
+        },
+        "C1": {
+          "break_even": 0.52381,
+          "edge": -0.008824,
+          "ev_per_unit": -0.016847,
+          "p_lose": 0.485015,
+          "p_push": 0.0,
+          "p_win": 0.514985,
+          "p_win_conditional": 0.514985
+        },
+        "F1": {
+          "break_even": 0.52381,
+          "edge": 0.172129,
+          "ev_per_unit": 0.32861,
+          "p_lose": 0.304061,
+          "p_push": 0.0,
+          "p_win": 0.695939,
+          "p_win_conditional": 0.695939
+        },
+        "M0": {
+          "break_even": 0.52381,
+          "edge": -0.02381,
+          "ev_per_unit": -0.045455,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.5,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047619,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:cdecadce32cc482b324e114e3d3d4152",
+      "source_payload_sha256": "a4921e73004048f9c1bbaf78843211ba9e3034d6395dbb61b284ab35e85767b9",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.568182,
+      "decision": "MEASUREMENT_ONLY",
+      "grading_identity": {
+        "american_odds": -176,
+        "captured_at": "2026-10-12T17:01:25Z",
+        "espn_event_id": "401872994",
+        "event_id": "36132650",
+        "line": null,
+        "market": "moneyline",
+        "market_id": "734.188988423",
+        "nflverse_game_id": "2026_05_BUF_LA",
+        "selection_id": "10782388",
+        "side": "HOME"
+      },
+      "implied_probability": 0.637681,
+      "lean_config": "C1",
+      "market": "moneyline",
+      "model_market_gap_points": null,
+      "models": {
+        "B0": {
+          "break_even": 0.637681,
+          "edge": -0.210577,
+          "ev_per_unit": -0.328425,
+          "p_lose": 0.569777,
+          "p_push": 0.005443,
+          "p_win": 0.42478,
+          "p_win_conditional": 0.427105
+        },
+        "C1": {
+          "break_even": 0.637681,
+          "edge": 0.004675,
+          "ev_per_unit": 0.007291,
+          "p_lose": 0.355649,
+          "p_push": 0.005577,
+          "p_win": 0.638774,
+          "p_win_conditional": 0.642356
+        },
+        "F1": {
+          "break_even": 0.637681,
+          "edge": -0.126846,
+          "ev_per_unit": -0.197791,
+          "p_lose": 0.486394,
+          "p_push": 0.005664,
+          "p_win": 0.507941,
+          "p_win_conditional": 0.510835
+        },
+        "M0": {
+          "break_even": 0.637681,
+          "edge": 0.000262,
+          "ev_per_unit": 0.000408,
+          "p_lose": 0.360029,
+          "p_push": 0.0056,
+          "p_win": 0.634371,
+          "p_win_conditional": 0.637943
+        }
+      },
+      "no_vig_probability": 0.612621,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.040907,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "MARKET_NOT_IN_LEAN_SCOPE"
+      ],
+      "selection_key": "fcnfl004:de3c6036f5cdc407cb344c55f7ad999b",
+      "source_payload_sha256": "a4921e73004048f9c1bbaf78843211ba9e3034d6395dbb61b284ab35e85767b9",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 2.48,
+      "decision": "MEASUREMENT_ONLY",
+      "grading_identity": {
+        "american_odds": 148,
+        "captured_at": "2026-10-12T17:01:25Z",
+        "espn_event_id": "401872994",
+        "event_id": "36132650",
+        "line": null,
+        "market": "moneyline",
+        "market_id": "734.188988423",
+        "nflverse_game_id": "2026_05_BUF_LA",
+        "selection_id": "50203",
+        "side": "AWAY"
+      },
+      "implied_probability": 0.403226,
+      "lean_config": "C1",
+      "market": "moneyline",
+      "model_market_gap_points": null,
+      "models": {
+        "B0": {
+          "break_even": 0.403226,
+          "edge": 0.16967,
+          "ev_per_unit": 0.41849,
+          "p_lose": 0.42478,
+          "p_push": 0.005443,
+          "p_win": 0.569777,
+          "p_win_conditional": 0.572895
+        },
+        "C1": {
+          "break_even": 0.403226,
+          "edge": -0.045582,
+          "ev_per_unit": -0.112413,
+          "p_lose": 0.638774,
+          "p_push": 0.005577,
+          "p_win": 0.355649,
+          "p_win_conditional": 0.357644
+        },
+        "F1": {
+          "break_even": 0.403226,
+          "edge": 0.085939,
+          "ev_per_unit": 0.211922,
+          "p_lose": 0.507941,
+          "p_push": 0.005664,
+          "p_win": 0.486394,
+          "p_win_conditional": 0.489165
+        },
+        "M0": {
+          "break_even": 0.403226,
+          "edge": -0.041169,
+          "ev_per_unit": -0.101527,
+          "p_lose": 0.634371,
+          "p_push": 0.0056,
+          "p_win": 0.360029,
+          "p_win_conditional": 0.362057
+        }
+      },
+      "no_vig_probability": 0.387379,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.040907,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "MARKET_NOT_IN_LEAN_SCOPE"
+      ],
+      "selection_key": "fcnfl004:a45c51fcc10bf99d0164874f0c4f323e",
+      "source_payload_sha256": "a4921e73004048f9c1bbaf78843211ba9e3034d6395dbb61b284ab35e85767b9",
+      "sportsbook": "FANDUEL"
+    }
+  ],
+  "sport": "NFL"
+}

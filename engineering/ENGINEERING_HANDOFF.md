@@ -6307,3 +6307,220 @@ are all untouched. Draft PR opened against `main`, not merged -- this
 workstream does not merge its own PR.
 
 Alligator
+
+## 2026-10-12 -- FC-NFL-004: NFL spread/total research pathway (Claude)
+
+Branch `claude/trusting-tesla-71g8mc`, base main `1eec042e`. Pre-registration
+`35a6cb03`; code `cb731be0`. Claim: Issue #91 comment 6128647971.
+
+**Reconciled first.** Main already had real FanDuel capture/normalisation, a
+sealed per-event snapshot, nflverse identity binding, ESPN-final extraction and
+an outcome grader. The live B0 board only compared a point estimate's sign with
+the line. Missing were a distribution, probabilities, no-vig/EV/gates, a durable
+probabilistic freeze, and the freeze -> final -> grade chain. #196/#199
+(player-prop prices), #202/#204 (unmerged factors) and #222 were not depended
+on.
+
+**Built.** The full chain is
+`live_game_market_research freeze` -> `seal_game_market_snapshot` ->
+`bind_nflverse_game_identity` -> B0 -> F1/M0/C1 (`game_market_models`) ->
+discrete margin/total pmfs (`game_score_distribution`) -> no-vig/break-even/
+edge/EV and gates (`game_market_pricing`) -> create-only
+`game_market_research_freeze` -> `grade` mode -> ESPN final ->
+`game_market_research_grade`, which reuses `grade_game_market` and adds CLV
+against the latest later pre-kickoff vintage.
+
+**Live bug found.** FanDuel `marketTime` = kickoff + 1 minute, so the exact-minute
+identity binder failed for 14 of 15 live events. `game_identity` gained an opt-in
+`kickoff_tolerance_minutes` (default 0 is byte-identical behaviour); the binding
+then carries the nflverse kickoff, which also matches ESPN.
+
+**Science.** `engineering/nfl_game_market_pathway_20261012/RESULTS.md`.
+- Market dominates. Recalibrated football-only F1 loses about +0.025
+  log loss to the close on validation and held, with intervals excluding 0.
+- Market-anchored C1 collapses onto M0: the k weights are about 0.
+- B0 lacks home field (+2.57 pts) and is over-dispersed (total slope 0.53),
+  but fixing that does not help. Given the close, B0's coefficient is about 0.
+- Deviation D1 (M0 must be solved so its line is 50/50) was caught by an
+  invariant check and documented.
+
+**Real evidence.** 15 Week 5 MNF / Week 6 events frozen at 2026-10-12T17:01Z
+under `data/nfl_game_market_research/` with raw payloads. Of 60 spread/total
+sides: 0 RESEARCH_LEAN, 56 NO_LEAN, 4 QUARANTINED (BAL@CLE QB change).
+
+**Not done.** Durable automatic ledger persistence: the workflow is
+`contents: read` and uploads 90-day artifacts. Committing generated research
+evidence from CI needs Jacob's decision. Only one book is captured, so cross-book
+consensus is unavailable.
+
+Tests: `nfl/tests/test_game_market_research_pathway.py` 32 OK; full NFL suite
+87 files / 1,088 tests OK.
+
+Nothing merged, deployed, promoted, or public.
+
+Alligator
+
+## 2026-10-12 -- FC-NFL-004 targeted repair of Codex review 6129120014 (Claude)
+
+Branch `claude/trusting-tesla-71g8mc`. The true merge base is `d18116fd`; the
+earlier `1eec042e` "base" was misstated. Repair code is `9644db45`.
+
+- **P1 M0 consistency.**
+  - The D1 fit procedure estimates M0 sigma, the key weights and C1's k around
+    the solved M0, with k fit on the final evaluation centers.
+  - The original procedure byte-reproduces `c1dbd52e`, which the existing
+    freezes are bound to. Amended params are `acc53f4d`.
+  - Results are labelled AMENDED_EXPLORATORY. C1−M0 still spans 0 and F1 still
+    loses. The fixed point is not converged at the 3 declared iterations
+    (mean shift 0.17 pts); this is disclosed, not tuned.
+- **P1 slate provenance.**
+  - The FanDuel root is archived and hashed, and discovery re-derives from it.
+  - Coverage is cross-checked against schedule games in the window:
+    COMPLETE, PARTIAL_COVERAGE, NO_EVENTS, or DISCOVERY_FAILURE (which fails).
+  - Freeze v2 binds the discovery. `verify-slate` re-checks everything.
+  - Real vintage 2026-10-12T17:34Z: COMPLETE 15/15, verified from root sha
+    `1c965bee…`.
+  - The 17:01Z v1 vintage has no archived root. That gap is disclosed, and
+    that vintage stays as-is.
+- **P1 lifecycle.**
+  - Read-only `actions: read` artifact chain: fetch-prior → replay → freeze →
+    grade → rolling ledger artifact.
+  - Durable persistence (`contents: write`) is designed in `LIFECYCLE_DESIGN.md`
+    and is blocked on Jacob.
+- **P2.**
+  - Explicit terminal dispositions for postponed, not-final-after-7-days, and
+    not-found games.
+  - The later vintage is labelled NOT_A_VERIFIED_CLOSE.
+  - The grading identity is rechecked field by field.
+- **Tests.** Lifecycle 15 OK, pathway 32 OK; full NFL suite 88 files /
+  1,103 tests OK.
+
+Alligator
+
+## 2026-10-12 -- FC-NFL-004 final integrity repair (Codex review 6129802534) (Claude)
+
+**P1 rolling continuity.**
+- New `nfl/prospective/game_market_research_chain.py`.
+- A committed `data/nfl_game_market_research/LEDGER_ANCHOR.json` covers the 30
+  committed freezes byte-for-byte: epoch `fc-nfl-004-epoch-1`, sha `25e816a5…`.
+- Chain artifacts are epoch-named, with a hash-linked monotonic
+  `LEDGER_MANIFEST.json`.
+- `chain-load` fails closed with an explicit code on any of:
+
+  | Code | Meaning |
+  |---|---|
+  | NO_CHAIN | no chain and no explicit bootstrap |
+  | BOOTSTRAP_REFUSED | bootstrap requested when a chain exists |
+  | EXPIRED_CHAIN_HEAD | the chain head artifact has expired |
+  | MISSING_EXPECTED_ARTIFACT | the latest successful run's link is gone |
+  | DIGEST_MISMATCH, MANIFEST_INVALID, TAMPERED, INCOMPLETE, UNLISTED_FILE | artifact or manifest integrity failure |
+  | NON_MONOTONIC | baseline or prior evidence dropped or changed |
+  | CHAIN_FORK | two links branch from the same predecessor |
+  | DUPLICATE_OBSERVATION | the same snapshot frozen twice |
+  | ANCHOR_MISMATCH | the committed baseline changed |
+
+- `chain-seal` requires a byte-identical superset.
+- A new epoch is possible only through a committed anchor plus a
+  `bootstrap_epoch` dispatch.
+- The workflow now queues runs (`cancel-in-progress: false`) to prevent forks.
+- Permissions are unchanged (`contents: read`, `actions: read`).
+- The `fetch_prior_ledgers` silent-restart path has been removed.
+
+**P1 verify-slate.** Coverage, status and counts are now re-derived from the
+hash-verified archived schedule bytes plus the archived root bytes. Codex's
+exact forgery (empty `expected_games`/`expected_not_discovered`, recomputed
+self-hash) is rejected, both on the real 17:34Z slate and in unit tests.
+
+**P2.**
+- RESULTS.md CLV wording is corrected; erratum E1 adds the finite three-iteration
+  fit caveat using Codex's fourth-iteration numbers.
+- Erratum to my earlier entry above, which said the grade "adds CLV": it measures
+  later pre-kickoff price movement against the latest later research vintage
+  (NOT_A_VERIFIED_CLOSE), not closing-line value.
+
+**Tests.** Chain 19, lifecycle 14, pathway 32; NFL suite 89 files / 1,121
+tests OK.
+
+Alligator
+
+## 2026-10-12 -- FC-NFL-004 final two P1 corrections (Codex review 6133401456) (Claude)
+
+**P1 same-epoch restart after total artifact deletion.**
+- `load_chain` now reads run/step history first. In the epoch's chain, a successful
+  `Upload sealed evidence-chain link [<epoch>]` step marks a sealed link; the legacy
+  name is honoured for epoch-1 only.
+- Bootstrap is refused when any sealed history exists, even with zero artifacts.
+- No artifacts plus history → MISSING_EXPECTED_ARTIFACT. Every historical upload
+  must still be listed, including uploads from failed runs.
+- Head sequence must equal the count of sealed uploads (SEQUENCE_GAP).
+- Unreadable history → HISTORY_UNVERIFIABLE.
+- A wrong-epoch bootstrap value → BOOTSTRAP_REFUSED.
+
+**P1 seal after upstream failure.** Grade requires a successful freeze. Seal and
+upload require load, freeze and grade all to succeed. `seal_chain` refuses truncated
+or partial files.
+
+**Docs.** `LIFECYCLE_DESIGN.md` gains the new-epoch recovery procedure, the
+baseline (30 committed) vs PR-branch drill (30 artifact-only) boundary, the main
+bootstrap path after a merge, and the retention limits.
+
+**Tests.** Chain 30, lifecycle 14, pathway 32 OK. A read-only dry run against the
+real PR-branch history: CONTINUE at seq 2; same-epoch bootstrap refused;
+no-chain branch NO_CHAIN.
+
+Alligator
+
+## 2026-10-13 -- FC-NFL-004: ESPN team-code alias repair (Jacob-authorized)
+
+The first real final-game grading run (38346795026, BUF@LA, ESPN STATUS_FINAL
+BUF 37 - LAR 34) failed closed. Every BUF@LA freeze stayed PENDING with "ESPN
+team identity mismatch: expected BUF@LA, got BUF@LAR".
+
+**Cause.** ESPN and nflverse codes differ for 2 of the 32 teams: LAR vs LA, and
+WSH vs WAS.
+
+**Fix.** A closed alias map, `ESPN_TO_NFLVERSE_TEAM = {LAR: LA, WSH: WAS}`, in
+`nfl/prospective/espn_final_outcome.py`. It is applied to the ESPN side before
+the comparison. All other identity checks are unchanged: event id, competition
+id, kickoff, roles, STATUS_FINAL/completed. Any other mismatch still fails
+closed. The outcome body and hash schema are unchanged.
+
+**Tests.** 7 regression tests in `nfl/tests/test_espn_final_outcome.py`:
+- both aliases grade;
+- lowercase input is normalized;
+- the alias never bridges LA/LAC, wrong opponents, swapped roles or unknown
+  codes;
+- the other identity checks still fail closed.
+
+Three of them fail when the normalization is removed. NFL suite: 1139 passed.
+
+**Local replay** on a copy of chain link 5: 6/6 BUF@LA freezes grade, and the
+settlements were checked independently. Real-run verification follows in the
+PR #223 comments.
+
+Alligator
+
+## 2026-10-13 -- FC-NFL-004: evidence-chain artifact packaging repair (Jacob-authorized)
+
+**Problem.** Chain links 1-7 uploaded the whole `/tmp/nfl-gm-chain` work dir,
+including `prior/`, which holds every downloaded earlier link, each with its own
+`prior/`. Artifacts nested recursively and doubled each run: `prior/` measured
+9.5 -> 20 -> 40 -> 77 MB over links 4-7, against a 3.2 MB ledger.
+
+**Fix.**
+- `seal_chain` builds a clean `package/` containing only `LEDGER_MANIFEST.json`
+  and `ledger/`, and checks it with `verify_sealed_package`.
+- New manifests declare `artifact_layout: MANIFEST_AND_LEDGER_ONLY_V1`.
+- `verify_chain_dir` enforces that layout on any link that declares it: no
+  `prior/`, no stray top-level files, no symlinks.
+- `load_chain` refuses a later link that drops the declaration.
+- Legacy links 1-7 are immutable and still load unchanged.
+- The workflow uploads only `/tmp/nfl-gm-chain/package`.
+
+**Not changed:** research data, grading logic, records, hashes.
+
+**Tests.** 11 packaging regression tests; a mutant that re-packages `prior/` is
+caught by 7 of them. NFL suite: 1150 passed. Real continuation and replay runs
+are reported in the PR #223 comments.
+
+Alligator

@@ -1,0 +1,707 @@
+{
+  "config_summaries": {
+    "B0": {
+      "available": true,
+      "expected_home_margin": 1.004167,
+      "expected_total": 40.285379,
+      "fair_home_spread": -2.0,
+      "fair_home_win_probability": 0.534384,
+      "fair_total": 40.0,
+      "margin_center": 1.9,
+      "total_center": 39.3
+    },
+    "C1": {
+      "available": true,
+      "expected_home_margin": 9.095378,
+      "expected_total": 43.571329,
+      "fair_home_spread": -7.5,
+      "fair_home_win_probability": 0.755566,
+      "fair_total": 43.5,
+      "margin_center": 10.148056,
+      "total_center": 43.013344
+    },
+    "F1": {
+      "available": true,
+      "expected_home_margin": 3.124086,
+      "expected_total": 42.178845,
+      "fair_home_spread": -3.0,
+      "fair_home_win_probability": 0.595014,
+      "fair_total": 41.5,
+      "margin_center": 4.092319,
+      "total_center": 41.432042
+    },
+    "M0": {
+      "available": true,
+      "expected_home_margin": 9.329598,
+      "expected_total": 43.833938,
+      "fair_home_spread": -7.5,
+      "fair_home_win_probability": 0.761105,
+      "fair_total": 43.5,
+      "margin_center": 10.378614,
+      "total_center": 43.283824
+    }
+  },
+  "discovery": {
+    "discovery_sha256": "15485b6d72d93c1695c14a1b81b80dcbce4e89879993a9a432c1352d4ae20ba9",
+    "process_event_ids": [
+      "35605984",
+      "36132650",
+      "36160495",
+      "36160506",
+      "36160507",
+      "36160508",
+      "36160509",
+      "36160510",
+      "36160511",
+      "36160512",
+      "36160513",
+      "36160514",
+      "36160515",
+      "36160516",
+      "36160524"
+    ],
+    "process_event_ids_sha256": "fba406afa43d34ae8e3248c91f31e8de27a5e37b3059c2460dda7f144b553d51",
+    "root_bytes": 986869,
+    "root_observed_at": "2026-10-12T17:34:35Z",
+    "root_sha256": "1c965bee5a811e9a2cad30202d99d10d6e4a2955a6098d36b5cc3c84ae3e4a8e",
+    "root_url": "https://sbapi.nj.sportsbook.fanduel.com/api/content-managed-page?page=CUSTOM&customPageId=nfl&_ak=FhMFpcPWXMeyZxOx"
+  },
+  "event_id": "36160508",
+  "evidence_class": "PROSPECTIVE_RESEARCH_FREEZE",
+  "frozen_at": "2026-10-12T17:34:36Z",
+  "identity_binding": {
+    "away_score": null,
+    "away_team": "NYJ",
+    "away_team_name": "New York Jets",
+    "binding_basis": "AWAY_HOME_TEAMS_PLUS_ET_KICKOFF_WITHIN_TOLERANCE",
+    "binding_sha256": "824762ffbac8c96ee232f0b23069970dcacf68d5a3380702d71ae11785aa2691",
+    "final_status": null,
+    "finality_proven": false,
+    "game_type": "REG",
+    "home_score": null,
+    "home_team": "NE",
+    "home_team_name": "New England Patriots",
+    "kickoff_tolerance_minutes": 2,
+    "nflverse_espn": "401873001",
+    "nflverse_game_id": "2026_06_NYJ_NE",
+    "nflverse_gsis": null,
+    "scheduled_kickoff": "2026-10-18T17:00:00+00:00",
+    "schema_version": 1,
+    "score_state": "UNSETTLED",
+    "season": 2026,
+    "source": "nflverse_schedules",
+    "source_observed_at": "2026-10-12T17:34:34+00:00",
+    "source_sha256": "9380292232901e4321c99992c7efca0c567a0a801dcb292662a3f78a9a101c49",
+    "source_url": "https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv",
+    "sportsbook": "FANDUEL",
+    "sportsbook_event_id": "36160508",
+    "sportsbook_market_time": "2026-10-18T17:01:00+00:00",
+    "sportsbook_snapshot_sha256": "34bdfb338717023b03070d3e97f58bf2157e574aa3d0c92f1496727488a36e20",
+    "week": 6
+  },
+  "input_state": {
+    "b0_prediction": {
+      "away_prior_games_n": 5,
+      "away_team": "NYJ",
+      "away_team_full": "New York Jets",
+      "baseline_name": "GAME_MARKET_B0_PRIOR_SCORING_BLEND",
+      "eligibility": "ELIGIBLE",
+      "event_id": "36160508",
+      "game_id": "2026_06_NYJ_NE",
+      "game_type": "REG",
+      "home_field_adjustment": 0.0,
+      "home_prior_games_n": 5,
+      "home_team": "NE",
+      "home_team_full": "New England Patriots",
+      "min_prior_games": 3,
+      "predicted_away_points": 18.700000000000003,
+      "predicted_home_margin": 1.8999999999999986,
+      "predicted_home_points": 20.6,
+      "predicted_total": 39.300000000000004,
+      "same_week_completed_games_deliberately_excluded": true,
+      "schedule_local_date": "2026-10-18",
+      "season": 2026,
+      "target_final_status": "PREGAME",
+      "uses_current_game_outcome_as_feature": false,
+      "uses_market_line_as_feature": false,
+      "week": 6
+    },
+    "qb_state": {
+      "away": {
+        "basis": "NFLVERSE_PREPOPULATED_EXPECTED_STARTER_UNTIMESTAMPED",
+        "expected_qb_id": "00-0030565",
+        "expected_qb_name": "Geno Smith",
+        "previous_game_id": "2026_05_CLE_NYJ",
+        "previous_qb_id": "00-0030565",
+        "status": "UNCHANGED",
+        "team": "NYJ"
+      },
+      "home": {
+        "basis": "NFLVERSE_PREPOPULATED_EXPECTED_STARTER_UNTIMESTAMPED",
+        "expected_qb_id": "00-0039851",
+        "expected_qb_name": "Drake Maye",
+        "previous_game_id": "2026_05_LV_NE",
+        "previous_qb_id": "00-0039851",
+        "status": "UNCHANGED",
+        "team": "NE"
+      }
+    },
+    "schedule_source": {
+      "bytes": 2184055,
+      "observed_at": "2026-10-12T17:34:34Z",
+      "sha256": "9380292232901e4321c99992c7efca0c567a0a801dcb292662a3f78a9a101c49",
+      "url": "https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv"
+    }
+  },
+  "input_state_sha256": "38c17d94bbc68fe6d5919f198cab267d55a977e8c11fb5b8778a0e1b41734a47",
+  "market_snapshot": {
+    "captured_at": "2026-10-12T17:34:36Z",
+    "event_id": "36160508",
+    "failures": [],
+    "public_eligible": false,
+    "records": [
+      {
+        "away_team": "New York Jets",
+        "captured_at": "2026-10-12T17:34:36Z",
+        "event_id": "36160508",
+        "event_name": "New York Jets @ New England Patriots",
+        "event_open_date": "2026-10-18T17:01:00.000Z",
+        "home_team": "New England Patriots",
+        "in_play": false,
+        "line": 43.5,
+        "market": "game_total",
+        "market_id": "734.190243485",
+        "market_name": "Total Points",
+        "market_status": "OPEN",
+        "market_time": "2026-10-18T17:01:00.000Z",
+        "market_type": "TOTAL_POINTS_(OVER/UNDER)",
+        "over_odds": -115,
+        "over_selection_id": "7017916",
+        "source": "fanduel_nfl",
+        "source_artifact": "event_36160508_no_tab",
+        "source_payload_sha256": "70cd724e4d88d060eea84d5e778319f94eb73a6d5ae78484587bd4d15e8dceaf",
+        "source_url": "https://sbapi.nj.sportsbook.fanduel.com/api/event-page?eventId=36160508&_ak=FhMFpcPWXMeyZxOx",
+        "sport": "NFL",
+        "sportsbook": "FANDUEL",
+        "under_odds": -105,
+        "under_selection_id": "7017917"
+      },
+      {
+        "away_odds": 310,
+        "away_selection_id": "50202",
+        "away_team": "New York Jets",
+        "captured_at": "2026-10-12T17:34:36Z",
+        "event_id": "36160508",
+        "event_name": "New York Jets @ New England Patriots",
+        "event_open_date": "2026-10-18T17:01:00.000Z",
+        "home_odds": -390,
+        "home_selection_id": "50204",
+        "home_team": "New England Patriots",
+        "in_play": false,
+        "market": "moneyline",
+        "market_id": "734.190243486",
+        "market_name": "Moneyline",
+        "market_status": "OPEN",
+        "market_time": "2026-10-18T17:01:00.000Z",
+        "market_type": "MONEY_LINE",
+        "source": "fanduel_nfl",
+        "source_artifact": "event_36160508_no_tab",
+        "source_payload_sha256": "70cd724e4d88d060eea84d5e778319f94eb73a6d5ae78484587bd4d15e8dceaf",
+        "source_url": "https://sbapi.nj.sportsbook.fanduel.com/api/event-page?eventId=36160508&_ak=FhMFpcPWXMeyZxOx",
+        "sport": "NFL",
+        "sportsbook": "FANDUEL"
+      },
+      {
+        "away_line": 7.5,
+        "away_odds": -115,
+        "away_selection_id": "50202",
+        "away_team": "New York Jets",
+        "captured_at": "2026-10-12T17:34:36Z",
+        "event_id": "36160508",
+        "event_name": "New York Jets @ New England Patriots",
+        "event_open_date": "2026-10-18T17:01:00.000Z",
+        "home_line": -7.5,
+        "home_odds": -105,
+        "home_selection_id": "50204",
+        "home_team": "New England Patriots",
+        "in_play": false,
+        "market": "spread",
+        "market_id": "734.190243488",
+        "market_name": "Spread",
+        "market_status": "OPEN",
+        "market_time": "2026-10-18T17:01:00.000Z",
+        "market_type": "MATCH_HANDICAP_(2-WAY)",
+        "source": "fanduel_nfl",
+        "source_artifact": "event_36160508_no_tab",
+        "source_payload_sha256": "70cd724e4d88d060eea84d5e778319f94eb73a6d5ae78484587bd4d15e8dceaf",
+        "source_url": "https://sbapi.nj.sportsbook.fanduel.com/api/event-page?eventId=36160508&_ak=FhMFpcPWXMeyZxOx",
+        "sport": "NFL",
+        "sportsbook": "FANDUEL"
+      }
+    ],
+    "research_only": true,
+    "schema_version": 1,
+    "sealed_at": "2026-10-12T17:34:36Z",
+    "snapshot_sha256": "34bdfb338717023b03070d3e97f58bf2157e574aa3d0c92f1496727488a36e20",
+    "source_payload_sha256": "70cd724e4d88d060eea84d5e778319f94eb73a6d5ae78484587bd4d15e8dceaf",
+    "sport": "NFL"
+  },
+  "market_snapshot_sha256": "34bdfb338717023b03070d3e97f58bf2157e574aa3d0c92f1496727488a36e20",
+  "model": {
+    "code_sha": "9644db4597e7f5368c69cff4d40ebf2a2af9fa65",
+    "configs": [
+      "B0",
+      "F1",
+      "M0",
+      "C1"
+    ],
+    "lean_config": "C1",
+    "params_provenance": {
+      "d1_outer_iterations": 3,
+      "d1_trace": [
+        {
+          "max_center_shift": 2.4484326155252347,
+          "mean_center_shift": 0.5105392423956254,
+          "sigma_margin": 13.342841397775521,
+          "sigma_total": 13.512298778559419
+        },
+        {
+          "max_center_shift": 0.6125877833546838,
+          "mean_center_shift": 0.18553900866471518,
+          "sigma_margin": 13.355317318317477,
+          "sigma_total": 13.519194975072713
+        },
+        {
+          "max_center_shift": 0.409497953398386,
+          "mean_center_shift": 0.1708374684060321,
+          "sigma_margin": 13.371224875093493,
+          "sigma_total": 13.524770451082345
+        }
+      ],
+      "fit_partition": "development_2000_2019",
+      "fit_procedure": "v1_1_d1_solved_m0",
+      "fit_rows": 5095,
+      "prereg": "engineering/nfl_game_market_pathway_20261012/PREREG.md",
+      "prereg_commit": "35a6cb032c5f6ac5ced37ba3a86716a57e1123e8",
+      "source_commit": "8ed09b2fe3ea42332b2249a995737e13dd931ff3",
+      "source_sha256": "26332ae5d8d8d0481f0670cf5e3849497a415351d4026ae5bee15a5aab96d188"
+    },
+    "params_sha256": "acc53f4dee9a1af6da90924b69d13fb288d91793694187c497f5c14ed24d43c5"
+  },
+  "public_eligible": false,
+  "record_sha256": "7f9239d9b60f0670a9516848578bc3cc78c38ecacfdf8d79036161658306e4f1",
+  "research_only": true,
+  "scheduled_kickoff": "2026-10-18T17:00:00+00:00",
+  "schema": "fc-nfl-004-game-market-research-freeze-v2",
+  "selections": [
+    {
+      "decimal_odds": 1.952381,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -105,
+        "captured_at": "2026-10-12T17:34:36Z",
+        "espn_event_id": "401873001",
+        "event_id": "36160508",
+        "line": -7.5,
+        "market": "spread",
+        "market_id": "734.190243488",
+        "nflverse_game_id": "2026_06_NYJ_NE",
+        "selection_id": "50204",
+        "side": "HOME"
+      },
+      "implied_probability": 0.512195,
+      "lean_config": "C1",
+      "market": "spread",
+      "model_market_gap_points": 2.648056,
+      "models": {
+        "B0": {
+          "break_even": 0.512195,
+          "edge": -0.23451,
+          "ev_per_unit": -0.457852,
+          "p_lose": 0.722315,
+          "p_push": 0.0,
+          "p_win": 0.277685,
+          "p_win_conditional": 0.277685
+        },
+        "C1": {
+          "break_even": 0.512195,
+          "edge": -0.019121,
+          "ev_per_unit": -0.037332,
+          "p_lose": 0.506926,
+          "p_push": 0.0,
+          "p_win": 0.493074,
+          "p_win_conditional": 0.493074
+        },
+        "F1": {
+          "break_even": 0.512195,
+          "edge": -0.1848,
+          "ev_per_unit": -0.3608,
+          "p_lose": 0.672605,
+          "p_push": 0.0,
+          "p_win": 0.327395,
+          "p_win_conditional": 0.327395
+        },
+        "M0": {
+          "break_even": 0.512195,
+          "edge": -0.012195,
+          "ev_per_unit": -0.02381,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.489166,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047079,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:0710ce8f05334c778bb3e9517681cf17",
+      "source_payload_sha256": "70cd724e4d88d060eea84d5e778319f94eb73a6d5ae78484587bd4d15e8dceaf",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.869565,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -115,
+        "captured_at": "2026-10-12T17:34:36Z",
+        "espn_event_id": "401873001",
+        "event_id": "36160508",
+        "line": 7.5,
+        "market": "spread",
+        "market_id": "734.190243488",
+        "nflverse_game_id": "2026_06_NYJ_NE",
+        "selection_id": "50202",
+        "side": "AWAY"
+      },
+      "implied_probability": 0.534884,
+      "lean_config": "C1",
+      "market": "spread",
+      "model_market_gap_points": 2.648056,
+      "models": {
+        "B0": {
+          "break_even": 0.534884,
+          "edge": 0.187431,
+          "ev_per_unit": 0.350414,
+          "p_lose": 0.277685,
+          "p_push": 0.0,
+          "p_win": 0.722315,
+          "p_win_conditional": 0.722315
+        },
+        "C1": {
+          "break_even": 0.534884,
+          "edge": -0.027958,
+          "ev_per_unit": -0.052269,
+          "p_lose": 0.493074,
+          "p_push": 0.0,
+          "p_win": 0.506926,
+          "p_win_conditional": 0.506926
+        },
+        "F1": {
+          "break_even": 0.534884,
+          "edge": 0.137721,
+          "ev_per_unit": 0.257479,
+          "p_lose": 0.327395,
+          "p_push": 0.0,
+          "p_win": 0.672605,
+          "p_win_conditional": 0.672605
+        },
+        "M0": {
+          "break_even": 0.534884,
+          "edge": -0.034884,
+          "ev_per_unit": -0.065217,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.510834,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047079,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:e198d8291c0d9a5b1c98d8f2263b1fde",
+      "source_payload_sha256": "70cd724e4d88d060eea84d5e778319f94eb73a6d5ae78484587bd4d15e8dceaf",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.869565,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -115,
+        "captured_at": "2026-10-12T17:34:36Z",
+        "espn_event_id": "401873001",
+        "event_id": "36160508",
+        "line": 43.5,
+        "market": "game_total",
+        "market_id": "734.190243485",
+        "nflverse_game_id": "2026_06_NYJ_NE",
+        "selection_id": "7017916",
+        "side": "OVER"
+      },
+      "implied_probability": 0.534884,
+      "lean_config": "C1",
+      "market": "game_total",
+      "model_market_gap_points": 0.486656,
+      "models": {
+        "B0": {
+          "break_even": 0.534884,
+          "edge": -0.13985,
+          "ev_per_unit": -0.261458,
+          "p_lose": 0.604966,
+          "p_push": 0.0,
+          "p_win": 0.395034,
+          "p_win_conditional": 0.395034
+        },
+        "C1": {
+          "break_even": 0.534884,
+          "edge": -0.042712,
+          "ev_per_unit": -0.079853,
+          "p_lose": 0.507829,
+          "p_push": 0.0,
+          "p_win": 0.492171,
+          "p_win_conditional": 0.492171
+        },
+        "F1": {
+          "break_even": 0.534884,
+          "edge": -0.084841,
+          "ev_per_unit": -0.158616,
+          "p_lose": 0.549957,
+          "p_push": 0.0,
+          "p_win": 0.450043,
+          "p_win_conditional": 0.450043
+        },
+        "M0": {
+          "break_even": 0.534884,
+          "edge": -0.034884,
+          "ev_per_unit": -0.065217,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.510834,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047079,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:cbfe906df1911aa79381480264d2ed0d",
+      "source_payload_sha256": "70cd724e4d88d060eea84d5e778319f94eb73a6d5ae78484587bd4d15e8dceaf",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.952381,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -105,
+        "captured_at": "2026-10-12T17:34:36Z",
+        "espn_event_id": "401873001",
+        "event_id": "36160508",
+        "line": 43.5,
+        "market": "game_total",
+        "market_id": "734.190243485",
+        "nflverse_game_id": "2026_06_NYJ_NE",
+        "selection_id": "7017917",
+        "side": "UNDER"
+      },
+      "implied_probability": 0.512195,
+      "lean_config": "C1",
+      "market": "game_total",
+      "model_market_gap_points": 0.486656,
+      "models": {
+        "B0": {
+          "break_even": 0.512195,
+          "edge": 0.092771,
+          "ev_per_unit": 0.181124,
+          "p_lose": 0.395034,
+          "p_push": 0.0,
+          "p_win": 0.604966,
+          "p_win_conditional": 0.604966
+        },
+        "C1": {
+          "break_even": 0.512195,
+          "edge": -0.004367,
+          "ev_per_unit": -0.008525,
+          "p_lose": 0.492171,
+          "p_push": 0.0,
+          "p_win": 0.507829,
+          "p_win_conditional": 0.507829
+        },
+        "F1": {
+          "break_even": 0.512195,
+          "edge": 0.037762,
+          "ev_per_unit": 0.073727,
+          "p_lose": 0.450043,
+          "p_push": 0.0,
+          "p_win": 0.549957,
+          "p_win_conditional": 0.549957
+        },
+        "M0": {
+          "break_even": 0.512195,
+          "edge": -0.012195,
+          "ev_per_unit": -0.02381,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.489166,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047079,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:1e261b2f65fde9cdcc2c8e771c9eb3dd",
+      "source_payload_sha256": "70cd724e4d88d060eea84d5e778319f94eb73a6d5ae78484587bd4d15e8dceaf",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.25641,
+      "decision": "MEASUREMENT_ONLY",
+      "grading_identity": {
+        "american_odds": -390,
+        "captured_at": "2026-10-12T17:34:36Z",
+        "espn_event_id": "401873001",
+        "event_id": "36160508",
+        "line": null,
+        "market": "moneyline",
+        "market_id": "734.190243486",
+        "nflverse_game_id": "2026_06_NYJ_NE",
+        "selection_id": "50204",
+        "side": "HOME"
+      },
+      "implied_probability": 0.795918,
+      "lean_config": "C1",
+      "market": "moneyline",
+      "model_market_gap_points": null,
+      "models": {
+        "B0": {
+          "break_even": 0.795918,
+          "edge": -0.261534,
+          "ev_per_unit": -0.326799,
+          "p_lose": 0.463072,
+          "p_push": 0.005463,
+          "p_win": 0.531464,
+          "p_win_conditional": 0.534384
+        },
+        "C1": {
+          "break_even": 0.795918,
+          "edge": -0.040352,
+          "ev_per_unit": -0.050466,
+          "p_lose": 0.24331,
+          "p_push": 0.004598,
+          "p_win": 0.752092,
+          "p_win_conditional": 0.755566
+        },
+        "F1": {
+          "break_even": 0.795918,
+          "edge": -0.200904,
+          "ev_per_unit": -0.251046,
+          "p_lose": 0.402785,
+          "p_push": 0.005435,
+          "p_win": 0.59178,
+          "p_win_conditional": 0.595014
+        },
+        "M0": {
+          "break_even": 0.795918,
+          "edge": -0.034813,
+          "ev_per_unit": -0.043541,
+          "p_lose": 0.237809,
+          "p_push": 0.004546,
+          "p_win": 0.757645,
+          "p_win_conditional": 0.761105
+        }
+      },
+      "no_vig_probability": 0.765438,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.039821,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "MARKET_NOT_IN_LEAN_SCOPE"
+      ],
+      "selection_key": "fcnfl004:f281170cccc8b816a023fa3898e32fc9",
+      "source_payload_sha256": "70cd724e4d88d060eea84d5e778319f94eb73a6d5ae78484587bd4d15e8dceaf",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 4.1,
+      "decision": "MEASUREMENT_ONLY",
+      "grading_identity": {
+        "american_odds": 310,
+        "captured_at": "2026-10-12T17:34:36Z",
+        "espn_event_id": "401873001",
+        "event_id": "36160508",
+        "line": null,
+        "market": "moneyline",
+        "market_id": "734.190243486",
+        "nflverse_game_id": "2026_06_NYJ_NE",
+        "selection_id": "50202",
+        "side": "AWAY"
+      },
+      "implied_probability": 0.243902,
+      "lean_config": "C1",
+      "market": "moneyline",
+      "model_market_gap_points": null,
+      "models": {
+        "B0": {
+          "break_even": 0.243902,
+          "edge": 0.221714,
+          "ev_per_unit": 0.90406,
+          "p_lose": 0.531464,
+          "p_push": 0.005463,
+          "p_win": 0.463072,
+          "p_win_conditional": 0.465616
+        },
+        "C1": {
+          "break_even": 0.243902,
+          "edge": 0.000531,
+          "ev_per_unit": 0.002169,
+          "p_lose": 0.752092,
+          "p_push": 0.004598,
+          "p_win": 0.24331,
+          "p_win_conditional": 0.244434
+        },
+        "F1": {
+          "break_even": 0.243902,
+          "edge": 0.161084,
+          "ev_per_unit": 0.656853,
+          "p_lose": 0.59178,
+          "p_push": 0.005435,
+          "p_win": 0.402785,
+          "p_win_conditional": 0.404986
+        },
+        "M0": {
+          "break_even": 0.243902,
+          "edge": -0.005008,
+          "ev_per_unit": -0.020438,
+          "p_lose": 0.757645,
+          "p_push": 0.004546,
+          "p_win": 0.237809,
+          "p_win_conditional": 0.238895
+        }
+      },
+      "no_vig_probability": 0.234562,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.039821,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "MARKET_NOT_IN_LEAN_SCOPE"
+      ],
+      "selection_key": "fcnfl004:c99a7a97bb456cc502262bbe47ef0d02",
+      "source_payload_sha256": "70cd724e4d88d060eea84d5e778319f94eb73a6d5ae78484587bd4d15e8dceaf",
+      "sportsbook": "FANDUEL"
+    }
+  ],
+  "sport": "NFL"
+}

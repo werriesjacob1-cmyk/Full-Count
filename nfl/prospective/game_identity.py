@@ -136,13 +136,23 @@ def bind_nflverse_game_identity(
     source_url: str,
     source_sha256: str,
     observed_at: str,
+    kickoff_tolerance_minutes: int = 0,
 ) -> dict[str, Any]:
     """Bind one sealed FanDuel event to exactly one nflverse schedule row.
 
     ``team_aliases`` is deliberately supplied by the caller rather than guessed.
     nflverse ``gameday``/``gametime`` are matched to the FanDuel market instant
     after converting that instant to America/New_York.
+
+    ``kickoff_tolerance_minutes`` (default 0 = exact, original behaviour) lets
+    the FanDuel market instant trail the nflverse kickoff by up to that many
+    minutes; never lead it. Live FanDuel NFL ``marketTime`` is observed at
+    kickoff + 1 minute (FC-NFL-004). With a tolerance in use, the binding's
+    ``scheduled_kickoff`` is the nflverse kickoff (the earlier instant) and the
+    sportsbook instant is recorded separately.
     """
+    if type(kickoff_tolerance_minutes) is not int or not 0 <= kickoff_tolerance_minutes <= 5:
+        raise GameIdentityError("kickoff_tolerance_minutes must be an int in [0, 5]")
     if not isinstance(snapshot, Mapping):
         raise GameIdentityError("snapshot must be a mapping")
     if snapshot.get("sport") != "NFL" or snapshot.get("research_only") is not True:
@@ -168,21 +178,37 @@ def bind_nflverse_game_identity(
     expected_day = eastern.date().isoformat()
     expected_time = eastern.strftime("%H:%M")
 
-    matches: list[Mapping[str, Any]] = []
+    matches: list[tuple[Mapping[str, Any], datetime]] = []
     for row in schedule_rows:
         if not isinstance(row, Mapping):
             continue
         if (
-            str(row.get("away_team") or "").strip().upper() == away_team
-            and str(row.get("home_team") or "").strip().upper() == home_team
-            and str(row.get("gameday") or "").strip() == expected_day
-            and str(row.get("gametime") or "").strip() == expected_time
+            str(row.get("away_team") or "").strip().upper() != away_team
+            or str(row.get("home_team") or "").strip().upper() != home_team
         ):
-            matches.append(row)
+            continue
+        if kickoff_tolerance_minutes == 0:
+            if (
+                str(row.get("gameday") or "").strip() == expected_day
+                and str(row.get("gametime") or "").strip() == expected_time
+            ):
+                matches.append((row, market_time))
+            continue
+        try:
+            kickoff = datetime.strptime(
+                f"{str(row.get('gameday') or '').strip()} {str(row.get('gametime') or '').strip()}",
+                "%Y-%m-%d %H:%M",
+            ).replace(tzinfo=_EASTERN)
+        except ValueError:
+            continue
+        lag = (market_time - kickoff).total_seconds()
+        if 0 <= lag <= kickoff_tolerance_minutes * 60:
+            matches.append((row, kickoff))
 
     if len(matches) != 1:
         raise GameIdentityError(f"expected exactly one nflverse game match, found {len(matches)}")
-    row = deepcopy(dict(matches[0]))
+    row = deepcopy(dict(matches[0][0]))
+    scheduled_kickoff = matches[0][1].astimezone(market_time.tzinfo)
 
     game_id = _text(row.get("game_id"), "nflverse.game_id")
     season = _optional_int(row, "season")
@@ -210,7 +236,7 @@ def bind_nflverse_game_identity(
         "home_team": home_team,
         "away_team_name": away_name,
         "home_team_name": home_name,
-        "scheduled_kickoff": market_time.isoformat(),
+        "scheduled_kickoff": scheduled_kickoff.isoformat(),
         "binding_basis": "AWAY_HOME_TEAMS_PLUS_EXACT_ET_KICKOFF",
         "score_state": score_state,
         "away_score": away_score,
@@ -222,4 +248,8 @@ def bind_nflverse_game_identity(
         "source_sha256": source_digest,
         "source_observed_at": source_observed.isoformat(),
     }
+    if kickoff_tolerance_minutes:
+        body["binding_basis"] = "AWAY_HOME_TEAMS_PLUS_ET_KICKOFF_WITHIN_TOLERANCE"
+        body["kickoff_tolerance_minutes"] = kickoff_tolerance_minutes
+        body["sportsbook_market_time"] = market_time.isoformat()
     return {**body, "binding_sha256": _canonical_hash(body)}

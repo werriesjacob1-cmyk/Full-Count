@@ -1,0 +1,660 @@
+{
+  "config_summaries": {
+    "B0": {
+      "available": true,
+      "expected_home_margin": 5.48254,
+      "expected_total": 42.078389,
+      "fair_home_spread": -4.5,
+      "fair_home_win_probability": 0.65233,
+      "fair_total": 41.5,
+      "margin_center": 5.5,
+      "total_center": 41.5
+    },
+    "C1": {
+      "available": true,
+      "expected_home_margin": 1.132519,
+      "expected_total": 42.627114,
+      "fair_home_spread": -2.0,
+      "fair_home_win_probability": 0.54073,
+      "fair_total": 42.5,
+      "margin_center": 1.230177,
+      "total_center": 42.26396
+    },
+    "F1": {
+      "available": true,
+      "expected_home_margin": 7.0497,
+      "expected_total": 43.06236,
+      "fair_home_spread": -6.5,
+      "fair_home_win_probability": 0.694366,
+      "fair_total": 43.0,
+      "margin_center": 7.048197,
+      "total_center": 42.598679
+    },
+    "M0": {
+      "available": true,
+      "expected_home_margin": 1.352739,
+      "expected_total": 42.621473,
+      "fair_home_spread": -2.5,
+      "fair_home_win_probability": 0.547194,
+      "fair_total": 42.5,
+      "margin_center": 1.45273,
+      "total_center": 42.257553
+    }
+  },
+  "event_id": "35605984",
+  "evidence_class": "PROSPECTIVE_RESEARCH_FREEZE",
+  "frozen_at": "2026-10-12T17:01:26Z",
+  "identity_binding": {
+    "away_score": null,
+    "away_team": "HOU",
+    "away_team_name": "Houston Texans",
+    "binding_basis": "AWAY_HOME_TEAMS_PLUS_ET_KICKOFF_WITHIN_TOLERANCE",
+    "binding_sha256": "e426a31dceb53e822a1c9370c665c274bf5603fc8dc4105ac20189e8222068dc",
+    "final_status": null,
+    "finality_proven": false,
+    "game_type": "REG",
+    "home_score": null,
+    "home_team": "JAX",
+    "home_team_name": "Jacksonville Jaguars",
+    "kickoff_tolerance_minutes": 2,
+    "nflverse_espn": "401872996",
+    "nflverse_game_id": "2026_06_HOU_JAX",
+    "nflverse_gsis": null,
+    "scheduled_kickoff": "2026-10-18T13:30:00+00:00",
+    "schema_version": 1,
+    "score_state": "UNSETTLED",
+    "season": 2026,
+    "source": "nflverse_schedules",
+    "source_observed_at": "2026-10-12T17:01:25+00:00",
+    "source_sha256": "9380292232901e4321c99992c7efca0c567a0a801dcb292662a3f78a9a101c49",
+    "source_url": "https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv",
+    "sportsbook": "FANDUEL",
+    "sportsbook_event_id": "35605984",
+    "sportsbook_market_time": "2026-10-18T13:30:00+00:00",
+    "sportsbook_snapshot_sha256": "8ebff2d09a206c9342988f9fa5a07a5792a31ee2b8eed42e454bc931b13fd421",
+    "week": 6
+  },
+  "input_state": {
+    "b0_prediction": {
+      "away_prior_games_n": 5,
+      "away_team": "HOU",
+      "away_team_full": "Houston Texans",
+      "baseline_name": "GAME_MARKET_B0_PRIOR_SCORING_BLEND",
+      "eligibility": "ELIGIBLE",
+      "event_id": "35605984",
+      "game_id": "2026_06_HOU_JAX",
+      "game_type": "REG",
+      "home_field_adjustment": 0.0,
+      "home_prior_games_n": 5,
+      "home_team": "JAX",
+      "home_team_full": "Jacksonville Jaguars",
+      "min_prior_games": 3,
+      "predicted_away_points": 18.0,
+      "predicted_home_margin": 5.5,
+      "predicted_home_points": 23.5,
+      "predicted_total": 41.5,
+      "same_week_completed_games_deliberately_excluded": true,
+      "schedule_local_date": "2026-10-18",
+      "season": 2026,
+      "target_final_status": "PREGAME",
+      "uses_current_game_outcome_as_feature": false,
+      "uses_market_line_as_feature": false,
+      "week": 6
+    },
+    "qb_state": {
+      "away": {
+        "basis": "NFLVERSE_PREPOPULATED_EXPECTED_STARTER_UNTIMESTAMPED",
+        "expected_qb_id": "00-0039163",
+        "expected_qb_name": "C.J. Stroud",
+        "previous_game_id": "2026_05_HOU_TEN",
+        "previous_qb_id": "00-0039163",
+        "status": "UNCHANGED",
+        "team": "HOU"
+      },
+      "home": {
+        "basis": "NFLVERSE_PREPOPULATED_EXPECTED_STARTER_UNTIMESTAMPED",
+        "expected_qb_id": "00-0036971",
+        "expected_qb_name": "Trevor Lawrence",
+        "previous_game_id": "2026_05_PHI_JAX",
+        "previous_qb_id": "00-0036971",
+        "status": "UNCHANGED",
+        "team": "JAX"
+      }
+    },
+    "schedule_source": {
+      "bytes": 2184055,
+      "observed_at": "2026-10-12T17:01:25Z",
+      "sha256": "9380292232901e4321c99992c7efca0c567a0a801dcb292662a3f78a9a101c49",
+      "url": "https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv"
+    }
+  },
+  "input_state_sha256": "32348e675a9278eaca79fd66764f3f1958c7df22c147171c4238dbf9ad809730",
+  "market_snapshot": {
+    "captured_at": "2026-10-12T17:01:26Z",
+    "event_id": "35605984",
+    "failures": [],
+    "public_eligible": false,
+    "records": [
+      {
+        "away_team": "Houston Texans",
+        "captured_at": "2026-10-12T17:01:26Z",
+        "event_id": "35605984",
+        "event_name": "Houston Texans @ Jacksonville Jaguars",
+        "event_open_date": "2026-10-18T13:30:00.000Z",
+        "home_team": "Jacksonville Jaguars",
+        "in_play": false,
+        "line": 42.5,
+        "market": "game_total",
+        "market_id": "734.168823982",
+        "market_name": "Total Points",
+        "market_status": "OPEN",
+        "market_time": "2026-10-18T13:30:00.000Z",
+        "market_type": "TOTAL_POINTS_(OVER/UNDER)",
+        "over_odds": -112,
+        "over_selection_id": "7017916",
+        "source": "fanduel_nfl",
+        "source_artifact": "event_35605984_no_tab",
+        "source_payload_sha256": "f7cfd2fa76c89b6168ac4da212aac7f6e32a44ac26c3885994e9c88e72e3bc96",
+        "source_url": "https://sbapi.nj.sportsbook.fanduel.com/api/event-page?eventId=35605984&_ak=FhMFpcPWXMeyZxOx",
+        "sport": "NFL",
+        "sportsbook": "FANDUEL",
+        "under_odds": -108,
+        "under_selection_id": "7017917"
+      },
+      {
+        "away_odds": 126,
+        "away_selection_id": "179823",
+        "away_team": "Houston Texans",
+        "captured_at": "2026-10-12T17:01:26Z",
+        "event_id": "35605984",
+        "event_name": "Houston Texans @ Jacksonville Jaguars",
+        "event_open_date": "2026-10-18T13:30:00.000Z",
+        "home_odds": -148,
+        "home_selection_id": "50207",
+        "home_team": "Jacksonville Jaguars",
+        "in_play": false,
+        "market": "moneyline",
+        "market_id": "734.168823981",
+        "market_name": "Moneyline",
+        "market_status": "OPEN",
+        "market_time": "2026-10-18T13:30:00.000Z",
+        "market_type": "MONEY_LINE",
+        "source": "fanduel_nfl",
+        "source_artifact": "event_35605984_no_tab",
+        "source_payload_sha256": "f7cfd2fa76c89b6168ac4da212aac7f6e32a44ac26c3885994e9c88e72e3bc96",
+        "source_url": "https://sbapi.nj.sportsbook.fanduel.com/api/event-page?eventId=35605984&_ak=FhMFpcPWXMeyZxOx",
+        "sport": "NFL",
+        "sportsbook": "FANDUEL"
+      },
+      {
+        "away_line": 2.5,
+        "away_odds": 100,
+        "away_selection_id": "179823",
+        "away_team": "Houston Texans",
+        "captured_at": "2026-10-12T17:01:26Z",
+        "event_id": "35605984",
+        "event_name": "Houston Texans @ Jacksonville Jaguars",
+        "event_open_date": "2026-10-18T13:30:00.000Z",
+        "home_line": -2.5,
+        "home_odds": -122,
+        "home_selection_id": "50207",
+        "home_team": "Jacksonville Jaguars",
+        "in_play": false,
+        "market": "spread",
+        "market_id": "734.168823978",
+        "market_name": "Spread",
+        "market_status": "OPEN",
+        "market_time": "2026-10-18T13:30:00.000Z",
+        "market_type": "MATCH_HANDICAP_(2-WAY)",
+        "source": "fanduel_nfl",
+        "source_artifact": "event_35605984_no_tab",
+        "source_payload_sha256": "f7cfd2fa76c89b6168ac4da212aac7f6e32a44ac26c3885994e9c88e72e3bc96",
+        "source_url": "https://sbapi.nj.sportsbook.fanduel.com/api/event-page?eventId=35605984&_ak=FhMFpcPWXMeyZxOx",
+        "sport": "NFL",
+        "sportsbook": "FANDUEL"
+      }
+    ],
+    "research_only": true,
+    "schema_version": 1,
+    "sealed_at": "2026-10-12T17:01:26Z",
+    "snapshot_sha256": "8ebff2d09a206c9342988f9fa5a07a5792a31ee2b8eed42e454bc931b13fd421",
+    "source_payload_sha256": "f7cfd2fa76c89b6168ac4da212aac7f6e32a44ac26c3885994e9c88e72e3bc96",
+    "sport": "NFL"
+  },
+  "market_snapshot_sha256": "8ebff2d09a206c9342988f9fa5a07a5792a31ee2b8eed42e454bc931b13fd421",
+  "model": {
+    "code_sha": "cb731be0c8a43692fc985bdb2cd2485e992fb17c",
+    "configs": [
+      "B0",
+      "F1",
+      "M0",
+      "C1"
+    ],
+    "lean_config": "C1",
+    "params_provenance": {
+      "fit_partition": "development_2000_2019",
+      "fit_rows": 5095,
+      "prereg": "engineering/nfl_game_market_pathway_20261012/PREREG.md",
+      "prereg_commit": "35a6cb032c5f6ac5ced37ba3a86716a57e1123e8",
+      "source_commit": "8ed09b2fe3ea42332b2249a995737e13dd931ff3",
+      "source_sha256": "26332ae5d8d8d0481f0670cf5e3849497a415351d4026ae5bee15a5aab96d188"
+    },
+    "params_sha256": "c1dbd52ee5232a882b9d91278261af66b54f5902b0ad1eeead28888eefb34fb5"
+  },
+  "public_eligible": false,
+  "record_sha256": "ac3c027d62ece0b229a87b1ada64e0ba0f236e9e305c4aa1c50458575cfc21a1",
+  "research_only": true,
+  "scheduled_kickoff": "2026-10-18T13:30:00+00:00",
+  "schema": "fc-nfl-004-game-market-research-freeze-v1",
+  "selections": [
+    {
+      "decimal_odds": 1.819672,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -122,
+        "captured_at": "2026-10-12T17:01:26Z",
+        "espn_event_id": "401872996",
+        "event_id": "35605984",
+        "line": -2.5,
+        "market": "spread",
+        "market_id": "734.168823978",
+        "nflverse_game_id": "2026_06_HOU_JAX",
+        "selection_id": "50207",
+        "side": "HOME"
+      },
+      "implied_probability": 0.54955,
+      "lean_config": "C1",
+      "market": "spread",
+      "model_market_gap_points": 1.269823,
+      "models": {
+        "B0": {
+          "break_even": 0.54955,
+          "edge": 0.059812,
+          "ev_per_unit": 0.108838,
+          "p_lose": 0.390638,
+          "p_push": 0.0,
+          "p_win": 0.609362,
+          "p_win_conditional": 0.609362
+        },
+        "C1": {
+          "break_even": 0.54955,
+          "edge": -0.055973,
+          "ev_per_unit": -0.101853,
+          "p_lose": 0.506424,
+          "p_push": 0.0,
+          "p_win": 0.493576,
+          "p_win_conditional": 0.493576
+        },
+        "F1": {
+          "break_even": 0.54955,
+          "edge": 0.102524,
+          "ev_per_unit": 0.18656,
+          "p_lose": 0.347926,
+          "p_push": 0.0,
+          "p_win": 0.652074,
+          "p_win_conditional": 0.652074
+        },
+        "M0": {
+          "break_even": 0.54955,
+          "edge": -0.04955,
+          "ev_per_unit": -0.090164,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.523605,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.04955,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:c7c8cf68bb0fceec92a44b87937cb70e",
+      "source_payload_sha256": "f7cfd2fa76c89b6168ac4da212aac7f6e32a44ac26c3885994e9c88e72e3bc96",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 2.0,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": 100,
+        "captured_at": "2026-10-12T17:01:26Z",
+        "espn_event_id": "401872996",
+        "event_id": "35605984",
+        "line": 2.5,
+        "market": "spread",
+        "market_id": "734.168823978",
+        "nflverse_game_id": "2026_06_HOU_JAX",
+        "selection_id": "179823",
+        "side": "AWAY"
+      },
+      "implied_probability": 0.5,
+      "lean_config": "C1",
+      "market": "spread",
+      "model_market_gap_points": 1.269823,
+      "models": {
+        "B0": {
+          "break_even": 0.5,
+          "edge": -0.109362,
+          "ev_per_unit": -0.218723,
+          "p_lose": 0.609362,
+          "p_push": 0.0,
+          "p_win": 0.390638,
+          "p_win_conditional": 0.390638
+        },
+        "C1": {
+          "break_even": 0.5,
+          "edge": 0.006424,
+          "ev_per_unit": 0.012848,
+          "p_lose": 0.493576,
+          "p_push": 0.0,
+          "p_win": 0.506424,
+          "p_win_conditional": 0.506424
+        },
+        "F1": {
+          "break_even": 0.5,
+          "edge": -0.152074,
+          "ev_per_unit": -0.304147,
+          "p_lose": 0.652074,
+          "p_push": 0.0,
+          "p_win": 0.347926,
+          "p_win_conditional": 0.347926
+        },
+        "M0": {
+          "break_even": 0.5,
+          "edge": -0.0,
+          "ev_per_unit": -0.0,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.476395,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.04955,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:ed1c2c9cea167d46f0090e5b52c4385f",
+      "source_payload_sha256": "f7cfd2fa76c89b6168ac4da212aac7f6e32a44ac26c3885994e9c88e72e3bc96",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.892857,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -112,
+        "captured_at": "2026-10-12T17:01:26Z",
+        "espn_event_id": "401872996",
+        "event_id": "35605984",
+        "line": 42.5,
+        "market": "game_total",
+        "market_id": "734.168823982",
+        "nflverse_game_id": "2026_06_HOU_JAX",
+        "selection_id": "7017916",
+        "side": "OVER"
+      },
+      "implied_probability": 0.528302,
+      "lean_config": "C1",
+      "market": "game_total",
+      "model_market_gap_points": 0.23604,
+      "models": {
+        "B0": {
+          "break_even": 0.528302,
+          "edge": -0.0467,
+          "ev_per_unit": -0.088396,
+          "p_lose": 0.518398,
+          "p_push": 0.0,
+          "p_win": 0.481602,
+          "p_win_conditional": 0.481602
+        },
+        "C1": {
+          "break_even": 0.528302,
+          "edge": -0.028124,
+          "ev_per_unit": -0.053234,
+          "p_lose": 0.499822,
+          "p_push": 0.0,
+          "p_win": 0.500178,
+          "p_win_conditional": 0.500178
+        },
+        "F1": {
+          "break_even": 0.528302,
+          "edge": -0.017187,
+          "ev_per_unit": -0.032533,
+          "p_lose": 0.488885,
+          "p_push": 0.0,
+          "p_win": 0.511115,
+          "p_win_conditional": 0.511115
+        },
+        "M0": {
+          "break_even": 0.528302,
+          "edge": -0.028302,
+          "ev_per_unit": -0.053571,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.50433,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047533,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:de574b6438488d7b38b592ef238c4ebd",
+      "source_payload_sha256": "f7cfd2fa76c89b6168ac4da212aac7f6e32a44ac26c3885994e9c88e72e3bc96",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.925926,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -108,
+        "captured_at": "2026-10-12T17:01:26Z",
+        "espn_event_id": "401872996",
+        "event_id": "35605984",
+        "line": 42.5,
+        "market": "game_total",
+        "market_id": "734.168823982",
+        "nflverse_game_id": "2026_06_HOU_JAX",
+        "selection_id": "7017917",
+        "side": "UNDER"
+      },
+      "implied_probability": 0.519231,
+      "lean_config": "C1",
+      "market": "game_total",
+      "model_market_gap_points": 0.23604,
+      "models": {
+        "B0": {
+          "break_even": 0.519231,
+          "edge": -0.000833,
+          "ev_per_unit": -0.001604,
+          "p_lose": 0.481602,
+          "p_push": 0.0,
+          "p_win": 0.518398,
+          "p_win_conditional": 0.518398
+        },
+        "C1": {
+          "break_even": 0.519231,
+          "edge": -0.019409,
+          "ev_per_unit": -0.03738,
+          "p_lose": 0.500178,
+          "p_push": 0.0,
+          "p_win": 0.499822,
+          "p_win_conditional": 0.499822
+        },
+        "F1": {
+          "break_even": 0.519231,
+          "edge": -0.030346,
+          "ev_per_unit": -0.058443,
+          "p_lose": 0.511115,
+          "p_push": 0.0,
+          "p_win": 0.488885,
+          "p_win_conditional": 0.488885
+        },
+        "M0": {
+          "break_even": 0.519231,
+          "edge": -0.019231,
+          "ev_per_unit": -0.037037,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.49567,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047533,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:f646fd93d78850a12bb3d17fe01d25e3",
+      "source_payload_sha256": "f7cfd2fa76c89b6168ac4da212aac7f6e32a44ac26c3885994e9c88e72e3bc96",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.675676,
+      "decision": "MEASUREMENT_ONLY",
+      "grading_identity": {
+        "american_odds": -148,
+        "captured_at": "2026-10-12T17:01:26Z",
+        "espn_event_id": "401872996",
+        "event_id": "35605984",
+        "line": null,
+        "market": "moneyline",
+        "market_id": "734.168823981",
+        "nflverse_game_id": "2026_06_HOU_JAX",
+        "selection_id": "50207",
+        "side": "HOME"
+      },
+      "implied_probability": 0.596774,
+      "lean_config": "C1",
+      "market": "moneyline",
+      "model_market_gap_points": null,
+      "models": {
+        "B0": {
+          "break_even": 0.596774,
+          "edge": 0.055556,
+          "ev_per_unit": 0.092612,
+          "p_lose": 0.345873,
+          "p_push": 0.005168,
+          "p_win": 0.648959,
+          "p_win_conditional": 0.65233
+        },
+        "C1": {
+          "break_even": 0.596774,
+          "edge": -0.056044,
+          "ev_per_unit": -0.093357,
+          "p_lose": 0.456555,
+          "p_push": 0.005912,
+          "p_win": 0.537533,
+          "p_win_conditional": 0.54073
+        },
+        "F1": {
+          "break_even": 0.596774,
+          "edge": 0.097592,
+          "ev_per_unit": 0.162714,
+          "p_lose": 0.304106,
+          "p_push": 0.005002,
+          "p_win": 0.690893,
+          "p_win_conditional": 0.694366
+        },
+        "M0": {
+          "break_even": 0.596774,
+          "edge": -0.049581,
+          "ev_per_unit": -0.082591,
+          "p_lose": 0.450134,
+          "p_push": 0.005902,
+          "p_win": 0.543964,
+          "p_win_conditional": 0.547194
+        }
+      },
+      "no_vig_probability": 0.574234,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.039252,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "MARKET_NOT_IN_LEAN_SCOPE"
+      ],
+      "selection_key": "fcnfl004:851baf880529748716a3964a416c41ad",
+      "source_payload_sha256": "f7cfd2fa76c89b6168ac4da212aac7f6e32a44ac26c3885994e9c88e72e3bc96",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 2.26,
+      "decision": "MEASUREMENT_ONLY",
+      "grading_identity": {
+        "american_odds": 126,
+        "captured_at": "2026-10-12T17:01:26Z",
+        "espn_event_id": "401872996",
+        "event_id": "35605984",
+        "line": null,
+        "market": "moneyline",
+        "market_id": "734.168823981",
+        "nflverse_game_id": "2026_06_HOU_JAX",
+        "selection_id": "179823",
+        "side": "AWAY"
+      },
+      "implied_probability": 0.442478,
+      "lean_config": "C1",
+      "market": "moneyline",
+      "model_market_gap_points": null,
+      "models": {
+        "B0": {
+          "break_even": 0.442478,
+          "edge": -0.094808,
+          "ev_per_unit": -0.213159,
+          "p_lose": 0.648959,
+          "p_push": 0.005168,
+          "p_win": 0.345873,
+          "p_win_conditional": 0.34767
+        },
+        "C1": {
+          "break_even": 0.442478,
+          "edge": 0.016792,
+          "ev_per_unit": 0.037726,
+          "p_lose": 0.537533,
+          "p_push": 0.005912,
+          "p_win": 0.456555,
+          "p_win_conditional": 0.45927
+        },
+        "F1": {
+          "break_even": 0.442478,
+          "edge": -0.136844,
+          "ev_per_unit": -0.30772,
+          "p_lose": 0.690893,
+          "p_push": 0.005002,
+          "p_win": 0.304106,
+          "p_win_conditional": 0.305634
+        },
+        "M0": {
+          "break_even": 0.442478,
+          "edge": 0.010329,
+          "ev_per_unit": 0.023205,
+          "p_lose": 0.543964,
+          "p_push": 0.005902,
+          "p_win": 0.450134,
+          "p_win_conditional": 0.452806
+        }
+      },
+      "no_vig_probability": 0.425766,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.039252,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "MARKET_NOT_IN_LEAN_SCOPE"
+      ],
+      "selection_key": "fcnfl004:7336150f582c228a0fdef5a80cf07cff",
+      "source_payload_sha256": "f7cfd2fa76c89b6168ac4da212aac7f6e32a44ac26c3885994e9c88e72e3bc96",
+      "sportsbook": "FANDUEL"
+    }
+  ],
+  "sport": "NFL"
+}
