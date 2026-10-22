@@ -286,21 +286,21 @@
   "strikeouts": {
     "method": "platt",
     "params": {
-      "A": 1.374592801173212,
-      "B": -0.5084361336087595
+      "A": 0.8432830444169422,
+      "B": -0.1259493893243091
     },
     "meta": {
       "method": "platt",
-      "n_rows": 466,
+      "n_rows": 609,
       "fair_test_only": false,
       "prop_type": "all",
       "date_range": [
-        "2026-09-05",
-        "2026-09-22"
+        "2026-07-09",
+        "2026-08-03"
       ],
       "support_bin_width": 0.05,
       "support_min_count": 30,
-      "support_rows_basis": "train_only",
+      "support_rows_basis": "train_only_reconstructed",
       "support_bins": [
         {
           "lo": 0.0,
@@ -347,203 +347,61 @@
         {
           "lo": 0.35,
           "hi": 0.4,
+          "count": 11,
+          "supported": false
+        },
+        {
+          "lo": 0.4,
+          "hi": 0.45,
+          "count": 28,
+          "supported": false
+        },
+        {
+          "lo": 0.45,
+          "hi": 0.5,
           "count": 14,
           "supported": false
         },
         {
-          "lo": 0.4,
-          "hi": 0.45,
-          "count": 7,
-          "supported": false
-        },
-        {
-          "lo": 0.45,
-          "hi": 0.5,
-          "count": 20,
-          "supported": false
-        },
-        {
           "lo": 0.5,
           "hi": 0.55,
-          "count": 22,
+          "count": 28,
           "supported": false
         },
         {
           "lo": 0.55,
           "hi": 0.6,
-          "count": 46,
-          "supported": true
-        },
-        {
-          "lo": 0.6,
-          "hi": 0.65,
-          "count": 139,
-          "supported": true
-        },
-        {
-          "lo": 0.65,
-          "hi": 0.7,
-          "count": 105,
-          "supported": true
-        },
-        {
-          "lo": 0.7,
-          "hi": 0.75,
-          "count": 86,
-          "supported": true
-        },
-        {
-          "lo": 0.75,
-          "hi": 0.8,
-          "count": 27,
-          "supported": false
-        },
-        {
-          "lo": 0.8,
-          "hi": 0.85,
-          "count": 0,
-          "supported": false
-        },
-        {
-          "lo": 0.85,
-          "hi": 0.9,
-          "count": 0,
-          "supported": false
-        },
-        {
-          "lo": 0.9,
-          "hi": 0.95,
-          "count": 0,
-          "supported": false
-        },
-        {
-          "lo": 0.95,
-          "hi": 1.0,
-          "count": 0,
-          "supported": false
-        }
-      ]
-    }
-  },
-  "pitcher_outs": {
-    "method": "platt",
-    "params": {
-      "A": 3.0169144845237743,
-      "B": -1.7369623325834993
-    },
-    "meta": {
-      "method": "platt",
-      "n_rows": 416,
-      "fair_test_only": false,
-      "prop_type": "all",
-      "date_range": [
-        "2026-09-05",
-        "2026-09-22"
-      ],
-      "support_bin_width": 0.05,
-      "support_min_count": 30,
-      "support_rows_basis": "train_only",
-      "support_bins": [
-        {
-          "lo": 0.0,
-          "hi": 0.05,
-          "count": 0,
-          "supported": false
-        },
-        {
-          "lo": 0.05,
-          "hi": 0.1,
-          "count": 0,
-          "supported": false
-        },
-        {
-          "lo": 0.1,
-          "hi": 0.15,
-          "count": 0,
-          "supported": false
-        },
-        {
-          "lo": 0.15,
-          "hi": 0.2,
-          "count": 0,
-          "supported": false
-        },
-        {
-          "lo": 0.2,
-          "hi": 0.25,
-          "count": 0,
-          "supported": false
-        },
-        {
-          "lo": 0.25,
-          "hi": 0.3,
-          "count": 0,
-          "supported": false
-        },
-        {
-          "lo": 0.3,
-          "hi": 0.35,
-          "count": 1,
-          "supported": false
-        },
-        {
-          "lo": 0.35,
-          "hi": 0.4,
-          "count": 13,
-          "supported": false
-        },
-        {
-          "lo": 0.4,
-          "hi": 0.45,
-          "count": 7,
-          "supported": false
-        },
-        {
-          "lo": 0.45,
-          "hi": 0.5,
           "count": 35,
           "supported": true
         },
         {
-          "lo": 0.5,
-          "hi": 0.55,
-          "count": 57,
-          "supported": true
-        },
-        {
-          "lo": 0.55,
-          "hi": 0.6,
-          "count": 74,
-          "supported": true
-        },
-        {
           "lo": 0.6,
           "hi": 0.65,
-          "count": 80,
+          "count": 154,
           "supported": true
         },
         {
           "lo": 0.65,
           "hi": 0.7,
-          "count": 70,
+          "count": 164,
           "supported": true
         },
         {
           "lo": 0.7,
           "hi": 0.75,
-          "count": 61,
+          "count": 131,
           "supported": true
         },
         {
           "lo": 0.75,
           "hi": 0.8,
-          "count": 16,
-          "supported": false
+          "count": 44,
+          "supported": true
         },
         {
           "lo": 0.8,
           "hi": 0.85,
-          "count": 2,
+          "count": 0,
           "supported": false
         },
         {

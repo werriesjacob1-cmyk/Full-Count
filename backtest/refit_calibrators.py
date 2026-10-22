@@ -286,6 +286,10 @@ def main(argv=None) -> int:
                     help="don't run backtest/engine.py to fetch new rows; use --rows as-is")
     ap.add_argument("--dry-run", action="store_true",
                     help="compute and report, but never write calibrators_by_market.json")
+    ap.add_argument("--candidates-out", default=None,
+                    help="with --dry-run: write bar-clearing fits here as CANDIDATES for human "
+                         "review (2026-10-12 governance: production calibrators change only via "
+                         "an approved, versioned backtest/calibration_registry.json entry)")
     ap.add_argument("--quiet", action="store_true")
     args = ap.parse_args(argv)
     verbose = not args.quiet
@@ -323,6 +327,10 @@ def main(argv=None) -> int:
 
     report = build_report(decisions, (start, end), args.method, args.test_frac,
                           len(rows), len(train), len(held_out))
+    # "promote" means "cleared the automated bar"; whether production changed is explicit.
+    report["production_written"] = bool(promoted) and not args.dry_run
+    report["promotion_mode"] = ("candidate_only_requires_registry_approval" if args.dry_run
+                                else "auto_write_production")
     with open(args.report, "w", encoding="utf-8") as f:
         json.dump(report, f, indent=2)
 
@@ -341,6 +349,13 @@ def main(argv=None) -> int:
         if args.dry_run:
             if verbose:
                 print(f"[dry-run] would have written {args.out}")
+            if args.candidates_out:
+                candidates_doc = dict(existing)
+                candidates_doc.update(promoted)
+                cal.save_calibrators(candidates_doc, args.candidates_out)
+                if verbose:
+                    print(f"Wrote CANDIDATE calibrators for review: {args.candidates_out} "
+                          f"(production {args.out} unchanged)")
         else:
             cal.save_calibrators(updated, args.out)
             if verbose:

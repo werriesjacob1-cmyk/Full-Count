@@ -14,10 +14,10 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Compute and report, but never write backtest/calibrators_by_market.json"
+        description: "Retained for compatibility; every run is now report/candidate-only (never writes production calibrators)"
         required: false
         type: boolean
-        default: false
+        default: true
 
 permissions:
   contents: write
@@ -72,25 +72,36 @@ jobs:
 
       - name: Run the calibration recheck
         # Extends backtest/rows.jsonl to the current rolling window, fits one
-        # candidate calibrator per market on the older portion, and only
-        # promotes a candidate into backtest/calibrators_by_market.json if it
-        # clears a real held-out improvement bar over BOTH the raw probability
-        # and whatever is already shipping for that market. See
+        # candidate calibrator per market on the older portion, and records as
+        # a CANDIDATE (backtest/calibrator_candidates.json, never production)
+        # any fit that clears the held-out improvement bar over BOTH the raw
+        # probability and whatever is already shipping for that market. See
         # backtest/refit_calibrators.py's own module docstring for exactly
         # what the bar is and why it is deliberately conservative. Writes
         # backtest/calibration_recheck_report.json every run, promoted or not,
         # so "checked, nothing changed" is a visible, committed fact.
-        env:
-          EXTRA_ARGS: ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '--dry-run' || '' }}
-        run: python3 backtest/refit_calibrators.py $EXTRA_ARGS
+        #
+        # GOVERNANCE (2026-10-12 audit): this job no longer writes production
+        # calibrators. Unreviewed weekly auto-promotion changed shipped
+        # strikeouts/pitcher_outs probabilities 5 times (2026-09-14..10-12) with
+        # no CALIBRATION_VERSION bump, contrary to engineering/AUDIT/README.md
+        # ("calibration changes require a separate validation task, held-out
+        # evidence, explicit versioning"). Fits that clear the automated bar are
+        # committed as CANDIDATES; production changes only through a reviewed PR
+        # that adds an approved, versioned entry to backtest/calibration_registry.json
+        # (enforced by test_calibration_governance.py).
+        run: >-
+          python3 backtest/refit_calibrators.py --dry-run
+          --candidates-out backtest/calibrator_candidates.json
 
-      - name: Commit any promoted calibrators and this run's report
+      - name: Commit this run's report and candidate calibrators (never production)
         if: always()
         run: |
           shopt -s nullglob
           git config user.name "mlb-pipeline-bot"
           git config user.email "actions@github.com"
-          git add backtest/calibrators_by_market.json backtest/calibration_recheck_report.json
+          git add backtest/calibration_recheck_report.json
+          if [ -f backtest/calibrator_candidates.json ]; then git add backtest/calibrator_candidates.json; fi
           if git diff --cached --quiet; then
             echo "No calibration changes and no new report to commit."
             exit 0

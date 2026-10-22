@@ -1,0 +1,137 @@
+{
+  "schema": "full-count-calibration-registry-v1",
+  "policy": "Production backtest/calibrators_by_market.json must equal an APPROVED entry below, market-for-market (method, params, supported region), and recommendation.CALIBRATION_VERSION must equal that entry's version. Changing production calibration requires a reviewed PR that adds a new approved entry with a bumped version, held-out AND forward evidence, and Jacob's authorization (engineering/AUDIT/README.md). The weekly recheck may only write candidates (backtest/calibrator_candidates.json).",
+  "approved": [
+    {
+      "calibration_version": "1.0.0",
+      "source_commit": "a052e79aae98e000751bf026261ca5ff37dd245a",
+      "source_file_sha256": "435765993301e212e2b9db2b0348bafa49b3d9ecf4face483990e67cafc1c877",
+      "fixture": "backtest/fixtures/calibrators_by_market_v1.0.0_a052e79a.json",
+      "basis": "Last production calibrator set committed by Jacob-directed engineering sessions before the unattended weekly bot began writing production (bot's first production write: 9e820aab47, 2026-09-14). Provenance: per-market refit 4118bc69 (2026-08-12; pitcher_outs/nrfi_combined/singles deliberately NOT fit), hard_hit_105 removed 3c047e5b (2026-08-14), strikeouts refit 83f1f6a0 (2026-08-15), support_bins backfilled b64e3ed5 and bounded a052e79a (2026-08-19, params byte-identical). No separate written approval existed at the time; the H1 audit materiality numbers were computed against these coefficients.",
+      "markets": {
+        "hits": {
+          "method": "platt",
+          "params": {
+            "A": 5.6923075992789025,
+            "B": -3.0162887832417584
+          },
+          "supported_region": [
+            0.55,
+            0.7
+          ]
+        },
+        "hits_runs_rbis": {
+          "method": "platt",
+          "params": {
+            "A": 2.6016350036383287,
+            "B": -1.0387400219330867
+          },
+          "supported_region": [
+            0.55,
+            0.8
+          ]
+        },
+        "strikeouts": {
+          "method": "platt",
+          "params": {
+            "A": 0.8432830444169422,
+            "B": -0.1259493893243091
+          },
+          "supported_region": [
+            0.55,
+            0.8
+          ]
+        }
+      },
+      "authorization": {
+        "by": "Jacob",
+        "date": "2026-10-12",
+        "decision": "Option A: restore v1.0.0 as production, subject to independent verification before merge",
+        "record": "PR #225 / Issue #91"
+      },
+      "evidence_class": "restoration of the last pre-bot, manually curated artifact, explicitly authorized for restoration on 2026-10-12; NOT a newly demonstrated predictive improvement"
+    }
+  ],
+  "unapproved_history": [
+    {
+      "commit": "9e820aab470685bf05405b50a6a1df6a582f317c",
+      "date": "2026-09-14",
+      "author": "mlb-pipeline-bot (calibration-recheck.yml)",
+      "change": "ADDED pitcher_outs calibrator (market previously rejected by manual review)",
+      "fixture": "backtest/fixtures/unapproved/calibrators_by_market_2026-09-14_9e820aab47.json",
+      "file_sha256": "87f34efc1e4b683fe002263cbed75f262234c3f5dafdd36cc07b838cbd790369",
+      "in_production": "2026-09-14 .. 2026-09-20",
+      "calibration_version_label_shipped": "1.0.0 (unchanged; mislabelled)",
+      "markets": [
+        "hits",
+        "hits_runs_rbis",
+        "pitcher_outs",
+        "strikeouts"
+      ]
+    },
+    {
+      "commit": "b87e01a6dfca1356a405aad4d6a5b39e875803ea",
+      "date": "2026-09-21",
+      "author": "mlb-pipeline-bot (calibration-recheck.yml)",
+      "change": "refit pitcher_outs",
+      "fixture": "backtest/fixtures/unapproved/calibrators_by_market_2026-09-21_b87e01a6df.json",
+      "file_sha256": "32ac17bd0f6243b9522cdb079b19bd04e4df64ceef18b646d380ccfbdc9781cd",
+      "in_production": "2026-09-21 .. 2026-09-27",
+      "calibration_version_label_shipped": "1.0.0 (unchanged; mislabelled)",
+      "markets": [
+        "hits",
+        "hits_runs_rbis",
+        "pitcher_outs",
+        "strikeouts"
+      ]
+    },
+    {
+      "commit": "ea4f99208917fbe194f953e650e5fd80b050315b",
+      "date": "2026-09-28",
+      "author": "mlb-pipeline-bot (calibration-recheck.yml)",
+      "change": "refit pitcher_outs",
+      "fixture": "backtest/fixtures/unapproved/calibrators_by_market_2026-09-28_ea4f992089.json",
+      "file_sha256": "3423b1c24e237af9c51a682118e1e90ccb1ab0f2247d6b5564c07dc6a0584dfd",
+      "in_production": "2026-09-28 .. 2026-10-04",
+      "calibration_version_label_shipped": "1.0.0 (unchanged; mislabelled)",
+      "markets": [
+        "hits",
+        "hits_runs_rbis",
+        "pitcher_outs",
+        "strikeouts"
+      ]
+    },
+    {
+      "commit": "8a5901521f0c3ff2e9fcd1b66bf61ccce0087d07",
+      "date": "2026-10-05",
+      "author": "mlb-pipeline-bot (calibration-recheck.yml)",
+      "change": "refit strikeouts (beat shipped by 0.0006 Brier on 236 held-out rows) and pitcher_outs",
+      "fixture": "backtest/fixtures/unapproved/calibrators_by_market_2026-10-05_8a5901521f.json",
+      "file_sha256": "5951ef195a41c87f2ee8cfa325196ff3331892169ed92f3e680fd2d7436231d5",
+      "in_production": "2026-10-05 .. 2026-10-11",
+      "calibration_version_label_shipped": "1.0.0 (unchanged; mislabelled)",
+      "markets": [
+        "hits",
+        "hits_runs_rbis",
+        "pitcher_outs",
+        "strikeouts"
+      ]
+    },
+    {
+      "commit": "34382f8af28c8c324911794d7e3ed4aa097e06c8",
+      "date": "2026-10-12",
+      "author": "mlb-pipeline-bot (calibration-recheck.yml)",
+      "change": "refit strikeouts (support narrowed to [0.55,0.75)) and pitcher_outs",
+      "fixture": "backtest/fixtures/unapproved/calibrators_by_market_2026-10-12_34382f8af2.json",
+      "file_sha256": "2f15846e40afa0986c86175c08bd86b642ef8d059658e79a222def725d96af3d",
+      "in_production": "2026-10-12 .. 2026-10-12 (until this restoration merges)",
+      "calibration_version_label_shipped": "1.0.0 (unchanged; mislabelled)",
+      "markets": [
+        "hits",
+        "hits_runs_rbis",
+        "pitcher_outs",
+        "strikeouts"
+      ]
+    }
+  ]
+}

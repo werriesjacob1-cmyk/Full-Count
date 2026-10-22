@@ -265,12 +265,14 @@ check(abs(c5["line_options"][0]["prob"] - 0.72) < 1e-9,
       "once, independently of the primary line's own single application",
       f"got {c5['line_options'][0]['prob']}")
 
-head("6. Fitted calibrator parameters on disk are untouched by this fix -- loads the real "
-     "committed backtest/calibrators_by_market.json and checks the exact coefficients this "
-     "audit's own materiality numbers were computed against")
+head("6. The calibrator coefficients this audit's materiality numbers were computed against "
+     "are the APPROVED v1.0.0 set (committed fixture) -- 2026-10-12 governance audit: this "
+     "section used to read the LIVE artifact, which the weekly recheck bot changed without "
+     "review; the live artifact is now governed, for every market, by "
+     "test_calibration_governance.py")
 
-_cal_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "backtest",
-                         "calibrators_by_market.json")
+_cal_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "backtest", "fixtures",
+                         "calibrators_by_market_v1.0.0_a052e79a.json")
 with open(_cal_path) as f:
     _cal = json.load(f)
 _expected = {
@@ -281,7 +283,7 @@ _expected = {
 for market, (a, b) in _expected.items():
     got = _cal.get(market, {}).get("params", {})
     check(abs(got.get("A", 0) - a) < 1e-9 and abs(got.get("B", 0) - b) < 1e-9,
-          f"{market} calibrator params on disk are exactly unchanged (A={a}, B={b})",
+          f"{market} approved v1.0.0 calibrator params are exactly the audited ones (A={a}, B={b})",
           f"got {got}")
 
 head("7. Recommendation thresholds are untouched by this fix -- this PR changes CI "
@@ -337,9 +339,9 @@ if _h1_range_reachable:
           "without invalidating this check.)", f"got changed files: {_diff_files!r}")
 else:
     print("  [SKIP] H1's historical commit range (%s..%s) not reachable in this checkout "
-         "(shallow clone) -- cannot verify H1's own diff scope here; section 6's "
-         "fitted-params check above already covers the invariant that actually matters "
-         "going forward" % (_PRE_H1_SHA, _H1_MERGE_SHA))
+         "(shallow clone) -- cannot verify H1's own diff scope here; the going-forward "
+         "calibrator invariant is enforced for every market by "
+         "test_calibration_governance.py" % (_PRE_H1_SHA, _H1_MERGE_SHA))
 
 
 head("9. 2026-08-24 SECOND CI PATH FIX: the deployed live board still showed "

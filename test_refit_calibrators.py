@@ -240,6 +240,34 @@ check("hits" in updated and updated["hits"] is not existing_other,
       "the newly promoted market is added alongside it")
 
 
+head("11. GOVERNANCE (2026-10-12): --dry-run --candidates-out writes a bar-clearing fit "
+     "ONLY as a candidate; production calibrators stay byte-identical")
+
+TMP11 = tempfile.mkdtemp(prefix="gridiron_test_refit_cand_")
+rows11 = os.path.join(TMP11, "rows.jsonl")
+with open(rows11, "w", encoding="utf-8") as f:
+    for r in make_rows("hits", dates, per_date=30, true_rate_fn=OVERCONFIDENT, seed=11):
+        f.write(json.dumps(r) + "\n")
+prod11 = os.path.join(TMP11, "calibrators_by_market.json")
+cal.save_calibrators({"strikeouts": existing_other}, prod11)
+before11 = open(prod11, "rb").read()
+cand11 = os.path.join(TMP11, "calibrator_candidates.json")
+rep11 = os.path.join(TMP11, "report.json")
+rc.main(["--no-extend", "--rows", rows11, "--start", dates[0], "--end", dates[-1], "--out", prod11,
+         "--report", rep11, "--dry-run", "--candidates-out", cand11, "--quiet"])
+check(open(prod11, "rb").read() == before11, "production calibrators file is byte-identical")
+cands = json.load(open(cand11)) if os.path.exists(cand11) else {}
+check("hits" in cands and "strikeouts" in cands,
+      "the bar-clearing hits fit is written as a CANDIDATE alongside the carried-through market",
+      f"got {sorted(cands)}")
+rep = json.load(open(rep11))
+check(rep.get("production_written") is False
+      and rep.get("promotion_mode") == "candidate_only_requires_registry_approval",
+      "the report states explicitly that production was not written", str({k: rep.get(k) for k in (
+          "production_written", "promotion_mode")}))
+shutil.rmtree(TMP11, ignore_errors=True)
+
+
 n_pass = sum(1 for ok, _, _ in _results if ok)
 n_total = len(_results)
 print("\n" + "=" * 78)
