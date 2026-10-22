@@ -1,0 +1,60 @@
+{
+ "protocol_id": "FC-ACC-016",
+ "protocol_version": "1.0.0",
+ "interface_version": "fc-acc-016-bundle-1",
+ "status": "PREREGISTERED_INACTIVE_RESEARCH_ONLY",
+ "model_lock_file": "research/fc_acc_016/model_lock.json",
+ "frozen_model_sha256": "07115a546d839aeb7cf1ff0df45d9c9c27ac3a7757fc242d1393d38f8157207b",
+ "production_gate_code": {
+  "prop_probability.py_sha256": "eafc90ac9ba3dcc14e56cc2222019b9ccf28c67b6c0fcc84df84770a75d097bb",
+  "recommendation.py_sha256": "a05424df25d4c9566bcafd8643d12b3e1c00efe1ec28509995a417a743ec2c73",
+  "pinned_at_main": "142abacb4"
+ },
+ "challengers": {
+  "total_bases": {"role": "PRIMARY", "market": "total_bases", "needs": 2, "line": 1.5, "side": "OVER",
+                  "sportsbook_market_type": "TO_RECORD_2+_TOTAL_BASES", "two_sided": false,
+                  "probability_interpretation": "P(official total bases >= 2 in this game | batter in confirmed starting lineup), frozen ridge-logistic output used as-is, no further calibration"},
+  "hits": {"role": "SECONDARY", "market": "hits", "needs": 1, "line": 0.5, "side": "OVER",
+           "sportsbook_market_type": "PLAYER_TO_RECORD_A_HIT", "two_sided": false,
+           "probability_interpretation": "P(official hits >= 1 in this game | batter in confirmed starting lineup), frozen ridge-logistic output used as-is, no further calibration"},
+  "strikeouts": {"role": "RESEARCH_DIAGNOSTIC_ONLY", "note": "logged only; never enters any arm or any promotion decision"}
+ },
+ "lanes": {
+  "TP": {"champion_status": "top_pick", "probability_floor_min": 0.60, "probability_cap_exclusive": null,
+         "min_reliability": ["A", "B"], "lineup_confirmed_required": true, "suspect_blocks": false,
+         "ordering": "PESSIMISTIC_PROBABILITY_DESC", "role": "MANDATED_PRIMARY_OPERATIONAL_LANE"},
+  "V": {"champion_status": "value", "probability_floor_min": null, "probability_cap_exclusive": 0.60,
+        "min_reliability": null, "lineup_confirmed_required": false, "suspect_blocks": true,
+        "ordering": "PESSIMISTIC_ROI_DESC", "role": "PREREGISTERED_ALTERNATIVE_PRIMARY_REQUIRES_GOVERNANCE_CHOICE"}
+ },
+ "gates": {
+  "min_roi": 0.05,
+  "require_robust": true,
+  "max_offer_age_seconds": 2700,
+  "max_board_age_seconds": 14400,
+  "sportsbook": "fanduel",
+  "offer_join_label_required": "MATCHED_RESEARCH_ONLY",
+  "offer_authenticated_required": true,
+  "slot_source_required": "CONFIRMED_LINEUP_AT_DECISION",
+  "sp_source_required": "ANNOUNCED_PROBABLE_AT_DECISION",
+  "challenger_interval_rule": "p_lo_challenger = p_challenger - max(0, p_champion - p_lo_champion) for the same line; no champion interval -> no challenger interval -> robust test fails closed",
+  "max_selections_per_player_per_unit": 1
+ },
+ "decision_unit": "one champion export run R; the unit's games are those whose final pregame export (prepared_at <= first_pitch - 10 min) is R; N_u = champion rows with the lane status in R for those games",
+ "final_pregame_margin_seconds": 600,
+ "evaluation": {
+  "horizon": "all decision units from 2027 MLB Opening Day through the final 2027 regular-season day, unless Jacob fixes a different end date in writing BEFORE capture starts",
+  "optional_stopping": false,
+  "interim_looks": "one safety-only look at mid-season (integrity and ROI-deterioration monitoring); no efficacy decision before the horizon",
+  "bootstrap_reps": 10000,
+  "bootstrap_seed": 20270101,
+  "cluster_primary": "slate (date)",
+  "cluster_sensitivity": ["game", "player"],
+  "min_discordant_settled_for_evaluable": 200,
+  "roi_noninferiority_margin_per_unit": -0.02,
+  "max_noncomparable_unit_share": 0.10,
+  "min_realized_volume_share": 0.95,
+  "calibration_bounds": {"citl_abs_max": 0.03, "slope_min": 0.7, "slope_max": 1.3},
+  "serving_skew_bounds": {"missing_rate_abs_diff_max": 0.10, "standardized_mean_shift_abs_max": 0.5}
+ }
+}

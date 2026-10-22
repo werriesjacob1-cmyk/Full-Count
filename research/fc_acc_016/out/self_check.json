@@ -1,0 +1,542 @@
+{
+ "synthetic": true,
+ "cases": {
+  "zero_pick_slate_invents_nothing": {
+   "pass": true,
+   "expected": {
+    "N": 0,
+    "A": [],
+    "B": [],
+    "C": [],
+    "comparable": true
+   },
+   "got": {
+    "N": 0,
+    "A": [],
+    "B": [],
+    "C": [],
+    "comparable": true,
+    "added": [],
+    "removed": [],
+    "exclusions": {},
+    "integrity": []
+   }
+  },
+  "tb_without_offer_cannot_enter": {
+   "pass": true,
+   "expected": {
+    "B": [
+     "h1",
+     "h2"
+    ],
+    "excl": "NO_OFFER"
+   },
+   "got": {
+    "N": 2,
+    "A": [
+     "h1",
+     "h2"
+    ],
+    "B": [
+     "h1",
+     "h2"
+    ],
+    "C": [
+     "h1",
+     "h2"
+    ],
+    "comparable": true,
+    "added": [],
+    "removed": [],
+    "exclusions": {
+     "NO_OFFER": 1
+    },
+    "integrity": []
+   }
+  },
+  "tb_stale_offer_cannot_enter": {
+   "pass": true,
+   "expected": {
+    "B": [
+     "h1",
+     "h2"
+    ],
+    "excl": "STALE_OFFER"
+   },
+   "got": {
+    "N": 2,
+    "A": [
+     "h1",
+     "h2"
+    ],
+    "B": [
+     "h1",
+     "h2"
+    ],
+    "C": [
+     "h1",
+     "h2"
+    ],
+    "comparable": true,
+    "added": [],
+    "removed": [],
+    "exclusions": {
+     "STALE_OFFER": 1
+    },
+    "integrity": []
+   }
+  },
+  "tb_post_cutoff_offer_cannot_enter": {
+   "pass": true,
+   "expected": {
+    "B": [
+     "h1",
+     "h2"
+    ],
+    "excl": "OFFER_AFTER_CUTOFF"
+   },
+   "got": {
+    "N": 2,
+    "A": [
+     "h1",
+     "h2"
+    ],
+    "B": [
+     "h1",
+     "h2"
+    ],
+    "C": [
+     "h1",
+     "h2"
+    ],
+    "comparable": true,
+    "added": [],
+    "removed": [],
+    "exclusions": {
+     "OFFER_AFTER_CUTOFF": 1
+    },
+    "integrity": []
+   }
+  },
+  "tb_unconfirmed_lineup_cannot_enter": {
+   "pass": true,
+   "expected": {
+    "B": [
+     "h1",
+     "h2"
+    ],
+    "excl": "LINEUP_NOT_CONFIRMED"
+   },
+   "got": {
+    "N": 2,
+    "A": [
+     "h1",
+     "h2"
+    ],
+    "B": [
+     "h1",
+     "h2"
+    ],
+    "C": [
+     "h1",
+     "h2"
+    ],
+    "comparable": true,
+    "added": [],
+    "removed": [],
+    "exclusions": {
+     "LINEUP_NOT_CONFIRMED": 2
+    },
+    "integrity": []
+   }
+  },
+  "tb_hindsight_slot_cannot_enter": {
+   "pass": true,
+   "expected": {
+    "B": [
+     "h1",
+     "h2"
+    ],
+    "excl": "SLOT_NOT_FROM_CONFIRMED_LINEUP"
+   },
+   "got": {
+    "N": 2,
+    "A": [
+     "h1",
+     "h2"
+    ],
+    "B": [
+     "h1",
+     "h2"
+    ],
+    "C": [
+     "h1",
+     "h2"
+    ],
+    "comparable": true,
+    "added": [],
+    "removed": [],
+    "exclusions": {
+     "SLOT_NOT_FROM_CONFIRMED_LINEUP": 1
+    },
+    "integrity": []
+   }
+  },
+  "tb_missing_critical_feature_fails_closed": {
+   "pass": true,
+   "expected": {
+    "B": [
+     "h1",
+     "h2"
+    ],
+    "excl": "MISSING_CRITICAL:skill_tb"
+   },
+   "got": {
+    "N": 2,
+    "A": [
+     "h1",
+     "h2"
+    ],
+    "B": [
+     "h1",
+     "h2"
+    ],
+    "C": [
+     "h1",
+     "h2"
+    ],
+    "comparable": true,
+    "added": [],
+    "removed": [],
+    "exclusions": {
+     "MISSING_CRITICAL:skill_tb": 1
+    },
+    "integrity": []
+   }
+  },
+  "qualifying_tb_displaces_weakest_champion": {
+   "pass": true,
+   "expected": {
+    "N": 2,
+    "B": [
+     "h1",
+     "tb1"
+    ],
+    "added": [
+     "tb1"
+    ],
+    "removed": [
+     "h2"
+    ]
+   },
+   "got": {
+    "N": 2,
+    "A": [
+     "h1",
+     "h2"
+    ],
+    "B": [
+     "h1",
+     "tb1"
+    ],
+    "C": [
+     "h1",
+     "h2"
+    ],
+    "comparable": true,
+    "added": [
+     "tb1"
+    ],
+    "removed": [
+     "h2"
+    ],
+    "exclusions": {},
+    "integrity": []
+   }
+  },
+  "high_probability_bad_price_cannot_enter": {
+   "pass": true,
+   "expected": {
+    "B": [
+     "h1",
+     "h2"
+    ],
+    "excl": "FAILS_PROBABILITY_OR_PRICE_GATE"
+   },
+   "got": {
+    "N": 2,
+    "A": [
+     "h1",
+     "h2"
+    ],
+    "B": [
+     "h1",
+     "h2"
+    ],
+    "C": [
+     "h1",
+     "tb1"
+    ],
+    "comparable": true,
+    "added": [],
+    "removed": [],
+    "exclusions": {
+     "FAILS_PROBABILITY_OR_PRICE_GATE": 1
+    },
+    "integrity": []
+   }
+  },
+  "tb_below_top_pick_floor_cannot_enter_tp": {
+   "pass": true,
+   "expected": {
+    "B": [
+     "h1",
+     "h2"
+    ],
+    "excl": "FAILS_PROBABILITY_OR_PRICE_GATE"
+   },
+   "got": {
+    "N": 2,
+    "A": [
+     "h1",
+     "h2"
+    ],
+    "B": [
+     "h1",
+     "h2"
+    ],
+    "C": [
+     "h1",
+     "h2"
+    ],
+    "comparable": true,
+    "added": [],
+    "removed": [],
+    "exclusions": {
+     "FAILS_PROBABILITY_OR_PRICE_GATE": 1
+    },
+    "integrity": []
+   }
+  },
+  "champion_offer_invalid_marks_noncomparable": {
+   "pass": true,
+   "expected": {
+    "comparable": false
+   },
+   "got": {
+    "N": 2,
+    "A": [
+     "h1",
+     "h2"
+    ],
+    "B": [
+     "h1",
+     "tb1"
+    ],
+    "C": [
+     "h1",
+     "tb1"
+    ],
+    "comparable": false,
+    "added": [
+     "tb1"
+    ],
+    "removed": [
+     "h2"
+    ],
+    "exclusions": {},
+    "integrity": []
+   }
+  },
+  "sealed_after_first_pitch_invalid": {
+   "pass": true,
+   "expected": {
+    "comparable": false,
+    "integrity": "SEALED_AFTER_FIRST_PITCH"
+   },
+   "got": {
+    "N": 2,
+    "A": [
+     "h1",
+     "h2"
+    ],
+    "B": [
+     "h1",
+     "h2"
+    ],
+    "C": [
+     "h1",
+     "h2"
+    ],
+    "comparable": false,
+    "added": [],
+    "removed": [],
+    "exclusions": {},
+    "integrity": [
+     "SEALED_AFTER_FIRST_PITCH"
+    ]
+   }
+  },
+  "same_player_concentration_blocked": {
+   "pass": true,
+   "expected": {
+    "B": [
+     "h1",
+     "h2"
+    ],
+    "excl": "PLAYER_ALREADY_SELECTED"
+   },
+   "got": {
+    "N": 2,
+    "A": [
+     "h1",
+     "h2"
+    ],
+    "B": [
+     "h1",
+     "h2"
+    ],
+    "C": [
+     "h1",
+     "h2"
+    ],
+    "comparable": true,
+    "added": [],
+    "removed": [],
+    "exclusions": {
+     "PLAYER_ALREADY_SELECTED": 1
+    },
+    "integrity": []
+   }
+  },
+  "lane_v_tb_enters_on_pessimistic_roi": {
+   "pass": true,
+   "expected": {
+    "N": 2,
+    "B": [
+     "tbv",
+     "v1"
+    ],
+    "added": [
+     "tbv"
+    ],
+    "removed": [
+     "v2"
+    ]
+   },
+   "got": {
+    "N": 2,
+    "A": [
+     "v1",
+     "v2"
+    ],
+    "B": [
+     "tbv",
+     "v1"
+    ],
+    "C": [
+     "tbv",
+     "v1"
+    ],
+    "comparable": true,
+    "added": [
+     "tbv"
+    ],
+    "removed": [
+     "v2"
+    ],
+    "exclusions": {},
+    "integrity": []
+   }
+  },
+  "market_only_picks_highest_implied": {
+   "pass": true,
+   "expected": {
+    "C": [
+     "h1",
+     "h3"
+    ]
+   },
+   "got": {
+    "N": 2,
+    "A": [
+     "h1",
+     "h2"
+    ],
+    "B": [
+     "h1",
+     "h2"
+    ],
+    "C": [
+     "h1",
+     "h3"
+    ],
+    "comparable": true,
+    "added": [],
+    "removed": [],
+    "exclusions": {},
+    "integrity": []
+   }
+  },
+  "hits_secondary_regoverns_hits_rows": {
+   "pass": true,
+   "expected": {
+    "N": 2,
+    "B": [
+     "h1",
+     "h3"
+    ],
+    "added": [
+     "h3"
+    ],
+    "removed": [
+     "h2"
+    ]
+   },
+   "got": {
+    "N": 2,
+    "A": [
+     "h1",
+     "h2"
+    ],
+    "B": [
+     "h1",
+     "h3"
+    ],
+    "C": [
+     "h1",
+     "h2"
+    ],
+    "comparable": true,
+    "added": [
+     "h3"
+    ],
+    "removed": [
+     "h2"
+    ],
+    "exclusions": {
+     "FAILS_PROBABILITY_OR_PRICE_GATE": 1
+    },
+    "integrity": []
+   }
+  },
+  "selection_is_outcome_blind": {
+   "pass": true
+  },
+  "settlement_void_and_price": {
+   "pass": true,
+   "got": {
+    "wins": 1,
+    "losses": 0,
+    "void": 1,
+    "unresolved": 0,
+    "profit": 0.7142857142857144,
+    "stakes": 1
+   }
+  },
+  "strikeouts_research_only": {
+   "pass": true
+  }
+ },
+ "all_pass": true
+}
