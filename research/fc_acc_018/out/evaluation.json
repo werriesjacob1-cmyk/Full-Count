@@ -1,0 +1,1564 @@
+{
+ "grading_consistency": {
+  "agree": 542,
+  "agreement_share": 1.0
+ },
+ "source": {
+  "raw_logs_files": 43
+ },
+ "periods": {
+  "P1_least_exposed": {
+   "dates": [
+    "2026-08-18",
+    "2026-08-24",
+    "2026-08-26",
+    "2026-08-28",
+    "2026-08-29",
+    "2026-08-31",
+    "2026-09-01",
+    "2026-09-02",
+    "2026-09-03",
+    "2026-09-05",
+    "2026-09-06",
+    "2026-09-07",
+    "2026-09-08",
+    "2026-09-10",
+    "2026-09-11",
+    "2026-09-12",
+    "2026-09-13",
+    "2026-09-14",
+    "2026-09-16",
+    "2026-09-17",
+    "2026-09-18",
+    "2026-09-19"
+   ],
+   "original": {
+    "slates": 22,
+    "target": 305,
+    "fill": {
+     "B": 0.3442622950819672,
+     "C": 0.32459016393442625
+    },
+    "arms": {
+     "A": {
+      "picks": 305,
+      "settled": 305,
+      "wins": 162,
+      "losses": 143,
+      "void": 0,
+      "hit_rate": 0.5311475409836065,
+      "roi_unauthenticated": -0.10239420757861584,
+      "profit": -31.23023331147783,
+      "market_expected_wins": 163.10685185185196
+     },
+     "B": {
+      "picks": 105,
+      "settled": 105,
+      "wins": 73,
+      "losses": 32,
+      "void": 0,
+      "hit_rate": 0.6952380952380952,
+      "roi_unauthenticated": -0.0840460274107371,
+      "profit": -8.824832878127395,
+      "market_expected_wins": 73.57277777777776
+     },
+     "C": {
+      "picks": 99,
+      "settled": 99,
+      "wins": 72,
+      "losses": 27,
+      "void": 0,
+      "hit_rate": 0.7272727272727273,
+      "roi_unauthenticated": -0.014470833768996223,
+      "profit": -1.432612543130626,
+      "market_expected_wins": 67.64583333333331
+     }
+    },
+    "added_removed": {
+     "C_vs_A": {
+      "added": 91,
+      "added_wins": 66,
+      "removed": 297,
+      "removed_wins": 156
+     },
+     "B_vs_A": {
+      "added": 102,
+      "added_wins": 72,
+      "removed": 302,
+      "removed_wins": 161
+     },
+     "C_vs_B": {
+      "added": 72,
+      "added_wins": 53,
+      "removed": 78,
+      "removed_wins": 54
+     }
+    },
+    "C_minus_A": {
+     "diff": 0.1961251862891208,
+     "ci_slate": [
+      0.09442546500976473,
+      0.2963801403122683
+     ],
+     "ci_game": [
+      0.09077307158080779,
+      0.29981986834013946
+     ],
+     "slates": 22,
+     "games": 178
+    },
+    "B_minus_A": {
+     "diff": 0.1640905542544887,
+     "ci_slate": [
+      0.05420142204318106,
+      0.2601307616945796
+     ],
+     "ci_game": [
+      0.058351757981441515,
+      0.2669273702060579
+     ],
+     "slates": 22,
+     "games": 178
+    },
+    "C_minus_B": {
+     "diff": 0.03203463203463208,
+     "ci_slate": [
+      -0.038523936441354684,
+      0.11699470446058118
+     ],
+     "ci_game": [
+      -0.06904948499776083,
+      0.1316556341981781
+     ],
+     "slates": 22,
+     "games": 178
+    },
+    "by_month": {
+     "2026-08": {
+      "A": {
+       "picks": 58,
+       "settled": 58,
+       "wins": 20,
+       "losses": 38,
+       "void": 0,
+       "hit_rate": 0.3448275862068966,
+       "roi_unauthenticated": -0.42637153736516353,
+       "profit": -24.729549167179485,
+       "market_expected_wins": 30.987037037037044
+      },
+      "B": {
+       "picks": 38,
+       "settled": 38,
+       "wins": 27,
+       "losses": 11,
+       "void": 0,
+       "hit_rate": 0.7105263157894737,
+       "roi_unauthenticated": -0.05819137360536564,
+       "profit": -2.211272197003894,
+       "market_expected_wins": 26.297592592592586
+      },
+      "C": {
+       "picks": 34,
+       "settled": 34,
+       "wins": 27,
+       "losses": 7,
+       "void": 0,
+       "hit_rate": 0.7941176470588235,
+       "roi_unauthenticated": 0.08454542991302719,
+       "profit": 2.8745446170429245,
+       "market_expected_wins": 23.008055555555554
+      }
+     },
+     "2026-09": {
+      "A": {
+       "picks": 247,
+       "settled": 247,
+       "wins": 142,
+       "losses": 105,
+       "void": 0,
+       "hit_rate": 0.5748987854251012,
+       "roi_unauthenticated": -0.026318559288657478,
+       "profit": -6.500684144298397,
+       "market_expected_wins": 132.1198148148149
+      },
+      "B": {
+       "picks": 67,
+       "settled": 67,
+       "wins": 46,
+       "losses": 21,
+       "void": 0,
+       "hit_rate": 0.6865671641791045,
+       "roi_unauthenticated": -0.09870986091229103,
+       "profit": -6.6135606811234995,
+       "market_expected_wins": 47.27518518518515
+      },
+      "C": {
+       "picks": 65,
+       "settled": 65,
+       "wins": 45,
+       "losses": 20,
+       "void": 0,
+       "hit_rate": 0.6923076923076923,
+       "roi_unauthenticated": -0.06626395631036232,
+       "profit": -4.307157160173551,
+       "market_expected_wins": 44.63777777777775
+      }
+     }
+    },
+    "by_market_C": {
+     "hits": {
+      "picks": 3,
+      "settled": 3,
+      "wins": 2,
+      "losses": 1,
+      "void": 0,
+      "hit_rate": 0.6666666666666666,
+      "roi_unauthenticated": -0.03846153846153847,
+      "profit": -0.11538461538461542,
+      "market_expected_wins": 1.9132407407407404
+     },
+     "hits_runs_rbis": {
+      "picks": 96,
+      "settled": 96,
+      "wins": 70,
+      "losses": 26,
+      "void": 0,
+      "hit_rate": 0.7291666666666666,
+      "roi_unauthenticated": -0.013721124247354282,
+      "profit": -1.317227927746011,
+      "market_expected_wins": 65.73259259259257
+     }
+    },
+    "by_market_B": {
+     "hits": {
+      "picks": 6,
+      "settled": 6,
+      "wins": 4,
+      "losses": 2,
+      "void": 0,
+      "hit_rate": 0.6666666666666666,
+      "roi_unauthenticated": -0.12276863462208291,
+      "profit": -0.7366118077324975,
+      "market_expected_wins": 4.223796296296296
+     },
+     "hits_runs_rbis": {
+      "picks": 95,
+      "settled": 95,
+      "wins": 67,
+      "losses": 28,
+      "void": 0,
+      "hit_rate": 0.7052631578947368,
+      "roi_unauthenticated": -0.07794655144311802,
+      "profit": -7.404922387096212,
+      "market_expected_wins": 67.26194444444441
+     },
+     "pitcher_outs": {
+      "picks": 1,
+      "settled": 1,
+      "wins": 0,
+      "losses": 1,
+      "void": 0,
+      "hit_rate": 0.0,
+      "roi_unauthenticated": -1.0,
+      "profit": -1.0,
+      "market_expected_wins": 0.4807407407407407
+     },
+     "strikeouts": {
+      "picks": 3,
+      "settled": 3,
+      "wins": 2,
+      "losses": 1,
+      "void": 0,
+      "hit_rate": 0.6666666666666666,
+      "roi_unauthenticated": 0.10556710556710554,
+      "profit": 0.3167013167013166,
+      "market_expected_wins": 1.6062962962962961
+     }
+    }
+   },
+   "cap": {
+    "slates": 22,
+    "target": 213,
+    "fill": {
+     "B": 0.4694835680751174,
+     "C": 0.4413145539906103
+    },
+    "arms": {
+     "A": {
+      "picks": 213,
+      "settled": 213,
+      "wins": 113,
+      "losses": 100,
+      "void": 0,
+      "hit_rate": 0.5305164319248826,
+      "roi_unauthenticated": -0.11563895048909884,
+      "profit": -24.631096454178053,
+      "market_expected_wins": 114.50342592592602
+     },
+     "B": {
+      "picks": 100,
+      "settled": 100,
+      "wins": 70,
+      "losses": 30,
+      "void": 0,
+      "hit_rate": 0.7,
+      "roi_unauthenticated": -0.07814080189955354,
+      "profit": -7.814080189955353,
+      "market_expected_wins": 70.07879629629628
+     },
+     "C": {
+      "picks": 94,
+      "settled": 94,
+      "wins": 67,
+      "losses": 27,
+      "void": 0,
+      "hit_rate": 0.7127659574468085,
+      "roi_unauthenticated": -0.03388187125751423,
+      "profit": -3.184895898206338,
+      "market_expected_wins": 64.21370370370369
+     }
+    },
+    "added_removed": {
+     "C_vs_A": {
+      "added": 86,
+      "added_wins": 61,
+      "removed": 205,
+      "removed_wins": 107
+     },
+     "B_vs_A": {
+      "added": 97,
+      "added_wins": 69,
+      "removed": 210,
+      "removed_wins": 112
+     },
+     "C_vs_B": {
+      "added": 67,
+      "added_wins": 48,
+      "removed": 73,
+      "removed_wins": 51
+     }
+    },
+    "C_minus_A": {
+     "diff": 0.18224952552192586,
+     "ci_slate": [
+      0.08676758809245108,
+      0.27694311261244897
+     ],
+     "ci_game": [
+      0.07705312209092943,
+      0.28587506222567116
+     ],
+     "slates": 22,
+     "games": 178
+    },
+    "B_minus_A": {
+     "diff": 0.16948356807511733,
+     "ci_slate": [
+      0.06180588761718429,
+      0.2758112296667406
+     ],
+     "ci_game": [
+      0.060193950017979204,
+      0.2778434289644927
+     ],
+     "slates": 22,
+     "games": 178
+    },
+    "C_minus_B": {
+     "diff": 0.012765957446808529,
+     "ci_slate": [
+      -0.06332980950893322,
+      0.10016032332828939
+     ],
+     "ci_game": [
+      -0.08612327961487629,
+      0.10807787099156628
+     ],
+     "slates": 22,
+     "games": 178
+    },
+    "by_month": {
+     "2026-08": {
+      "A": {
+       "picks": 48,
+       "settled": 48,
+       "wins": 18,
+       "losses": 30,
+       "void": 0,
+       "hit_rate": 0.375,
+       "roi_unauthenticated": -0.3767889792970822,
+       "profit": -18.085871006259946,
+       "market_expected_wins": 25.60675925925926
+      },
+      "B": {
+       "picks": 35,
+       "settled": 35,
+       "wins": 26,
+       "losses": 9,
+       "void": 0,
+       "hit_rate": 0.7428571428571429,
+       "roi_unauthenticated": -0.015560158009635108,
+       "profit": -0.5446055303372288,
+       "market_expected_wins": 24.198148148148142
+      },
+      "C": {
+       "picks": 31,
+       "settled": 31,
+       "wins": 24,
+       "losses": 7,
+       "void": 0,
+       "hit_rate": 0.7741935483870968,
+       "roi_unauthenticated": 0.056057792419274756,
+       "profit": 1.7377915649975175,
+       "market_expected_wins": 20.991944444444442
+      }
+     },
+     "2026-09": {
+      "A": {
+       "picks": 165,
+       "settled": 165,
+       "wins": 95,
+       "losses": 70,
+       "void": 0,
+       "hit_rate": 0.5757575757575758,
+       "roi_unauthenticated": -0.03966803301768559,
+       "profit": -6.545225447918122,
+       "market_expected_wins": 88.89666666666672
+      },
+      "B": {
+       "picks": 65,
+       "settled": 65,
+       "wins": 44,
+       "losses": 21,
+       "void": 0,
+       "hit_rate": 0.676923076923077,
+       "roi_unauthenticated": -0.11183807168643269,
+       "profit": -7.269474659618124,
+       "market_expected_wins": 45.88064814814812
+      },
+      "C": {
+       "picks": 63,
+       "settled": 63,
+       "wins": 43,
+       "losses": 20,
+       "void": 0,
+       "hit_rate": 0.6825396825396826,
+       "roi_unauthenticated": -0.07813789624133101,
+       "profit": -4.922687463203854,
+       "market_expected_wins": 43.22175925925924
+      }
+     }
+    },
+    "by_market_C": {
+     "hits": {
+      "picks": 3,
+      "settled": 3,
+      "wins": 2,
+      "losses": 1,
+      "void": 0,
+      "hit_rate": 0.6666666666666666,
+      "roi_unauthenticated": -0.03846153846153847,
+      "profit": -0.11538461538461542,
+      "market_expected_wins": 1.9132407407407404
+     },
+     "hits_runs_rbis": {
+      "picks": 91,
+      "settled": 91,
+      "wins": 65,
+      "losses": 26,
+      "void": 0,
+      "hit_rate": 0.7142857142857143,
+      "roi_unauthenticated": -0.03373089321782113,
+      "profit": -3.069511282821723,
+      "market_expected_wins": 62.300462962962946
+     }
+    },
+    "by_market_B": {
+     "hits": {
+      "picks": 6,
+      "settled": 6,
+      "wins": 4,
+      "losses": 2,
+      "void": 0,
+      "hit_rate": 0.6666666666666666,
+      "roi_unauthenticated": -0.12276863462208291,
+      "profit": -0.7366118077324975,
+      "market_expected_wins": 4.223796296296296
+     },
+     "hits_runs_rbis": {
+      "picks": 90,
+      "settled": 90,
+      "wins": 64,
+      "losses": 26,
+      "void": 0,
+      "hit_rate": 0.7111111111111111,
+      "roi_unauthenticated": -0.07104632998804636,
+      "profit": -6.394169698924172,
+      "market_expected_wins": 63.7679629629629
+     },
+     "pitcher_outs": {
+      "picks": 1,
+      "settled": 1,
+      "wins": 0,
+      "losses": 1,
+      "void": 0,
+      "hit_rate": 0.0,
+      "roi_unauthenticated": -1.0,
+      "profit": -1.0,
+      "market_expected_wins": 0.4807407407407407
+     },
+     "strikeouts": {
+      "picks": 3,
+      "settled": 3,
+      "wins": 2,
+      "losses": 1,
+      "void": 0,
+      "hit_rate": 0.6666666666666666,
+      "roi_unauthenticated": 0.10556710556710554,
+      "profit": 0.3167013167013166,
+      "market_expected_wins": 1.6062962962962961
+     }
+    }
+   }
+  },
+  "P2_all_graded": {
+   "dates": [
+    "2026-08-18",
+    "2026-08-24",
+    "2026-08-25",
+    "2026-08-26",
+    "2026-08-28",
+    "2026-08-29",
+    "2026-08-30",
+    "2026-08-31",
+    "2026-09-01",
+    "2026-09-02",
+    "2026-09-03",
+    "2026-09-04",
+    "2026-09-05",
+    "2026-09-06",
+    "2026-09-07",
+    "2026-09-08",
+    "2026-09-09",
+    "2026-09-10",
+    "2026-09-11",
+    "2026-09-12",
+    "2026-09-13",
+    "2026-09-14",
+    "2026-09-15",
+    "2026-09-16",
+    "2026-09-17",
+    "2026-09-18",
+    "2026-09-19",
+    "2026-09-20",
+    "2026-09-21",
+    "2026-09-22",
+    "2026-09-23",
+    "2026-09-24",
+    "2026-09-25",
+    "2026-09-26",
+    "2026-09-27"
+   ],
+   "original": {
+    "slates": 35,
+    "target": 542,
+    "fill": {
+     "B": 0.39114391143911437,
+     "C": 0.3173431734317343
+    },
+    "arms": {
+     "A": {
+      "picks": 542,
+      "settled": 542,
+      "wins": 289,
+      "losses": 253,
+      "void": 0,
+      "hit_rate": 0.533210332103321,
+      "roi_unauthenticated": -0.09847890678951278,
+      "profit": -53.37556747991593,
+      "market_expected_wins": 291.0887037037038
+     },
+     "B": {
+      "picks": 212,
+      "settled": 212,
+      "wins": 142,
+      "losses": 70,
+      "void": 0,
+      "hit_rate": 0.6698113207547169,
+      "roi_unauthenticated": -0.09356684308109682,
+      "profit": -19.836170733192525,
+      "market_expected_wins": 143.63212962962976
+     },
+     "C": {
+      "picks": 172,
+      "settled": 172,
+      "wins": 124,
+      "losses": 48,
+      "void": 0,
+      "hit_rate": 0.7209302325581395,
+      "roi_unauthenticated": -0.02449635945938261,
+      "profit": -4.213373827013809,
+      "market_expected_wins": 117.67759259259255
+     }
+    },
+    "added_removed": {
+     "C_vs_A": {
+      "added": 159,
+      "added_wins": 115,
+      "removed": 529,
+      "removed_wins": 280
+     },
+     "B_vs_A": {
+      "added": 174,
+      "added_wins": 125,
+      "removed": 504,
+      "removed_wins": 272
+     },
+     "C_vs_B": {
+      "added": 124,
+      "added_wins": 88,
+      "removed": 164,
+      "removed_wins": 106
+     }
+    },
+    "C_minus_A": {
+     "diff": 0.18771990045481846,
+     "ci_slate": [
+      0.11732281697758935,
+      0.25547678785071914
+     ],
+     "ci_game": [
+      0.10840938037132838,
+      0.26488640261033003
+     ],
+     "slates": 35,
+     "games": 293
+    },
+    "B_minus_A": {
+     "diff": 0.13660098865139592,
+     "ci_slate": [
+      0.054541266071140314,
+      0.21700759445606363
+     ],
+     "ci_game": [
+      0.06640539189897744,
+      0.2060425669546284
+     ],
+     "slates": 35,
+     "games": 293
+    },
+    "C_minus_B": {
+     "diff": 0.05111891180342254,
+     "ci_slate": [
+      -0.01379818884356778,
+      0.12523423064534128
+     ],
+     "ci_game": [
+      -0.02743292808588053,
+      0.12740486997474573
+     ],
+     "slates": 35,
+     "games": 293
+    },
+    "by_month": {
+     "2026-08": {
+      "A": {
+       "picks": 96,
+       "settled": 96,
+       "wins": 43,
+       "losses": 53,
+       "void": 0,
+       "hit_rate": 0.4479166666666667,
+       "roi_unauthenticated": -0.25815123794371764,
+       "profit": -24.782518842596893,
+       "market_expected_wins": 51.91972222222221
+      },
+      "B": {
+       "picks": 60,
+       "settled": 60,
+       "wins": 43,
+       "losses": 17,
+       "void": 0,
+       "hit_rate": 0.7166666666666667,
+       "roi_unauthenticated": -0.043824081277215564,
+       "profit": -2.6294448766329337,
+       "market_expected_wins": 41.249537037037044
+      },
+      "C": {
+       "picks": 53,
+       "settled": 53,
+       "wins": 41,
+       "losses": 12,
+       "void": 0,
+       "hit_rate": 0.7735849056603774,
+       "roi_unauthenticated": 0.06554126121696843,
+       "profit": 3.473686844499327,
+       "market_expected_wins": 35.72749999999999
+      }
+     },
+     "2026-09": {
+      "A": {
+       "picks": 446,
+       "settled": 446,
+       "wins": 246,
+       "losses": 200,
+       "void": 0,
+       "hit_rate": 0.5515695067264574,
+       "roi_unauthenticated": -0.06410997452313695,
+       "profit": -28.593048637319082,
+       "market_expected_wins": 239.16898148148127
+      },
+      "B": {
+       "picks": 152,
+       "settled": 152,
+       "wins": 99,
+       "losses": 53,
+       "void": 0,
+       "hit_rate": 0.6513157894736842,
+       "roi_unauthenticated": -0.1132021437931552,
+       "profit": -17.20672585655959,
+       "market_expected_wins": 102.38259259259263
+      },
+      "C": {
+       "picks": 119,
+       "settled": 119,
+       "wins": 83,
+       "losses": 36,
+       "void": 0,
+       "hit_rate": 0.6974789915966386,
+       "roi_unauthenticated": -0.0645971485001104,
+       "profit": -7.687060671513137,
+       "market_expected_wins": 81.95009259259255
+      }
+     }
+    },
+    "by_market_C": {
+     "hits": {
+      "picks": 8,
+      "settled": 8,
+      "wins": 7,
+      "losses": 1,
+      "void": 0,
+      "hit_rate": 0.875,
+      "roi_unauthenticated": 0.24782818831731873,
+      "profit": 1.9826255065385499,
+      "market_expected_wins": 5.176481481481481
+     },
+     "hits_runs_rbis": {
+      "picks": 164,
+      "settled": 164,
+      "wins": 117,
+      "losses": 47,
+      "void": 0,
+      "hit_rate": 0.7134146341463414,
+      "roi_unauthenticated": -0.03778048374117292,
+      "profit": -6.195999333552359,
+      "market_expected_wins": 112.50111111111107
+     }
+    },
+    "by_market_B": {
+     "hits": {
+      "picks": 15,
+      "settled": 15,
+      "wins": 12,
+      "losses": 3,
+      "void": 0,
+      "hit_rate": 0.8,
+      "roi_unauthenticated": 0.10716599492461559,
+      "profit": 1.607489923869234,
+      "market_expected_wins": 10.252592592592594
+     },
+     "hits_runs_rbis": {
+      "picks": 185,
+      "settled": 185,
+      "wins": 126,
+      "losses": 59,
+      "void": 0,
+      "hit_rate": 0.6810810810810811,
+      "roi_unauthenticated": -0.08831140466208853,
+      "profit": -16.337609862486378,
+      "market_expected_wins": 127.52935185185198
+     },
+     "pitcher_outs": {
+      "picks": 2,
+      "settled": 2,
+      "wins": 0,
+      "losses": 2,
+      "void": 0,
+      "hit_rate": 0.0,
+      "roi_unauthenticated": -1.0,
+      "profit": -2.0,
+      "market_expected_wins": 0.9137962962962962
+     },
+     "strikeouts": {
+      "picks": 10,
+      "settled": 10,
+      "wins": 4,
+      "losses": 6,
+      "void": 0,
+      "hit_rate": 0.4,
+      "roi_unauthenticated": -0.31060507945753846,
+      "profit": -3.106050794575385,
+      "market_expected_wins": 4.936388888888888
+     }
+    }
+   },
+   "cap": {
+    "slates": 35,
+    "target": 369,
+    "fill": {
+     "B": 0.5311653116531165,
+     "C": 0.43360433604336046
+    },
+    "arms": {
+     "A": {
+      "picks": 369,
+      "settled": 369,
+      "wins": 193,
+      "losses": 176,
+      "void": 0,
+      "hit_rate": 0.5230352303523035,
+      "roi_unauthenticated": -0.1293115066454393,
+      "profit": -47.715945952167104,
+      "market_expected_wins": 199.61851851851833
+     },
+     "B": {
+      "picks": 196,
+      "settled": 196,
+      "wins": 132,
+      "losses": 64,
+      "void": 0,
+      "hit_rate": 0.673469387755102,
+      "roi_unauthenticated": -0.0905819351849101,
+      "profit": -17.75405929624238,
+      "market_expected_wins": 133.2129629629631
+     },
+     "C": {
+      "picks": 160,
+      "settled": 160,
+      "wins": 114,
+      "losses": 46,
+      "void": 0,
+      "hit_rate": 0.7125,
+      "roi_unauthenticated": -0.034808265520846655,
+      "profit": -5.569322483335465,
+      "market_expected_wins": 109.32870370370367
+     }
+    },
+    "added_removed": {
+     "C_vs_A": {
+      "added": 147,
+      "added_wins": 105,
+      "removed": 356,
+      "removed_wins": 184
+     },
+     "B_vs_A": {
+      "added": 163,
+      "added_wins": 117,
+      "removed": 336,
+      "removed_wins": 178
+     },
+     "C_vs_B": {
+      "added": 115,
+      "added_wins": 80,
+      "removed": 151,
+      "removed_wins": 98
+     }
+    },
+    "C_minus_A": {
+     "diff": 0.18946476964769654,
+     "ci_slate": [
+      0.1185133752117448,
+      0.26169709757259496
+     ],
+     "ci_game": [
+      0.10913948856022038,
+      0.2691864334181821
+     ],
+     "slates": 35,
+     "games": 293
+    },
+    "B_minus_A": {
+     "diff": 0.15043415740279853,
+     "ci_slate": [
+      0.05943782652280915,
+      0.24109294198392262
+     ],
+     "ci_game": [
+      0.07395809118648827,
+      0.22795848439893593
+     ],
+     "slates": 35,
+     "games": 293
+    },
+    "C_minus_B": {
+     "diff": 0.03903061224489801,
+     "ci_slate": [
+      -0.0345406301568453,
+      0.11814635402320871
+     ],
+     "ci_game": [
+      -0.036415740495338716,
+      0.11383396214832177
+     ],
+     "slates": 35,
+     "games": 293
+    },
+    "by_month": {
+     "2026-08": {
+      "A": {
+       "picks": 76,
+       "settled": 76,
+       "wins": 35,
+       "losses": 41,
+       "void": 0,
+       "hit_rate": 0.4605263157894737,
+       "roi_unauthenticated": -0.2425067506560309,
+       "profit": -18.430513049858348,
+       "market_expected_wins": 41.21074074074074
+      },
+      "B": {
+       "picks": 55,
+       "settled": 55,
+       "wins": 40,
+       "losses": 15,
+       "void": 0,
+       "hit_rate": 0.7272727272727273,
+       "roi_unauthenticated": -0.030059170917135593,
+       "profit": -1.6532544004424576,
+       "market_expected_wins": 37.77342592592593
+      },
+      "C": {
+       "picks": 48,
+       "settled": 48,
+       "wins": 36,
+       "losses": 12,
+       "void": 0,
+       "hit_rate": 0.75,
+       "roi_unauthenticated": 0.03424964118588042,
+       "profit": 1.6439827769222601,
+       "market_expected_wins": 32.33564814814814
+      }
+     },
+     "2026-09": {
+      "A": {
+       "picks": 293,
+       "settled": 293,
+       "wins": 158,
+       "losses": 135,
+       "void": 0,
+       "hit_rate": 0.5392491467576792,
+       "roi_unauthenticated": -0.09995028294303344,
+       "profit": -29.2854329023088,
+       "market_expected_wins": 158.40777777777768
+      },
+      "B": {
+       "picks": 141,
+       "settled": 141,
+       "wins": 92,
+       "losses": 49,
+       "void": 0,
+       "hit_rate": 0.6524822695035462,
+       "roi_unauthenticated": -0.1141901056439711,
+       "profit": -16.100804895799925,
+       "market_expected_wins": 95.43953703703708
+      },
+      "C": {
+       "picks": 112,
+       "settled": 112,
+       "wins": 78,
+       "losses": 34,
+       "void": 0,
+       "hit_rate": 0.6964285714285714,
+       "roi_unauthenticated": -0.06440451125230115,
+       "profit": -7.213305260257728,
+       "market_expected_wins": 76.99305555555551
+      }
+     }
+    },
+    "by_market_C": {
+     "hits": {
+      "picks": 7,
+      "settled": 7,
+      "wins": 6,
+      "losses": 1,
+      "void": 0,
+      "hit_rate": 0.8571428571428571,
+      "roi_unauthenticated": 0.23032216230973995,
+      "profit": 1.6122551361681796,
+      "market_expected_wins": 4.500833333333333
+     },
+     "hits_runs_rbis": {
+      "picks": 153,
+      "settled": 153,
+      "wins": 108,
+      "losses": 45,
+      "void": 0,
+      "hit_rate": 0.7058823529411765,
+      "roi_unauthenticated": -0.046938415813749315,
+      "profit": -7.181577619503646,
+      "market_expected_wins": 104.82787037037035
+     }
+    },
+    "by_market_B": {
+     "hits": {
+      "picks": 14,
+      "settled": 14,
+      "wins": 11,
+      "losses": 3,
+      "void": 0,
+      "hit_rate": 0.7857142857142857,
+      "roi_unauthenticated": 0.08931050476616977,
+      "profit": 1.2503470667263767,
+      "market_expected_wins": 9.570370370370371
+     },
+     "hits_runs_rbis": {
+      "picks": 171,
+      "settled": 171,
+      "wins": 117,
+      "losses": 54,
+      "void": 0,
+      "hit_rate": 0.6842105263157895,
+      "roi_unauthenticated": -0.08712488636487348,
+      "profit": -14.898355568393365,
+      "market_expected_wins": 118.21574074074086
+     },
+     "pitcher_outs": {
+      "picks": 2,
+      "settled": 2,
+      "wins": 0,
+      "losses": 2,
+      "void": 0,
+      "hit_rate": 0.0,
+      "roi_unauthenticated": -1.0,
+      "profit": -2.0,
+      "market_expected_wins": 0.9137962962962962
+     },
+     "strikeouts": {
+      "picks": 9,
+      "settled": 9,
+      "wins": 4,
+      "losses": 5,
+      "void": 0,
+      "hit_rate": 0.4444444444444444,
+      "roi_unauthenticated": -0.2340056438417094,
+      "profit": -2.106050794575385,
+      "market_expected_wins": 4.513055555555555
+     }
+    }
+   }
+  },
+  "P_dev_only": {
+   "dates": [
+    "2026-08-25",
+    "2026-08-30",
+    "2026-09-04",
+    "2026-09-09",
+    "2026-09-15",
+    "2026-09-20",
+    "2026-09-21",
+    "2026-09-22",
+    "2026-09-23",
+    "2026-09-24",
+    "2026-09-25",
+    "2026-09-26",
+    "2026-09-27"
+   ],
+   "original": {
+    "slates": 13,
+    "target": 237,
+    "fill": {
+     "B": 0.45147679324894513,
+     "C": 0.3080168776371308
+    },
+    "arms": {
+     "A": {
+      "picks": 237,
+      "settled": 237,
+      "wins": 127,
+      "losses": 110,
+      "void": 0,
+      "hit_rate": 0.5358649789029536,
+      "roi_unauthenticated": -0.09344022855881057,
+      "profit": -22.145334168438104,
+      "market_expected_wins": 127.98185185185197
+     },
+     "B": {
+      "picks": 107,
+      "settled": 107,
+      "wins": 69,
+      "losses": 38,
+      "void": 0,
+      "hit_rate": 0.6448598130841121,
+      "roi_unauthenticated": -0.10290969958004795,
+      "profit": -11.01133785506513,
+      "market_expected_wins": 70.05935185185183
+     },
+     "C": {
+      "picks": 73,
+      "settled": 73,
+      "wins": 52,
+      "losses": 21,
+      "void": 0,
+      "hit_rate": 0.7123287671232876,
+      "roi_unauthenticated": -0.038092620327166885,
+      "profit": -2.7807612838831828,
+      "market_expected_wins": 50.031759259259246
+     }
+    },
+    "added_removed": {
+     "C_vs_A": {
+      "added": 68,
+      "added_wins": 49,
+      "removed": 232,
+      "removed_wins": 124
+     },
+     "B_vs_A": {
+      "added": 72,
+      "added_wins": 53,
+      "removed": 202,
+      "removed_wins": 111
+     },
+     "C_vs_B": {
+      "added": 52,
+      "added_wins": 35,
+      "removed": 86,
+      "removed_wins": 52
+     }
+    },
+    "C_minus_A": {
+     "diff": 0.17646378822033404,
+     "ci_slate": [
+      0.0848083772646161,
+      0.27486415392637786
+     ],
+     "ci_game": [
+      0.0558994399858894,
+      0.29420538908707916
+     ],
+     "slates": 13,
+     "games": 115
+    },
+    "B_minus_A": {
+     "diff": 0.10899483418115852,
+     "ci_slate": [
+      -0.020931822660981106,
+      0.22518457227034946
+     ],
+     "ci_game": [
+      0.015240193600238578,
+      0.20414063990003622
+     ],
+     "slates": 13,
+     "games": 115
+    },
+    "C_minus_B": {
+     "diff": 0.06746895403917552,
+     "ci_slate": [
+      -0.03968346684468177,
+      0.19643295534252972
+     ],
+     "ci_game": [
+      -0.05204974688473513,
+      0.18549972492206115
+     ],
+     "slates": 13,
+     "games": 115
+    },
+    "by_month": {
+     "2026-08": {
+      "A": {
+       "picks": 38,
+       "settled": 38,
+       "wins": 23,
+       "losses": 15,
+       "void": 0,
+       "hit_rate": 0.6052631578947368,
+       "roi_unauthenticated": -0.0013939388267739895,
+       "profit": -0.0529696754174116,
+       "market_expected_wins": 20.932685185185193
+      },
+      "B": {
+       "picks": 22,
+       "settled": 22,
+       "wins": 16,
+       "losses": 6,
+       "void": 0,
+       "hit_rate": 0.7272727272727273,
+       "roi_unauthenticated": -0.019007849074047126,
+       "profit": -0.4181726796290368,
+       "market_expected_wins": 14.951944444444447
+      },
+      "C": {
+       "picks": 19,
+       "settled": 19,
+       "wins": 14,
+       "losses": 5,
+       "void": 0,
+       "hit_rate": 0.7368421052631579,
+       "roi_unauthenticated": 0.03153380144507384,
+       "profit": 0.5991422274564029,
+       "market_expected_wins": 12.719444444444449
+      }
+     },
+     "2026-09": {
+      "A": {
+       "picks": 199,
+       "settled": 199,
+       "wins": 104,
+       "losses": 95,
+       "void": 0,
+       "hit_rate": 0.5226130653266332,
+       "roi_unauthenticated": -0.111016907000104,
+       "profit": -22.092364493020696,
+       "market_expected_wins": 107.04916666666674
+      },
+      "B": {
+       "picks": 85,
+       "settled": 85,
+       "wins": 53,
+       "losses": 32,
+       "void": 0,
+       "hit_rate": 0.6235294117647059,
+       "roi_unauthenticated": -0.12462547265218935,
+       "profit": -10.593165175436095,
+       "market_expected_wins": 55.107407407407386
+      },
+      "C": {
+       "picks": 54,
+       "settled": 54,
+       "wins": 38,
+       "losses": 16,
+       "void": 0,
+       "hit_rate": 0.7037037037037037,
+       "roi_unauthenticated": -0.06259080576554789,
+       "profit": -3.3799035113395863,
+       "market_expected_wins": 37.312314814814805
+      }
+     }
+    },
+    "by_market_C": {
+     "hits": {
+      "picks": 5,
+      "settled": 5,
+      "wins": 5,
+      "losses": 0,
+      "void": 0,
+      "hit_rate": 1.0,
+      "roi_unauthenticated": 0.41960202438463307,
+      "profit": 2.0980101219231653,
+      "market_expected_wins": 3.2632407407407404
+     },
+     "hits_runs_rbis": {
+      "picks": 68,
+      "settled": 68,
+      "wins": 47,
+      "losses": 21,
+      "void": 0,
+      "hit_rate": 0.6911764705882353,
+      "roi_unauthenticated": -0.0717466383206816,
+      "profit": -4.878771405806348,
+      "market_expected_wins": 46.768518518518505
+     }
+    },
+    "by_market_B": {
+     "hits": {
+      "picks": 9,
+      "settled": 9,
+      "wins": 8,
+      "losses": 1,
+      "void": 0,
+      "hit_rate": 0.8888888888888888,
+      "roi_unauthenticated": 0.26045574795574794,
+      "profit": 2.3441017316017314,
+      "market_expected_wins": 6.028796296296297
+     },
+     "hits_runs_rbis": {
+      "picks": 90,
+      "settled": 90,
+      "wins": 59,
+      "losses": 31,
+      "void": 0,
+      "hit_rate": 0.6555555555555556,
+      "roi_unauthenticated": -0.09925208305989064,
+      "profit": -8.932687475390157,
+      "market_expected_wins": 60.26740740740738
+     },
+     "pitcher_outs": {
+      "picks": 1,
+      "settled": 1,
+      "wins": 0,
+      "losses": 1,
+      "void": 0,
+      "hit_rate": 0.0,
+      "roi_unauthenticated": -1.0,
+      "profit": -1.0,
+      "market_expected_wins": 0.4330555555555555
+     },
+     "strikeouts": {
+      "picks": 7,
+      "settled": 7,
+      "wins": 2,
+      "losses": 5,
+      "void": 0,
+      "hit_rate": 0.2857142857142857,
+      "roi_unauthenticated": -0.4889645873252431,
+      "profit": -3.4227521112767016,
+      "market_expected_wins": 3.3300925925925924
+     }
+    }
+   },
+   "cap": {
+    "slates": 13,
+    "target": 156,
+    "fill": {
+     "B": 0.6153846153846154,
+     "C": 0.4230769230769231
+    },
+    "arms": {
+     "A": {
+      "picks": 156,
+      "settled": 156,
+      "wins": 80,
+      "losses": 76,
+      "void": 0,
+      "hit_rate": 0.5128205128205128,
+      "roi_unauthenticated": -0.14797980447428905,
+      "profit": -23.08484949798909,
+      "market_expected_wins": 85.11509259259262
+     },
+     "B": {
+      "picks": 96,
+      "settled": 96,
+      "wins": 62,
+      "losses": 34,
+      "void": 0,
+      "hit_rate": 0.6458333333333334,
+      "roi_unauthenticated": -0.10354144902382317,
+      "profit": -9.939979106287025,
+      "market_expected_wins": 63.13416666666666
+     },
+     "C": {
+      "picks": 66,
+      "settled": 66,
+      "wins": 47,
+      "losses": 19,
+      "void": 0,
+      "hit_rate": 0.7121212121212122,
+      "roi_unauthenticated": -0.03612767553225954,
+      "profit": -2.3844265851291295,
+      "market_expected_wins": 45.115
+     }
+    },
+    "added_removed": {
+     "C_vs_A": {
+      "added": 61,
+      "added_wins": 44,
+      "removed": 151,
+      "removed_wins": 77
+     },
+     "B_vs_A": {
+      "added": 66,
+      "added_wins": 48,
+      "removed": 126,
+      "removed_wins": 66
+     },
+     "C_vs_B": {
+      "added": 48,
+      "added_wins": 32,
+      "removed": 78,
+      "removed_wins": 47
+     }
+    },
+    "C_minus_A": {
+     "diff": 0.19930069930069938,
+     "ci_slate": [
+      0.0931494896518504,
+      0.31241754740427663
+     ],
+     "ci_game": [
+      0.07503368588814832,
+      0.3225645161290323
+     ],
+     "slates": 13,
+     "games": 115
+    },
+    "B_minus_A": {
+     "diff": 0.1330128205128206,
+     "ci_slate": [
+      -0.019191052582677677,
+      0.2857254801154266
+     ],
+     "ci_game": [
+      0.02946316705724171,
+      0.23982676779605772
+     ],
+     "slates": 13,
+     "games": 115
+    },
+    "C_minus_B": {
+     "diff": 0.06628787878787878,
+     "ci_slate": [
+      -0.06111607142857143,
+      0.2022254537953795
+     ],
+     "ci_game": [
+      -0.05555918859311691,
+      0.18924371026034395
+     ],
+     "slates": 13,
+     "games": 115
+    },
+    "by_month": {
+     "2026-08": {
+      "A": {
+       "picks": 28,
+       "settled": 28,
+       "wins": 17,
+       "losses": 11,
+       "void": 0,
+       "hit_rate": 0.6071428571428571,
+       "roi_unauthenticated": -0.012308644414228576,
+       "profit": -0.3446420435984001,
+       "market_expected_wins": 15.60398148148148
+      },
+      "B": {
+       "picks": 20,
+       "settled": 20,
+       "wins": 14,
+       "losses": 6,
+       "void": 0,
+       "hit_rate": 0.7,
+       "roi_unauthenticated": -0.055432443505261365,
+       "profit": -1.1086488701052273,
+       "market_expected_wins": 13.57527777777778
+      },
+      "C": {
+       "picks": 17,
+       "settled": 17,
+       "wins": 12,
+       "losses": 5,
+       "void": 0,
+       "hit_rate": 0.7058823529411765,
+       "roi_unauthenticated": -0.005518164004426918,
+       "profit": -0.09380878807525761,
+       "market_expected_wins": 11.343703703703707
+      }
+     },
+     "2026-09": {
+      "A": {
+       "picks": 128,
+       "settled": 128,
+       "wins": 63,
+       "losses": 65,
+       "void": 0,
+       "hit_rate": 0.4921875,
+       "roi_unauthenticated": -0.17765787073742723,
+       "profit": -22.740207454390685,
+       "market_expected_wins": 69.51111111111109
+      },
+      "B": {
+       "picks": 76,
+       "settled": 76,
+       "wins": 48,
+       "losses": 28,
+       "void": 0,
+       "hit_rate": 0.631578947368421,
+       "roi_unauthenticated": -0.11620171363397101,
+       "profit": -8.831330236181797,
+       "market_expected_wins": 49.55888888888888
+      },
+      "C": {
+       "picks": 49,
+       "settled": 49,
+       "wins": 35,
+       "losses": 14,
+       "void": 0,
+       "hit_rate": 0.7142857142857143,
+       "roi_unauthenticated": -0.04674730198069126,
+       "profit": -2.290617797053872,
+       "market_expected_wins": 33.771296296296285
+      }
+     }
+    },
+    "by_market_C": {
+     "hits": {
+      "picks": 4,
+      "settled": 4,
+      "wins": 4,
+      "losses": 0,
+      "void": 0,
+      "hit_rate": 1.0,
+      "roi_unauthenticated": 0.43190993788819876,
+      "profit": 1.727639751552795,
+      "market_expected_wins": 2.5875925925925927
+     },
+     "hits_runs_rbis": {
+      "picks": 62,
+      "settled": 62,
+      "wins": 43,
+      "losses": 19,
+      "void": 0,
+      "hit_rate": 0.6935483870967742,
+      "roi_unauthenticated": -0.06632365059164393,
+      "profit": -4.112066336681924,
+      "market_expected_wins": 42.5274074074074
+     }
+    },
+    "by_market_B": {
+     "hits": {
+      "picks": 8,
+      "settled": 8,
+      "wins": 7,
+      "losses": 1,
+      "void": 0,
+      "hit_rate": 0.875,
+      "roi_unauthenticated": 0.24836985930735928,
+      "profit": 1.9869588744588742,
+      "market_expected_wins": 5.346574074074074
+     },
+     "hits_runs_rbis": {
+      "picks": 81,
+      "settled": 81,
+      "wins": 53,
+      "losses": 28,
+      "void": 0,
+      "hit_rate": 0.654320987654321,
+      "roi_unauthenticated": -0.10498994900579257,
+      "profit": -8.504185869469199,
+      "market_expected_wins": 54.44777777777776
+     },
+     "pitcher_outs": {
+      "picks": 1,
+      "settled": 1,
+      "wins": 0,
+      "losses": 1,
+      "void": 0,
+      "hit_rate": 0.0,
+      "roi_unauthenticated": -1.0,
+      "profit": -1.0,
+      "market_expected_wins": 0.4330555555555555
+     },
+     "strikeouts": {
+      "picks": 6,
+      "settled": 6,
+      "wins": 2,
+      "losses": 4,
+      "void": 0,
+      "hit_rate": 0.3333333333333333,
+      "roi_unauthenticated": -0.40379201854611696,
+      "profit": -2.4227521112767016,
+      "market_expected_wins": 2.906759259259259
+     }
+    }
+   }
+  }
+ },
+ "frozen_verdict": {
+  "verdict": "STOP",
+  "volume_ok_P1_cap": false,
+  "roi_ok": true,
+  "consistency_ok": true,
+  "model_alpha_C_over_B": false
+ }
+}
