@@ -6307,3 +6307,348 @@ are all untouched. Draft PR opened against `main`, not merged -- this
 workstream does not merge its own PR.
 
 Alligator
+
+## 2026-10-13 -- FC-ACC-001: winning-pick accuracy, first findings (research only)
+
+Branch: `claude/fc-acc-001-winning-pick-accuracy`.
+Preregistration: `research/fc_acc_001/PREREG.md` (commit bb8600e8f5, anchored on
+Issue #91 6135666313 before any challenger result). Full report:
+`research/fc_acc_001/REPORT.md`.
+
+**Findings**
+
+- **The champion Top Pick selector loses against its own prices.**
+  - Public ledger: 298/552 = 54.0% against a mean implied 0.583 (−4.3 pp),
+    ROI −8.8%.
+  - Sealed freezes: 48/91 = 52.7% (−5.9 pp), ROI −10.5%.
+  - Cause: adverse selection on model-over-market disagreement.
+- **Equal-volume competition on 19 sealed freezes (09-20..10-11).** The
+  primary arm CH1 ranks the same eligible pool by (p+q)/2.
+  - CH1: 68/91 = 74.7%, ROI +2.7%, i.e. +20 net winners.
+  - Verdict: EXPLORATORY_POSITIVE. Not promotable: prior exposure, late-day
+    partial slates, and mostly chalk (median −260).
+  - The pure chalk benchmark gets 72.5% but only matches the market.
+- **Pool test.** The model's disagreement with the price carries no
+  demonstrated information. AUC(q) ≥ AUC(p).
+
+**Recommendation**
+
+- Run a sealed forward shadow (spec in REPORT §7) with CH1 as primary.
+- Measure hits together with excess-over-market and ROI.
+- Pursue residual-over-price model research (PR #220 V3 C2).
+- Activation is Jacob's decision.
+
+Nothing in production, published picks, grades or other PRs was changed.
+
+Alligator
+
+## 2026-10-13 -- FC-ACC-001 Amendment A1: audit corrections (PR #226)
+
+This amendment responds to Codex audit 6151131715. It is post-hoc and labelled
+as such. The original PREREG, the original arms and the original outputs are
+unchanged; their bytes are verified, and the outputs reproduce identically.
+
+**Public baseline, recomputed from history plus `results/grades_*.json`.**
+- 629 published picks: 609 settled, 321 wins, 288 losses, 20 void or ungraded.
+- 52.7% hit rate, ROI −11.2%, 6.35 pp below the published-odds break-even.
+- 572 picks are graded in both sources, 57 only in results files, 0 conflicts.
+
+**Price semantics.**
+- `market_implied` is no-vig for two-sided markets and raw break-even
+  otherwise.
+- New, separate fields: `break_even_raw`, `fair_novig` (null for one-sided
+  markets), p, and the ranking score.
+
+**Corrected arm results (91 picks each).**
+
+| Arm | Wins | ROI |
+|---|---|---|
+| CH1u (uniform raw break-even) | 67 | +1.4% |
+| Market-only | 66 | −1.7% |
+| Champion | 48 | −10.5% |
+
+CH1 − market-only: +2 wins [−5, +9]. **No demonstrated model edge over price.**
+
+**Populations.** P1 published, P2 eligible, P3 research board and P4 shadow are
+now separated. CH1's picks are 79 `lean` and 62 that fail `price_clears`.
+
+**Loader.** It verifies every board seal and requires each graded file's board
+binding.
+
+**S1 protocol.** Drafted and **BLOCKED**: 0/91 selections have an authentic
+offer. Freezes hold no sportsbook, event, observation-time or raw-response
+binding. `data/props` snapshots carry no raw hash. Freezes also hold no factor
+values. Unblocking needs Jacob's authorization of a capture step.
+
+**Hypotheses.** A ranked list, none tested, is in `HYPOTHESES.md`.
+
+**Tests.** `test_fc_acc_001_research.py`: 18 passed.
+
+Alligator
+
+## 2026-10-13 -- FC-ACC-001-S1: research-only evidence capture implemented (PR #226, not active)
+
+Jacob authorized implementing and testing a minimal research-only capture for
+S1. He did not authorize activating it, scheduling it, or starting the forward
+experiment.
+
+**What was built.** The package `research/fc_acc_001/s1/`, about 840 lines,
+is documented in `S1_CAPTURE.md`:
+- a content-addressed raw archive;
+- a FanDuel sweep that archives the **raw bytes** and parses offers only from
+  the archive;
+- a prior-start-only pitcher workload from the archived statsapi game log;
+- minimal feature snapshots, where missing values are `UNKNOWN`;
+- a re-derivable offer manifest with three matched arms: champion,
+  market-only, and a fixed 50/50 blend;
+- a write-once ledger that blocks backfill and returns `IDEMPOTENT_NOOP` on
+  identical replay.
+
+**Reuse.**
+- Production `odds_fanduel` market maps and parsers.
+- `prop_probability` implied-probability and devig functions.
+- The sweep structure of PR #220's `capture.py`, mirrored only. PR #220 is
+  untouched.
+
+**Tests.** `test_fc_acc_001_s1_capture.py`: 24 passed, synthetic and offline.
+
+**Dry run.** `research/fc_acc_001/out/s1_dry_run_NONCONFIRMATORY.json` is
+synthetic and not evidence.
+- The synthetic slate sealed, and re-sealing returned `IDEMPOTENT_NOOP`.
+- The real board `board_freeze_2026-10-13` (70 candidates) with no capture
+  fails closed.
+
+**Still unavailable:**
+- the raw confirmed-lineup source;
+- the raw schedule binding;
+- any documented pitch-limit source;
+- raw (unscaled) signal values;
+- a read-only export of the scored candidate pool from `generate_picks`, which
+  needs a production change.
+
+**Storage.** The estimate is unmeasured at about 1 to 5 MB per sweep, and
+needs one authorized measured capture.
+
+**Not done:** no merge, deploy, schedule, live capture, or production selector
+change.
+
+Alligator
+
+## 2026-10-13 -- FC-ACC-001-S1: full-candidate export design (design only, PR #226)
+
+The design is in `research/fc_acc_001/s1/EXPORT_DESIGN.md`. No production file
+was changed.
+
+**Recommended insertion point.**
+- A new, flag-gated (`FC_ACC_EXPORT`) and fail-isolated `try` block in
+  `generate_picks.main()`, immediately after the existing `board_freeze` block.
+- It writes extension rows keyed by `candidate_id`: signals, every
+  `line_options` threshold, lineup slot and basis, opposing starter, run
+  identity, and excluded started games.
+- The export's id set must equal the sealed freeze's id set exactly.
+
+**Bindings.** Authentication comes from the S1 capture step that runs after
+picks are pushed:
+- raw FanDuel;
+- raw statsapi schedule, lineups and probable pitchers.
+
+Nothing is teed from production fetchers.
+
+**Finding.** `board_freeze_{date}.json` is overwritten by each of the 6 daily
+runs, and every run scores only games not yet started. A late run therefore
+replaces a full-slate freeze. For example, `board_freeze_2026-09-20.json` holds
+1 game and 72 records, generated at 22:33 UTC. The export must be per run and
+write-once, with a fixed rule that picks, for each game, the last pregame run.
+
+**Storage.**
+- Measured: the freeze is 65 KB gzip for 985 records.
+- Export (estimated): about 0.1–0.25 MB gzip per full-slate run, roughly
+  70–180 MB a season.
+- Raw FanDuel archive (unmeasured): about 0.4–1.8 GB a season.
+- Proposed location: an append-only evidence branch, with no nesting.
+
+**Waiting on:** Codex review and Jacob's authorization.
+
+Alligator
+
+## 2026-10-13 -- FC-ACC-001-S1 capture integrity repair (v2, PR #226; research only, inactive)
+
+This responds to Codex HOLD 6154204021 on `d316593c`. All five attacks were
+reproduced first, with 8 of 8 sub-cases VULNERABLE, using
+`research/fc_acc_001/s1/attacks/pre_repair_attacks.py` against a `d316593c`
+worktree. After the repair, `post_repair_attacks.py` rejects all 19 variants.
+Both results are in `research/fc_acc_001/out/s1_codex_attacks_before_after.json`.
+
+**What changed** (details in `research/fc_acc_001/s1/S1_CAPTURE.md`):
+- **Event lineage.** Events are re-derived from the archived root, tab paths
+  are bound to each eventId, and each market's eventId must match. Event and
+  capture statuses are recomputed, and the budget is checked before every
+  request.
+- **Exact join.** The join is on game, player, market, side and line.
+  - A name shared by two MLB ids is `AMBIGUOUS_PLAYER_NAME`.
+  - Batters must appear in a raw confirmed lineup and pitchers must be the raw
+    probable starter, with the team matching.
+  - Selection ids must be consistent, and `validate_offer` is now actually
+    called.
+- **Two-sided markets.** Only a coherent single-player, single-line OVER/UNDER
+  pair is accepted.
+- **Availability.** Non-OPEN markets and non-ACTIVE runners are rejected. When
+  those fields are absent, the offer is marked unverified (a blocker), never
+  treated as open.
+- **Point in time.**
+  - Candidates come from the sealed production board (`verify_board_seal`).
+  - The schedule comes from archived raw statsapi.
+  - Workload is bound to its source observation time and is re-derived inside
+    feature snapshots.
+  - Snapshots captured after the decision are rejected.
+- **Equal volume.** N comes from board `top_pick` decisions before offer
+  filtering. Units are `COMPARABLE`, `NON_COMPARABLE` or `ZERO_CHAMPION`, and
+  `MATCHED` appears only in a COMPARABLE unit. A price change gives
+  `POLICY_PRICE_CHANGED_UNREVALIDATED`.
+- **Ledger.**
+  - A hash-chained, append-only chain with an O_EXCL index and an `fcntl` lock;
+    a race test shows exactly one sealer wins.
+  - A deleted index gives `MISSING_LINK`; `restore_index` rewrites it
+    byte-identically.
+  - PROSPECTIVE seals must extend the externally anchored head.
+- **`anchor.py`.** Defines the external anchor statement and its verification,
+  but **does not publish**.
+- **Archive.** It refuses a root inside a git work tree and has a size bound.
+- **Certification.** `certification.certified_prospective` is always false.
+
+**Real-data finding (no fabrication).** `board_freeze_2026-09-22` re-verifies,
+and its 965 in-scope single-player records parse exactly. The 14
+`nrfi_combined` and 6 `combined_strikeouts` records are game-level markets, so
+they are out of S1 scope and make any unit containing such a champion pick
+NON_COMPARABLE.
+
+**Tests.** `test_fc_acc_001_s1_capture.py`: 30 passed. Also passing:
+`test_fc_acc_001_research.py` (19), `test_board_freeze.py` and
+`test_mlb_fullboard_snapshot_wiring.py`.
+
+**Not done:**
+- no production or workflow change;
+- no live capture, export implementation or anchor publication;
+- no merge or deployment;
+- no historical record change.
+
+Alligator
+
+## 2026-10-15 -- FC-ACC-001-S1 Amendment A2: unit timing and seal correction (PR #226; research only, inactive)
+
+This responds to Codex re-audit 6194240381 on `4e6a1f04`. That review gave a
+conditional pass for the inactive capture contract and raised two new P1s.
+
+**Reproduced before the repair.** `s1/attacks/timing_attacks.py`, run against a
+`4e6a1f04` worktree, gave 5 of 5 VULNERABLE:
+- 17:30 EDT was classified DAY, both on an ordinary day and on the DST-start
+  day;
+- a unit was decided after its earliest pitch by dropping the started game;
+- a PROSPECTIVE unit was SEALED after its earliest first pitch;
+- a game that was not pregame was silently dropped, leaving N=0.
+
+**After the repair:** 5 of 5 REJECTED. The record is in
+`out/s1_a2_timing_attacks_before_after.json`.
+
+**Fix.** The rule is set out in `research/fc_acc_001/AMENDMENT_A2.md`, a
+labelled post-hoc amendment made before any unit existed.
+- **Window.** `schedule.window_of` uses the IANA zone `America/New_York`: DAY
+  is before 17:00 local, NIGHT is at or after it. A start after midnight on an
+  official date counts as NIGHT. Naive or malformed times are rejected.
+- **Cutoff.** `manifest.build` requires `decision_at` to equal the unit's
+  earliest scheduled first pitch (from the archived schedule) minus 30
+  minutes, one cutoff for the whole unit.
+- **No dropped games.** A game is never dropped. A game that is not pregame
+  stays in the unit and in N, and makes the unit `NON_COMPARABLE`.
+- **Late information.** Boards from later runs and late observations are
+  rejected. The ledger refuses a second manifest for a unit that is already
+  sealed.
+
+**`EXPORT_DESIGN.md`.** Its per-game "last pregame run" rule is replaced by
+one decision run per unit, completed by the unit cutoff. Per-run snapshots are
+still kept, but only for completeness.
+
+**Frozen evidence.** `S1_PROTOCOL.md`, `PREREG.md`, `AMENDMENT_A1.md`,
+`out/amendment_a1.json` and the v2 attack record are pinned by sha256 in
+`EvidencePreservation`.
+
+**Tests:**
+- `test_fc_acc_001_s1_capture.py`: 41 passed. The new tests cover the
+  window, both DST regimes, the transition days, UTC date rollovers, invalid
+  and ambiguous times, the unit cutoff, late information, seals after first
+  pitch, and evidence hashes.
+- `test_fc_acc_001_research.py`: 19 passed.
+- The dry run replays byte-identically.
+
+**Not done:** no production change, export implementation, live capture,
+anchor publication, activation, merge, deploy or promotion.
+
+Alligator
+
+## 2026-10-15 -- FC-ACC-001-S1 Amendment A3: pinned cutoffs and complete-coverage zero slates (PR #226; research only)
+
+This responds to Codex's final A2 audit, 6195082449 (HOLD), on `0a4d23d0`.
+
+**Reproduced before the repair.** `s1/attacks/a3_attacks.py`, run against a
+`0a4d23d0` worktree, gave 5 of 5 VULNERABLE:
+- the cutoff was extended from 21:30 to 21:50 by a delayed schedule observed at
+  21:35, via three variants: the delayed schedule alone, a fresh commitment,
+  and no earlier evidence;
+- a board missing a game was reported `ZERO_CHAMPION`;
+- an incomplete capture was reported `ZERO_CHAMPION`.
+
+**After the repair:** 5 of 5 REJECTED. The record is in
+`out/s1_a3_attacks_before_after.json`.
+
+**Fix** (`research/fc_acc_001/AMENDMENT_A3.md`):
+- **`cutoff.py`.** The cutoff commitment comes from an archived schedule
+  observed by a fixed New York deadline: 09:00 for DAY, 15:00 for NIGHT. It is
+  content-addressed and re-derivable.
+- **`ledger.record_cutoff`.** Write-once per unit, by the deadline. The
+  PROSPECTIVE seal must carry exactly the logged commitment.
+- **`manifest.build(cutoff_commitment=…)`.**
+  - `decision_at` must equal the committed cutoff, so a delay never moves it
+    later.
+  - A game moved earlier gives `CUTOFF_LEAD_SHORTENED` and makes the unit
+    `NON_COMPARABLE`; a game at or before the cutoff is refused.
+  - A membership change gives `UNIT_GAMES_CHANGED_SINCE_COMMITMENT` and keeps
+    the game in N.
+  - A missing commitment gives `MISSING_CUTOFF_EVIDENCE`, makes the unit
+    `NON_COMPARABLE`, and adds a certification blocker.
+- **Coverage precedence.** Any coverage failure gives `NON_COMPARABLE`
+  regardless of N; `ZERO_CHAMPION` requires verified complete coverage.
+  `arm_status` and `unit_tally` prevent downstream overrides.
+- **Anchoring.** `anchor.commitment_statement` and `verify_commitment_anchor`
+  are defined; nothing is published.
+
+**Tests.** `test_fc_acc_001_s1_capture.py`: 53 passed. All 29 attacks are
+rejected (19 + 5 + 5). The A2 amendment and A2 attack record are byte-pinned.
+The dry run replays byte-identically.
+
+**Not done:** no export implementation, production or workflow change, live
+capture, anchor publication, activation, merge, deploy or promotion.
+
+Alligator
+
+## 2026-10-16 — FC-ACC-001-S1 Amendment A4: cutoff commitments chained into the ledger (research only, not activated)
+
+**Trigger:** Codex A3 certification HOLD on PR #226 (comment 6197211757). The A3 cutoff commitment was a standalone local file, so deleting, replacing or recovering it went undetected, an idempotent re-seal skipped the cutoff check, and a PROSPECTIVE seal was allowed with no commitment.
+
+**Reproduction:** `s1/attacks/a4_attacks.py` against a clean `9df0520c` worktree gave 7 of 8 VULNERABLE (the concurrent-writer case was already serialized). Record: `out/s1_a4_attacks_before_after.json`.
+
+**Fix** (`research/fc_acc_001/AMENDMENT_A4.md`; reuses the existing hash chain, no new storage):
+- `ledger.record_cutoff` appends a `CUTOFF_COMMITMENT` chain entry. `cutoffs/<unit>.json` is only an index, verified by `read_chain` the same way as `units/`.
+- PROSPECTIVE commitments extend the externally anchored head.
+- The PROSPECTIVE seal requires the chained commitment, and it is validated before any NOOP.
+- `restore_index` restores commitment indexes byte-identically.
+- `anchor.verify_anchors` covers commitment entries (`ANCHORED_BEFORE_DEADLINE`). `anchor.unit_evidence` separates `LOCAL_ONLY` from `EXTERNALLY_ANCHORED_PROSPECTIVE`.
+
+**Results:**
+- All 8 A4 attacks and the 29 earlier ones are rejected.
+- `test_fc_acc_001_s1_capture.py`: 64 OK (11 new `ChainedCutoff` tests). `test_fc_acc_001_research.py`: 19 OK.
+- The A3 amendment and attack record are now byte-pinned.
+- The dry-run `manifest_sha256` is unchanged (`0e000510…`). Only the ledger shape changed: the seal is now seq 2, after the chained commitment.
+
+**Not done:** no anchor publication or certification, no live capture, production or workflow change, activation, merge, deploy or promotion.
+
+Alligator

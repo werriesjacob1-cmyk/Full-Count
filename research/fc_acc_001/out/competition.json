@@ -1,0 +1,1388 @@
+{
+ "arms": {
+  "CH1_BLEND": {
+   "all_slates": {
+    "daily_volume": {
+     "2026-09-20": 4,
+     "2026-09-21": 1,
+     "2026-09-22": 8,
+     "2026-09-23": 13,
+     "2026-09-24": 0,
+     "2026-09-25": 2,
+     "2026-09-26": 4,
+     "2026-09-27": 0,
+     "2026-09-29": 9,
+     "2026-09-30": 7,
+     "2026-10-01": 2,
+     "2026-10-03": 4,
+     "2026-10-04": 1,
+     "2026-10-05": 5,
+     "2026-10-06": 4,
+     "2026-10-07": 5,
+     "2026-10-08": 6,
+     "2026-10-10": 4,
+     "2026-10-11": 12
+    },
+    "hit_rate": 0.7473,
+    "hits": 68,
+    "markets": {
+     "hits": 9,
+     "hits_runs_rbis": 76,
+     "pitcher_outs": 6
+    },
+    "mean_p": 0.7066,
+    "mean_q": 0.7198,
+    "roi": 0.0266,
+    "selected": 91,
+    "settled": 91,
+    "slates": 19,
+    "units": 2.42,
+    "void_or_ungraded": 0
+   },
+   "arm_on_comparable": {
+    "daily_volume": {
+     "2026-09-20": 4,
+     "2026-09-21": 1,
+     "2026-09-22": 8,
+     "2026-09-23": 13,
+     "2026-09-24": 0,
+     "2026-09-25": 2,
+     "2026-09-26": 4,
+     "2026-09-27": 0,
+     "2026-09-29": 9,
+     "2026-09-30": 7,
+     "2026-10-01": 2,
+     "2026-10-03": 4,
+     "2026-10-04": 1,
+     "2026-10-05": 5,
+     "2026-10-06": 4,
+     "2026-10-07": 5,
+     "2026-10-08": 6,
+     "2026-10-10": 4,
+     "2026-10-11": 12
+    },
+    "hit_rate": 0.7473,
+    "hits": 68,
+    "markets": {
+     "hits": 9,
+     "hits_runs_rbis": 76,
+     "pitcher_outs": 6
+    },
+    "mean_p": 0.7066,
+    "mean_q": 0.7198,
+    "roi": 0.0266,
+    "selected": 91,
+    "settled": 91,
+    "slates": 19,
+    "units": 2.42,
+    "void_or_ungraded": 0
+   },
+   "bootstrap_game": {
+    "ci90": [
+     0.1559,
+     0.2851
+    ],
+    "lb95_one_sided": 0.1559,
+    "p_one_sided": 0.0
+   },
+   "bootstrap_slate": {
+    "ci90": [
+     0.1262,
+     0.3077
+    ],
+    "lb95_one_sided": 0.1262,
+    "p_one_sided": 0.0
+   },
+   "champion_on_comparable": {
+    "daily_volume": {
+     "2026-09-20": 4,
+     "2026-09-21": 1,
+     "2026-09-22": 8,
+     "2026-09-23": 13,
+     "2026-09-24": 0,
+     "2026-09-25": 2,
+     "2026-09-26": 4,
+     "2026-09-27": 0,
+     "2026-09-29": 9,
+     "2026-09-30": 7,
+     "2026-10-01": 2,
+     "2026-10-03": 4,
+     "2026-10-04": 1,
+     "2026-10-05": 5,
+     "2026-10-06": 4,
+     "2026-10-07": 5,
+     "2026-10-08": 6,
+     "2026-10-10": 4,
+     "2026-10-11": 12
+    },
+    "hit_rate": 0.5275,
+    "hits": 48,
+    "markets": {
+     "hits": 13,
+     "hits_runs_rbis": 63,
+     "pitcher_outs": 4,
+     "strikeouts": 11
+    },
+    "mean_p": 0.6524,
+    "mean_q": 0.5863,
+    "roi": -0.1049,
+    "selected": 91,
+    "settled": 91,
+    "slates": 19,
+    "units": -9.54,
+    "void_or_ungraded": 0
+   },
+   "comparable_slates": [
+    "2026-09-20",
+    "2026-09-21",
+    "2026-09-22",
+    "2026-09-23",
+    "2026-09-24",
+    "2026-09-25",
+    "2026-09-26",
+    "2026-09-27",
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-01",
+    "2026-10-03",
+    "2026-10-04",
+    "2026-10-05",
+    "2026-10-06",
+    "2026-10-07",
+    "2026-10-08",
+    "2026-10-10",
+    "2026-10-11"
+   ],
+   "diff_hit_rate": 0.2198,
+   "noncomparable": {},
+   "overlap": {
+    "losers_added": 19,
+    "losers_removed": 39,
+    "net_winners": 20,
+    "shared": 12,
+    "unsettled_changed": 0,
+    "winners_added": 60,
+    "winners_removed": 40,
+    "winners_retained": 8
+   },
+   "post_2026": {
+    "daily_volume": {
+     "2026-09-29": 9,
+     "2026-09-30": 7,
+     "2026-10-01": 2,
+     "2026-10-03": 4,
+     "2026-10-04": 1,
+     "2026-10-05": 5,
+     "2026-10-06": 4,
+     "2026-10-07": 5,
+     "2026-10-08": 6,
+     "2026-10-10": 4,
+     "2026-10-11": 12
+    },
+    "hit_rate": 0.7119,
+    "hits": 42,
+    "markets": {
+     "hits": 7,
+     "hits_runs_rbis": 47,
+     "pitcher_outs": 5
+    },
+    "mean_p": 0.7028,
+    "mean_q": 0.6859,
+    "roi": 0.0224,
+    "selected": 59,
+    "settled": 59,
+    "slates": 11,
+    "units": 1.32,
+    "void_or_ungraded": 0
+   },
+   "regular_2026": {
+    "daily_volume": {
+     "2026-09-20": 4,
+     "2026-09-21": 1,
+     "2026-09-22": 8,
+     "2026-09-23": 13,
+     "2026-09-24": 0,
+     "2026-09-25": 2,
+     "2026-09-26": 4,
+     "2026-09-27": 0
+    },
+    "hit_rate": 0.8125,
+    "hits": 26,
+    "markets": {
+     "hits": 2,
+     "hits_runs_rbis": 29,
+     "pitcher_outs": 1
+    },
+    "mean_p": 0.7136,
+    "mean_q": 0.7825,
+    "roi": 0.0345,
+    "selected": 32,
+    "settled": 32,
+    "slates": 8,
+    "units": 1.1,
+    "void_or_ungraded": 0
+   }
+  },
+  "CH2_MARKET": {
+   "all_slates": {
+    "daily_volume": {
+     "2026-09-20": 4,
+     "2026-09-21": 1,
+     "2026-09-22": 8,
+     "2026-09-23": 13,
+     "2026-09-24": 0,
+     "2026-09-25": 2,
+     "2026-09-26": 4,
+     "2026-09-27": 0,
+     "2026-09-29": 9,
+     "2026-09-30": 7,
+     "2026-10-01": 2,
+     "2026-10-03": 4,
+     "2026-10-04": 1,
+     "2026-10-05": 5,
+     "2026-10-06": 4,
+     "2026-10-07": 5,
+     "2026-10-08": 6,
+     "2026-10-10": 4,
+     "2026-10-11": 12
+    },
+    "hit_rate": 0.7253,
+    "hits": 66,
+    "markets": {
+     "hits": 29,
+     "hits_runs_rbis": 61,
+     "nrfi_combined": 1
+    },
+    "mean_p": 0.6751,
+    "mean_q": 0.7348,
+    "roi": -0.0167,
+    "selected": 91,
+    "settled": 91,
+    "slates": 19,
+    "units": -1.52,
+    "void_or_ungraded": 0
+   },
+   "arm_on_comparable": {
+    "daily_volume": {
+     "2026-09-20": 4,
+     "2026-09-21": 1,
+     "2026-09-22": 8,
+     "2026-09-23": 13,
+     "2026-09-24": 0,
+     "2026-09-25": 2,
+     "2026-09-26": 4,
+     "2026-09-27": 0,
+     "2026-09-29": 9,
+     "2026-09-30": 7,
+     "2026-10-01": 2,
+     "2026-10-03": 4,
+     "2026-10-04": 1,
+     "2026-10-05": 5,
+     "2026-10-06": 4,
+     "2026-10-07": 5,
+     "2026-10-08": 6,
+     "2026-10-10": 4,
+     "2026-10-11": 12
+    },
+    "hit_rate": 0.7253,
+    "hits": 66,
+    "markets": {
+     "hits": 29,
+     "hits_runs_rbis": 61,
+     "nrfi_combined": 1
+    },
+    "mean_p": 0.6751,
+    "mean_q": 0.7348,
+    "roi": -0.0167,
+    "selected": 91,
+    "settled": 91,
+    "slates": 19,
+    "units": -1.52,
+    "void_or_ungraded": 0
+   },
+   "bootstrap_game": {
+    "ci90": [
+     0.1159,
+     0.2804
+    ],
+    "lb95_one_sided": 0.1159,
+    "p_one_sided": 0.0
+   },
+   "bootstrap_slate": {
+    "ci90": [
+     0.092,
+     0.2967
+    ],
+    "lb95_one_sided": 0.092,
+    "p_one_sided": 0.0015
+   },
+   "champion_on_comparable": {
+    "daily_volume": {
+     "2026-09-20": 4,
+     "2026-09-21": 1,
+     "2026-09-22": 8,
+     "2026-09-23": 13,
+     "2026-09-24": 0,
+     "2026-09-25": 2,
+     "2026-09-26": 4,
+     "2026-09-27": 0,
+     "2026-09-29": 9,
+     "2026-09-30": 7,
+     "2026-10-01": 2,
+     "2026-10-03": 4,
+     "2026-10-04": 1,
+     "2026-10-05": 5,
+     "2026-10-06": 4,
+     "2026-10-07": 5,
+     "2026-10-08": 6,
+     "2026-10-10": 4,
+     "2026-10-11": 12
+    },
+    "hit_rate": 0.5275,
+    "hits": 48,
+    "markets": {
+     "hits": 13,
+     "hits_runs_rbis": 63,
+     "pitcher_outs": 4,
+     "strikeouts": 11
+    },
+    "mean_p": 0.6524,
+    "mean_q": 0.5863,
+    "roi": -0.1049,
+    "selected": 91,
+    "settled": 91,
+    "slates": 19,
+    "units": -9.54,
+    "void_or_ungraded": 0
+   },
+   "comparable_slates": [
+    "2026-09-20",
+    "2026-09-21",
+    "2026-09-22",
+    "2026-09-23",
+    "2026-09-24",
+    "2026-09-25",
+    "2026-09-26",
+    "2026-09-27",
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-01",
+    "2026-10-03",
+    "2026-10-04",
+    "2026-10-05",
+    "2026-10-06",
+    "2026-10-07",
+    "2026-10-08",
+    "2026-10-10",
+    "2026-10-11"
+   ],
+   "diff_hit_rate": 0.1978,
+   "noncomparable": {},
+   "overlap": {
+    "losers_added": 23,
+    "losers_removed": 41,
+    "net_winners": 18,
+    "shared": 7,
+    "unsettled_changed": 0,
+    "winners_added": 61,
+    "winners_removed": 43,
+    "winners_retained": 5
+   },
+   "post_2026": {
+    "daily_volume": {
+     "2026-09-29": 9,
+     "2026-09-30": 7,
+     "2026-10-01": 2,
+     "2026-10-03": 4,
+     "2026-10-04": 1,
+     "2026-10-05": 5,
+     "2026-10-06": 4,
+     "2026-10-07": 5,
+     "2026-10-08": 6,
+     "2026-10-10": 4,
+     "2026-10-11": 12
+    },
+    "hit_rate": 0.678,
+    "hits": 40,
+    "markets": {
+     "hits": 21,
+     "hits_runs_rbis": 37,
+     "nrfi_combined": 1
+    },
+    "mean_p": 0.667,
+    "mean_q": 0.702,
+    "roi": -0.0351,
+    "selected": 59,
+    "settled": 59,
+    "slates": 11,
+    "units": -2.07,
+    "void_or_ungraded": 0
+   },
+   "regular_2026": {
+    "daily_volume": {
+     "2026-09-20": 4,
+     "2026-09-21": 1,
+     "2026-09-22": 8,
+     "2026-09-23": 13,
+     "2026-09-24": 0,
+     "2026-09-25": 2,
+     "2026-09-26": 4,
+     "2026-09-27": 0
+    },
+    "hit_rate": 0.8125,
+    "hits": 26,
+    "markets": {
+     "hits": 8,
+     "hits_runs_rbis": 24
+    },
+    "mean_p": 0.6901,
+    "mean_q": 0.7954,
+    "roi": 0.0173,
+    "selected": 32,
+    "settled": 32,
+    "slates": 8,
+    "units": 0.55,
+    "void_or_ungraded": 0
+   }
+  },
+  "CH3_CAPPED_MODEL": {
+   "all_slates": {
+    "daily_volume": {
+     "2026-09-20": 4,
+     "2026-09-21": 1,
+     "2026-09-22": 8,
+     "2026-09-23": 13,
+     "2026-09-24": 0,
+     "2026-09-25": 2,
+     "2026-09-26": 4,
+     "2026-09-27": 0,
+     "2026-09-29": 9,
+     "2026-09-30": 7,
+     "2026-10-01": 2,
+     "2026-10-03": 4,
+     "2026-10-04": 1,
+     "2026-10-05": 5,
+     "2026-10-06": 4,
+     "2026-10-07": 5,
+     "2026-10-08": 6,
+     "2026-10-10": 4,
+     "2026-10-11": 12
+    },
+    "hit_rate": 0.6264,
+    "hits": 57,
+    "markets": {
+     "hits": 5,
+     "hits_runs_rbis": 86
+    },
+    "mean_p": 0.6995,
+    "mean_q": 0.7013,
+    "roi": -0.1156,
+    "selected": 91,
+    "settled": 91,
+    "slates": 19,
+    "units": -10.52,
+    "void_or_ungraded": 0
+   },
+   "arm_on_comparable": {
+    "daily_volume": {
+     "2026-09-20": 4,
+     "2026-09-21": 1,
+     "2026-09-22": 8,
+     "2026-09-23": 13,
+     "2026-09-24": 0,
+     "2026-09-25": 2,
+     "2026-09-26": 4,
+     "2026-09-27": 0,
+     "2026-09-29": 9,
+     "2026-09-30": 7,
+     "2026-10-01": 2,
+     "2026-10-03": 4,
+     "2026-10-04": 1,
+     "2026-10-05": 5,
+     "2026-10-06": 4,
+     "2026-10-07": 5,
+     "2026-10-08": 6,
+     "2026-10-10": 4,
+     "2026-10-11": 12
+    },
+    "hit_rate": 0.6264,
+    "hits": 57,
+    "markets": {
+     "hits": 5,
+     "hits_runs_rbis": 86
+    },
+    "mean_p": 0.6995,
+    "mean_q": 0.7013,
+    "roi": -0.1156,
+    "selected": 91,
+    "settled": 91,
+    "slates": 19,
+    "units": -10.52,
+    "void_or_ungraded": 0
+   },
+   "bootstrap_game": {
+    "ci90": [
+     0.021,
+     0.179
+    ],
+    "lb95_one_sided": 0.021,
+    "p_one_sided": 0.016
+   },
+   "bootstrap_slate": {
+    "ci90": [
+     0.0385,
+     0.1688
+    ],
+    "lb95_one_sided": 0.0385,
+    "p_one_sided": 0.008
+   },
+   "champion_on_comparable": {
+    "daily_volume": {
+     "2026-09-20": 4,
+     "2026-09-21": 1,
+     "2026-09-22": 8,
+     "2026-09-23": 13,
+     "2026-09-24": 0,
+     "2026-09-25": 2,
+     "2026-09-26": 4,
+     "2026-09-27": 0,
+     "2026-09-29": 9,
+     "2026-09-30": 7,
+     "2026-10-01": 2,
+     "2026-10-03": 4,
+     "2026-10-04": 1,
+     "2026-10-05": 5,
+     "2026-10-06": 4,
+     "2026-10-07": 5,
+     "2026-10-08": 6,
+     "2026-10-10": 4,
+     "2026-10-11": 12
+    },
+    "hit_rate": 0.5275,
+    "hits": 48,
+    "markets": {
+     "hits": 13,
+     "hits_runs_rbis": 63,
+     "pitcher_outs": 4,
+     "strikeouts": 11
+    },
+    "mean_p": 0.6524,
+    "mean_q": 0.5863,
+    "roi": -0.1049,
+    "selected": 91,
+    "settled": 91,
+    "slates": 19,
+    "units": -9.54,
+    "void_or_ungraded": 0
+   },
+   "comparable_slates": [
+    "2026-09-20",
+    "2026-09-21",
+    "2026-09-22",
+    "2026-09-23",
+    "2026-09-24",
+    "2026-09-25",
+    "2026-09-26",
+    "2026-09-27",
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-01",
+    "2026-10-03",
+    "2026-10-04",
+    "2026-10-05",
+    "2026-10-06",
+    "2026-10-07",
+    "2026-10-08",
+    "2026-10-10",
+    "2026-10-11"
+   ],
+   "diff_hit_rate": 0.0989,
+   "noncomparable": {},
+   "overlap": {
+    "losers_added": 22,
+    "losers_removed": 31,
+    "net_winners": 9,
+    "shared": 26,
+    "unsettled_changed": 0,
+    "winners_added": 43,
+    "winners_removed": 34,
+    "winners_retained": 14
+   },
+   "post_2026": {
+    "daily_volume": {
+     "2026-09-29": 9,
+     "2026-09-30": 7,
+     "2026-10-01": 2,
+     "2026-10-03": 4,
+     "2026-10-04": 1,
+     "2026-10-05": 5,
+     "2026-10-06": 4,
+     "2026-10-07": 5,
+     "2026-10-08": 6,
+     "2026-10-10": 4,
+     "2026-10-11": 12
+    },
+    "hit_rate": 0.5932,
+    "hits": 35,
+    "markets": {
+     "hits": 4,
+     "hits_runs_rbis": 55
+    },
+    "mean_p": 0.6907,
+    "mean_q": 0.6742,
+    "roi": -0.1242,
+    "selected": 59,
+    "settled": 59,
+    "slates": 11,
+    "units": -7.33,
+    "void_or_ungraded": 0
+   },
+   "regular_2026": {
+    "daily_volume": {
+     "2026-09-20": 4,
+     "2026-09-21": 1,
+     "2026-09-22": 8,
+     "2026-09-23": 13,
+     "2026-09-24": 0,
+     "2026-09-25": 2,
+     "2026-09-26": 4,
+     "2026-09-27": 0
+    },
+    "hit_rate": 0.6875,
+    "hits": 22,
+    "markets": {
+     "hits": 1,
+     "hits_runs_rbis": 31
+    },
+    "mean_p": 0.7158,
+    "mean_q": 0.7513,
+    "roi": -0.0996,
+    "selected": 32,
+    "settled": 32,
+    "slates": 8,
+    "units": -3.19,
+    "void_or_ungraded": 0
+   }
+  },
+  "CH4_DEPTH": {
+   "all_slates": {
+    "daily_volume": {
+     "2026-09-20": 4,
+     "2026-09-21": 1,
+     "2026-09-22": 8,
+     "2026-09-23": 13,
+     "2026-09-24": 0,
+     "2026-09-25": 2,
+     "2026-09-26": 4,
+     "2026-09-27": 0,
+     "2026-09-29": 9,
+     "2026-09-30": 7,
+     "2026-10-01": 2,
+     "2026-10-03": 4,
+     "2026-10-04": 1,
+     "2026-10-05": 5,
+     "2026-10-06": 4,
+     "2026-10-07": 5,
+     "2026-10-08": 6,
+     "2026-10-10": 4,
+     "2026-10-11": 12
+    },
+    "hit_rate": 0.6374,
+    "hits": 58,
+    "markets": {
+     "hits": 4,
+     "hits_runs_rbis": 87
+    },
+    "mean_p": 0.6994,
+    "mean_q": 0.7022,
+    "roi": -0.1008,
+    "selected": 91,
+    "settled": 91,
+    "slates": 19,
+    "units": -9.17,
+    "void_or_ungraded": 0
+   },
+   "arm_on_comparable": {
+    "daily_volume": {
+     "2026-09-20": 4,
+     "2026-09-21": 1,
+     "2026-09-22": 8,
+     "2026-09-23": 13,
+     "2026-09-24": 0,
+     "2026-09-25": 2,
+     "2026-09-26": 4,
+     "2026-09-27": 0,
+     "2026-09-29": 9,
+     "2026-09-30": 7,
+     "2026-10-01": 2,
+     "2026-10-03": 4,
+     "2026-10-04": 1,
+     "2026-10-05": 5,
+     "2026-10-06": 4,
+     "2026-10-07": 5,
+     "2026-10-08": 6,
+     "2026-10-10": 4,
+     "2026-10-11": 12
+    },
+    "hit_rate": 0.6374,
+    "hits": 58,
+    "markets": {
+     "hits": 4,
+     "hits_runs_rbis": 87
+    },
+    "mean_p": 0.6994,
+    "mean_q": 0.7022,
+    "roi": -0.1008,
+    "selected": 91,
+    "settled": 91,
+    "slates": 19,
+    "units": -9.17,
+    "void_or_ungraded": 0
+   },
+   "bootstrap_game": {
+    "ci90": [
+     0.033,
+     0.1882
+    ],
+    "lb95_one_sided": 0.033,
+    "p_one_sided": 0.0105
+   },
+   "bootstrap_slate": {
+    "ci90": [
+     0.0405,
+     0.1818
+    ],
+    "lb95_one_sided": 0.0405,
+    "p_one_sided": 0.0055
+   },
+   "champion_on_comparable": {
+    "daily_volume": {
+     "2026-09-20": 4,
+     "2026-09-21": 1,
+     "2026-09-22": 8,
+     "2026-09-23": 13,
+     "2026-09-24": 0,
+     "2026-09-25": 2,
+     "2026-09-26": 4,
+     "2026-09-27": 0,
+     "2026-09-29": 9,
+     "2026-09-30": 7,
+     "2026-10-01": 2,
+     "2026-10-03": 4,
+     "2026-10-04": 1,
+     "2026-10-05": 5,
+     "2026-10-06": 4,
+     "2026-10-07": 5,
+     "2026-10-08": 6,
+     "2026-10-10": 4,
+     "2026-10-11": 12
+    },
+    "hit_rate": 0.5275,
+    "hits": 48,
+    "markets": {
+     "hits": 13,
+     "hits_runs_rbis": 63,
+     "pitcher_outs": 4,
+     "strikeouts": 11
+    },
+    "mean_p": 0.6524,
+    "mean_q": 0.5863,
+    "roi": -0.1049,
+    "selected": 91,
+    "settled": 91,
+    "slates": 19,
+    "units": -9.54,
+    "void_or_ungraded": 0
+   },
+   "comparable_slates": [
+    "2026-09-20",
+    "2026-09-21",
+    "2026-09-22",
+    "2026-09-23",
+    "2026-09-24",
+    "2026-09-25",
+    "2026-09-26",
+    "2026-09-27",
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-01",
+    "2026-10-03",
+    "2026-10-04",
+    "2026-10-05",
+    "2026-10-06",
+    "2026-10-07",
+    "2026-10-08",
+    "2026-10-10",
+    "2026-10-11"
+   ],
+   "diff_hit_rate": 0.1099,
+   "noncomparable": {},
+   "overlap": {
+    "losers_added": 21,
+    "losers_removed": 31,
+    "net_winners": 10,
+    "shared": 26,
+    "unsettled_changed": 0,
+    "winners_added": 44,
+    "winners_removed": 34,
+    "winners_retained": 14
+   },
+   "post_2026": {
+    "daily_volume": {
+     "2026-09-29": 9,
+     "2026-09-30": 7,
+     "2026-10-01": 2,
+     "2026-10-03": 4,
+     "2026-10-04": 1,
+     "2026-10-05": 5,
+     "2026-10-06": 4,
+     "2026-10-07": 5,
+     "2026-10-08": 6,
+     "2026-10-10": 4,
+     "2026-10-11": 12
+    },
+    "hit_rate": 0.5932,
+    "hits": 35,
+    "markets": {
+     "hits": 4,
+     "hits_runs_rbis": 55
+    },
+    "mean_p": 0.6907,
+    "mean_q": 0.6742,
+    "roi": -0.1242,
+    "selected": 59,
+    "settled": 59,
+    "slates": 11,
+    "units": -7.33,
+    "void_or_ungraded": 0
+   },
+   "regular_2026": {
+    "daily_volume": {
+     "2026-09-20": 4,
+     "2026-09-21": 1,
+     "2026-09-22": 8,
+     "2026-09-23": 13,
+     "2026-09-24": 0,
+     "2026-09-25": 2,
+     "2026-09-26": 4,
+     "2026-09-27": 0
+    },
+    "hit_rate": 0.7188,
+    "hits": 23,
+    "markets": {
+     "hits_runs_rbis": 32
+    },
+    "mean_p": 0.7155,
+    "mean_q": 0.7539,
+    "roi": -0.0576,
+    "selected": 32,
+    "settled": 32,
+    "slates": 8,
+    "units": -1.84,
+    "void_or_ungraded": 0
+   }
+  },
+  "CH5_ONE_PER_GAME": {
+   "all_slates": {
+    "daily_volume": {
+     "2026-09-20": 1,
+     "2026-09-21": 1,
+     "2026-09-22": 5,
+     "2026-09-23": 6,
+     "2026-09-24": 0,
+     "2026-09-25": 1,
+     "2026-09-26": 3,
+     "2026-09-27": 0,
+     "2026-09-29": 2,
+     "2026-09-30": 2,
+     "2026-10-01": 1,
+     "2026-10-03": 1,
+     "2026-10-04": 1,
+     "2026-10-05": 1,
+     "2026-10-06": 1,
+     "2026-10-07": 3,
+     "2026-10-08": 1,
+     "2026-10-10": 1,
+     "2026-10-11": 1
+    },
+    "hit_rate": 0.4375,
+    "hits": 14,
+    "markets": {
+     "hits": 3,
+     "hits_runs_rbis": 23,
+     "pitcher_outs": 1,
+     "strikeouts": 5
+    },
+    "mean_p": 0.6633,
+    "mean_q": 0.5976,
+    "roi": -0.2935,
+    "selected": 32,
+    "settled": 32,
+    "slates": 19,
+    "units": -9.39,
+    "void_or_ungraded": 0
+   },
+   "arm_on_comparable": {
+    "daily_volume": {
+     "2026-09-21": 1,
+     "2026-09-24": 0,
+     "2026-09-27": 0,
+     "2026-10-04": 1
+    },
+    "hit_rate": 0.0,
+    "hits": 0,
+    "markets": {
+     "hits_runs_rbis": 1,
+     "strikeouts": 1
+    },
+    "mean_p": 0.616,
+    "mean_q": 0.4903,
+    "roi": -1.0,
+    "selected": 2,
+    "settled": 2,
+    "slates": 4,
+    "units": -2.0,
+    "void_or_ungraded": 0
+   },
+   "bootstrap_game": {
+    "ci90": [
+     0.0,
+     0.0
+    ],
+    "lb95_one_sided": 0.0,
+    "p_one_sided": 1.0
+   },
+   "bootstrap_slate": {
+    "ci90": [
+     0.0,
+     0.0
+    ],
+    "lb95_one_sided": 0.0,
+    "p_one_sided": 1.0
+   },
+   "champion_on_comparable": {
+    "daily_volume": {
+     "2026-09-21": 1,
+     "2026-09-24": 0,
+     "2026-09-27": 0,
+     "2026-10-04": 1
+    },
+    "hit_rate": 0.0,
+    "hits": 0,
+    "markets": {
+     "hits_runs_rbis": 1,
+     "strikeouts": 1
+    },
+    "mean_p": 0.616,
+    "mean_q": 0.4903,
+    "roi": -1.0,
+    "selected": 2,
+    "settled": 2,
+    "slates": 4,
+    "units": -2.0,
+    "void_or_ungraded": 0
+   },
+   "comparable_slates": [
+    "2026-09-21",
+    "2026-09-24",
+    "2026-09-27",
+    "2026-10-04"
+   ],
+   "diff_hit_rate": 0.0,
+   "noncomparable": {
+    "2026-09-20": 3,
+    "2026-09-22": 3,
+    "2026-09-23": 7,
+    "2026-09-25": 1,
+    "2026-09-26": 1,
+    "2026-09-29": 7,
+    "2026-09-30": 5,
+    "2026-10-01": 1,
+    "2026-10-03": 3,
+    "2026-10-05": 4,
+    "2026-10-06": 3,
+    "2026-10-07": 2,
+    "2026-10-08": 5,
+    "2026-10-10": 3,
+    "2026-10-11": 11
+   },
+   "overlap": {
+    "losers_added": 0,
+    "losers_removed": 0,
+    "net_winners": 0,
+    "shared": 2,
+    "unsettled_changed": 0,
+    "winners_added": 0,
+    "winners_removed": 0,
+    "winners_retained": 0
+   },
+   "post_2026": {
+    "daily_volume": {
+     "2026-09-29": 2,
+     "2026-09-30": 2,
+     "2026-10-01": 1,
+     "2026-10-03": 1,
+     "2026-10-04": 1,
+     "2026-10-05": 1,
+     "2026-10-06": 1,
+     "2026-10-07": 3,
+     "2026-10-08": 1,
+     "2026-10-10": 1,
+     "2026-10-11": 1
+    },
+    "hit_rate": 0.4667,
+    "hits": 7,
+    "markets": {
+     "hits": 2,
+     "hits_runs_rbis": 13
+    },
+    "mean_p": 0.678,
+    "mean_q": 0.6213,
+    "roi": -0.2721,
+    "selected": 15,
+    "settled": 15,
+    "slates": 11,
+    "units": -4.08,
+    "void_or_ungraded": 0
+   },
+   "regular_2026": {
+    "daily_volume": {
+     "2026-09-20": 1,
+     "2026-09-21": 1,
+     "2026-09-22": 5,
+     "2026-09-23": 6,
+     "2026-09-24": 0,
+     "2026-09-25": 1,
+     "2026-09-26": 3,
+     "2026-09-27": 0
+    },
+    "hit_rate": 0.4118,
+    "hits": 7,
+    "markets": {
+     "hits": 1,
+     "hits_runs_rbis": 10,
+     "pitcher_outs": 1,
+     "strikeouts": 5
+    },
+    "mean_p": 0.6502,
+    "mean_q": 0.5768,
+    "roi": -0.3125,
+    "selected": 17,
+    "settled": 17,
+    "slates": 8,
+    "units": -5.31,
+    "void_or_ungraded": 0
+   }
+  },
+  "CHAMPION": {
+   "all_slates": {
+    "daily_volume": {
+     "2026-09-20": 4,
+     "2026-09-21": 1,
+     "2026-09-22": 8,
+     "2026-09-23": 13,
+     "2026-09-24": 0,
+     "2026-09-25": 2,
+     "2026-09-26": 4,
+     "2026-09-27": 0,
+     "2026-09-29": 9,
+     "2026-09-30": 7,
+     "2026-10-01": 2,
+     "2026-10-03": 4,
+     "2026-10-04": 1,
+     "2026-10-05": 5,
+     "2026-10-06": 4,
+     "2026-10-07": 5,
+     "2026-10-08": 6,
+     "2026-10-10": 4,
+     "2026-10-11": 12
+    },
+    "hit_rate": 0.5275,
+    "hits": 48,
+    "markets": {
+     "hits": 13,
+     "hits_runs_rbis": 63,
+     "pitcher_outs": 4,
+     "strikeouts": 11
+    },
+    "mean_p": 0.6524,
+    "mean_q": 0.5863,
+    "roi": -0.1049,
+    "selected": 91,
+    "settled": 91,
+    "slates": 19,
+    "units": -9.54,
+    "void_or_ungraded": 0
+   },
+   "comparable_slates": [
+    "2026-09-20",
+    "2026-09-21",
+    "2026-09-22",
+    "2026-09-23",
+    "2026-09-24",
+    "2026-09-25",
+    "2026-09-26",
+    "2026-09-27",
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-01",
+    "2026-10-03",
+    "2026-10-04",
+    "2026-10-05",
+    "2026-10-06",
+    "2026-10-07",
+    "2026-10-08",
+    "2026-10-10",
+    "2026-10-11"
+   ],
+   "noncomparable": {},
+   "post_2026": {
+    "daily_volume": {
+     "2026-09-29": 9,
+     "2026-09-30": 7,
+     "2026-10-01": 2,
+     "2026-10-03": 4,
+     "2026-10-04": 1,
+     "2026-10-05": 5,
+     "2026-10-06": 4,
+     "2026-10-07": 5,
+     "2026-10-08": 6,
+     "2026-10-10": 4,
+     "2026-10-11": 12
+    },
+    "hit_rate": 0.5254,
+    "hits": 31,
+    "markets": {
+     "hits": 11,
+     "hits_runs_rbis": 43,
+     "strikeouts": 5
+    },
+    "mean_p": 0.6574,
+    "mean_q": 0.5965,
+    "roi": -0.1211,
+    "selected": 59,
+    "settled": 59,
+    "slates": 11,
+    "units": -7.15,
+    "void_or_ungraded": 0
+   },
+   "regular_2026": {
+    "daily_volume": {
+     "2026-09-20": 4,
+     "2026-09-21": 1,
+     "2026-09-22": 8,
+     "2026-09-23": 13,
+     "2026-09-24": 0,
+     "2026-09-25": 2,
+     "2026-09-26": 4,
+     "2026-09-27": 0
+    },
+    "hit_rate": 0.5312,
+    "hits": 17,
+    "markets": {
+     "hits": 2,
+     "hits_runs_rbis": 20,
+     "pitcher_outs": 4,
+     "strikeouts": 6
+    },
+    "mean_p": 0.6432,
+    "mean_q": 0.5675,
+    "roi": -0.0748,
+    "selected": 32,
+    "settled": 32,
+    "slates": 8,
+    "units": -2.39,
+    "void_or_ungraded": 0
+   }
+  }
+ },
+ "champion_outside_U": 0,
+ "excluded_slates": [
+  {
+   "date": "2026-10-12",
+   "reason": "no graded file"
+  }
+ ],
+ "holm_adjusted_p_secondary": {
+  "CH2_MARKET": 0.0,
+  "CH3_CAPPED_MODEL": 0.021,
+  "CH4_DEPTH": 0.021
+ },
+ "inputs": [
+  {
+   "board": "output/board_freeze_2026-09-20.json",
+   "graded": "output/board_freeze_graded_2026-09-20.json",
+   "graded_sha256": "0ec31f39e28eeaab13137f5e1e2c7c370169b950dc36986357e536c213332114",
+   "sha256": "85d5a3cb9d125e79c40e46cd8a44a5c42c8524f00b959bb9804de74f1cc3457b"
+  },
+  {
+   "board": "output/board_freeze_2026-09-21.json",
+   "graded": "output/board_freeze_graded_2026-09-21.json",
+   "graded_sha256": "40707072c697fc82c8061074c2d8ccfbbd108bad78dbad8ca756c5cf2da10082",
+   "sha256": "051474938a5276518511a009f7d5cad0f620e850ddba7a0abd38fc90c86635cc"
+  },
+  {
+   "board": "output/board_freeze_2026-09-22.json",
+   "graded": "output/board_freeze_graded_2026-09-22.json",
+   "graded_sha256": "5547da37c1926d8ed8f69e5c37b78fb980f89f4ffb6e85bbf1631549b01139ec",
+   "sha256": "96bb2d192cb3c325fb530b35968f87ddfde3df89de433ace104d37df72affc07"
+  },
+  {
+   "board": "output/board_freeze_2026-09-23.json",
+   "graded": "output/board_freeze_graded_2026-09-23.json",
+   "graded_sha256": "7d29e8a78a2ffc707395e9fb7fdf915764c363063ec3e55d6150fcaea595ab63",
+   "sha256": "95f1fd9394209953988d2b008f2f371d666f12b70cf8fb2ebc6b1ae486ad5158"
+  },
+  {
+   "board": "output/board_freeze_2026-09-24.json",
+   "graded": "output/board_freeze_graded_2026-09-24.json",
+   "graded_sha256": "bbd455d356ea72d7de7861e045153143c90369ea0705d85297c462e44d77aeca",
+   "sha256": "65aebbe334c49f51b6f3463da104e2352db821cf77d4539ab01e3d952790f712"
+  },
+  {
+   "board": "output/board_freeze_2026-09-25.json",
+   "graded": "output/board_freeze_graded_2026-09-25.json",
+   "graded_sha256": "82471c3fd861700ef0fdea4780159e82434691d9c6c121850ae48aab2c867385",
+   "sha256": "4151d9527d610a9bf22f7773499c4b5462a205c68b204168a3d2f913fdc0b6df"
+  },
+  {
+   "board": "output/board_freeze_2026-09-26.json",
+   "graded": "output/board_freeze_graded_2026-09-26.json",
+   "graded_sha256": "73a654744b913b434de536dc7e2fc5497d8b5eb46ab9446be8c3c33e434e2927",
+   "sha256": "8c5f1bb4be441daa8e5971ac3187a98812265d74df5f265b41e38367c5c678f0"
+  },
+  {
+   "board": "output/board_freeze_2026-09-27.json",
+   "graded": "output/board_freeze_graded_2026-09-27.json",
+   "graded_sha256": "138239bac9b1fb1a2acfdd56e775f5a8dc3ac2b6060faed1c60093ab9561e2c8",
+   "sha256": "177f4c071510a9c58b4fd2d4baddc148f51bc83056deecd665b50145639d6fed"
+  },
+  {
+   "board": "output/board_freeze_2026-09-29.json",
+   "graded": "output/board_freeze_graded_2026-09-29.json",
+   "graded_sha256": "3494dafff3bfb01022ba836b546dadd368785567effc2f7d1598ca1849a15635",
+   "sha256": "60b5d5b15c3f0e3263c3b75a5bff029e411d1ce1a6b4935e1140b9c2796ea988"
+  },
+  {
+   "board": "output/board_freeze_2026-09-30.json",
+   "graded": "output/board_freeze_graded_2026-09-30.json",
+   "graded_sha256": "263d6a61e69d2d46e0279762a49c770bbf844f8bd46b4da4b74ff5c1cf95d5a3",
+   "sha256": "c78f64df2c19668e45d81e2be314ddd1fcf252740a137805f6ffb0285b63816b"
+  },
+  {
+   "board": "output/board_freeze_2026-10-01.json",
+   "graded": "output/board_freeze_graded_2026-10-01.json",
+   "graded_sha256": "e7121ed3bf6ca452da62d6d5bc279e0c4015fd3d8784ea9adef8943147206d76",
+   "sha256": "60f50a541abf3d2b6bf1c4543e32d3fcb36ea3360cbc5ed6e99a16095a56a414"
+  },
+  {
+   "board": "output/board_freeze_2026-10-03.json",
+   "graded": "output/board_freeze_graded_2026-10-03.json",
+   "graded_sha256": "87652361406300211a4d523d58177c884603119ddeda0685845db291282530fb",
+   "sha256": "b29ed16999ff3f2bd07458aeb59b75ba103a474c42fe3ce190b8b0a7608ef722"
+  },
+  {
+   "board": "output/board_freeze_2026-10-04.json",
+   "graded": "output/board_freeze_graded_2026-10-04.json",
+   "graded_sha256": "6528c59db7e435b5e67c4f65ada4357db74685b8ba6d5fec9d303b2dcd26a523",
+   "sha256": "2c5f887b5c5b264b16a8d334be22e80554b6f0300d1fbbf3e23d4d2256517549"
+  },
+  {
+   "board": "output/board_freeze_2026-10-05.json",
+   "graded": "output/board_freeze_graded_2026-10-05.json",
+   "graded_sha256": "bc7c545021868820eb2dc3ae5c078b2bc3b9026f03daa4e8d691709954568365",
+   "sha256": "505ee50e0d69b21e4e33a3a8916aac287af19e2787d98144cacce0962644b451"
+  },
+  {
+   "board": "output/board_freeze_2026-10-06.json",
+   "graded": "output/board_freeze_graded_2026-10-06.json",
+   "graded_sha256": "9407ce0519b91d95df68ae3c6794b9b9d5817f8479101d6147de4bdfbaa63ad9",
+   "sha256": "591818a5f1123c9292c63981f2ad9d9365fef318feddb8b47dce3af1b81b8749"
+  },
+  {
+   "board": "output/board_freeze_2026-10-07.json",
+   "graded": "output/board_freeze_graded_2026-10-07.json",
+   "graded_sha256": "f055dbc36cd1646cc5e193a56389cbe959fb9e8bb71488aa77ccd856d2637dd5",
+   "sha256": "3a3adaa21908ed430a9f1ea72dd1bebd19745f15014ec4ea7c4e07f6149a6010"
+  },
+  {
+   "board": "output/board_freeze_2026-10-08.json",
+   "graded": "output/board_freeze_graded_2026-10-08.json",
+   "graded_sha256": "9c910bc0c7f1ce1df5f57f3f67758de9152342d0315e0dcf04518332e54b7f3d",
+   "sha256": "2e5b337e24509de2723a1cd8ce3f9a0be3bc00cba7129d212d4347efc50dacd3"
+  },
+  {
+   "board": "output/board_freeze_2026-10-10.json",
+   "graded": "output/board_freeze_graded_2026-10-10.json",
+   "graded_sha256": "6547c446ed6c5b4ee85d7b8619a7d3ff668a2707c9e20863f3ae4b584b2f8d9c",
+   "sha256": "d3ce864044960670aa74e687c309ffc37154a175ff74ee6234cbc6a91cb97bd5"
+  },
+  {
+   "board": "output/board_freeze_2026-10-11.json",
+   "graded": "output/board_freeze_graded_2026-10-11.json",
+   "graded_sha256": "728ee6b288b5dc44c4e6e77341646b15f9128f9cc83bd24ddb744ff092145cba",
+   "sha256": "64f065b222f30047cd3407545186ec56ee0bbad0debbef42aaa09737e36777e6"
+  },
+  {
+   "board": "output/board_freeze_2026-10-12.json",
+   "graded": null,
+   "graded_sha256": null,
+   "sha256": "be6cefbb4e83b82c9e4247611b98b0d5f0342e3beabf051afca259595f708647"
+  }
+ ],
+ "pool_test_all": {
+  "auc_blend": 0.8435,
+  "auc_p": 0.8361,
+  "auc_q": 0.8434,
+  "coef_d": 0.1135,
+  "coef_d_ci95": [
+   -0.1337,
+   0.397
+  ],
+  "coef_logit_q": 1.0091,
+  "games": 60,
+  "hit_rate": 0.3064,
+  "mean_p": 0.3237,
+  "mean_q": 0.3393,
+  "n": 2056
+ },
+ "pool_test_core": {
+  "auc_blend": 0.6152,
+  "auc_p": 0.5865,
+  "auc_q": 0.6162,
+  "coef_d": 0.0445,
+  "coef_d_ci95": [
+   -0.4412,
+   0.6112
+  ],
+  "coef_logit_q": 1.118,
+  "games": 57,
+  "hit_rate": 0.5795,
+  "mean_p": 0.6321,
+  "mean_q": 0.6421,
+  "n": 887
+ },
+ "prereg_sha256": "e6466a71cdbacb86ce0f10af1cd89e353c20aa8f99ac8c3df59a616d5905dbbb",
+ "primary_verdict_CH1": "EXPLORATORY_POSITIVE",
+ "slates": [
+  "2026-09-20",
+  "2026-09-21",
+  "2026-09-22",
+  "2026-09-23",
+  "2026-09-24",
+  "2026-09-25",
+  "2026-09-26",
+  "2026-09-27",
+  "2026-09-29",
+  "2026-09-30",
+  "2026-10-01",
+  "2026-10-03",
+  "2026-10-04",
+  "2026-10-05",
+  "2026-10-06",
+  "2026-10-07",
+  "2026-10-08",
+  "2026-10-10",
+  "2026-10-11"
+ ]
+}

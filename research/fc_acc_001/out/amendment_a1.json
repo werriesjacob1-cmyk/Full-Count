@@ -1,0 +1,509 @@
+{
+ "P1_post_window_new_evidence": {
+  "hit_minus_break_even_pp": -6.34,
+  "hit_rate": 0.5455,
+  "losses": 5,
+  "mean_break_even_raw_at_published_odds": 0.6089,
+  "mean_stored_market_implied_MIXED": 0.6061,
+  "published": 12,
+  "roi": -0.1108,
+  "settled": 11,
+  "ungraded": 1,
+  "units": -1.22,
+  "void": 0,
+  "wins": 6
+ },
+ "P1_public_baseline": {
+  "hit_minus_break_even_pp": -6.35,
+  "hit_rate": 0.5271,
+  "losses": 288,
+  "mean_break_even_raw_at_published_odds": 0.5906,
+  "mean_stored_market_implied_MIXED": 0.5831,
+  "published": 618,
+  "roi": -0.1117,
+  "settled": 609,
+  "ungraded": 0,
+  "units": -68.03,
+  "void": 9,
+  "wins": 321
+ },
+ "P1_public_by_market": {
+  "hits": {
+   "hit_minus_break_even_pp": -2.48,
+   "hit_rate": 0.5545,
+   "losses": 49,
+   "mean_break_even_raw_at_published_odds": 0.5793,
+   "mean_stored_market_implied_MIXED": 0.5793,
+   "published": 112,
+   "roi": -0.0399,
+   "settled": 110,
+   "ungraded": 0,
+   "units": -4.39,
+   "void": 2,
+   "wins": 61
+  },
+  "hits_runs_rbis": {
+   "hit_minus_break_even_pp": -6.24,
+   "hit_rate": 0.55,
+   "losses": 162,
+   "mean_break_even_raw_at_published_odds": 0.6124,
+   "mean_stored_market_implied_MIXED": 0.6124,
+   "published": 363,
+   "roi": -0.1035,
+   "settled": 360,
+   "ungraded": 0,
+   "units": -37.26,
+   "void": 3,
+   "wins": 198
+  },
+  "pitcher_outs": {
+   "hit_minus_break_even_pp": -8.53,
+   "hit_rate": 0.4651,
+   "losses": 23,
+   "mean_break_even_raw_at_published_odds": 0.5504,
+   "mean_stored_market_implied_MIXED": 0.5124,
+   "published": 45,
+   "roi": -0.1705,
+   "settled": 43,
+   "ungraded": 0,
+   "units": -7.33,
+   "void": 2,
+   "wins": 20
+  },
+  "strikeouts": {
+   "hit_minus_break_even_pp": -10.27,
+   "hit_rate": 0.4375,
+   "losses": 54,
+   "mean_break_even_raw_at_published_odds": 0.5402,
+   "mean_stored_market_implied_MIXED": 0.5095,
+   "published": 98,
+   "roi": -0.1984,
+   "settled": 96,
+   "ungraded": 0,
+   "units": -19.05,
+   "void": 2,
+   "wins": 42
+  }
+ },
+ "arms": {
+  "CH1_BLEND": {
+   "hit_minus_break_even_pp": 2.46,
+   "hit_rate": 0.7473,
+   "mean_break_even_raw": 0.7227,
+   "note": "ORIGINAL preregistered arm; q = stored market_implied (MIXED semantics)",
+   "roi": 0.0266,
+   "settled": 91,
+   "share_shorter_than_-200": 0.835,
+   "wins": 68
+  },
+  "CH1u_BLEND_RAW_BE": {
+   "hit_minus_break_even_pp": 1.69,
+   "hit_rate": 0.7363,
+   "mean_break_even_raw": 0.7194,
+   "note": "A1 corrected: q = uniform offered-price break-even",
+   "roi": 0.0139,
+   "settled": 91,
+   "share_shorter_than_-200": 0.813,
+   "wins": 67
+  },
+  "CH2_MARKET": {
+   "hit_minus_break_even_pp": -1.0,
+   "hit_rate": 0.7253,
+   "mean_break_even_raw": 0.7352,
+   "roi": -0.0167,
+   "settled": 91,
+   "share_shorter_than_-200": 0.912,
+   "wins": 66
+  },
+  "CH2u_MARKET_RAW_BE": {
+   "hit_minus_break_even_pp": -1.0,
+   "hit_rate": 0.7253,
+   "mean_break_even_raw": 0.7353,
+   "roi": -0.0167,
+   "settled": 91,
+   "share_shorter_than_-200": 0.912,
+   "wins": 66
+  },
+  "CHAMPION": {
+   "hit_minus_break_even_pp": -6.41,
+   "hit_rate": 0.5275,
+   "mean_break_even_raw": 0.5915,
+   "roi": -0.1048,
+   "settled": 91,
+   "share_shorter_than_-200": 0.033,
+   "wins": 48
+  }
+ },
+ "grade_reconciliation": {
+  "both_agree": 561,
+  "conflict": 0,
+  "history_only": 0,
+  "none": 0,
+  "results_only": 57
+ },
+ "inputs": [
+  {
+   "board": "output/board_freeze_2026-09-20.json",
+   "graded": "output/board_freeze_graded_2026-09-20.json",
+   "graded_sha256": "0ec31f39e28eeaab13137f5e1e2c7c370169b950dc36986357e536c213332114",
+   "sha256": "85d5a3cb9d125e79c40e46cd8a44a5c42c8524f00b959bb9804de74f1cc3457b"
+  },
+  {
+   "board": "output/board_freeze_2026-09-21.json",
+   "graded": "output/board_freeze_graded_2026-09-21.json",
+   "graded_sha256": "40707072c697fc82c8061074c2d8ccfbbd108bad78dbad8ca756c5cf2da10082",
+   "sha256": "051474938a5276518511a009f7d5cad0f620e850ddba7a0abd38fc90c86635cc"
+  },
+  {
+   "board": "output/board_freeze_2026-09-22.json",
+   "graded": "output/board_freeze_graded_2026-09-22.json",
+   "graded_sha256": "5547da37c1926d8ed8f69e5c37b78fb980f89f4ffb6e85bbf1631549b01139ec",
+   "sha256": "96bb2d192cb3c325fb530b35968f87ddfde3df89de433ace104d37df72affc07"
+  },
+  {
+   "board": "output/board_freeze_2026-09-23.json",
+   "graded": "output/board_freeze_graded_2026-09-23.json",
+   "graded_sha256": "7d29e8a78a2ffc707395e9fb7fdf915764c363063ec3e55d6150fcaea595ab63",
+   "sha256": "95f1fd9394209953988d2b008f2f371d666f12b70cf8fb2ebc6b1ae486ad5158"
+  },
+  {
+   "board": "output/board_freeze_2026-09-24.json",
+   "graded": "output/board_freeze_graded_2026-09-24.json",
+   "graded_sha256": "bbd455d356ea72d7de7861e045153143c90369ea0705d85297c462e44d77aeca",
+   "sha256": "65aebbe334c49f51b6f3463da104e2352db821cf77d4539ab01e3d952790f712"
+  },
+  {
+   "board": "output/board_freeze_2026-09-25.json",
+   "graded": "output/board_freeze_graded_2026-09-25.json",
+   "graded_sha256": "82471c3fd861700ef0fdea4780159e82434691d9c6c121850ae48aab2c867385",
+   "sha256": "4151d9527d610a9bf22f7773499c4b5462a205c68b204168a3d2f913fdc0b6df"
+  },
+  {
+   "board": "output/board_freeze_2026-09-26.json",
+   "graded": "output/board_freeze_graded_2026-09-26.json",
+   "graded_sha256": "73a654744b913b434de536dc7e2fc5497d8b5eb46ab9446be8c3c33e434e2927",
+   "sha256": "8c5f1bb4be441daa8e5971ac3187a98812265d74df5f265b41e38367c5c678f0"
+  },
+  {
+   "board": "output/board_freeze_2026-09-27.json",
+   "graded": "output/board_freeze_graded_2026-09-27.json",
+   "graded_sha256": "138239bac9b1fb1a2acfdd56e775f5a8dc3ac2b6060faed1c60093ab9561e2c8",
+   "sha256": "177f4c071510a9c58b4fd2d4baddc148f51bc83056deecd665b50145639d6fed"
+  },
+  {
+   "board": "output/board_freeze_2026-09-29.json",
+   "graded": "output/board_freeze_graded_2026-09-29.json",
+   "graded_sha256": "3494dafff3bfb01022ba836b546dadd368785567effc2f7d1598ca1849a15635",
+   "sha256": "60b5d5b15c3f0e3263c3b75a5bff029e411d1ce1a6b4935e1140b9c2796ea988"
+  },
+  {
+   "board": "output/board_freeze_2026-09-30.json",
+   "graded": "output/board_freeze_graded_2026-09-30.json",
+   "graded_sha256": "263d6a61e69d2d46e0279762a49c770bbf844f8bd46b4da4b74ff5c1cf95d5a3",
+   "sha256": "c78f64df2c19668e45d81e2be314ddd1fcf252740a137805f6ffb0285b63816b"
+  },
+  {
+   "board": "output/board_freeze_2026-10-01.json",
+   "graded": "output/board_freeze_graded_2026-10-01.json",
+   "graded_sha256": "e7121ed3bf6ca452da62d6d5bc279e0c4015fd3d8784ea9adef8943147206d76",
+   "sha256": "60f50a541abf3d2b6bf1c4543e32d3fcb36ea3360cbc5ed6e99a16095a56a414"
+  },
+  {
+   "board": "output/board_freeze_2026-10-03.json",
+   "graded": "output/board_freeze_graded_2026-10-03.json",
+   "graded_sha256": "87652361406300211a4d523d58177c884603119ddeda0685845db291282530fb",
+   "sha256": "b29ed16999ff3f2bd07458aeb59b75ba103a474c42fe3ce190b8b0a7608ef722"
+  },
+  {
+   "board": "output/board_freeze_2026-10-04.json",
+   "graded": "output/board_freeze_graded_2026-10-04.json",
+   "graded_sha256": "6528c59db7e435b5e67c4f65ada4357db74685b8ba6d5fec9d303b2dcd26a523",
+   "sha256": "2c5f887b5c5b264b16a8d334be22e80554b6f0300d1fbbf3e23d4d2256517549"
+  },
+  {
+   "board": "output/board_freeze_2026-10-05.json",
+   "graded": "output/board_freeze_graded_2026-10-05.json",
+   "graded_sha256": "bc7c545021868820eb2dc3ae5c078b2bc3b9026f03daa4e8d691709954568365",
+   "sha256": "505ee50e0d69b21e4e33a3a8916aac287af19e2787d98144cacce0962644b451"
+  },
+  {
+   "board": "output/board_freeze_2026-10-06.json",
+   "graded": "output/board_freeze_graded_2026-10-06.json",
+   "graded_sha256": "9407ce0519b91d95df68ae3c6794b9b9d5817f8479101d6147de4bdfbaa63ad9",
+   "sha256": "591818a5f1123c9292c63981f2ad9d9365fef318feddb8b47dce3af1b81b8749"
+  },
+  {
+   "board": "output/board_freeze_2026-10-07.json",
+   "graded": "output/board_freeze_graded_2026-10-07.json",
+   "graded_sha256": "f055dbc36cd1646cc5e193a56389cbe959fb9e8bb71488aa77ccd856d2637dd5",
+   "sha256": "3a3adaa21908ed430a9f1ea72dd1bebd19745f15014ec4ea7c4e07f6149a6010"
+  },
+  {
+   "board": "output/board_freeze_2026-10-08.json",
+   "graded": "output/board_freeze_graded_2026-10-08.json",
+   "graded_sha256": "9c910bc0c7f1ce1df5f57f3f67758de9152342d0315e0dcf04518332e54b7f3d",
+   "sha256": "2e5b337e24509de2723a1cd8ce3f9a0be3bc00cba7129d212d4347efc50dacd3"
+  },
+  {
+   "board": "output/board_freeze_2026-10-10.json",
+   "graded": "output/board_freeze_graded_2026-10-10.json",
+   "graded_sha256": "6547c446ed6c5b4ee85d7b8619a7d3ff668a2707c9e20863f3ae4b584b2f8d9c",
+   "sha256": "d3ce864044960670aa74e687c309ffc37154a175ff74ee6234cbc6a91cb97bd5"
+  },
+  {
+   "board": "output/board_freeze_2026-10-11.json",
+   "graded": "output/board_freeze_graded_2026-10-11.json",
+   "graded_sha256": "728ee6b288b5dc44c4e6e77341646b15f9128f9cc83bd24ddb744ff092145cba",
+   "sha256": "64f065b222f30047cd3407545186ec56ee0bbad0debbef42aaa09737e36777e6"
+  }
+ ],
+ "label": "AMENDMENT_A1_POST_HOC_CORRECTIONS",
+ "offer_feasibility": {
+  "CH1u_BLEND_RAW_BE": {
+   "bound_to_pre_seal_snapshot": 50,
+   "failure_reasons": {
+    "no_pre_seal_snapshot_row": 41,
+    "offer missing required provenance": 50
+   },
+   "fully_valid_offers": 0,
+   "selections": 91
+  },
+  "CH2u_MARKET_RAW_BE": {
+   "bound_to_pre_seal_snapshot": 53,
+   "failure_reasons": {
+    "no_pre_seal_snapshot_row": 38,
+    "offer missing required provenance": 53
+   },
+   "fully_valid_offers": 0,
+   "selections": 91
+  },
+  "CHAMPION": {
+   "bound_to_pre_seal_snapshot": 55,
+   "failure_reasons": {
+    "no_pre_seal_snapshot_row": 36,
+    "offer missing required provenance": 55
+   },
+   "fully_valid_offers": 0,
+   "selections": 91
+  }
+ },
+ "paired_slate_bootstrap": {
+  "CH1_BLEND_vs_CH2_MARKET": {
+   "resamples": 10000,
+   "roi_diff": 0.0433,
+   "roi_diff_ci90_slate": [
+    -0.0626,
+    0.1698
+   ],
+   "wins_diff": 2,
+   "wins_diff_ci90_slate": [
+    -5,
+    9
+   ]
+  },
+  "CH1_BLEND_vs_CHAMPION": {
+   "resamples": 10000,
+   "roi_diff": 0.1315,
+   "roi_diff_ci90_slate": [
+    0.0127,
+    0.261
+   ],
+   "wins_diff": 20,
+   "wins_diff_ci90_slate": [
+    11,
+    29
+   ]
+  },
+  "CH1u_BLEND_RAW_BE_vs_CH2u_MARKET_RAW_BE": {
+   "resamples": 10000,
+   "roi_diff": 0.0306,
+   "roi_diff_ci90_slate": [
+    -0.0767,
+    0.1637
+   ],
+   "wins_diff": 1,
+   "wins_diff_ci90_slate": [
+    -6,
+    9
+   ]
+  },
+  "CH1u_BLEND_RAW_BE_vs_CHAMPION": {
+   "resamples": 10000,
+   "roi_diff": 0.1187,
+   "roi_diff_ci90_slate": [
+    0.0076,
+    0.2382
+   ],
+   "wins_diff": 19,
+   "wins_diff_ci90_slate": [
+    11,
+    28
+   ]
+  }
+ },
+ "pool_test_uniform": {
+  "ci95": [
+   -0.2101,
+   0.3405
+  ],
+  "coef_d_uniform_raw_break_even": 0.045,
+  "n": 2056
+ },
+ "populations": {
+  "P1_published_customer_top_picks": {
+   "count": 618,
+   "definition": "public registry entries (customer-facing)"
+  },
+  "P2_publication_eligible_candidate_top_picks_in_freezes": {
+   "actually_published": 60,
+   "count": 91,
+   "definition": "freeze records with recommendation_status=top_pick (existing policy), graded slates",
+   "not_published": 31,
+   "note": "not-published picks fall in the 2026-10-06..10-11 Pages publication outage (PR #224)"
+  },
+  "P3_research_board_selections": {
+   "count": 80,
+   "definition": "freeze selector.selected_top_pick (top-10 main board; research artifact, not customer Top Picks)"
+  },
+  "P4_alternative_policy_shadow_CH1_BLEND": {
+   "count": 91,
+   "definition": "alternative-policy shadow selection on the research pool; NOT eligible under the existing Top Pick policy unless status says so",
+   "existing_policy_status": {
+    "lean": 79,
+    "top_pick": 12
+   },
+   "price_clears_false": 62,
+   "published": 1,
+   "reliability": {
+    "A": 82,
+    "B": 6,
+    "C": 3
+   }
+  },
+  "P4_alternative_policy_shadow_CH1u_BLEND_RAW_BE": {
+   "count": 91,
+   "definition": "alternative-policy shadow selection on the research pool; NOT eligible under the existing Top Pick policy unless status says so",
+   "existing_policy_status": {
+    "lean": 79,
+    "top_pick": 12
+   },
+   "price_clears_false": 61,
+   "published": 1,
+   "reliability": {
+    "A": 83,
+    "B": 6,
+    "C": 2
+   }
+  },
+  "P4_alternative_policy_shadow_CH2_MARKET": {
+   "count": 91,
+   "definition": "alternative-policy shadow selection on the research pool; NOT eligible under the existing Top Pick policy unless status says so",
+   "existing_policy_status": {
+    "lean": 84,
+    "top_pick": 7
+   },
+   "price_clears_false": 79,
+   "published": 0,
+   "reliability": {
+    "A": 83,
+    "B": 7,
+    "C": 1
+   }
+  },
+  "P4_alternative_policy_shadow_CH2u_MARKET_RAW_BE": {
+   "count": 91,
+   "definition": "alternative-policy shadow selection on the research pool; NOT eligible under the existing Top Pick policy unless status says so",
+   "existing_policy_status": {
+    "lean": 83,
+    "neutral": 1,
+    "top_pick": 7
+   },
+   "price_clears_false": 80,
+   "published": 0,
+   "reliability": {
+    "A": 83,
+    "B": 7,
+    "C": 1
+   }
+  }
+ },
+ "prereg_unchanged_sha256": "e6466a71cdbacb86ce0f10af1cd89e353c20aa8f99ac8c3df59a616d5905dbbb",
+ "public_inputs": {
+  "evidence_cutoff": "2026-10-11",
+  "excluded_after_cutoff": 12,
+  "history": "docs/history.json",
+  "history_sha256": "b84c091387a12511b65d0c469b4dc8d970298153afc39f70c36dec14d758ad7f",
+  "registry": "data/public_top_picks/registry.json",
+  "registry_sha256": "81df7d4d7298beb725cb9cc781ac40b7da7e4cccf481fa383b03337f3ffd0fb1",
+  "results_files": 67,
+  "results_sha256": {
+   "grades_2026-08-04.json": "71fa69d91894b7caea3465b271815d9b59d5ee9c741afc14b14523e05de7a25c",
+   "grades_2026-08-05.json": "d079c441e196b7efb4f87c384942e1540f09694f0ff58d61a49d4c28267a995a",
+   "grades_2026-08-06.json": "a9d3d2dd385ff94c6187baa8a8579c55fcc5132f74a01a6834656234583bd2ed",
+   "grades_2026-08-07.json": "d96e3a36bdc9b10d35b7cfa997a12e5c42c34115c53f23776eb3d25b4123d5b6",
+   "grades_2026-08-08.json": "33c9743bc4943a15189c8ff32cb6eb9a2fb35ac0f4a16e2089a0ec8288c593f4",
+   "grades_2026-08-09.json": "82a4fc0b980016b32dc6f8ed5ad8cb506440cd1fca103aa336b19bee740455bc",
+   "grades_2026-08-10.json": "d50fe83d149101d5a4cca932b3efc0b14439ee3c8aeacb70c2023a7408490061",
+   "grades_2026-08-11.json": "dfd6b96c731c8615d6282d56a4bd5e523fe9fdbe48debc9fe788932f98f76b48",
+   "grades_2026-08-12.json": "9caddb618644277960a440f974540708ab7ad16c1d94bdb78d7125e2a501744c",
+   "grades_2026-08-13.json": "2c3c214538d79dde590c1806b385f6d6e4cae2c736f00d8748a5859d55cc0412",
+   "grades_2026-08-14.json": "a9f6f057c12c58d680bf91ac1513ec369ffea2af858ab3e0ed05d7de76a096bb",
+   "grades_2026-08-15.json": "71e89e66c3421f168a16195e4b73c6a3f0b70c91b07794ae561f1c492626d445",
+   "grades_2026-08-16.json": "4ee17181ccf05a1602ce5a621bcfad801811f4c3c793563e2e2b37af94c9e25a",
+   "grades_2026-08-17.json": "fd12938cade0ea4209556d3db13a70e6a69f8cf0e789ab435e615db2f29dc590",
+   "grades_2026-08-18.json": "fddaa1ff15b9a2f66cd5fda197d0f3caf2d8a1699a3ed142b602e691d16969d7",
+   "grades_2026-08-19.json": "fa03433c3d314d9a091c2e68be1702a3bb2b0de911f7d8bb8c095e9f9ef0fe5e",
+   "grades_2026-08-21.json": "979900484d0686a5718dd7d8a6f64577fe49c42bec7da811b1fc60d39e6cd3fc",
+   "grades_2026-08-22.json": "3845301e0434ea675e1e0440c5648bb61bfa0eec815b31b7054961b14ab37552",
+   "grades_2026-08-23.json": "1a3f31d8580751b6781a5644f4d5d1bb3f568dcd4c382a90735df2db8d0dff20",
+   "grades_2026-08-24.json": "ca73a67c2eb6ef35e539cd2bdbcd912091c41135b4d47ba1ef3c69d5b9d54399",
+   "grades_2026-08-25.json": "4320d888ce55c7dee795b0dceb0674ab8b67d00708ed19c39814764da271c17e",
+   "grades_2026-08-26.json": "5209d7fdd73ad23293ecacc9df7d3f23be5d50b9c2dcec1e4f6c35d9258c816f",
+   "grades_2026-08-27.json": "2b2faa0c7d0262f0c12e7e2a5eb2c68942568e8ab3909382e0631cf14b961cbb",
+   "grades_2026-08-28.json": "bf40fdace88e36bf40c019e9100bc9620fa2d6333d8278387c74791ffc1f669f",
+   "grades_2026-08-29.json": "17ba3275da775f1e7f0fde1c3e0bcce7ed023a5d9de4363c30dc7e4c23a2b4e5",
+   "grades_2026-08-30.json": "c9ea58d987d1f934a56c09ebc78bdf40644c0567a9b3be0098956700b7d164e8",
+   "grades_2026-08-31.json": "eec455d0924a9411e3d2a8f9b8d3b3b1df771af19f6a547b7d8be75462271ebd",
+   "grades_2026-09-01.json": "3db515c5663376a3a64b89f26a645101c9f6574e34ac869902fa9e75f561dea0",
+   "grades_2026-09-02.json": "4f44f913e6f2cf62992e105d03afc789cc40c1d948f75717c601ed22b66a4de0",
+   "grades_2026-09-03.json": "0eaf9a752e716709eb3d26e71164035c2402c974ba0edbe1878a7e2a5f89b6bc",
+   "grades_2026-09-04.json": "38a48c5d914818751067d9a812d9480e5e08368d7c36059876b6e0416153efbf",
+   "grades_2026-09-05.json": "8958422ab5c328f8fa2f39cc1acec850646fd8fa6d1a9b623e054b222daadb66",
+   "grades_2026-09-06.json": "69c9bebdc625b4d7c5e19bf42e1f72f43d83a14f258c24d88b317e1a279865f2",
+   "grades_2026-09-07.json": "10c579fb859252105b6f9be08a924c29fcbf6e3e7e1f3e44e20d1cdcb1114644",
+   "grades_2026-09-08.json": "f0bfb2fd754bd9a09bd99ae2acb51a1910daf6d325e860ecf3796f9d95f42fac",
+   "grades_2026-09-09.json": "af47dffc112d8e42f0b52b9902bd779635e5cb57f0677a59bd415d7a46f551b5",
+   "grades_2026-09-10.json": "5ff6ed9d0143512a7fa963068c67cd44f5612ae7167e92f288a85dfb3115befd",
+   "grades_2026-09-11.json": "12bd52bcddd8da8193ffae499299070dcf1fd6ec8608a9d273b8202edbf050d7",
+   "grades_2026-09-12.json": "4190792cc55a4a77146909685ef3a43159535e94b1696fcb1323f71d4023de2e",
+   "grades_2026-09-13.json": "a29965526c1eb44d7e3a75ee6d7c1ae5191dadba3c6d93a104a425c39f163cb2",
+   "grades_2026-09-14.json": "b7ceb2b562d032d0d61d47224c17e6627eeab7657f9ca755a929c3fb627f85c2",
+   "grades_2026-09-15.json": "d6149b8f4ec26e263e64fcad62161e8e105652db6876d1177eaff2050b67a0a0",
+   "grades_2026-09-16.json": "2eda72c321b74cf872ea56554c2c4a1e9c1a7469a623c08666aa2f40c5b1d7b9",
+   "grades_2026-09-17.json": "2b15cc73661d4fd955aa74a055a9914a9282f8ad0ed6964f89bfd972d1a25ff6",
+   "grades_2026-09-18.json": "0c580efaf70d811117ae32ae7de4a67b5be0da79acdf1ecb231758441e90c347",
+   "grades_2026-09-19.json": "5effd15233c76fac29d3925743bc64d20b2bc7c2a64b26f52aa348298cebf14f",
+   "grades_2026-09-20.json": "19f9205bedf91e3cff3230c6ae9feb50449710d8300729512fa66f824272a88b",
+   "grades_2026-09-21.json": "f194f2d9b80a12a6e6906c037a3d535f40838281c9042f572b190339ea284b51",
+   "grades_2026-09-22.json": "fe883d11eb0a7d326c366158aa1229d656d9df76cb1bdaca8716edd11e3145b1",
+   "grades_2026-09-23.json": "1ed3f45d7619b70cb925d507b1f6bb65db0a5c296b9f26f3e52b3ce71b17ee17",
+   "grades_2026-09-24.json": "9da33f5f67aeaa72b42f20c7f4e7330d3f7dcd5b7590a739d0da376a51dcc5f1",
+   "grades_2026-09-25.json": "a3e3f7f187ed011c77db8737aafb9d72d1473833c0162f97a38b68ebc1ed83b9",
+   "grades_2026-09-26.json": "61b2d6772e85a73d07e3646294681d3a4f8356c2e860477f6d2fc84cb679dcf7",
+   "grades_2026-09-27.json": "7e425d2c57ab461c286f4e8f6dc10ca01c2aacab7e9a4aacab1ddf4e710ecd1f",
+   "grades_2026-09-29.json": "2698a1258ee37447d13fe1e37f544214c56e60c0ccf423336222ad8c697a8dbd",
+   "grades_2026-09-30.json": "1129dd69bad7e0b4f74a8a9051ed7b6d7ba49c01bc92bb7afee2fcb8ad919de6",
+   "grades_2026-10-01.json": "f1d78a47c9b8adf9c2d04d80cf174f43898c73694c8b6cc961ecf4b8d4ca30a8",
+   "grades_2026-10-03.json": "1a9067a04ce5497e2ccf51a02d9a4eeb83113450add96ef61e72b6c9ee9874a8",
+   "grades_2026-10-04.json": "0f755bc5e06d979dacbea0917c93822f2b0a8330840b1f627f78c9e4739c0ccd",
+   "grades_2026-10-05.json": "2d76514b8e991f20e3636d6b2d9a960861eb607e6b3ee57b3fd59631a07dd8da",
+   "grades_2026-10-06.json": "074d1227f7832fb07971aac38d074d18bc617a3a7c23396884b76e2cb471955d",
+   "grades_2026-10-07.json": "2ae9462a69f1e097aeef4f825235c005a990b3500c86dc279d220a6a6071d294",
+   "grades_2026-10-08.json": "32c0532fc2fe159654ee05ab9b8c4aca8e98006a6cd0a967f342b22025526050",
+   "grades_2026-10-10.json": "3ebd2defb7526a3bd7a08f477663dd61b90ba057df8880438c3f6cf3817762fb",
+   "grades_2026-10-11.json": "3aa18c37c51ae471767011210a048c7706d2fa270b7ab326aa62116b51944d13",
+   "grades_2026-10-12.json": "5a8d4140324be80b56626e948bfeb01d74028a9f5086dc5261b403297c547fdb",
+   "grades_2026-10-13.json": "702eb02f87df17e7f7ed41498c51b7abe8d3da8606d983498dd7ed62d83c0e5f"
+  }
+ }
+}

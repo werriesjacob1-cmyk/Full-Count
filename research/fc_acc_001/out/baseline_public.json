@@ -1,0 +1,2496 @@
+{
+ "breakdowns_explore": {
+  "calibration_version_label": {
+   "1.0.0": {
+    "ci95": [
+     0.501,
+     0.606
+    ],
+    "hit_rate": 0.5543,
+    "hits": 189,
+    "mean_implied_q": 0.5778,
+    "mean_stated_p": 0.646,
+    "misses": 152,
+    "priced_settled": 341,
+    "published": 407,
+    "roi": -0.0612,
+    "settled": 341,
+    "units": -20.86,
+    "void_or_ungraded": 66
+   }
+  },
+  "daily_volume": {
+   "[11,16)": {
+    "ci95": [
+     0.524,
+     0.719
+    ],
+    "hit_rate": 0.6264,
+    "hits": 57,
+    "mean_implied_q": 0.5809,
+    "mean_stated_p": 0.6461,
+    "misses": 34,
+    "priced_settled": 91,
+    "published": 107,
+    "roi": 0.0473,
+    "settled": 91,
+    "units": 4.3,
+    "void_or_ungraded": 16
+   },
+   "[16,21)": {
+    "ci95": [
+     0.434,
+     0.592
+    ],
+    "hit_rate": 0.5133,
+    "hits": 77,
+    "mean_implied_q": 0.5735,
+    "mean_stated_p": 0.6446,
+    "misses": 73,
+    "priced_settled": 150,
+    "published": 157,
+    "roi": -0.1202,
+    "settled": 150,
+    "units": -18.03,
+    "void_or_ungraded": 7
+   },
+   "[21,1000000)": {
+    "ci95": [
+     0.441,
+     0.657
+    ],
+    "hit_rate": 0.5513,
+    "hits": 43,
+    "mean_implied_q": 0.5864,
+    "mean_stated_p": 0.6539,
+    "misses": 35,
+    "priced_settled": 78,
+    "published": 101,
+    "roi": -0.077,
+    "settled": 78,
+    "units": -6.0,
+    "void_or_ungraded": 23
+   },
+   "[6,11)": {
+    "ci95": [
+     0.347,
+     0.731
+    ],
+    "hit_rate": 0.5455,
+    "hits": 12,
+    "mean_implied_q": 0.5637,
+    "mean_stated_p": 0.6274,
+    "misses": 10,
+    "priced_settled": 22,
+    "published": 42,
+    "roi": -0.0512,
+    "settled": 22,
+    "units": -1.13,
+    "void_or_ungraded": 20
+   }
+  },
+  "lead_time_min": {
+   "[-1000000,60)": {
+    "ci95": [
+     0.237,
+     0.763
+    ],
+    "hit_rate": 0.5,
+    "hits": 5,
+    "mean_implied_q": 0.6087,
+    "mean_stated_p": 0.6427,
+    "misses": 5,
+    "priced_settled": 10,
+    "published": 18,
+    "roi": -0.1949,
+    "settled": 10,
+    "units": -1.95,
+    "void_or_ungraded": 8
+   },
+   "[180,360)": {
+    "ci95": [
+     0.552,
+     0.711
+    ],
+    "hit_rate": 0.635,
+    "hits": 87,
+    "mean_implied_q": 0.5939,
+    "mean_stated_p": 0.6516,
+    "misses": 50,
+    "priced_settled": 137,
+    "published": 158,
+    "roi": 0.0621,
+    "settled": 137,
+    "units": 8.51,
+    "void_or_ungraded": 21
+   },
+   "[360,720)": {
+    "ci95": [
+     0.212,
+     0.573
+    ],
+    "hit_rate": 0.375,
+    "hits": 9,
+    "mean_implied_q": 0.5257,
+    "mean_stated_p": 0.6302,
+    "misses": 15,
+    "priced_settled": 24,
+    "published": 27,
+    "roi": -0.3442,
+    "settled": 24,
+    "units": -8.26,
+    "void_or_ungraded": 3
+   },
+   "[60,180)": {
+    "ci95": [
+     0.427,
+     0.607
+    ],
+    "hit_rate": 0.5175,
+    "hits": 59,
+    "mean_implied_q": 0.6042,
+    "mean_stated_p": 0.6491,
+    "misses": 55,
+    "priced_settled": 114,
+    "published": 142,
+    "roi": -0.1499,
+    "settled": 114,
+    "units": -17.09,
+    "void_or_ungraded": 28
+   },
+   "[720,1000000)": {
+    "ci95": [
+     0.39,
+     0.643
+    ],
+    "hit_rate": 0.5179,
+    "hits": 29,
+    "mean_implied_q": 0.5017,
+    "mean_stated_p": 0.6335,
+    "misses": 27,
+    "priced_settled": 56,
+    "published": 62,
+    "roi": -0.0369,
+    "settled": 56,
+    "units": -2.07,
+    "void_or_ungraded": 6
+   }
+  },
+  "market": {
+   "hits": {
+    "ci95": [
+     0.526,
+     0.745
+    ],
+    "hit_rate": 0.6429,
+    "hits": 45,
+    "mean_implied_q": 0.5808,
+    "mean_stated_p": 0.6288,
+    "misses": 25,
+    "priced_settled": 70,
+    "published": 83,
+    "roi": 0.1088,
+    "settled": 70,
+    "units": 7.62,
+    "void_or_ungraded": 13
+   },
+   "hits_runs_rbis": {
+    "ci95": [
+     0.489,
+     0.635
+    ],
+    "hit_rate": 0.5632,
+    "hits": 98,
+    "mean_implied_q": 0.6137,
+    "mean_stated_p": 0.6604,
+    "misses": 76,
+    "priced_settled": 174,
+    "published": 211,
+    "roi": -0.0855,
+    "settled": 174,
+    "units": -14.89,
+    "void_or_ungraded": 37
+   },
+   "pitcher_outs": {
+    "ci95": [
+     0.264,
+     0.592
+    ],
+    "hit_rate": 0.4194,
+    "hits": 13,
+    "mean_implied_q": 0.5182,
+    "mean_stated_p": 0.6767,
+    "misses": 18,
+    "priced_settled": 31,
+    "published": 38,
+    "roi": -0.2692,
+    "settled": 31,
+    "units": -8.34,
+    "void_or_ungraded": 7
+   },
+   "strikeouts": {
+    "ci95": [
+     0.383,
+     0.617
+    ],
+    "hit_rate": 0.5,
+    "hits": 33,
+    "mean_implied_q": 0.5078,
+    "mean_stated_p": 0.6118,
+    "misses": 33,
+    "priced_settled": 66,
+    "published": 75,
+    "roi": -0.0795,
+    "settled": 66,
+    "units": -5.24,
+    "void_or_ungraded": 9
+   }
+  },
+  "market_disagrees_flag": {
+   "True": {
+    "ci95": [
+     0.501,
+     0.606
+    ],
+    "hit_rate": 0.5543,
+    "hits": 189,
+    "mean_implied_q": 0.5778,
+    "mean_stated_p": 0.646,
+    "misses": 152,
+    "priced_settled": 341,
+    "published": 407,
+    "roi": -0.0612,
+    "settled": 341,
+    "units": -20.86,
+    "void_or_ungraded": 66
+   }
+  },
+  "market_side": {
+   "hits:over": {
+    "ci95": [
+     0.526,
+     0.745
+    ],
+    "hit_rate": 0.6429,
+    "hits": 45,
+    "mean_implied_q": 0.5808,
+    "mean_stated_p": 0.6288,
+    "misses": 25,
+    "priced_settled": 70,
+    "published": 83,
+    "roi": 0.1088,
+    "settled": 70,
+    "units": 7.62,
+    "void_or_ungraded": 13
+   },
+   "hits_runs_rbis:over": {
+    "ci95": [
+     0.489,
+     0.635
+    ],
+    "hit_rate": 0.5632,
+    "hits": 98,
+    "mean_implied_q": 0.6137,
+    "mean_stated_p": 0.6604,
+    "misses": 76,
+    "priced_settled": 174,
+    "published": 211,
+    "roi": -0.0855,
+    "settled": 174,
+    "units": -14.89,
+    "void_or_ungraded": 37
+   },
+   "pitcher_outs:over": {
+    "ci95": [
+     0.264,
+     0.592
+    ],
+    "hit_rate": 0.4194,
+    "hits": 13,
+    "mean_implied_q": 0.5182,
+    "mean_stated_p": 0.6767,
+    "misses": 18,
+    "priced_settled": 31,
+    "published": 38,
+    "roi": -0.2692,
+    "settled": 31,
+    "units": -8.34,
+    "void_or_ungraded": 7
+   },
+   "strikeouts:over": {
+    "ci95": [
+     0.383,
+     0.617
+    ],
+    "hit_rate": 0.5,
+    "hits": 33,
+    "mean_implied_q": 0.5078,
+    "mean_stated_p": 0.6118,
+    "misses": 33,
+    "priced_settled": 66,
+    "published": 75,
+    "roi": -0.0795,
+    "settled": 66,
+    "units": -5.24,
+    "void_or_ungraded": 9
+   }
+  },
+  "model_minus_market": {
+   "[0,0.03)": {
+    "ci95": [
+     0.0,
+     0.793
+    ],
+    "hit_rate": 0.0,
+    "hits": 0,
+    "mean_implied_q": 0.5745,
+    "mean_stated_p": 0.6037,
+    "misses": 1,
+    "priced_settled": 1,
+    "published": 1,
+    "roi": -1.0,
+    "settled": 1,
+    "units": -1.0,
+    "void_or_ungraded": 0
+   },
+   "[0.03,0.06)": {
+    "ci95": [
+     0.526,
+     0.661
+    ],
+    "hit_rate": 0.595,
+    "hits": 119,
+    "mean_implied_q": 0.6114,
+    "mean_stated_p": 0.6525,
+    "misses": 81,
+    "priced_settled": 200,
+    "published": 243,
+    "roi": -0.0295,
+    "settled": 200,
+    "units": -5.91,
+    "void_or_ungraded": 43
+   },
+   "[0.06,0.1)": {
+    "ci95": [
+     0.441,
+     0.654
+    ],
+    "hit_rate": 0.55,
+    "hits": 44,
+    "mean_implied_q": 0.555,
+    "mean_stated_p": 0.6286,
+    "misses": 36,
+    "priced_settled": 80,
+    "published": 94,
+    "roi": -0.0297,
+    "settled": 80,
+    "units": -2.37,
+    "void_or_ungraded": 14
+   },
+   "[0.1,0.15)": {
+    "ci95": [
+     0.279,
+     0.578
+    ],
+    "hit_rate": 0.4211,
+    "hits": 16,
+    "mean_implied_q": 0.5143,
+    "mean_stated_p": 0.6401,
+    "misses": 22,
+    "priced_settled": 38,
+    "published": 44,
+    "roi": -0.2451,
+    "settled": 38,
+    "units": -9.31,
+    "void_or_ungraded": 6
+   },
+   "[0.15,1)": {
+    "ci95": [
+     0.269,
+     0.653
+    ],
+    "hit_rate": 0.4545,
+    "hits": 10,
+    "mean_implied_q": 0.465,
+    "mean_stated_p": 0.6626,
+    "misses": 12,
+    "priced_settled": 22,
+    "published": 25,
+    "roi": -0.1028,
+    "settled": 22,
+    "units": -2.26,
+    "void_or_ungraded": 3
+   }
+  },
+  "odds_band": {
+   "-109..+100": {
+    "ci95": [
+     0.28,
+     0.787
+    ],
+    "hit_rate": 0.5455,
+    "hits": 6,
+    "mean_implied_q": 0.484,
+    "mean_stated_p": 0.6065,
+    "misses": 5,
+    "priced_settled": 11,
+    "published": 13,
+    "roi": 0.0769,
+    "settled": 11,
+    "units": 0.85,
+    "void_or_ungraded": 2
+   },
+   "-139..-110": {
+    "ci95": [
+     0.379,
+     0.566
+    ],
+    "hit_rate": 0.4717,
+    "hits": 50,
+    "mean_implied_q": 0.5419,
+    "mean_stated_p": 0.6278,
+    "misses": 56,
+    "priced_settled": 106,
+    "published": 128,
+    "roi": -0.1541,
+    "settled": 106,
+    "units": -16.34,
+    "void_or_ungraded": 22
+   },
+   "-179..-140": {
+    "ci95": [
+     0.532,
+     0.678
+    ],
+    "hit_rate": 0.6071,
+    "hits": 102,
+    "mean_implied_q": 0.6035,
+    "mean_stated_p": 0.6505,
+    "misses": 66,
+    "priced_settled": 168,
+    "published": 200,
+    "roi": 0.0016,
+    "settled": 168,
+    "units": 0.27,
+    "void_or_ungraded": 32
+   },
+   "-249..-180": {
+    "ci95": [
+     0.51,
+     0.794
+    ],
+    "hit_rate": 0.6667,
+    "hits": 26,
+    "mean_implied_q": 0.6525,
+    "mean_stated_p": 0.7038,
+    "misses": 13,
+    "priced_settled": 39,
+    "published": 47,
+    "roi": 0.0159,
+    "settled": 39,
+    "units": 0.62,
+    "void_or_ungraded": 8
+   },
+   "<=-250": {
+    "ci95": null,
+    "hit_rate": null,
+    "hits": 0,
+    "mean_implied_q": null,
+    "mean_stated_p": null,
+    "misses": 0,
+    "priced_settled": 0,
+    "published": 1,
+    "roi": null,
+    "settled": 0,
+    "units": 0,
+    "void_or_ungraded": 1
+   },
+   ">+100": {
+    "ci95": [
+     0.133,
+     0.531
+    ],
+    "hit_rate": 0.2941,
+    "hits": 5,
+    "mean_implied_q": 0.4368,
+    "mean_stated_p": 0.6087,
+    "misses": 12,
+    "priced_settled": 17,
+    "published": 18,
+    "roi": -0.3682,
+    "settled": 17,
+    "units": -6.26,
+    "void_or_ungraded": 1
+   }
+  },
+  "picks_same_game_same_day": {
+   "1": {
+    "ci95": [
+     0.388,
+     0.6
+    ],
+    "hit_rate": 0.4938,
+    "hits": 40,
+    "mean_implied_q": 0.5431,
+    "mean_stated_p": 0.6404,
+    "misses": 41,
+    "priced_settled": 81,
+    "published": 99,
+    "roi": -0.145,
+    "settled": 81,
+    "units": -11.74,
+    "void_or_ungraded": 18
+   },
+   "2": {
+    "ci95": [
+     0.471,
+     0.705
+    ],
+    "hit_rate": 0.5938,
+    "hits": 38,
+    "mean_implied_q": 0.5722,
+    "mean_stated_p": 0.6435,
+    "misses": 26,
+    "priced_settled": 64,
+    "published": 78,
+    "roi": 0.0272,
+    "settled": 64,
+    "units": 1.74,
+    "void_or_ungraded": 14
+   },
+   "3": {
+    "ci95": [
+     0.415,
+     0.637
+    ],
+    "hit_rate": 0.527,
+    "hits": 39,
+    "mean_implied_q": 0.5923,
+    "mean_stated_p": 0.6446,
+    "misses": 35,
+    "priced_settled": 74,
+    "published": 84,
+    "roi": -0.1153,
+    "settled": 74,
+    "units": -8.53,
+    "void_or_ungraded": 10
+   },
+   "4+": {
+    "ci95": [
+     0.501,
+     0.673
+    ],
+    "hit_rate": 0.5902,
+    "hits": 72,
+    "mean_implied_q": 0.595,
+    "mean_stated_p": 0.6519,
+    "misses": 50,
+    "priced_settled": 122,
+    "published": 146,
+    "roi": -0.019,
+    "settled": 122,
+    "units": -2.32,
+    "void_or_ungraded": 24
+   }
+  },
+  "picks_same_player_same_day": {
+   "1": {
+    "ci95": [
+     0.479,
+     0.594
+    ],
+    "hit_rate": 0.5371,
+    "hits": 152,
+    "mean_implied_q": 0.5753,
+    "mean_stated_p": 0.6452,
+    "misses": 131,
+    "priced_settled": 283,
+    "published": 343,
+    "roi": -0.0905,
+    "settled": 283,
+    "units": -25.62,
+    "void_or_ungraded": 60
+   },
+   "2": {
+    "ci95": [
+     0.509,
+     0.749
+    ],
+    "hit_rate": 0.6379,
+    "hits": 37,
+    "mean_implied_q": 0.59,
+    "mean_stated_p": 0.6499,
+    "misses": 21,
+    "priced_settled": 58,
+    "published": 64,
+    "roi": 0.082,
+    "settled": 58,
+    "units": 4.76,
+    "void_or_ungraded": 6
+   }
+  },
+  "reliability": {
+   "A": {
+    "ci95": [
+     0.482,
+     0.607
+    ],
+    "hit_rate": 0.5455,
+    "hits": 132,
+    "mean_implied_q": 0.5825,
+    "mean_stated_p": 0.6492,
+    "misses": 110,
+    "priced_settled": 242,
+    "published": 288,
+    "roi": -0.0864,
+    "settled": 242,
+    "units": -20.92,
+    "void_or_ungraded": 46
+   },
+   "B": {
+    "ci95": [
+     0.477,
+     0.668
+    ],
+    "hit_rate": 0.5758,
+    "hits": 57,
+    "mean_implied_q": 0.5662,
+    "mean_stated_p": 0.6382,
+    "misses": 42,
+    "priced_settled": 99,
+    "published": 119,
+    "roi": 0.0006,
+    "settled": 99,
+    "units": 0.06,
+    "void_or_ungraded": 20
+   }
+  },
+  "sample_n": {
+   "[0,10)": {
+    "ci95": [
+     0.438,
+     1.0
+    ],
+    "hit_rate": 1.0,
+    "hits": 3,
+    "mean_implied_q": 0.5668,
+    "mean_stated_p": 0.6574,
+    "misses": 0,
+    "priced_settled": 3,
+    "published": 4,
+    "roi": 0.6599,
+    "settled": 3,
+    "units": 1.98,
+    "void_or_ungraded": 1
+   },
+   "[10,20)": {
+    "ci95": [
+     0.35,
+     0.63
+    ],
+    "hit_rate": 0.4889,
+    "hits": 22,
+    "mean_implied_q": 0.5082,
+    "mean_stated_p": 0.6297,
+    "misses": 23,
+    "priced_settled": 45,
+    "published": 52,
+    "roi": -0.0981,
+    "settled": 45,
+    "units": -4.42,
+    "void_or_ungraded": 7
+   },
+   "[20,40)": {
+    "ci95": [
+     0.3,
+     0.567
+    ],
+    "hit_rate": 0.4286,
+    "hits": 21,
+    "mean_implied_q": 0.5105,
+    "mean_stated_p": 0.6336,
+    "misses": 28,
+    "priced_settled": 49,
+    "published": 57,
+    "roi": -0.2276,
+    "settled": 49,
+    "units": -11.15,
+    "void_or_ungraded": 8
+   },
+   "[40,80)": {
+    "ci95": [
+     0.448,
+     0.676
+    ],
+    "hit_rate": 0.5652,
+    "hits": 39,
+    "mean_implied_q": 0.5907,
+    "mean_stated_p": 0.6425,
+    "misses": 30,
+    "priced_settled": 69,
+    "published": 84,
+    "roi": -0.0385,
+    "settled": 69,
+    "units": -2.66,
+    "void_or_ungraded": 15
+   },
+   "[80,1000000)": {
+    "ci95": [
+     0.52,
+     0.664
+    ],
+    "hit_rate": 0.5943,
+    "hits": 104,
+    "mean_implied_q": 0.6096,
+    "mean_stated_p": 0.6549,
+    "misses": 71,
+    "priced_settled": 175,
+    "published": 210,
+    "roi": -0.0263,
+    "settled": 175,
+    "units": -4.61,
+    "void_or_ungraded": 35
+   }
+  },
+  "side": {
+   "over": {
+    "ci95": [
+     0.501,
+     0.606
+    ],
+    "hit_rate": 0.5543,
+    "hits": 189,
+    "mean_implied_q": 0.5778,
+    "mean_stated_p": 0.646,
+    "misses": 152,
+    "priced_settled": 341,
+    "published": 407,
+    "roi": -0.0612,
+    "settled": 341,
+    "units": -20.86,
+    "void_or_ungraded": 66
+   }
+  },
+  "stated_p_band": {
+   "[0.6,0.63)": {
+    "ci95": [
+     0.389,
+     0.554
+    ],
+    "hit_rate": 0.4706,
+    "hits": 64,
+    "mean_implied_q": 0.5323,
+    "mean_stated_p": 0.6133,
+    "misses": 72,
+    "priced_settled": 136,
+    "published": 166,
+    "roi": -0.1451,
+    "settled": 136,
+    "units": -19.74,
+    "void_or_ungraded": 30
+   },
+   "[0.63,0.66)": {
+    "ci95": [
+     0.497,
+     0.687
+    ],
+    "hit_rate": 0.596,
+    "hits": 59,
+    "mean_implied_q": 0.5941,
+    "mean_stated_p": 0.6442,
+    "misses": 40,
+    "priced_settled": 99,
+    "published": 112,
+    "roi": -0.0002,
+    "settled": 99,
+    "units": -0.02,
+    "void_or_ungraded": 13
+   },
+   "[0.66,0.7)": {
+    "ci95": [
+     0.505,
+     0.728
+    ],
+    "hit_rate": 0.6232,
+    "hits": 43,
+    "mean_implied_q": 0.6278,
+    "mean_stated_p": 0.6757,
+    "misses": 26,
+    "priced_settled": 69,
+    "published": 84,
+    "roi": -0.0076,
+    "settled": 69,
+    "units": -0.52,
+    "void_or_ungraded": 15
+   },
+   "[0.7,0.75)": {
+    "ci95": [
+     0.461,
+     0.759
+    ],
+    "hit_rate": 0.6216,
+    "hits": 23,
+    "mean_implied_q": 0.6083,
+    "mean_stated_p": 0.7157,
+    "misses": 14,
+    "priced_settled": 37,
+    "published": 43,
+    "roi": -0.0154,
+    "settled": 37,
+    "units": -0.57,
+    "void_or_ungraded": 6
+   },
+   "[0.75,1.01)": {
+    "ci95": null,
+    "hit_rate": null,
+    "hits": 0,
+    "mean_implied_q": null,
+    "mean_stated_p": null,
+    "misses": 0,
+    "priced_settled": 0,
+    "published": 2,
+    "roi": null,
+    "settled": 0,
+    "units": 0,
+    "void_or_ungraded": 2
+   }
+  }
+ },
+ "breakdowns_full_descriptive": {
+  "calibration_version_label": {
+   "1.0.0": {
+    "ci95": [
+     0.498,
+     0.581
+    ],
+    "hit_rate": 0.5399,
+    "hits": 298,
+    "mean_implied_q": 0.5825,
+    "mean_stated_p": 0.6471,
+    "misses": 254,
+    "priced_settled": 552,
+    "published": 629,
+    "roi": -0.0884,
+    "settled": 552,
+    "units": -48.82,
+    "void_or_ungraded": 77
+   }
+  },
+  "daily_volume": {
+   "[0,6)": {
+    "ci95": [
+     0.108,
+     0.603
+    ],
+    "hit_rate": 0.3,
+    "hits": 3,
+    "mean_implied_q": 0.5591,
+    "mean_stated_p": 0.646,
+    "misses": 7,
+    "priced_settled": 10,
+    "published": 10,
+    "roi": -0.5163,
+    "settled": 10,
+    "units": -5.16,
+    "void_or_ungraded": 0
+   },
+   "[11,16)": {
+    "ci95": [
+     0.474,
+     0.633
+    ],
+    "hit_rate": 0.5548,
+    "hits": 81,
+    "mean_implied_q": 0.5854,
+    "mean_stated_p": 0.6484,
+    "misses": 65,
+    "priced_settled": 146,
+    "published": 173,
+    "roi": -0.0726,
+    "settled": 146,
+    "units": -10.59,
+    "void_or_ungraded": 27
+   },
+   "[16,21)": {
+    "ci95": [
+     0.459,
+     0.591
+    ],
+    "hit_rate": 0.5253,
+    "hits": 114,
+    "mean_implied_q": 0.5808,
+    "mean_stated_p": 0.6469,
+    "misses": 103,
+    "priced_settled": 217,
+    "published": 224,
+    "roi": -0.1073,
+    "settled": 217,
+    "units": -23.29,
+    "void_or_ungraded": 7
+   },
+   "[21,1000000)": {
+    "ci95": [
+     0.482,
+     0.636
+    ],
+    "hit_rate": 0.5605,
+    "hits": 88,
+    "mean_implied_q": 0.5863,
+    "mean_stated_p": 0.6489,
+    "misses": 69,
+    "priced_settled": 157,
+    "published": 180,
+    "roi": -0.0551,
+    "settled": 157,
+    "units": -8.64,
+    "void_or_ungraded": 23
+   },
+   "[6,11)": {
+    "ci95": [
+     0.347,
+     0.731
+    ],
+    "hit_rate": 0.5455,
+    "hits": 12,
+    "mean_implied_q": 0.5637,
+    "mean_stated_p": 0.6274,
+    "misses": 10,
+    "priced_settled": 22,
+    "published": 42,
+    "roi": -0.0512,
+    "settled": 22,
+    "units": -1.13,
+    "void_or_ungraded": 20
+   }
+  },
+  "lead_time_min": {
+   "[-1000000,60)": {
+    "ci95": [
+     0.273,
+     0.683
+    ],
+    "hit_rate": 0.4737,
+    "hits": 9,
+    "mean_implied_q": 0.602,
+    "mean_stated_p": 0.6461,
+    "misses": 10,
+    "priced_settled": 19,
+    "published": 32,
+    "roi": -0.2322,
+    "settled": 19,
+    "units": -4.41,
+    "void_or_ungraded": 13
+   },
+   "[180,360)": {
+    "ci95": [
+     0.485,
+     0.617
+    ],
+    "hit_rate": 0.5519,
+    "hits": 117,
+    "mean_implied_q": 0.5981,
+    "mean_stated_p": 0.6546,
+    "misses": 95,
+    "priced_settled": 212,
+    "published": 239,
+    "roi": -0.0811,
+    "settled": 212,
+    "units": -17.19,
+    "void_or_ungraded": 27
+   },
+   "[360,720)": {
+    "ci95": [
+     0.282,
+     0.607
+    ],
+    "hit_rate": 0.4375,
+    "hits": 14,
+    "mean_implied_q": 0.5216,
+    "mean_stated_p": 0.6294,
+    "misses": 18,
+    "priced_settled": 32,
+    "published": 35,
+    "roi": -0.218,
+    "settled": 32,
+    "units": -6.98,
+    "void_or_ungraded": 3
+   },
+   "[60,180)": {
+    "ci95": [
+     0.51,
+     0.641
+    ],
+    "hit_rate": 0.5767,
+    "hits": 124,
+    "mean_implied_q": 0.6013,
+    "mean_stated_p": 0.6482,
+    "misses": 91,
+    "priced_settled": 215,
+    "published": 243,
+    "roi": -0.0432,
+    "settled": 215,
+    "units": -9.28,
+    "void_or_ungraded": 28
+   },
+   "[720,1000000)": {
+    "ci95": [
+     0.351,
+     0.572
+    ],
+    "hit_rate": 0.4595,
+    "hits": 34,
+    "mean_implied_q": 0.5046,
+    "mean_stated_p": 0.6301,
+    "misses": 40,
+    "priced_settled": 74,
+    "published": 80,
+    "roi": -0.1481,
+    "settled": 74,
+    "units": -10.96,
+    "void_or_ungraded": 6
+   }
+  },
+  "market": {
+   "hits": {
+    "ci95": [
+     0.477,
+     0.668
+    ],
+    "hit_rate": 0.5758,
+    "hits": 57,
+    "mean_implied_q": 0.5796,
+    "mean_stated_p": 0.6265,
+    "misses": 42,
+    "priced_settled": 99,
+    "published": 112,
+    "roi": -0.0035,
+    "settled": 99,
+    "units": -0.35,
+    "void_or_ungraded": 13
+   },
+   "hits_runs_rbis": {
+    "ci95": [
+     0.507,
+     0.614
+    ],
+    "hit_rate": 0.5613,
+    "hits": 183,
+    "mean_implied_q": 0.6114,
+    "mean_stated_p": 0.6601,
+    "misses": 143,
+    "priced_settled": 326,
+    "published": 373,
+    "roi": -0.0824,
+    "settled": 326,
+    "units": -26.85,
+    "void_or_ungraded": 47
+   },
+   "pitcher_outs": {
+    "ci95": [
+     0.348,
+     0.652
+    ],
+    "hit_rate": 0.5,
+    "hits": 19,
+    "mean_implied_q": 0.5144,
+    "mean_stated_p": 0.671,
+    "misses": 19,
+    "priced_settled": 38,
+    "published": 45,
+    "roi": -0.1087,
+    "settled": 38,
+    "units": -4.13,
+    "void_or_ungraded": 7
+   },
+   "strikeouts": {
+    "ci95": [
+     0.34,
+     0.542
+    ],
+    "hit_rate": 0.4382,
+    "hits": 39,
+    "mean_implied_q": 0.509,
+    "mean_stated_p": 0.6123,
+    "misses": 50,
+    "priced_settled": 89,
+    "published": 99,
+    "roi": -0.1966,
+    "settled": 89,
+    "units": -17.5,
+    "void_or_ungraded": 10
+   }
+  },
+  "market_disagrees_flag": {
+   "True": {
+    "ci95": [
+     0.498,
+     0.581
+    ],
+    "hit_rate": 0.5399,
+    "hits": 298,
+    "mean_implied_q": 0.5825,
+    "mean_stated_p": 0.6471,
+    "misses": 254,
+    "priced_settled": 552,
+    "published": 629,
+    "roi": -0.0884,
+    "settled": 552,
+    "units": -48.82,
+    "void_or_ungraded": 77
+   }
+  },
+  "market_side": {
+   "hits:over": {
+    "ci95": [
+     0.477,
+     0.668
+    ],
+    "hit_rate": 0.5758,
+    "hits": 57,
+    "mean_implied_q": 0.5796,
+    "mean_stated_p": 0.6265,
+    "misses": 42,
+    "priced_settled": 99,
+    "published": 112,
+    "roi": -0.0035,
+    "settled": 99,
+    "units": -0.35,
+    "void_or_ungraded": 13
+   },
+   "hits_runs_rbis:over": {
+    "ci95": [
+     0.507,
+     0.614
+    ],
+    "hit_rate": 0.5613,
+    "hits": 183,
+    "mean_implied_q": 0.6114,
+    "mean_stated_p": 0.6601,
+    "misses": 143,
+    "priced_settled": 326,
+    "published": 373,
+    "roi": -0.0824,
+    "settled": 326,
+    "units": -26.85,
+    "void_or_ungraded": 47
+   },
+   "pitcher_outs:over": {
+    "ci95": [
+     0.348,
+     0.652
+    ],
+    "hit_rate": 0.5,
+    "hits": 19,
+    "mean_implied_q": 0.5144,
+    "mean_stated_p": 0.671,
+    "misses": 19,
+    "priced_settled": 38,
+    "published": 45,
+    "roi": -0.1087,
+    "settled": 38,
+    "units": -4.13,
+    "void_or_ungraded": 7
+   },
+   "strikeouts:over": {
+    "ci95": [
+     0.34,
+     0.542
+    ],
+    "hit_rate": 0.4382,
+    "hits": 39,
+    "mean_implied_q": 0.509,
+    "mean_stated_p": 0.6123,
+    "misses": 50,
+    "priced_settled": 89,
+    "published": 99,
+    "roi": -0.1966,
+    "settled": 89,
+    "units": -17.5,
+    "void_or_ungraded": 10
+   }
+  },
+  "model_minus_market": {
+   "[0,0.03)": {
+    "ci95": [
+     0.061,
+     0.792
+    ],
+    "hit_rate": 0.3333,
+    "hits": 1,
+    "mean_implied_q": 0.5745,
+    "mean_stated_p": 0.6041,
+    "misses": 2,
+    "priced_settled": 3,
+    "published": 3,
+    "roi": -0.4198,
+    "settled": 3,
+    "units": -1.26,
+    "void_or_ungraded": 0
+   },
+   "[0.03,0.06)": {
+    "ci95": [
+     0.513,
+     0.618
+    ],
+    "hit_rate": 0.566,
+    "hits": 193,
+    "mean_implied_q": 0.6116,
+    "mean_stated_p": 0.6531,
+    "misses": 148,
+    "priced_settled": 341,
+    "published": 391,
+    "roi": -0.0766,
+    "settled": 341,
+    "units": -26.11,
+    "void_or_ungraded": 50
+   },
+   "[0.06,0.1)": {
+    "ci95": [
+     0.446,
+     0.613
+    ],
+    "hit_rate": 0.5303,
+    "hits": 70,
+    "mean_implied_q": 0.559,
+    "mean_stated_p": 0.634,
+    "misses": 62,
+    "priced_settled": 132,
+    "published": 150,
+    "roi": -0.0681,
+    "settled": 132,
+    "units": -8.99,
+    "void_or_ungraded": 18
+   },
+   "[0.1,0.15)": {
+    "ci95": [
+     0.314,
+     0.588
+    ],
+    "hit_rate": 0.4468,
+    "hits": 21,
+    "mean_implied_q": 0.5113,
+    "mean_stated_p": 0.637,
+    "misses": 26,
+    "priced_settled": 47,
+    "published": 53,
+    "roi": -0.1887,
+    "settled": 47,
+    "units": -8.87,
+    "void_or_ungraded": 6
+   },
+   "[0.15,1)": {
+    "ci95": [
+     0.284,
+     0.625
+    ],
+    "hit_rate": 0.4483,
+    "hits": 13,
+    "mean_implied_q": 0.4643,
+    "mean_stated_p": 0.6571,
+    "misses": 16,
+    "priced_settled": 29,
+    "published": 32,
+    "roi": -0.1241,
+    "settled": 29,
+    "units": -3.6,
+    "void_or_ungraded": 3
+   }
+  },
+  "odds_band": {
+   "-109..+100": {
+    "ci95": [
+     0.417,
+     0.848
+    ],
+    "hit_rate": 0.6667,
+    "hits": 10,
+    "mean_implied_q": 0.485,
+    "mean_stated_p": 0.6071,
+    "misses": 5,
+    "priced_settled": 15,
+    "published": 17,
+    "roi": 0.3112,
+    "settled": 15,
+    "units": 4.67,
+    "void_or_ungraded": 2
+   },
+   "-139..-110": {
+    "ci95": [
+     0.403,
+     0.551
+    ],
+    "hit_rate": 0.4765,
+    "hits": 81,
+    "mean_implied_q": 0.5449,
+    "mean_stated_p": 0.6245,
+    "misses": 89,
+    "priced_settled": 170,
+    "published": 193,
+    "roi": -0.1477,
+    "settled": 170,
+    "units": -25.12,
+    "void_or_ungraded": 23
+   },
+   "-179..-140": {
+    "ci95": [
+     0.521,
+     0.636
+    ],
+    "hit_rate": 0.5797,
+    "hits": 160,
+    "mean_implied_q": 0.606,
+    "mean_stated_p": 0.6532,
+    "misses": 116,
+    "priced_settled": 276,
+    "published": 317,
+    "roi": -0.0471,
+    "settled": 276,
+    "units": -13.0,
+    "void_or_ungraded": 41
+   },
+   "-249..-180": {
+    "ci95": [
+     0.484,
+     0.711
+    ],
+    "hit_rate": 0.6029,
+    "hits": 41,
+    "mean_implied_q": 0.6514,
+    "mean_stated_p": 0.6991,
+    "misses": 27,
+    "priced_settled": 68,
+    "published": 77,
+    "roi": -0.0769,
+    "settled": 68,
+    "units": -5.23,
+    "void_or_ungraded": 9
+   },
+   "<=-250": {
+    "ci95": null,
+    "hit_rate": null,
+    "hits": 0,
+    "mean_implied_q": null,
+    "mean_stated_p": null,
+    "misses": 0,
+    "priced_settled": 0,
+    "published": 1,
+    "roi": null,
+    "settled": 0,
+    "units": 0,
+    "void_or_ungraded": 1
+   },
+   ">+100": {
+    "ci95": [
+     0.125,
+     0.465
+    ],
+    "hit_rate": 0.2609,
+    "hits": 6,
+    "mean_implied_q": 0.4389,
+    "mean_stated_p": 0.6128,
+    "misses": 17,
+    "priced_settled": 23,
+    "published": 24,
+    "roi": -0.4409,
+    "settled": 23,
+    "units": -10.14,
+    "void_or_ungraded": 1
+   }
+  },
+  "picks_same_game_same_day": {
+   "1": {
+    "ci95": [
+     0.377,
+     0.561
+    ],
+    "hit_rate": 0.4679,
+    "hits": 51,
+    "mean_implied_q": 0.5459,
+    "mean_stated_p": 0.6392,
+    "misses": 58,
+    "priced_settled": 109,
+    "published": 127,
+    "roi": -0.1926,
+    "settled": 109,
+    "units": -21.0,
+    "void_or_ungraded": 18
+   },
+   "2": {
+    "ci95": [
+     0.463,
+     0.66
+    ],
+    "hit_rate": 0.5638,
+    "hits": 53,
+    "mean_implied_q": 0.5768,
+    "mean_stated_p": 0.6456,
+    "misses": 41,
+    "priced_settled": 94,
+    "published": 108,
+    "roi": -0.0348,
+    "settled": 94,
+    "units": -3.27,
+    "void_or_ungraded": 14
+   },
+   "3": {
+    "ci95": [
+     0.42,
+     0.607
+    ],
+    "hit_rate": 0.514,
+    "hits": 55,
+    "mean_implied_q": 0.5931,
+    "mean_stated_p": 0.6466,
+    "misses": 52,
+    "priced_settled": 107,
+    "published": 117,
+    "roi": -0.1344,
+    "settled": 107,
+    "units": -14.39,
+    "void_or_ungraded": 10
+   },
+   "4+": {
+    "ci95": [
+     0.511,
+     0.635
+    ],
+    "hit_rate": 0.5744,
+    "hits": 139,
+    "mean_implied_q": 0.5966,
+    "mean_stated_p": 0.6514,
+    "misses": 103,
+    "priced_settled": 242,
+    "published": 277,
+    "roi": -0.042,
+    "settled": 242,
+    "units": -10.17,
+    "void_or_ungraded": 35
+   }
+  },
+  "picks_same_player_same_day": {
+   "1": {
+    "ci95": [
+     0.483,
+     0.574
+    ],
+    "hit_rate": 0.5284,
+    "hits": 242,
+    "mean_implied_q": 0.5804,
+    "mean_stated_p": 0.6469,
+    "misses": 216,
+    "priced_settled": 458,
+    "published": 529,
+    "roi": -0.1079,
+    "settled": 458,
+    "units": -49.4,
+    "void_or_ungraded": 71
+   },
+   "2": {
+    "ci95": [
+     0.495,
+     0.689
+    ],
+    "hit_rate": 0.5957,
+    "hits": 56,
+    "mean_implied_q": 0.5928,
+    "mean_stated_p": 0.6481,
+    "misses": 38,
+    "priced_settled": 94,
+    "published": 100,
+    "roi": 0.0062,
+    "settled": 94,
+    "units": 0.58,
+    "void_or_ungraded": 6
+   }
+  },
+  "reliability": {
+   "A": {
+    "ci95": [
+     0.495,
+     0.591
+    ],
+    "hit_rate": 0.5437,
+    "hits": 224,
+    "mean_implied_q": 0.5861,
+    "mean_stated_p": 0.6495,
+    "misses": 188,
+    "priced_settled": 412,
+    "published": 468,
+    "roi": -0.089,
+    "settled": 412,
+    "units": -36.69,
+    "void_or_ungraded": 56
+   },
+   "B": {
+    "ci95": [
+     0.446,
+     0.609
+    ],
+    "hit_rate": 0.5286,
+    "hits": 74,
+    "mean_implied_q": 0.572,
+    "mean_stated_p": 0.6401,
+    "misses": 66,
+    "priced_settled": 140,
+    "published": 161,
+    "roi": -0.0867,
+    "settled": 140,
+    "units": -12.13,
+    "void_or_ungraded": 21
+   }
+  },
+  "sample_n": {
+   "[0,10)": {
+    "ci95": [
+     0.438,
+     1.0
+    ],
+    "hit_rate": 1.0,
+    "hits": 3,
+    "mean_implied_q": 0.5668,
+    "mean_stated_p": 0.6574,
+    "misses": 0,
+    "priced_settled": 3,
+    "published": 4,
+    "roi": 0.6599,
+    "settled": 3,
+    "units": 1.98,
+    "void_or_ungraded": 1
+   },
+   "[10,20)": {
+    "ci95": [
+     0.35,
+     0.601
+    ],
+    "hit_rate": 0.4737,
+    "hits": 27,
+    "mean_implied_q": 0.5082,
+    "mean_stated_p": 0.6284,
+    "misses": 30,
+    "priced_settled": 57,
+    "published": 64,
+    "roi": -0.133,
+    "settled": 57,
+    "units": -7.58,
+    "void_or_ungraded": 7
+   },
+   "[20,40)": {
+    "ci95": [
+     0.307,
+     0.537
+    ],
+    "hit_rate": 0.4179,
+    "hits": 28,
+    "mean_implied_q": 0.5102,
+    "mean_stated_p": 0.6299,
+    "misses": 39,
+    "priced_settled": 67,
+    "published": 76,
+    "roi": -0.2392,
+    "settled": 67,
+    "units": -16.03,
+    "void_or_ungraded": 9
+   },
+   "[40,80)": {
+    "ci95": [
+     0.42,
+     0.607
+    ],
+    "hit_rate": 0.514,
+    "hits": 55,
+    "mean_implied_q": 0.592,
+    "mean_stated_p": 0.644,
+    "misses": 52,
+    "priced_settled": 107,
+    "published": 123,
+    "roi": -0.1264,
+    "settled": 107,
+    "units": -13.53,
+    "void_or_ungraded": 16
+   },
+   "[80,1000000)": {
+    "ci95": [
+     0.527,
+     0.635
+    ],
+    "hit_rate": 0.5818,
+    "hits": 185,
+    "mean_implied_q": 0.608,
+    "mean_stated_p": 0.655,
+    "misses": 133,
+    "priced_settled": 318,
+    "published": 362,
+    "roi": -0.043,
+    "settled": 318,
+    "units": -13.66,
+    "void_or_ungraded": 44
+   }
+  },
+  "side": {
+   "over": {
+    "ci95": [
+     0.498,
+     0.581
+    ],
+    "hit_rate": 0.5399,
+    "hits": 298,
+    "mean_implied_q": 0.5825,
+    "mean_stated_p": 0.6471,
+    "misses": 254,
+    "priced_settled": 552,
+    "published": 629,
+    "roi": -0.0884,
+    "settled": 552,
+    "units": -48.82,
+    "void_or_ungraded": 77
+   }
+  },
+  "stated_p_band": {
+   "[0.6,0.63)": {
+    "ci95": [
+     0.392,
+     0.529
+    ],
+    "hit_rate": 0.46,
+    "hits": 92,
+    "mean_implied_q": 0.5347,
+    "mean_stated_p": 0.6129,
+    "misses": 108,
+    "priced_settled": 200,
+    "published": 231,
+    "roi": -0.1666,
+    "settled": 200,
+    "units": -33.31,
+    "void_or_ungraded": 31
+   },
+   "[0.63,0.66)": {
+    "ci95": [
+     0.507,
+     0.654
+    ],
+    "hit_rate": 0.5824,
+    "hits": 99,
+    "mean_implied_q": 0.5925,
+    "mean_stated_p": 0.6448,
+    "misses": 71,
+    "priced_settled": 170,
+    "published": 188,
+    "roi": -0.0196,
+    "settled": 170,
+    "units": -3.33,
+    "void_or_ungraded": 18
+   },
+   "[0.66,0.7)": {
+    "ci95": [
+     0.501,
+     0.667
+    ],
+    "hit_rate": 0.5865,
+    "hits": 78,
+    "mean_implied_q": 0.6291,
+    "mean_stated_p": 0.6766,
+    "misses": 55,
+    "priced_settled": 133,
+    "published": 152,
+    "roi": -0.0676,
+    "settled": 133,
+    "units": -9.0,
+    "void_or_ungraded": 19
+   },
+   "[0.7,0.75)": {
+    "ci95": [
+     0.452,
+     0.718
+    ],
+    "hit_rate": 0.5918,
+    "hits": 29,
+    "mean_implied_q": 0.6166,
+    "mean_stated_p": 0.7144,
+    "misses": 20,
+    "priced_settled": 49,
+    "published": 56,
+    "roi": -0.065,
+    "settled": 49,
+    "units": -3.19,
+    "void_or_ungraded": 7
+   },
+   "[0.75,1.01)": {
+    "ci95": null,
+    "hit_rate": null,
+    "hits": 0,
+    "mean_implied_q": null,
+    "mean_stated_p": null,
+    "misses": 0,
+    "priced_settled": 0,
+    "published": 2,
+    "roi": null,
+    "settled": 0,
+    "units": 0,
+    "void_or_ungraded": 2
+   }
+  }
+ },
+ "by_date": {
+  "2026-08-18": {
+   "ci95": null,
+   "hit_rate": null,
+   "hits": 0,
+   "mean_implied_q": null,
+   "mean_stated_p": null,
+   "misses": 0,
+   "priced_settled": 0,
+   "published": 6,
+   "roi": null,
+   "settled": 0,
+   "units": 0,
+   "void_or_ungraded": 6
+  },
+  "2026-08-24": {
+   "ci95": null,
+   "hit_rate": null,
+   "hits": 0,
+   "mean_implied_q": null,
+   "mean_stated_p": null,
+   "misses": 0,
+   "priced_settled": 0,
+   "published": 8,
+   "roi": null,
+   "settled": 0,
+   "units": 0,
+   "void_or_ungraded": 8
+  },
+  "2026-08-25": {
+   "ci95": null,
+   "hit_rate": null,
+   "hits": 0,
+   "mean_implied_q": null,
+   "mean_stated_p": null,
+   "misses": 0,
+   "priced_settled": 0,
+   "published": 22,
+   "roi": null,
+   "settled": 0,
+   "units": 0,
+   "void_or_ungraded": 22
+  },
+  "2026-08-26": {
+   "ci95": null,
+   "hit_rate": null,
+   "hits": 0,
+   "mean_implied_q": null,
+   "mean_stated_p": null,
+   "misses": 0,
+   "priced_settled": 0,
+   "published": 6,
+   "roi": null,
+   "settled": 0,
+   "units": 0,
+   "void_or_ungraded": 6
+  },
+  "2026-08-28": {
+   "ci95": null,
+   "hit_rate": null,
+   "hits": 0,
+   "mean_implied_q": null,
+   "mean_stated_p": null,
+   "misses": 0,
+   "priced_settled": 0,
+   "published": 15,
+   "roi": null,
+   "settled": 0,
+   "units": 0,
+   "void_or_ungraded": 15
+  },
+  "2026-08-29": {
+   "ci95": [
+    0.185,
+    0.614
+   ],
+   "hit_rate": 0.375,
+   "hits": 6,
+   "mean_implied_q": 0.5576,
+   "mean_stated_p": 0.6245,
+   "misses": 10,
+   "priced_settled": 16,
+   "published": 16,
+   "roi": -0.3635,
+   "settled": 16,
+   "units": -5.82,
+   "void_or_ungraded": 0
+  },
+  "2026-08-30": {
+   "ci95": [
+    0.332,
+    0.769
+   ],
+   "hit_rate": 0.5625,
+   "hits": 9,
+   "mean_implied_q": 0.596,
+   "mean_stated_p": 0.6594,
+   "misses": 7,
+   "priced_settled": 16,
+   "published": 16,
+   "roi": -0.0676,
+   "settled": 16,
+   "units": -1.08,
+   "void_or_ungraded": 0
+  },
+  "2026-08-31": {
+   "ci95": [
+    0.359,
+    0.918
+   ],
+   "hit_rate": 0.7143,
+   "hits": 5,
+   "mean_implied_q": 0.579,
+   "mean_stated_p": 0.6366,
+   "misses": 2,
+   "priced_settled": 7,
+   "published": 7,
+   "roi": 0.1896,
+   "settled": 7,
+   "units": 1.33,
+   "void_or_ungraded": 0
+  },
+  "2026-09-01": {
+   "ci95": [
+    0.454,
+    0.883
+   ],
+   "hit_rate": 0.7143,
+   "hits": 10,
+   "mean_implied_q": 0.5805,
+   "mean_stated_p": 0.6506,
+   "misses": 4,
+   "priced_settled": 14,
+   "published": 16,
+   "roi": 0.2162,
+   "settled": 14,
+   "units": 3.03,
+   "void_or_ungraded": 2
+  },
+  "2026-09-02": {
+   "ci95": [
+    0.262,
+    0.69
+   ],
+   "hit_rate": 0.4706,
+   "hits": 8,
+   "mean_implied_q": 0.5708,
+   "mean_stated_p": 0.6391,
+   "misses": 9,
+   "priced_settled": 17,
+   "published": 18,
+   "roi": -0.2137,
+   "settled": 17,
+   "units": -3.63,
+   "void_or_ungraded": 1
+  },
+  "2026-09-03": {
+   "ci95": [
+    0.523,
+    0.949
+   ],
+   "hit_rate": 0.8182,
+   "hits": 9,
+   "mean_implied_q": 0.5634,
+   "mean_stated_p": 0.6291,
+   "misses": 2,
+   "priced_settled": 11,
+   "published": 11,
+   "roi": 0.4336,
+   "settled": 11,
+   "units": 4.77,
+   "void_or_ungraded": 0
+  },
+  "2026-09-04": {
+   "ci95": [
+    0.231,
+    0.668
+   ],
+   "hit_rate": 0.4375,
+   "hits": 7,
+   "mean_implied_q": 0.5786,
+   "mean_stated_p": 0.653,
+   "misses": 9,
+   "priced_settled": 16,
+   "published": 18,
+   "roi": -0.2341,
+   "settled": 16,
+   "units": -3.75,
+   "void_or_ungraded": 2
+  },
+  "2026-09-05": {
+   "ci95": [
+    0.543,
+    0.853
+   ],
+   "hit_rate": 0.7241,
+   "hits": 21,
+   "mean_implied_q": 0.5747,
+   "mean_stated_p": 0.6447,
+   "misses": 8,
+   "priced_settled": 29,
+   "published": 29,
+   "roi": 0.2344,
+   "settled": 29,
+   "units": 6.8,
+   "void_or_ungraded": 0
+  },
+  "2026-09-06": {
+   "ci95": [
+    0.299,
+    0.701
+   ],
+   "hit_rate": 0.5,
+   "hits": 10,
+   "mean_implied_q": 0.5717,
+   "mean_stated_p": 0.6387,
+   "misses": 10,
+   "priced_settled": 20,
+   "published": 20,
+   "roi": -0.131,
+   "settled": 20,
+   "units": -2.62,
+   "void_or_ungraded": 0
+  },
+  "2026-09-07": {
+   "ci95": [
+    0.36,
+    0.784
+   ],
+   "hit_rate": 0.5882,
+   "hits": 10,
+   "mean_implied_q": 0.5565,
+   "mean_stated_p": 0.6331,
+   "misses": 7,
+   "priced_settled": 17,
+   "published": 17,
+   "roi": 0.0676,
+   "settled": 17,
+   "units": 1.15,
+   "void_or_ungraded": 0
+  },
+  "2026-09-08": {
+   "ci95": [
+    0.314,
+    0.686
+   ],
+   "hit_rate": 0.5,
+   "hits": 12,
+   "mean_implied_q": 0.5949,
+   "mean_stated_p": 0.6631,
+   "misses": 12,
+   "priced_settled": 24,
+   "published": 24,
+   "roi": -0.1885,
+   "settled": 24,
+   "units": -4.52,
+   "void_or_ungraded": 0
+  },
+  "2026-09-09": {
+   "ci95": [
+    0.454,
+    0.883
+   ],
+   "hit_rate": 0.7143,
+   "hits": 10,
+   "mean_implied_q": 0.5555,
+   "mean_stated_p": 0.6504,
+   "misses": 4,
+   "priced_settled": 14,
+   "published": 14,
+   "roi": 0.2313,
+   "settled": 14,
+   "units": 3.24,
+   "void_or_ungraded": 0
+  },
+  "2026-09-10": {
+   "ci95": [
+    0.232,
+    0.709
+   ],
+   "hit_rate": 0.4615,
+   "hits": 6,
+   "mean_implied_q": 0.6029,
+   "mean_stated_p": 0.6419,
+   "misses": 7,
+   "priced_settled": 13,
+   "published": 13,
+   "roi": -0.2442,
+   "settled": 13,
+   "units": -3.17,
+   "void_or_ungraded": 0
+  },
+  "2026-09-11": {
+   "ci95": [
+    0.548,
+    0.93
+   ],
+   "hit_rate": 0.8,
+   "hits": 12,
+   "mean_implied_q": 0.5924,
+   "mean_stated_p": 0.6445,
+   "misses": 3,
+   "priced_settled": 15,
+   "published": 15,
+   "roi": 0.3323,
+   "settled": 15,
+   "units": 4.98,
+   "void_or_ungraded": 0
+  },
+  "2026-09-12": {
+   "ci95": [
+    0.354,
+    0.879
+   ],
+   "hit_rate": 0.6667,
+   "hits": 6,
+   "mean_implied_q": 0.5554,
+   "mean_stated_p": 0.6214,
+   "misses": 3,
+   "priced_settled": 9,
+   "published": 9,
+   "roi": 0.1518,
+   "settled": 9,
+   "units": 1.37,
+   "void_or_ungraded": 0
+  },
+  "2026-09-13": {
+   "ci95": [
+    0.355,
+    0.823
+   ],
+   "hit_rate": 0.6154,
+   "hits": 8,
+   "mean_implied_q": 0.5957,
+   "mean_stated_p": 0.6475,
+   "misses": 5,
+   "priced_settled": 13,
+   "published": 13,
+   "roi": 0.0423,
+   "settled": 13,
+   "units": 0.55,
+   "void_or_ungraded": 0
+  },
+  "2026-09-14": {
+   "ci95": [
+    0.185,
+    0.614
+   ],
+   "hit_rate": 0.375,
+   "hits": 6,
+   "mean_implied_q": 0.5809,
+   "mean_stated_p": 0.6563,
+   "misses": 10,
+   "priced_settled": 16,
+   "published": 17,
+   "roi": -0.3645,
+   "settled": 16,
+   "units": -5.83,
+   "void_or_ungraded": 1
+  },
+  "2026-09-15": {
+   "ci95": [
+    0.234,
+    0.593
+   ],
+   "hit_rate": 0.4,
+   "hits": 10,
+   "mean_implied_q": 0.5918,
+   "mean_stated_p": 0.6558,
+   "misses": 15,
+   "priced_settled": 25,
+   "published": 26,
+   "roi": -0.3312,
+   "settled": 25,
+   "units": -8.28,
+   "void_or_ungraded": 1
+  },
+  "2026-09-16": {
+   "ci95": [
+    0.386,
+    0.797
+   ],
+   "hit_rate": 0.6111,
+   "hits": 11,
+   "mean_implied_q": 0.5717,
+   "mean_stated_p": 0.6493,
+   "misses": 7,
+   "priced_settled": 18,
+   "published": 19,
+   "roi": 0.0291,
+   "settled": 18,
+   "units": 0.52,
+   "void_or_ungraded": 1
+  },
+  "2026-09-17": {
+   "ci95": [
+    0.03,
+    0.564
+   ],
+   "hit_rate": 0.1667,
+   "hits": 1,
+   "mean_implied_q": 0.5584,
+   "mean_stated_p": 0.6256,
+   "misses": 5,
+   "priced_settled": 6,
+   "published": 6,
+   "roi": -0.6367,
+   "settled": 6,
+   "units": -3.82,
+   "void_or_ungraded": 0
+  },
+  "2026-09-18": {
+   "ci95": [
+    0.193,
+    0.68
+   ],
+   "hit_rate": 0.4167,
+   "hits": 5,
+   "mean_implied_q": 0.5778,
+   "mean_stated_p": 0.6549,
+   "misses": 7,
+   "priced_settled": 12,
+   "published": 13,
+   "roi": -0.3481,
+   "settled": 12,
+   "units": -4.18,
+   "void_or_ungraded": 1
+  },
+  "2026-09-19": {
+   "ci95": [
+    0.291,
+    0.768
+   ],
+   "hit_rate": 0.5385,
+   "hits": 7,
+   "mean_implied_q": 0.5759,
+   "mean_stated_p": 0.6524,
+   "misses": 6,
+   "priced_settled": 13,
+   "published": 13,
+   "roi": -0.1454,
+   "settled": 13,
+   "units": -1.89,
+   "void_or_ungraded": 0
+  },
+  "2026-09-20": {
+   "ci95": [
+    0.326,
+    0.674
+   ],
+   "hit_rate": 0.5,
+   "hits": 14,
+   "mean_implied_q": 0.5846,
+   "mean_stated_p": 0.638,
+   "misses": 14,
+   "priced_settled": 28,
+   "published": 28,
+   "roi": -0.1305,
+   "settled": 28,
+   "units": -3.65,
+   "void_or_ungraded": 0
+  },
+  "2026-09-21": {
+   "ci95": [
+    0.0,
+    0.562
+   ],
+   "hit_rate": 0.0,
+   "hits": 0,
+   "mean_implied_q": 0.4886,
+   "mean_stated_p": 0.6198,
+   "misses": 3,
+   "priced_settled": 3,
+   "published": 3,
+   "roi": -1.0,
+   "settled": 3,
+   "units": -3.0,
+   "void_or_ungraded": 0
+  },
+  "2026-09-22": {
+   "ci95": [
+    0.388,
+    0.755
+   ],
+   "hit_rate": 0.5833,
+   "hits": 14,
+   "mean_implied_q": 0.5838,
+   "mean_stated_p": 0.6461,
+   "misses": 10,
+   "priced_settled": 24,
+   "published": 24,
+   "roi": -0.0147,
+   "settled": 24,
+   "units": -0.35,
+   "void_or_ungraded": 0
+  },
+  "2026-09-23": {
+   "ci95": [
+    0.442,
+    0.785
+   ],
+   "hit_rate": 0.6296,
+   "hits": 17,
+   "mean_implied_q": 0.5902,
+   "mean_stated_p": 0.6485,
+   "misses": 10,
+   "priced_settled": 27,
+   "published": 27,
+   "roi": 0.0505,
+   "settled": 27,
+   "units": 1.36,
+   "void_or_ungraded": 0
+  },
+  "2026-09-24": {
+   "ci95": [
+    0.177,
+    0.645
+   ],
+   "hit_rate": 0.3846,
+   "hits": 5,
+   "mean_implied_q": 0.5829,
+   "mean_stated_p": 0.6483,
+   "misses": 8,
+   "priced_settled": 13,
+   "published": 13,
+   "roi": -0.3194,
+   "settled": 13,
+   "units": -4.15,
+   "void_or_ungraded": 0
+  },
+  "2026-09-25": {
+   "ci95": [
+    0.386,
+    0.815
+   ],
+   "hit_rate": 0.625,
+   "hits": 10,
+   "mean_implied_q": 0.5947,
+   "mean_stated_p": 0.6494,
+   "misses": 6,
+   "priced_settled": 16,
+   "published": 16,
+   "roi": 0.0275,
+   "settled": 16,
+   "units": 0.44,
+   "void_or_ungraded": 0
+  },
+  "2026-09-26": {
+   "ci95": [
+    0.198,
+    0.643
+   ],
+   "hit_rate": 0.4,
+   "hits": 6,
+   "mean_implied_q": 0.5705,
+   "mean_stated_p": 0.6353,
+   "misses": 9,
+   "priced_settled": 15,
+   "published": 15,
+   "roi": -0.3191,
+   "settled": 15,
+   "units": -4.79,
+   "void_or_ungraded": 0
+  },
+  "2026-09-27": {
+   "ci95": [
+    0.386,
+    0.797
+   ],
+   "hit_rate": 0.6111,
+   "hits": 11,
+   "mean_implied_q": 0.5752,
+   "mean_stated_p": 0.6424,
+   "misses": 7,
+   "priced_settled": 18,
+   "published": 18,
+   "roi": 0.0463,
+   "settled": 18,
+   "units": 0.83,
+   "void_or_ungraded": 0
+  },
+  "2026-09-29": {
+   "ci95": [
+    0.36,
+    0.784
+   ],
+   "hit_rate": 0.5882,
+   "hits": 10,
+   "mean_implied_q": 0.6163,
+   "mean_stated_p": 0.6647,
+   "misses": 7,
+   "priced_settled": 17,
+   "published": 17,
+   "roi": -0.0383,
+   "settled": 17,
+   "units": -0.65,
+   "void_or_ungraded": 0
+  },
+  "2026-09-30": {
+   "ci95": [
+    0.177,
+    0.645
+   ],
+   "hit_rate": 0.3846,
+   "hits": 5,
+   "mean_implied_q": 0.6142,
+   "mean_stated_p": 0.6623,
+   "misses": 8,
+   "priced_settled": 13,
+   "published": 13,
+   "roi": -0.3767,
+   "settled": 13,
+   "units": -4.9,
+   "void_or_ungraded": 0
+  },
+  "2026-10-01": {
+   "ci95": [
+    0.095,
+    0.905
+   ],
+   "hit_rate": 0.5,
+   "hits": 1,
+   "mean_implied_q": 0.5859,
+   "mean_stated_p": 0.651,
+   "misses": 1,
+   "priced_settled": 2,
+   "published": 2,
+   "roi": -0.2222,
+   "settled": 2,
+   "units": -0.44,
+   "void_or_ungraded": 0
+  },
+  "2026-10-03": {
+   "ci95": [
+    0.185,
+    0.614
+   ],
+   "hit_rate": 0.375,
+   "hits": 6,
+   "mean_implied_q": 0.6042,
+   "mean_stated_p": 0.6519,
+   "misses": 10,
+   "priced_settled": 16,
+   "published": 16,
+   "roi": -0.368,
+   "settled": 16,
+   "units": -5.89,
+   "void_or_ungraded": 0
+  },
+  "2026-10-04": {
+   "ci95": [
+    0.118,
+    0.769
+   ],
+   "hit_rate": 0.4,
+   "hits": 2,
+   "mean_implied_q": 0.5907,
+   "mean_stated_p": 0.6596,
+   "misses": 3,
+   "priced_settled": 5,
+   "published": 5,
+   "roi": -0.3437,
+   "settled": 5,
+   "units": -1.72,
+   "void_or_ungraded": 0
+  },
+  "2026-10-05": {
+   "ci95": [
+    0.326,
+    0.786
+   ],
+   "hit_rate": 0.5714,
+   "hits": 8,
+   "mean_implied_q": 0.6062,
+   "mean_stated_p": 0.6651,
+   "misses": 6,
+   "priced_settled": 14,
+   "published": 14,
+   "roi": -0.0756,
+   "settled": 14,
+   "units": -1.06,
+   "void_or_ungraded": 0
+  },
+  "2026-10-12": {
+   "ci95": null,
+   "hit_rate": null,
+   "hits": 0,
+   "mean_implied_q": null,
+   "mean_stated_p": null,
+   "misses": 0,
+   "priced_settled": 0,
+   "published": 11,
+   "roi": null,
+   "settled": 0,
+   "units": 0,
+   "void_or_ungraded": 11
+  }
+ },
+ "coverage": {
+  "first_date": "2026-08-18",
+  "graded_in_retained_history": 552,
+  "history_note": "docs/history.json retains 45 days; picks dated 2026-08-18..08-28 and 10-06..10-12 have no retained grade here and are counted, never imputed.",
+  "last_date": "2026-10-12",
+  "not_in_retained_history": 57
+ },
+ "explore_pre_2026_09_20": {
+  "ci95": [
+   0.501,
+   0.606
+  ],
+  "hit_rate": 0.5543,
+  "hits": 189,
+  "mean_implied_q": 0.5778,
+  "mean_stated_p": 0.646,
+  "misses": 152,
+  "priced_settled": 341,
+  "published": 407,
+  "roi": -0.0612,
+  "settled": 341,
+  "units": -20.86,
+  "void_or_ungraded": 66
+ },
+ "full_period": {
+  "ci95": [
+   0.498,
+   0.581
+  ],
+  "hit_rate": 0.5399,
+  "hits": 298,
+  "mean_implied_q": 0.5825,
+  "mean_stated_p": 0.6471,
+  "misses": 254,
+  "priced_settled": 552,
+  "published": 629,
+  "roi": -0.0884,
+  "settled": 552,
+  "units": -48.82,
+  "void_or_ungraded": 77
+ },
+ "post_2026_09_20": {
+  "ci95": [
+   0.449,
+   0.583
+  ],
+  "hit_rate": 0.5166,
+  "hits": 109,
+  "mean_implied_q": 0.5902,
+  "mean_stated_p": 0.6488,
+  "misses": 102,
+  "priced_settled": 211,
+  "published": 222,
+  "roi": -0.1325,
+  "settled": 211,
+  "units": -27.96,
+  "void_or_ungraded": 11
+ },
+ "provenance": {
+  "history": "docs/history.json",
+  "history_sha256": "e9a95b654873c619a8afbc1f74e89750d391a7d649a1ceda6443cbb0e851c043",
+  "registry": "data/public_top_picks/registry.json",
+  "registry_sha256": "be2daaa0c330c7b103fefa9724baff4acf83354d5a49828f1b5d42293550b88b"
+ },
+ "regime": "A_PUBLIC_LEDGER"
+}

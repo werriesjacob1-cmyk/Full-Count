@@ -1,0 +1,38 @@
+{
+ "codex_audit": "https://github.com/werriesjacob1-cmyk/Full-Count/pull/226#issuecomment-6154204021",
+ "label": "SYNTHETIC_ADVERSARIAL_NONCONFIRMATORY",
+ "post_repair": {
+  "a1_forged_event_identity": "REJECTED: event identities do not match those derived from the archived root",
+  "a1b_tab_request_rebound_to_other_event": "REJECTED: event E1: tab requests are not bound to its eventId",
+  "a1c_market_from_foreign_event_inside_page": "REJECTED: MARKET_EVENT_ID_MISMATCH",
+  "a2a_wrong_line": "REJECTED: MISSING_QUOTE",
+  "a2b_same_name_two_player_ids": "REJECTED: ['AMBIGUOUS_PLAYER_NAME']",
+  "a2c_wrong_player_id_not_in_raw_lineup": "REJECTED: PLAYER_NOT_IN_RAW_LINEUP",
+  "a2d_wrong_team": "REJECTED: TEAM_MISMATCH",
+  "a3_mixed_two_sided_runners": "REJECTED: parser ['INCOHERENT_TWO_SIDED_MARKET']; c5 MISSING_QUOTE",
+  "a3b_two_sided_split_lines": "REJECTED: INCOHERENT_TWO_SIDED_MARKET",
+  "a3c_suspended_market": "REJECTED: MARKET_NOT_OPEN:SUSPENDED",
+  "a4a2_workload_observed_after_decision": "REJECTED: workload source rejected: source observation completed 2031-05-01T22:10:02.000000Z after cutoff 2031-05-01T21:30:00Z",
+  "a4a3_edited_workload_inside_snapshot": "REJECTED: WORKLOAD_NOT_REDERIVABLE",
+  "a4a4_schedule_observed_after_decision": "REJECTED: schedule source not verifiable: source observation completed 2031-05-01T22:00:02.000000Z after cutoff 2031-05-01T21:30:00Z",
+  "a4a_post_start_feature_snapshot": "REJECTED: FEATURE_AFTER_DECISION",
+  "a4b_N_fixed_before_offer_filtering": "REJECTED: unit NON_COMPARABLE ['CHAMPION_SHORTFALL']; arms {'CHAMPION_EXISTING_POLICY': (4, 3, 'SHORTFALL'), 'MARKET_ONLY': (4, 4, 'NON_COMPARABLE'), 'BLEND_50_50': (4, 4, 'NON_COMPARABLE')}",
+  "a4c_partial_sweep": "REJECTED: unit NON_COMPARABLE ['CAPTURE_INCOMPLETE', 'GAME_INCOMPLETE_CAPTURE']",
+  "a4d_policy_price_changed": "REJECTED: c3 POLICY_PRICE_CHANGED_UNREVALIDATED; unit NON_COMPARABLE",
+  "a5_reseal_after_deleting_index": "REJECTED: MISSING_LINK: unit index for 2031-05-01_NIGHT is missing (recover with restore_index)",
+  "a5b_reseal_after_deleting_whole_ledger": "REJECTED: local chain head GENESIS != externally anchored head 1f4fc2246fbd046a78db41f22a5ea78fc4f9113ecc86b19f9136215648502892: deleted, forked or unanchored local ledger; restore it, do not re-seal"
+ },
+ "post_repair_command": "python3 research/fc_acc_001/s1/attacks/post_repair_attacks.py",
+ "pre_repair": {
+  "1_forged_event_identity": "VULNERABLE: verify_capture passed; 8 offers from request eventId=E1 emitted as FORGED_EVENT",
+  "2a_wrong_line": "VULNERABLE: candidate line 1.5 AUTHENTICATED against offer line 0.5",
+  "2b_same_name_two_ids": "VULNERABLE: two distinct player ids with one name bound to the same offer_id",
+  "3_mixed_two_sided_runners": "VULNERABLE: offer 'Other Arm OVER' carries Ace Arm's selection 31 / -125",
+  "4a_post_start_feature": "VULNERABLE: post-first-pitch feature snapshot accepted in a verified manifest",
+  "4b_N_after_offer_filter": "VULNERABLE: 4 policy top picks, 1 unquoted -> {'CHAMPION_EXISTING_POLICY': (3, 'MATCHED'), 'MARKET_ONLY': (3, 'MATCHED'), 'BLEND_50_50': (3, 'MATCHED')}",
+  "4c_partial_sweep_matched": "VULNERABLE: capture INCOMPLETE but unit arms MATCHED",
+  "5_reseal_after_local_delete": "VULNERABLE: after deleting the seal file a contradictory manifest sealed as SEALED"
+ },
+ "pre_repair_command": "git worktree add <dir> d316593c && python3 research/fc_acc_001/s1/attacks/pre_repair_attacks.py <dir>/research/fc_acc_001/s1",
+ "pre_repair_head": "d316593c2e6e45375c2e723fa5e845f452e432fe"
+}
