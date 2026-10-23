@@ -6332,3 +6332,23 @@ Focused regression tests are in `test_fc_ops_001_offer_contract.py`. The
 branch's draft PR and exact-head CI, if available, are the review gate before
 any proposal to integrate the contract. No model, selector, calibrator,
 publication workflow, public record or frozen evidence was changed.
+
+## 2026-10-22 — FC-OPS-002 inactive evaluation bridge
+
+Codex stacked a separate research branch on draft #234's strict offer parser
+and built `research/fc_ops_002/bridge.py` plus focused offline tests. The
+bridge joins archived S1 offer/capture bytes (#226), uncapped intended
+dashboard champion decisions (#230), and the exact frozen #235 total-bases
+model artifact. It preserves the original champion N, records eligible and
+rejected opportunities, compares three deterministic research arms and
+reports shortfalls. A separate hash-bound grade linker supports transparent
+flat-stake accounting without claiming external grade truth. Synthetic replay
+and an independent numerical check of #235's frozen transform are in the
+tests and research README.
+
+This is contract-level research, not a working forward capture. The drafts
+do not yet share a verified run ID, #226's candidate pool is narrower than
+the entire sportsbook universe, and no archived pregame feature derivation,
+external anchor, verified settlement source or publication exposure is
+available in this branch. Every ledger remains nonprospective. No production
+source, model, workflow, public policy or historical evidence was changed.
