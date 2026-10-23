@@ -1,0 +1,198 @@
+{
+ "slates": 35,
+ "champion_picks": 542,
+ "champion_player_market_present_in_R2": 524,
+ "champion": {
+  "n": 542,
+  "games": 250,
+  "players": 242,
+  "slates": 35,
+  "hit_rate": 0.533210332103321,
+  "mean_model": 0.6454651291512914,
+  "mean_raw_breakeven": 0.5883709482379054,
+  "mean_no_vig": 0.5466203546747916,
+  "no_vig_exact_share": 0.25276752767527677,
+  "roi_unauthenticated": -0.09847890678951293,
+  "roi_ci_game": [
+   -0.17510598493316332,
+   -0.021524597529999023
+  ],
+  "logloss": {
+   "model": 0.7117804615475807,
+   "no_vig": 0.6826165844308195,
+   "raw": 0.6875733760946316
+  },
+  "brier": {
+   "model": 0.2587340632287823,
+   "no_vig": 0.2447946876748756
+  },
+  "citl": {
+   "model": -0.11225479704797037,
+   "no_vig": -0.013410022571470614
+  },
+  "model_minus_novig_logloss_ci_game": [
+   0.009437712998323716,
+   0.04815528025669043
+  ],
+  "top_stats": {
+   "hits_runs_rbis": 301,
+   "hits": 104,
+   "strikeouts": 94,
+   "pitcher_outs": 43
+  },
+  "max_rows_per_game": 11,
+  "market_expected_wins": 296.26823223373714
+ },
+ "market_only_no_vig": {
+  "n": 539,
+  "games": 315,
+  "players": 137,
+  "slates": 35,
+  "hit_rate": 0.7625231910946196,
+  "mean_model": 0.691721521335807,
+  "mean_raw_breakeven": 0.7983091971267655,
+  "mean_no_vig": 0.7392324095150282,
+  "no_vig_exact_share": 0.0055658627087198514,
+  "roi_unauthenticated": -0.045314711751487026,
+  "roi_ci_game": [
+   -0.09008169141927987,
+   0.0015162482069412814
+  ],
+  "logloss": {
+   "model": 0.5584021090311156,
+   "no_vig": 0.5423326006488464,
+   "raw": 0.5435348202404231
+  },
+  "brier": {
+   "model": 0.18526134762523191,
+   "no_vig": 0.179013756403801
+  },
+  "citl": {
+   "model": 0.07080166975881264,
+   "no_vig": 0.023290781579591413
+  },
+  "model_minus_novig_logloss_ci_game": [
+   0.005768016489680652,
+   0.02610479850591765
+  ],
+  "top_stats": {
+   "hits_runs_rbis": 535,
+   "strikeouts": 3,
+   "hits": 1
+  },
+  "max_rows_per_game": 2,
+  "shortfall": 3,
+  "wins": 411,
+  "market_expected_wins": 398.4462687285999,
+  "odds_quantiles": [
+   -900.0,
+   -550.0,
+   -400.0,
+   -330.0,
+   -122.0
+  ],
+  "share_priced_-300_or_shorter": 0.961038961038961
+ },
+ "model_prob": {
+  "n": 539,
+  "games": 334,
+  "players": 108,
+  "slates": 35,
+  "hit_rate": 0.6883116883116883,
+  "mean_model": 0.7171194805194805,
+  "mean_raw_breakeven": 0.7443951880030637,
+  "mean_no_vig": 0.6896572580284762,
+  "no_vig_exact_share": 0.09461966604823747,
+  "roi_unauthenticated": -0.07756523908856469,
+  "roi_ci_game": [
+   -0.13303916894722664,
+   -0.022033069236838582
+  ],
+  "logloss": {
+   "model": 0.6287419477668241,
+   "no_vig": 0.6050871068109953,
+   "raw": 0.6122953889911987
+  },
+  "brier": {
+   "model": 0.21692142155844155,
+   "no_vig": 0.2079340351779656
+  },
+  "citl": {
+   "model": -0.02880779220779217,
+   "no_vig": -0.0013455697167878977
+  },
+  "model_minus_novig_logloss_ci_game": [
+   0.006301212672778128,
+   0.0414799001018032
+  ],
+  "top_stats": {
+   "hits_runs_rbis": 480,
+   "pitcher_outs": 42,
+   "strikeouts": 9,
+   "hits": 8
+  },
+  "max_rows_per_game": 2,
+  "shortfall": 3,
+  "wins": 371,
+  "market_expected_wins": 371.72526207734944,
+  "odds_quantiles": [
+   -900.0,
+   -450.0,
+   -320.0,
+   -180.0,
+   130.0
+  ],
+  "share_priced_-300_or_shorter": 0.6122448979591837
+ },
+ "model_minus_breakeven": {
+  "n": 539,
+  "games": 345,
+  "players": 256,
+  "slates": 35,
+  "hit_rate": 0.36178107606679033,
+  "mean_model": 0.5203944341372914,
+  "mean_raw_breakeven": 0.41517162816475034,
+  "mean_no_vig": 0.38704534981436517,
+  "no_vig_exact_share": 0.45083487940630795,
+  "roi_unauthenticated": -0.1449583004399969,
+  "roi_ci_game": [
+   -0.2582207627871939,
+   -0.027047007050442804
+  ],
+  "logloss": {
+   "model": 0.6618092994768634,
+   "no_vig": 0.6015178415480297,
+   "raw": 0.6055011957138582
+  },
+  "brier": {
+   "model": 0.23356776296846013,
+   "no_vig": 0.20729025917714566
+  },
+  "citl": {
+   "model": -0.15861335807050103,
+   "no_vig": -0.02526427374757484
+  },
+  "model_minus_novig_logloss_ci_game": [
+   0.03392910916019824,
+   0.08730407798298145
+  ],
+  "top_stats": {
+   "strikeouts": 128,
+   "pitcher_outs": 115,
+   "runs": 75,
+   "stolen_base": 70
+  },
+  "max_rows_per_game": 2,
+  "shortfall": 3,
+  "wins": 195,
+  "market_expected_wins": 208.61744354994278,
+  "odds_quantiles": [
+   -220.0,
+   -140.0,
+   124.0,
+   453.9999999999998,
+   1500.0
+  ],
+  "share_priced_-300_or_shorter": 0.0
+ }
+}
