@@ -6307,3 +6307,27 @@ are all untouched. Draft PR opened against `main`, not merged -- this
 workstream does not merge its own PR.
 
 Alligator
+
+## 2026-10-23 -- FC-ACC-017 winning-pick accuracy investigation (research only)
+
+Branch `claude/fc-acc-017-winning-pick-forensics-20261023` (from main
+`15d67037`). Files: `research/fc_acc_017/` only. No production, public-pick,
+historical-result or workflow change.
+
+- Ledger: 656 published Top Picks reconcile exactly (343-303, 9 void, 1
+  ungraded; registry `ca408175...`, history `4d17969e...`). The 342-302
+  figure matches no slate boundary (340-302 through Oct 18, 343-303 through
+  Oct 19). ROI -10.6%.
+- Mechanism: all 646 settled Top Picks carry production's "market itself
+  disagrees" note. The model said 64.8%, the devigged market 54.1%, realized
+  53.1%; 303 losses vs 296.7 expected at market prices. The value gate
+  therefore selects model-over-market disagreements, and the market predicts
+  better (log loss 0.683 vs 0.715). Pitcher props 44.4% (n=142); gaps >= 0.14
+  41% (n=87).
+- Replacement (exploratory; frozen board pool, 13 equal-count slates, 156
+  picks, 40 games): a market-favorite lane (devig >= 0.60, price >= -350,
+  model >= 0.60, ranked by model) hit 71.8% vs 52.6%, ROI +1.3% vs -12.5%.
+  Replicated on 833 graded dashboard hits 1+ candidates (favorite lane 67.2%;
+  model-above-market rows 52%).
+- Verdict: GO for a preregistered research test of the favorite lane; no
+  production change without prospective evidence and Jacob's authorization.
