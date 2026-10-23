@@ -6329,3 +6329,27 @@ before any supply or new outcome was examined.
 - Next: persist complete pre-decision candidate sets (PR #230 export,
   Codex-owned; needs authorization), then rerun the frozen comparison
   prospectively.
+
+## 2026-10-23 -- FC-ACC-019 market-wide predictive-edge investigation (research only)
+
+Branch `claude/fc-acc-019-market-edge-20261023` (stacked on FC-ACC-018
+`1e5d72fe`). Files: `research/fc_acc_019/` only. Preregistered at `32c77d2e`.
+
+- R1 baseline is unchanged on main `25052101`: 343-303-9-1, registry
+  `ca408175...`.
+- Correction: FC-ACC-017/018 double-devigged rows whose `market_implied` is
+  already an exact two-sided fair value (strikeouts/outs). Published pitcher
+  picks' market probability was 51.1% (not 47.3%), and they hit 44.4%, below
+  the market.
+- R2: 67,820 graded pregame candidates (latest pregame dashboard state per
+  game; 12 markets; no price cap). The market beats the model on log loss in
+  every odds bin, and every bin loses at recorded prices. The frozen-rule
+  control finds credible incremental information only for stolen bases and
+  triples (2 of ~40 segments; no positive-EV band; ROI about -37%), so the
+  frozen verdict is MODIFY while the substantive finding is NO DEMONSTRATED
+  EDGE. R3: neither frozen hits nor TB challenger beats the market.
+- Equal-N hypothetical: the model-ranked arm wins exactly its market
+  expectation (371 vs 371.7); the model-edge arm wins 13.6 fewer than market
+  expectation; market-only reaches 76% only at -300 or shorter (ROI -4.5%).
+- Next: an archive-only prospective test of the champion vs the
+  champion-with-market-probability at equal N, on authentic captured offers.
