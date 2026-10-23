@@ -6388,3 +6388,29 @@ capture, workflow, ledger or Codex FC-OPS file was touched, and nothing was fitt
 - Verdict MODIFY. Next: G0 decision; Codex adds the bundle fields to the
   FC-OPS-002 replay fixture; then an authorized decision-time feature builder
   and the outcome-free parity check.
+
+## 2026-10-23 -- FC-ACC-016 Amendment A1 (protocol v1.1.0; research only, inactive)
+
+Branch `claude/fc-acc-016-a1-amendment-20261023` (stacked on FC-ACC-016
+`417184c0`). New files only, under `research/fc_acc_016/amendment_a1/`. The
+v1.0.0 files are pinned by sha256 and verified on import, and are unchanged.
+
+- Implements SUPERCHAD's G0 decision:
+  - E1 = hits 1+ vs actual Top Picks (primary hit rate, v1.0.0 rules);
+  - E2 = TB 2+ in the existing value lane (separate primary, ROI rule:
+    slate-clustered dROI lower bound > 0).
+  - Experiments are hard-bound and never pooled; the Top Pick hit-rate
+    denominator refuses value-lane results. The 0.60 floor and all gates are
+    unchanged.
+- Outcome-free feasibility (8 production dashboard snapshots, Aug 20 - Sep 25;
+  prices not authenticated):
+  - 0 of 1,098 TB 2+ rows carry a production interval (`modelled_shrunk` /
+    `league_only` by design), so 0 eligible under the unchanged robust value
+    gate. E2 structural gate: NOT_EVALUABLE_STRUCTURAL.
+  - E1 is feasible but on thin evidence: on Aug 25 the challenger rejects both
+    champion hits Top Picks and qualifies 7 other rows. Graded Top Picks average
+    about 1.9 hits/slate (Sep 8 - Oct 19).
+- Verdict: E1 MODIFY (research-ready; capture blocked on the bridge, builder
+  and parity check). E2 STOP (structurally not evaluable) unless an authorized
+  production TB 2+ interval and a passing A2 gate exist.
+- Codex coordination via #91. FC-OPS-002 is not assumed complete and not edited.

@@ -1,0 +1,34 @@
+{
+ "amendment_id": "FC-ACC-016-A1",
+ "protocol_version": "1.1.0",
+ "amends": "FC-ACC-016 v1.0.0 @ 417184c0a349d29a1bf5c16d0899ae505b043e25",
+ "status": "PREREGISTERED_INACTIVE_RESEARCH_ONLY",
+ "authority": "SUPERCHAD decision on FC-ACC-016 G0, recorded 2026-10-23: option (b) for 2+ total bases, with (c) as a separate primary hit-rate test",
+ "committed_before_any_prospective_outcome": true,
+ "frozen_v1_files_sha256": {
+  "PROTOCOL.md": "c44c49caba60711f68e0aa50be7d24de63275c1600f81c68c4d11b8ec9596894",
+  "protocol.json": "ea3dee837b4d4ffe21964e86590b50b6d1448cd37bae1eaabfa7f9a6eaaf4cbb",
+  "checker.py": "126e233af87ad6ec4a6addc13c4f9077279c30670b7fbd5b1d5f8db3e97ab662",
+  "synthetic.py": "5f0005ca7350097930bed705150a77bd8fc35cf6891f70bda3de184ec9aa44ff",
+  "model_lock.json": "b88fc8dc3d863bc734249d1610c61947e03b5f95217560d2bd780221d738a119"
+ },
+ "experiments": {
+  "E1": {"name": "hits 1+ vs actual Top Picks", "lane": "TP", "challenger": "hits", "role": "PRIMARY_HIT_RATE",
+         "primary_outcome": "additional settled wins at equal legitimate Top Pick volume (v1.0.0 §4 items 1-3)",
+         "verdict_rule": "v1.0.0 checker.verdict_label, unchanged"},
+  "E2": {"name": "2+ total bases in the existing value lane", "lane": "V", "challenger": "total_bases", "role": "PRIMARY_ROI_SEPARATE",
+         "primary_outcome": "offered-price flat-stake ROI difference B - A at equal value-lane volume",
+         "secondary_outcomes": "additional settled wins, volume, shortfalls, calibration (v1.0.0 §4)",
+         "verdict_rule": "amendment_a1.roi_verdict_label",
+         "structural_evaluability_gate": "amendment_a1.e2_structural_gate must return EVALUABLE on a pre-capture production feasibility check before any E2 capture is authorized"}
+ },
+ "pooling": "E1 and E2 are never pooled. Top Pick hit-rate statistics use lane TP units only; no value-lane selection ever enters a Top Pick hit-rate denominator.",
+ "unchanged": ["Top Pick floor 0.60", "every v1.0.0 gate (offer authenticity/freshness, lineup, reliability, value_verdict(require_robust=True), SUSPECT rule, concentration, integrity)",
+               "challenger interval rule (borrowed champion width; no champion interval -> fails closed)", "frozen models", "decision unit and N anchoring", "uncertainty framework and horizon"],
+ "e2_roi_rule": {"roi_ci_lower_gt": 0.0, "min_discordant_settled": 200, "max_noncomparable_unit_share": 0.10,
+                 "min_realized_volume_share": 0.95, "calibration_bounds": "v1.0.0 evaluation.calibration_bounds"},
+ "e2_structural_gate": {"min_snapshots": 8, "min_share_tb2_rows_with_production_interval": 0.5,
+                        "min_projected_eligible_tb2_challenger_rows_per_full_slate": 1.0,
+                        "note": "outcome-free; uses production dashboard rows and the frozen challenger only; a passing gate makes E2 eligible for capture authorization, not evaluated"},
+ "e1_structural_gate": {"min_units_with_champion_hits_top_pick": 1, "note": "E1 may proceed to capture authorization; its evaluability is decided only by v1.0.0 §6 labels at the horizon"}
+}
