@@ -188,6 +188,8 @@ class ReplayTests(unittest.TestCase):
         self.assertAlmostEqual(frozen_probability(m, {"x": 2}), expected)
         with self.assertRaisesRegex(BridgeError, "FEATURE_VALUE_INVALID"):
             frozen_probability(m, {"x": float("nan")})
+        with self.assertRaisesRegex(BridgeError, "FROZEN_REQUIRED_FEATURE_MISSING"):
+            frozen_probability(m, {"y": 3})
 
     def test_corrupt_seals_and_model_identity_fail_closed(self):
         for mutate, reason in [

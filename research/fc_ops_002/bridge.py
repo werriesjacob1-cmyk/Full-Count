@@ -74,7 +74,9 @@ def frozen_probability(model, values):
     for key, med in zip(keys, median):
         value = values.get(key)
         bad = value is None
-        if not bad:
+        if bad:
+            _require(key in missing, "FROZEN_REQUIRED_FEATURE_MISSING")
+        else:
             _require(isinstance(value, (int, float)) and not isinstance(value, bool)
                      and math.isfinite(value), "FEATURE_VALUE_INVALID")
         _require(isinstance(med, (int, float)) and math.isfinite(med), "MODEL_SCHEMA_INVALID")
@@ -229,7 +231,8 @@ def _alternative_policy_gate(candidate, probability, offer, snap, archive, decis
     base = candidate.get("p")
     if not isinstance(lower, (int, float)) or isinstance(lower, bool) or not isinstance(base, (int, float)) or not 0 <= lower <= base:
         return "ALTERNATIVE_POLICY_CI_MISSING"
-    if snap.get("baseline_p") != base or snap.get("lineup_confirmed") is not True or snap.get("data_fresh") is not True or snap.get("sample_n") in (None, 0) or snap.get("reliability") != candidate.get("reliability") or snap.get("reliability") not in rec_policy.TOP_PICK_MIN_RELIABILITY:
+    sample_n = snap.get("sample_n")
+    if snap.get("baseline_p") != base or snap.get("lineup_confirmed") is not True or snap.get("data_fresh") is not True or not isinstance(sample_n, int) or isinstance(sample_n, bool) or sample_n <= 0 or snap.get("reliability") != candidate.get("reliability") or snap.get("reliability") not in rec_policy.TOP_PICK_MIN_RELIABILITY:
         return "ALTERNATIVE_POLICY_PREREQUISITE_FAIL"
     adjusted_lower = probability - (base - lower)
     if probability < rec_policy.TOP_PICK_MIN_PROB or adjusted_lower < 0:
