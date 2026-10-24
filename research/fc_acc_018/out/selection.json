@@ -1,0 +1,4409 @@
+{
+ "slates": {
+  "2026-08-18": {
+   "N": 6,
+   "N_cap": 6,
+   "champion_removed_by_cap": 0,
+   "universe": 476,
+   "universe_games": 14,
+   "universe_players": 269,
+   "universe_by_market": {
+    "strikeouts": 24,
+    "pitcher_outs": 19,
+    "hits_runs_rbis": 188,
+    "hits": 245
+   },
+   "C_gate_pass": 265,
+   "C_gate_players": 206,
+   "C_gate_games": 14,
+   "gates": {
+    "games_with_state": 15,
+    "rows_in_game": 2508,
+    "fail_market": 1981,
+    "fail_unpriced": 62,
+    "eligible": 476,
+    "fail_price_shorter_than_-350": 45,
+    "games_scheduled": 15
+   },
+   "arms": {
+    "original": {
+     "target": 6,
+     "B": {
+      "ids": [
+       "fc2:822938:player-666018:hits_runs_rbis:1:over",
+       "fc2:823341:player-668804:hits_runs_rbis:1:over",
+       "fc2:823341:player-690993:hits_runs_rbis:1:over",
+       "fc2:823423:player-664761:hits_runs_rbis:1:over",
+       "fc2:823423:player-681082:hits_runs_rbis:1:over",
+       "fc2:824075:player-680869:hits_runs_rbis:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 0,
+      "games": 4,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:823341:player-805808:hits_runs_rbis:1:over",
+       "fc2:823341:player-680664:hits:1:over",
+       "fc2:823423:player-669364:hits_runs_rbis:1:over",
+       "fc2:824639:player-805367:hits_runs_rbis:1:over",
+       "fc2:824723:player-678882:hits_runs_rbis:1:over",
+       "fc2:824075:player-680869:hits_runs_rbis:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 0,
+      "games": 5,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.8333333333333334
+     }
+    },
+    "cap": {
+     "target": 6,
+     "B": {
+      "ids": [
+       "fc2:822938:player-666018:hits_runs_rbis:1:over",
+       "fc2:823341:player-668804:hits_runs_rbis:1:over",
+       "fc2:823341:player-690993:hits_runs_rbis:1:over",
+       "fc2:823423:player-664761:hits_runs_rbis:1:over",
+       "fc2:823423:player-681082:hits_runs_rbis:1:over",
+       "fc2:824075:player-680869:hits_runs_rbis:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 0,
+      "games": 4,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:823341:player-805808:hits_runs_rbis:1:over",
+       "fc2:823341:player-680664:hits:1:over",
+       "fc2:823423:player-669364:hits_runs_rbis:1:over",
+       "fc2:824639:player-805367:hits_runs_rbis:1:over",
+       "fc2:824723:player-678882:hits_runs_rbis:1:over",
+       "fc2:824075:player-680869:hits_runs_rbis:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 0,
+      "games": 5,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.8333333333333334
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:823341:player-672456:pitcher_outs:17:over",
+    "fc2:823667:player-805673:pitcher_outs:16:over",
+    "fc2:823667:player-641816:strikeouts:5:over",
+    "fc2:823423:player-665052:hits:1:over",
+    "fc2:824639:player-805367:hits_runs_rbis:1:over",
+    "fc2:823341:player-805808:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823341:player-805808:hits_runs_rbis:1:over",
+    "fc2:824639:player-805367:hits_runs_rbis:1:over",
+    "fc2:823423:player-665052:hits:1:over",
+    "fc2:823341:player-672456:pitcher_outs:17:over",
+    "fc2:823667:player-805673:pitcher_outs:16:over",
+    "fc2:823667:player-641816:strikeouts:5:over"
+   ],
+   "A_conc": {
+    "games": 4,
+    "max_per_game": 2,
+    "share_price_le_-250": 0.16666666666666666
+   }
+  },
+  "2026-08-24": {
+   "N": 8,
+   "N_cap": 5,
+   "champion_removed_by_cap": 3,
+   "universe": 201,
+   "universe_games": 6,
+   "universe_players": 118,
+   "universe_by_market": {
+    "hits_runs_rbis": 72,
+    "hits": 106,
+    "strikeouts": 12,
+    "pitcher_outs": 11
+   },
+   "C_gate_pass": 92,
+   "C_gate_players": 79,
+   "C_gate_games": 6,
+   "gates": {
+    "games_with_state": 10,
+    "rows_in_game": 1073,
+    "eligible": 201,
+    "fail_market": 846,
+    "fail_price_shorter_than_-350": 25,
+    "fail_unpriced": 31,
+    "games_scheduled": 10
+   },
+   "arms": {
+    "original": {
+     "target": 8,
+     "B": {
+      "ids": [
+       "fc2:824964:player-695720:hits_runs_rbis:1:over",
+       "fc2:823992:player-666176:hits_runs_rbis:1:over",
+       "fc2:824964:player-671732:hits_runs_rbis:1:over",
+       "fc2:825041:player-699393:hits_runs_rbis:1:over",
+       "fc2:823183:player-663886:hits_runs_rbis:1:over",
+       "fc2:825041:player-663457:hits_runs_rbis:1:over",
+       "fc2:823097:player-607208:hits_runs_rbis:1:over",
+       "fc2:823183:player-808982:hits_runs_rbis:1:over"
+      ],
+      "filled": 8,
+      "shortfall": 0,
+      "games": 5,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:823097:player-650333:hits_runs_rbis:1:over",
+       "fc2:823992:player-545361:hits_runs_rbis:1:over",
+       "fc2:823260:player-664040:hits_runs_rbis:1:over",
+       "fc2:823260:player-668804:hits_runs_rbis:1:over",
+       "fc2:823097:player-621493:hits_runs_rbis:1:over",
+       "fc2:825041:player-545121:hits_runs_rbis:1:over",
+       "fc2:825041:player-672695:hits_runs_rbis:1:over",
+       "fc2:823992:player-687263:hits_runs_rbis:1:over"
+      ],
+      "filled": 8,
+      "shortfall": 0,
+      "games": 4,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.625
+     }
+    },
+    "cap": {
+     "target": 5,
+     "B": {
+      "ids": [
+       "fc2:824964:player-695720:hits_runs_rbis:1:over",
+       "fc2:823992:player-666176:hits_runs_rbis:1:over",
+       "fc2:824964:player-671732:hits_runs_rbis:1:over",
+       "fc2:825041:player-699393:hits_runs_rbis:1:over",
+       "fc2:823183:player-663886:hits_runs_rbis:1:over"
+      ],
+      "filled": 5,
+      "shortfall": 0,
+      "games": 4,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:823097:player-650333:hits_runs_rbis:1:over",
+       "fc2:823992:player-545361:hits_runs_rbis:1:over",
+       "fc2:823260:player-664040:hits_runs_rbis:1:over",
+       "fc2:823260:player-668804:hits_runs_rbis:1:over",
+       "fc2:823097:player-621493:hits_runs_rbis:1:over"
+      ],
+      "filled": 5,
+      "shortfall": 0,
+      "games": 3,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.6
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:823097:player-642215:hits_runs_rbis:1:over",
+    "fc2:823097:player-702222:hits_runs_rbis:1:over",
+    "fc2:823992:player-642350:hits:1:over",
+    "fc2:823097:player-621493:hits_runs_rbis:1:over",
+    "fc2:823992:player-694203:hits_runs_rbis:1:over",
+    "fc2:823097:player-669016:hits_runs_rbis:1:over",
+    "fc2:825041:player-814439:hits_runs_rbis:1:over",
+    "fc2:823097:player-663728:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823097:player-621493:hits_runs_rbis:1:over",
+    "fc2:823097:player-669016:hits_runs_rbis:1:over",
+    "fc2:823992:player-694203:hits_runs_rbis:1:over",
+    "fc2:825041:player-814439:hits_runs_rbis:1:over",
+    "fc2:823992:player-642350:hits:1:over"
+   ],
+   "A_conc": {
+    "games": 3,
+    "max_per_game": 5,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-08-25": {
+   "N": 22,
+   "N_cap": 14,
+   "champion_removed_by_cap": 8,
+   "universe": 281,
+   "universe_games": 8,
+   "universe_players": 160,
+   "universe_by_market": {
+    "hits_runs_rbis": 108,
+    "pitcher_outs": 14,
+    "strikeouts": 15,
+    "hits": 144
+   },
+   "C_gate_pass": 146,
+   "C_gate_players": 116,
+   "C_gate_games": 8,
+   "gates": {
+    "games_with_state": 15,
+    "rows_in_game": 1433,
+    "eligible": 281,
+    "fail_game_not_pregame": 10,
+    "fail_market": 1120,
+    "fail_price_shorter_than_-350": 19,
+    "fail_unpriced": 44,
+    "games_scheduled": 15
+   },
+   "arms": {
+    "original": {
+     "target": 22,
+     "B": {
+      "ids": [
+       "fc2:823016:player-802139:hits_runs_rbis:1:over",
+       "fc2:823989:player-608070:hits_runs_rbis:1:over",
+       "fc2:824962:player-665019:hits_runs_rbis:1:over",
+       "fc2:823016:player-624413:hits_runs_rbis:1:over",
+       "fc2:825042:player-663457:hits_runs_rbis:1:over",
+       "fc2:824881:player-605141:hits:1:over",
+       "fc2:824881:player-669242:hits_runs_rbis:1:over",
+       "fc2:824962:player-680869:hits_runs_rbis:1:over",
+       "fc2:825042:player-673548:hits_runs_rbis:1:over",
+       "fc2:823098:player-650333:hits_runs_rbis:1:over",
+       "fc2:823181:player-663886:hits_runs_rbis:1:over",
+       "fc2:823181:player-646240:hits_runs_rbis:1:over",
+       "fc2:823259:player-693304:hits_runs_rbis:1:over",
+       "fc2:823989:player-666176:hits_runs_rbis:1:over",
+       "fc2:823098:player-547180:hits_runs_rbis:1:over",
+       "fc2:823259:player-665487:hits:1:over"
+      ],
+      "filled": 16,
+      "shortfall": 6,
+      "games": 8,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:823098:player-650333:hits_runs_rbis:1:over",
+       "fc2:824962:player-680869:hits_runs_rbis:1:over",
+       "fc2:823989:player-545361:hits_runs_rbis:1:over",
+       "fc2:824881:player-621566:hits_runs_rbis:1:over",
+       "fc2:823259:player-668804:hits_runs_rbis:1:over",
+       "fc2:823016:player-624413:hits_runs_rbis:1:over",
+       "fc2:823259:player-664040:hits_runs_rbis:1:over",
+       "fc2:825042:player-608324:hits_runs_rbis:1:over",
+       "fc2:825042:player-663538:hits_runs_rbis:1:over",
+       "fc2:823098:player-621493:hits_runs_rbis:1:over",
+       "fc2:824881:player-686948:hits_runs_rbis:1:over",
+       "fc2:824962:player-701785:hits:1:over",
+       "fc2:823989:player-687263:hits_runs_rbis:1:over",
+       "fc2:823016:player-802139:hits_runs_rbis:1:over",
+       "fc2:823181:player-646240:hits_runs_rbis:1:over",
+       "fc2:823181:player-808982:hits:1:over"
+      ],
+      "filled": 16,
+      "shortfall": 6,
+      "games": 8,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.6875
+     }
+    },
+    "cap": {
+     "target": 14,
+     "B": {
+      "ids": [
+       "fc2:823016:player-802139:hits_runs_rbis:1:over",
+       "fc2:823989:player-608070:hits_runs_rbis:1:over",
+       "fc2:824962:player-665019:hits_runs_rbis:1:over",
+       "fc2:823016:player-624413:hits_runs_rbis:1:over",
+       "fc2:825042:player-663457:hits_runs_rbis:1:over",
+       "fc2:824881:player-605141:hits:1:over",
+       "fc2:824881:player-669242:hits_runs_rbis:1:over",
+       "fc2:824962:player-680869:hits_runs_rbis:1:over",
+       "fc2:825042:player-673548:hits_runs_rbis:1:over",
+       "fc2:823098:player-650333:hits_runs_rbis:1:over",
+       "fc2:823181:player-663886:hits_runs_rbis:1:over",
+       "fc2:823181:player-646240:hits_runs_rbis:1:over",
+       "fc2:823259:player-693304:hits_runs_rbis:1:over",
+       "fc2:823989:player-666176:hits_runs_rbis:1:over"
+      ],
+      "filled": 14,
+      "shortfall": 0,
+      "games": 8,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:823098:player-650333:hits_runs_rbis:1:over",
+       "fc2:824962:player-680869:hits_runs_rbis:1:over",
+       "fc2:823989:player-545361:hits_runs_rbis:1:over",
+       "fc2:824881:player-621566:hits_runs_rbis:1:over",
+       "fc2:823259:player-668804:hits_runs_rbis:1:over",
+       "fc2:823016:player-624413:hits_runs_rbis:1:over",
+       "fc2:823259:player-664040:hits_runs_rbis:1:over",
+       "fc2:825042:player-608324:hits_runs_rbis:1:over",
+       "fc2:825042:player-663538:hits_runs_rbis:1:over",
+       "fc2:823098:player-621493:hits_runs_rbis:1:over",
+       "fc2:824881:player-686948:hits_runs_rbis:1:over",
+       "fc2:824962:player-701785:hits:1:over",
+       "fc2:823989:player-687263:hits_runs_rbis:1:over",
+       "fc2:823016:player-802139:hits_runs_rbis:1:over"
+      ],
+      "filled": 14,
+      "shortfall": 0,
+      "games": 7,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.6428571428571429
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:823181:player-605288:strikeouts:4:over",
+    "fc2:823016:player-605135:strikeouts:4:over",
+    "fc2:823826:player-663969:strikeouts:4:over",
+    "fc2:824881:player-573262:hits_runs_rbis:1:over",
+    "fc2:823826:player-669364:hits_runs_rbis:1:over",
+    "fc2:823585:player-805999:hits_runs_rbis:1:over",
+    "fc2:823585:player-676724:hits_runs_rbis:1:over",
+    "fc2:823585:player-676724:hits:1:over",
+    "fc2:824556:player-695657:hits_runs_rbis:1:over",
+    "fc2:824556:player-671976:hits:1:over",
+    "fc2:824556:player-691011:hits_runs_rbis:1:over",
+    "fc2:824556:player-805367:hits_runs_rbis:1:over",
+    "fc2:823989:player-545361:hits_runs_rbis:1:over",
+    "fc2:823585:player-804267:strikeouts:4:over",
+    "fc2:823989:player-624428:hits_runs_rbis:1:over",
+    "fc2:823098:player-621493:hits_runs_rbis:1:over",
+    "fc2:823989:player-694203:hits_runs_rbis:1:over",
+    "fc2:823259:player-669134:hits:1:over",
+    "fc2:823098:player-702284:hits_runs_rbis:1:over",
+    "fc2:823098:player-702284:hits:1:over",
+    "fc2:823098:player-686527:hits:1:over",
+    "fc2:823098:player-641487:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823826:player-669364:hits_runs_rbis:1:over",
+    "fc2:824556:player-805367:hits_runs_rbis:1:over",
+    "fc2:823989:player-545361:hits_runs_rbis:1:over",
+    "fc2:823098:player-621493:hits_runs_rbis:1:over",
+    "fc2:823098:player-702284:hits_runs_rbis:1:over",
+    "fc2:823989:player-694203:hits_runs_rbis:1:over",
+    "fc2:823585:player-676724:hits_runs_rbis:1:over",
+    "fc2:823585:player-805999:hits_runs_rbis:1:over",
+    "fc2:824556:player-695657:hits_runs_rbis:1:over",
+    "fc2:824881:player-573262:hits_runs_rbis:1:over",
+    "fc2:823259:player-669134:hits:1:over",
+    "fc2:823181:player-605288:strikeouts:4:over",
+    "fc2:823826:player-663969:strikeouts:4:over",
+    "fc2:823016:player-605135:strikeouts:4:over"
+   ],
+   "A_conc": {
+    "games": 9,
+    "max_per_game": 5,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-08-26": {
+   "N": 6,
+   "N_cap": 6,
+   "champion_removed_by_cap": 0,
+   "universe": 352,
+   "universe_games": 10,
+   "universe_players": 198,
+   "universe_by_market": {
+    "strikeouts": 17,
+    "hits": 180,
+    "hits_runs_rbis": 141,
+    "pitcher_outs": 14
+   },
+   "C_gate_pass": 200,
+   "C_gate_players": 147,
+   "C_gate_games": 10,
+   "gates": {
+    "games_with_state": 14,
+    "rows_in_game": 1801,
+    "fail_game_not_pregame": 1,
+    "eligible": 352,
+    "fail_market": 1417,
+    "fail_price_shorter_than_-350": 27,
+    "fail_unpriced": 22,
+    "game_final_state_wrong_payload_date": 1,
+    "games_scheduled": 15
+   },
+   "arms": {
+    "original": {
+     "target": 6,
+     "B": {
+      "ids": [
+       "fc2:823015:player-671056:hits_runs_rbis:1:over",
+       "fc2:823096:player-650333:hits_runs_rbis:1:over",
+       "fc2:823015:player-676475:hits_runs_rbis:1:over",
+       "fc2:823506:player-671277:hits_runs_rbis:1:over",
+       "fc2:823584:player-669003:hits_runs_rbis:1:over",
+       "fc2:823825:player-686765:hits_runs_rbis:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 0,
+      "games": 5,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:823096:player-650333:hits_runs_rbis:1:over",
+       "fc2:823988:player-545361:hits_runs_rbis:1:over",
+       "fc2:824878:player-621566:hits_runs_rbis:1:over",
+       "fc2:823255:player-668804:hits_runs_rbis:1:over",
+       "fc2:822772:player-676391:hits_runs_rbis:1:over",
+       "fc2:822772:player-703520:hits:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 0,
+      "games": 5,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    },
+    "cap": {
+     "target": 6,
+     "B": {
+      "ids": [
+       "fc2:823015:player-671056:hits_runs_rbis:1:over",
+       "fc2:823096:player-650333:hits_runs_rbis:1:over",
+       "fc2:823015:player-676475:hits_runs_rbis:1:over",
+       "fc2:823506:player-671277:hits_runs_rbis:1:over",
+       "fc2:823584:player-669003:hits_runs_rbis:1:over",
+       "fc2:823825:player-686765:hits_runs_rbis:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 0,
+      "games": 5,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:823096:player-650333:hits_runs_rbis:1:over",
+       "fc2:823988:player-545361:hits_runs_rbis:1:over",
+       "fc2:824878:player-621566:hits_runs_rbis:1:over",
+       "fc2:823255:player-668804:hits_runs_rbis:1:over",
+       "fc2:822772:player-676391:hits_runs_rbis:1:over",
+       "fc2:822772:player-703520:hits:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 0,
+      "games": 5,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:823825:player-687473:strikeouts:4:over",
+    "fc2:823584:player-669160:pitcher_outs:16:over",
+    "fc2:823015:player-700241:pitcher_outs:17:over",
+    "fc2:824234:player-690993:hits:1:over",
+    "fc2:823096:player-641487:hits_runs_rbis:1:over",
+    "fc2:823096:player-642215:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823096:player-641487:hits_runs_rbis:1:over",
+    "fc2:823015:player-700241:pitcher_outs:17:over",
+    "fc2:824234:player-690993:hits:1:over",
+    "fc2:823096:player-642215:hits_runs_rbis:1:over",
+    "fc2:823584:player-669160:pitcher_outs:16:over",
+    "fc2:823825:player-687473:strikeouts:4:over"
+   ],
+   "A_conc": {
+    "games": 5,
+    "max_per_game": 2,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-08-28": {
+   "N": 15,
+   "N_cap": 11,
+   "champion_removed_by_cap": 4,
+   "universe": 117,
+   "universe_games": 5,
+   "universe_players": 64,
+   "universe_by_market": {
+    "strikeouts": 10,
+    "hits": 54,
+    "hits_runs_rbis": 47,
+    "pitcher_outs": 6
+   },
+   "C_gate_pass": 52,
+   "C_gate_players": 39,
+   "C_gate_games": 3,
+   "gates": {
+    "games_with_state": 12,
+    "rows_in_game": 876,
+    "fail_market": 686,
+    "fail_lineup_not_confirmed": 337,
+    "fail_price_shorter_than_-350": 4,
+    "fail_unpriced": 53,
+    "eligible": 117,
+    "game_final_state_wrong_payload_date": 3,
+    "games_scheduled": 15
+   },
+   "arms": {
+    "original": {
+     "target": 15,
+     "B": {
+      "ids": [
+       "fc2:823744:player-661388:hits_runs_rbis:1:over",
+       "fc2:824231:player-605141:hits_runs_rbis:1:over",
+       "fc2:824231:player-660271:hits_runs_rbis:1:over",
+       "fc2:822769:player-665489:hits_runs_rbis:1:over",
+       "fc2:822769:player-543807:hits_runs_rbis:1:over",
+       "fc2:823744:player-641343:hits_runs_rbis:1:over",
+       "fc2:822691:player-800600:strikeouts:4:over",
+       "fc2:824638:player-656849:strikeouts:5:over",
+       "fc2:824638:player-695076:strikeouts:4:over",
+       "fc2:822691:player-691587:pitcher_outs:18:over"
+      ],
+      "filled": 10,
+      "shortfall": 5,
+      "games": 5,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.6
+     },
+     "C": {
+      "ids": [
+       "fc2:824231:player-805808:hits_runs_rbis:1:over",
+       "fc2:824231:player-518692:hits_runs_rbis:1:over",
+       "fc2:822769:player-676391:hits_runs_rbis:1:over",
+       "fc2:822769:player-668227:hits_runs_rbis:1:over",
+       "fc2:823744:player-641343:hits_runs_rbis:1:over",
+       "fc2:823744:player-592885:hits_runs_rbis:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 9,
+      "games": 3,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.6666666666666666
+     }
+    },
+    "cap": {
+     "target": 11,
+     "B": {
+      "ids": [
+       "fc2:823744:player-661388:hits_runs_rbis:1:over",
+       "fc2:824231:player-605141:hits_runs_rbis:1:over",
+       "fc2:824231:player-660271:hits_runs_rbis:1:over",
+       "fc2:822769:player-665489:hits_runs_rbis:1:over",
+       "fc2:822769:player-543807:hits_runs_rbis:1:over",
+       "fc2:823744:player-641343:hits_runs_rbis:1:over",
+       "fc2:822691:player-800600:strikeouts:4:over",
+       "fc2:824638:player-656849:strikeouts:5:over",
+       "fc2:824638:player-695076:strikeouts:4:over",
+       "fc2:822691:player-691587:pitcher_outs:18:over"
+      ],
+      "filled": 10,
+      "shortfall": 1,
+      "games": 5,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.6
+     },
+     "C": {
+      "ids": [
+       "fc2:824231:player-805808:hits_runs_rbis:1:over",
+       "fc2:824231:player-518692:hits_runs_rbis:1:over",
+       "fc2:822769:player-676391:hits_runs_rbis:1:over",
+       "fc2:822769:player-668227:hits_runs_rbis:1:over",
+       "fc2:823744:player-641343:hits_runs_rbis:1:over",
+       "fc2:823744:player-592885:hits_runs_rbis:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 5,
+      "games": 3,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.6666666666666666
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:822935:player-663554:pitcher_outs:16:over",
+    "fc2:822935:player-670764:hits_runs_rbis:1:over",
+    "fc2:823504:player-680776:hits_runs_rbis:1:over",
+    "fc2:823504:player-678011:hits_runs_rbis:1:over",
+    "fc2:824396:player-664728:hits_runs_rbis:1:over",
+    "fc2:823504:player-676609:hits_runs_rbis:1:over",
+    "fc2:824231:player-701678:hits:1:over",
+    "fc2:823583:player-676724:hits:1:over",
+    "fc2:822769:player-676106:strikeouts:4:over",
+    "fc2:822769:player-621493:hits_runs_rbis:1:over",
+    "fc2:823013:player-669357:hits_runs_rbis:1:over",
+    "fc2:822769:player-641487:hits_runs_rbis:1:over",
+    "fc2:823744:player-669394:hits_runs_rbis:1:over",
+    "fc2:822769:player-663728:hits_runs_rbis:1:over",
+    "fc2:822769:player-686527:hits:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:822769:player-621493:hits_runs_rbis:1:over",
+    "fc2:823504:player-680776:hits_runs_rbis:1:over",
+    "fc2:822935:player-670764:hits_runs_rbis:1:over",
+    "fc2:823744:player-669394:hits_runs_rbis:1:over",
+    "fc2:823504:player-678011:hits_runs_rbis:1:over",
+    "fc2:822769:player-641487:hits_runs_rbis:1:over",
+    "fc2:824231:player-701678:hits:1:over",
+    "fc2:823013:player-669357:hits_runs_rbis:1:over",
+    "fc2:824396:player-664728:hits_runs_rbis:1:over",
+    "fc2:822935:player-663554:pitcher_outs:16:over",
+    "fc2:823583:player-676724:hits:1:over"
+   ],
+   "A_conc": {
+    "games": 8,
+    "max_per_game": 5,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-08-29": {
+   "N": 16,
+   "N_cap": 13,
+   "champion_removed_by_cap": 3,
+   "universe": 66,
+   "universe_games": 2,
+   "universe_players": 39,
+   "universe_by_market": {
+    "strikeouts": 3,
+    "pitcher_outs": 2,
+    "hits_runs_rbis": 25,
+    "hits": 36
+   },
+   "C_gate_pass": 37,
+   "C_gate_players": 26,
+   "C_gate_games": 2,
+   "gates": {
+    "game_no_prior_commit": 1,
+    "games_with_state": 14,
+    "rows_in_game": 340,
+    "eligible": 66,
+    "fail_market": 269,
+    "fail_price_shorter_than_-350": 5,
+    "fail_unpriced": 2,
+    "game_final_state_wrong_payload_date": 3,
+    "games_scheduled": 18
+   },
+   "arms": {
+    "original": {
+     "target": 16,
+     "B": {
+      "ids": [
+       "fc2:822770:player-665489:hits_runs_rbis:1:over",
+       "fc2:823011:player-663968:hits_runs_rbis:1:over",
+       "fc2:823011:player-687462:hits_runs_rbis:1:over",
+       "fc2:822770:player-543807:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 12,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:822770:player-676391:hits_runs_rbis:1:over",
+       "fc2:822770:player-703520:hits:1:over",
+       "fc2:823011:player-664040:hits_runs_rbis:1:over",
+       "fc2:823011:player-663968:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 12,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.5
+     }
+    },
+    "cap": {
+     "target": 13,
+     "B": {
+      "ids": [
+       "fc2:822770:player-665489:hits_runs_rbis:1:over",
+       "fc2:823011:player-663968:hits_runs_rbis:1:over",
+       "fc2:823011:player-687462:hits_runs_rbis:1:over",
+       "fc2:822770:player-543807:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 9,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:822770:player-676391:hits_runs_rbis:1:over",
+       "fc2:822770:player-703520:hits:1:over",
+       "fc2:823011:player-664040:hits_runs_rbis:1:over",
+       "fc2:823011:player-663968:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 9,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.5
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:822936:player-621111:strikeouts:4:over",
+    "fc2:823986:player-696270:strikeouts:4:over",
+    "fc2:824230:player-672456:pitcher_outs:16:over",
+    "fc2:823501:player-608331:strikeouts:5:over",
+    "fc2:824230:player-701678:hits:1:over",
+    "fc2:824230:player-679529:hits_runs_rbis:1:over",
+    "fc2:824637:player-671096:strikeouts:4:over",
+    "fc2:823741:player-615698:strikeouts:4:over",
+    "fc2:823539:player-642201:hits_runs_rbis:1:over",
+    "fc2:823011:player-681517:strikeouts:4:over",
+    "fc2:823582:player-676724:hits:1:over",
+    "fc2:822690:player-665052:hits:1:over",
+    "fc2:823986:player-685133:hits:1:over",
+    "fc2:823986:player-685133:hits_runs_rbis:1:over",
+    "fc2:823501:player-642201:hits_runs_rbis:1:over",
+    "fc2:823501:player-676609:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823986:player-685133:hits_runs_rbis:1:over",
+    "fc2:824230:player-672456:pitcher_outs:16:over",
+    "fc2:823501:player-676609:hits_runs_rbis:1:over",
+    "fc2:824230:player-701678:hits:1:over",
+    "fc2:823539:player-642201:hits_runs_rbis:1:over",
+    "fc2:823582:player-676724:hits:1:over",
+    "fc2:823011:player-681517:strikeouts:4:over",
+    "fc2:823741:player-615698:strikeouts:4:over",
+    "fc2:824637:player-671096:strikeouts:4:over",
+    "fc2:823501:player-608331:strikeouts:5:over",
+    "fc2:822690:player-665052:hits:1:over",
+    "fc2:822936:player-621111:strikeouts:4:over",
+    "fc2:823986:player-696270:strikeouts:4:over"
+   ],
+   "A_conc": {
+    "games": 10,
+    "max_per_game": 3,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-08-30": {
+   "N": 16,
+   "N_cap": 14,
+   "champion_removed_by_cap": 2,
+   "universe": 42,
+   "universe_games": 3,
+   "universe_players": 24,
+   "universe_by_market": {
+    "strikeouts": 3,
+    "hits_runs_rbis": 17,
+    "hits": 20,
+    "pitcher_outs": 2
+   },
+   "C_gate_pass": 24,
+   "C_gate_players": 16,
+   "C_gate_games": 2,
+   "gates": {
+    "games_with_state": 14,
+    "rows_in_game": 177,
+    "eligible": 42,
+    "fail_market": 135,
+    "fail_unpriced": 1,
+    "games_scheduled": 14
+   },
+   "arms": {
+    "original": {
+     "target": 16,
+     "B": {
+      "ids": [
+       "fc2:822766:player-665489:hits_runs_rbis:1:over",
+       "fc2:822766:player-686527:hits_runs_rbis:1:over",
+       "fc2:824232:player-805808:hits_runs_rbis:1:over",
+       "fc2:824232:player-595879:hits_runs_rbis:1:over",
+       "fc2:824393:player-607625:strikeouts:4:over",
+       "fc2:824393:player-686475:hits:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 10,
+      "games": 3,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.3333333333333333
+     },
+     "C": {
+      "ids": [
+       "fc2:824232:player-805808:hits_runs_rbis:1:over",
+       "fc2:822766:player-703520:hits:1:over",
+       "fc2:822766:player-621493:hits_runs_rbis:1:over"
+      ],
+      "filled": 3,
+      "shortfall": 13,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.0
+     }
+    },
+    "cap": {
+     "target": 14,
+     "B": {
+      "ids": [
+       "fc2:822766:player-665489:hits_runs_rbis:1:over",
+       "fc2:822766:player-686527:hits_runs_rbis:1:over",
+       "fc2:824232:player-805808:hits_runs_rbis:1:over",
+       "fc2:824232:player-595879:hits_runs_rbis:1:over",
+       "fc2:824393:player-607625:strikeouts:4:over",
+       "fc2:824393:player-686475:hits:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 8,
+      "games": 3,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.3333333333333333
+     },
+     "C": {
+      "ids": [
+       "fc2:824232:player-805808:hits_runs_rbis:1:over",
+       "fc2:822766:player-703520:hits:1:over",
+       "fc2:822766:player-621493:hits_runs_rbis:1:over"
+      ],
+      "filled": 3,
+      "shortfall": 11,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.0
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:823580:player-804267:strikeouts:4:over",
+    "fc2:822688:player-676083:pitcher_outs:15:over",
+    "fc2:824393:player-686475:hits:1:over",
+    "fc2:824232:player-805808:hits_runs_rbis:1:over",
+    "fc2:824232:player-595879:hits_runs_rbis:1:over",
+    "fc2:824876:player-650489:hits_runs_rbis:1:over",
+    "fc2:824876:player-666160:hits_runs_rbis:1:over",
+    "fc2:824232:player-805808:hits:1:over",
+    "fc2:824393:player-607625:strikeouts:4:over",
+    "fc2:822933:player-670764:hits_runs_rbis:1:over",
+    "fc2:823502:player-665862:hits_runs_rbis:1:over",
+    "fc2:822933:player-676356:hits:1:over",
+    "fc2:823502:player-676609:hits_runs_rbis:1:over",
+    "fc2:824876:player-650489:hits:1:over",
+    "fc2:823987:player-694203:hits_runs_rbis:1:over",
+    "fc2:823987:player-685133:hits:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:822688:player-676083:pitcher_outs:15:over",
+    "fc2:824232:player-805808:hits_runs_rbis:1:over",
+    "fc2:824876:player-650489:hits_runs_rbis:1:over",
+    "fc2:824876:player-666160:hits_runs_rbis:1:over",
+    "fc2:822933:player-670764:hits_runs_rbis:1:over",
+    "fc2:824232:player-595879:hits_runs_rbis:1:over",
+    "fc2:823987:player-694203:hits_runs_rbis:1:over",
+    "fc2:823502:player-665862:hits_runs_rbis:1:over",
+    "fc2:823987:player-685133:hits:1:over",
+    "fc2:823502:player-676609:hits_runs_rbis:1:over",
+    "fc2:822933:player-676356:hits:1:over",
+    "fc2:824393:player-686475:hits:1:over",
+    "fc2:823580:player-804267:strikeouts:4:over",
+    "fc2:824393:player-607625:strikeouts:4:over"
+   ],
+   "A_conc": {
+    "games": 8,
+    "max_per_game": 3,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-08-31": {
+   "N": 7,
+   "N_cap": 7,
+   "champion_removed_by_cap": 0,
+   "universe": 71,
+   "universe_games": 2,
+   "universe_players": 40,
+   "universe_by_market": {
+    "hits_runs_rbis": 28,
+    "strikeouts": 4,
+    "hits": 36,
+    "pitcher_outs": 3
+   },
+   "C_gate_pass": 42,
+   "C_gate_players": 32,
+   "C_gate_games": 2,
+   "gates": {
+    "game_no_prior_commit": 1,
+    "games_with_state": 9,
+    "rows_in_game": 372,
+    "eligible": 71,
+    "fail_market": 292,
+    "fail_price_shorter_than_-350": 8,
+    "fail_unpriced": 3,
+    "game_final_state_wrong_payload_date": 3,
+    "games_scheduled": 13
+   },
+   "arms": {
+    "original": {
+     "target": 7,
+     "B": {
+      "ids": [
+       "fc2:824635:player-663538:hits_runs_rbis:1:over",
+       "fc2:824635:player-686217:hits_runs_rbis:1:over",
+       "fc2:822932:player-650490:hits:1:over",
+       "fc2:822932:player-666182:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 3,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:824635:player-608324:hits_runs_rbis:1:over",
+       "fc2:824635:player-663538:hits_runs_rbis:1:over",
+       "fc2:822932:player-701807:hits_runs_rbis:1:over",
+       "fc2:822932:player-689414:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 3,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.75
+     }
+    },
+    "cap": {
+     "target": 7,
+     "B": {
+      "ids": [
+       "fc2:824635:player-663538:hits_runs_rbis:1:over",
+       "fc2:824635:player-686217:hits_runs_rbis:1:over",
+       "fc2:822932:player-650490:hits:1:over",
+       "fc2:822932:player-666182:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 3,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:824635:player-608324:hits_runs_rbis:1:over",
+       "fc2:824635:player-663538:hits_runs_rbis:1:over",
+       "fc2:822932:player-701807:hits_runs_rbis:1:over",
+       "fc2:822932:player-689414:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 3,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.75
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:825040:player-605400:strikeouts:5:over",
+    "fc2:822689:player-687473:strikeouts:4:over",
+    "fc2:825040:player-694297:strikeouts:4:over",
+    "fc2:824719:player-641487:hits_runs_rbis:1:over",
+    "fc2:824719:player-621493:hits_runs_rbis:1:over",
+    "fc2:822932:player-682626:hits_runs_rbis:1:over",
+    "fc2:822855:player-687231:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:824719:player-621493:hits_runs_rbis:1:over",
+    "fc2:822932:player-682626:hits_runs_rbis:1:over",
+    "fc2:822855:player-687231:hits_runs_rbis:1:over",
+    "fc2:824719:player-641487:hits_runs_rbis:1:over",
+    "fc2:825040:player-605400:strikeouts:5:over",
+    "fc2:825040:player-694297:strikeouts:4:over",
+    "fc2:822689:player-687473:strikeouts:4:over"
+   ],
+   "A_conc": {
+    "games": 5,
+    "max_per_game": 2,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-01": {
+   "N": 14,
+   "N_cap": 11,
+   "champion_removed_by_cap": 3,
+   "universe": 211,
+   "universe_games": 6,
+   "universe_players": 117,
+   "universe_by_market": {
+    "pitcher_outs": 8,
+    "hits": 107,
+    "hits_runs_rbis": 86,
+    "strikeouts": 10
+   },
+   "C_gate_pass": 112,
+   "C_gate_players": 82,
+   "C_gate_games": 6,
+   "gates": {
+    "games_with_state": 11,
+    "rows_in_game": 1066,
+    "fail_market": 839,
+    "fail_price_shorter_than_-350": 14,
+    "fail_unpriced": 13,
+    "eligible": 211,
+    "game_final_state_wrong_payload_date": 4,
+    "games_scheduled": 15
+   },
+   "arms": {
+    "original": {
+     "target": 14,
+     "B": {
+      "ids": [
+       "fc2:822854:player-607043:hits_runs_rbis:1:over",
+       "fc2:822854:player-608369:hits_runs_rbis:1:over",
+       "fc2:824148:player-665161:hits_runs_rbis:1:over",
+       "fc2:822929:player-691406:hits_runs_rbis:1:over",
+       "fc2:824148:player-670541:hits_runs_rbis:1:over",
+       "fc2:824472:player-669392:hits_runs_rbis:1:over",
+       "fc2:824472:player-701398:hits_runs_rbis:1:over",
+       "fc2:822929:player-666182:hits_runs_rbis:1:over",
+       "fc2:823340:player-668804:hits_runs_rbis:1:over",
+       "fc2:823340:player-808982:hits_runs_rbis:1:over",
+       "fc2:824391:player-666176:hits_runs_rbis:1:over",
+       "fc2:824391:player-665489:hits_runs_rbis:1:over"
+      ],
+      "filled": 12,
+      "shortfall": 2,
+      "games": 6,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:822929:player-802415:hits_runs_rbis:1:over",
+       "fc2:824472:player-701398:hits_runs_rbis:1:over",
+       "fc2:824148:player-665161:hits_runs_rbis:1:over",
+       "fc2:822929:player-691406:hits_runs_rbis:1:over",
+       "fc2:824148:player-805367:hits_runs_rbis:1:over",
+       "fc2:823340:player-668804:hits_runs_rbis:1:over",
+       "fc2:822854:player-680869:hits_runs_rbis:1:over",
+       "fc2:824472:player-669392:hits_runs_rbis:1:over",
+       "fc2:823340:player-664040:hits_runs_rbis:1:over",
+       "fc2:824391:player-676391:hits_runs_rbis:1:over",
+       "fc2:824391:player-543807:hits_runs_rbis:1:over",
+       "fc2:822854:player-677649:hits_runs_rbis:1:over"
+      ],
+      "filled": 12,
+      "shortfall": 2,
+      "games": 6,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.75
+     }
+    },
+    "cap": {
+     "target": 11,
+     "B": {
+      "ids": [
+       "fc2:822854:player-607043:hits_runs_rbis:1:over",
+       "fc2:822854:player-608369:hits_runs_rbis:1:over",
+       "fc2:824148:player-665161:hits_runs_rbis:1:over",
+       "fc2:822929:player-691406:hits_runs_rbis:1:over",
+       "fc2:824148:player-670541:hits_runs_rbis:1:over",
+       "fc2:824472:player-669392:hits_runs_rbis:1:over",
+       "fc2:824472:player-701398:hits_runs_rbis:1:over",
+       "fc2:822929:player-666182:hits_runs_rbis:1:over",
+       "fc2:823340:player-668804:hits_runs_rbis:1:over",
+       "fc2:823340:player-808982:hits_runs_rbis:1:over",
+       "fc2:824391:player-666176:hits_runs_rbis:1:over"
+      ],
+      "filled": 11,
+      "shortfall": 0,
+      "games": 6,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:822929:player-802415:hits_runs_rbis:1:over",
+       "fc2:824472:player-701398:hits_runs_rbis:1:over",
+       "fc2:824148:player-665161:hits_runs_rbis:1:over",
+       "fc2:822929:player-691406:hits_runs_rbis:1:over",
+       "fc2:824148:player-805367:hits_runs_rbis:1:over",
+       "fc2:823340:player-668804:hits_runs_rbis:1:over",
+       "fc2:822854:player-680869:hits_runs_rbis:1:over",
+       "fc2:824472:player-669392:hits_runs_rbis:1:over",
+       "fc2:823340:player-664040:hits_runs_rbis:1:over",
+       "fc2:824391:player-676391:hits_runs_rbis:1:over",
+       "fc2:824391:player-543807:hits_runs_rbis:1:over"
+      ],
+      "filled": 11,
+      "shortfall": 0,
+      "games": 6,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.7272727272727273
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:823908:player-700241:strikeouts:4:over",
+    "fc2:824070:player-663969:strikeouts:4:over",
+    "fc2:824472:player-681190:pitcher_outs:15:over",
+    "fc2:823908:player-641778:strikeouts:4:over",
+    "fc2:822929:player-670764:hits_runs_rbis:1:over",
+    "fc2:824391:player-672960:hits_runs_rbis:1:over",
+    "fc2:822854:player-680869:hits_runs_rbis:1:over",
+    "fc2:822854:player-679822:hits:1:over",
+    "fc2:822854:player-675961:hits_runs_rbis:1:over",
+    "fc2:822854:player-680869:hits:1:over",
+    "fc2:823984:player-685133:hits:1:over",
+    "fc2:823984:player-666139:hits_runs_rbis:1:over",
+    "fc2:823908:player-701675:hits_runs_rbis:1:over",
+    "fc2:825038:player-814439:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:824472:player-681190:pitcher_outs:15:over",
+    "fc2:822854:player-680869:hits_runs_rbis:1:over",
+    "fc2:822929:player-670764:hits_runs_rbis:1:over",
+    "fc2:824391:player-672960:hits_runs_rbis:1:over",
+    "fc2:825038:player-814439:hits_runs_rbis:1:over",
+    "fc2:823908:player-701675:hits_runs_rbis:1:over",
+    "fc2:823984:player-685133:hits:1:over",
+    "fc2:822854:player-675961:hits_runs_rbis:1:over",
+    "fc2:824070:player-663969:strikeouts:4:over",
+    "fc2:823984:player-666139:hits_runs_rbis:1:over",
+    "fc2:823908:player-641778:strikeouts:4:over"
+   ],
+   "A_conc": {
+    "games": 8,
+    "max_per_game": 4,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-02": {
+   "N": 17,
+   "N_cap": 13,
+   "champion_removed_by_cap": 4,
+   "universe": 63,
+   "universe_games": 2,
+   "universe_players": 39,
+   "universe_by_market": {
+    "pitcher_outs": 1,
+    "hits_runs_rbis": 23,
+    "hits": 36,
+    "strikeouts": 3
+   },
+   "C_gate_pass": 38,
+   "C_gate_players": 28,
+   "C_gate_games": 2,
+   "gates": {
+    "games_with_state": 13,
+    "rows_in_game": 342,
+    "fail_market": 269,
+    "fail_price_shorter_than_-350": 7,
+    "fail_unpriced": 6,
+    "eligible": 63,
+    "game_final_state_wrong_payload_date": 2,
+    "games_scheduled": 15
+   },
+   "arms": {
+    "original": {
+     "target": 17,
+     "B": {
+      "ids": [
+       "fc2:822686:player-695578:hits_runs_rbis:1:over",
+       "fc2:822686:player-645277:hits_runs_rbis:1:over",
+       "fc2:824470:player-665487:hits:1:over",
+       "fc2:824470:player-669392:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 13,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:824470:player-701398:hits_runs_rbis:1:over",
+       "fc2:822686:player-695578:hits_runs_rbis:1:over",
+       "fc2:824470:player-669392:hits_runs_rbis:1:over",
+       "fc2:822686:player-645277:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 13,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    },
+    "cap": {
+     "target": 13,
+     "B": {
+      "ids": [
+       "fc2:822686:player-695578:hits_runs_rbis:1:over",
+       "fc2:822686:player-645277:hits_runs_rbis:1:over",
+       "fc2:824470:player-665487:hits:1:over",
+       "fc2:824470:player-669392:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 9,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:824470:player-701398:hits_runs_rbis:1:over",
+       "fc2:822686:player-695578:hits_runs_rbis:1:over",
+       "fc2:824470:player-669392:hits_runs_rbis:1:over",
+       "fc2:822686:player-645277:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 9,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:824147:player-663436:strikeouts:4:over",
+    "fc2:822931:player-643377:strikeouts:5:over",
+    "fc2:825037:player-691725:strikeouts:4:over",
+    "fc2:824470:player-663554:pitcher_outs:16:over",
+    "fc2:824717:player-682243:pitcher_outs:16:over",
+    "fc2:822851:player-679822:hits:1:over",
+    "fc2:822931:player-683146:hits_runs_rbis:1:over",
+    "fc2:824634:player-665804:hits_runs_rbis:1:over",
+    "fc2:824634:player-683737:hits_runs_rbis:1:over",
+    "fc2:823983:player-685133:hits:1:over",
+    "fc2:823983:player-672724:hits_runs_rbis:1:over",
+    "fc2:823906:player-669357:hits_runs_rbis:1:over",
+    "fc2:823906:player-701675:hits_runs_rbis:1:over",
+    "fc2:823906:player-691023:hits:1:over",
+    "fc2:823983:player-665862:hits_runs_rbis:1:over",
+    "fc2:823983:player-545361:hits_runs_rbis:1:over",
+    "fc2:823906:player-500743:hits:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823983:player-545361:hits_runs_rbis:1:over",
+    "fc2:824634:player-683737:hits_runs_rbis:1:over",
+    "fc2:823983:player-665862:hits_runs_rbis:1:over",
+    "fc2:823906:player-701675:hits_runs_rbis:1:over",
+    "fc2:823906:player-691023:hits:1:over",
+    "fc2:824634:player-665804:hits_runs_rbis:1:over",
+    "fc2:822931:player-683146:hits_runs_rbis:1:over",
+    "fc2:825037:player-691725:strikeouts:4:over",
+    "fc2:822851:player-679822:hits:1:over",
+    "fc2:822931:player-643377:strikeouts:5:over",
+    "fc2:824147:player-663436:strikeouts:4:over",
+    "fc2:824717:player-682243:pitcher_outs:16:over",
+    "fc2:824470:player-663554:pitcher_outs:16:over"
+   ],
+   "A_conc": {
+    "games": 9,
+    "max_per_game": 4,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-03": {
+   "N": 11,
+   "N_cap": 8,
+   "champion_removed_by_cap": 3,
+   "universe": 0,
+   "universe_games": 0,
+   "universe_players": 0,
+   "universe_by_market": {},
+   "C_gate_pass": 0,
+   "C_gate_players": 0,
+   "C_gate_games": 0,
+   "gates": {
+    "games_with_state": 7,
+    "rows_in_game": 0,
+    "eligible": 0,
+    "game_final_state_wrong_payload_date": 2,
+    "games_scheduled": 9
+   },
+   "arms": {
+    "original": {
+     "target": 11,
+     "B": {
+      "ids": [],
+      "filled": 0,
+      "shortfall": 11,
+      "games": 0,
+      "max_per_game": 0,
+      "share_price_le_-250": null
+     },
+     "C": {
+      "ids": [],
+      "filled": 0,
+      "shortfall": 11,
+      "games": 0,
+      "max_per_game": 0,
+      "share_price_le_-250": null
+     }
+    },
+    "cap": {
+     "target": 8,
+     "B": {
+      "ids": [],
+      "filled": 0,
+      "shortfall": 8,
+      "games": 0,
+      "max_per_game": 0,
+      "share_price_le_-250": null
+     },
+     "C": {
+      "ids": [],
+      "filled": 0,
+      "shortfall": 8,
+      "games": 0,
+      "max_per_game": 0,
+      "share_price_le_-250": null
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:824796:player-687562:pitcher_outs:17:over",
+    "fc2:822853:player-615698:strikeouts:4:over",
+    "fc2:824069:player-645261:strikeouts:4:over",
+    "fc2:824144:player-671976:hits:1:over",
+    "fc2:822853:player-679822:hits:1:over",
+    "fc2:822853:player-553869:hits_runs_rbis:1:over",
+    "fc2:823095:player-675961:hits:1:over",
+    "fc2:823095:player-675961:hits_runs_rbis:1:over",
+    "fc2:823907:player-686780:hits_runs_rbis:1:over",
+    "fc2:823907:player-701675:hits_runs_rbis:1:over",
+    "fc2:823907:player-691023:hits:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823907:player-701675:hits_runs_rbis:1:over",
+    "fc2:823907:player-691023:hits:1:over",
+    "fc2:823095:player-675961:hits_runs_rbis:1:over",
+    "fc2:822853:player-553869:hits_runs_rbis:1:over",
+    "fc2:822853:player-615698:strikeouts:4:over",
+    "fc2:824796:player-687562:pitcher_outs:17:over",
+    "fc2:824144:player-671976:hits:1:over",
+    "fc2:824069:player-645261:strikeouts:4:over"
+   ],
+   "A_conc": {
+    "games": 6,
+    "max_per_game": 3,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-04": {
+   "N": 16,
+   "N_cap": 11,
+   "champion_removed_by_cap": 5,
+   "universe": 235,
+   "universe_games": 7,
+   "universe_players": 133,
+   "universe_by_market": {
+    "pitcher_outs": 11,
+    "hits": 121,
+    "hits_runs_rbis": 93,
+    "strikeouts": 10
+   },
+   "C_gate_pass": 141,
+   "C_gate_players": 106,
+   "C_gate_games": 7,
+   "gates": {
+    "game_no_prior_commit": 1,
+    "games_with_state": 13,
+    "rows_in_game": 1256,
+    "eligible": 235,
+    "fail_market": 989,
+    "fail_price_shorter_than_-350": 27,
+    "fail_unpriced": 47,
+    "game_final_state_wrong_payload_date": 3,
+    "games_scheduled": 17
+   },
+   "arms": {
+    "original": {
+     "target": 16,
+     "B": {
+      "ids": [
+       "fc2:822852:player-691406:hits_runs_rbis:1:over",
+       "fc2:824146:player-665161:hits_runs_rbis:1:over",
+       "fc2:824311:player-671056:hits:1:over",
+       "fc2:824311:player-681393:hits_runs_rbis:1:over",
+       "fc2:824554:player-665019:hits_runs_rbis:1:over",
+       "fc2:824797:player-701350:hits_runs_rbis:1:over",
+       "fc2:823338:player-545361:hits_runs_rbis:1:over",
+       "fc2:823338:player-693304:hits:1:over",
+       "fc2:824067:player-676391:hits_runs_rbis:1:over",
+       "fc2:824554:player-807712:hits_runs_rbis:1:over",
+       "fc2:822852:player-608369:hits_runs_rbis:1:over",
+       "fc2:824067:player-686469:hits_runs_rbis:1:over",
+       "fc2:824797:player-677942:hits_runs_rbis:1:over",
+       "fc2:824146:player-514888:hits_runs_rbis:1:over"
+      ],
+      "filled": 14,
+      "shortfall": 2,
+      "games": 7,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:822852:player-802415:hits_runs_rbis:1:over",
+       "fc2:824146:player-665161:hits_runs_rbis:1:over",
+       "fc2:822852:player-691406:hits_runs_rbis:1:over",
+       "fc2:824554:player-805367:hits_runs_rbis:1:over",
+       "fc2:823338:player-545361:hits_runs_rbis:1:over",
+       "fc2:824146:player-672515:hits_runs_rbis:1:over",
+       "fc2:824067:player-703520:hits:1:over",
+       "fc2:823338:player-804606:hits_runs_rbis:1:over",
+       "fc2:824554:player-680777:hits_runs_rbis:1:over",
+       "fc2:824797:player-624413:hits_runs_rbis:1:over",
+       "fc2:824067:player-676391:hits_runs_rbis:1:over",
+       "fc2:824797:player-677800:hits_runs_rbis:1:over",
+       "fc2:824311:player-687859:hits_runs_rbis:1:over",
+       "fc2:824311:player-701675:hits_runs_rbis:1:over"
+      ],
+      "filled": 14,
+      "shortfall": 2,
+      "games": 7,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    },
+    "cap": {
+     "target": 11,
+     "B": {
+      "ids": [
+       "fc2:822852:player-691406:hits_runs_rbis:1:over",
+       "fc2:824146:player-665161:hits_runs_rbis:1:over",
+       "fc2:824311:player-671056:hits:1:over",
+       "fc2:824311:player-681393:hits_runs_rbis:1:over",
+       "fc2:824554:player-665019:hits_runs_rbis:1:over",
+       "fc2:824797:player-701350:hits_runs_rbis:1:over",
+       "fc2:823338:player-545361:hits_runs_rbis:1:over",
+       "fc2:823338:player-693304:hits:1:over",
+       "fc2:824067:player-676391:hits_runs_rbis:1:over",
+       "fc2:824554:player-807712:hits_runs_rbis:1:over",
+       "fc2:822852:player-608369:hits_runs_rbis:1:over"
+      ],
+      "filled": 11,
+      "shortfall": 0,
+      "games": 7,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:822852:player-802415:hits_runs_rbis:1:over",
+       "fc2:824146:player-665161:hits_runs_rbis:1:over",
+       "fc2:822852:player-691406:hits_runs_rbis:1:over",
+       "fc2:824554:player-805367:hits_runs_rbis:1:over",
+       "fc2:823338:player-545361:hits_runs_rbis:1:over",
+       "fc2:824146:player-672515:hits_runs_rbis:1:over",
+       "fc2:824067:player-703520:hits:1:over",
+       "fc2:823338:player-804606:hits_runs_rbis:1:over",
+       "fc2:824554:player-680777:hits_runs_rbis:1:over",
+       "fc2:824797:player-624413:hits_runs_rbis:1:over",
+       "fc2:824067:player-676391:hits_runs_rbis:1:over"
+      ],
+      "filled": 11,
+      "shortfall": 0,
+      "games": 6,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:824554:player-607200:strikeouts:4:over",
+    "fc2:823824:player-676083:pitcher_outs:15:over",
+    "fc2:823418:player-656537:hits_runs_rbis:1:over",
+    "fc2:823418:player-547180:hits_runs_rbis:1:over",
+    "fc2:822852:player-553869:hits_runs_rbis:1:over",
+    "fc2:824146:player-814439:hits_runs_rbis:1:over",
+    "fc2:822852:player-670764:hits_runs_rbis:1:over",
+    "fc2:823905:player-500743:hits:1:over",
+    "fc2:823093:player-622268:hits_runs_rbis:1:over",
+    "fc2:823093:player-666126:hits:1:over",
+    "fc2:823093:player-680869:hits_runs_rbis:1:over",
+    "fc2:823093:player-680869:hits:1:over",
+    "fc2:823093:player-666126:hits_runs_rbis:1:over",
+    "fc2:823905:player-665953:hits:1:over",
+    "fc2:823905:player-683083:hits_runs_rbis:1:over",
+    "fc2:823905:player-696285:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823824:player-676083:pitcher_outs:15:over",
+    "fc2:823093:player-680869:hits_runs_rbis:1:over",
+    "fc2:823418:player-547180:hits_runs_rbis:1:over",
+    "fc2:822852:player-670764:hits_runs_rbis:1:over",
+    "fc2:824146:player-814439:hits_runs_rbis:1:over",
+    "fc2:823093:player-622268:hits_runs_rbis:1:over",
+    "fc2:823905:player-696285:hits_runs_rbis:1:over",
+    "fc2:823905:player-683083:hits_runs_rbis:1:over",
+    "fc2:822852:player-553869:hits_runs_rbis:1:over",
+    "fc2:823418:player-656537:hits_runs_rbis:1:over",
+    "fc2:824554:player-607200:strikeouts:4:over"
+   ],
+   "A_conc": {
+    "games": 7,
+    "max_per_game": 5,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-05": {
+   "N": 29,
+   "N_cap": 17,
+   "champion_removed_by_cap": 12,
+   "universe": 76,
+   "universe_games": 2,
+   "universe_players": 40,
+   "universe_by_market": {
+    "pitcher_outs": 4,
+    "hits_runs_rbis": 32,
+    "hits": 36,
+    "strikeouts": 4
+   },
+   "C_gate_pass": 40,
+   "C_gate_players": 27,
+   "C_gate_games": 2,
+   "gates": {
+    "games_with_state": 13,
+    "rows_in_game": 361,
+    "eligible": 76,
+    "fail_market": 282,
+    "fail_price_shorter_than_-350": 3,
+    "fail_unpriced": 10,
+    "game_final_state_wrong_payload_date": 2,
+    "games_scheduled": 15
+   },
+   "arms": {
+    "original": {
+     "target": 29,
+     "B": {
+      "ids": [
+       "fc2:823419:player-664761:hits_runs_rbis:1:over",
+       "fc2:824389:player-680757:hits_runs_rbis:1:over",
+       "fc2:823419:player-547180:hits_runs_rbis:1:over",
+       "fc2:824389:player-682657:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 25,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:823419:player-686948:hits_runs_rbis:1:over",
+       "fc2:824389:player-682985:hits_runs_rbis:1:over",
+       "fc2:823419:player-621566:hits_runs_rbis:1:over",
+       "fc2:824389:player-680757:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 25,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.75
+     }
+    },
+    "cap": {
+     "target": 17,
+     "B": {
+      "ids": [
+       "fc2:823419:player-664761:hits_runs_rbis:1:over",
+       "fc2:824389:player-680757:hits_runs_rbis:1:over",
+       "fc2:823419:player-547180:hits_runs_rbis:1:over",
+       "fc2:824389:player-682657:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 13,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:823419:player-686948:hits_runs_rbis:1:over",
+       "fc2:824389:player-682985:hits_runs_rbis:1:over",
+       "fc2:823419:player-621566:hits_runs_rbis:1:over",
+       "fc2:824389:player-680757:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 13,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.75
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:824066:player-453286:strikeouts:4:over",
+    "fc2:824553:player-641743:strikeouts:4:over",
+    "fc2:824468:player-671096:strikeouts:4:over",
+    "fc2:823335:player-677952:pitcher_outs:17:over",
+    "fc2:824389:player-664285:pitcher_outs:17:over",
+    "fc2:823823:player-665871:strikeouts:4:over",
+    "fc2:823823:player-687473:strikeouts:4:over",
+    "fc2:824145:player-814439:hits_runs_rbis:1:over",
+    "fc2:822850:player-643376:hits_runs_rbis:1:over",
+    "fc2:824389:player-682985:hits_runs_rbis:1:over",
+    "fc2:824389:player-595978:hits_runs_rbis:1:over",
+    "fc2:824795:player-687637:hits_runs_rbis:1:over",
+    "fc2:824553:player-671976:hits:1:over",
+    "fc2:822850:player-670764:hits_runs_rbis:1:over",
+    "fc2:822850:player-680700:hits_runs_rbis:1:over",
+    "fc2:822850:player-656775:hits_runs_rbis:1:over",
+    "fc2:822850:player-689414:hits:1:over",
+    "fc2:823904:player-686611:hits_runs_rbis:1:over",
+    "fc2:823904:player-691781:hits_runs_rbis:1:over",
+    "fc2:823904:player-660688:hits_runs_rbis:1:over",
+    "fc2:823904:player-660688:hits:1:over",
+    "fc2:823904:player-695578:hits_runs_rbis:1:over",
+    "fc2:823904:player-682928:hits_runs_rbis:1:over",
+    "fc2:823904:player-695578:hits:1:over",
+    "fc2:823904:player-678391:hits_runs_rbis:1:over",
+    "fc2:823094:player-675961:hits:1:over",
+    "fc2:823094:player-675961:hits_runs_rbis:1:over",
+    "fc2:823094:player-622268:hits_runs_rbis:1:over",
+    "fc2:823904:player-691781:hits:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823904:player-695578:hits_runs_rbis:1:over",
+    "fc2:824389:player-682985:hits_runs_rbis:1:over",
+    "fc2:823904:player-682928:hits_runs_rbis:1:over",
+    "fc2:822850:player-670764:hits_runs_rbis:1:over",
+    "fc2:824145:player-814439:hits_runs_rbis:1:over",
+    "fc2:824795:player-687637:hits_runs_rbis:1:over",
+    "fc2:823094:player-622268:hits_runs_rbis:1:over",
+    "fc2:822850:player-656775:hits_runs_rbis:1:over",
+    "fc2:823094:player-675961:hits_runs_rbis:1:over",
+    "fc2:824389:player-595978:hits_runs_rbis:1:over",
+    "fc2:823335:player-677952:pitcher_outs:17:over",
+    "fc2:824066:player-453286:strikeouts:4:over",
+    "fc2:824553:player-671976:hits:1:over",
+    "fc2:824553:player-641743:strikeouts:4:over",
+    "fc2:823823:player-665871:strikeouts:4:over",
+    "fc2:823823:player-687473:strikeouts:4:over",
+    "fc2:824468:player-671096:strikeouts:4:over"
+   ],
+   "A_conc": {
+    "games": 11,
+    "max_per_game": 9,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-06": {
+   "N": 20,
+   "N_cap": 15,
+   "champion_removed_by_cap": 5,
+   "universe": 0,
+   "universe_games": 0,
+   "universe_players": 0,
+   "universe_by_market": {},
+   "C_gate_pass": 0,
+   "C_gate_players": 0,
+   "C_gate_games": 0,
+   "gates": {
+    "games_with_state": 14,
+    "rows_in_game": 0,
+    "eligible": 0,
+    "game_final_state_wrong_payload_date": 1,
+    "games_scheduled": 15
+   },
+   "arms": {
+    "original": {
+     "target": 20,
+     "B": {
+      "ids": [],
+      "filled": 0,
+      "shortfall": 20,
+      "games": 0,
+      "max_per_game": 0,
+      "share_price_le_-250": null
+     },
+     "C": {
+      "ids": [],
+      "filled": 0,
+      "shortfall": 20,
+      "games": 0,
+      "max_per_game": 0,
+      "share_price_le_-250": null
+     }
+    },
+    "cap": {
+     "target": 15,
+     "B": {
+      "ids": [],
+      "filled": 0,
+      "shortfall": 15,
+      "games": 0,
+      "max_per_game": 0,
+      "share_price_le_-250": null
+     },
+     "C": {
+      "ids": [],
+      "filled": 0,
+      "shortfall": 15,
+      "games": 0,
+      "max_per_game": 0,
+      "share_price_le_-250": null
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:824309:player-681517:strikeouts:4:over",
+    "fc2:824065:player-681293:strikeouts:4:over",
+    "fc2:823903:player-680736:strikeouts:4:over",
+    "fc2:823903:player-674841:strikeouts:4:over",
+    "fc2:823822:player-663969:strikeouts:4:over",
+    "fc2:824065:player-681293:pitcher_outs:15:over",
+    "fc2:824385:player-682985:hits_runs_rbis:1:over",
+    "fc2:824385:player-682985:hits:1:over",
+    "fc2:824794:player-665966:hits_runs_rbis:1:over",
+    "fc2:823336:player-685133:hits:1:over",
+    "fc2:823336:player-666139:hits_runs_rbis:1:over",
+    "fc2:822848:player-553869:hits_runs_rbis:1:over",
+    "fc2:822848:player-679822:hits:1:over",
+    "fc2:822848:player-663743:hits_runs_rbis:1:over",
+    "fc2:822848:player-668723:hits:1:over",
+    "fc2:824794:player-665750:hits_runs_rbis:1:over",
+    "fc2:823253:player-682987:hits:1:over",
+    "fc2:823091:player-622268:hits_runs_rbis:1:over",
+    "fc2:823091:player-675961:hits_runs_rbis:1:over",
+    "fc2:823091:player-675961:hits:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:824065:player-681293:pitcher_outs:15:over",
+    "fc2:824385:player-682985:hits_runs_rbis:1:over",
+    "fc2:823091:player-622268:hits_runs_rbis:1:over",
+    "fc2:823091:player-675961:hits_runs_rbis:1:over",
+    "fc2:823336:player-685133:hits:1:over",
+    "fc2:822848:player-663743:hits_runs_rbis:1:over",
+    "fc2:824794:player-665750:hits_runs_rbis:1:over",
+    "fc2:822848:player-553869:hits_runs_rbis:1:over",
+    "fc2:823903:player-680736:strikeouts:4:over",
+    "fc2:824309:player-681517:strikeouts:4:over",
+    "fc2:823903:player-674841:strikeouts:4:over",
+    "fc2:823822:player-663969:strikeouts:4:over",
+    "fc2:823336:player-666139:hits_runs_rbis:1:over",
+    "fc2:824794:player-665966:hits_runs_rbis:1:over",
+    "fc2:823253:player-682987:hits:1:over"
+   ],
+   "A_conc": {
+    "games": 10,
+    "max_per_game": 4,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-07": {
+   "N": 17,
+   "N_cap": 11,
+   "champion_removed_by_cap": 6,
+   "universe": 217,
+   "universe_games": 6,
+   "universe_players": 118,
+   "universe_by_market": {
+    "pitcher_outs": 7,
+    "hits": 107,
+    "hits_runs_rbis": 92,
+    "strikeouts": 11
+   },
+   "C_gate_pass": 128,
+   "C_gate_players": 92,
+   "C_gate_games": 6,
+   "gates": {
+    "games_with_state": 9,
+    "rows_in_game": 1081,
+    "fail_market": 849,
+    "fail_price_shorter_than_-350": 11,
+    "eligible": 217,
+    "fail_unpriced": 27,
+    "game_final_state_wrong_payload_date": 2,
+    "games_scheduled": 11
+   },
+   "arms": {
+    "original": {
+     "target": 17,
+     "B": {
+      "ids": [
+       "fc2:824062:player-686469:hits_runs_rbis:1:over",
+       "fc2:824793:player-677942:hits_runs_rbis:1:over",
+       "fc2:823742:player-663538:hits_runs_rbis:1:over",
+       "fc2:823742:player-691718:hits_runs_rbis:1:over",
+       "fc2:823820:player-666182:hits_runs_rbis:1:over",
+       "fc2:824062:player-521692:hits_runs_rbis:1:over",
+       "fc2:824715:player-677800:hits_runs_rbis:1:over",
+       "fc2:824715:player-681508:hits_runs_rbis:1:over",
+       "fc2:823415:player-607208:hits_runs_rbis:1:over",
+       "fc2:823820:player-672640:hits:1:over",
+       "fc2:824793:player-682657:hits_runs_rbis:1:over",
+       "fc2:823415:player-656941:hits_runs_rbis:1:over"
+      ],
+      "filled": 12,
+      "shortfall": 5,
+      "games": 6,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:823742:player-668930:hits_runs_rbis:1:over",
+       "fc2:823415:player-686948:hits_runs_rbis:1:over",
+       "fc2:824715:player-545361:hits_runs_rbis:1:over",
+       "fc2:823742:player-608324:hits_runs_rbis:1:over",
+       "fc2:823415:player-621566:hits_runs_rbis:1:over",
+       "fc2:824793:player-624413:hits_runs_rbis:1:over",
+       "fc2:824715:player-596115:hits_runs_rbis:1:over",
+       "fc2:823820:player-701807:hits_runs_rbis:1:over",
+       "fc2:824062:player-545121:hits_runs_rbis:1:over",
+       "fc2:824062:player-686469:hits_runs_rbis:1:over",
+       "fc2:824793:player-680757:hits_runs_rbis:1:over",
+       "fc2:823820:player-665742:hits_runs_rbis:1:over"
+      ],
+      "filled": 12,
+      "shortfall": 5,
+      "games": 6,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.8333333333333334
+     }
+    },
+    "cap": {
+     "target": 11,
+     "B": {
+      "ids": [
+       "fc2:824062:player-686469:hits_runs_rbis:1:over",
+       "fc2:824793:player-677942:hits_runs_rbis:1:over",
+       "fc2:823742:player-663538:hits_runs_rbis:1:over",
+       "fc2:823742:player-691718:hits_runs_rbis:1:over",
+       "fc2:823820:player-666182:hits_runs_rbis:1:over",
+       "fc2:824062:player-521692:hits_runs_rbis:1:over",
+       "fc2:824715:player-677800:hits_runs_rbis:1:over",
+       "fc2:824715:player-681508:hits_runs_rbis:1:over",
+       "fc2:823415:player-607208:hits_runs_rbis:1:over",
+       "fc2:823820:player-672640:hits:1:over",
+       "fc2:824793:player-682657:hits_runs_rbis:1:over"
+      ],
+      "filled": 11,
+      "shortfall": 0,
+      "games": 6,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:823742:player-668930:hits_runs_rbis:1:over",
+       "fc2:823415:player-686948:hits_runs_rbis:1:over",
+       "fc2:824715:player-545361:hits_runs_rbis:1:over",
+       "fc2:823742:player-608324:hits_runs_rbis:1:over",
+       "fc2:823415:player-621566:hits_runs_rbis:1:over",
+       "fc2:824793:player-624413:hits_runs_rbis:1:over",
+       "fc2:824715:player-596115:hits_runs_rbis:1:over",
+       "fc2:823820:player-701807:hits_runs_rbis:1:over",
+       "fc2:824062:player-545121:hits_runs_rbis:1:over",
+       "fc2:824062:player-686469:hits_runs_rbis:1:over",
+       "fc2:824793:player-680757:hits_runs_rbis:1:over"
+      ],
+      "filled": 11,
+      "shortfall": 0,
+      "games": 6,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.8181818181818182
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:824958:player-682052:strikeouts:5:over",
+    "fc2:823175:player-700241:strikeouts:4:over",
+    "fc2:823902:player-695505:strikeouts:5:over",
+    "fc2:824793:player-669432:strikeouts:5:over",
+    "fc2:823175:player-700241:pitcher_outs:17:over",
+    "fc2:824793:player-687637:hits_runs_rbis:1:over",
+    "fc2:824229:player-668904:hits_runs_rbis:1:over",
+    "fc2:824229:player-657746:strikeouts:4:over",
+    "fc2:824062:player-702070:strikeouts:4:over",
+    "fc2:824793:player-595978:hits_runs_rbis:1:over",
+    "fc2:823254:player-696285:hits_runs_rbis:1:over",
+    "fc2:824958:player-675961:hits:1:over",
+    "fc2:824958:player-675961:hits_runs_rbis:1:over",
+    "fc2:824958:player-622268:hits_runs_rbis:1:over",
+    "fc2:823902:player-571970:hits:1:over",
+    "fc2:823902:player-680574:hits_runs_rbis:1:over",
+    "fc2:824958:player-641680:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:824229:player-668904:hits_runs_rbis:1:over",
+    "fc2:824793:player-687637:hits_runs_rbis:1:over",
+    "fc2:823254:player-696285:hits_runs_rbis:1:over",
+    "fc2:824958:player-622268:hits_runs_rbis:1:over",
+    "fc2:824958:player-675961:hits_runs_rbis:1:over",
+    "fc2:824793:player-595978:hits_runs_rbis:1:over",
+    "fc2:823902:player-680574:hits_runs_rbis:1:over",
+    "fc2:824229:player-657746:strikeouts:4:over",
+    "fc2:824062:player-702070:strikeouts:4:over",
+    "fc2:823902:player-695505:strikeouts:5:over",
+    "fc2:823175:player-700241:pitcher_outs:17:over"
+   ],
+   "A_conc": {
+    "games": 7,
+    "max_per_game": 5,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-08": {
+   "N": 24,
+   "N_cap": 11,
+   "champion_removed_by_cap": 13,
+   "universe": 112,
+   "universe_games": 3,
+   "universe_players": 60,
+   "universe_by_market": {
+    "hits_runs_rbis": 47,
+    "hits": 54,
+    "pitcher_outs": 6,
+    "strikeouts": 5
+   },
+   "C_gate_pass": 44,
+   "C_gate_players": 34,
+   "C_gate_games": 3,
+   "gates": {
+    "games_with_state": 10,
+    "rows_in_game": 541,
+    "eligible": 112,
+    "fail_market": 425,
+    "fail_unpriced": 4,
+    "fail_price_shorter_than_-350": 3,
+    "game_final_state_wrong_payload_date": 5,
+    "games_scheduled": 15
+   },
+   "arms": {
+    "original": {
+     "target": 24,
+     "B": {
+      "ids": [
+       "fc2:824714:player-701350:hits_runs_rbis:1:over",
+       "fc2:823738:player-683734:hits_runs_rbis:1:over",
+       "fc2:823500:player-592450:hits_runs_rbis:1:over",
+       "fc2:823738:player-661388:hits_runs_rbis:1:over",
+       "fc2:824714:player-687093:hits_runs_rbis:1:over",
+       "fc2:823500:player-671277:hits:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 18,
+      "games": 3,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:823500:player-664983:hits_runs_rbis:1:over",
+       "fc2:824714:player-545361:hits_runs_rbis:1:over",
+       "fc2:823738:player-668930:hits_runs_rbis:1:over",
+       "fc2:823738:player-608324:hits_runs_rbis:1:over",
+       "fc2:823500:player-681198:hits_runs_rbis:1:over",
+       "fc2:824714:player-596115:hits_runs_rbis:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 18,
+      "games": 3,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.5
+     }
+    },
+    "cap": {
+     "target": 11,
+     "B": {
+      "ids": [
+       "fc2:824714:player-701350:hits_runs_rbis:1:over",
+       "fc2:823738:player-683734:hits_runs_rbis:1:over",
+       "fc2:823500:player-592450:hits_runs_rbis:1:over",
+       "fc2:823738:player-661388:hits_runs_rbis:1:over",
+       "fc2:824714:player-687093:hits_runs_rbis:1:over",
+       "fc2:823500:player-671277:hits:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 5,
+      "games": 3,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:823500:player-664983:hits_runs_rbis:1:over",
+       "fc2:824714:player-545361:hits_runs_rbis:1:over",
+       "fc2:823738:player-668930:hits_runs_rbis:1:over",
+       "fc2:823738:player-608324:hits_runs_rbis:1:over",
+       "fc2:823500:player-681198:hits_runs_rbis:1:over",
+       "fc2:824714:player-596115:hits_runs_rbis:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 5,
+      "games": 3,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.5
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:824792:player-687064:strikeouts:4:over",
+    "fc2:823500:player-687312:pitcher_outs:15:over",
+    "fc2:824551:player-696149:pitcher_outs:15:over",
+    "fc2:824957:player-678022:strikeouts:4:over",
+    "fc2:823500:player-666160:hits_runs_rbis:1:over",
+    "fc2:823500:player-681198:hits_runs_rbis:1:over",
+    "fc2:823500:player-678662:hits_runs_rbis:1:over",
+    "fc2:823500:player-691720:hits_runs_rbis:1:over",
+    "fc2:823500:player-681198:hits:1:over",
+    "fc2:823500:player-666160:hits:1:over",
+    "fc2:823174:player-694738:pitcher_outs:15:over",
+    "fc2:823738:player-665804:hits_runs_rbis:1:over",
+    "fc2:823738:player-664023:hits_runs_rbis:1:over",
+    "fc2:823738:player-683737:hits_runs_rbis:1:over",
+    "fc2:823738:player-691718:hits:1:over",
+    "fc2:823738:player-608324:hits_runs_rbis:1:over",
+    "fc2:823738:player-691718:hits_runs_rbis:1:over",
+    "fc2:823738:player-673548:hits:1:over",
+    "fc2:823738:player-673548:hits_runs_rbis:1:over",
+    "fc2:823901:player-680574:hits_runs_rbis:1:over",
+    "fc2:823901:player-553993:hits_runs_rbis:1:over",
+    "fc2:823901:player-663886:hits_runs_rbis:1:over",
+    "fc2:823901:player-701398:hits_runs_rbis:1:over",
+    "fc2:824957:player-675961:hits:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823500:player-687312:pitcher_outs:15:over",
+    "fc2:823174:player-694738:pitcher_outs:15:over",
+    "fc2:823901:player-701398:hits_runs_rbis:1:over",
+    "fc2:824551:player-696149:pitcher_outs:15:over",
+    "fc2:823738:player-608324:hits_runs_rbis:1:over",
+    "fc2:823500:player-681198:hits_runs_rbis:1:over",
+    "fc2:823738:player-691718:hits_runs_rbis:1:over",
+    "fc2:823901:player-663886:hits_runs_rbis:1:over",
+    "fc2:824957:player-678022:strikeouts:4:over",
+    "fc2:824792:player-687064:strikeouts:4:over",
+    "fc2:824957:player-675961:hits:1:over"
+   ],
+   "A_conc": {
+    "games": 7,
+    "max_per_game": 8,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-09": {
+   "N": 14,
+   "N_cap": 13,
+   "champion_removed_by_cap": 1,
+   "universe": 39,
+   "universe_games": 2,
+   "universe_players": 21,
+   "universe_by_market": {
+    "pitcher_outs": 3,
+    "hits": 18,
+    "strikeouts": 2,
+    "hits_runs_rbis": 16
+   },
+   "C_gate_pass": 23,
+   "C_gate_players": 15,
+   "C_gate_games": 1,
+   "gates": {
+    "games_with_state": 14,
+    "rows_in_game": 182,
+    "eligible": 39,
+    "fail_market": 142,
+    "fail_price_shorter_than_-350": 1,
+    "game_final_state_wrong_payload_date": 1,
+    "games_scheduled": 15
+   },
+   "arms": {
+    "original": {
+     "target": 14,
+     "B": {
+      "ids": [
+       "fc2:823416:player-670541:hits_runs_rbis:1:over",
+       "fc2:823416:player-607208:hits_runs_rbis:1:over",
+       "fc2:824226:player-805673:pitcher_outs:17:over"
+      ],
+      "filled": 3,
+      "shortfall": 11,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.6666666666666666
+     },
+     "C": {
+      "ids": [
+       "fc2:823416:player-665161:hits_runs_rbis:1:over",
+       "fc2:823416:player-670541:hits_runs_rbis:1:over"
+      ],
+      "filled": 2,
+      "shortfall": 12,
+      "games": 1,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    },
+    "cap": {
+     "target": 13,
+     "B": {
+      "ids": [
+       "fc2:823416:player-670541:hits_runs_rbis:1:over",
+       "fc2:823416:player-607208:hits_runs_rbis:1:over",
+       "fc2:824226:player-805673:pitcher_outs:17:over"
+      ],
+      "filled": 3,
+      "shortfall": 10,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.6666666666666666
+     },
+     "C": {
+      "ids": [
+       "fc2:823416:player-665161:hits_runs_rbis:1:over",
+       "fc2:823416:player-670541:hits_runs_rbis:1:over"
+      ],
+      "filled": 2,
+      "shortfall": 11,
+      "games": 1,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:824713:player-696270:strikeouts:4:over",
+    "fc2:824226:player-805673:pitcher_outs:17:over",
+    "fc2:823818:player-676083:pitcher_outs:15:over",
+    "fc2:824871:player-643377:pitcher_outs:15:over",
+    "fc2:823416:player-686613:strikeouts:5:over",
+    "fc2:823090:player-679822:hits:1:over",
+    "fc2:823090:player-553869:hits_runs_rbis:1:over",
+    "fc2:824871:player-625643:strikeouts:4:over",
+    "fc2:824549:player-545341:hits:1:over",
+    "fc2:824713:player-694203:hits_runs_rbis:1:over",
+    "fc2:823739:player-669003:hits_runs_rbis:1:over",
+    "fc2:823739:player-608348:hits_runs_rbis:1:over",
+    "fc2:823739:player-664023:hits_runs_rbis:1:over",
+    "fc2:824549:player-663436:pitcher_outs:16:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823818:player-676083:pitcher_outs:15:over",
+    "fc2:824871:player-643377:pitcher_outs:15:over",
+    "fc2:823739:player-608348:hits_runs_rbis:1:over",
+    "fc2:823739:player-669003:hits_runs_rbis:1:over",
+    "fc2:824713:player-694203:hits_runs_rbis:1:over",
+    "fc2:824549:player-545341:hits:1:over",
+    "fc2:823090:player-679822:hits:1:over",
+    "fc2:823090:player-553869:hits_runs_rbis:1:over",
+    "fc2:824871:player-625643:strikeouts:4:over",
+    "fc2:824549:player-663436:pitcher_outs:16:over",
+    "fc2:824226:player-805673:pitcher_outs:17:over",
+    "fc2:824713:player-696270:strikeouts:4:over",
+    "fc2:823416:player-686613:strikeouts:5:over"
+   ],
+   "A_conc": {
+    "games": 8,
+    "max_per_game": 3,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-10": {
+   "N": 13,
+   "N_cap": 7,
+   "champion_removed_by_cap": 6,
+   "universe": 77,
+   "universe_games": 2,
+   "universe_players": 39,
+   "universe_by_market": {
+    "hits": 36,
+    "strikeouts": 3,
+    "hits_runs_rbis": 35,
+    "pitcher_outs": 3
+   },
+   "C_gate_pass": 43,
+   "C_gate_players": 29,
+   "C_gate_games": 2,
+   "gates": {
+    "games_with_state": 5,
+    "rows_in_game": 369,
+    "eligible": 77,
+    "fail_market": 290,
+    "fail_price_shorter_than_-350": 1,
+    "fail_unpriced": 5,
+    "games_scheduled": 5
+   },
+   "arms": {
+    "original": {
+     "target": 13,
+     "B": {
+      "ids": [
+       "fc2:823413:player-547180:hits_runs_rbis:1:over",
+       "fc2:824550:player-678246:hits_runs_rbis:1:over",
+       "fc2:823413:player-607208:hits_runs_rbis:1:over",
+       "fc2:824550:player-693304:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 9,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:824550:player-805367:hits_runs_rbis:1:over",
+       "fc2:823413:player-665161:hits_runs_rbis:1:over",
+       "fc2:824550:player-668804:hits_runs_rbis:1:over",
+       "fc2:823413:player-670541:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 9,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.75
+     }
+    },
+    "cap": {
+     "target": 7,
+     "B": {
+      "ids": [
+       "fc2:823413:player-547180:hits_runs_rbis:1:over",
+       "fc2:824550:player-678246:hits_runs_rbis:1:over",
+       "fc2:823413:player-607208:hits_runs_rbis:1:over",
+       "fc2:824550:player-693304:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 3,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:824550:player-805367:hits_runs_rbis:1:over",
+       "fc2:823413:player-665161:hits_runs_rbis:1:over",
+       "fc2:824550:player-668804:hits_runs_rbis:1:over",
+       "fc2:823413:player-670541:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 3,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.75
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:823413:player-664299:strikeouts:4:over",
+    "fc2:823413:player-543877:hits_runs_rbis:1:over",
+    "fc2:823413:player-669016:hits:1:over",
+    "fc2:823088:player-643376:hits_runs_rbis:1:over",
+    "fc2:823088:player-702284:hits_runs_rbis:1:over",
+    "fc2:823088:player-694497:hits_runs_rbis:1:over",
+    "fc2:823088:player-668227:hits:1:over",
+    "fc2:823088:player-668227:hits_runs_rbis:1:over",
+    "fc2:823499:player-678662:hits_runs_rbis:1:over",
+    "fc2:823499:player-681198:hits:1:over",
+    "fc2:824550:player-671976:hits:1:over",
+    "fc2:823499:player-687597:hits_runs_rbis:1:over",
+    "fc2:823499:player-681198:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823088:player-668227:hits_runs_rbis:1:over",
+    "fc2:823499:player-681198:hits_runs_rbis:1:over",
+    "fc2:823088:player-702284:hits_runs_rbis:1:over",
+    "fc2:823499:player-678662:hits_runs_rbis:1:over",
+    "fc2:823413:player-664299:strikeouts:4:over",
+    "fc2:823413:player-669016:hits:1:over",
+    "fc2:824550:player-671976:hits:1:over"
+   ],
+   "A_conc": {
+    "games": 4,
+    "max_per_game": 5,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-11": {
+   "N": 15,
+   "N_cap": 11,
+   "champion_removed_by_cap": 4,
+   "universe": 38,
+   "universe_games": 2,
+   "universe_players": 20,
+   "universe_by_market": {
+    "hits_runs_rbis": 17,
+    "hits": 17,
+    "strikeouts": 2,
+    "pitcher_outs": 2
+   },
+   "C_gate_pass": 19,
+   "C_gate_players": 16,
+   "C_gate_games": 1,
+   "gates": {
+    "games_with_state": 12,
+    "rows_in_game": 182,
+    "eligible": 38,
+    "fail_market": 142,
+    "fail_price_shorter_than_-350": 1,
+    "fail_unpriced": 8,
+    "game_final_state_wrong_payload_date": 3,
+    "games_scheduled": 15
+   },
+   "arms": {
+    "original": {
+     "target": 15,
+     "B": {
+      "ids": [
+       "fc2:823012:player-678246:hits_runs_rbis:1:over",
+       "fc2:823012:player-671056:hits_runs_rbis:1:over",
+       "fc2:824873:player-656537:hits_runs_rbis:1:over"
+      ],
+      "filled": 3,
+      "shortfall": 12,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.6666666666666666
+     },
+     "C": {
+      "ids": [
+       "fc2:823012:player-676475:hits_runs_rbis:1:over",
+       "fc2:823012:player-678246:hits_runs_rbis:1:over"
+      ],
+      "filled": 2,
+      "shortfall": 13,
+      "games": 1,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    },
+    "cap": {
+     "target": 11,
+     "B": {
+      "ids": [
+       "fc2:823012:player-678246:hits_runs_rbis:1:over",
+       "fc2:823012:player-671056:hits_runs_rbis:1:over",
+       "fc2:824873:player-656537:hits_runs_rbis:1:over"
+      ],
+      "filled": 3,
+      "shortfall": 8,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.6666666666666666
+     },
+     "C": {
+      "ids": [
+       "fc2:823012:player-676475:hits_runs_rbis:1:over",
+       "fc2:823012:player-678246:hits_runs_rbis:1:over"
+      ],
+      "filled": 2,
+      "shortfall": 9,
+      "games": 1,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:822767:player-605135:strikeouts:4:over",
+    "fc2:823817:player-687473:strikeouts:4:over",
+    "fc2:824631:player-669707:hits_runs_rbis:1:over",
+    "fc2:823012:player-701675:hits_runs_rbis:1:over",
+    "fc2:824227:player-678662:hits_runs_rbis:1:over",
+    "fc2:823817:player-672640:hits:1:over",
+    "fc2:823817:player-665052:hits_runs_rbis:1:over",
+    "fc2:823817:player-669065:hits_runs_rbis:1:over",
+    "fc2:823817:player-691594:hits:1:over",
+    "fc2:823817:player-682663:hits_runs_rbis:1:over",
+    "fc2:823498:player-682987:hits:1:over",
+    "fc2:823498:player-682626:hits_runs_rbis:1:over",
+    "fc2:822930:player-669397:hits_runs_rbis:1:over",
+    "fc2:824873:player-656537:hits_runs_rbis:1:over",
+    "fc2:823012:player-545341:hits:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823817:player-672640:hits:1:over",
+    "fc2:823012:player-701675:hits_runs_rbis:1:over",
+    "fc2:823012:player-545341:hits:1:over",
+    "fc2:823817:player-669065:hits_runs_rbis:1:over",
+    "fc2:823498:player-682626:hits_runs_rbis:1:over",
+    "fc2:824631:player-669707:hits_runs_rbis:1:over",
+    "fc2:822930:player-669397:hits_runs_rbis:1:over",
+    "fc2:824227:player-678662:hits_runs_rbis:1:over",
+    "fc2:824873:player-656537:hits_runs_rbis:1:over",
+    "fc2:822767:player-605135:strikeouts:4:over",
+    "fc2:823498:player-682987:hits:1:over"
+   ],
+   "A_conc": {
+    "games": 8,
+    "max_per_game": 6,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-12": {
+   "N": 9,
+   "N_cap": 6,
+   "champion_removed_by_cap": 3,
+   "universe": 104,
+   "universe_games": 3,
+   "universe_players": 58,
+   "universe_by_market": {
+    "hits": 53,
+    "strikeouts": 5,
+    "hits_runs_rbis": 42,
+    "pitcher_outs": 4
+   },
+   "C_gate_pass": 64,
+   "C_gate_players": 48,
+   "C_gate_games": 3,
+   "gates": {
+    "games_with_state": 14,
+    "rows_in_game": 548,
+    "eligible": 104,
+    "fail_market": 431,
+    "fail_price_shorter_than_-350": 10,
+    "fail_unpriced": 13,
+    "game_final_state_wrong_payload_date": 1,
+    "games_scheduled": 15
+   },
+   "arms": {
+    "original": {
+     "target": 9,
+     "B": {
+      "ids": [
+       "fc2:824630:player-663538:hits_runs_rbis:1:over",
+       "fc2:824630:player-608324:hits_runs_rbis:1:over",
+       "fc2:824712:player-596115:hits_runs_rbis:1:over",
+       "fc2:823009:player-665877:hits_runs_rbis:1:over",
+       "fc2:823009:player-805367:hits_runs_rbis:1:over",
+       "fc2:824712:player-677951:hits:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 3,
+      "games": 3,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:824630:player-668804:hits_runs_rbis:1:over",
+       "fc2:823009:player-805367:hits_runs_rbis:1:over",
+       "fc2:824630:player-608324:hits_runs_rbis:1:over",
+       "fc2:824712:player-596115:hits_runs_rbis:1:over",
+       "fc2:823009:player-808959:hits_runs_rbis:1:over",
+       "fc2:824712:player-686469:hits_runs_rbis:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 3,
+      "games": 3,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    },
+    "cap": {
+     "target": 6,
+     "B": {
+      "ids": [
+       "fc2:824630:player-663538:hits_runs_rbis:1:over",
+       "fc2:824630:player-608324:hits_runs_rbis:1:over",
+       "fc2:824712:player-596115:hits_runs_rbis:1:over",
+       "fc2:823009:player-665877:hits_runs_rbis:1:over",
+       "fc2:823009:player-805367:hits_runs_rbis:1:over",
+       "fc2:824712:player-677951:hits:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 0,
+      "games": 3,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:824630:player-668804:hits_runs_rbis:1:over",
+       "fc2:823009:player-805367:hits_runs_rbis:1:over",
+       "fc2:824630:player-608324:hits_runs_rbis:1:over",
+       "fc2:824712:player-596115:hits_runs_rbis:1:over",
+       "fc2:823009:player-808959:hits_runs_rbis:1:over",
+       "fc2:824712:player-686469:hits_runs_rbis:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 0,
+      "games": 3,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:823819:player-663969:strikeouts:4:over",
+    "fc2:824712:player-677976:strikeouts:4:over",
+    "fc2:825035:player-677958:strikeouts:4:over",
+    "fc2:823009:player-681517:strikeouts:4:over",
+    "fc2:822768:player-680694:strikeouts:4:over",
+    "fc2:823819:player-691788:hits_runs_rbis:1:over",
+    "fc2:823819:player-683357:hits_runs_rbis:1:over",
+    "fc2:823819:player-665052:hits:1:over",
+    "fc2:823819:player-688363:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823819:player-691788:hits_runs_rbis:1:over",
+    "fc2:823819:player-683357:hits_runs_rbis:1:over",
+    "fc2:823009:player-681517:strikeouts:4:over",
+    "fc2:825035:player-677958:strikeouts:4:over",
+    "fc2:824712:player-677976:strikeouts:4:over",
+    "fc2:822768:player-680694:strikeouts:4:over"
+   ],
+   "A_conc": {
+    "games": 5,
+    "max_per_game": 5,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-13": {
+   "N": 13,
+   "N_cap": 8,
+   "champion_removed_by_cap": 5,
+   "universe": 40,
+   "universe_games": 2,
+   "universe_players": 23,
+   "universe_by_market": {
+    "hits_runs_rbis": 19,
+    "hits": 17,
+    "strikeouts": 2,
+    "pitcher_outs": 2
+   },
+   "C_gate_pass": 19,
+   "C_gate_players": 15,
+   "C_gate_games": 2,
+   "gates": {
+    "games_with_state": 15,
+    "rows_in_game": 182,
+    "eligible": 40,
+    "fail_market": 139,
+    "fail_price_shorter_than_-350": 1,
+    "fail_unpriced": 8,
+    "games_scheduled": 15
+   },
+   "arms": {
+    "original": {
+     "target": 13,
+     "B": {
+      "ids": [
+       "fc2:823815:player-518692:hits_runs_rbis:1:over",
+       "fc2:823815:player-669257:hits_runs_rbis:1:over",
+       "fc2:823495:player-701807:hits_runs_rbis:1:over",
+       "fc2:823495:player-805999:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 9,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.5
+     },
+     "C": {
+      "ids": [
+       "fc2:823815:player-669364:hits_runs_rbis:1:over",
+       "fc2:823815:player-518692:hits_runs_rbis:1:over",
+       "fc2:823495:player-701807:hits_runs_rbis:1:over"
+      ],
+      "filled": 3,
+      "shortfall": 10,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.6666666666666666
+     }
+    },
+    "cap": {
+     "target": 8,
+     "B": {
+      "ids": [
+       "fc2:823815:player-518692:hits_runs_rbis:1:over",
+       "fc2:823815:player-669257:hits_runs_rbis:1:over",
+       "fc2:823495:player-701807:hits_runs_rbis:1:over",
+       "fc2:823495:player-805999:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 4,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.5
+     },
+     "C": {
+      "ids": [
+       "fc2:823815:player-669364:hits_runs_rbis:1:over",
+       "fc2:823815:player-518692:hits_runs_rbis:1:over",
+       "fc2:823495:player-701807:hits_runs_rbis:1:over"
+      ],
+      "filled": 3,
+      "shortfall": 5,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.6666666666666666
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:824225:player-687312:pitcher_outs:15:over",
+    "fc2:825033:player-615698:strikeouts:4:over",
+    "fc2:822764:player-669432:strikeouts:5:over",
+    "fc2:823495:player-683146:hits_runs_rbis:1:over",
+    "fc2:823495:player-682626:hits_runs_rbis:1:over",
+    "fc2:823495:player-701807:hits_runs_rbis:1:over",
+    "fc2:822764:player-687637:hits:1:over",
+    "fc2:824628:player-665804:hits_runs_rbis:1:over",
+    "fc2:822764:player-665750:hits_runs_rbis:1:over",
+    "fc2:823495:player-805999:hits_runs_rbis:1:over",
+    "fc2:824628:player-669707:hits_runs_rbis:1:over",
+    "fc2:822764:player-691723:hits_runs_rbis:1:over",
+    "fc2:824628:player-680779:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:824225:player-687312:pitcher_outs:15:over",
+    "fc2:823495:player-701807:hits_runs_rbis:1:over",
+    "fc2:823495:player-805999:hits_runs_rbis:1:over",
+    "fc2:822764:player-691723:hits_runs_rbis:1:over",
+    "fc2:822764:player-665750:hits_runs_rbis:1:over",
+    "fc2:824628:player-665804:hits_runs_rbis:1:over",
+    "fc2:824628:player-669707:hits_runs_rbis:1:over",
+    "fc2:825033:player-615698:strikeouts:4:over"
+   ],
+   "A_conc": {
+    "games": 5,
+    "max_per_game": 4,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-14": {
+   "N": 16,
+   "N_cap": 10,
+   "champion_removed_by_cap": 6,
+   "universe": 0,
+   "universe_games": 0,
+   "universe_players": 0,
+   "universe_by_market": {},
+   "C_gate_pass": 0,
+   "C_gate_players": 0,
+   "C_gate_games": 0,
+   "gates": {
+    "games_with_state": 7,
+    "rows_in_game": 0,
+    "eligible": 0,
+    "game_final_state_wrong_payload_date": 3,
+    "games_scheduled": 10
+   },
+   "arms": {
+    "original": {
+     "target": 16,
+     "B": {
+      "ids": [],
+      "filled": 0,
+      "shortfall": 16,
+      "games": 0,
+      "max_per_game": 0,
+      "share_price_le_-250": null
+     },
+     "C": {
+      "ids": [],
+      "filled": 0,
+      "shortfall": 16,
+      "games": 0,
+      "max_per_game": 0,
+      "share_price_le_-250": null
+     }
+    },
+    "cap": {
+     "target": 10,
+     "B": {
+      "ids": [],
+      "filled": 0,
+      "shortfall": 10,
+      "games": 0,
+      "max_per_game": 0,
+      "share_price_le_-250": null
+     },
+     "C": {
+      "ids": [],
+      "filled": 0,
+      "shortfall": 10,
+      "games": 0,
+      "max_per_game": 0,
+      "share_price_le_-250": null
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:823575:player-687064:strikeouts:4:over",
+    "fc2:823575:player-687064:pitcher_outs:16:over",
+    "fc2:823656:player-665152:pitcher_outs:15:over",
+    "fc2:824308:player-663554:pitcher_outs:16:over",
+    "fc2:823006:player-694738:pitcher_outs:15:over",
+    "fc2:822765:player-675512:strikeouts:4:over",
+    "fc2:824465:player-553993:hits_runs_rbis:1:over",
+    "fc2:824465:player-701398:hits_runs_rbis:1:over",
+    "fc2:824465:player-663886:hits_runs_rbis:1:over",
+    "fc2:823575:player-665966:hits_runs_rbis:1:over",
+    "fc2:824386:player-808959:hits_runs_rbis:1:over",
+    "fc2:824386:player-695657:hits_runs_rbis:1:over",
+    "fc2:824386:player-695731:hits_runs_rbis:1:over",
+    "fc2:824386:player-671976:hits:1:over",
+    "fc2:824386:player-805367:hits_runs_rbis:1:over",
+    "fc2:824386:player-643217:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823656:player-665152:pitcher_outs:15:over",
+    "fc2:823006:player-694738:pitcher_outs:15:over",
+    "fc2:824465:player-701398:hits_runs_rbis:1:over",
+    "fc2:824386:player-805367:hits_runs_rbis:1:over",
+    "fc2:824386:player-808959:hits_runs_rbis:1:over",
+    "fc2:824465:player-663886:hits_runs_rbis:1:over",
+    "fc2:823575:player-687064:pitcher_outs:16:over",
+    "fc2:822765:player-675512:strikeouts:4:over",
+    "fc2:823575:player-665966:hits_runs_rbis:1:over",
+    "fc2:824308:player-663554:pitcher_outs:16:over"
+   ],
+   "A_conc": {
+    "games": 7,
+    "max_per_game": 6,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-15": {
+   "N": 25,
+   "N_cap": 15,
+   "champion_removed_by_cap": 10,
+   "universe": 147,
+   "universe_games": 4,
+   "universe_players": 78,
+   "universe_by_market": {
+    "strikeouts": 7,
+    "hits": 71,
+    "hits_runs_rbis": 62,
+    "pitcher_outs": 7
+   },
+   "C_gate_pass": 85,
+   "C_gate_players": 64,
+   "C_gate_games": 4,
+   "gates": {
+    "games_with_state": 12,
+    "rows_in_game": 717,
+    "eligible": 147,
+    "fail_market": 562,
+    "fail_price_shorter_than_-350": 7,
+    "fail_unpriced": 15,
+    "game_final_state_wrong_payload_date": 3,
+    "games_scheduled": 15
+   },
+   "arms": {
+    "original": {
+     "target": 25,
+     "B": {
+      "ids": [
+       "fc2:822762:player-672386:hits_runs_rbis:1:over",
+       "fc2:823007:player-808982:hits_runs_rbis:1:over",
+       "fc2:823007:player-687551:hits_runs_rbis:1:over",
+       "fc2:824143:player-665161:hits_runs_rbis:1:over",
+       "fc2:822762:player-805808:hits_runs_rbis:1:over",
+       "fc2:823574:player-624413:hits_runs_rbis:1:over",
+       "fc2:824143:player-514888:hits_runs_rbis:1:over",
+       "fc2:823574:player-596019:hits_runs_rbis:1:over"
+      ],
+      "filled": 8,
+      "shortfall": 17,
+      "games": 4,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:822762:player-805808:hits_runs_rbis:1:over",
+       "fc2:824143:player-677951:hits_runs_rbis:1:over",
+       "fc2:824143:player-672580:hits_runs_rbis:1:over",
+       "fc2:822762:player-682985:hits_runs_rbis:1:over",
+       "fc2:823574:player-624413:hits_runs_rbis:1:over",
+       "fc2:823574:player-701807:hits_runs_rbis:1:over",
+       "fc2:823007:player-805811:hits_runs_rbis:1:over",
+       "fc2:823007:player-691026:hits_runs_rbis:1:over"
+      ],
+      "filled": 8,
+      "shortfall": 17,
+      "games": 4,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    },
+    "cap": {
+     "target": 15,
+     "B": {
+      "ids": [
+       "fc2:822762:player-672386:hits_runs_rbis:1:over",
+       "fc2:823007:player-808982:hits_runs_rbis:1:over",
+       "fc2:823007:player-687551:hits_runs_rbis:1:over",
+       "fc2:824143:player-665161:hits_runs_rbis:1:over",
+       "fc2:822762:player-805808:hits_runs_rbis:1:over",
+       "fc2:823574:player-624413:hits_runs_rbis:1:over",
+       "fc2:824143:player-514888:hits_runs_rbis:1:over",
+       "fc2:823574:player-596019:hits_runs_rbis:1:over"
+      ],
+      "filled": 8,
+      "shortfall": 7,
+      "games": 4,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:822762:player-805808:hits_runs_rbis:1:over",
+       "fc2:824143:player-677951:hits_runs_rbis:1:over",
+       "fc2:824143:player-672580:hits_runs_rbis:1:over",
+       "fc2:822762:player-682985:hits_runs_rbis:1:over",
+       "fc2:823574:player-624413:hits_runs_rbis:1:over",
+       "fc2:823574:player-701807:hits_runs_rbis:1:over",
+       "fc2:823007:player-805811:hits_runs_rbis:1:over",
+       "fc2:823007:player-691026:hits_runs_rbis:1:over"
+      ],
+      "filled": 8,
+      "shortfall": 7,
+      "games": 4,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:824307:player-621111:strikeouts:4:over",
+    "fc2:825030:player-647336:pitcher_outs:15:over",
+    "fc2:823574:player-640455:pitcher_outs:17:over",
+    "fc2:824384:player-545341:hits:1:over",
+    "fc2:823654:player-608331:strikeouts:5:over",
+    "fc2:823333:player-664040:hits_runs_rbis:1:over",
+    "fc2:823333:player-665833:hits:1:over",
+    "fc2:823333:player-665833:hits_runs_rbis:1:over",
+    "fc2:823333:player-687462:hits_runs_rbis:1:over",
+    "fc2:823333:player-663968:hits_runs_rbis:1:over",
+    "fc2:823333:player-664040:hits:1:over",
+    "fc2:823333:player-668804:hits_runs_rbis:1:over",
+    "fc2:823333:player-656811:hits:1:over",
+    "fc2:822925:player-680869:hits_runs_rbis:1:over",
+    "fc2:823333:player-656811:hits_runs_rbis:1:over",
+    "fc2:822849:player-679822:hits:1:over",
+    "fc2:822849:player-596115:hits_runs_rbis:1:over",
+    "fc2:822849:player-686765:hits_runs_rbis:1:over",
+    "fc2:824143:player-686681:hits:1:over",
+    "fc2:824143:player-695506:hits:1:over",
+    "fc2:823654:player-668885:hits_runs_rbis:1:over",
+    "fc2:822762:player-623454:strikeouts:4:over",
+    "fc2:824466:player-680574:hits_runs_rbis:1:over",
+    "fc2:823333:player-668804:hits:1:over",
+    "fc2:824143:player-664774:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:825030:player-647336:pitcher_outs:15:over",
+    "fc2:823333:player-668804:hits_runs_rbis:1:over",
+    "fc2:822925:player-680869:hits_runs_rbis:1:over",
+    "fc2:822849:player-596115:hits_runs_rbis:1:over",
+    "fc2:823333:player-664040:hits_runs_rbis:1:over",
+    "fc2:824384:player-545341:hits:1:over",
+    "fc2:822849:player-686765:hits_runs_rbis:1:over",
+    "fc2:824143:player-695506:hits:1:over",
+    "fc2:823654:player-668885:hits_runs_rbis:1:over",
+    "fc2:824143:player-686681:hits:1:over",
+    "fc2:824466:player-680574:hits_runs_rbis:1:over",
+    "fc2:823574:player-640455:pitcher_outs:17:over",
+    "fc2:822762:player-623454:strikeouts:4:over",
+    "fc2:824307:player-621111:strikeouts:4:over",
+    "fc2:823654:player-608331:strikeouts:5:over"
+   ],
+   "A_conc": {
+    "games": 11,
+    "max_per_game": 10,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-16": {
+   "N": 18,
+   "N_cap": 11,
+   "champion_removed_by_cap": 7,
+   "universe": 0,
+   "universe_games": 0,
+   "universe_players": 0,
+   "universe_by_market": {},
+   "C_gate_pass": 0,
+   "C_gate_players": 0,
+   "C_gate_games": 0,
+   "gates": {
+    "games_with_state": 12,
+    "rows_in_game": 0,
+    "eligible": 0,
+    "game_final_state_wrong_payload_date": 3,
+    "games_scheduled": 15
+   },
+   "arms": {
+    "original": {
+     "target": 18,
+     "B": {
+      "ids": [],
+      "filled": 0,
+      "shortfall": 18,
+      "games": 0,
+      "max_per_game": 0,
+      "share_price_le_-250": null
+     },
+     "C": {
+      "ids": [],
+      "filled": 0,
+      "shortfall": 18,
+      "games": 0,
+      "max_per_game": 0,
+      "share_price_le_-250": null
+     }
+    },
+    "cap": {
+     "target": 11,
+     "B": {
+      "ids": [],
+      "filled": 0,
+      "shortfall": 11,
+      "games": 0,
+      "max_per_game": 0,
+      "share_price_le_-250": null
+     },
+     "C": {
+      "ids": [],
+      "filled": 0,
+      "shortfall": 11,
+      "games": 0,
+      "max_per_game": 0,
+      "share_price_le_-250": null
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:822763:player-672456:pitcher_outs:16:over",
+    "fc2:822846:player-669022:pitcher_outs:15:over",
+    "fc2:825031:player-687473:strikeouts:4:over",
+    "fc2:824467:player-671096:pitcher_outs:15:over",
+    "fc2:824382:player-641743:strikeouts:4:over",
+    "fc2:824382:player-545341:hits:1:over",
+    "fc2:824382:player-671976:hits_runs_rbis:1:over",
+    "fc2:824382:player-695657:hits_runs_rbis:1:over",
+    "fc2:823655:player-668904:hits_runs_rbis:1:over",
+    "fc2:823655:player-668952:hits_runs_rbis:1:over",
+    "fc2:824467:player-680574:hits_runs_rbis:1:over",
+    "fc2:824467:player-668709:hits_runs_rbis:1:over",
+    "fc2:824467:player-682829:hits:1:over",
+    "fc2:824467:player-701398:hits_runs_rbis:1:over",
+    "fc2:824467:player-701398:hits:1:over",
+    "fc2:824467:player-553993:hits_runs_rbis:1:over",
+    "fc2:822680:player-686611:hits_runs_rbis:1:over",
+    "fc2:822846:player-643376:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:824467:player-701398:hits_runs_rbis:1:over",
+    "fc2:822846:player-669022:pitcher_outs:15:over",
+    "fc2:824467:player-671096:pitcher_outs:15:over",
+    "fc2:822680:player-686611:hits_runs_rbis:1:over",
+    "fc2:823655:player-668904:hits_runs_rbis:1:over",
+    "fc2:824382:player-545341:hits:1:over",
+    "fc2:824382:player-671976:hits_runs_rbis:1:over",
+    "fc2:822846:player-643376:hits_runs_rbis:1:over",
+    "fc2:823655:player-668952:hits_runs_rbis:1:over",
+    "fc2:822763:player-672456:pitcher_outs:16:over",
+    "fc2:825031:player-687473:strikeouts:4:over"
+   ],
+   "A_conc": {
+    "games": 7,
+    "max_per_game": 7,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-17": {
+   "N": 6,
+   "N_cap": 5,
+   "champion_removed_by_cap": 1,
+   "universe": 37,
+   "universe_games": 1,
+   "universe_players": 20,
+   "universe_by_market": {
+    "hits_runs_rbis": 15,
+    "pitcher_outs": 2,
+    "hits": 18,
+    "strikeouts": 2
+   },
+   "C_gate_pass": 19,
+   "C_gate_players": 14,
+   "C_gate_games": 1,
+   "gates": {
+    "games_with_state": 8,
+    "rows_in_game": 182,
+    "eligible": 37,
+    "fail_market": 142,
+    "fail_price_shorter_than_-350": 3,
+    "fail_unpriced": 2,
+    "game_final_state_wrong_payload_date": 1,
+    "games_scheduled": 9
+   },
+   "arms": {
+    "original": {
+     "target": 6,
+     "B": {
+      "ids": [
+       "fc2:822924:player-650490:hits:1:over",
+       "fc2:822924:player-802415:hits_runs_rbis:1:over"
+      ],
+      "filled": 2,
+      "shortfall": 4,
+      "games": 1,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:822924:player-802415:hits_runs_rbis:1:over",
+       "fc2:822924:player-680869:hits_runs_rbis:1:over"
+      ],
+      "filled": 2,
+      "shortfall": 4,
+      "games": 1,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.5
+     }
+    },
+    "cap": {
+     "target": 5,
+     "B": {
+      "ids": [
+       "fc2:822924:player-650490:hits:1:over",
+       "fc2:822924:player-802415:hits_runs_rbis:1:over"
+      ],
+      "filled": 2,
+      "shortfall": 3,
+      "games": 1,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:822924:player-802415:hits_runs_rbis:1:over",
+       "fc2:822924:player-680869:hits_runs_rbis:1:over"
+      ],
+      "filled": 2,
+      "shortfall": 3,
+      "games": 1,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.5
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:824548:player-607200:strikeouts:4:over",
+    "fc2:822924:player-641680:hits_runs_rbis:1:over",
+    "fc2:822924:player-675961:hits_runs_rbis:1:over",
+    "fc2:822924:player-622268:hits_runs_rbis:1:over",
+    "fc2:824305:player-685299:strikeouts:4:over",
+    "fc2:822845:player-670032:hits:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:822924:player-622268:hits_runs_rbis:1:over",
+    "fc2:822924:player-641680:hits_runs_rbis:1:over",
+    "fc2:822845:player-670032:hits:1:over",
+    "fc2:824305:player-685299:strikeouts:4:over",
+    "fc2:824548:player-607200:strikeouts:4:over"
+   ],
+   "A_conc": {
+    "games": 4,
+    "max_per_game": 3,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-18": {
+   "N": 12,
+   "N_cap": 9,
+   "champion_removed_by_cap": 3,
+   "universe": 35,
+   "universe_games": 1,
+   "universe_players": 19,
+   "universe_by_market": {
+    "strikeouts": 1,
+    "hits_runs_rbis": 16,
+    "hits": 18
+   },
+   "C_gate_pass": 21,
+   "C_gate_players": 16,
+   "C_gate_games": 1,
+   "gates": {
+    "games_with_state": 11,
+    "rows_in_game": 178,
+    "eligible": 35,
+    "fail_market": 140,
+    "fail_price_shorter_than_-350": 2,
+    "fail_unpriced": 1,
+    "game_final_state_wrong_payload_date": 4,
+    "games_scheduled": 15
+   },
+   "arms": {
+    "original": {
+     "target": 12,
+     "B": {
+      "ids": [
+       "fc2:823572:player-607208:hits_runs_rbis:1:over",
+       "fc2:823572:player-596019:hits_runs_rbis:1:over"
+      ],
+      "filled": 2,
+      "shortfall": 10,
+      "games": 1,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:823572:player-607208:hits_runs_rbis:1:over",
+       "fc2:823572:player-547180:hits_runs_rbis:1:over"
+      ],
+      "filled": 2,
+      "shortfall": 10,
+      "games": 1,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    },
+    "cap": {
+     "target": 9,
+     "B": {
+      "ids": [
+       "fc2:823572:player-607208:hits_runs_rbis:1:over",
+       "fc2:823572:player-596019:hits_runs_rbis:1:over"
+      ],
+      "filled": 2,
+      "shortfall": 7,
+      "games": 1,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:823572:player-607208:hits_runs_rbis:1:over",
+       "fc2:823572:player-547180:hits_runs_rbis:1:over"
+      ],
+      "filled": 2,
+      "shortfall": 7,
+      "games": 1,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:823252:player-663969:strikeouts:4:over",
+    "fc2:823331:player-677976:strikeouts:4:over",
+    "fc2:823977:player-687570:pitcher_outs:15:over",
+    "fc2:824463:player-695505:strikeouts:4:over",
+    "fc2:822847:player-677958:strikeouts:4:over",
+    "fc2:822923:player-670764:hits_runs_rbis:1:over",
+    "fc2:822847:player-553869:hits_runs_rbis:1:over",
+    "fc2:822923:player-596115:hits_runs_rbis:1:over",
+    "fc2:822847:player-669394:hits_runs_rbis:1:over",
+    "fc2:823252:player-669364:hits_runs_rbis:1:over",
+    "fc2:823252:player-691788:hits_runs_rbis:1:over",
+    "fc2:823252:player-665052:hits:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823977:player-687570:pitcher_outs:15:over",
+    "fc2:823252:player-669364:hits_runs_rbis:1:over",
+    "fc2:822923:player-596115:hits_runs_rbis:1:over",
+    "fc2:822923:player-670764:hits_runs_rbis:1:over",
+    "fc2:822847:player-669394:hits_runs_rbis:1:over",
+    "fc2:823252:player-691788:hits_runs_rbis:1:over",
+    "fc2:822847:player-553869:hits_runs_rbis:1:over",
+    "fc2:824463:player-695505:strikeouts:4:over",
+    "fc2:823331:player-677976:strikeouts:4:over"
+   ],
+   "A_conc": {
+    "games": 6,
+    "max_per_game": 4,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-19": {
+   "N": 13,
+   "N_cap": 12,
+   "champion_removed_by_cap": 1,
+   "universe": 151,
+   "universe_games": 4,
+   "universe_players": 79,
+   "universe_by_market": {
+    "strikeouts": 8,
+    "hits_runs_rbis": 64,
+    "hits": 71,
+    "pitcher_outs": 8
+   },
+   "C_gate_pass": 86,
+   "C_gate_players": 61,
+   "C_gate_games": 4,
+   "gates": {
+    "games_with_state": 12,
+    "rows_in_game": 730,
+    "eligible": 151,
+    "fail_market": 571,
+    "fail_unpriced": 6,
+    "fail_price_shorter_than_-350": 8,
+    "game_final_state_wrong_payload_date": 3,
+    "games_scheduled": 15
+   },
+   "arms": {
+    "original": {
+     "target": 13,
+     "B": {
+      "ids": [
+       "fc2:823571:player-650333:hits_runs_rbis:1:over",
+       "fc2:823571:player-666182:hits_runs_rbis:1:over",
+       "fc2:825029:player-641355:hits_runs_rbis:1:over",
+       "fc2:825029:player-671218:hits_runs_rbis:1:over",
+       "fc2:824461:player-608348:hits_runs_rbis:1:over",
+       "fc2:824137:player-514888:hits_runs_rbis:1:over",
+       "fc2:824137:player-621566:hits_runs_rbis:1:over",
+       "fc2:824461:player-673548:hits_runs_rbis:1:over"
+      ],
+      "filled": 8,
+      "shortfall": 5,
+      "games": 4,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:823571:player-650333:hits_runs_rbis:1:over",
+       "fc2:824461:player-701398:hits_runs_rbis:1:over",
+       "fc2:825029:player-641355:hits_runs_rbis:1:over",
+       "fc2:824137:player-621566:hits_runs_rbis:1:over",
+       "fc2:825029:player-672695:hits_runs_rbis:1:over",
+       "fc2:824137:player-670623:hits_runs_rbis:1:over",
+       "fc2:823571:player-607208:hits_runs_rbis:1:over",
+       "fc2:824461:player-673548:hits_runs_rbis:1:over"
+      ],
+      "filled": 8,
+      "shortfall": 5,
+      "games": 4,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    },
+    "cap": {
+     "target": 12,
+     "B": {
+      "ids": [
+       "fc2:823571:player-650333:hits_runs_rbis:1:over",
+       "fc2:823571:player-666182:hits_runs_rbis:1:over",
+       "fc2:825029:player-641355:hits_runs_rbis:1:over",
+       "fc2:825029:player-671218:hits_runs_rbis:1:over",
+       "fc2:824461:player-608348:hits_runs_rbis:1:over",
+       "fc2:824137:player-514888:hits_runs_rbis:1:over",
+       "fc2:824137:player-621566:hits_runs_rbis:1:over",
+       "fc2:824461:player-673548:hits_runs_rbis:1:over"
+      ],
+      "filled": 8,
+      "shortfall": 4,
+      "games": 4,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:823571:player-650333:hits_runs_rbis:1:over",
+       "fc2:824461:player-701398:hits_runs_rbis:1:over",
+       "fc2:825029:player-641355:hits_runs_rbis:1:over",
+       "fc2:824137:player-621566:hits_runs_rbis:1:over",
+       "fc2:825029:player-672695:hits_runs_rbis:1:over",
+       "fc2:824137:player-670623:hits_runs_rbis:1:over",
+       "fc2:823571:player-607208:hits_runs_rbis:1:over",
+       "fc2:824461:player-673548:hits_runs_rbis:1:over"
+      ],
+      "filled": 8,
+      "shortfall": 4,
+      "games": 4,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:823003:player-700241:strikeouts:4:over",
+    "fc2:822843:player-615698:strikeouts:4:over",
+    "fc2:824545:player-690993:hits:1:over",
+    "fc2:822921:player-596115:hits_runs_rbis:1:over",
+    "fc2:822921:player-680776:hits_runs_rbis:1:over",
+    "fc2:823976:player-657746:pitcher_outs:16:over",
+    "fc2:824137:player-669713:pitcher_outs:15:over",
+    "fc2:825029:player-660821:hits_runs_rbis:1:over",
+    "fc2:825029:player-571448:hits_runs_rbis:1:over",
+    "fc2:825029:player-694374:hits_runs_rbis:1:over",
+    "fc2:823330:player-663968:hits_runs_rbis:1:over",
+    "fc2:823899:player-683766:hits_runs_rbis:1:over",
+    "fc2:823249:player-691788:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:824137:player-669713:pitcher_outs:15:over",
+    "fc2:822921:player-596115:hits_runs_rbis:1:over",
+    "fc2:823330:player-663968:hits_runs_rbis:1:over",
+    "fc2:825029:player-571448:hits_runs_rbis:1:over",
+    "fc2:822921:player-680776:hits_runs_rbis:1:over",
+    "fc2:825029:player-694374:hits_runs_rbis:1:over",
+    "fc2:823249:player-691788:hits_runs_rbis:1:over",
+    "fc2:823899:player-683766:hits_runs_rbis:1:over",
+    "fc2:824545:player-690993:hits:1:over",
+    "fc2:822843:player-615698:strikeouts:4:over",
+    "fc2:823976:player-657746:pitcher_outs:16:over",
+    "fc2:823003:player-700241:strikeouts:4:over"
+   ],
+   "A_conc": {
+    "games": 10,
+    "max_per_game": 3,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-20": {
+   "N": 28,
+   "N_cap": 12,
+   "champion_removed_by_cap": 16,
+   "universe": 75,
+   "universe_games": 3,
+   "universe_players": 41,
+   "universe_by_market": {
+    "hits": 36,
+    "hits_runs_rbis": 33,
+    "strikeouts": 4,
+    "pitcher_outs": 2
+   },
+   "C_gate_pass": 33,
+   "C_gate_players": 25,
+   "C_gate_games": 2,
+   "gates": {
+    "games_with_state": 15,
+    "rows_in_game": 362,
+    "eligible": 75,
+    "fail_market": 282,
+    "fail_price_shorter_than_-350": 3,
+    "fail_unpriced": 3,
+    "games_scheduled": 15
+   },
+   "arms": {
+    "original": {
+     "target": 28,
+     "B": {
+      "ids": [
+       "fc2:824381:player-608070:hits_runs_rbis:1:over",
+       "fc2:824139:player-665161:hits_runs_rbis:1:over",
+       "fc2:824139:player-673237:hits_runs_rbis:1:over",
+       "fc2:824381:player-666176:hits_runs_rbis:1:over",
+       "fc2:824546:player-686668:hits_runs_rbis:1:over"
+      ],
+      "filled": 5,
+      "shortfall": 23,
+      "games": 3,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.8
+     },
+     "C": {
+      "ids": [
+       "fc2:824381:player-669127:hits_runs_rbis:1:over",
+       "fc2:824139:player-665161:hits_runs_rbis:1:over",
+       "fc2:824139:player-621566:hits_runs_rbis:1:over",
+       "fc2:824381:player-703607:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 24,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.75
+     }
+    },
+    "cap": {
+     "target": 12,
+     "B": {
+      "ids": [
+       "fc2:824381:player-608070:hits_runs_rbis:1:over",
+       "fc2:824139:player-665161:hits_runs_rbis:1:over",
+       "fc2:824139:player-673237:hits_runs_rbis:1:over",
+       "fc2:824381:player-666176:hits_runs_rbis:1:over",
+       "fc2:824546:player-686668:hits_runs_rbis:1:over"
+      ],
+      "filled": 5,
+      "shortfall": 7,
+      "games": 3,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.8
+     },
+     "C": {
+      "ids": [
+       "fc2:824381:player-669127:hits_runs_rbis:1:over",
+       "fc2:824139:player-665161:hits_runs_rbis:1:over",
+       "fc2:824139:player-621566:hits_runs_rbis:1:over",
+       "fc2:824381:player-703607:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 8,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.75
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:823001:player-663623:strikeouts:4:over",
+    "fc2:824789:player-687064:pitcher_outs:16:over",
+    "fc2:822922:player-680776:hits_runs_rbis:1:over",
+    "fc2:824381:player-675961:hits:1:over",
+    "fc2:824381:player-680869:hits_runs_rbis:1:over",
+    "fc2:824381:player-675961:hits_runs_rbis:1:over",
+    "fc2:823329:player-686475:hits:1:over",
+    "fc2:824381:player-622268:hits:1:over",
+    "fc2:824381:player-641680:hits_runs_rbis:1:over",
+    "fc2:824381:player-622268:hits_runs_rbis:1:over",
+    "fc2:824381:player-680869:hits:1:over",
+    "fc2:824381:player-695720:hits:1:over",
+    "fc2:824381:player-695720:hits_runs_rbis:1:over",
+    "fc2:824381:player-669127:hits_runs_rbis:1:over",
+    "fc2:822922:player-663776:strikeouts:4:over",
+    "fc2:823570:player-682626:hits_runs_rbis:1:over",
+    "fc2:824546:player-686668:hits_runs_rbis:1:over",
+    "fc2:824139:player-669397:hits:1:over",
+    "fc2:822844:player-678218:hits_runs_rbis:1:over",
+    "fc2:822922:player-670764:hits_runs_rbis:1:over",
+    "fc2:824789:player-665750:hits_runs_rbis:1:over",
+    "fc2:824789:player-681297:hits_runs_rbis:1:over",
+    "fc2:824789:player-665966:hits_runs_rbis:1:over",
+    "fc2:824789:player-687637:hits:1:over",
+    "fc2:824789:player-669236:hits_runs_rbis:1:over",
+    "fc2:824789:player-687637:hits_runs_rbis:1:over",
+    "fc2:824789:player-691723:hits_runs_rbis:1:over",
+    "fc2:824789:player-683002:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:824381:player-669127:hits_runs_rbis:1:over",
+    "fc2:824381:player-680869:hits_runs_rbis:1:over",
+    "fc2:824789:player-683002:hits_runs_rbis:1:over",
+    "fc2:822922:player-670764:hits_runs_rbis:1:over",
+    "fc2:824789:player-687637:hits_runs_rbis:1:over",
+    "fc2:822922:player-680776:hits_runs_rbis:1:over",
+    "fc2:823570:player-682626:hits_runs_rbis:1:over",
+    "fc2:824546:player-686668:hits_runs_rbis:1:over",
+    "fc2:822844:player-678218:hits_runs_rbis:1:over",
+    "fc2:823001:player-663623:strikeouts:4:over",
+    "fc2:824139:player-669397:hits:1:over",
+    "fc2:823329:player-686475:hits:1:over"
+   ],
+   "A_conc": {
+    "games": 9,
+    "max_per_game": 10,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-21": {
+   "N": 3,
+   "N_cap": 3,
+   "champion_removed_by_cap": 0,
+   "universe": 38,
+   "universe_games": 2,
+   "universe_players": 21,
+   "universe_by_market": {
+    "strikeouts": 2,
+    "hits_runs_rbis": 18,
+    "hits": 18
+   },
+   "C_gate_pass": 23,
+   "C_gate_players": 17,
+   "C_gate_games": 1,
+   "gates": {
+    "games_with_state": 2,
+    "rows_in_game": 179,
+    "eligible": 38,
+    "fail_market": 140,
+    "fail_unpriced": 5,
+    "game_final_state_wrong_payload_date": 1,
+    "games_scheduled": 3
+   },
+   "arms": {
+    "original": {
+     "target": 3,
+     "B": {
+      "ids": [
+       "fc2:824221:player-650402:hits_runs_rbis:1:over",
+       "fc2:824221:player-695734:hits_runs_rbis:1:over",
+       "fc2:824787:player-681297:hits_runs_rbis:1:over"
+      ],
+      "filled": 3,
+      "shortfall": 0,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.6666666666666666
+     },
+     "C": {
+      "ids": [
+       "fc2:824221:player-682985:hits_runs_rbis:1:over",
+       "fc2:824221:player-695578:hits_runs_rbis:1:over"
+      ],
+      "filled": 2,
+      "shortfall": 1,
+      "games": 1,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    },
+    "cap": {
+     "target": 3,
+     "B": {
+      "ids": [
+       "fc2:824221:player-650402:hits_runs_rbis:1:over",
+       "fc2:824221:player-695734:hits_runs_rbis:1:over",
+       "fc2:824787:player-681297:hits_runs_rbis:1:over"
+      ],
+      "filled": 3,
+      "shortfall": 0,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.6666666666666666
+     },
+     "C": {
+      "ids": [
+       "fc2:824221:player-682985:hits_runs_rbis:1:over",
+       "fc2:824221:player-695578:hits_runs_rbis:1:over"
+      ],
+      "filled": 2,
+      "shortfall": 1,
+      "games": 1,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:824787:player-702056:strikeouts:4:over",
+    "fc2:823169:player-805673:pitcher_outs:16:over",
+    "fc2:824787:player-681297:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823169:player-805673:pitcher_outs:16:over",
+    "fc2:824787:player-702056:strikeouts:4:over",
+    "fc2:824787:player-681297:hits_runs_rbis:1:over"
+   ],
+   "A_conc": {
+    "games": 2,
+    "max_per_game": 2,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-22": {
+   "N": 24,
+   "N_cap": 15,
+   "champion_removed_by_cap": 9,
+   "universe": 1,
+   "universe_games": 1,
+   "universe_players": 1,
+   "universe_by_market": {
+    "hits_runs_rbis": 1
+   },
+   "C_gate_pass": 0,
+   "C_gate_players": 0,
+   "C_gate_games": 0,
+   "gates": {
+    "game_no_prior_commit": 1,
+    "games_with_state": 10,
+    "rows_in_game": 1,
+    "eligible": 1,
+    "game_final_state_wrong_payload_date": 5,
+    "games_scheduled": 16
+   },
+   "arms": {
+    "original": {
+     "target": 24,
+     "B": {
+      "ids": [
+       "fc2:823543:player-689414:hits_runs_rbis:1:over"
+      ],
+      "filled": 1,
+      "shortfall": 23,
+      "games": 1,
+      "max_per_game": 1,
+      "share_price_le_-250": 0.0
+     },
+     "C": {
+      "ids": [],
+      "filled": 0,
+      "shortfall": 24,
+      "games": 0,
+      "max_per_game": 0,
+      "share_price_le_-250": null
+     }
+    },
+    "cap": {
+     "target": 15,
+     "B": {
+      "ids": [
+       "fc2:823543:player-689414:hits_runs_rbis:1:over"
+      ],
+      "filled": 1,
+      "shortfall": 14,
+      "games": 1,
+      "max_per_game": 1,
+      "share_price_le_-250": 0.0
+     },
+     "C": {
+      "ids": [],
+      "filled": 0,
+      "shortfall": 15,
+      "games": 0,
+      "max_per_game": 0,
+      "share_price_le_-250": null
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:823412:player-669160:strikeouts:4:over",
+    "fc2:824785:player-605135:strikeouts:4:over",
+    "fc2:823328:player-669467:pitcher_outs:16:over",
+    "fc2:824302:player-647336:pitcher_outs:15:over",
+    "fc2:823543:player-689414:hits:1:over",
+    "fc2:823543:player-676609:hits_runs_rbis:1:over",
+    "fc2:823543:player-682987:hits_runs_rbis:1:over",
+    "fc2:823543:player-680700:hits_runs_rbis:1:over",
+    "fc2:823543:player-689414:hits_runs_rbis:1:over",
+    "fc2:823328:player-701675:hits_runs_rbis:1:over",
+    "fc2:823328:player-691026:hits_runs_rbis:1:over",
+    "fc2:824709:player-595978:hits_runs_rbis:1:over",
+    "fc2:824709:player-677587:hits_runs_rbis:1:over",
+    "fc2:822840:player-679822:hits:1:over",
+    "fc2:823412:player-669016:hits_runs_rbis:1:over",
+    "fc2:824624:player-665052:hits_runs_rbis:1:over",
+    "fc2:823494:player-641857:hits_runs_rbis:1:over",
+    "fc2:823412:player-669016:hits:1:over",
+    "fc2:823412:player-800325:hits_runs_rbis:1:over",
+    "fc2:823494:player-670764:hits_runs_rbis:1:over",
+    "fc2:823494:player-663743:hits:1:over",
+    "fc2:823494:player-656775:hits_runs_rbis:1:over",
+    "fc2:823494:player-663743:hits_runs_rbis:1:over",
+    "fc2:823089:player-668227:hits:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:824302:player-647336:pitcher_outs:15:over",
+    "fc2:823543:player-689414:hits_runs_rbis:1:over",
+    "fc2:823328:player-691026:hits_runs_rbis:1:over",
+    "fc2:823328:player-701675:hits_runs_rbis:1:over",
+    "fc2:824709:player-677587:hits_runs_rbis:1:over",
+    "fc2:823412:player-669016:hits_runs_rbis:1:over",
+    "fc2:823412:player-800325:hits_runs_rbis:1:over",
+    "fc2:823494:player-670764:hits_runs_rbis:1:over",
+    "fc2:824709:player-595978:hits_runs_rbis:1:over",
+    "fc2:823494:player-656775:hits_runs_rbis:1:over",
+    "fc2:824624:player-665052:hits_runs_rbis:1:over",
+    "fc2:823543:player-676609:hits_runs_rbis:1:over",
+    "fc2:823089:player-668227:hits:1:over",
+    "fc2:824785:player-605135:strikeouts:4:over",
+    "fc2:822840:player-679822:hits:1:over"
+   ],
+   "A_conc": {
+    "games": 10,
+    "max_per_game": 5,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-23": {
+   "N": 27,
+   "N_cap": 17,
+   "champion_removed_by_cap": 10,
+   "universe": 64,
+   "universe_games": 2,
+   "universe_players": 39,
+   "universe_by_market": {
+    "pitcher_outs": 2,
+    "hits_runs_rbis": 23,
+    "hits": 36,
+    "strikeouts": 3
+   },
+   "C_gate_pass": 33,
+   "C_gate_players": 28,
+   "C_gate_games": 2,
+   "gates": {
+    "game_final_state_wrong_payload_date": 5,
+    "games_with_state": 12,
+    "rows_in_game": 339,
+    "fail_market": 268,
+    "fail_price_shorter_than_-350": 6,
+    "fail_unpriced": 3,
+    "eligible": 64,
+    "fail_game_not_pregame": 1,
+    "games_scheduled": 17
+   },
+   "arms": {
+    "original": {
+     "target": 27,
+     "B": {
+      "ids": [
+       "fc2:823168:player-806367:hits_runs_rbis:1:over",
+       "fc2:823168:player-807712:hits:1:over",
+       "fc2:824223:player-693307:hits_runs_rbis:1:over",
+       "fc2:824223:player-701162:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 23,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:824223:player-682985:hits_runs_rbis:1:over",
+       "fc2:824223:player-695578:hits_runs_rbis:1:over",
+       "fc2:823168:player-668904:hits_runs_rbis:1:over",
+       "fc2:823168:player-806367:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 23,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    },
+    "cap": {
+     "target": 17,
+     "B": {
+      "ids": [
+       "fc2:823168:player-806367:hits_runs_rbis:1:over",
+       "fc2:823168:player-807712:hits:1:over",
+       "fc2:824223:player-693307:hits_runs_rbis:1:over",
+       "fc2:824223:player-701162:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 13,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:824223:player-682985:hits_runs_rbis:1:over",
+       "fc2:824223:player-695578:hits_runs_rbis:1:over",
+       "fc2:823168:player-668904:hits_runs_rbis:1:over",
+       "fc2:823168:player-806367:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 13,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:823894:player-592662:strikeouts:4:over",
+    "fc2:824301:player-518876:strikeouts:4:over",
+    "fc2:823168:player-687570:pitcher_outs:15:over",
+    "fc2:824625:player-687473:strikeouts:4:over",
+    "fc2:824951:player-700712:strikeouts:5:over",
+    "fc2:824223:player-683083:hits_runs_rbis:1:over",
+    "fc2:823410:player-669016:hits_runs_rbis:1:over",
+    "fc2:824710:player-596115:hits_runs_rbis:1:over",
+    "fc2:823410:player-669016:hits:1:over",
+    "fc2:824868:player-553993:hits_runs_rbis:1:over",
+    "fc2:823327:player-669357:hits_runs_rbis:1:over",
+    "fc2:823327:player-691026:hits_runs_rbis:1:over",
+    "fc2:823410:player-702222:hits_runs_rbis:1:over",
+    "fc2:823327:player-701675:hits_runs_rbis:1:over",
+    "fc2:823492:player-656775:hits_runs_rbis:1:over",
+    "fc2:823492:player-680700:hits_runs_rbis:1:over",
+    "fc2:823492:player-676609:hits_runs_rbis:1:over",
+    "fc2:824625:player-665804:hits_runs_rbis:1:over",
+    "fc2:824625:player-691788:hits_runs_rbis:1:over",
+    "fc2:824625:player-688363:hits_runs_rbis:1:over",
+    "fc2:824625:player-665052:hits_runs_rbis:1:over",
+    "fc2:824625:player-669065:hits_runs_rbis:1:over",
+    "fc2:823492:player-543037:pitcher_outs:17:over",
+    "fc2:823410:player-592663:hits_runs_rbis:1:over",
+    "fc2:824710:player-677587:hits_runs_rbis:1:over",
+    "fc2:823894:player-630105:hits_runs_rbis:1:over",
+    "fc2:823894:player-663656:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823168:player-687570:pitcher_outs:15:over",
+    "fc2:824710:player-596115:hits_runs_rbis:1:over",
+    "fc2:823894:player-663656:hits_runs_rbis:1:over",
+    "fc2:823327:player-701675:hits_runs_rbis:1:over",
+    "fc2:824710:player-677587:hits_runs_rbis:1:over",
+    "fc2:823410:player-669016:hits_runs_rbis:1:over",
+    "fc2:823327:player-691026:hits_runs_rbis:1:over",
+    "fc2:824625:player-669065:hits_runs_rbis:1:over",
+    "fc2:823410:player-702222:hits_runs_rbis:1:over",
+    "fc2:823492:player-656775:hits_runs_rbis:1:over",
+    "fc2:824625:player-665052:hits_runs_rbis:1:over",
+    "fc2:823492:player-676609:hits_runs_rbis:1:over",
+    "fc2:823894:player-630105:hits_runs_rbis:1:over",
+    "fc2:824223:player-683083:hits_runs_rbis:1:over",
+    "fc2:824868:player-553993:hits_runs_rbis:1:over",
+    "fc2:824301:player-518876:strikeouts:4:over",
+    "fc2:824951:player-700712:strikeouts:5:over"
+   ],
+   "A_conc": {
+    "games": 11,
+    "max_per_game": 6,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-24": {
+   "N": 13,
+   "N_cap": 8,
+   "champion_removed_by_cap": 5,
+   "universe": 82,
+   "universe_games": 4,
+   "universe_players": 47,
+   "universe_by_market": {
+    "pitcher_outs": 2,
+    "hits_runs_rbis": 39,
+    "hits": 38,
+    "strikeouts": 3
+   },
+   "C_gate_pass": 43,
+   "C_gate_players": 32,
+   "C_gate_games": 2,
+   "gates": {
+    "games_with_state": 9,
+    "rows_in_game": 373,
+    "eligible": 82,
+    "fail_market": 286,
+    "fail_price_shorter_than_-350": 2,
+    "fail_unpriced": 15,
+    "game_final_state_wrong_payload_date": 3,
+    "games_scheduled": 12
+   },
+   "arms": {
+    "original": {
+     "target": 13,
+     "B": {
+      "ids": [
+       "fc2:823411:player-664761:hits_runs_rbis:1:over",
+       "fc2:823411:player-650333:hits_runs_rbis:1:over",
+       "fc2:822842:player-608369:hits_runs_rbis:1:over",
+       "fc2:822842:player-665742:hits_runs_rbis:1:over",
+       "fc2:824707:player-677587:hits_runs_rbis:1:over",
+       "fc2:824707:player-596115:hits_runs_rbis:1:over",
+       "fc2:823493:player-668723:hits_runs_rbis:1:over",
+       "fc2:823493:player-676609:hits_runs_rbis:1:over"
+      ],
+      "filled": 8,
+      "shortfall": 5,
+      "games": 4,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.5
+     },
+     "C": {
+      "ids": [
+       "fc2:823411:player-650333:hits_runs_rbis:1:over",
+       "fc2:823411:player-668930:hits_runs_rbis:1:over",
+       "fc2:822842:player-701807:hits_runs_rbis:1:over",
+       "fc2:822842:player-666182:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 9,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    },
+    "cap": {
+     "target": 8,
+     "B": {
+      "ids": [
+       "fc2:823411:player-664761:hits_runs_rbis:1:over",
+       "fc2:823411:player-650333:hits_runs_rbis:1:over",
+       "fc2:822842:player-608369:hits_runs_rbis:1:over",
+       "fc2:822842:player-665742:hits_runs_rbis:1:over",
+       "fc2:824707:player-677587:hits_runs_rbis:1:over",
+       "fc2:824707:player-596115:hits_runs_rbis:1:over",
+       "fc2:823493:player-668723:hits_runs_rbis:1:over",
+       "fc2:823493:player-676609:hits_runs_rbis:1:over"
+      ],
+      "filled": 8,
+      "shortfall": 0,
+      "games": 4,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.5
+     },
+     "C": {
+      "ids": [
+       "fc2:823411:player-650333:hits_runs_rbis:1:over",
+       "fc2:823411:player-668930:hits_runs_rbis:1:over",
+       "fc2:822842:player-701807:hits_runs_rbis:1:over",
+       "fc2:822842:player-666182:hits_runs_rbis:1:over"
+      ],
+      "filled": 4,
+      "shortfall": 4,
+      "games": 2,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:823326:player-681517:strikeouts:4:over",
+    "fc2:824623:player-571510:pitcher_outs:16:over",
+    "fc2:824623:player-663969:strikeouts:4:over",
+    "fc2:823326:player-701675:hits_runs_rbis:1:over",
+    "fc2:823326:player-691026:hits_runs_rbis:1:over",
+    "fc2:824707:player-596115:hits_runs_rbis:1:over",
+    "fc2:824707:player-681508:hits:1:over",
+    "fc2:824707:player-677587:hits_runs_rbis:1:over",
+    "fc2:823493:player-676609:hits_runs_rbis:1:over",
+    "fc2:823493:player-670764:hits_runs_rbis:1:over",
+    "fc2:823493:player-680700:hits_runs_rbis:1:over",
+    "fc2:823493:player-668723:hits_runs_rbis:1:over",
+    "fc2:823493:player-689414:hits:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:824707:player-596115:hits_runs_rbis:1:over",
+    "fc2:824707:player-677587:hits_runs_rbis:1:over",
+    "fc2:823326:player-691026:hits_runs_rbis:1:over",
+    "fc2:823326:player-701675:hits_runs_rbis:1:over",
+    "fc2:823493:player-670764:hits_runs_rbis:1:over",
+    "fc2:823493:player-676609:hits_runs_rbis:1:over",
+    "fc2:824623:player-571510:pitcher_outs:16:over",
+    "fc2:824623:player-663969:strikeouts:4:over"
+   ],
+   "A_conc": {
+    "games": 4,
+    "max_per_game": 5,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-25": {
+   "N": 16,
+   "N_cap": 12,
+   "champion_removed_by_cap": 4,
+   "universe": 124,
+   "universe_games": 7,
+   "universe_players": 67,
+   "universe_by_market": {
+    "strikeouts": 7,
+    "hits_runs_rbis": 59,
+    "hits": 54,
+    "pitcher_outs": 4
+   },
+   "C_gate_pass": 57,
+   "C_gate_players": 41,
+   "C_gate_games": 3,
+   "gates": {
+    "games_with_state": 13,
+    "rows_in_game": 1097,
+    "fail_market": 855,
+    "fail_unpriced": 540,
+    "eligible": 124,
+    "fail_lineup_not_confirmed": 172,
+    "game_final_state_wrong_payload_date": 4,
+    "games_scheduled": 17
+   },
+   "arms": {
+    "original": {
+     "target": 16,
+     "B": {
+      "ids": [
+       "fc2:824220:player-804606:hits_runs_rbis:1:over",
+       "fc2:824220:player-693304:hits_runs_rbis:1:over",
+       "fc2:824706:player-691718:hits_runs_rbis:1:over",
+       "fc2:823409:player-650490:hits_runs_rbis:1:over",
+       "fc2:824706:player-663538:hits_runs_rbis:1:over",
+       "fc2:823409:player-664761:hits_runs_rbis:1:over",
+       "fc2:823652:player-668904:hits_runs_rbis:1:over",
+       "fc2:824058:player-686681:hits_runs_rbis:1:over",
+       "fc2:823816:player-691788:hits_runs_rbis:1:over",
+       "fc2:824058:player-670231:hits_runs_rbis:1:over",
+       "fc2:823652:player-668952:hits_runs_rbis:1:over",
+       "fc2:822681:player-674841:strikeouts:5:over"
+      ],
+      "filled": 12,
+      "shortfall": 4,
+      "games": 7,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.5
+     },
+     "C": {
+      "ids": [
+       "fc2:824220:player-805808:hits_runs_rbis:1:over",
+       "fc2:823409:player-802415:hits_runs_rbis:1:over",
+       "fc2:823409:player-691406:hits_runs_rbis:1:over",
+       "fc2:824220:player-682985:hits_runs_rbis:1:over",
+       "fc2:824706:player-596115:hits_runs_rbis:1:over",
+       "fc2:824706:player-663538:hits_runs_rbis:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 10,
+      "games": 3,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.8333333333333334
+     }
+    },
+    "cap": {
+     "target": 12,
+     "B": {
+      "ids": [
+       "fc2:824220:player-804606:hits_runs_rbis:1:over",
+       "fc2:824220:player-693304:hits_runs_rbis:1:over",
+       "fc2:824706:player-691718:hits_runs_rbis:1:over",
+       "fc2:823409:player-650490:hits_runs_rbis:1:over",
+       "fc2:824706:player-663538:hits_runs_rbis:1:over",
+       "fc2:823409:player-664761:hits_runs_rbis:1:over",
+       "fc2:823652:player-668904:hits_runs_rbis:1:over",
+       "fc2:824058:player-686681:hits_runs_rbis:1:over",
+       "fc2:823816:player-691788:hits_runs_rbis:1:over",
+       "fc2:824058:player-670231:hits_runs_rbis:1:over",
+       "fc2:823652:player-668952:hits_runs_rbis:1:over",
+       "fc2:822681:player-674841:strikeouts:5:over"
+      ],
+      "filled": 12,
+      "shortfall": 0,
+      "games": 7,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.5
+     },
+     "C": {
+      "ids": [
+       "fc2:824220:player-805808:hits_runs_rbis:1:over",
+       "fc2:823409:player-802415:hits_runs_rbis:1:over",
+       "fc2:823409:player-691406:hits_runs_rbis:1:over",
+       "fc2:824220:player-682985:hits_runs_rbis:1:over",
+       "fc2:824706:player-596115:hits_runs_rbis:1:over",
+       "fc2:824706:player-663538:hits_runs_rbis:1:over"
+      ],
+      "filled": 6,
+      "shortfall": 6,
+      "games": 3,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.8333333333333334
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:822681:player-674841:strikeouts:5:over",
+    "fc2:824058:player-664728:hits_runs_rbis:1:over",
+    "fc2:824058:player-686681:hits_runs_rbis:1:over",
+    "fc2:824058:player-670231:hits_runs_rbis:1:over",
+    "fc2:824220:player-687462:hits_runs_rbis:1:over",
+    "fc2:824220:player-665833:hits:1:over",
+    "fc2:823409:player-802415:hits_runs_rbis:1:over",
+    "fc2:823409:player-666018:hits_runs_rbis:1:over",
+    "fc2:823816:player-691788:hits_runs_rbis:1:over",
+    "fc2:823409:player-802415:hits:1:over",
+    "fc2:823652:player-668904:hits_runs_rbis:1:over",
+    "fc2:823652:player-668952:hits_runs_rbis:1:over",
+    "fc2:824706:player-678394:strikeouts:5:over",
+    "fc2:823409:player-622761:hits_runs_rbis:1:over",
+    "fc2:823248:player-669392:hits:1:over",
+    "fc2:823248:player-669392:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823409:player-802415:hits_runs_rbis:1:over",
+    "fc2:823409:player-666018:hits_runs_rbis:1:over",
+    "fc2:823652:player-668904:hits_runs_rbis:1:over",
+    "fc2:823248:player-669392:hits_runs_rbis:1:over",
+    "fc2:824220:player-687462:hits_runs_rbis:1:over",
+    "fc2:824058:player-686681:hits_runs_rbis:1:over",
+    "fc2:823816:player-691788:hits_runs_rbis:1:over",
+    "fc2:824058:player-670231:hits_runs_rbis:1:over",
+    "fc2:824220:player-665833:hits:1:over",
+    "fc2:824706:player-678394:strikeouts:5:over",
+    "fc2:823652:player-668952:hits_runs_rbis:1:over",
+    "fc2:822681:player-674841:strikeouts:5:over"
+   ],
+   "A_conc": {
+    "games": 8,
+    "max_per_game": 4,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-26": {
+   "N": 15,
+   "N_cap": 14,
+   "champion_removed_by_cap": 1,
+   "universe": 14,
+   "universe_games": 8,
+   "universe_players": 14,
+   "universe_by_market": {
+    "strikeouts": 5,
+    "hits_runs_rbis": 8,
+    "hits": 1
+   },
+   "C_gate_pass": 0,
+   "C_gate_players": 0,
+   "C_gate_games": 0,
+   "gates": {
+    "games_with_state": 10,
+    "rows_in_game": 14,
+    "eligible": 14,
+    "game_final_state_wrong_payload_date": 3,
+    "games_scheduled": 13
+   },
+   "arms": {
+    "original": {
+     "target": 15,
+     "B": {
+      "ids": [
+       "fc2:823733:player-701675:hits_runs_rbis:1:over",
+       "fc2:823407:player-656775:hits_runs_rbis:1:over",
+       "fc2:824543:player-666160:hits_runs_rbis:1:over",
+       "fc2:824543:player-678662:hits_runs_rbis:1:over",
+       "fc2:823165:player-683766:hits_runs_rbis:1:over",
+       "fc2:823407:player-670764:hits_runs_rbis:1:over",
+       "fc2:822759:player-702056:strikeouts:4:over",
+       "fc2:823165:player-813841:hits:1:over",
+       "fc2:823733:player-669357:hits_runs_rbis:1:over",
+       "fc2:824057:player-686555:hits_runs_rbis:1:over",
+       "fc2:824057:player-676440:strikeouts:4:over",
+       "fc2:822678:player-813349:strikeouts:4:over",
+       "fc2:823653:player-543135:strikeouts:4:over"
+      ],
+      "filled": 13,
+      "shortfall": 2,
+      "games": 8,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.0
+     },
+     "C": {
+      "ids": [],
+      "filled": 0,
+      "shortfall": 15,
+      "games": 0,
+      "max_per_game": 0,
+      "share_price_le_-250": null
+     }
+    },
+    "cap": {
+     "target": 14,
+     "B": {
+      "ids": [
+       "fc2:823733:player-701675:hits_runs_rbis:1:over",
+       "fc2:823407:player-656775:hits_runs_rbis:1:over",
+       "fc2:824543:player-666160:hits_runs_rbis:1:over",
+       "fc2:824543:player-678662:hits_runs_rbis:1:over",
+       "fc2:823165:player-683766:hits_runs_rbis:1:over",
+       "fc2:823407:player-670764:hits_runs_rbis:1:over",
+       "fc2:822759:player-702056:strikeouts:4:over",
+       "fc2:823165:player-813841:hits:1:over",
+       "fc2:823733:player-669357:hits_runs_rbis:1:over",
+       "fc2:824057:player-686555:hits_runs_rbis:1:over",
+       "fc2:824057:player-676440:strikeouts:4:over",
+       "fc2:822678:player-813349:strikeouts:4:over",
+       "fc2:823653:player-543135:strikeouts:4:over"
+      ],
+      "filled": 13,
+      "shortfall": 1,
+      "games": 8,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.0
+     },
+     "C": {
+      "ids": [],
+      "filled": 0,
+      "shortfall": 14,
+      "games": 0,
+      "max_per_game": 0,
+      "share_price_le_-250": null
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:822759:player-702056:strikeouts:4:over",
+    "fc2:822678:player-813349:strikeouts:4:over",
+    "fc2:824057:player-676440:strikeouts:4:over",
+    "fc2:823733:player-669160:strikeouts:4:over",
+    "fc2:823245:player-621111:strikeouts:4:over",
+    "fc2:823653:player-543135:strikeouts:4:over",
+    "fc2:823165:player-683766:hits_runs_rbis:1:over",
+    "fc2:823165:player-813841:hits:1:over",
+    "fc2:824543:player-666160:hits_runs_rbis:1:over",
+    "fc2:824057:player-686555:hits_runs_rbis:1:over",
+    "fc2:824543:player-678662:hits_runs_rbis:1:over",
+    "fc2:823733:player-669357:hits_runs_rbis:1:over",
+    "fc2:823733:player-701675:hits_runs_rbis:1:over",
+    "fc2:823407:player-670764:hits_runs_rbis:1:over",
+    "fc2:823407:player-656775:hits_runs_rbis:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823733:player-701675:hits_runs_rbis:1:over",
+    "fc2:823407:player-670764:hits_runs_rbis:1:over",
+    "fc2:824543:player-666160:hits_runs_rbis:1:over",
+    "fc2:823407:player-656775:hits_runs_rbis:1:over",
+    "fc2:824543:player-678662:hits_runs_rbis:1:over",
+    "fc2:823733:player-669357:hits_runs_rbis:1:over",
+    "fc2:823165:player-683766:hits_runs_rbis:1:over",
+    "fc2:822678:player-813349:strikeouts:4:over",
+    "fc2:824057:player-686555:hits_runs_rbis:1:over",
+    "fc2:823653:player-543135:strikeouts:4:over",
+    "fc2:823165:player-813841:hits:1:over",
+    "fc2:822759:player-702056:strikeouts:4:over",
+    "fc2:823245:player-621111:strikeouts:4:over",
+    "fc2:824057:player-676440:strikeouts:4:over"
+   ],
+   "A_conc": {
+    "games": 9,
+    "max_per_game": 3,
+    "share_price_le_-250": 0.0
+   }
+  },
+  "2026-09-27": {
+   "N": 18,
+   "N_cap": 8,
+   "champion_removed_by_cap": 10,
+   "universe": 168,
+   "universe_games": 8,
+   "universe_players": 97,
+   "universe_by_market": {
+    "hits_runs_rbis": 75,
+    "strikeouts": 4,
+    "hits": 89
+   },
+   "C_gate_pass": 81,
+   "C_gate_players": 62,
+   "C_gate_games": 5,
+   "gates": {
+    "games_with_state": 15,
+    "rows_in_game": 886,
+    "eligible": 168,
+    "fail_market": 693,
+    "fail_unpriced": 26,
+    "fail_price_shorter_than_-350": 10,
+    "games_scheduled": 15
+   },
+   "arms": {
+    "original": {
+     "target": 18,
+     "B": {
+      "ids": [
+       "fc2:822761:player-703520:hits_runs_rbis:1:over",
+       "fc2:823164:player-663656:hits_runs_rbis:1:over",
+       "fc2:823164:player-669242:hits_runs_rbis:1:over",
+       "fc2:823408:player-607208:hits_runs_rbis:1:over",
+       "fc2:824705:player-608324:hits_runs_rbis:1:over",
+       "fc2:824948:player-670541:hits:1:over",
+       "fc2:824948:player-673237:hits:1:over",
+       "fc2:822761:player-543807:hits_runs_rbis:1:over",
+       "fc2:824705:player-663538:hits_runs_rbis:1:over",
+       "fc2:823408:player-547180:hits_runs_rbis:1:over",
+       "fc2:823731:player-701675:hits_runs_rbis:1:over",
+       "fc2:824217:player-679529:hits_runs_rbis:1:over",
+       "fc2:823731:player-686780:hits_runs_rbis:1:over",
+       "fc2:823814:player-702275:strikeouts:5:over"
+      ],
+      "filled": 14,
+      "shortfall": 4,
+      "games": 8,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.7142857142857143
+     },
+     "C": {
+      "ids": [
+       "fc2:823408:player-691406:hits_runs_rbis:1:over",
+       "fc2:822761:player-703520:hits_runs_rbis:1:over",
+       "fc2:824705:player-678882:hits_runs_rbis:1:over",
+       "fc2:822761:player-701398:hits_runs_rbis:1:over",
+       "fc2:824948:player-811965:hits:1:over",
+       "fc2:824948:player-669127:hits_runs_rbis:1:over",
+       "fc2:823164:player-681624:hits_runs_rbis:1:over",
+       "fc2:823408:player-607208:hits_runs_rbis:1:over",
+       "fc2:824705:player-663538:hits_runs_rbis:1:over",
+       "fc2:823164:player-663656:hits_runs_rbis:1:over"
+      ],
+      "filled": 10,
+      "shortfall": 8,
+      "games": 5,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.8
+     }
+    },
+    "cap": {
+     "target": 8,
+     "B": {
+      "ids": [
+       "fc2:822761:player-703520:hits_runs_rbis:1:over",
+       "fc2:823164:player-663656:hits_runs_rbis:1:over",
+       "fc2:823164:player-669242:hits_runs_rbis:1:over",
+       "fc2:823408:player-607208:hits_runs_rbis:1:over",
+       "fc2:824705:player-608324:hits_runs_rbis:1:over",
+       "fc2:824948:player-670541:hits:1:over",
+       "fc2:824948:player-673237:hits:1:over",
+       "fc2:822761:player-543807:hits_runs_rbis:1:over"
+      ],
+      "filled": 8,
+      "shortfall": 0,
+      "games": 5,
+      "max_per_game": 2,
+      "share_price_le_-250": 1.0
+     },
+     "C": {
+      "ids": [
+       "fc2:823408:player-691406:hits_runs_rbis:1:over",
+       "fc2:822761:player-703520:hits_runs_rbis:1:over",
+       "fc2:824705:player-678882:hits_runs_rbis:1:over",
+       "fc2:822761:player-701398:hits_runs_rbis:1:over",
+       "fc2:824948:player-811965:hits:1:over",
+       "fc2:824948:player-669127:hits_runs_rbis:1:over",
+       "fc2:823164:player-681624:hits_runs_rbis:1:over",
+       "fc2:823408:player-607208:hits_runs_rbis:1:over"
+      ],
+      "filled": 8,
+      "shortfall": 0,
+      "games": 5,
+      "max_per_game": 2,
+      "share_price_le_-250": 0.75
+     }
+    }
+   },
+   "A_ids": [
+    "fc2:823814:player-702275:strikeouts:5:over",
+    "fc2:823408:player-607259:strikeouts:4:over",
+    "fc2:823731:player-669357:hits_runs_rbis:1:over",
+    "fc2:823731:player-686780:hits_runs_rbis:1:over",
+    "fc2:823731:player-701675:hits_runs_rbis:1:over",
+    "fc2:823408:player-592663:hits_runs_rbis:1:over",
+    "fc2:823408:player-656775:hits_runs_rbis:1:over",
+    "fc2:824705:player-596115:hits_runs_rbis:1:over",
+    "fc2:823408:player-689414:hits:1:over",
+    "fc2:823408:player-676356:hits:1:over",
+    "fc2:823408:player-676356:hits_runs_rbis:1:over",
+    "fc2:823408:player-689414:hits_runs_rbis:1:over",
+    "fc2:823408:player-680700:hits_runs_rbis:1:over",
+    "fc2:823408:player-683748:hits:1:over",
+    "fc2:824705:player-655316:hits_runs_rbis:1:over",
+    "fc2:824217:player-679529:hits_runs_rbis:1:over",
+    "fc2:823408:player-666018:hits_runs_rbis:1:over",
+    "fc2:823408:player-666018:hits:1:over"
+   ],
+   "A_cap_ids": [
+    "fc2:823408:player-666018:hits_runs_rbis:1:over",
+    "fc2:824705:player-596115:hits_runs_rbis:1:over",
+    "fc2:823408:player-689414:hits_runs_rbis:1:over",
+    "fc2:823731:player-701675:hits_runs_rbis:1:over",
+    "fc2:824705:player-655316:hits_runs_rbis:1:over",
+    "fc2:824217:player-679529:hits_runs_rbis:1:over",
+    "fc2:823731:player-669357:hits_runs_rbis:1:over",
+    "fc2:823814:player-702275:strikeouts:5:over"
+   ],
+   "A_conc": {
+    "games": 5,
+    "max_per_game": 11,
+    "share_price_le_-250": 0.0
+   }
+  }
+ },
+ "totals": {
+  "B_original": {
+   "target": 542,
+   "filled": 212,
+   "fill_share": 0.39114391143911437
+  },
+  "C_original": {
+   "target": 542,
+   "filled": 172,
+   "fill_share": 0.3173431734317343
+  },
+  "B_cap": {
+   "target": 369,
+   "filled": 196,
+   "fill_share": 0.5311653116531165
+  },
+  "C_cap": {
+   "target": 369,
+   "filled": 160,
+   "fill_share": 0.43360433604336046
+  }
+ }
+}

@@ -6307,3 +6307,25 @@ are all untouched. Draft PR opened against `main`, not merged -- this
 workstream does not merge its own PR.
 
 Alligator
+
+## 2026-10-23 -- FC-ACC-018 market-favorite equal-volume falsification (research only)
+
+Branch `claude/fc-acc-018-favorite-falsification-20261023` (from main
+`8b1a0cdc`). Files: `research/fc_acc_018/` only. Preregistered at `6174a417`
+before any supply or new outcome was examined.
+
+- Universe: each game's final pregame `docs/data.json` state, from 5,005
+  dashboard commits (blobless clone). Graded against official StatsAPI logs;
+  the grader agrees with the public grades on 542/542 champion picks.
+- Volume gate FAILS. On P1 (22 least-exposed slates), the frozen hybrid fills
+  44% of the cap-comparable champion count (32% of the original count);
+  market-only fills 47%. Retained dashboard states are partial: the date rolls
+  over in the evening, rows shed intraday, 4 P1 slates are empty, and only 25%
+  of the champion's own picks are present. Frozen verdict: STOP.
+- Descriptive (unequal volume): hybrid 71.3% (94 picks), market-only 70.0%
+  (100), champion 53.1% (213). Hybrid minus market-only +1.3 pts [-6, +10], so
+  no model alpha; arms win at their market-expected totals. Favorites are
+  mostly priced -250 to -350, so ROI stays negative (unauthenticated).
+- Next: persist complete pre-decision candidate sets (PR #230 export,
+  Codex-owned; needs authorization), then rerun the frozen comparison
+  prospectively.
