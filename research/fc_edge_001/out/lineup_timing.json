@@ -1,0 +1,64 @@
+{
+ "slates": {
+  "2026-08-22": {
+   "commits": 23,
+   "commits_with_slate_payload": 23
+  },
+  "2026-08-27": {
+   "commits": 2,
+   "commits_with_slate_payload": 2
+  },
+  "2026-09-02": {
+   "commits": 77,
+   "commits_with_slate_payload": 77
+  },
+  "2026-09-10": {
+   "commits": 78,
+   "commits_with_slate_payload": 78
+  },
+  "2026-09-17": {
+   "commits": 56,
+   "commits_with_slate_payload": 56
+  },
+  "2026-09-24": {
+   "commits": 32,
+   "commits_with_slate_payload": 32
+  }
+ },
+ "series": 6919,
+ "transition": {
+  "n": 4375,
+  "share_price_changed": 0.6569142857142857,
+  "mean_abs_implied_change": 0.009769044504773927,
+  "median_minutes_between_obs": 10.566666666666666
+ },
+ "control_assumed_pairs": {
+  "n": 76007,
+  "share_price_changed": 0.07847961371978897,
+  "mean_abs_implied_change": 0.0007178581977339611,
+  "median_minutes_between_obs": 9.433333333333334
+ },
+ "slot_change_at_confirmation": {
+  "same_slot": 1951,
+  "moved_down": 393,
+  "moved_up": 676
+ },
+ "implied_change_by_slot_change": {
+  "same_slot": {
+   "n": 1951,
+   "mean": -0.0003163069003807373,
+   "share_changed": 0.6135315222962583
+  },
+  "moved_down": {
+   "n": 393,
+   "mean": -0.005776812130181874,
+   "share_changed": 0.7201017811704835
+  },
+  "moved_up": {
+   "n": 676,
+   "mean": 0.010435695167402278,
+   "share_changed": 0.7618343195266272
+  }
+ },
+ "note": "timestamps are FULL COUNT observation times (dashboard commits / odds_fetched_at), not book update or execution times"
+}

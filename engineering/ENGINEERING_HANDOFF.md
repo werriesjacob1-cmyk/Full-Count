@@ -6307,3 +6307,28 @@ are all untouched. Draft PR opened against `main`, not merged -- this
 workstream does not merge its own PR.
 
 Alligator
+
+## 2026-10-27 — FC-EDGE-001: search for a real, executable MLB betting advantage (research only)
+
+Branch `claude/fc-edge-001-executable-advantage-20261027`, base `main` @ `2f735a93`. Report:
+`research/fc_edge_001/REPORT.md`. Research and feasibility only: no production, selector, gate, display,
+capture, model or workflow change; nothing purchased, integrated or scraped.
+
+Measured from retained repo data:
+- **Cross-market exact dominance (Phase 3):** `dominance.py` over `data/props/props_2026-*.json`
+  (83 files, 730 snapshots, 4,078,256 pregame FanDuel rows). Zero dominance on every exact
+  implication and monotone threshold except HR>=1 => TB>=4 (157/17,555 player-games, 68 strict
+  observations, median gap 0, max 0.9pp). Verdict **STOP**.
+- **Lineup timing (Phase 2):** `lineup_timing.py` over 268 `docs/data.json` commits on six
+  regular-season slates. At FULL COUNT's first confirmed-lineup observation FanDuel's price had
+  already changed in 65.7% of 4,375 transitions (control 7.8% of 76,007), in the slot-consistent
+  direction (moved up +1.04pp, moved down -0.58pp), about 10 minutes after the last
+  projected-lineup observation. Verdict **STOP** at current latency; Arm D not supported.
+- **Multi-book price/consensus (Phases 1, 5):** the repo holds zero multi-book prop observations.
+  The Odds API historical props (5-minute snapshots from 2023-05-03; 10 x markets x regions credits)
+  make a fully retrospective, archive-only test possible for about one month of the $119 plan.
+  Verdict **GO for the research test only**, with a separate purchase authorization from Jacob and
+  preregistration before any vendor data is examined (FC-EDGE-002 design and STOP criteria are in
+  the report).
+
+Regression check `test_fc_edge_001_dominance.py` (6 checks). Draft PR not merged. Alligator
