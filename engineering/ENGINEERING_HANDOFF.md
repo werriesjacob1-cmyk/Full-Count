@@ -6307,3 +6307,24 @@ are all untouched. Draft PR opened against `main`, not merged -- this
 workstream does not merge its own PR.
 
 Alligator
+
+## 2026-10-27 — FC-ZERO-001: $0 profitability challenge (research only) — verdict STOP
+
+Branch `claude/fc-zero-001-zero-cost-advantage-20261027`, base `main` @ `599c85bef`. Report:
+`research/fc_zero_001/REPORT.md`. $0 spent; no production, selector, display, capture, ledger or
+model change.
+
+- **Free resources:** every free input we own is public pre-game and is already in the model,
+  which loses to FanDuel on log loss (FC-ACC-019). `data/odds` is FanDuel-only, not a consensus.
+  **Free multi-book prop history is insufficient:** The Odds API free tier allows 500 credits and
+  no historical data; SportsGameOdds Amateur is forward-only, with storage terms unconfirmed. That
+  avenue is terminated.
+- **H1 "ladder gap"**, preregistered at `96652d3a` before outcomes: at an identical H+R+RBI>=1
+  price, does the gap to the same player's hits>=1 price predict the result?
+  - 13,322 graded rows. Regular season D = +0.66pp, 99% CI [-2.19, +3.49] -> **STOP**.
+  - Postseason has the opposite sign. Every tercile loses 7-9% at recorded prices.
+  - At equal volume (551), B is 410/548 at -4.0% ROI and the market reference C is 415/548 at
+    -6.1%, both at a median of -350 to -400. That is the short-favourite trap, not progress.
+- **Recommendation:** freeze single-book FanDuel selection research. Reopen conditions are in
+  report section F. Regression check `test_fc_zero_001_ladder_gap.py`. Draft PR not merged.
+  Alligator
