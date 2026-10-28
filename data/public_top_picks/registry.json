@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-10-27T20:06:29.281459+00:00",
+  "updated_at": "2026-10-28T15:53:01.115200+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -65138,6 +65138,94 @@
         "qualification_timestamp": "2026-10-27T20:04:14.705831+00:00",
         "board_timestamp": "2026-10-27T20:04:14.702443+00:00",
         "slate_date": "2026-10-27"
+      }
+    },
+    "fc2:849799:player-694819:pitcher_outs:16:over": {
+      "canonical_id": "fc2:849799:player-694819:pitcher_outs:16:over",
+      "settlement_identity": [
+        "849799",
+        [
+          "player",
+          "694819"
+        ],
+        "pitcher_outs",
+        "16",
+        "over"
+      ],
+      "slate_date": "2026-10-28",
+      "first_published_at": "2026-10-28T15:53:01.115200+00:00",
+      "publication_provenance": {
+        "artifact_id": "bd4e1a4de604b293370f00ff3ca21dda6a732a73a49f9d8f228f917de75ebd92",
+        "source_commit": "190e36a65ea804e99afed321cfe3d418087719a1",
+        "workflow_run_id": "40720193253",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-10-28T15:52:47.429825+00:00",
+        "data_hash": "7d883179f8bb2dc3f09bbdf4283da375703da72c88bb060ea1652bd737640660",
+        "live_hash": "b7b8078749e5cfa09c4700d47fc0ac974f07054256366a40d10415ec33f072d1"
+      },
+      "snapshot": {
+        "id": "fc2:849799:player-694819:pitcher_outs:16:over",
+        "identity_version": 2,
+        "game_pk": 849799,
+        "player_id": 694819,
+        "combo_player_ids": null,
+        "type": "pitcher",
+        "name": "Jacob Misiorowski",
+        "team": "Milwaukee Brewers",
+        "matchup": "Milwaukee Brewers @ Tampa Bay Rays",
+        "game_start": "2026-10-29T00:00:00Z",
+        "stat": "pitcher_outs",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "pitcher_outs",
+          "value": 15.5,
+          "needs": 16
+        },
+        "prop": "Over 15.5 Outs Recorded",
+        "hit_probability": 0.6166,
+        "market_odds": 102,
+        "market_implied": 0.4621,
+        "market_edge": 0.1545,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (15.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "Recorded 16+ outs (5.1 IP) in 73.3% of his last 30 real starts (league 73.3%, avg 17.47 outs/start)"
+        ],
+        "watchouts": [
+          "Barely above this market's base rate \u2014 the high percentage is mostly the market being easy, not a strong read on this player"
+        ],
+        "prob_ci": [
+          0.5481,
+          0.7215
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 30,
+        "lineup_assumed": null,
+        "base_rate": 0.7333,
+        "lift": -0.1167,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "2dbe32122",
+          "prediction_timestamp": "2026-10-28T15:51:04.124488+00:00",
+          "odds_fetched_at": "2026-10-28T15:51:03.400698+00:00",
+          "board_generated_at": "2026-10-28T15:51:04.120763+00:00"
+        },
+        "qualification_timestamp": "2026-10-28T15:51:04.124488+00:00",
+        "board_timestamp": "2026-10-28T15:51:04.120763+00:00",
+        "slate_date": "2026-10-28"
       }
     }
   }
