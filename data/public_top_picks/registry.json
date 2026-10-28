@@ -2,7 +2,7 @@
   "schema_version": 1,
   "identity_schema_version": 2,
   "rollout_version": "pre-phase-v-live-lifecycle-v1",
-  "updated_at": "2026-10-28T21:13:09.077206+00:00",
+  "updated_at": "2026-10-28T21:32:46.157692+00:00",
   "migration": {
     "version": "pre-phase-v-live-lifecycle-v1",
     "completed_at": "2026-08-17T23:14:57+00:00",
@@ -65819,6 +65819,104 @@
         },
         "qualification_timestamp": "2026-10-28T21:07:58.879893+00:00",
         "board_timestamp": "2026-10-28T21:07:58.876097+00:00",
+        "slate_date": "2026-10-28"
+      }
+    },
+    "fc2:849799:player-666152:hits_runs_rbis:1:over": {
+      "canonical_id": "fc2:849799:player-666152:hits_runs_rbis:1:over",
+      "settlement_identity": [
+        "849799",
+        [
+          "player",
+          "666152"
+        ],
+        "hits_runs_rbis",
+        "1",
+        "over"
+      ],
+      "slate_date": "2026-10-28",
+      "first_published_at": "2026-10-28T21:32:46.157692+00:00",
+      "publication_provenance": {
+        "artifact_id": "33ddf676128c8470908adbed3086fc64786563d411c34a393b66d27371885cae",
+        "source_commit": "e72fe095e3e9dbaa489241b5da897794724399bd",
+        "workflow_run_id": "40772630522",
+        "deployment_id": null,
+        "deployment_url": "https://werriesjacob1-cmyk.github.io/Full-Count/",
+        "artifact_prepared_at": "2026-10-28T21:32:26.926090+00:00",
+        "data_hash": "ceb15bacc65765b31a6afe9f9916687c5d124c9e15e16202f52c0b9dc217ddef",
+        "live_hash": "28968467a0b65d850c21293f2b7357a7263e92d0de6c06a48a3aa94c23cdcb38"
+      },
+      "snapshot": {
+        "id": "fc2:849799:player-666152:hits_runs_rbis:1:over",
+        "identity_version": 2,
+        "game_pk": 849799,
+        "player_id": 666152,
+        "combo_player_ids": null,
+        "type": "batter",
+        "name": "David Hamilton",
+        "team": "Milwaukee Brewers",
+        "matchup": "Milwaukee Brewers @ Tampa Bay Rays",
+        "game_start": "2026-10-29T00:00:00Z",
+        "stat": "hits_runs_rbis",
+        "market_side": "over",
+        "lean": null,
+        "projection": {
+          "stat": "hits_runs_rbis",
+          "value": 0.5,
+          "needs": 1
+        },
+        "prop": "Over 0.5 Hits+Runs+RBIs",
+        "hit_probability": 0.6218,
+        "market_odds": -145,
+        "market_implied": 0.5918,
+        "market_edge": 0.03,
+        "market_hold": null,
+        "price_clears": true,
+        "recommendation_status": "top_pick",
+        "status_reasons": [
+          "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+          "note: the market itself disagrees with this read (7.4 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+        ],
+        "why": [
+          "L7 barrel% 20.0 \u2014 hot recent contact",
+          "Bat speed trending up L14 (+5.8mph 2nd-half vs 1st-half)",
+          "Platoon: L bat vs RHP (favorable)",
+          "Hitters batting ahead of him: 0.340 wOBA (league ~.320)",
+          "Hitter batting behind him: 0.361 wOBA (league ~.320)",
+          "Dome \u2014 weather neutral"
+        ],
+        "watchouts": [
+          "L7 avg EV 77.0mph (league ~88.5) \u2014 cold recent contact",
+          "Opposing SP ERA 2.67 \u2014 elite pitcher, tough matchup",
+          "Projected 3.54 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+          "Team implied for 3.67 runs (league avg 4.245; line 3.5, game total 6.5) \u2014 a weak offensive environment",
+          "Season barrel% 3.4 \u2014 below-average barrel rate",
+          "Opposing bullpen fatigue: 1/9 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+        ],
+        "prob_ci": [
+          0.6085,
+          0.6534
+        ],
+        "reliability": "A",
+        "reliability_note": null,
+        "sample_n": 114,
+        "lineup_assumed": null,
+        "base_rate": 0.7047,
+        "lift": -0.0829,
+        "lift_reference_rate": null,
+        "stable_lift": null,
+        "versions": {
+          "model_version": "2026.08.15",
+          "selection_policy_version": "1.0.0",
+          "calibration_version": "1.0.0",
+          "feature_version": "1.0.0",
+          "git_sha": "2b644902d",
+          "prediction_timestamp": "2026-10-28T21:31:18.133157+00:00",
+          "odds_fetched_at": "2026-10-28T21:31:17.435579+00:00",
+          "board_generated_at": "2026-10-28T21:31:18.128216+00:00"
+        },
+        "qualification_timestamp": "2026-10-28T21:31:18.133157+00:00",
+        "board_timestamp": "2026-10-28T21:31:18.128216+00:00",
         "slate_date": "2026-10-28"
       }
     }
