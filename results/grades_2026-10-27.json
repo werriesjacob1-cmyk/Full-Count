@@ -8,17 +8,17 @@
   "by_category": {},
   "by_recommendation_status": {
     "top_pick": {
-      "hits": 0,
-      "misses": 0,
+      "hits": 1,
+      "misses": 1,
       "voids": 0,
-      "ungraded": 1
+      "ungraded": 0
     }
   },
   "public_top_pick_counts": {
-    "hits": 0,
-    "misses": 0,
+    "hits": 1,
+    "misses": 1,
     "voids": 0,
-    "ungraded": 1
+    "ungraded": 0
   },
   "public_top_picks": [
     {
@@ -92,18 +92,134 @@
       "publication_source_commit": "6310fe8b9b2d3947b4a09ad122432093c72cb034",
       "publication_run_id": "40474567998",
       "publication_deployment_id": null,
-      "grade": "ungraded",
-      "settlement_state": "ungraded",
-      "reason": "game_not_authoritatively_final",
+      "grade": "hit",
+      "actual": 6.0,
+      "actual_stat": "strikeouts",
+      "threshold": 3.5,
+      "game_innings": 12,
+      "shortened_game": false,
+      "actual_ip": 4.0,
+      "pitch_count": 74.0,
+      "fair_test": true,
+      "opportunity": "full (4.0 IP)",
       "eligibility": {
-        "eligibility": "ungraded",
-        "reason_code": "game_not_authoritatively_final",
+        "eligibility": "eligible",
+        "reason_code": "listed_pitcher_started",
         "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
-        "game_state": "pregame"
+        "scheduled_innings": 9,
+        "innings_played": 12
       },
-      "settlement_authority": "none",
-      "settlement_observed_at": "2026-10-27T15:54:58.020245+00:00",
-      "settlement_source": "durable_morning_status_observation"
+      "settlement_state": "hit",
+      "settlement_authority": "official_final",
+      "settlement_observed_at": "2026-10-28T10:37:35.387345+00:00",
+      "settlement_source": "durable_morning_grader"
+    },
+    {
+      "id": "fc2:849803:player-670764:hits_runs_rbis:1:over",
+      "identity_version": 2,
+      "game_pk": 849803,
+      "player_id": 670764,
+      "combo_player_ids": null,
+      "type": "batter",
+      "name": "Taylor Walls",
+      "team": "Tampa Bay Rays",
+      "matchup": "Milwaukee Brewers @ Tampa Bay Rays",
+      "game_start": "2026-10-28T00:00:00Z",
+      "stat": "hits_runs_rbis",
+      "market_side": "over",
+      "lean": null,
+      "projection": {
+        "stat": "hits_runs_rbis",
+        "value": 0.5,
+        "needs": 1
+      },
+      "prop": "Over 0.5 Hits+Runs+RBIs",
+      "hit_probability": 0.672,
+      "market_odds": -125,
+      "market_implied": 0.5556,
+      "market_edge": 0.1164,
+      "market_hold": null,
+      "price_clears": true,
+      "recommendation_status": "top_pick",
+      "status_reasons": [
+        "clears the real probability floor (>= 60%), a real evidence grade (A), a confirmed lineup, live pricing, and the price/value test at the pessimistic end of its own interval",
+        "note: the market itself disagrees with this read (15.8 points from the market \u2014 a large disagreement with a sharper estimator is far more often a gap in the model than an edge in the market) \u2014 still a Top Pick on the model's own probability and price test, but size with that in mind"
+      ],
+      "why": [
+        "Bat speed trending up L14 (+1.6mph 2nd-half vs 1st-half)",
+        "Platoon: S bat vs ?HP (handedness unknown)",
+        "Hitter batting behind him: 0.350 wOBA (league ~.320)",
+        "Dome \u2014 weather neutral",
+        "Sharp money backing Tampa Bay Rays (money% +11 pts vs ticket%)"
+      ],
+      "watchouts": [
+        "L7 avg EV 59.2mph (league ~88.5) \u2014 cold recent contact",
+        "L7 barrel% 0.0 \u2014 cold recent contact",
+        "Opposing starter not yet confirmed \u2014 starter-specific matchup analysis unavailable",
+        "Projected 3.53 PA (batting slot 9) \u2014 a tough lineup slot for plate appearances",
+        "Hitters batting ahead of him: 0.316 wOBA (league ~.320) \u2014 a weak on-base group ahead of him, fewer runners to drive in",
+        "Team implied for 3.51 runs (league avg 4.245; line 3.5, game total 7.5) \u2014 a weak offensive environment",
+        "AVG vs xBA: 0.222 vs 0.190 (+0.032) \u2014 outperforming his contact quality, regression risk",
+        "wOBA vs xwOBA: 0.278 vs 0.251 (+0.027) \u2014 outperforming his contact quality, regression risk",
+        "L7 sample is thin (3 PA) \u2014 treat recent-form read with caution",
+        "Season barrel% 2.1 \u2014 below-average barrel rate",
+        "Opposing bullpen fatigue: 0/8 relievers over 60 pitches in L7 (fresh pen \u2014 tougher matchup late)"
+      ],
+      "prob_ci": [
+        0.6612,
+        0.6951
+      ],
+      "reliability": "A",
+      "reliability_note": null,
+      "sample_n": 118,
+      "lineup_assumed": null,
+      "base_rate": 0.7074,
+      "lift": -0.0354,
+      "lift_reference_rate": null,
+      "stable_lift": null,
+      "versions": {
+        "model_version": "2026.08.15",
+        "selection_policy_version": "1.0.0",
+        "calibration_version": "1.0.0",
+        "feature_version": "1.0.0",
+        "git_sha": "d1da6f7db",
+        "prediction_timestamp": "2026-10-27T20:04:14.705831+00:00",
+        "odds_fetched_at": "2026-10-27T20:04:13.269200+00:00",
+        "board_generated_at": "2026-10-27T20:04:14.702443+00:00"
+      },
+      "qualification_timestamp": "2026-10-27T20:04:14.705831+00:00",
+      "board_timestamp": "2026-10-27T20:04:14.702443+00:00",
+      "slate_date": "2026-10-27",
+      "published_top_pick_at": "2026-10-27T20:06:29.281459+00:00",
+      "publication_artifact_id": "20c92ababbc91e605259f0d82525f65205b79d20f539af0ba9927bee146a83c7",
+      "publication_source_commit": "0e1a1aa7e36c4cb2da6e6b44787ccb4535f67a71",
+      "publication_run_id": "40574758892",
+      "publication_deployment_id": null,
+      "grade": "miss",
+      "actual": 0.0,
+      "actual_stat": "hits_runs_rbis",
+      "threshold": 0.5,
+      "game_innings": 12,
+      "shortened_game": false,
+      "actual_ab": 4,
+      "actual_pa_est": 4,
+      "was_substitute": false,
+      "batting_order": 9,
+      "fair_test": true,
+      "opportunity": "full (4 PA)",
+      "eligibility": {
+        "eligibility": "eligible",
+        "reason_code": "batter_started_and_recorded_plate_appearance",
+        "ruleset_version": "fanduel-us-conservative-2026-08-17-v2",
+        "plate_appearances": 4,
+        "was_starter": true,
+        "scheduled_innings": 9,
+        "innings_played": 12
+      },
+      "settlement_state": "miss",
+      "settlement_authority": "official_final",
+      "settlement_observed_at": "2026-10-28T10:37:35.387345+00:00",
+      "settlement_source": "durable_morning_grader"
     }
   ],
   "shadow_by_category": {},
