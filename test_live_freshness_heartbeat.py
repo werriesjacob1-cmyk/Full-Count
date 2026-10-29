@@ -210,6 +210,26 @@ class GradingHeartbeatIntegrationTests(unittest.TestCase):
         self.assertGreaterEqual(second["grades_checked_at"], first["grades_checked_at"])
         self.assertEqual(load_json(self.registry), registry_before)
 
+    def test_empty_published_population_still_advances_heartbeat(self):
+        # 2026-10-12 incident regression: with no deployment-proven Top Pick
+        # awaiting settlement, refresh_grades returned before any heartbeat,
+        # so grades_checked_at froze and an idle grader looked dead. The
+        # registry check is a completed settlement check: heartbeat moves,
+        # grades_updated_at (facts changed) does not, no MLB feed is fetched,
+        # and the registry is never touched.
+        row = prop(side="under")
+        atomic_write_json(self.data, payload([row]))
+        atomic_write_json(self.live, default_live_state())
+        write_registry(self.registry, default_registry())  # nothing published
+        registry_before = load_json(self.registry)
+        with mock.patch.object(gr, "fetch_game_contexts") as fetch:
+            rg.refresh(self.data, self.live, self.registry)
+            fetch.assert_not_called()
+        result = load_json(self.live)
+        self.assertIsNotNone(result["grades_checked_at"])
+        self.assertIsNone(result["grades_updated_at"])
+        self.assertEqual(load_json(self.registry), registry_before)
+
     def test_total_feed_failure_does_not_advance_heartbeat(self):
         # Covers "source fetch failure"/"grading failure": the channel
         # never actually checked anything this cycle, so the heartbeat
