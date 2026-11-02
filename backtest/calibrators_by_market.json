@@ -570,17 +570,17 @@
   "runs": {
     "method": "platt",
     "params": {
-      "A": 3.6822840917068973,
-      "B": -1.9647771277458617
+      "A": 3.003018297641208,
+      "B": -1.741538002620929
     },
     "meta": {
       "method": "platt",
-      "n_rows": 2009,
+      "n_rows": 784,
       "fair_test_only": false,
       "prop_type": "all",
       "date_range": [
-        "2026-09-19",
-        "2026-09-27"
+        "2026-09-26",
+        "2026-10-06"
       ],
       "support_bin_width": 0.05,
       "support_min_count": 30,
@@ -619,31 +619,31 @@
         {
           "lo": 0.25,
           "hi": 0.3,
-          "count": 139,
+          "count": 43,
           "supported": true
         },
         {
           "lo": 0.3,
           "hi": 0.35,
-          "count": 503,
+          "count": 160,
           "supported": true
         },
         {
           "lo": 0.35,
           "hi": 0.4,
-          "count": 761,
+          "count": 294,
           "supported": true
         },
         {
           "lo": 0.4,
           "hi": 0.45,
-          "count": 416,
+          "count": 205,
           "supported": true
         },
         {
           "lo": 0.45,
           "hi": 0.5,
-          "count": 190,
+          "count": 82,
           "supported": true
         },
         {
