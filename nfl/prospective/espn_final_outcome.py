@@ -19,6 +19,14 @@ class EspnFinalOutcomeError(ValueError):
     """Raised when ESPN cannot prove one explicit final outcome safely."""
 
 
+# ESPN and nflverse disagree on exactly two of the 32 team codes (checked
+# against ESPN's live team list, 2026-10-13). This is a CLOSED alias map applied
+# to the ESPN side only: every other ESPN code must equal the bound nflverse
+# code verbatim, and an unmapped mismatch still fails closed. Found by the first
+# real final-game grading run (BUF@LA, ESPN reported BUF@LAR).
+ESPN_TO_NFLVERSE_TEAM = {"LAR": "LA", "WSH": "WAS"}
+
+
 def _text(value: Any, field: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise EspnFinalOutcomeError(f"{field} must be a non-empty string")
@@ -133,7 +141,8 @@ def extract_espn_final_outcome(
         team = competitor.get("team")
         if not isinstance(team, Mapping):
             raise EspnFinalOutcomeError(f"ESPN {role} team must be a mapping")
-        return _text(team.get("abbreviation"), f"espn.{role}.team.abbreviation").upper()
+        raw = _text(team.get("abbreviation"), f"espn.{role}.team.abbreviation").upper()
+        return ESPN_TO_NFLVERSE_TEAM.get(raw, raw)
 
     espn_away = team_abbr(by_role["away"], "away")
     espn_home = team_abbr(by_role["home"], "home")

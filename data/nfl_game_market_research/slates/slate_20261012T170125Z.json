@@ -1,0 +1,1973 @@
+{
+  "accounted_events": 15,
+  "artifact_sha256": "c2383f4e6e123b24db45f70c4e7cab1b41cc64a133b95ef78e28dc8a95a92acb",
+  "code_sha": "cb731be0c8a43692fc985bdb2cd2485e992fb17c",
+  "discovered_events": 15,
+  "events": [
+    {
+      "event_id": "36132650",
+      "event_name": "Buffalo Bills @ Los Angeles Rams",
+      "open_date": "2026-10-13T00:16:00.000Z",
+      "path": "data/nfl_game_market_research/frozen/2026/week_5/event_36132650/20261012T170125Z_11dcdf87c24f.json",
+      "record_sha256": "11dcdf87c24fbd3332b3c8eea6eac964bc3288a9c7c72a83abe7d94f0c24a8ab",
+      "status": "FROZEN",
+      "summary": {
+        "fair_home_spread": {
+          "C1": -3.5,
+          "F1": -1.0,
+          "M0": -3.5
+        },
+        "fair_home_win_probability": {
+          "C1": 0.642356,
+          "F1": 0.510835,
+          "M0": 0.637943
+        },
+        "fair_total": {
+          "C1": 54.0,
+          "F1": 47.0,
+          "M0": 54.5
+        },
+        "frozen_at": "2026-10-12T17:01:25Z",
+        "game_id": "2026_05_BUF_LA",
+        "kickoff": "2026-10-13T00:15:00+00:00",
+        "qb_state": {
+          "away": "UNCHANGED",
+          "home": "UNCHANGED"
+        },
+        "selections": [
+          {
+            "C1_ev": -0.014746,
+            "C1_p": 0.504642,
+            "F1_ev": -0.258105,
+            "F1_p": 0.379995,
+            "decision": "NO_LEAN",
+            "line": -3.5,
+            "market": "spread",
+            "no_vig": 0.489166,
+            "odds": -105,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:c6c7db46a08346fb8c9353c40cf40765",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.073897,
+            "C1_p": 0.495358,
+            "F1_ev": 0.15914,
+            "F1_p": 0.620005,
+            "decision": "NO_LEAN",
+            "line": 3.5,
+            "market": "spread",
+            "no_vig": 0.510834,
+            "odds": -115,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:95be29e6f466b4ce144fa529f7438b45",
+            "side": "AWAY"
+          },
+          {
+            "C1_ev": -0.074062,
+            "C1_p": 0.485015,
+            "F1_ev": -0.419519,
+            "F1_p": 0.304061,
+            "decision": "NO_LEAN",
+            "line": 54.5,
+            "market": "game_total",
+            "no_vig": 0.5,
+            "odds": -110,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:9de9c7c19c605f946511be6e3dd530f5",
+            "side": "OVER"
+          },
+          {
+            "C1_ev": -0.016847,
+            "C1_p": 0.514985,
+            "F1_ev": 0.32861,
+            "F1_p": 0.695939,
+            "decision": "NO_LEAN",
+            "line": 54.5,
+            "market": "game_total",
+            "no_vig": 0.5,
+            "odds": -110,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:cdecadce32cc482b324e114e3d3d4152",
+            "side": "UNDER"
+          },
+          {
+            "C1_ev": 0.007291,
+            "C1_p": 0.642356,
+            "F1_ev": -0.197791,
+            "F1_p": 0.510835,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.612621,
+            "odds": -176,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:de3c6036f5cdc407cb344c55f7ad999b",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.112413,
+            "C1_p": 0.357644,
+            "F1_ev": 0.211922,
+            "F1_p": 0.489165,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.387379,
+            "odds": 148,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:a45c51fcc10bf99d0164874f0c4f323e",
+            "side": "AWAY"
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "36160506",
+      "event_name": "Seattle Seahawks @ Denver Broncos",
+      "open_date": "2026-10-16T00:16:00.000Z",
+      "path": "data/nfl_game_market_research/frozen/2026/week_6/event_36160506/20261012T170126Z_55e1150e0abf.json",
+      "record_sha256": "55e1150e0abfc54cc6609394581d6d06386f41b9d6e8a400bdf9bd7f6b4daef1",
+      "status": "FROZEN",
+      "summary": {
+        "fair_home_spread": {
+          "C1": 3.0,
+          "F1": 1.5,
+          "M0": 3.0
+        },
+        "fair_home_win_probability": {
+          "C1": 0.413281,
+          "F1": 0.476256,
+          "M0": 0.416099
+        },
+        "fair_total": {
+          "C1": 42.0,
+          "F1": 44.0,
+          "M0": 41.5
+        },
+        "frozen_at": "2026-10-12T17:01:26Z",
+        "game_id": "2026_06_SEA_DEN",
+        "kickoff": "2026-10-16T00:15:00+00:00",
+        "qb_state": {
+          "away": "UNCHANGED",
+          "home": "UNCHANGED"
+        },
+        "selections": [
+          {
+            "C1_ev": -0.061953,
+            "C1_p": 0.496922,
+            "F1_ev": 0.048252,
+            "F1_p": 0.560457,
+            "decision": "NO_LEAN",
+            "line": 3.0,
+            "market": "spread",
+            "no_vig": 0.508664,
+            "odds": -114,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:3d2eab815185f01e7423703eff5b2d0e",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.020583,
+            "C1_p": 0.503078,
+            "F1_ev": -0.135062,
+            "F1_p": 0.439543,
+            "decision": "NO_LEAN",
+            "line": -3.0,
+            "market": "spread",
+            "no_vig": 0.491336,
+            "odds": -106,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:39160202be538b049c6182063c24e6f5",
+            "side": "AWAY"
+          },
+          {
+            "C1_ev": -0.013605,
+            "C1_p": 0.505227,
+            "F1_ev": 0.119007,
+            "F1_p": 0.57315,
+            "decision": "NO_LEAN",
+            "line": 41.5,
+            "market": "game_total",
+            "no_vig": 0.489166,
+            "odds": -105,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:8101862227a698b8fcc99701e8e83f69",
+            "side": "OVER"
+          },
+          {
+            "C1_ev": -0.074989,
+            "C1_p": 0.494773,
+            "F1_ev": -0.201976,
+            "F1_p": 0.42685,
+            "decision": "NO_LEAN",
+            "line": 41.5,
+            "market": "game_total",
+            "no_vig": 0.510834,
+            "odds": -115,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:4582f2b4253b1a8269c545bf104ead0a",
+            "side": "UNDER"
+          },
+          {
+            "C1_ev": -0.04095,
+            "C1_p": 0.413281,
+            "F1_ev": 0.104322,
+            "F1_p": 0.476256,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.414293,
+            "odds": 132,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:6639d9ee0119e57046cfa272c1c60b30",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.036965,
+            "C1_p": 0.586719,
+            "F1_ev": -0.139729,
+            "F1_p": 0.523744,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.585707,
+            "odds": -156,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:5d80e5fc1da7233f748be75967878aff",
+            "side": "AWAY"
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "35605984",
+      "event_name": "Houston Texans @ Jacksonville Jaguars",
+      "open_date": "2026-10-18T13:30:00.000Z",
+      "path": "data/nfl_game_market_research/frozen/2026/week_6/event_35605984/20261012T170126Z_ac3c027d62ec.json",
+      "record_sha256": "ac3c027d62ece0b229a87b1ada64e0ba0f236e9e305c4aa1c50458575cfc21a1",
+      "status": "FROZEN",
+      "summary": {
+        "fair_home_spread": {
+          "C1": -2.0,
+          "F1": -6.5,
+          "M0": -2.5
+        },
+        "fair_home_win_probability": {
+          "C1": 0.54073,
+          "F1": 0.694366,
+          "M0": 0.547194
+        },
+        "fair_total": {
+          "C1": 42.5,
+          "F1": 43.0,
+          "M0": 42.5
+        },
+        "frozen_at": "2026-10-12T17:01:26Z",
+        "game_id": "2026_06_HOU_JAX",
+        "kickoff": "2026-10-18T13:30:00+00:00",
+        "qb_state": {
+          "away": "UNCHANGED",
+          "home": "UNCHANGED"
+        },
+        "selections": [
+          {
+            "C1_ev": -0.101853,
+            "C1_p": 0.493576,
+            "F1_ev": 0.18656,
+            "F1_p": 0.652074,
+            "decision": "NO_LEAN",
+            "line": -2.5,
+            "market": "spread",
+            "no_vig": 0.523605,
+            "odds": -122,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:c7c8cf68bb0fceec92a44b87937cb70e",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": 0.012848,
+            "C1_p": 0.506424,
+            "F1_ev": -0.304147,
+            "F1_p": 0.347926,
+            "decision": "NO_LEAN",
+            "line": 2.5,
+            "market": "spread",
+            "no_vig": 0.476395,
+            "odds": 100,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:ed1c2c9cea167d46f0090e5b52c4385f",
+            "side": "AWAY"
+          },
+          {
+            "C1_ev": -0.053234,
+            "C1_p": 0.500178,
+            "F1_ev": -0.032533,
+            "F1_p": 0.511115,
+            "decision": "NO_LEAN",
+            "line": 42.5,
+            "market": "game_total",
+            "no_vig": 0.50433,
+            "odds": -112,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:de574b6438488d7b38b592ef238c4ebd",
+            "side": "OVER"
+          },
+          {
+            "C1_ev": -0.03738,
+            "C1_p": 0.499822,
+            "F1_ev": -0.058443,
+            "F1_p": 0.488885,
+            "decision": "NO_LEAN",
+            "line": 42.5,
+            "market": "game_total",
+            "no_vig": 0.49567,
+            "odds": -108,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:f646fd93d78850a12bb3d17fe01d25e3",
+            "side": "UNDER"
+          },
+          {
+            "C1_ev": -0.093357,
+            "C1_p": 0.54073,
+            "F1_ev": 0.162714,
+            "F1_p": 0.694366,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.574234,
+            "odds": -148,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:851baf880529748716a3964a416c41ad",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": 0.037726,
+            "C1_p": 0.45927,
+            "F1_ev": -0.30772,
+            "F1_p": 0.305634,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.425766,
+            "odds": 126,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:7336150f582c228a0fdef5a80cf07cff",
+            "side": "AWAY"
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "36160507",
+      "event_name": "Baltimore Ravens @ Cleveland Browns",
+      "open_date": "2026-10-18T17:01:00.000Z",
+      "path": "data/nfl_game_market_research/frozen/2026/week_6/event_36160507/20261012T170126Z_e29009c6c71f.json",
+      "record_sha256": "e29009c6c71f75833338f95e71e937db0cc2a93841b7608f7888b2f8ae9aaf84",
+      "status": "FROZEN",
+      "summary": {
+        "fair_home_spread": {
+          "C1": 5.0,
+          "F1": 2.0,
+          "M0": 4.5
+        },
+        "fair_home_win_probability": {
+          "C1": 0.345056,
+          "F1": 0.469351,
+          "M0": 0.349425
+        },
+        "fair_total": {
+          "C1": 42.0,
+          "F1": 45.5,
+          "M0": 41.5
+        },
+        "frozen_at": "2026-10-12T17:01:26Z",
+        "game_id": "2026_06_BAL_CLE",
+        "kickoff": "2026-10-18T17:00:00+00:00",
+        "qb_state": {
+          "away": "CHANGED",
+          "home": "UNCHANGED"
+        },
+        "selections": [
+          {
+            "C1_ev": -0.033003,
+            "C1_p": 0.495291,
+            "F1_ev": 0.200299,
+            "F1_p": 0.614787,
+            "decision": "QUARANTINED",
+            "line": 4.5,
+            "market": "spread",
+            "no_vig": 0.489166,
+            "odds": -105,
+            "reasons": [
+              "QB_CHANGE_UNMODELLED"
+            ],
+            "selection_key": "fcnfl004:74d36f9a015928650de5caf515066681",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.056414,
+            "C1_p": 0.504709,
+            "F1_ev": -0.27982,
+            "F1_p": 0.385213,
+            "decision": "QUARANTINED",
+            "line": -4.5,
+            "market": "spread",
+            "no_vig": 0.510834,
+            "odds": -115,
+            "reasons": [
+              "QB_CHANGE_UNMODELLED"
+            ],
+            "selection_key": "fcnfl004:4871459a91f5617b76e985f79b714eec",
+            "side": "AWAY"
+          },
+          {
+            "C1_ev": -0.031115,
+            "C1_p": 0.507511,
+            "F1_ev": 0.158647,
+            "F1_p": 0.606911,
+            "decision": "QUARANTINED",
+            "line": 41.5,
+            "market": "game_total",
+            "no_vig": 0.5,
+            "odds": -110,
+            "reasons": [
+              "QB_CHANGE_UNMODELLED"
+            ],
+            "selection_key": "fcnfl004:7419135ac0e20a03e5405b7f7697c87a",
+            "side": "OVER"
+          },
+          {
+            "C1_ev": -0.059794,
+            "C1_p": 0.492489,
+            "F1_ev": -0.249557,
+            "F1_p": 0.393089,
+            "decision": "QUARANTINED",
+            "line": 41.5,
+            "market": "game_total",
+            "no_vig": 0.5,
+            "odds": -110,
+            "reasons": [
+              "QB_CHANGE_UNMODELLED"
+            ],
+            "selection_key": "fcnfl004:e0424a8ee8bf1941e04af44f60554e74",
+            "side": "UNDER"
+          },
+          {
+            "C1_ev": -0.006206,
+            "C1_p": 0.345056,
+            "F1_ev": 0.349746,
+            "F1_p": 0.469351,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.334018,
+            "odds": 188,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE",
+              "QB_CHANGE_UNMODELLED"
+            ],
+            "selection_key": "fcnfl004:b2b160aefc481d076069852f25eced2e",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.053676,
+            "C1_p": 0.654944,
+            "F1_ev": -0.23219,
+            "F1_p": 0.530649,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.665982,
+            "odds": -225,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE",
+              "QB_CHANGE_UNMODELLED"
+            ],
+            "selection_key": "fcnfl004:f8f3d3c5e87f80a061c8e453c0d656b1",
+            "side": "AWAY"
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "36160508",
+      "event_name": "New York Jets @ New England Patriots",
+      "open_date": "2026-10-18T17:01:00.000Z",
+      "path": "data/nfl_game_market_research/frozen/2026/week_6/event_36160508/20261012T170126Z_f3d11ed68c9e.json",
+      "record_sha256": "f3d11ed68c9e3b152d461e65cd48e84ff884530f0e60fa44dca1f9df6f1b727a",
+      "status": "FROZEN",
+      "summary": {
+        "fair_home_spread": {
+          "C1": -7.5,
+          "F1": -3.5,
+          "M0": -7.5
+        },
+        "fair_home_win_probability": {
+          "C1": 0.760784,
+          "F1": 0.61754,
+          "M0": 0.756884
+        },
+        "fair_total": {
+          "C1": 43.5,
+          "F1": 41.5,
+          "M0": 43.5
+        },
+        "frozen_at": "2026-10-12T17:01:26Z",
+        "game_id": "2026_06_NYJ_NE",
+        "kickoff": "2026-10-18T17:00:00+00:00",
+        "qb_state": {
+          "away": "UNCHANGED",
+          "home": "UNCHANGED"
+        },
+        "selections": [
+          {
+            "C1_ev": -0.013884,
+            "C1_p": 0.505084,
+            "F1_ev": -0.306719,
+            "F1_p": 0.355095,
+            "decision": "NO_LEAN",
+            "line": -7.5,
+            "market": "spread",
+            "no_vig": 0.489166,
+            "odds": -105,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:66f03c00b1dc7a7ceda5cada6dbb3940",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.074721,
+            "C1_p": 0.494916,
+            "F1_ev": 0.205691,
+            "F1_p": 0.644905,
+            "decision": "NO_LEAN",
+            "line": 7.5,
+            "market": "spread",
+            "no_vig": 0.510834,
+            "odds": -115,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:5903009626885a95909928f0ef2042c9",
+            "side": "AWAY"
+          },
+          {
+            "C1_ev": -0.072548,
+            "C1_p": 0.496079,
+            "F1_ev": -0.171084,
+            "F1_p": 0.443374,
+            "decision": "NO_LEAN",
+            "line": 43.5,
+            "market": "game_total",
+            "no_vig": 0.510834,
+            "odds": -115,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:793c367c90c3a4bd52ebac74be413a6c",
+            "side": "OVER"
+          },
+          {
+            "C1_ev": -0.016154,
+            "C1_p": 0.503921,
+            "F1_ev": 0.086746,
+            "F1_p": 0.556626,
+            "decision": "NO_LEAN",
+            "line": 43.5,
+            "market": "game_total",
+            "no_vig": 0.489166,
+            "odds": -105,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:e20accf82649e83b6b2d9ae858022a74",
+            "side": "UNDER"
+          },
+          {
+            "C1_ev": -0.043938,
+            "C1_p": 0.760784,
+            "F1_ev": -0.222898,
+            "F1_p": 0.61754,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.765438,
+            "odds": -390,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:8665f343a0d33c9b2e8befb82fcbc3f9",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.019126,
+            "C1_p": 0.239216,
+            "F1_ev": 0.564998,
+            "F1_p": 0.38246,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.234562,
+            "odds": 310,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:73d4c77d56babdbe80dbae55d8f3a6b3",
+            "side": "AWAY"
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "36160509",
+      "event_name": "New Orleans Saints @ New York Giants",
+      "open_date": "2026-10-18T17:01:00.000Z",
+      "path": "data/nfl_game_market_research/frozen/2026/week_6/event_36160509/20261012T170126Z_bcbc6506836e.json",
+      "record_sha256": "bcbc6506836eacbf55309ea484d64a619ac84f74b1e892398b72599ce891c6f9",
+      "status": "FROZEN",
+      "summary": {
+        "fair_home_spread": {
+          "C1": 2.0,
+          "F1": -4.5,
+          "M0": 1.5
+        },
+        "fair_home_win_probability": {
+          "C1": 0.467361,
+          "F1": 0.654563,
+          "M0": 0.477349
+        },
+        "fair_total": {
+          "C1": 44.5,
+          "F1": 46.5,
+          "M0": 44.5
+        },
+        "frozen_at": "2026-10-12T17:01:26Z",
+        "game_id": "2026_06_NO_NYG",
+        "kickoff": "2026-10-18T17:00:00+00:00",
+        "qb_state": {
+          "away": "UNCHANGED",
+          "home": "UNCHANGED"
+        },
+        "selections": [
+          {
+            "C1_ev": -0.101558,
+            "C1_p": 0.490059,
+            "F1_ev": 0.234188,
+            "F1_p": 0.673194,
+            "decision": "NO_LEAN",
+            "line": 1.5,
+            "market": "spread",
+            "no_vig": 0.51928,
+            "odds": -120,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:27e7bf4d4dc8454513d8a13f35aec442",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": 0.009882,
+            "C1_p": 0.509941,
+            "F1_ev": -0.352795,
+            "F1_p": 0.326806,
+            "decision": "NO_LEAN",
+            "line": -1.5,
+            "market": "spread",
+            "no_vig": 0.48072,
+            "odds": -102,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:b0f2ed8d2a6cc4ff62f515e11aa2862d",
+            "side": "AWAY"
+          },
+          {
+            "C1_ev": -0.070067,
+            "C1_p": 0.503358,
+            "F1_ev": -0.000317,
+            "F1_p": 0.541113,
+            "decision": "NO_LEAN",
+            "line": 44.5,
+            "market": "game_total",
+            "no_vig": 0.514975,
+            "odds": -118,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:92ddfe1441588589702694448180eecf",
+            "side": "OVER"
+          },
+          {
+            "C1_ev": -0.025818,
+            "C1_p": 0.496642,
+            "F1_ev": -0.099875,
+            "F1_p": 0.458887,
+            "decision": "NO_LEAN",
+            "line": 44.5,
+            "market": "game_total",
+            "no_vig": 0.485025,
+            "odds": -104,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:c99dc13f17ff7fb1de16998d2133c551",
+            "side": "UNDER"
+          },
+          {
+            "C1_ev": -0.074003,
+            "C1_p": 0.467361,
+            "F1_ev": 0.294733,
+            "F1_p": 0.654563,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.484603,
+            "odds": -102,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:2e35269495f14418f231597eec8c8ddb",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.008141,
+            "C1_p": 0.532639,
+            "F1_ev": -0.354896,
+            "F1_p": 0.345437,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.515397,
+            "odds": -116,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:91ad9d57a19ea6337e9be234c5a07733",
+            "side": "AWAY"
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "36160510",
+      "event_name": "Carolina Panthers @ Philadelphia Eagles",
+      "open_date": "2026-10-18T17:01:00.000Z",
+      "path": "data/nfl_game_market_research/frozen/2026/week_6/event_36160510/20261012T170126Z_5f8c509df6a1.json",
+      "record_sha256": "5f8c509df6a16d4978efba5ac73973ac945a1082795661363b12fd8fd91f0b42",
+      "status": "FROZEN",
+      "summary": {
+        "fair_home_spread": {
+          "C1": -1.5,
+          "F1": -0.5,
+          "M0": -1.5
+        },
+        "fair_home_win_probability": {
+          "C1": 0.529241,
+          "F1": 0.506224,
+          "M0": 0.527195
+        },
+        "fair_total": {
+          "C1": 42.0,
+          "F1": 45.0,
+          "M0": 41.5
+        },
+        "frozen_at": "2026-10-12T17:01:26Z",
+        "game_id": "2026_06_CAR_PHI",
+        "kickoff": "2026-10-18T17:00:00+00:00",
+        "qb_state": {
+          "away": "UNCHANGED",
+          "home": "UNCHANGED"
+        },
+        "selections": [
+          {
+            "C1_ev": -0.033129,
+            "C1_p": 0.502029,
+            "F1_ev": -0.074729,
+            "F1_p": 0.480429,
+            "decision": "NO_LEAN",
+            "line": -1.5,
+            "market": "spread",
+            "no_vig": 0.49567,
+            "odds": -108,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:3361ed8cfb59fcd2674a46546b377b14",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.057412,
+            "C1_p": 0.497971,
+            "F1_ev": -0.016527,
+            "F1_p": 0.519571,
+            "decision": "NO_LEAN",
+            "line": 1.5,
+            "market": "spread",
+            "no_vig": 0.50433,
+            "odds": -112,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:b362f625989c35dd8cf18de8d8b69b9a",
+            "side": "AWAY"
+          },
+          {
+            "C1_ev": -0.052289,
+            "C1_p": 0.506915,
+            "F1_ev": 0.118278,
+            "F1_p": 0.598148,
+            "decision": "NO_LEAN",
+            "line": 41.5,
+            "market": "game_total",
+            "no_vig": 0.510834,
+            "odds": -115,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:4664b19ab883d3b0243e2c538878d842",
+            "side": "OVER"
+          },
+          {
+            "C1_ev": -0.037311,
+            "C1_p": 0.493085,
+            "F1_ev": -0.215433,
+            "F1_p": 0.401852,
+            "decision": "NO_LEAN",
+            "line": 41.5,
+            "market": "game_total",
+            "no_vig": 0.489166,
+            "odds": -105,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:235147babab774adab2b758c8885715f",
+            "side": "UNDER"
+          },
+          {
+            "C1_ev": -0.029548,
+            "C1_p": 0.529241,
+            "F1_ev": -0.071514,
+            "F1_p": 0.506224,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.524221,
+            "odds": -120,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:0a035070a0b42c45535bdcb9c332e89a",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.048777,
+            "C1_p": 0.470759,
+            "F1_ev": -0.002559,
+            "F1_p": 0.493776,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.475779,
+            "odds": 102,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:5849a141067d8142d3054e9104944699",
+            "side": "AWAY"
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "36160512",
+      "event_name": "Pittsburgh Steelers @ Tampa Bay Buccaneers",
+      "open_date": "2026-10-18T17:01:00.000Z",
+      "path": "data/nfl_game_market_research/frozen/2026/week_6/event_36160512/20261012T170127Z_543e6bafc53a.json",
+      "record_sha256": "543e6bafc53a90585b918cced044dd85cb53b72b76c6dfa58705f1295fc4741e",
+      "status": "FROZEN",
+      "summary": {
+        "fair_home_spread": {
+          "C1": 2.5,
+          "F1": -2.5,
+          "M0": 2.5
+        },
+        "fair_home_win_probability": {
+          "C1": 0.449365,
+          "F1": 0.543034,
+          "M0": 0.454895
+        },
+        "fair_total": {
+          "C1": 40.5,
+          "F1": 43.5,
+          "M0": 40.5
+        },
+        "frozen_at": "2026-10-12T17:01:27Z",
+        "game_id": "2026_06_PIT_TB",
+        "kickoff": "2026-10-18T17:00:00+00:00",
+        "qb_state": {
+          "away": "UNCHANGED",
+          "home": "UNCHANGED"
+        },
+        "selections": [
+          {
+            "C1_ev": -0.034576,
+            "C1_p": 0.494485,
+            "F1_ev": 0.141783,
+            "F1_p": 0.584816,
+            "decision": "NO_LEAN",
+            "line": 2.5,
+            "market": "spread",
+            "no_vig": 0.489166,
+            "odds": -105,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:1309736826f5f85be88bcc92d8b97ca3",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.054908,
+            "C1_p": 0.505515,
+            "F1_ev": -0.223786,
+            "F1_p": 0.415184,
+            "decision": "NO_LEAN",
+            "line": -2.5,
+            "market": "spread",
+            "no_vig": 0.510834,
+            "odds": -115,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:1f6acb86de00a2eaaf28482c393ad394",
+            "side": "AWAY"
+          },
+          {
+            "C1_ev": -0.017521,
+            "C1_p": 0.505548,
+            "F1_ev": 0.149453,
+            "F1_p": 0.591466,
+            "decision": "NO_LEAN",
+            "line": 40.5,
+            "market": "game_total",
+            "no_vig": 0.491336,
+            "odds": -106,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:78e95a7ddd0ad8be5c736a8ab8f98ddb",
+            "side": "OVER"
+          },
+          {
+            "C1_ev": -0.071817,
+            "C1_p": 0.494452,
+            "F1_ev": -0.233103,
+            "F1_p": 0.408534,
+            "decision": "NO_LEAN",
+            "line": 40.5,
+            "market": "game_total",
+            "no_vig": 0.508664,
+            "odds": -114,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:6a6d9afbdcd00395609b9851924f5c27",
+            "side": "UNDER"
+          },
+          {
+            "C1_ev": -0.0292,
+            "C1_p": 0.449365,
+            "F1_ev": 0.171977,
+            "F1_p": 0.543034,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.445485,
+            "odds": 116,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:337bc2b8299f83b4184bbb135672515c",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.044224,
+            "C1_p": 0.550635,
+            "F1_ev": -0.205861,
+            "F1_p": 0.456966,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.554515,
+            "odds": -136,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:7edef9e1b0f32a5245bbf5fa1dde6378",
+            "side": "AWAY"
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "36160514",
+      "event_name": "Chicago Bears @ Atlanta Falcons",
+      "open_date": "2026-10-18T17:01:00.000Z",
+      "path": "data/nfl_game_market_research/frozen/2026/week_6/event_36160514/20261012T170127Z_7a9446e000aa.json",
+      "record_sha256": "7a9446e000aafde61ddeff5d47a9a0f85824903e5d31d9e1e34884af63fc8982",
+      "status": "FROZEN",
+      "summary": {
+        "fair_home_spread": {
+          "C1": 3.5,
+          "F1": -1.0,
+          "M0": 3.5
+        },
+        "fair_home_win_probability": {
+          "C1": 0.372849,
+          "F1": 0.515444,
+          "M0": 0.378202
+        },
+        "fair_total": {
+          "C1": 48.5,
+          "F1": 44.5,
+          "M0": 48.5
+        },
+        "frozen_at": "2026-10-12T17:01:27Z",
+        "game_id": "2026_06_CHI_ATL",
+        "kickoff": "2026-10-18T17:00:00+00:00",
+        "qb_state": {
+          "away": "UNCHANGED",
+          "home": "UNCHANGED"
+        },
+        "selections": [
+          {
+            "C1_ev": -0.071888,
+            "C1_p": 0.494415,
+            "F1_ev": 0.182825,
+            "F1_p": 0.630103,
+            "decision": "NO_LEAN",
+            "line": 3.5,
+            "market": "spread",
+            "no_vig": 0.508664,
+            "odds": -114,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:daa0b0fbefcaef557dfa94e8ad9448a4",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.017447,
+            "C1_p": 0.505585,
+            "F1_ev": -0.281144,
+            "F1_p": 0.369897,
+            "decision": "NO_LEAN",
+            "line": -3.5,
+            "market": "spread",
+            "no_vig": 0.491336,
+            "odds": -106,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:78ff2abaf19c178c6c59af1da2d641b3",
+            "side": "AWAY"
+          },
+          {
+            "C1_ev": -0.059495,
+            "C1_p": 0.492645,
+            "F1_ev": -0.256102,
+            "F1_p": 0.389661,
+            "decision": "NO_LEAN",
+            "line": 48.5,
+            "market": "game_total",
+            "no_vig": 0.5,
+            "odds": -110,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:fd2adbb01ebeba90552c8b832406df01",
+            "side": "OVER"
+          },
+          {
+            "C1_ev": -0.031414,
+            "C1_p": 0.507355,
+            "F1_ev": 0.165193,
+            "F1_p": 0.610339,
+            "decision": "NO_LEAN",
+            "line": 48.5,
+            "market": "game_total",
+            "no_vig": 0.5,
+            "odds": -110,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:6649e82191201e78a12086eac792e3bd",
+            "side": "UNDER"
+          },
+          {
+            "C1_ev": -0.037838,
+            "C1_p": 0.372849,
+            "F1_ev": 0.327977,
+            "F1_p": 0.515444,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.372555,
+            "odds": 158,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:d5e8439681f3d3cd8d4dcdfb167576c9",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.039038,
+            "C1_p": 0.627151,
+            "F1_ev": -0.256242,
+            "F1_p": 0.484556,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.627445,
+            "odds": -188,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:9e4cc134abf0924236f9f6e917907770",
+            "side": "AWAY"
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "36160516",
+      "event_name": "Tennessee Titans @ Indianapolis Colts",
+      "open_date": "2026-10-18T17:01:00.000Z",
+      "path": "data/nfl_game_market_research/frozen/2026/week_6/event_36160516/20261012T170127Z_e0aa18f3cb3f.json",
+      "record_sha256": "e0aa18f3cb3f86d3add0f0b18b96eda37d5fca2a06e3fb29511c474013b4e30f",
+      "status": "FROZEN",
+      "summary": {
+        "fair_home_spread": {
+          "C1": -6.5,
+          "F1": -4.5,
+          "M0": -6.5
+        },
+        "fair_home_win_probability": {
+          "C1": 0.710971,
+          "F1": 0.656702,
+          "M0": 0.709799
+        },
+        "fair_total": {
+          "C1": 43.5,
+          "F1": 43.5,
+          "M0": 43.5
+        },
+        "frozen_at": "2026-10-12T17:01:27Z",
+        "game_id": "2026_06_TEN_IND",
+        "kickoff": "2026-10-18T17:00:00+00:00",
+        "qb_state": {
+          "away": "UNCHANGED",
+          "home": "UNCHANGED"
+        },
+        "selections": [
+          {
+            "C1_ev": -0.062691,
+            "C1_p": 0.501351,
+            "F1_ev": -0.157628,
+            "F1_p": 0.450571,
+            "decision": "NO_LEAN",
+            "line": -6.5,
+            "market": "spread",
+            "no_vig": 0.510834,
+            "odds": -115,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:6e85705d1ec71e2a591fee39e5b973cd",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.026448,
+            "C1_p": 0.498649,
+            "F1_ev": 0.072694,
+            "F1_p": 0.549429,
+            "decision": "NO_LEAN",
+            "line": 6.5,
+            "market": "spread",
+            "no_vig": 0.489166,
+            "odds": -105,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:eb7e6be70455789f112d4febb056017a",
+            "side": "AWAY"
+          },
+          {
+            "C1_ev": -0.065793,
+            "C1_p": 0.499692,
+            "F1_ev": -0.071091,
+            "F1_p": 0.496859,
+            "decision": "NO_LEAN",
+            "line": 43.5,
+            "market": "game_total",
+            "no_vig": 0.510834,
+            "odds": -115,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:02a27f192045f0695c568cefdc98b47e",
+            "side": "OVER"
+          },
+          {
+            "C1_ev": -0.023208,
+            "C1_p": 0.500308,
+            "F1_ev": -0.017676,
+            "F1_p": 0.503141,
+            "decision": "NO_LEAN",
+            "line": 43.5,
+            "market": "game_total",
+            "no_vig": 0.489166,
+            "odds": -105,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:4d24afe1948ad0f801362293cd9624dc",
+            "side": "UNDER"
+          },
+          {
+            "C1_ev": -0.073208,
+            "C1_p": 0.710971,
+            "F1_ev": -0.143541,
+            "F1_p": 0.656702,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.736923,
+            "odds": -330,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:d09c76c2e61d414e6fbe361d75be30e5",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": 0.054677,
+            "C1_p": 0.289029,
+            "F1_ev": 0.251711,
+            "F1_p": 0.343298,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.263077,
+            "odds": 265,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:b33ffcd736583cbe5f408fa5c25631ee",
+            "side": "AWAY"
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "36160495",
+      "event_name": "Arizona Cardinals @ Los Angeles Rams",
+      "open_date": "2026-10-18T20:06:00.000Z",
+      "path": "data/nfl_game_market_research/frozen/2026/week_6/event_36160495/20261012T170127Z_ea4a31ad2ab0.json",
+      "record_sha256": "ea4a31ad2ab09852931e84dff7539dbd200c2bb2305d5f2ff238328b54b99811",
+      "status": "FROZEN",
+      "summary": {
+        "fair_home_spread": {
+          "C1": -13.0,
+          "F1": -7.0,
+          "M0": -12.5
+        },
+        "fair_home_win_probability": {
+          "C1": 0.835324,
+          "F1": 0.730214,
+          "M0": 0.831626
+        },
+        "fair_total": {
+          "C1": 51.5,
+          "F1": 47.0,
+          "M0": 51.5
+        },
+        "frozen_at": "2026-10-12T17:01:27Z",
+        "game_id": "2026_06_ARI_LA",
+        "kickoff": "2026-10-18T20:05:00+00:00",
+        "qb_state": {
+          "away": "UNCHANGED",
+          "home": "UNCHANGED"
+        },
+        "selections": [
+          {
+            "C1_ev": -0.041864,
+            "C1_p": 0.506185,
+            "F1_ev": -0.289713,
+            "F1_p": 0.375246,
+            "decision": "NO_LEAN",
+            "line": -12.5,
+            "market": "spread",
+            "no_vig": 0.50433,
+            "odds": -112,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:db690d64abf3744486b1b8e81d997984",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.048949,
+            "C1_p": 0.493815,
+            "F1_ev": 0.20323,
+            "F1_p": 0.624754,
+            "decision": "NO_LEAN",
+            "line": 12.5,
+            "market": "spread",
+            "no_vig": 0.49567,
+            "odds": -108,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:c249ba41e03d6732c1a4f2c24d9ef502",
+            "side": "AWAY"
+          },
+          {
+            "C1_ev": -0.082811,
+            "C1_p": 0.490589,
+            "F1_ev": -0.32898,
+            "F1_p": 0.358918,
+            "decision": "NO_LEAN",
+            "line": 51.5,
+            "market": "game_total",
+            "no_vig": 0.510834,
+            "odds": -115,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:219f444f25c23c92188bcefcb180d50c",
+            "side": "OVER"
+          },
+          {
+            "C1_ev": -0.005437,
+            "C1_p": 0.509411,
+            "F1_ev": 0.251636,
+            "F1_p": 0.641082,
+            "decision": "NO_LEAN",
+            "line": 51.5,
+            "market": "game_total",
+            "no_vig": 0.489166,
+            "odds": -105,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:eb98ad27b1a8733cbad18aa9e8710ca0",
+            "side": "UNDER"
+          },
+          {
+            "C1_ev": -0.066156,
+            "C1_p": 0.835324,
+            "F1_ev": -0.183012,
+            "F1_p": 0.730214,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.860602,
+            "odds": -850,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:bec640a3ce9e811deef9b636502b5c9e",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": 0.135758,
+            "C1_p": 0.164676,
+            "F1_ev": 0.857462,
+            "F1_p": 0.269786,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.139398,
+            "odds": 590,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:60b54a9f5739a39345b51c2423e354c8",
+            "side": "AWAY"
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "36160513",
+      "event_name": "Buffalo Bills @ Las Vegas Raiders",
+      "open_date": "2026-10-18T20:26:00.000Z",
+      "path": "data/nfl_game_market_research/frozen/2026/week_6/event_36160513/20261012T170127Z_262edd11451b.json",
+      "record_sha256": "262edd11451b418c6d0b4e94261e6b8c092424da84f516678af234ca7e9b1bb4",
+      "status": "FROZEN",
+      "summary": {
+        "fair_home_spread": {
+          "C1": 5.5,
+          "F1": 1.5,
+          "M0": 5.5
+        },
+        "fair_home_win_probability": {
+          "C1": 0.326703,
+          "F1": 0.473953,
+          "M0": 0.332525
+        },
+        "fair_total": {
+          "C1": 52.0,
+          "F1": 49.5,
+          "M0": 52.5
+        },
+        "frozen_at": "2026-10-12T17:01:27Z",
+        "game_id": "2026_06_BUF_LV",
+        "kickoff": "2026-10-18T20:25:00+00:00",
+        "qb_state": {
+          "away": "UNCHANGED",
+          "home": "UNCHANGED"
+        },
+        "selections": [
+          {
+            "C1_ev": -0.036361,
+            "C1_p": 0.493571,
+            "F1_ev": 0.242022,
+            "F1_p": 0.636158,
+            "decision": "NO_LEAN",
+            "line": 5.5,
+            "market": "spread",
+            "no_vig": 0.489166,
+            "odds": -105,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:0636e9b7f246dc2e370089b3b6414ef5",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.053199,
+            "C1_p": 0.506429,
+            "F1_ev": -0.319773,
+            "F1_p": 0.363842,
+            "decision": "NO_LEAN",
+            "line": -5.5,
+            "market": "spread",
+            "no_vig": 0.510834,
+            "odds": -115,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:3444c25c4af13e247646ba422dcf64b2",
+            "side": "AWAY"
+          },
+          {
+            "C1_ev": -0.078088,
+            "C1_p": 0.493116,
+            "F1_ev": -0.254761,
+            "F1_p": 0.398616,
+            "decision": "NO_LEAN",
+            "line": 52.5,
+            "market": "game_total",
+            "no_vig": 0.510834,
+            "odds": -115,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:76438c2a15734bd70713ce66a3febb07",
+            "side": "OVER"
+          },
+          {
+            "C1_ev": -0.010369,
+            "C1_p": 0.506884,
+            "F1_ev": 0.17413,
+            "F1_p": 0.601384,
+            "decision": "NO_LEAN",
+            "line": 52.5,
+            "market": "game_total",
+            "no_vig": 0.489166,
+            "odds": -105,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:95644c4d8b99dea65daf882b8507bf81",
+            "side": "UNDER"
+          },
+          {
+            "C1_ev": 0.061456,
+            "C1_p": 0.326703,
+            "F1_ev": 0.537299,
+            "F1_p": 0.473953,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.295567,
+            "odds": 225,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:d76a1489137cf936996e3bdfff16e9df",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.081433,
+            "C1_p": 0.673297,
+            "F1_ev": -0.281068,
+            "F1_p": 0.526047,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.704433,
+            "odds": -275,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:2cac4733e9c9d3ad62591faadece10bc",
+            "side": "AWAY"
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "36160524",
+      "event_name": "Los Angeles Chargers @ Kansas City Chiefs",
+      "open_date": "2026-10-18T20:26:00.000Z",
+      "path": "data/nfl_game_market_research/frozen/2026/week_6/event_36160524/20261012T170127Z_79cb866be20e.json",
+      "record_sha256": "79cb866be20e448eec24c57ad7dfaa97dd27f683005be1cd286a3dba59c786f9",
+      "status": "FROZEN",
+      "summary": {
+        "fair_home_spread": {
+          "C1": -8.5,
+          "F1": -7.5,
+          "M0": -8.5
+        },
+        "fair_home_win_probability": {
+          "C1": 0.773511,
+          "F1": 0.751107,
+          "M0": 0.774512
+        },
+        "fair_total": {
+          "C1": 42.5,
+          "F1": 43.5,
+          "M0": 42.5
+        },
+        "frozen_at": "2026-10-12T17:01:27Z",
+        "game_id": "2026_06_LAC_KC",
+        "kickoff": "2026-10-18T20:25:00+00:00",
+        "qb_state": {
+          "away": "UNCHANGED",
+          "home": "UNCHANGED"
+        },
+        "selections": [
+          {
+            "C1_ev": -0.026554,
+            "C1_p": 0.498594,
+            "F1_ev": -0.056667,
+            "F1_p": 0.48317,
+            "decision": "NO_LEAN",
+            "line": -8.5,
+            "market": "spread",
+            "no_vig": 0.489166,
+            "odds": -105,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:84c1852b6dc2e95cfb60009968d0b282",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.062589,
+            "C1_p": 0.501406,
+            "F1_ev": -0.033753,
+            "F1_p": 0.51683,
+            "decision": "NO_LEAN",
+            "line": 8.5,
+            "market": "spread",
+            "no_vig": 0.510834,
+            "odds": -115,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:60c8b79f6aa822b2b90bfc1cbad6e422",
+            "side": "AWAY"
+          },
+          {
+            "C1_ev": -0.049651,
+            "C1_p": 0.502071,
+            "F1_ev": 0.021081,
+            "F1_p": 0.539439,
+            "decision": "NO_LEAN",
+            "line": 42.5,
+            "market": "game_total",
+            "no_vig": 0.50433,
+            "odds": -112,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:801ab02962768efc349f62c0e3e2c0ff",
+            "side": "OVER"
+          },
+          {
+            "C1_ev": -0.041026,
+            "C1_p": 0.497929,
+            "F1_ev": -0.112993,
+            "F1_p": 0.460561,
+            "decision": "NO_LEAN",
+            "line": 42.5,
+            "market": "game_total",
+            "no_vig": 0.49567,
+            "odds": -108,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:778a5ec51417bce71136d47aea4c68ce",
+            "side": "UNDER"
+          },
+          {
+            "C1_ev": -0.058071,
+            "C1_p": 0.773511,
+            "F1_ev": -0.085222,
+            "F1_p": 0.751107,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.790732,
+            "odds": -460,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:c6bc27cdd26667a40c0fa94b61b4deea",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": 0.041659,
+            "C1_p": 0.226489,
+            "F1_ev": 0.144253,
+            "F1_p": 0.248893,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.209268,
+            "odds": 360,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:b73055ee0b50e070935092ad3fa49467",
+            "side": "AWAY"
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "36160511",
+      "event_name": "Dallas Cowboys @ Green Bay Packers",
+      "open_date": "2026-10-19T00:21:00.000Z",
+      "path": "data/nfl_game_market_research/frozen/2026/week_6/event_36160511/20261012T170128Z_281fe551250d.json",
+      "record_sha256": "281fe551250d62696fff58d2572d071029e371b3b2a227975e5e4d9d44836698",
+      "status": "FROZEN",
+      "summary": {
+        "fair_home_spread": {
+          "C1": -1.5,
+          "F1": -2.5,
+          "M0": -1.5
+        },
+        "fair_home_win_probability": {
+          "C1": 0.526897,
+          "F1": 0.552192,
+          "M0": 0.527195
+        },
+        "fair_total": {
+          "C1": 52.0,
+          "F1": 46.5,
+          "M0": 52.5
+        },
+        "frozen_at": "2026-10-12T17:01:28Z",
+        "game_id": "2026_06_DAL_GB",
+        "kickoff": "2026-10-19T00:20:00+00:00",
+        "qb_state": {
+          "away": "UNCHANGED",
+          "home": "UNCHANGED"
+        },
+        "selections": [
+          {
+            "C1_ev": -0.000598,
+            "C1_p": 0.499701,
+            "F1_ev": 0.052238,
+            "F1_p": 0.526119,
+            "decision": "NO_LEAN",
+            "line": -1.5,
+            "market": "spread",
+            "no_vig": 0.476395,
+            "odds": 100,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:3134039c41b19ece5a7dc73bfc5847c0",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.08962,
+            "C1_p": 0.500299,
+            "F1_ev": -0.137692,
+            "F1_p": 0.473881,
+            "decision": "NO_LEAN",
+            "line": 1.5,
+            "market": "spread",
+            "no_vig": 0.523605,
+            "odds": -122,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:1a8ceec54115dc9b1cc073e400d411e8",
+            "side": "AWAY"
+          },
+          {
+            "C1_ev": -0.051733,
+            "C1_p": 0.487943,
+            "F1_ev": -0.363636,
+            "F1_p": 0.327449,
+            "decision": "NO_LEAN",
+            "line": 52.5,
+            "market": "game_total",
+            "no_vig": 0.491336,
+            "odds": -106,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:72b4949aef33a10ae648111e1d61af87",
+            "side": "OVER"
+          },
+          {
+            "C1_ev": -0.038771,
+            "C1_p": 0.512057,
+            "F1_ev": 0.262507,
+            "F1_p": 0.672551,
+            "decision": "NO_LEAN",
+            "line": 52.5,
+            "market": "game_total",
+            "no_vig": 0.508664,
+            "odds": -114,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:f1a11690a2e7775acb4f5bf53d3b3034",
+            "side": "UNDER"
+          },
+          {
+            "C1_ev": 0.00586,
+            "C1_p": 0.526897,
+            "F1_ev": 0.05388,
+            "F1_p": 0.552192,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.504452,
+            "odds": -110,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:7982ad9e743024b8dc8cdb039ec66ae6",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.080097,
+            "C1_p": 0.473103,
+            "F1_ev": -0.129002,
+            "F1_p": 0.447808,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.495548,
+            "odds": -106,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:03d6b15f0674bee430f9bd5dc2835722",
+            "side": "AWAY"
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "36160515",
+      "event_name": "Washington Commanders @ San Francisco 49ers",
+      "open_date": "2026-10-20T00:16:00.000Z",
+      "path": "data/nfl_game_market_research/frozen/2026/week_6/event_36160515/20261012T170128Z_f18f23fb564b.json",
+      "record_sha256": "f18f23fb564b378810b8fac26278632089629b891ac90451ca800fbf76cf8cb5",
+      "status": "FROZEN",
+      "summary": {
+        "fair_home_spread": {
+          "C1": -7.5,
+          "F1": -9.5,
+          "M0": -7.5
+        },
+        "fair_home_win_probability": {
+          "C1": 0.753658,
+          "F1": 0.771163,
+          "M0": 0.756884
+        },
+        "fair_total": {
+          "C1": 50.5,
+          "F1": 47.5,
+          "M0": 50.5
+        },
+        "frozen_at": "2026-10-12T17:01:28Z",
+        "game_id": "2026_06_WAS_SF",
+        "kickoff": "2026-10-20T00:15:00+00:00",
+        "qb_state": {
+          "away": "UNCHANGED",
+          "home": "UNCHANGED"
+        },
+        "selections": [
+          {
+            "C1_ev": -0.032064,
+            "C1_p": 0.495772,
+            "F1_ev": 0.038828,
+            "F1_p": 0.532083,
+            "decision": "NO_LEAN",
+            "line": -7.5,
+            "market": "spread",
+            "no_vig": 0.489166,
+            "odds": -105,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:ad4c70f5a9db23c3c4af606cfc3757c1",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": -0.057313,
+            "C1_p": 0.504228,
+            "F1_ev": -0.125198,
+            "F1_p": 0.467917,
+            "decision": "NO_LEAN",
+            "line": 7.5,
+            "market": "spread",
+            "no_vig": 0.510834,
+            "odds": -115,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:aa166470ef4756b14bfa947182dacc0b",
+            "side": "AWAY"
+          },
+          {
+            "C1_ev": -0.071942,
+            "C1_p": 0.494386,
+            "F1_ev": -0.200765,
+            "F1_p": 0.425761,
+            "decision": "NO_LEAN",
+            "line": 50.5,
+            "market": "game_total",
+            "no_vig": 0.508664,
+            "odds": -114,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:89354aee00e0b3d58ab9274f0692ed66",
+            "side": "OVER"
+          },
+          {
+            "C1_ev": -0.017392,
+            "C1_p": 0.505614,
+            "F1_ev": 0.115974,
+            "F1_p": 0.574239,
+            "decision": "NO_LEAN",
+            "line": 50.5,
+            "market": "game_total",
+            "no_vig": 0.491336,
+            "odds": -106,
+            "reasons": [
+              "EV_BELOW_THRESHOLD"
+            ],
+            "selection_key": "fcnfl004:591d7ceed23d1a1011012985ba2c23b3",
+            "side": "UNDER"
+          },
+          {
+            "C1_ev": -0.066585,
+            "C1_p": 0.753658,
+            "F1_ev": -0.045032,
+            "F1_p": 0.771163,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.77644,
+            "odds": -420,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:082bbbef6a8e6fa5d2ea4d6931c6e6e3",
+            "side": "HOME"
+          },
+          {
+            "C1_ev": 0.058993,
+            "C1_p": 0.246342,
+            "F1_ev": -0.015931,
+            "F1_p": 0.228837,
+            "decision": "MEASUREMENT_ONLY",
+            "line": null,
+            "market": "moneyline",
+            "no_vig": 0.22356,
+            "odds": 330,
+            "reasons": [
+              "MARKET_NOT_IN_LEAN_SCOPE"
+            ],
+            "selection_key": "fcnfl004:b672881bd867de86a6ad886549cff67c",
+            "side": "AWAY"
+          }
+        ]
+      }
+    }
+  ],
+  "fanduel_root_observed_at": "2026-10-12T17:01:25Z",
+  "generated_at": "2026-10-12T17:01:28Z",
+  "params_sha256": "c1dbd52ee5232a882b9d91278261af66b54f5902b0ad1eeead28888eefb34fb5",
+  "public_eligible": false,
+  "research_only": true,
+  "schedule_source": {
+    "bytes": 2184055,
+    "observed_at": "2026-10-12T17:01:25Z",
+    "sha256": "9380292232901e4321c99992c7efca0c567a0a801dcb292662a3f78a9a101c49",
+    "url": "https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv"
+  },
+  "schema": "fc-nfl-004-slate-artifact-v1",
+  "window_days": 8.0
+}

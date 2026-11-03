@@ -1,0 +1,660 @@
+{
+  "config_summaries": {
+    "B0": {
+      "available": true,
+      "expected_home_margin": 3.643913,
+      "expected_total": 43.420475,
+      "fair_home_spread": -3.0,
+      "fair_home_win_probability": 0.605094,
+      "fair_total": 43.0,
+      "margin_center": 3.7,
+      "total_center": 42.9
+    },
+    "C1": {
+      "available": true,
+      "expected_home_margin": 7.333636,
+      "expected_total": 43.822622,
+      "fair_home_spread": -6.5,
+      "fair_home_win_probability": 0.710971,
+      "fair_total": 43.5,
+      "margin_center": 7.39857,
+      "total_center": 43.494758
+    },
+    "F1": {
+      "available": true,
+      "expected_home_margin": 5.528737,
+      "expected_total": 43.783805,
+      "fair_home_spread": -4.5,
+      "fair_home_win_probability": 0.656702,
+      "fair_total": 43.5,
+      "margin_center": 5.570258,
+      "total_center": 43.341084
+    },
+    "M0": {
+      "available": true,
+      "expected_home_margin": 7.286959,
+      "expected_total": 43.83326,
+      "fair_home_spread": -6.5,
+      "fair_home_win_probability": 0.709799,
+      "fair_total": 43.5,
+      "margin_center": 7.353076,
+      "total_center": 43.505077
+    }
+  },
+  "event_id": "36160516",
+  "evidence_class": "PROSPECTIVE_RESEARCH_FREEZE",
+  "frozen_at": "2026-10-12T17:01:27Z",
+  "identity_binding": {
+    "away_score": null,
+    "away_team": "TEN",
+    "away_team_name": "Tennessee Titans",
+    "binding_basis": "AWAY_HOME_TEAMS_PLUS_ET_KICKOFF_WITHIN_TOLERANCE",
+    "binding_sha256": "18105aa7d1c0afe2648c68ed10ad77652b235900c57362aece0cf25f510a76f4",
+    "final_status": null,
+    "finality_proven": false,
+    "game_type": "REG",
+    "home_score": null,
+    "home_team": "IND",
+    "home_team_name": "Indianapolis Colts",
+    "kickoff_tolerance_minutes": 2,
+    "nflverse_espn": "401873003",
+    "nflverse_game_id": "2026_06_TEN_IND",
+    "nflverse_gsis": null,
+    "scheduled_kickoff": "2026-10-18T17:00:00+00:00",
+    "schema_version": 1,
+    "score_state": "UNSETTLED",
+    "season": 2026,
+    "source": "nflverse_schedules",
+    "source_observed_at": "2026-10-12T17:01:25+00:00",
+    "source_sha256": "9380292232901e4321c99992c7efca0c567a0a801dcb292662a3f78a9a101c49",
+    "source_url": "https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv",
+    "sportsbook": "FANDUEL",
+    "sportsbook_event_id": "36160516",
+    "sportsbook_market_time": "2026-10-18T17:01:00+00:00",
+    "sportsbook_snapshot_sha256": "1860089614c66db832b43b7d1a78378f4b885db94cb77398292d9c9d86a33dba",
+    "week": 6
+  },
+  "input_state": {
+    "b0_prediction": {
+      "away_prior_games_n": 5,
+      "away_team": "TEN",
+      "away_team_full": "Tennessee Titans",
+      "baseline_name": "GAME_MARKET_B0_PRIOR_SCORING_BLEND",
+      "eligibility": "ELIGIBLE",
+      "event_id": "36160516",
+      "game_id": "2026_06_TEN_IND",
+      "game_type": "REG",
+      "home_field_adjustment": 0.0,
+      "home_prior_games_n": 5,
+      "home_team": "IND",
+      "home_team_full": "Indianapolis Colts",
+      "min_prior_games": 3,
+      "predicted_away_points": 19.6,
+      "predicted_home_margin": 3.6999999999999993,
+      "predicted_home_points": 23.3,
+      "predicted_total": 42.900000000000006,
+      "same_week_completed_games_deliberately_excluded": true,
+      "schedule_local_date": "2026-10-18",
+      "season": 2026,
+      "target_final_status": "PREGAME",
+      "uses_current_game_outcome_as_feature": false,
+      "uses_market_line_as_feature": false,
+      "week": 6
+    },
+    "qb_state": {
+      "away": {
+        "basis": "NFLVERSE_PREPOPULATED_EXPECTED_STARTER_UNTIMESTAMPED",
+        "expected_qb_id": "00-0040676",
+        "expected_qb_name": "Cam Ward",
+        "previous_game_id": "2026_05_HOU_TEN",
+        "previous_qb_id": "00-0040676",
+        "status": "UNCHANGED",
+        "team": "TEN"
+      },
+      "home": {
+        "basis": "NFLVERSE_PREPOPULATED_EXPECTED_STARTER_UNTIMESTAMPED",
+        "expected_qb_id": "00-0035710",
+        "expected_qb_name": "Daniel Jones",
+        "previous_game_id": "2026_05_IND_PIT",
+        "previous_qb_id": "00-0035710",
+        "status": "UNCHANGED",
+        "team": "IND"
+      }
+    },
+    "schedule_source": {
+      "bytes": 2184055,
+      "observed_at": "2026-10-12T17:01:25Z",
+      "sha256": "9380292232901e4321c99992c7efca0c567a0a801dcb292662a3f78a9a101c49",
+      "url": "https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv"
+    }
+  },
+  "input_state_sha256": "64c09dbad6dfa82fc209994b933ac1c33235481e9a032aa4b93ed046fe897e76",
+  "market_snapshot": {
+    "captured_at": "2026-10-12T17:01:27Z",
+    "event_id": "36160516",
+    "failures": [],
+    "public_eligible": false,
+    "records": [
+      {
+        "away_team": "Tennessee Titans",
+        "captured_at": "2026-10-12T17:01:27Z",
+        "event_id": "36160516",
+        "event_name": "Tennessee Titans @ Indianapolis Colts",
+        "event_open_date": "2026-10-18T17:01:00.000Z",
+        "home_team": "Indianapolis Colts",
+        "in_play": false,
+        "line": 43.5,
+        "market": "game_total",
+        "market_id": "734.190243547",
+        "market_name": "Total Points",
+        "market_status": "OPEN",
+        "market_time": "2026-10-18T17:01:00.000Z",
+        "market_type": "TOTAL_POINTS_(OVER/UNDER)",
+        "over_odds": -115,
+        "over_selection_id": "7017916",
+        "source": "fanduel_nfl",
+        "source_artifact": "event_36160516_no_tab",
+        "source_payload_sha256": "7f670a317d0002a81d95fccb3e2ea81c8361140acc14c36c4a0c4fe6ef50820d",
+        "source_url": "https://sbapi.nj.sportsbook.fanduel.com/api/event-page?eventId=36160516&_ak=FhMFpcPWXMeyZxOx",
+        "sport": "NFL",
+        "sportsbook": "FANDUEL",
+        "under_odds": -105,
+        "under_selection_id": "7017917"
+      },
+      {
+        "away_odds": 265,
+        "away_selection_id": "50206",
+        "away_team": "Tennessee Titans",
+        "captured_at": "2026-10-12T17:01:27Z",
+        "event_id": "36160516",
+        "event_name": "Tennessee Titans @ Indianapolis Colts",
+        "event_open_date": "2026-10-18T17:01:00.000Z",
+        "home_odds": -330,
+        "home_selection_id": "50200",
+        "home_team": "Indianapolis Colts",
+        "in_play": false,
+        "market": "moneyline",
+        "market_id": "734.190243548",
+        "market_name": "Moneyline",
+        "market_status": "OPEN",
+        "market_time": "2026-10-18T17:01:00.000Z",
+        "market_type": "MONEY_LINE",
+        "source": "fanduel_nfl",
+        "source_artifact": "event_36160516_no_tab",
+        "source_payload_sha256": "7f670a317d0002a81d95fccb3e2ea81c8361140acc14c36c4a0c4fe6ef50820d",
+        "source_url": "https://sbapi.nj.sportsbook.fanduel.com/api/event-page?eventId=36160516&_ak=FhMFpcPWXMeyZxOx",
+        "sport": "NFL",
+        "sportsbook": "FANDUEL"
+      },
+      {
+        "away_line": 6.5,
+        "away_odds": -105,
+        "away_selection_id": "50206",
+        "away_team": "Tennessee Titans",
+        "captured_at": "2026-10-12T17:01:27Z",
+        "event_id": "36160516",
+        "event_name": "Tennessee Titans @ Indianapolis Colts",
+        "event_open_date": "2026-10-18T17:01:00.000Z",
+        "home_line": -6.5,
+        "home_odds": -115,
+        "home_selection_id": "50200",
+        "home_team": "Indianapolis Colts",
+        "in_play": false,
+        "market": "spread",
+        "market_id": "734.190243544",
+        "market_name": "Spread",
+        "market_status": "OPEN",
+        "market_time": "2026-10-18T17:01:00.000Z",
+        "market_type": "MATCH_HANDICAP_(2-WAY)",
+        "source": "fanduel_nfl",
+        "source_artifact": "event_36160516_no_tab",
+        "source_payload_sha256": "7f670a317d0002a81d95fccb3e2ea81c8361140acc14c36c4a0c4fe6ef50820d",
+        "source_url": "https://sbapi.nj.sportsbook.fanduel.com/api/event-page?eventId=36160516&_ak=FhMFpcPWXMeyZxOx",
+        "sport": "NFL",
+        "sportsbook": "FANDUEL"
+      }
+    ],
+    "research_only": true,
+    "schema_version": 1,
+    "sealed_at": "2026-10-12T17:01:27Z",
+    "snapshot_sha256": "1860089614c66db832b43b7d1a78378f4b885db94cb77398292d9c9d86a33dba",
+    "source_payload_sha256": "7f670a317d0002a81d95fccb3e2ea81c8361140acc14c36c4a0c4fe6ef50820d",
+    "sport": "NFL"
+  },
+  "market_snapshot_sha256": "1860089614c66db832b43b7d1a78378f4b885db94cb77398292d9c9d86a33dba",
+  "model": {
+    "code_sha": "cb731be0c8a43692fc985bdb2cd2485e992fb17c",
+    "configs": [
+      "B0",
+      "F1",
+      "M0",
+      "C1"
+    ],
+    "lean_config": "C1",
+    "params_provenance": {
+      "fit_partition": "development_2000_2019",
+      "fit_rows": 5095,
+      "prereg": "engineering/nfl_game_market_pathway_20261012/PREREG.md",
+      "prereg_commit": "35a6cb032c5f6ac5ced37ba3a86716a57e1123e8",
+      "source_commit": "8ed09b2fe3ea42332b2249a995737e13dd931ff3",
+      "source_sha256": "26332ae5d8d8d0481f0670cf5e3849497a415351d4026ae5bee15a5aab96d188"
+    },
+    "params_sha256": "c1dbd52ee5232a882b9d91278261af66b54f5902b0ad1eeead28888eefb34fb5"
+  },
+  "public_eligible": false,
+  "record_sha256": "e0aa18f3cb3f86d3add0f0b18b96eda37d5fca2a06e3fb29511c474013b4e30f",
+  "research_only": true,
+  "scheduled_kickoff": "2026-10-18T17:00:00+00:00",
+  "schema": "fc-nfl-004-game-market-research-freeze-v1",
+  "selections": [
+    {
+      "decimal_odds": 1.869565,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -115,
+        "captured_at": "2026-10-12T17:01:27Z",
+        "espn_event_id": "401873003",
+        "event_id": "36160516",
+        "line": -6.5,
+        "market": "spread",
+        "market_id": "734.190243544",
+        "nflverse_game_id": "2026_06_TEN_IND",
+        "selection_id": "50200",
+        "side": "HOME"
+      },
+      "implied_probability": 0.534884,
+      "lean_config": "C1",
+      "market": "spread",
+      "model_market_gap_points": 0.89857,
+      "models": {
+        "B0": {
+          "break_even": 0.534884,
+          "edge": -0.133982,
+          "ev_per_unit": -0.250487,
+          "p_lose": 0.599098,
+          "p_push": 0.0,
+          "p_win": 0.400902,
+          "p_win_conditional": 0.400902
+        },
+        "C1": {
+          "break_even": 0.534884,
+          "edge": -0.033532,
+          "ev_per_unit": -0.062691,
+          "p_lose": 0.498649,
+          "p_push": 0.0,
+          "p_win": 0.501351,
+          "p_win_conditional": 0.501351
+        },
+        "F1": {
+          "break_even": 0.534884,
+          "edge": -0.084312,
+          "ev_per_unit": -0.157628,
+          "p_lose": 0.549429,
+          "p_push": 0.0,
+          "p_win": 0.450571,
+          "p_win_conditional": 0.450571
+        },
+        "M0": {
+          "break_even": 0.534884,
+          "edge": -0.034884,
+          "ev_per_unit": -0.065217,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.510834,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047079,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:6e85705d1ec71e2a591fee39e5b973cd",
+      "source_payload_sha256": "7f670a317d0002a81d95fccb3e2ea81c8361140acc14c36c4a0c4fe6ef50820d",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.952381,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -105,
+        "captured_at": "2026-10-12T17:01:27Z",
+        "espn_event_id": "401873003",
+        "event_id": "36160516",
+        "line": 6.5,
+        "market": "spread",
+        "market_id": "734.190243544",
+        "nflverse_game_id": "2026_06_TEN_IND",
+        "selection_id": "50206",
+        "side": "AWAY"
+      },
+      "implied_probability": 0.512195,
+      "lean_config": "C1",
+      "market": "spread",
+      "model_market_gap_points": 0.89857,
+      "models": {
+        "B0": {
+          "break_even": 0.512195,
+          "edge": 0.086903,
+          "ev_per_unit": 0.169667,
+          "p_lose": 0.400902,
+          "p_push": 0.0,
+          "p_win": 0.599098,
+          "p_win_conditional": 0.599098
+        },
+        "C1": {
+          "break_even": 0.512195,
+          "edge": -0.013547,
+          "ev_per_unit": -0.026448,
+          "p_lose": 0.501351,
+          "p_push": 0.0,
+          "p_win": 0.498649,
+          "p_win_conditional": 0.498649
+        },
+        "F1": {
+          "break_even": 0.512195,
+          "edge": 0.037234,
+          "ev_per_unit": 0.072694,
+          "p_lose": 0.450571,
+          "p_push": 0.0,
+          "p_win": 0.549429,
+          "p_win_conditional": 0.549429
+        },
+        "M0": {
+          "break_even": 0.512195,
+          "edge": -0.012195,
+          "ev_per_unit": -0.02381,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.489166,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047079,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:eb7e6be70455789f112d4febb056017a",
+      "source_payload_sha256": "7f670a317d0002a81d95fccb3e2ea81c8361140acc14c36c4a0c4fe6ef50820d",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.869565,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -115,
+        "captured_at": "2026-10-12T17:01:27Z",
+        "espn_event_id": "401873003",
+        "event_id": "36160516",
+        "line": 43.5,
+        "market": "game_total",
+        "market_id": "734.190243547",
+        "nflverse_game_id": "2026_06_TEN_IND",
+        "selection_id": "7017916",
+        "side": "OVER"
+      },
+      "implied_probability": 0.534884,
+      "lean_config": "C1",
+      "market": "game_total",
+      "model_market_gap_points": 0.005242,
+      "models": {
+        "B0": {
+          "break_even": 0.534884,
+          "edge": -0.049314,
+          "ev_per_unit": -0.092195,
+          "p_lose": 0.51443,
+          "p_push": 0.0,
+          "p_win": 0.48557,
+          "p_win_conditional": 0.48557
+        },
+        "C1": {
+          "break_even": 0.534884,
+          "edge": -0.035192,
+          "ev_per_unit": -0.065793,
+          "p_lose": 0.500308,
+          "p_push": 0.0,
+          "p_win": 0.499692,
+          "p_win_conditional": 0.499692
+        },
+        "F1": {
+          "break_even": 0.534884,
+          "edge": -0.038025,
+          "ev_per_unit": -0.071091,
+          "p_lose": 0.503141,
+          "p_push": 0.0,
+          "p_win": 0.496859,
+          "p_win_conditional": 0.496859
+        },
+        "M0": {
+          "break_even": 0.534884,
+          "edge": -0.034884,
+          "ev_per_unit": -0.065217,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.510834,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047079,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:02a27f192045f0695c568cefdc98b47e",
+      "source_payload_sha256": "7f670a317d0002a81d95fccb3e2ea81c8361140acc14c36c4a0c4fe6ef50820d",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.952381,
+      "decision": "NO_LEAN",
+      "grading_identity": {
+        "american_odds": -105,
+        "captured_at": "2026-10-12T17:01:27Z",
+        "espn_event_id": "401873003",
+        "event_id": "36160516",
+        "line": 43.5,
+        "market": "game_total",
+        "market_id": "734.190243547",
+        "nflverse_game_id": "2026_06_TEN_IND",
+        "selection_id": "7017917",
+        "side": "UNDER"
+      },
+      "implied_probability": 0.512195,
+      "lean_config": "C1",
+      "market": "game_total",
+      "model_market_gap_points": 0.005242,
+      "models": {
+        "B0": {
+          "break_even": 0.512195,
+          "edge": 0.002235,
+          "ev_per_unit": 0.004364,
+          "p_lose": 0.48557,
+          "p_push": 0.0,
+          "p_win": 0.51443,
+          "p_win_conditional": 0.51443
+        },
+        "C1": {
+          "break_even": 0.512195,
+          "edge": -0.011887,
+          "ev_per_unit": -0.023208,
+          "p_lose": 0.499692,
+          "p_push": 0.0,
+          "p_win": 0.500308,
+          "p_win_conditional": 0.500308
+        },
+        "F1": {
+          "break_even": 0.512195,
+          "edge": -0.009054,
+          "ev_per_unit": -0.017676,
+          "p_lose": 0.496859,
+          "p_push": 0.0,
+          "p_win": 0.503141,
+          "p_win_conditional": 0.503141
+        },
+        "M0": {
+          "break_even": 0.512195,
+          "edge": -0.012195,
+          "ev_per_unit": -0.02381,
+          "p_lose": 0.5,
+          "p_push": 0.0,
+          "p_win": 0.5,
+          "p_win_conditional": 0.5
+        }
+      },
+      "no_vig_probability": 0.489166,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.047079,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "EV_BELOW_THRESHOLD"
+      ],
+      "selection_key": "fcnfl004:4d24afe1948ad0f801362293cd9624dc",
+      "source_payload_sha256": "7f670a317d0002a81d95fccb3e2ea81c8361140acc14c36c4a0c4fe6ef50820d",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 1.30303,
+      "decision": "MEASUREMENT_ONLY",
+      "grading_identity": {
+        "american_odds": -330,
+        "captured_at": "2026-10-12T17:01:27Z",
+        "espn_event_id": "401873003",
+        "event_id": "36160516",
+        "line": null,
+        "market": "moneyline",
+        "market_id": "734.190243548",
+        "nflverse_game_id": "2026_06_TEN_IND",
+        "selection_id": "50200",
+        "side": "HOME"
+      },
+      "implied_probability": 0.767442,
+      "lean_config": "C1",
+      "market": "moneyline",
+      "model_market_gap_points": null,
+      "models": {
+        "B0": {
+          "break_even": 0.767442,
+          "edge": -0.162348,
+          "ev_per_unit": -0.210406,
+          "p_lose": 0.392781,
+          "p_push": 0.005381,
+          "p_win": 0.601839,
+          "p_win_conditional": 0.605094
+        },
+        "C1": {
+          "break_even": 0.767442,
+          "edge": -0.056471,
+          "ev_per_unit": -0.073208,
+          "p_lose": 0.287552,
+          "p_push": 0.005111,
+          "p_win": 0.707337,
+          "p_win_conditional": 0.710971
+        },
+        "F1": {
+          "break_even": 0.767442,
+          "edge": -0.11074,
+          "ev_per_unit": -0.143541,
+          "p_lose": 0.341498,
+          "p_push": 0.005245,
+          "p_win": 0.653258,
+          "p_win_conditional": 0.656702
+        },
+        "M0": {
+          "break_even": 0.767442,
+          "edge": -0.057643,
+          "ev_per_unit": -0.074726,
+          "p_lose": 0.288715,
+          "p_push": 0.00512,
+          "p_win": 0.706164,
+          "p_win_conditional": 0.709799
+        }
+      },
+      "no_vig_probability": 0.736923,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.041414,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "MARKET_NOT_IN_LEAN_SCOPE"
+      ],
+      "selection_key": "fcnfl004:d09c76c2e61d414e6fbe361d75be30e5",
+      "source_payload_sha256": "7f670a317d0002a81d95fccb3e2ea81c8361140acc14c36c4a0c4fe6ef50820d",
+      "sportsbook": "FANDUEL"
+    },
+    {
+      "decimal_odds": 3.65,
+      "decision": "MEASUREMENT_ONLY",
+      "grading_identity": {
+        "american_odds": 265,
+        "captured_at": "2026-10-12T17:01:27Z",
+        "espn_event_id": "401873003",
+        "event_id": "36160516",
+        "line": null,
+        "market": "moneyline",
+        "market_id": "734.190243548",
+        "nflverse_game_id": "2026_06_TEN_IND",
+        "selection_id": "50206",
+        "side": "AWAY"
+      },
+      "implied_probability": 0.273973,
+      "lean_config": "C1",
+      "market": "moneyline",
+      "model_market_gap_points": null,
+      "models": {
+        "B0": {
+          "break_even": 0.273973,
+          "edge": 0.120933,
+          "ev_per_unit": 0.439031,
+          "p_lose": 0.601839,
+          "p_push": 0.005381,
+          "p_win": 0.392781,
+          "p_win_conditional": 0.394906
+        },
+        "C1": {
+          "break_even": 0.273973,
+          "edge": 0.015057,
+          "ev_per_unit": 0.054677,
+          "p_lose": 0.707337,
+          "p_push": 0.005111,
+          "p_win": 0.287552,
+          "p_win_conditional": 0.289029
+        },
+        "F1": {
+          "break_even": 0.273973,
+          "edge": 0.069325,
+          "ev_per_unit": 0.251711,
+          "p_lose": 0.653258,
+          "p_push": 0.005245,
+          "p_win": 0.341498,
+          "p_win_conditional": 0.343298
+        },
+        "M0": {
+          "break_even": 0.273973,
+          "edge": 0.016229,
+          "ev_per_unit": 0.058931,
+          "p_lose": 0.706164,
+          "p_push": 0.00512,
+          "p_win": 0.288715,
+          "p_win_conditional": 0.290201
+        }
+      },
+      "no_vig_probability": 0.263077,
+      "observation_basis": "CAPTURE_OBSERVED_AT (book quote-origin time unavailable)",
+      "overround": 0.041414,
+      "quote_age_minutes": 0.0,
+      "reasons": [
+        "MARKET_NOT_IN_LEAN_SCOPE"
+      ],
+      "selection_key": "fcnfl004:b33ffcd736583cbe5f408fa5c25631ee",
+      "source_payload_sha256": "7f670a317d0002a81d95fccb3e2ea81c8361140acc14c36c4a0c4fe6ef50820d",
+      "sportsbook": "FANDUEL"
+    }
+  ],
+  "sport": "NFL"
+}
