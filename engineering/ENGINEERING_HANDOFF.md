@@ -6307,3 +6307,18 @@ are all untouched. Draft PR opened against `main`, not merged -- this
 workstream does not merge its own PR.
 
 Alligator
+
+## 2026-10-17 — FC-ACC-007 published Top Pick failure anatomy (research only)
+
+Codex independently reconciled the deployed-publication registry with every
+same-slate public grade at main `53810a27c4ac5439e0153e38589c69959593896a`.
+The exact scope was 648 exposed picks, 636 win/loss settlements (336 wins,
+300 losses), nine voids and three unresolved, with 52.83% settled hit rate
+and −11.08% one-unit return at recorded odds. The October 11 checkpoint
+reproduced 609 settled, 321 wins, 288 losses and −11.17% return. The
+market/odds/period tables, cluster intervals, provenance limitations and
+ranked prospective hypotheses are in `research/mlb_engine/fc_acc_007/`.
+No historical replacement winners or executable odds were inferred.
+Recommendation: one inactive, preregistered equal-volume 2027 comparison of
+champion, market-only and a fixed market/model ranking over authentic common
+offers. No production or published evidence was changed. Alligator.
