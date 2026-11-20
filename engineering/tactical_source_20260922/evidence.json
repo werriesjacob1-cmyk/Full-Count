@@ -1,0 +1,258 @@
+{
+  "status": "REAL_SOURCE_DESCRIPTIVE_PROTOTYPE_NOT_PREDICTIVE",
+  "sources": [
+    {
+      "kind": "participation",
+      "season": 2024,
+      "captured_at": "2026-09-22T22:24:42.437548+00:00",
+      "sha256": "b1f436a98b2a7759eb4ed1181e072a35c2666f9aeb356a49c943d28d6be6b0b9",
+      "url": "https://github.com/nflverse/nflverse-data/releases/download/pbp_participation/pbp_participation_2024.csv",
+      "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "FTN Data via nflverse",
+      "observation_kind": "THIRD_PARTY_CHARTING_NOT_FILM_VIEWED",
+      "bytes": 49688308,
+      "raw_rows": 45919,
+      "games": 285,
+      "pbp_sha256": "23370d5d10f8104d80d46a1fc5e61f4f6f5a3263fe96fe2dd629913cfcb08c06",
+      "pbp_url": "https://github.com/nflverse/nflverse-data/releases/download/pbp/play_by_play_2024.csv.gz",
+      "pbp_captured_at": "2026-09-22T22:26:54.771420+00:00",
+      "excluded": {
+        "NOT_LEGAL_PASS_ATTEMPT": 25912,
+        "UNKNOWN_TARGET_IDENTITY": 2159
+      },
+      "cutoff": "2026-09-22T22:27:46.878971+00:00",
+      "bound_targets": 17848,
+      "field_coverage": {
+        "route": {
+          "known": 17611,
+          "unknown": 237
+        },
+        "defense_man_zone_type": {
+          "known": 17827,
+          "unknown": 21
+        },
+        "defense_coverage_type": {
+          "known": 17827,
+          "unknown": 21
+        },
+        "was_pressure": {
+          "known": 17848
+        },
+        "offense_personnel": {
+          "known": 17848
+        },
+        "defense_personnel": {
+          "known": 17848
+        }
+      },
+      "conditional_cell_count": 6169,
+      "sample_bound_rows": [
+        {
+          "game_id": "2024_01_TEN_CHI",
+          "play_id": "85",
+          "receiver_gsis_id": "00-0035261",
+          "offense": "TEN",
+          "defense": "CHI",
+          "complete_pass": "0",
+          "charting": {
+            "route": "SWING",
+            "defense_man_zone_type": "ZONE_COVERAGE",
+            "defense_coverage_type": "COVER_2",
+            "was_pressure": "TRUE",
+            "offense_personnel": "1 C, 1 QB, 1 RB, 4 T, 1 TE, 3 WR",
+            "defense_personnel": "3 CB, 2 DE, 2 DT, 1 FS, 2 ILB, 1 SS"
+          },
+          "source_sha256": "b1f436a98b2a7759eb4ed1181e072a35c2666f9aeb356a49c943d28d6be6b0b9",
+          "available_at": "2026-09-22T22:26:54.771420+00:00"
+        },
+        {
+          "game_id": "2024_01_TEN_CHI",
+          "play_id": "108",
+          "receiver_gsis_id": "00-0033009",
+          "offense": "TEN",
+          "defense": "CHI",
+          "complete_pass": "0",
+          "charting": {
+            "route": "DEEP OUT",
+            "defense_man_zone_type": "MAN_COVERAGE",
+            "defense_coverage_type": "2_MAN",
+            "was_pressure": "FALSE",
+            "offense_personnel": "1 C, 1 QB, 1 RB, 4 T, 1 TE, 3 WR",
+            "defense_personnel": "3 CB, 2 DE, 1 DT, 1 FS, 2 ILB, 1 OLB, 1 SS"
+          },
+          "source_sha256": "b1f436a98b2a7759eb4ed1181e072a35c2666f9aeb356a49c943d28d6be6b0b9",
+          "available_at": "2026-09-22T22:26:54.771420+00:00"
+        },
+        {
+          "game_id": "2024_01_TEN_CHI",
+          "play_id": "184",
+          "receiver_gsis_id": "00-0034827",
+          "offense": "CHI",
+          "defense": "TEN",
+          "complete_pass": "1",
+          "charting": {
+            "route": "SCREEN",
+            "defense_man_zone_type": "ZONE_COVERAGE",
+            "defense_coverage_type": "COVER_2",
+            "was_pressure": "FALSE",
+            "offense_personnel": "1 C, 1 G, 1 QB, 1 RB, 3 T, 1 TE, 3 WR",
+            "defense_personnel": "3 CB, 1 DT, 2 FS, 2 ILB, 1 NT, 2 OLB"
+          },
+          "source_sha256": "b1f436a98b2a7759eb4ed1181e072a35c2666f9aeb356a49c943d28d6be6b0b9",
+          "available_at": "2026-09-22T22:26:54.771420+00:00"
+        }
+      ],
+      "sample_conditional_cells": [
+        {
+          "receiver_gsis_id": "00-0024243",
+          "defense": "JAX",
+          "coverage": "MAN_COVERAGE",
+          "targets": 1,
+          "known_outcomes": 1,
+          "catches": 1
+        },
+        {
+          "receiver_gsis_id": "00-0029892",
+          "defense": "ARI",
+          "coverage": "MAN_COVERAGE",
+          "targets": 1,
+          "known_outcomes": 1,
+          "catches": 0
+        },
+        {
+          "receiver_gsis_id": "00-0029892",
+          "defense": "ARI",
+          "coverage": "ZONE_COVERAGE",
+          "targets": 2,
+          "known_outcomes": 2,
+          "catches": 2
+        }
+      ],
+      "limitations": [
+        "target-conditioned; not all-route opportunity",
+        "third-party charting; not independently reviewed film",
+        "no predictive value established",
+        "no historical PIT replay before capture"
+      ]
+    },
+    {
+      "kind": "ftn_charting",
+      "season": 2026,
+      "captured_at": "2026-09-22T22:24:42.637193+00:00",
+      "sha256": "d755f7f37aa3b3975ff32f43b2ad634e17659371ab56d6ab714714365dabb9cc",
+      "url": "https://github.com/nflverse/nflverse-data/releases/download/ftn_charting/ftn_charting_2026.csv",
+      "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "FTN Data via nflverse",
+      "observation_kind": "THIRD_PARTY_CHARTING_NOT_FILM_VIEWED",
+      "bytes": 886882,
+      "raw_rows": 5174,
+      "games": 31,
+      "pbp_sha256": "40eef5cb9c1f2c9e0cfc2efaf4050d61c937b0d6457ae6e4b07739ae883b7682",
+      "pbp_url": "https://github.com/nflverse/nflverse-data/releases/download/pbp/play_by_play_2026.csv.gz",
+      "pbp_captured_at": "2026-09-22T22:26:52.831586+00:00",
+      "excluded": {
+        "NOT_LEGAL_PASS_ATTEMPT": 3079,
+        "UNKNOWN_TARGET_IDENTITY": 247
+      },
+      "cutoff": "2026-09-22T22:27:47.870496+00:00",
+      "bound_targets": 1848,
+      "field_coverage": {
+        "is_motion": {
+          "known": 1848
+        },
+        "is_play_action": {
+          "known": 1848
+        },
+        "is_rpo": {
+          "known": 1848
+        },
+        "read_thrown": {
+          "known": 1848
+        },
+        "is_catchable_ball": {
+          "known": 1848
+        },
+        "is_contested_ball": {
+          "known": 1848
+        },
+        "n_blitzers": {
+          "known": 1848
+        },
+        "n_pass_rushers": {
+          "known": 1848
+        }
+      },
+      "conditional_cell_count": 0,
+      "sample_bound_rows": [
+        {
+          "game_id": "2026_01_NE_SEA",
+          "play_id": "86",
+          "receiver_gsis_id": "00-0038543",
+          "offense": "SEA",
+          "defense": "NE",
+          "complete_pass": "1",
+          "charting": {
+            "is_motion": "TRUE",
+            "is_play_action": "TRUE",
+            "is_rpo": "FALSE",
+            "read_thrown": "1",
+            "is_catchable_ball": "TRUE",
+            "is_contested_ball": "FALSE",
+            "n_blitzers": "0",
+            "n_pass_rushers": "4"
+          },
+          "source_sha256": "d755f7f37aa3b3975ff32f43b2ad634e17659371ab56d6ab714714365dabb9cc",
+          "available_at": "2026-09-22T22:26:52.831586+00:00"
+        },
+        {
+          "game_id": "2026_01_NE_SEA",
+          "play_id": "157",
+          "receiver_gsis_id": "00-0037545",
+          "offense": "SEA",
+          "defense": "NE",
+          "complete_pass": "0",
+          "charting": {
+            "is_motion": "TRUE",
+            "is_play_action": "FALSE",
+            "is_rpo": "FALSE",
+            "read_thrown": "1",
+            "is_catchable_ball": "FALSE",
+            "is_contested_ball": "FALSE",
+            "n_blitzers": "0",
+            "n_pass_rushers": "4"
+          },
+          "source_sha256": "d755f7f37aa3b3975ff32f43b2ad634e17659371ab56d6ab714714365dabb9cc",
+          "available_at": "2026-09-22T22:26:52.831586+00:00"
+        },
+        {
+          "game_id": "2026_01_NE_SEA",
+          "play_id": "505",
+          "receiver_gsis_id": "00-0038543",
+          "offense": "SEA",
+          "defense": "NE",
+          "complete_pass": "1",
+          "charting": {
+            "is_motion": "FALSE",
+            "is_play_action": "TRUE",
+            "is_rpo": "FALSE",
+            "read_thrown": "1",
+            "is_catchable_ball": "TRUE",
+            "is_contested_ball": "FALSE",
+            "n_blitzers": "0",
+            "n_pass_rushers": "4"
+          },
+          "source_sha256": "d755f7f37aa3b3975ff32f43b2ad634e17659371ab56d6ab714714365dabb9cc",
+          "available_at": "2026-09-22T22:26:52.831586+00:00"
+        }
+      ],
+      "sample_conditional_cells": [],
+      "limitations": [
+        "target-conditioned; not all-route opportunity",
+        "third-party charting; not independently reviewed film",
+        "no predictive value established",
+        "no historical PIT replay before capture"
+      ]
+    }
+  ]
+}
+
