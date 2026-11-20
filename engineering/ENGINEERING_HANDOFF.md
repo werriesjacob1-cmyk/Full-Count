@@ -6307,3 +6307,23 @@ are all untouched. Draft PR opened against `main`, not merged -- this
 workstream does not merge its own PR.
 
 Alligator
+
+## 2026-10-17 — FC-ACC-009 inactive dashboard champion decision export
+
+Codex prepared a separate research-only branch from main to record the actual
+uncapped dashboard/Pages preparation decision set, following the FC-ACC-008
+Issue #91 protocol. `dashboard/champion_decision_export.py` records the
+pre-withholding normalized dashboard and live-overlay state, registry,
+publication-manifest candidate IDs, and the final staged-manifest digest.
+It replays both decisions against the saved inputs and final staged files.
+`dashboard/prepare_pages_artifact.py` calls it only when
+`FC_ACC_009_EXPORT_DIR` is explicitly supplied, after all customer files are
+written, and contains failures to the research path. No workflow sets that
+variable. The export records intended new publication decisions separately
+from classifier Top Picks and deployment-proven public exposure. Local
+write-once behavior is not an external timestamp or immutable remote archive.
+Game coverage remains UNVERIFIED without authenticated source discovery;
+missing/partial coverage cannot be called a genuine zero-pick slate. Source
+and operational limitations are recorded in
+`research/mlb_engine/fc_acc_009/README.md`. No scorer, ranker, calibration,
+public pick, registry, workflow or PR #226 file changed. Alligator.
