@@ -1643,8 +1643,6 @@ Next: run repository CI on the exact pushed head; add multi-event census and MLB
 
 Alligator
 
-
-
 ## 2026-09-14 — Deterministic nflverse quarantine contract
 
 - Added `nfl/research/nflverse_quarantine.py` and eight focused tests. The
@@ -6307,3 +6305,30 @@ are all untouched. Draft PR opened against `main`, not merged -- this
 workstream does not merge its own PR.
 
 Alligator
+
+## 2026-10-22 — FC-OPS-001 inactive FanDuel offer-integrity contract
+
+Codex reproduced four existing parser defects at main
+`466f73355023a3b57b466af44d4848e9a76b0bbc`: CLOSED/INACTIVE
+one-sided quote acceptance, mismatched strikeout player/line pairing,
+the equivalent pitcher-outs pairing, and SUSPENDED first-inning market
+acceptance. The defects are current production behavior; no published-pick
+impact has been established. No production source was changed in this
+research branch.
+
+New `research/fc_ops_001/offer_contract.py` parses hash-bound archived
+FanDuel pages into accepted offers and separate diagnostics, requiring
+explicit open/active/pregame status, coherent same-player/same-line pairs,
+identity, timing, valid price, and verified player mapping. It also supplies
+an inactive structural join from PR #226 S1 candidate/offer rows to PR #230
+uncapped champion decisions. Success remains `MATCHED_RESEARCH_ONLY`:
+authenticated root discovery, schedule/roster binding, complete capture,
+same-run seals and publication exposure must be independently verified
+upstream. The README documents a future three-arm matched-volume experiment
+and the 2027 source-availability boundary. Synthetic fixtures are clearly
+nonconfirmatory. This is not an activation or a production parser repair.
+
+Focused regression tests are in `test_fc_ops_001_offer_contract.py`. The
+branch's draft PR and exact-head CI, if available, are the review gate before
+any proposal to integrate the contract. No model, selector, calibrator,
+publication workflow, public record or frozen evidence was changed.
