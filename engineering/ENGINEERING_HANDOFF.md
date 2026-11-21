@@ -6307,3 +6307,49 @@ are all untouched. Draft PR opened against `main`, not merged -- this
 workstream does not merge its own PR.
 
 Alligator
+
+
+## 2026-11-21 -- NFL shadow capture: non-Sunday waves (NFL-NONSUNDAY-WAVES-20261121)
+
+Branch `claude/nfl-non-sunday-waves-20261121`, base `057ef8c8da95982efc82c66754daf7266b72a586`
+(origin/main). Research-only; no model, sealing, grading, publication or Python change.
+
+**Problem.** `nfl-live-game-market-shadow`, `nfl-live-passing-yards-shadow-board` and
+`nfl-live-receptions-shadow-board` fired Sundays only (plus 00:10Z Monday, still Sunday in
+Chicago), and a blank slate date resolves to "upcoming Sunday". Wed/Thu/Fri/Sat/Mon games
+(Thanksgiving, Black Friday, Christmas, TNF, MNF) therefore got no prospective capture.
+State before this change: those workflows were healthy (all scheduled Sunday waves through
+2026-11-16 succeeded; the ~02:30Z Monday run fails by design with "no future FanDuel NFL
+events for CT date <Sunday>").
+
+**Change.** Cron waves for every firm non-Sunday regular-season kickoff in ESPN weeks 11-17
+(kickoff-80 min and kickoff-10 min, i.e. 10 min after the ~90-min inactives deadline and a
+final pre-lock wave): weekly `55 23 * * 1,4` and `5 1 * * 2,5` for the 19:15 CT Mon/Thu games,
+plus dated crons for Wed 11/25, Thanksgiving 11/26 (12:00 and 15:30 CT), Black Friday 11/27,
+Sat 12/19 (16:00 and 19:20 CT) and Fri 12/25 (12:00, 15:30, 19:15 CT). One new step,
+"Resolve Chicago slate date for non-Sunday waves", exports the Chicago calendar date only when
+the event is `schedule` and the Chicago weekday is Mon/Wed/Thu/Fri/Sat; the run step's
+`TARGET_LOCAL_DATE` is now `inputs.target_local_date || steps.slate.outputs.target_local_date`,
+so manual dispatch and all Sunday behavior are unchanged.
+
+**Verification (offline).** `simulate.py`-style check over the real workflow YAML: all 27
+crons per workflow expanded to firings through 2027-01-12, each resolved with the exact
+`TZ=America/Chicago date` commands; all 22 firm non-Sunday games in weeks 11-17 get a wave
+inside [deadline, kickoff-40 min] and a final wave inside [kickoff-30 min, kickoff) on the
+game's Chicago date; no Sunday firing is reclassified. The workflow YAML parses; the new step
+and expression were **not executed in GitHub Actions** (workflow_dispatch skips the step by
+design). First live exercise: Mon 2026-11-23 23:55Z, only if merged to `main` before then.
+
+**Not done / open.**
+- Scheduled workflows run only from `main`; nothing is active until Jacob merges.
+- TBD/flex kickoffs (12/26, 1/2, 1/9-1/10) are not scheduled; ESPN shows placeholders.
+- Pre-existing, not changed: Sunday cron UTC times were sized for EDT. DST ended 2026-11-01, so
+  Sunday 1pm ET is 18:00Z and the first Sunday wave (15:40Z) precedes the ~16:30Z inactives
+  deadline; 19:55Z and 20:15Z are 20 min apart under `cancel-in-progress` with a 20-min timeout.
+  Left alone because Sunday timing may be tied to the preregistered capture design.
+- After 2027-01-05 the weekly Mon/Thu waves will fire with no games and fail with the same
+  benign "no future events" error.
+- Passing-yards and receptions boards still name their steps/manifest fields "Sunday"; the
+  event filter is date-based, so non-Sunday slates work, but the labels are cosmetic.
+
+Alligator
