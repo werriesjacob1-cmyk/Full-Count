@@ -97,9 +97,9 @@ async function notifyClaim(record, tabId) {
     await chrome.notifications.create(id, {
       type: 'basic',
       iconUrl: chrome.runtime.getURL('icons/icon128.png'),
-      title: record.dryRun ? 'New lead detected (dry run)' : 'Lead claimed',
+      title: record.dryRun ? 'New lead — claim it yourself' : 'Lead claimed',
       message: record.dryRun
-        ? `Would have claimed: ${record.label || 'new lead'} — tap it yourself`
+        ? `Practice mode: ${record.label || 'new lead'} — nothing was claimed`
         : `${record.label || 'Lead'} claimed at ${when} (${record.elapsedMs}ms)`,
       contextMessage: record.url ? new URL(record.url).hostname : 'carnow.com',
       priority: 2,

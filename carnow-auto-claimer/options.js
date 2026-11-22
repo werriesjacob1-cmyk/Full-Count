@@ -45,8 +45,8 @@ function reflectArmState() {
   banner.textContent = !$('autoClaim').checked
     ? 'OFF — not watching for leads'
     : live
-      ? 'LIVE — new leads will be clicked automatically'
-      : 'DRY RUN — new leads are detected and announced, never clicked';
+      ? 'LIVE — new leads will be claimed automatically'
+      : 'PRACTICE MODE — you get the beep and the pop-up, but nothing is claimed';
   banner.className = 'banner ' + (!$('autoClaim').checked ? 'idle' : live ? 'live' : 'dry');
 }
 
@@ -150,7 +150,7 @@ function render(history, ports) {
     label.title = entry.signature || '';
 
     const source = document.createElement('td');
-    source.textContent = entry.dryRun ? 'dry run'
+    source.textContent = entry.dryRun ? 'practice'
       : entry.verified === true ? 'confirmed'
       : entry.verified === false ? 'UNVERIFIED'
       : (entry.source || 'claimed');

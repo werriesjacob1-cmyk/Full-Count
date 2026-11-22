@@ -115,6 +115,10 @@
   let lastUrl = location.href;
   let returnTimer = null;
 
+  const BADGE_ID = '__carnow-ac-badge';
+  let badgeEl = null;
+  let badgeTimer = null;
+
   const observers = new Set();
   const observedRoots = new WeakSet();
   let knownRoots = [];
@@ -154,6 +158,7 @@
         if (k in DEFAULTS) settings[k] = newValue;
       }
       log('settings updated', settings);
+      updateBadge();
     });
   } catch { /* no extension context */ }
 
@@ -250,6 +255,7 @@
       for (const row of found) {
         // Header rows have no data cells worth keying.
         if (row.querySelector('th') && !row.querySelector('td')) continue;
+        if (row.id === BADGE_ID || (row.closest && row.closest('#' + BADGE_ID))) continue;
         if (!isVisible(row)) continue;
         const key = rowKey(row);
         if (key) rows.push({ row, key });
@@ -329,6 +335,77 @@
       return false;
     }
     return true;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* On-page status badge                                              */
+  /* ---------------------------------------------------------------- */
+
+  /*
+   * Checking that the extension is alive should not require opening
+   * DevTools, so it says so on the page itself.
+   *
+   * pointer-events:none is load-bearing, not cosmetic: without it the badge
+   * can sit over a row, and clickTargetFor's elementFromPoint would read it
+   * as an overlay and refuse a legitimate claim.
+   */
+  function ensureBadge() {
+    if (window.top !== window) return null;          // top frame only
+    if (badgeEl && badgeEl.isConnected) return badgeEl;
+    if (!document.body) return null;
+
+    badgeEl = document.createElement('div');
+    badgeEl.id = BADGE_ID;
+    badgeEl.style.cssText = [
+      'position:fixed', 'left:12px', 'bottom:12px', 'z-index:2147483647',
+      'pointer-events:none', 'user-select:none',
+      'font:600 12px/1.35 system-ui,-apple-system,Segoe UI,Roboto,sans-serif',
+      'padding:8px 12px', 'border-radius:999px',
+      'box-shadow:0 2px 10px rgba(0,0,0,.25)',
+      'display:flex', 'align-items:center', 'gap:8px',
+      'max-width:340px', 'white-space:nowrap'
+    ].join(';');
+    document.body.appendChild(badgeEl);
+    return badgeEl;
+  }
+
+  function badgeState() {
+    if (!settings.autoClaim) {
+      return { dot: '#94a3b8', bg: '#334155', fg: '#e2e8f0', text: 'Auto-claim is OFF' };
+    }
+    if (claimsThisSession >= settings.maxClaimsPerSession) {
+      return { dot: '#f59e0b', bg: '#334155', fg: '#e2e8f0',
+               text: 'Session limit reached — reload this page' };
+    }
+    if (!armed) {
+      return { dot: '#f59e0b', bg: '#334155', fg: '#e2e8f0', text: 'Starting up…' };
+    }
+    const tail = `${baseline.size} existing leads ignored` +
+                 (claimsThisSession ? ` · ${claimsThisSession} claimed` : '');
+    return settings.dryRun
+      ? { dot: '#22c55e', bg: '#064e3b', fg: '#d1fae5', text: `PRACTICE MODE · watching · ${tail}` }
+      : { dot: '#ef4444', bg: '#7f1d1d', fg: '#fee2e2', text: `LIVE · watching · ${tail}` };
+  }
+
+  function updateBadge() {
+    const el = ensureBadge();
+    if (!el) return;
+    const state = badgeState();
+    el.style.background = state.bg;
+    el.style.color = state.fg;
+    el.textContent = '';
+    const dot = document.createElement('span');
+    dot.style.cssText =
+      `width:8px;height:8px;border-radius:50%;background:${state.dot};flex:0 0 auto`;
+    const label = document.createElement('span');
+    label.textContent = state.text;
+    el.append(dot, label);
+  }
+
+  function removeBadge() {
+    if (badgeTimer) { clearInterval(badgeTimer); badgeTimer = null; }
+    if (badgeEl && badgeEl.isConnected) badgeEl.remove();
+    badgeEl = null;
   }
 
   /* ---------------------------------------------------------------- */
@@ -618,6 +695,7 @@
       log((dry ? 'WOULD CLAIM (dry run)' : 'CLAIMED') + ' via ' + source +
           ' in ' + record.elapsedMs + 'ms —', label, extra || '');
       report(record);
+      updateBadge();
       if (!dry) saveHandoff(record, location.href);
       return record;
     };
@@ -714,6 +792,7 @@
 
     if (quiet || timedOut) {
       armed = true;
+      updateBadge();
       if (baselineTimer) { clearInterval(baselineTimer); baselineTimer = null; }
       console.log('%c[CarNow AC] ARMED', 'color:#16a34a;font-weight:bold',
         '— baseline of ' + baseline.size + ' existing rows ignored.' +
@@ -837,6 +916,7 @@
     observers.clear();
     teardownWorker();
     if (returnTimer) { clearTimeout(returnTimer); returnTimer = null; }
+    removeBadge();
     for (const t of [pollTimer, shadowTimer, purgeTimer, baselineTimer]) if (t) clearInterval(t);
     pollTimer = shadowTimer = purgeTimer = baselineTimer = null;
     seen.clear();
@@ -924,6 +1004,8 @@
       shadowTimer = setInterval(() => { pruneShadowRoots(); discoverShadowRoots(document.documentElement); }, SHADOW_SCAN_MS);
       purgeTimer  = setInterval(purge, PURGE_EVERY_MS);
       connectKeepAlive();
+      updateBadge();
+      badgeTimer = setInterval(updateBadge, 2000);
       log('watching', location.href, settings);
     });
   }
