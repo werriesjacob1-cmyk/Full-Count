@@ -39,7 +39,9 @@
     maxClaimsPerSession: 10,
     returnToList: true,
     returnDelaySec: 5,
-    myName: ''
+    myName: '',
+    claimAttempts: 5,
+    claimRetryMs: 120
   });
 
   const POLL_INTERVAL_MS   = 500;
@@ -524,6 +526,75 @@
     } catch { /* context invalidated */ }
   }
 
+  /**
+   * Has the claim visibly taken effect? Any one of these settles it:
+   * the app navigated to the lead's detail page, the row left the list, or
+   * the row now carries an assignee.
+   */
+  function claimLanded(row, startUrl) {
+    if (location.href !== startUrl) return true;
+    if (!row.isConnected) return true;
+    if (assigneeState(row) === 'assigned') return true;
+    return false;
+  }
+
+  /**
+   * One click is not always enough: a row that has only just been inserted
+   * may not have its handler bound yet, so the click lands on nothing.
+   *
+   * Rather than firing a fixed burst — which would scatter the later clicks
+   * across the detail page once the first one navigates — this retries and
+   * checks after each attempt, stopping the instant the claim registers.
+   * When nothing ever confirms, it does use the full attempt budget.
+   *
+   * onDone(landed, attempts)
+   */
+  function attemptClaim(entry, onDone) {
+    const { row } = entry;
+    const startUrl = location.href;
+    const maxAttempts = Math.max(1, Number(settings.claimAttempts) || 1);
+    const gap = Math.max(20, Number(settings.claimRetryMs) || 120);
+    let attempts = 0;
+    let clicked = 0;
+
+    const finish = (landed) => onDone(landed, clicked, attempts);
+
+    const tryOnce = () => {
+      if (torndown) return finish(false);
+
+      // Navigation means the first click worked; never click into the page
+      // that replaced the list.
+      if (location.href !== startUrl) return finish(true);
+      if (!row.isConnected) return finish(true);
+      if (assigneeState(row) === 'assigned') return finish(true);
+
+      if (attempts >= maxAttempts) return finish(claimLanded(row, startUrl));
+      attempts++;
+
+      const target = clickTargetFor(row);
+      if (!target) {
+        // Obscured by a modal right now; wait for it to clear.
+        log('attempt ' + attempts + ': row obscured, waiting');
+        return setTimeout(tryOnce, gap);
+      }
+
+      try {
+        fireClick(target);
+        clicked++;
+        log('claim click ' + clicked + '/' + maxAttempts);
+      } catch (err) {
+        warn('click failed on attempt ' + attempts, err);
+      }
+
+      setTimeout(() => {
+        if (claimLanded(row, startUrl)) return finish(true);
+        tryOnce();
+      }, gap);
+    };
+
+    tryOnce();
+  }
+
   function act(entry, source) {
     const started = performance.now();
     const { row, key } = entry;
@@ -533,39 +604,47 @@
     const label = norm(row.textContent).slice(0, 80);
     const dry = settings.dryRun;
 
-    if (!dry) {
-      const target = clickTargetFor(row);
-      if (!target) {
-        // Obscured. Un-mark it so the next tick can retry once it is clear.
-        acted.delete(key);
-        return;
-      }
-      try {
-        fireClick(target);
-      } catch (err) {
-        warn('click failed', err);
-        acted.delete(key);
-        return;
-      }
-      claimsThisSession++;
-      lastClaimAt = Date.now();
-    }
-
-    const record = {
-      ts: Date.now(),
-      label,
-      signature: key,
-      url: location.href,
-      source,
-      dryRun: dry,
-      elapsedMs: Math.round((performance.now() - started) * 100) / 100
+    const finalize = (extra) => {
+      const record = {
+        ts: Date.now(),
+        label,
+        signature: key,
+        url: location.href,
+        source,
+        dryRun: dry,
+        elapsedMs: Math.round((performance.now() - started) * 100) / 100,
+        ...extra
+      };
+      log((dry ? 'WOULD CLAIM (dry run)' : 'CLAIMED') + ' via ' + source +
+          ' in ' + record.elapsedMs + 'ms —', label, extra || '');
+      report(record);
+      if (!dry) saveHandoff(record, location.href);
+      return record;
     };
 
-    log((dry ? 'WOULD CLAIM (dry run)' : 'CLAIMED') + ' via ' + source +
-        ' in ' + record.elapsedMs + 'ms —', label);
+    if (dry) {
+      beep();
+      finalize({ clicks: 0 });
+      return;
+    }
+
+    // Count it and start the clock now: the rate limit must hold even while
+    // the retries are still running.
+    claimsThisSession++;
+    lastClaimAt = Date.now();
     beep();
-    report(record);
-    if (!dry) saveHandoff(record, location.href);
+
+    attemptClaim(entry, (landed, clicks, attempts) => {
+      if (clicks === 0) {
+        // Never got a single click away — give the row back to the next tick.
+        warn('no click delivered after ' + attempts + ' attempts; releasing the row');
+        acted.delete(key);
+        claimsThisSession--;
+        return;
+      }
+      if (!landed) warn('clicked ' + clicks + ' time(s), nothing confirmed the claim');
+      finalize({ clicks, attempts, landed });
+    });
   }
 
   /* ---------------------------------------------------------------- */

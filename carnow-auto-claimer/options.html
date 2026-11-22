@@ -240,6 +240,26 @@
       </div>
     </div>
 
+    <p class="section-title">Click persistence</p>
+    <div class="card">
+      <div class="row">
+        <div>
+          <div class="label">Attempts per lead</div>
+          <div class="hint">A row that has just appeared may not have its click handler bound yet,
+            so one click can land on nothing. It re-clicks until the claim registers, then stops —
+            it does not fire a fixed burst.</div>
+        </div>
+        <input type="number" id="claimAttempts" min="1" max="15" step="1" aria-label="Attempts per lead">
+      </div>
+      <div class="row">
+        <div>
+          <div class="label">Milliseconds between attempts</div>
+          <div class="hint">Time to let the page react before checking and trying again.</div>
+        </div>
+        <input type="number" id="claimRetryMs" min="20" max="2000" step="10" aria-label="Milliseconds between attempts">
+      </div>
+    </div>
+
     <p class="section-title">Safety limits</p>
     <div class="card">
       <div class="row">

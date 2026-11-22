@@ -39,6 +39,7 @@
     <button class="ctl gray" id="refresh">Force full table re-render (must claim nothing)</button>
     <button class="ctl warn" id="addUnderOverlay">Add new lead UNDER a modal (must refuse to click through)</button>
     <button class="ctl warn" id="coworkerClaims">Coworker claims a baselined lead (must NOT be re-claimed)</button>
+    <button class="ctl" id="addSlowHandler">Add new lead whose handler binds 400ms LATE (retry must win)</button>
   </div>
 
   <table>
@@ -60,6 +61,7 @@
   const tbody = document.getElementById('rows');
   const logEl = document.getElementById('log');
   let lines = [], n = 0, spawn = new Map();
+  const clickCounts = new Map();   // lead.id -> clicks actually delivered
 
   const REPS = ['Jacob Werries', 'Johnson Fabiyi', 'HASAN SAVAS', 'Steve Blank', 'Coleman H'];
   const CARS = ['2026 Toyota Camry SE', '2024 Toyota Tundra 1794', '2026 Toyota Tacoma SR5', ''];
@@ -93,11 +95,19 @@
     };
   }
 
+  tbody.addEventListener('click', (e) => {
+    const tr = e.target && e.target.closest && e.target.closest('tr.lead');
+    if (!tr || !tr.dataset.leadId) return;
+    const id = Number(tr.dataset.leadId);
+    clickCounts.set(id, (clickCounts.get(id) || 0) + 1);
+  }, true);   // capture: counts even when the row's own handler is not bound yet
+
   function render() {
     tbody.replaceChildren();
     for (const lead of model) {
       const tr = document.createElement('tr');
       tr.className = 'lead';
+      tr.dataset.leadId = String(lead.id);
 
       const dot = document.createElement('td');
       dot.innerHTML = '<span class="dot">&bull;</span>';
@@ -122,14 +132,38 @@
       upd.textContent = stamp(lead.date);
 
       tr.append(dot, name, car, dept, upd);
-      tr.addEventListener('click', (e) => {
+
+      const claimHandler = (e) => {
         e.preventDefault();
+        if (lead.claimed) return;
+        lead.claimed = true;
+        lead.rep = 'Jacob Werries';
         const t = spawn.get(lead.id);
         const lat = t ? (performance.now() - t).toFixed(1) + 'ms' : 'n/a';
+        const clicks = clickCounts.get(lead.id) || 1;
         const verdict = lead.isNew ? 'CORRECT' : '*** WRONG — this was not a new lead ***';
-        log(`CLICKED "${lead.name}"  latency=${lat}  ${verdict}`);
+        log(`CLAIMED "${lead.name}"  latency=${lat}  clicks=${clicks}  ${verdict}`);
         tr.style.background = lead.isNew ? '#dcfce7' : '#fee2e2';
-      });
+        // Mirror the real app: the row now shows an assignee, which is what
+        // the extension checks to know it can stop clicking.
+        rep.className = 'rep';
+        rep.textContent = `${lead.rep} (Nashville Toyota North)`;
+        setTimeout(() => {
+          const total = clickCounts.get(lead.id) || 1;
+          if (total > clicks) log(`  ...${total - clicks} extra click(s) AFTER the claim landed — should be 0`);
+        }, 1500);
+      };
+
+      if (lead.handlerDelayMs && !lead.handlerReady) {
+        setTimeout(() => {
+          lead.handlerReady = true;
+          tr.addEventListener('click', claimHandler);
+          log(`handler for "${lead.name}" is now bound (${lead.handlerDelayMs}ms late)`);
+        }, lead.handlerDelayMs);
+      } else {
+        tr.addEventListener('click', claimHandler);
+      }
+
       tbody.append(tr);
     }
   }
@@ -186,6 +220,16 @@
     render();
     log(`coworker claimed baselined lead "${target.name}" — its key must not change, ` +
         'and the assignee gate must refuse it. Any click here is a WRONG claim.');
+  };
+
+  document.getElementById('addSlowHandler').onclick = () => {
+    const lead = makeLead({ rep: '', date: new Date(), isNew: true });
+    lead.handlerDelayMs = 400;
+    spawn.set(lead.id, performance.now());
+    model.unshift(lead);
+    render();
+    log(`spawned lead "${lead.name}" whose handler binds 400ms late — ` +
+        'early clicks hit nothing; the retry should win, then stop clicking');
   };
 
   document.getElementById('addUnderOverlay').onclick = () => {

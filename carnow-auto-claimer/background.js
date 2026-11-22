@@ -20,7 +20,9 @@ const DEFAULTS = Object.freeze({
   maxClaimsPerSession: 10,
   returnToList: true,
   returnDelaySec: 5,
-  myName: ''
+  myName: '',
+  claimAttempts: 5,
+  claimRetryMs: 120
 });
 
 const KEEPALIVE_ALARM = 'carnow-keepalive';

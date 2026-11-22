@@ -120,7 +120,10 @@ implementation. Two of these cases are regressions for defects that would have c
 Open `test/mock-carnow.html`. It renders 10 baseline rows, then gives you five buttons:
 
 - **Add ONE new lead** → should be claimed, and the page logs the latency
-- **Add stale lead (3 days ago)** → must be skipped by gate 4
+- **Add stale lead (3 days ago)** → must be skipped by the freshness gate
+- **Lead whose handler binds 400ms late** → early clicks hit nothing; the retry should
+  win, then stop. The log prints the click count and warns about any click delivered
+  *after* the claim landed (should always be 0)
 - **Bump an existing lead's timestamp** → must *not* re-claim (key stability)
 - **Switch filter (replace all rows)** → must re-baseline via gate 2, claim nothing
 - **Force re-render** → keys unchanged, claim nothing
@@ -145,6 +148,33 @@ You want `status().armed === true` and `baselineRows` matching the visible row c
 before you trust anything. Look for the green `[CarNow AC] ARMED` line in the console.
 
 Service worker console: `chrome://extensions` → the **service worker** link.
+
+## Click persistence
+
+One click is not always enough. A row that has only just been inserted may not have its
+click handler bound yet — the extension fires within ~2ms of insertion, which can beat
+the app's own event binding — so the click lands on nothing and the lead is missed.
+
+The fix is not a fixed burst of clicks. The first successful click navigates to the lead
+detail page, so clicks 2..n in a burst would land on whatever replaced the list: near
+"Add Vehicle", the notes field, or the red dismiss icon.
+
+Instead it clicks, waits `claimRetryMs` (default 120), checks, and only clicks again if
+nothing happened — up to `claimAttempts` (default 5). Three signals end the loop
+immediately:
+
+- the URL changed (the app navigated to the lead)
+- the row left the list
+- the row now carries an assignee
+
+So a claim that registers first time costs exactly one click; a late-binding handler
+costs as many as it takes; and nothing is ever clicked after the claim lands. When no
+signal ever confirms, the full attempt budget is used and the claim is recorded as
+`unconfirmed` in the history table.
+
+The rate limit counts the lead once, at the start, so retries can't slip past it. If the
+loop never lands a single click — the row stayed obscured throughout — the lead is
+released back for a later tick and the session counter is rolled back.
 
 ## How the tap is delivered
 

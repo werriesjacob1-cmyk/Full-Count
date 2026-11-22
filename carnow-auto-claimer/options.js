@@ -15,11 +15,14 @@ const DEFAULTS = Object.freeze({
   maxClaimsPerSession: 10,
   returnToList: true,
   returnDelaySec: 5,
-  myName: ''
+  myName: '',
+  claimAttempts: 5,
+  claimRetryMs: 120
 });
 
 const TOGGLES = ['autoClaim', 'dryRun', 'soundAlert', 'debug', 'returnToList'];
-const NUMBERS = ['maxLeadAgeMin', 'minClaimIntervalSec', 'maxClaimsPerSession', 'returnDelaySec'];
+const NUMBERS = ['maxLeadAgeMin', 'minClaimIntervalSec', 'maxClaimsPerSession', 'returnDelaySec',
+                 'claimAttempts', 'claimRetryMs'];
 const TEXTS = ['myName'];
 const $ = (id) => document.getElementById(id);
 
@@ -158,6 +161,8 @@ function render(history, ports) {
     const speed = document.createElement('td');
     speed.className = 'mono';
     speed.textContent = entry.elapsedMs !== undefined ? `${entry.elapsedMs} ms` : '—';
+    if (entry.clicks > 1) speed.textContent += ` · ${entry.clicks}\u00d7`;
+    if (entry.landed === false) { speed.textContent += ' · unconfirmed'; speed.style.color = '#dc2626'; }
 
     row.append(time, label, source, speed);
     body.append(row);
